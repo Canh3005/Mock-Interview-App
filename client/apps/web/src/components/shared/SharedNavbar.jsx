@@ -73,7 +73,7 @@ function LandingBar({ navigate }) {
       id="shared-navbar"
       className="sticky top-0 z-50 border-b border-slate-700/60 bg-background/80 backdrop-blur-md"
     >
-      <div className="max-w-[1200px] mx-auto px-6 h-14 flex items-center justify-between gap-4">
+      <div className="max-w-[1400px] mx-auto px-6 h-16 flex items-center justify-between gap-4">
         <Brand navigate={navigate} />
 
         {/* Desktop nav links */}
