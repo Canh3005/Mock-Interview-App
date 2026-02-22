@@ -25,7 +25,7 @@ import LearningPath from './LearningPath'
 import SkillBreakdown from './SkillBreakdown'
 import UpcomingSessions from './UpcomingSessions'
 
-export default function DashboardPage() {
+export default function DashboardPage({ navigate = () => {} }) {
   const [darkMode, setDarkMode] = useState(true)
 
   // Sync dark class on <html>
@@ -137,7 +137,10 @@ export default function DashboardPage() {
                 Đây là tổng quan kỹ năng phỏng vấn của bạn — Chủ nhật, 22 tháng 2 năm 2026
               </p>
             </div>
-            <button className="shrink-0 inline-flex items-center gap-2 font-body text-sm font-semibold text-white bg-cta hover:bg-cta/90 px-5 py-2.5 rounded-xl transition-all duration-200 cursor-pointer hover:-translate-y-0.5 shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta">
+            <button
+              onClick={() => navigate('interview-room')}
+              className="shrink-0 inline-flex items-center gap-2 font-body text-sm font-semibold text-white bg-cta hover:bg-cta/90 px-5 py-2.5 rounded-xl transition-all duration-200 cursor-pointer hover:-translate-y-0.5 shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta"
+            >
               <Code2 size={15} />
               Bắt đầu phỏng vấn
             </button>
