@@ -1,6 +1,7 @@
 /**
  * HeroSection — Main hero area for Landing Page
- * Style: dark bg (#0F172A), green CTA, Fira Code heading, slate muted text
+ * Background: hero-bg.png (hexagonal green glow) with dark overlay
+ * Style: dark bg, green CTA, Fira Code heading, slate muted text
  */
 import { Play, ArrowRight, ChevronRight } from 'lucide-react'
 
@@ -15,14 +16,25 @@ export default function HeroSection({ navigate }) {
     document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })
 
   return (
-    <section className="relative overflow-hidden bg-background pt-20 pb-28 sm:pt-28 sm:pb-36">
-      {/* Ambient glow */}
+    <section className="relative overflow-hidden pt-20 pb-28 sm:pt-28 sm:pb-36">
+
+      {/* ── Background image + layered overlays ── */}
       <div
         aria-hidden="true"
-        className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] rounded-full opacity-[0.07] blur-3xl pointer-events-none"
-        style={{ background: '#22C55E' }}
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: "url('/hero-bg.png')" }}
+      />
+      {/* Dark gradient overlay — ensures text contrast */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0"
+        style={{
+          background:
+            'linear-gradient(180deg, rgba(10,15,30,0.82) 0%, rgba(10,15,30,0.70) 50%, rgba(10,15,30,0.90) 100%)',
+        }}
       />
 
+      {/* ── Content ── */}
       <div className="relative z-10 mx-auto max-w-[760px] px-6 text-center">
 
         {/* Badge */}
@@ -40,7 +52,7 @@ export default function HeroSection({ navigate }) {
         </h1>
 
         {/* Sub-description */}
-        <p className="font-body text-base sm:text-lg text-slate-400 leading-relaxed mb-10 max-w-xl mx-auto">
+        <p className="font-body text-base sm:text-lg text-slate-300 leading-relaxed mb-10 max-w-xl mx-auto">
           Môi trường giả lập sát thực tế, IDE JavaScript tích hợp và bảng phân tích
           kỹ năng chuyên sâu — tất cả trong một nền tảng duy nhất.
         </p>
@@ -63,7 +75,7 @@ export default function HeroSection({ navigate }) {
           {/* Secondary */}
           <button
             onClick={scrollToFeatures}
-            className="inline-flex items-center gap-2 font-body text-sm font-semibold text-slate-300 border border-slate-600 hover:border-cta/60 hover:text-cta px-6 py-3 rounded-xl transition-all duration-200 cursor-pointer w-full sm:w-auto justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta"
+            className="inline-flex items-center gap-2 font-body text-sm font-semibold text-slate-200 border border-slate-500 hover:border-cta/60 hover:text-cta bg-black/20 backdrop-blur-sm px-6 py-3 rounded-xl transition-all duration-200 cursor-pointer w-full sm:w-auto justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta"
           >
             Xem tính năng
             <ChevronRight size={15} />
@@ -74,10 +86,10 @@ export default function HeroSection({ navigate }) {
         <div className="mt-14 flex flex-col sm:flex-row items-center justify-center gap-8 sm:gap-14">
           {STATS.map(({ value, label }) => (
             <div key={label} className="text-center">
-              <div className="font-heading text-2xl sm:text-3xl font-bold text-cta tabular-nums">
+              <div className="font-heading text-2xl sm:text-3xl font-bold text-cta tabular-nums drop-shadow-[0_0_12px_rgba(34,197,94,0.5)]">
                 {value}
               </div>
-              <div className="font-body text-xs text-slate-500 mt-1">{label}</div>
+              <div className="font-body text-xs text-slate-400 mt-1">{label}</div>
             </div>
           ))}
         </div>
