@@ -7,8 +7,8 @@
 ---
 
 **Project:** Mock Interview App
-**Generated:** 2026-02-22 20:57:25
-**Category:** Developer Tool / IDE
+**Generated:** 2026-02-22 22:07:48
+**Category:** Service Landing Page
 
 ---
 
@@ -18,24 +18,24 @@
 
 | Role | Hex | CSS Variable |
 |------|-----|--------------|
-| Primary | `#1E293B` | `--color-primary` |
-| Secondary | `#334155` | `--color-secondary` |
-| CTA/Accent | `#22C55E` | `--color-cta` |
-| Background | `#0F172A` | `--color-background` |
-| Text | `#F8FAFC` | `--color-text` |
+| Primary | `#E11D48` | `--color-primary` |
+| Secondary | `#FB7185` | `--color-secondary` |
+| CTA/Accent | `#2563EB` | `--color-cta` |
+| Background | `#FFF1F2` | `--color-background` |
+| Text | `#881337` | `--color-text` |
 
-**Color Notes:** Code dark + run green
+**Color Notes:** Vibrant rose + engagement blue
 
 ### Typography
 
-- **Heading Font:** Fira Code
-- **Body Font:** Fira Sans
-- **Mood:** dashboard, data, analytics, code, technical, precise
-- **Google Fonts:** [Fira Code + Fira Sans](https://fonts.google.com/share?selection.family=Fira+Code:wght@400;500;600;700|Fira+Sans:wght@300;400;500;600;700)
+- **Heading Font:** Outfit
+- **Body Font:** Work Sans
+- **Mood:** geometric, modern, clean, balanced, contemporary, versatile
+- **Google Fonts:** [Outfit + Work Sans](https://fonts.google.com/share?selection.family=Outfit:wght@300;400;500;600;700|Work+Sans:wght@300;400;500;600;700)
 
 **CSS Import:**
 ```css
-@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Fira+Sans:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Work+Sans:wght@300;400;500;600;700&display=swap');
 ```
 
 ### Spacing Variables
@@ -68,7 +68,7 @@
 ```css
 /* Primary Button */
 .btn-primary {
-  background: #22C55E;
+  background: #2563EB;
   color: white;
   padding: 12px 24px;
   border-radius: 8px;
@@ -85,8 +85,8 @@
 /* Secondary Button */
 .btn-secondary {
   background: transparent;
-  color: #1E293B;
-  border: 2px solid #1E293B;
+  color: #E11D48;
+  border: 2px solid #E11D48;
   padding: 12px 24px;
   border-radius: 8px;
   font-weight: 600;
@@ -99,7 +99,7 @@
 
 ```css
 .card {
-  background: #0F172A;
+  background: #FFF1F2;
   border-radius: 12px;
   padding: 24px;
   box-shadow: var(--shadow-md);
@@ -125,9 +125,9 @@
 }
 
 .input:focus {
-  border-color: #1E293B;
+  border-color: #E11D48;
   outline: none;
-  box-shadow: 0 0 0 3px #1E293B20;
+  box-shadow: 0 0 0 3px #E11D4820;
 }
 ```
 
@@ -153,28 +153,28 @@
 
 ## Style Guidelines
 
-**Style:** Vibrant & Block-based
+**Style:** Social Proof-Focused
 
-**Keywords:** Bold, energetic, playful, block layout, geometric shapes, high color contrast, duotone, modern, energetic
+**Keywords:** Testimonials prominent, client logos displayed, case studies sections, reviews/ratings, user avatars, success metrics, credibility markers
 
-**Best For:** Startups, creative agencies, gaming, social media, youth-focused, entertainment, consumer
+**Best For:** B2B SaaS, professional services, premium products, e-commerce conversion pages, established brands
 
-**Key Effects:** Large sections (48px+ gaps), animated patterns, bold hover (color shift), scroll-snap, large type (32px+), 200-300ms
+**Key Effects:** Testimonial carousel animations, logo grid fade-in, stat counter animations (number count-up), review star ratings
 
 ### Page Pattern
 
-**Pattern Name:** Video-First Hero
+**Pattern Name:** Hero + Testimonials + CTA
 
-- **Conversion Strategy:** 86% higher engagement with video. Add captions for accessibility. Compress video for performance.
-- **CTA Placement:** Overlay on video (center/bottom) + Bottom section
-- **Section Order:** 1. Hero with video background, 2. Key features overlay, 3. Benefits section, 4. CTA
+- **Conversion Strategy:** Social proof before CTA. Use 3-5 testimonials. Include photo + name + role. CTA after social proof.
+- **CTA Placement:** Hero (sticky) + Post-testimonials
+- **Section Order:** 1. Hero, 2. Problem statement, 3. Solution overview, 4. Testimonials carousel, 5. CTA
 
 ---
 
 ## Anti-Patterns (Do NOT Use)
 
-- ❌ Flat design without depth
-- ❌ Text-heavy pages
+- ❌ Complex navigation
+- ❌ Hidden contact info
 
 ### Additional Forbidden Patterns
 
