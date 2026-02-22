@@ -179,9 +179,9 @@ function InterviewBar({ navigate, children }) {
   return (
     <header
       id="shared-navbar"
-      className="sticky top-0 z-50 h-12 flex-shrink-0 flex items-center justify-between px-4 border-b border-slate-700/50 bg-[#0D1424]/90 backdrop-blur-sm"
+      className="sticky top-0 z-50 h-16 flex-shrink-0 flex items-center justify-between px-4 border-b border-slate-700/50 bg-[#0D1424]/90 backdrop-blur-sm"
     >
-      {/* Left: back + breadcrumb */}
+      {/* Left: back + brand + breadcrumb */}
       <div className="flex items-center gap-3">
         <button
           onClick={() => navigate('dashboard')}
@@ -191,25 +191,12 @@ function InterviewBar({ navigate, children }) {
           <ChevronLeft size={16} />
         </button>
 
-        {/* Clickable brand → landing */}
-        <button
-          onClick={() => navigate('landing')}
-          className="flex items-center justify-center w-7 h-7 rounded-md bg-cta/15 border border-cta/30 text-cta hover:bg-cta/25 transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta flex-shrink-0"
-          aria-label="Về trang chủ"
-        >
-          <Code2 size={14} />
-        </button>
+        {/* Brand — đồng nhất với Landing & Dashboard */}
+        <Brand navigate={navigate} />
 
-        <div className="flex items-center gap-1.5 font-['Fira_Code',monospace] text-xs">
-          {/* Landing link */}
-          <button
-            onClick={() => navigate('landing')}
-            className="text-slate-500 hover:text-slate-300 transition-colors duration-150 cursor-pointer focus-visible:outline-none"
-          >
-            Mock Interview
-          </button>
-          <span className="text-slate-600">/</span>
-          {/* Dashboard link */}
+        {/* Breadcrumb */}
+        <div className="hidden md:flex items-center gap-1.5 font-body text-sm">
+          <span className="text-slate-500">/</span>
           <button
             onClick={() => navigate('dashboard')}
             className="text-slate-500 hover:text-slate-300 transition-colors duration-150 cursor-pointer focus-visible:outline-none"
@@ -217,7 +204,7 @@ function InterviewBar({ navigate, children }) {
             Dashboard
           </button>
           <span className="text-slate-600">/</span>
-          <span className="text-cta font-semibold">Interview Room</span>
+          <span className="text-cta font-medium">Interview Room</span>
         </div>
       </div>
 
