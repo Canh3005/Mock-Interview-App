@@ -6,8 +6,9 @@
  *   Row 3: InterviewHistory (col-span-8) + LearningPath (col-span-4)
  */
 import { useState, useEffect } from 'react'
-import { Code2, Target, Award, Activity } from 'lucide-react'
+import { Github, Code2, Target, Award, Activity } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { useSelector } from 'react-redux'
 import SharedNavbar from '../shared/SharedNavbar'
 import StatCard from './StatCard'
 import RadarChartPlaceholder from './RadarChartPlaceholder'
@@ -18,8 +19,10 @@ import UpcomingSessions from './UpcomingSessions'
 
 export default function DashboardPage({ navigate = () => {} }) {
   const { t } = useTranslation()
+  const token = useSelector((state) => state.auth.accessToken)
+  const user = useSelector((state) => state.auth.user)
   const [darkMode, setDarkMode] = useState(true)
-
+  const isGithubLinked = user?.linkedProviders?.includes('github')
   // Sync dark class on <html>
   useEffect(() => {
     document.documentElement.classList.toggle('dark', darkMode)
@@ -75,19 +78,33 @@ export default function DashboardPage({ navigate = () => {} }) {
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
             <div>
               <h1 className="font-heading text-2xl font-bold text-white leading-tight">
-                {t('dashboard.welcome')}, Minh Tú
+                {t('dashboard.welcome')}, {user?.name || 'User'}
               </h1>
               <p className="font-body text-sm text-slate-400 mt-1">
                 {t('dashboard.greeting')} — Chủ nhật, 22 tháng 2 năm 2026
               </p>
             </div>
-            <button
-              onClick={() => navigate('interview-room')}
-              className="shrink-0 inline-flex items-center gap-2 font-body text-sm font-semibold text-white bg-cta hover:bg-cta/90 px-5 py-2.5 rounded-xl transition-all duration-200 cursor-pointer hover:-translate-y-0.5 shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta"
-            >
-              <Code2 size={15} />
-              {t('dashboard.startInterview')}
-            </button>
+            <div className="flex items-center gap-3 shrink-0">
+              {!isGithubLinked && (
+                <button
+                  onClick={() => {
+                    const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+                    window.location.href = `${backendUrl}/auth/github/link?t=${token}`;
+                  }}
+                  className="inline-flex items-center gap-2 font-body text-sm font-medium text-slate-300 bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 px-4 py-2.5 rounded-xl transition-all duration-200 cursor-pointer hover:-translate-y-0.5"
+                >
+                  <Github size={15} />
+                  {t('auth.linkingGitHub')}
+                </button>
+              )}
+              <button
+                onClick={() => navigate('interview-room')}
+                className="inline-flex items-center gap-2 font-body text-sm font-semibold text-white bg-cta hover:bg-cta/90 px-5 py-2.5 rounded-xl transition-all duration-200 cursor-pointer hover:-translate-y-0.5 shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta"
+              >
+                <Code2 size={15} />
+                {t('dashboard.startInterview')}
+              </button>
+            </div>
           </div>
 
           {/* ── Row 1: Stat Cards (4 × col-span-3) ── */}

@@ -6,8 +6,11 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor() {
     super({
-      // Extract token from 'Authorization: Bearer <token>'
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      // Extract token from 'Authorization: Bearer <token>' or query param 't'
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        ExtractJwt.fromAuthHeaderAsBearerToken(),
+        ExtractJwt.fromUrlQueryParameter('t'),
+      ]),
       ignoreExpiration: false,
       // In production, load this from environment variables
       secretOrKey: process.env.JWT_SECRET || 'super-secret-access-key',

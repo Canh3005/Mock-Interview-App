@@ -277,16 +277,20 @@ function DashboardUserMenu({ navigate }) {
         <span className="text-sm font-medium text-white">{user?.name || 'User'}</span>
         <button 
           onClick={handleLogout}
-          className="text-xs text-slate-500 hover:text-red-400 transition-colors"
+          className="text-xs text-slate-500 cursor-pointer hover:text-red-400 transition-colors"
         >
           Đăng xuất
         </button>
       </div>
       <div
-        className="flex items-center justify-center w-9 h-9 rounded-full border-2 border-cta/50 bg-cta/10 text-cta cursor-pointer hover:border-cta transition-colors duration-200"
+        className="flex overflow-hidden items-center justify-center w-9 h-9 rounded-full border-2 border-cta/50 bg-cta/10 text-cta cursor-pointer hover:border-cta transition-colors duration-200"
         title="Hồ sơ"
       >
-        <User size={16} />
+        {user?.avatarUrl ? (
+          <img src={user.avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+        ) : (
+          <User size={16} />
+        )}
       </div>
     </div>
   )
