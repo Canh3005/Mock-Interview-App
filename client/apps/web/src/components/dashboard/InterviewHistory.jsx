@@ -3,6 +3,7 @@
  * Shows: date, type, score, duration, status with row hover highlight
  */
 import { CheckCircle, Clock, XCircle, ChevronRight } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 const MOCK_DATA = [
   { id: 1, date: '22 Feb 2026', type: 'System Design',   score: 82, duration: '45 phút', status: 'passed' },
@@ -12,25 +13,26 @@ const MOCK_DATA = [
   { id: 5, date: '12 Feb 2026', type: 'Giao tiếp (EN)',   score: 88, duration: '20 phút', status: 'passed' },
 ]
 
-const STATUS_CONFIG = {
-  passed: { label: 'Đạt',    Icon: CheckCircle, color: 'text-cta',      bg: 'bg-cta/10 border-cta/30'      },
-  review: { label: 'Xem lại', Icon: Clock,       color: 'text-amber-400', bg: 'bg-amber-400/10 border-amber-400/30' },
-  failed: { label: 'Chưa đạt', Icon: XCircle,   color: 'text-rose-400', bg: 'bg-rose-400/10 border-rose-400/30' },
-}
-
 export default function InterviewHistory({ colSpan = '' }) {
+  const { t } = useTranslation()
+  
+  const STATUS_CONFIG = {
+    passed: { label: t('dashboard.history.status.passed'),    Icon: CheckCircle, color: 'text-cta',      bg: 'bg-cta/10 border-cta/30'      },
+    review: { label: t('dashboard.history.status.review'), Icon: Clock,       color: 'text-amber-400', bg: 'bg-amber-400/10 border-amber-400/30' },
+    failed: { label: t('dashboard.history.status.failed'), Icon: XCircle,   color: 'text-rose-400', bg: 'bg-rose-400/10 border-rose-400/30' },
+  }
   return (
     <div className={[colSpan, 'bg-primary border border-slate-700/60 rounded-[12px] p-6 shadow-md flex flex-col'].join(' ')}>
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
         <div>
           <h2 className="font-heading text-base font-semibold text-white tracking-tight">
-            Lịch sử phỏng vấn
+            {t('dashboard.history.title')}
           </h2>
-          <p className="font-body text-xs text-slate-400 mt-0.5">5 phiên gần nhất</p>
+          <p className="font-body text-xs text-slate-400 mt-0.5">5 {t('dashboard.history.subtitle')}</p>
         </div>
         <button className="flex items-center gap-1 font-body text-xs text-cta hover:text-cta/80 transition-colors duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta rounded">
-          Xem tất cả
+          {t('dashboard.history.viewAll')}
           <ChevronRight size={14} />
         </button>
       </div>
@@ -40,7 +42,13 @@ export default function InterviewHistory({ colSpan = '' }) {
         <table className="w-full min-w-[420px] border-collapse">
           <thead>
             <tr className="border-b border-slate-700/60">
-              {['Ngày', 'Loại phỏng vấn', 'Điểm', 'Thời lượng', 'Trạng thái'].map((h) => (
+              {[
+                t('dashboard.history.headers.date'),
+                t('dashboard.history.headers.type'),
+                t('dashboard.history.headers.score'),
+                t('dashboard.history.headers.duration'),
+                t('dashboard.history.headers.status')
+              ].map((h) => (
                 <th
                   key={h}
                   className="font-body text-xs font-medium text-slate-500 uppercase tracking-wider text-left pb-3 pr-4 last:pr-0"

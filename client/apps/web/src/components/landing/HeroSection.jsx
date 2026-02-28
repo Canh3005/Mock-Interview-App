@@ -4,14 +4,17 @@
  * Style: dark bg, green CTA, Fira Code heading, slate muted text
  */
 import { Play, ArrowRight, ChevronRight } from 'lucide-react'
-
-const STATS = [
-  { value: '2,400+', label: 'Câu hỏi phỏng vấn' },
-  { value: '98%',    label: 'Tỉ lệ hài lòng'    },
-  { value: '350+',   label: 'Người dùng active'  },
-]
+import { useTranslation } from 'react-i18next'
 
 export default function HeroSection({ navigate }) {
+  const { t } = useTranslation()
+  
+  const STATS = [
+    { value: '2,400+', label: t('hero.stats.questions') },
+    { value: '98%',    label: t('hero.stats.satisfaction') },
+    { value: '350+',   label: t('hero.stats.users') },
+  ]
+
   const scrollToFeatures = () =>
     document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })
 
@@ -40,21 +43,20 @@ export default function HeroSection({ navigate }) {
         {/* Badge */}
         <span className="inline-flex items-center gap-2 rounded-full border border-cta/25 bg-cta/10 px-3.5 py-1 font-body text-xs font-medium text-cta mb-8">
           <span className="w-1.5 h-1.5 rounded-full bg-cta animate-pulse" aria-hidden="true" />
-          Nền tảng luyện phỏng vấn IT chuyên sâu
+          {t('hero.badge')}
         </span>
 
         {/* Heading */}
         <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight tracking-tight mb-6">
-          Chinh phục mọi kỳ phỏng vấn&nbsp;
-          <span className="text-cta">IT</span>
+          {t('hero.title.main')}&nbsp;
+          <span className="text-cta">{t('hero.title.highlight')}</span>
           <br className="hidden sm:block" />
-          tại các tập đoàn công nghệ
+          {t('hero.title.sub')}
         </h1>
 
         {/* Sub-description */}
         <p className="font-body text-base sm:text-lg text-slate-300 leading-relaxed mb-10 max-w-xl mx-auto">
-          Môi trường giả lập sát thực tế, IDE JavaScript tích hợp và bảng phân tích
-          kỹ năng chuyên sâu — tất cả trong một nền tảng duy nhất.
+          {t('hero.subtitle')}
         </p>
 
         {/* CTA Buttons */}
@@ -65,7 +67,7 @@ export default function HeroSection({ navigate }) {
             className="group inline-flex items-center gap-2 font-body text-sm font-semibold text-white bg-cta hover:bg-cta/90 px-6 py-3 rounded-xl transition-all duration-200 cursor-pointer hover:-translate-y-0.5 shadow-md w-full sm:w-auto justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta"
           >
             <Play size={15} className="fill-white" />
-            Bắt đầu luyện tập
+            {t('hero.ctaPrimary')}
             <ArrowRight
               size={15}
               className="transition-transform duration-200 group-hover:translate-x-1"
@@ -77,7 +79,7 @@ export default function HeroSection({ navigate }) {
             onClick={scrollToFeatures}
             className="inline-flex items-center gap-2 font-body text-sm font-semibold text-slate-200 border border-slate-500 hover:border-cta/60 hover:text-cta bg-black/20 backdrop-blur-sm px-6 py-3 rounded-xl transition-all duration-200 cursor-pointer w-full sm:w-auto justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta"
           >
-            Xem tính năng
+            {t('hero.ctaSecondary')}
             <ChevronRight size={15} />
           </button>
         </div>

@@ -1,14 +1,7 @@
 /**
  * SkillBreakdown — Individual skill progress bars
  */
-const SKILLS = [
-  { name: 'Giao tiếp',     score: 78, category: 'Soft Skill',   color: 'bg-sky-400'    },
-  { name: 'Thuật toán',    score: 85, category: 'Technical',    color: 'bg-cta'        },
-  { name: 'System Design', score: 62, category: 'Technical',    color: 'bg-violet-400' },
-  { name: 'Problem Solving', score: 90, category: 'Technical',  color: 'bg-cta'        },
-  { name: 'Behavioral',    score: 70, category: 'Soft Skill',   color: 'bg-amber-400'  },
-  { name: 'Code Quality',  score: 74, category: 'Technical',    color: 'bg-sky-400'    },
-]
+import { useTranslation } from 'react-i18next'
 
 function ScoreBar({ score, color }) {
   return (
@@ -22,11 +15,22 @@ function ScoreBar({ score, color }) {
 }
 
 export default function SkillBreakdown({ colSpan = '' }) {
+  const { t } = useTranslation()
+  
+  const SKILLS = [
+    { name: t('dashboard.skillBreakdown.skills.communication'),     score: 78, category: t('dashboard.skillBreakdown.categories.softSkill'),   color: 'bg-sky-400'    },
+    { name: t('dashboard.skillBreakdown.skills.algorithms'),    score: 85, category: t('dashboard.skillBreakdown.categories.technical'),    color: 'bg-cta'        },
+    { name: t('dashboard.skillBreakdown.skills.systemDesign'), score: 62, category: t('dashboard.skillBreakdown.categories.technical'),    color: 'bg-violet-400' },
+    { name: t('dashboard.skillBreakdown.skills.problemSolving'), score: 90, category: t('dashboard.skillBreakdown.categories.technical'),  color: 'bg-cta'        },
+    { name: t('dashboard.skillBreakdown.skills.behavioral'),    score: 70, category: t('dashboard.skillBreakdown.categories.softSkill'),   color: 'bg-amber-400'  },
+    { name: t('dashboard.skillBreakdown.skills.codeQuality'),  score: 74, category: t('dashboard.skillBreakdown.categories.technical'),    color: 'bg-sky-400'    },
+  ]
+  
   return (
     <div className={[colSpan, 'bg-primary border border-slate-700/60 rounded-[12px] p-6 shadow-md'].join(' ')}>
       <div className="mb-5">
-        <h2 className="font-heading text-base font-semibold text-white tracking-tight">Phân tích kỹ năng</h2>
-        <p className="font-body text-xs text-slate-400 mt-0.5">Điểm trung bình mỗi nhóm</p>
+        <h2 className="font-heading text-base font-semibold text-white tracking-tight">{t('dashboard.skillBreakdown.title')}</h2>
+        <p className="font-body text-xs text-slate-400 mt-0.5">{t('dashboard.skillBreakdown.subtitle')}</p>
       </div>
 
       <div className="flex flex-col gap-4">
@@ -56,7 +60,7 @@ export default function SkillBreakdown({ colSpan = '' }) {
       {/* Summary note */}
       <div className="mt-5 pt-4 border-t border-slate-700/60">
         <p className="font-body text-xs text-slate-500">
-          Dựa trên <span className="text-slate-300 font-medium">12 phiên phỏng vấn</span> trong 30 ngày qua
+          {t('dashboard.skillBreakdown.basedOn')} <span className="text-slate-300 font-medium">12 {t('dashboard.skillBreakdown.sessions')}</span> {t('dashboard.skillBreakdown.in30Days')}
         </p>
       </div>
     </div>

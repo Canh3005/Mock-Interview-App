@@ -4,6 +4,7 @@
  * Fully accessible: aria-pressed, aria-label, focus-visible ring.
  */
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   Mic,
   MicOff,
@@ -55,6 +56,7 @@ function ToolBtn({ icon, label, active = null, danger = false, accent = false, o
 }
 
 export default function FloatingToolbar({ onRunCode, isRunning }) {
+  const { t } = useTranslation()
   const [micOn,    setMic]    = useState(true)
   const [camOn,    setCam]    = useState(true)
   const [screenOn, setScreen] = useState(false)
@@ -63,13 +65,13 @@ export default function FloatingToolbar({ onRunCode, isRunning }) {
   return (
     <div
       role="toolbar"
-      aria-label="Thanh điều khiển phiên phỏng vấn"
+      aria-label={t('interviewRoom.toolbar.label')}
       className="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 flex items-end gap-2 sm:gap-3 px-4 sm:px-5 py-3 rounded-2xl bg-[#0D1628]/90 backdrop-blur-xl border border-slate-700/60 shadow-2xl shadow-black/50"
     >
       {/* Mic */}
       <ToolBtn
         icon={micOn ? <Mic size={18} /> : <MicOff size={18} />}
-        label={micOn ? 'Tắt mic' : 'Bật mic'}
+        label={micOn ? t('interviewRoom.toolbar.muteMic') : t('interviewRoom.toolbar.unmuteMic')}
         active={micOn}
         onClick={() => setMic(m => !m)}
       />
@@ -77,7 +79,7 @@ export default function FloatingToolbar({ onRunCode, isRunning }) {
       {/* Camera */}
       <ToolBtn
         icon={camOn ? <Video size={18} /> : <VideoOff size={18} />}
-        label={camOn ? 'Tắt camera' : 'Bật camera'}
+        label={camOn ? t('interviewRoom.toolbar.disableCamera') : t('interviewRoom.toolbar.enableCamera')}
         active={camOn}
         onClick={() => setCam(c => !c)}
       />
@@ -85,7 +87,7 @@ export default function FloatingToolbar({ onRunCode, isRunning }) {
       {/* Screen share */}
       <ToolBtn
         icon={<Monitor size={18} />}
-        label={screenOn ? 'Dừng chia sẻ' : 'Chia sẻ màn hình'}
+        label={screenOn ? t('interviewRoom.toolbar.stopSharing') : t('interviewRoom.toolbar.shareScreen')}
         active={!screenOn ? null : null}
         onClick={() => setScreen(s => !s)}
       />
@@ -100,7 +102,7 @@ export default function FloatingToolbar({ onRunCode, isRunning }) {
             ? <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" aria-hidden="true" />
             : <Play size={18} fill="currentColor" />
         }
-        label={isRunning ? 'Đang chạy…' : 'Chạy code'}
+        label={isRunning ? t('interviewRoom.toolbar.running') : t('interviewRoom.toolbar.runCode')}
         active={null}
         accent={true}
         disabled={isRunning}
@@ -113,7 +115,7 @@ export default function FloatingToolbar({ onRunCode, isRunning }) {
       {/* Chat */}
       <ToolBtn
         icon={<MessageSquare size={18} />}
-        label={chatOpen ? 'Đóng chat' : 'Chat'}
+        label={chatOpen ? t('interviewRoom.toolbar.closeChat') : t('interviewRoom.toolbar.chat')}
         active={null}
         onClick={() => setChat(c => !c)}
       />
@@ -121,11 +123,11 @@ export default function FloatingToolbar({ onRunCode, isRunning }) {
       {/* End call — danger */}
       <ToolBtn
         icon={<PhoneOff size={18} />}
-        label="Kết thúc"
+        label={t('interviewRoom.toolbar.end')}
         active={null}
         danger={true}
         onClick={() => {
-          if (window.confirm('Bạn có chắc muốn kết thúc phiên phỏng vấn?')) {
+          if (window.confirm(t('interviewRoom.confirmEnd'))) {
             /* navigate away */
           }
         }}

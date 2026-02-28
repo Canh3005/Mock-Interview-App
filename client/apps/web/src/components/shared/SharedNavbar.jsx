@@ -12,7 +12,6 @@
  *   dashboard     — Logo + breadcrumb + nav links (Trang chủ / Phòng phỏng vấn) + dark toggle + notification + settings + avatar
  *   interview-room— Compact bar: back chevron + breadcrumb + session meta (timer, connection badge appear via slots)
  */
-// No React hooks needed directly here — sub-components are pure
 import {
   Code2,
   LayoutDashboard,
@@ -24,16 +23,19 @@ import {
   User,
   Home,
 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
+import LanguageSwitcher from './LanguageSwitcher'
 
 /* ─────────────────────── Sub-components ─────────────────────── */
 
 /** Logo mark — identical across all pages */
 function Brand({ navigate, compact = false }) {
+  const { t } = useTranslation()
   return (
     <button
       onClick={() => navigate('landing')}
       className="flex items-center gap-2.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta rounded"
-      aria-label="Về trang chủ"
+      aria-label={t('navbar.backToHome')}
     >
       <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-cta/15 border border-cta/30 text-cta flex-shrink-0">
         <Code2 size={16} />
@@ -66,6 +68,7 @@ function IconBtn({ icon: Icon, label, onClick, badge = false, className = '' }) 
 /* ─────────────────────── Landing Navbar ─────────────────────── */
 
 function LandingBar({ navigate }) {
+  const { t } = useTranslation()
   const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
 
   return (
@@ -79,8 +82,8 @@ function LandingBar({ navigate }) {
         {/* Desktop nav links */}
         <nav className="hidden md:flex items-center gap-6" aria-label="Landing navigation">
           {[
-            { label: 'Tính năng',      id: 'features'     },
-            { label: 'Cách hoạt động', id: 'how-it-works' },
+            { label: t('navbar.features'),      id: 'features'     },
+            { label: t('navbar.howItWorks'), id: 'how-it-works' },
           ].map(({ label, id }) => (
             <button
               key={id}
@@ -100,13 +103,19 @@ function LandingBar({ navigate }) {
           </button>
         </nav>
 
-        {/* CTA */}
-        <button
-          onClick={() => navigate('interview-room')}
-          className="inline-flex items-center gap-2 font-body text-sm font-semibold text-white bg-cta hover:bg-cta/90 px-4 py-2 rounded-lg transition-all duration-200 cursor-pointer hover:-translate-y-0.5 shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta"
-        >
-          Bắt đầu ngay
-        </button>
+        {/* Right actions */}
+        <div className="flex items-center gap-3">
+          {/* Language Switcher */}
+          <LanguageSwitcher />
+          
+          {/* CTA */}
+          <button
+            onClick={() => navigate('interview-room')}
+            className="inline-flex items-center gap-2 font-body text-sm font-semibold text-white bg-cta hover:bg-cta/90 px-4 py-2 rounded-lg transition-all duration-200 cursor-pointer hover:-translate-y-0.5 shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta"
+          >
+            {t('navbar.getStarted')}
+          </button>
+        </div>
       </div>
     </header>
   )
@@ -115,6 +124,7 @@ function LandingBar({ navigate }) {
 /* ─────────────────────── Dashboard Navbar ─────────────────────── */
 
 function DashboardBar({ navigate, darkMode, onToggleDark }) {
+  const { t } = useTranslation()
   return (
     <header
       id="shared-navbar"
@@ -135,19 +145,22 @@ function DashboardBar({ navigate, darkMode, onToggleDark }) {
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-body text-xs text-slate-400 hover:text-white hover:bg-slate-700/40 transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta"
           >
             <Home size={13} />
-            Trang chủ
+            {t('navbar.home')}
           </button>
           <button
             onClick={() => navigate('interview-room')}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-body text-xs text-slate-400 hover:text-white hover:bg-slate-700/40 transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta"
           >
             <LayoutDashboard size={13} />
-            Phòng phỏng vấn
+            {t('navbar.interviewRoom')}
           </button>
         </nav>
 
         {/* Right actions */}
         <div className="flex items-center gap-2">
+          {/* Language Switcher */}
+          <LanguageSwitcher />
+          
           {/* Dark mode toggle */}
           <IconBtn
             icon={darkMode ? Sun : Moon}
@@ -176,6 +189,7 @@ function DashboardBar({ navigate, darkMode, onToggleDark }) {
 /* ─────────────────────── Interview Room Navbar ─────────────────────── */
 
 function InterviewBar({ navigate, children }) {
+  const { t } = useTranslation()
   return (
     <header
       id="shared-navbar"
@@ -185,7 +199,7 @@ function InterviewBar({ navigate, children }) {
       <div className="flex items-center gap-3">
         <button
           onClick={() => navigate('dashboard')}
-          aria-label="Quay lại Dashboard"
+          aria-label={t('navbar.backToDashboard')}
           className="flex items-center justify-center w-8 h-8 rounded-lg text-slate-400 hover:text-white hover:bg-slate-700/60 transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta"
         >
           <ChevronLeft size={16} />
@@ -204,12 +218,14 @@ function InterviewBar({ navigate, children }) {
             Dashboard
           </button>
           <span className="text-slate-600">/</span>
-          <span className="text-cta font-medium">Interview Room</span>
+          <span className="text-cta font-medium">{t('navbar.interviewRoom')}</span>
         </div>
       </div>
 
       {/* Right slot: session timer, connection badge, end-session — passed as children */}
       <div className="flex items-center gap-2">
+        {/* Language Switcher */}
+        <LanguageSwitcher />
         {children}
       </div>
     </header>

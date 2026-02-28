@@ -2,20 +2,24 @@
  * ProblemStatement — Rendered problem description for the interview question.
  * Displays: title, tags, constraints, and example I/O.
  */
+import { useTranslation } from 'react-i18next'
+
 export default function ProblemStatement() {
+  const { t } = useTranslation()
+  
   return (
-    <article className="p-4 space-y-4 font-['Fira_Sans',sans-serif]" aria-label="Đề bài phỏng vấn">
+    <article className="p-4 space-y-4 font-['Fira_Sans',sans-serif]" aria-label={t('interviewRoom.problem')}>
       {/* Title */}
       <div>
         <h2 className="font-['Fira_Code',monospace] text-sm font-bold text-white leading-snug">
-          #42 · Two Sum
+          #42 · {t('interviewRoom.problemTitle')}
         </h2>
         <div className="flex flex-wrap gap-1.5 mt-2">
-          {['Array', 'Hash Map', 'Easy'].map(tag => (
+          {['Array', 'Hash Map', t('interviewRoom.difficulty.easy')].map(tag => (
             <span
               key={tag}
               className={`inline-block text-[10px] font-semibold px-2 py-0.5 rounded-full border ${
-                tag === 'Easy'
+                tag === t('interviewRoom.difficulty.easy')
                   ? 'bg-[#22C55E]/10 border-[#22C55E]/30 text-[#22C55E]'
                   : 'bg-slate-700/50 border-slate-600/60 text-slate-400'
               }`}
@@ -28,22 +32,17 @@ export default function ProblemStatement() {
 
       {/* Description */}
       <p className="text-sm text-slate-300 leading-relaxed">
-        Cho một mảng số nguyên <code className="font-['Fira_Code',monospace] text-[#22C55E] bg-[#22C55E]/10 px-1 py-0.5 rounded text-xs">nums</code> và
-        một số nguyên đích <code className="font-['Fira_Code',monospace] text-[#22C55E] bg-[#22C55E]/10 px-1 py-0.5 rounded text-xs">target</code>,
-        hãy trả về
-        {' '}<em className="text-slate-200 not-italic font-medium">chỉ số</em> của hai số có tổng bằng{' '}
-        <code className="font-['Fira_Code',monospace] text-[#22C55E] bg-[#22C55E]/10 px-1 py-0.5 rounded text-xs">target</code>.
+        {t('interviewRoom.problemDescription')}
       </p>
 
       <p className="text-xs text-slate-400 leading-relaxed">
-        Giả sử rằng mỗi đầu vào chỉ có <strong className="text-slate-300">đúng một</strong> cặp đáp án,
-        và bạn không thể sử dụng cùng một phần tử hai lần.
+        {t('interviewRoom.problemNote')}
       </p>
 
       {/* Examples */}
       <div className="space-y-3">
         <h3 className="font-['Fira_Code',monospace] text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
-          Ví dụ
+          {t('interviewRoom.examples')}
         </h3>
 
         {[
@@ -82,14 +81,14 @@ export default function ProblemStatement() {
       {/* Constraints */}
       <div>
         <h3 className="font-['Fira_Code',monospace] text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">
-          Ràng buộc
+          {t('interviewRoom.constraints')}
         </h3>
         <ul className="space-y-1">
           {[
             '2 ≤ nums.length ≤ 10⁴',
             '-10⁹ ≤ nums[i] ≤ 10⁹',
             '-10⁹ ≤ target ≤ 10⁹',
-            'Chỉ có đúng một đáp án hợp lệ.',
+            t('interviewRoom.constraintsList.c1'),
           ].map((c, i) => (
             <li key={i} className="flex items-start gap-2">
               <span className="mt-1.5 w-1 h-1 rounded-full bg-slate-600 flex-shrink-0" aria-hidden="true" />

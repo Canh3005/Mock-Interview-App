@@ -2,41 +2,7 @@
  * LearningPath — Roadmap showing learning steps with progress
  */
 import { CheckCircle, Circle, PlayCircle, Lock } from 'lucide-react'
-
-const STEPS = [
-  {
-    id: 1,
-    phase: 'Phase 1',
-    title: 'Nền tảng thuật toán',
-    desc: 'Arrays, Strings, HashMaps, Two Pointers, Sliding Window',
-    status: 'done',
-    progress: 100,
-  },
-  {
-    id: 2,
-    phase: 'Phase 2',
-    title: 'Cấu trúc dữ liệu nâng cao',
-    desc: 'Trees, Graphs, Heaps, Tries, Union-Find',
-    status: 'active',
-    progress: 58,
-  },
-  {
-    id: 3,
-    phase: 'Phase 3',
-    title: 'System Design cơ bản',
-    desc: 'Load Balancer, Database Sharding, Caching, CAP Theorem',
-    status: 'pending',
-    progress: 0,
-  },
-  {
-    id: 4,
-    phase: 'Phase 4',
-    title: 'Behavioral Interview',
-    desc: 'STAR Method, Leadership, Conflict Resolution',
-    status: 'locked',
-    progress: 0,
-  },
-]
+import { useTranslation } from 'react-i18next'
 
 const STATUS_META = {
   done:    { Icon: CheckCircle, iconClass: 'text-cta',        trackClass: 'bg-cta'        },
@@ -46,11 +12,47 @@ const STATUS_META = {
 }
 
 export default function LearningPath({ colSpan = '' }) {
+  const { t } = useTranslation()
+  
+  const STEPS = [
+    {
+      id: 1,
+      phase: t('dashboard.learningPath.phases.phase1'),
+      title: t('dashboard.learningPath.phase1.title'),
+      desc: t('dashboard.learningPath.phase1.desc'),
+      status: 'done',
+      progress: 100,
+    },
+    {
+      id: 2,
+      phase: t('dashboard.learningPath.phases.phase2'),
+      title: t('dashboard.learningPath.phase2.title'),
+      desc: t('dashboard.learningPath.phase2.desc'),
+      status: 'active',
+      progress: 58,
+    },
+    {
+      id: 3,
+      phase: t('dashboard.learningPath.phases.phase3'),
+      title: t('dashboard.learningPath.phase3.title'),
+      desc: t('dashboard.learningPath.phase3.desc'),
+      status: 'pending',
+      progress: 0,
+    },
+    {
+      id: 4,
+      phase: t('dashboard.learningPath.phases.phase4'),
+      title: t('dashboard.learningPath.phase4.title'),
+      desc: t('dashboard.learningPath.phase4.desc'),
+      status: 'locked',
+      progress: 0,
+    },
+  ]
   return (
     <div className={[colSpan, 'bg-primary border border-slate-700/60 rounded-[12px] p-6 shadow-md'].join(' ')}>
       <div className="mb-5">
-        <h2 className="font-heading text-base font-semibold text-white tracking-tight">Lộ trình học tập</h2>
-        <p className="font-body text-xs text-slate-400 mt-0.5">2 / 4 giai đoạn hoàn thành</p>
+        <h2 className="font-heading text-base font-semibold text-white tracking-tight">{t('dashboard.learningPath.title')}</h2>
+        <p className="font-body text-xs text-slate-400 mt-0.5">2 / 4 {t('dashboard.learningPath.subtitle')}</p>
       </div>
 
       <div className="relative">

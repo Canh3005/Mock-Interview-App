@@ -3,32 +3,31 @@
  * Style: surface (#1E293B) cards, cta green accent, slate text
  */
 import { BrainCircuit, Code2, BarChart3 } from 'lucide-react'
-
-const FEATURES = [
-  {
-    icon: BrainCircuit,
-    title: 'Phỏng vấn giả lập sát thực tế',
-    description:
-      'Bộ câu hỏi được chọn lọc từ các vòng phỏng vấn kỹ thuật tại FAANG và các tập đoàn công nghệ hàng đầu, cập nhật liên tục.',
-    accent: 'cta',
-  },
-  {
-    icon: Code2,
-    title: 'IDE JavaScript tích hợp',
-    description:
-      'Viết code và chạy thử trực tiếp trong trình duyệt với syntax highlighting, auto-indent và phản hồi output tức thì.',
-    accent: 'cta',
-  },
-  {
-    icon: BarChart3,
-    title: 'Bảng phân tích kỹ năng chuyên sâu',
-    description:
-      'Radar chart trực quan hóa điểm mạnh và điểm yếu theo từng chủ đề: DSA, System Design, OOP — giúp bạn học đúng trọng tâm.',
-    accent: 'cta',
-  },
-]
+import { useTranslation } from 'react-i18next'
 
 export default function FeaturesSection() {
+  const { t } = useTranslation()
+  
+  const FEATURES = [
+    {
+      icon: BrainCircuit,
+      title: t('features.interview.title'),
+      description: t('features.interview.description'),
+      accent: 'cta',
+    },
+    {
+      icon: Code2,
+      title: t('features.ide.title'),
+      description: t('features.ide.description'),
+      accent: 'cta',
+    },
+    {
+      icon: BarChart3,
+      title: t('features.analytics.title'),
+      description: t('features.analytics.description'),
+      accent: 'cta',
+    },
+  ]
   return (
     <section id="features" className="py-20 sm:py-24 bg-background border-t border-slate-700/40">
       <div className="mx-auto max-w-[1200px] px-6">
@@ -36,13 +35,13 @@ export default function FeaturesSection() {
         {/* Section header */}
         <div className="text-center mb-14">
           <p className="font-heading text-xs font-semibold uppercase tracking-[0.18em] text-cta mb-3">
-            Tính năng nổi bật
+            {t('features.sectionBadge')}
           </p>
           <h2 className="font-heading text-3xl sm:text-4xl font-bold text-white leading-tight">
-            Mọi thứ bạn cần để thành công
+            {t('features.sectionTitle')}
           </h2>
           <p className="font-body text-sm text-slate-400 mt-4 max-w-md mx-auto">
-            Ba trụ cột cốt lõi giúp bạn luyện tập toàn diện và tự tin bước vào phòng phỏng vấn.
+            {t('features.sectionSubtitle')}
           </p>
         </div>
 

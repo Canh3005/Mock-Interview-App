@@ -7,6 +7,7 @@
  */
 import { useState, useEffect } from 'react'
 import { Code2, Target, Award, Activity } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import SharedNavbar from '../shared/SharedNavbar'
 import StatCard from './StatCard'
 import RadarChartPlaceholder from './RadarChartPlaceholder'
@@ -16,6 +17,7 @@ import SkillBreakdown from './SkillBreakdown'
 import UpcomingSessions from './UpcomingSessions'
 
 export default function DashboardPage({ navigate = () => {} }) {
+  const { t } = useTranslation()
   const [darkMode, setDarkMode] = useState(true)
 
   // Sync dark class on <html>
@@ -26,30 +28,30 @@ export default function DashboardPage({ navigate = () => {} }) {
   const stats = [
     {
       icon: <Code2 size={18} />,
-      label: 'Tổng phỏng vấn',
+      label: t('dashboard.stats.totalInterviews'),
       value: '47',
-      change: '+3 tuần này',
+      change: `+3 ${t('dashboard.stats.weekChange')}`,
       changeType: 'up',
     },
     {
       icon: <Target size={18} />,
-      label: 'Điểm trung bình',
+      label: t('dashboard.stats.avgScore'),
       value: '77.4',
-      change: '+2.1 so với tháng trước',
+      change: `+2.1 ${t('dashboard.stats.monthChange')}`,
       changeType: 'up',
     },
     {
       icon: <Award size={18} />,
-      label: 'Kỹ năng thành thạo',
+      label: t('dashboard.stats.skillsMastered'),
       value: '12',
-      change: '2 kỹ năng mới',
+      change: `2 ${t('dashboard.stats.newSkills')}`,
       changeType: 'up',
     },
     {
       icon: <Activity size={18} />,
-      label: 'Chuỗi luyện tập',
+      label: t('dashboard.stats.studyStreak'),
       value: '14 ngày',
-      change: 'Kỷ lục cá nhân!',
+      change: t('dashboard.stats.personalRecord'),
       changeType: 'neutral',
     },
   ]
@@ -73,10 +75,10 @@ export default function DashboardPage({ navigate = () => {} }) {
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
             <div>
               <h1 className="font-heading text-2xl font-bold text-white leading-tight">
-                Xin chào, Minh Tú
+                {t('dashboard.welcome')}, Minh Tú
               </h1>
               <p className="font-body text-sm text-slate-400 mt-1">
-                Đây là tổng quan kỹ năng phỏng vấn của bạn — Chủ nhật, 22 tháng 2 năm 2026
+                {t('dashboard.greeting')} — Chủ nhật, 22 tháng 2 năm 2026
               </p>
             </div>
             <button
@@ -84,7 +86,7 @@ export default function DashboardPage({ navigate = () => {} }) {
               className="shrink-0 inline-flex items-center gap-2 font-body text-sm font-semibold text-white bg-cta hover:bg-cta/90 px-5 py-2.5 rounded-xl transition-all duration-200 cursor-pointer hover:-translate-y-0.5 shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta"
             >
               <Code2 size={15} />
-              Bắt đầu phỏng vấn
+              {t('dashboard.startInterview')}
             </button>
           </div>
 
@@ -129,15 +131,19 @@ export default function DashboardPage({ navigate = () => {} }) {
         <footer className="max-w-[1400px] mx-auto px-6 py-6 border-t border-slate-700/40 mt-4">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
             <p className="font-body text-xs text-slate-500">
-              © 2026 Mock Interview App — Phân tích kỹ năng thông minh
+              {t('dashboard.footer.copyright')}
             </p>
             <div className="flex items-center gap-5">
-              {['Hỗ trợ', 'Quyền riêng tư', 'Điều khoản'].map((link) => (
+              {[
+                { key: 'support', label: t('dashboard.footer.support') },
+                { key: 'privacy', label: t('dashboard.footer.privacy') },
+                { key: 'terms', label: t('dashboard.footer.terms') }
+              ].map((link) => (
                 <button
-                  key={link}
+                  key={link.key}
                   className="font-body text-xs text-slate-500 hover:text-slate-300 transition-colors duration-200 cursor-pointer"
                 >
-                  {link}
+                  {link.label}
                 </button>
               ))}
             </div>

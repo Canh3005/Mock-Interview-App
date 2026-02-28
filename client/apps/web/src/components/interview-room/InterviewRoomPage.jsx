@@ -6,6 +6,7 @@
  */
 import { useState, useEffect, useCallback } from 'react'
 import { Clock, Wifi, WifiOff } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import SharedNavbar from '../shared/SharedNavbar'
 import VideoPanel from './VideoPanel'
 import CodeEditorPanel from './CodeEditorPanel'
@@ -25,6 +26,7 @@ function useSessionTimer() {
 }
 
 export default function InterviewRoomPage({ navigate = () => {} }) {
+  const { t } = useTranslation()
   // Force dark mode for this page
   useEffect(() => {
     document.documentElement.classList.add('dark')
@@ -78,13 +80,13 @@ export default function InterviewRoomPage({ navigate = () => {} }) {
         {/* Session label */}
         <div className="hidden sm:flex items-center gap-1.5 text-xs font-['Fira_Sans',sans-serif]">
           <span className="w-2 h-2 rounded-full bg-cta animate-pulse" aria-hidden="true" />
-          <span className="text-slate-400 font-medium">JavaScript — Algorithm</span>
+          <span className="text-slate-400 font-medium">{t('interviewRoom.sessionLabel')}</span>
         </div>
 
         {/* Connection badge */}
         <button
           onClick={() => setConnected(c => !c)}
-          aria-label={connected ? 'Kết nối ổn định' : 'Mất kết nối'}
+          aria-label={connected ? t('interviewRoom.connection.stable') : t('interviewRoom.connection.lost')}
           className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium border transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta ${
             connected
               ? 'bg-cta/10 border-cta/30 text-cta hover:bg-cta/20'
@@ -93,21 +95,21 @@ export default function InterviewRoomPage({ navigate = () => {} }) {
         >
           {connected ? <Wifi size={12} /> : <WifiOff size={12} />}
           <span className="hidden sm:inline font-['Fira_Sans',sans-serif]">
-            {connected ? 'Connected' : 'Disconnected'}
+            {connected ? t('interviewRoom.connection.connected') : t('interviewRoom.connection.disconnected')}
           </span>
         </button>
 
         {/* End session */}
         <button
           onClick={() => {
-            if (window.confirm('Kết thúc phiên phỏng vấn và quay về Dashboard?')) {
+            if (window.confirm(t('interviewRoom.confirmEnd'))) {
               navigate('dashboard')
             }
           }}
-          aria-label="Kết thúc phiên phỏng vấn"
+          aria-label={t('interviewRoom.endSession')}
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-500/15 border border-rose-500/30 text-rose-400 hover:bg-rose-500/25 hover:text-rose-300 text-xs font-semibold font-['Fira_Sans',sans-serif] transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500"
         >
-          Kết thúc
+          {t('interviewRoom.endSession')}
         </button>
       </SharedNavbar>
 
@@ -128,7 +130,7 @@ export default function InterviewRoomPage({ navigate = () => {} }) {
         {/* Drag divider */}
         <div
           role="separator"
-          aria-label="Kéo để thay đổi kích thước"
+          aria-label={t('interviewRoom.dragToResize')}
           aria-orientation="vertical"
           onMouseDown={startDrag}
           className="w-1 flex-shrink-0 bg-slate-700/50 hover:bg-[#22C55E]/60 active:bg-[#22C55E] cursor-col-resize transition-colors duration-150 focus-visible:outline-none focus-visible:bg-[#22C55E]"

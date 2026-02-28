@@ -3,32 +3,31 @@
  * Style: dark surface, step circles with cta border, slate text
  */
 import { UserCheck, FileEdit, TrendingUp } from 'lucide-react'
-
-const STEPS = [
-  {
-    icon: UserCheck,
-    step: '01',
-    title: 'Tạo tài khoản miễn phí',
-    description:
-      'Đăng ký trong vòng 30 giây. Chọn cấp độ và lĩnh vực muốn luyện tập để nhận lộ trình cá nhân hóa.',
-  },
-  {
-    icon: FileEdit,
-    step: '02',
-    title: 'Tham gia buổi phỏng vấn thử',
-    description:
-      'Bắt đầu phiên giả lập. Trả lời câu hỏi lý thuyết và giải bài coding trực tiếp trong IDE tích hợp.',
-  },
-  {
-    icon: TrendingUp,
-    step: '03',
-    title: 'Xem phân tích và cải thiện',
-    description:
-      'Nhận báo cáo chi tiết sau mỗi buổi. Theo dõi tiến độ trên dashboard và tập trung vào điểm yếu.',
-  },
-]
+import { useTranslation } from 'react-i18next'
 
 export default function HowItWorksSection() {
+  const { t } = useTranslation()
+  
+  const STEPS = [
+    {
+      icon: UserCheck,
+      step: '01',
+      title: t('howItWorks.step1.title'),
+      description: t('howItWorks.step1.description'),
+    },
+    {
+      icon: FileEdit,
+      step: '02',
+      title: t('howItWorks.step2.title'),
+      description: t('howItWorks.step2.description'),
+    },
+    {
+      icon: TrendingUp,
+      step: '03',
+      title: t('howItWorks.step3.title'),
+      description: t('howItWorks.step3.description'),
+    },
+  ]
   return (
     <section
       id="how-it-works"
@@ -39,12 +38,14 @@ export default function HowItWorksSection() {
         {/* Section header */}
         <div className="text-center mb-16">
           <p className="font-heading text-xs font-semibold uppercase tracking-[0.18em] text-cta mb-3">
-            Cách hoạt động
+            {t('howItWorks.sectionBadge')}
           </p>
           <h2 className="font-heading text-3xl sm:text-4xl font-bold text-white leading-tight">
-            Bắt đầu chỉ trong{' '}
-            <span className="text-cta">3 bước đơn giản</span>
+            {t('howItWorks.sectionTitle')}
           </h2>
+          <p className="font-body text-sm text-slate-400 mt-4 max-w-md mx-auto">
+            {t('howItWorks.sectionSubtitle')}
+          </p>
         </div>
 
         {/* Steps row */}
@@ -87,7 +88,7 @@ export default function HowItWorksSection() {
                 {/* Text */}
                 <div className="md:text-center md:mt-5">
                   <span className="font-heading text-[10px] font-semibold tracking-widest text-cta/50 mb-1 block uppercase">
-                    Bước {step}
+                    {t('howItWorks.stepLabel')} {step}
                   </span>
                   <h3 className="font-heading text-sm font-semibold text-white mb-2">
                     {title}
