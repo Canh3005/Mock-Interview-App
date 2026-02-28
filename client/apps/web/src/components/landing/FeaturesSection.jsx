@@ -4,6 +4,7 @@
  */
 import { BrainCircuit, Code2, BarChart3 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { motion } from 'framer-motion'
 
 export default function FeaturesSection() {
   const { t } = useTranslation()
@@ -28,12 +29,28 @@ export default function FeaturesSection() {
       accent: 'cta',
     },
   ]
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.15 } }
+  }
+
+  const cardVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } }
+  }
+
   return (
     <section id="features" className="py-20 sm:py-24 bg-background border-t border-slate-700/40">
-      <div className="mx-auto max-w-[1200px] px-6">
+      <motion.div 
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.2 }}
+        className="mx-auto max-w-[1200px] px-6"
+      >
 
         {/* Section header */}
-        <div className="text-center mb-14">
+        <motion.div variants={cardVariants} className="text-center mb-14">
           <p className="font-heading text-xs font-semibold uppercase tracking-[0.18em] text-cta mb-3">
             {t('features.sectionBadge')}
           </p>
@@ -43,12 +60,13 @@ export default function FeaturesSection() {
           <p className="font-body text-sm text-slate-400 mt-4 max-w-md mx-auto">
             {t('features.sectionSubtitle')}
           </p>
-        </div>
+        </motion.div>
 
         {/* Feature cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {FEATURES.map(({ icon: Icon, title, description }) => (
-            <article
+            <motion.article
+              variants={cardVariants}
               key={title}
               className="group bg-primary border border-slate-700/60 rounded-[12px] p-6 shadow-md hover:shadow-card-hover hover:-translate-y-1 transition-all duration-200 cursor-default focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta"
               tabIndex={0}
@@ -65,10 +83,10 @@ export default function FeaturesSection() {
               <p className="font-body text-sm text-slate-400 leading-relaxed">
                 {description}
               </p>
-            </article>
+            </motion.article>
           ))}
         </div>
-      </div>
+      </motion.div>
     </section>
   )
 }

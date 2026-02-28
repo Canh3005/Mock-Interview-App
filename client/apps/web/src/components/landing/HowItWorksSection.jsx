@@ -4,6 +4,7 @@
  */
 import { UserCheck, FileEdit, TrendingUp } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { motion } from 'framer-motion'
 
 export default function HowItWorksSection() {
   const { t } = useTranslation()
@@ -28,15 +29,31 @@ export default function HowItWorksSection() {
       description: t('howItWorks.step3.description'),
     },
   ]
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.2 } }
+  }
+
+  const stepVariants = {
+    hidden: { opacity: 0, x: -30 },
+    visible: { opacity: 1, x: 0, transition: { duration: 0.6, ease: 'easeOut' } }
+  }
+
   return (
     <section
       id="how-it-works"
       className="py-20 sm:py-24 bg-primary border-t border-slate-700/40"
     >
-      <div className="mx-auto max-w-[1200px] px-6">
+      <motion.div 
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.2 }}
+        className="mx-auto max-w-[1200px] px-6"
+      >
 
         {/* Section header */}
-        <div className="text-center mb-16">
+        <motion.div variants={stepVariants} className="text-center mb-16">
           <p className="font-heading text-xs font-semibold uppercase tracking-[0.18em] text-cta mb-3">
             {t('howItWorks.sectionBadge')}
           </p>
@@ -46,12 +63,12 @@ export default function HowItWorksSection() {
           <p className="font-body text-sm text-slate-400 mt-4 max-w-md mx-auto">
             {t('howItWorks.sectionSubtitle')}
           </p>
-        </div>
+        </motion.div>
 
         {/* Steps row */}
         <div className="relative flex flex-col md:flex-row items-stretch gap-0">
           {STEPS.map(({ icon: Icon, step, title, description }, index) => (
-            <div key={step} className="relative flex md:flex-col items-start md:items-center flex-1">
+            <motion.div variants={stepVariants} key={step} className="relative flex md:flex-col items-start md:items-center flex-1">
 
               {/* Connector line — desktop */}
               {index < STEPS.length - 1 && (
@@ -98,10 +115,10 @@ export default function HowItWorksSection() {
                   </p>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
-      </div>
+      </motion.div>
     </section>
   )
 }

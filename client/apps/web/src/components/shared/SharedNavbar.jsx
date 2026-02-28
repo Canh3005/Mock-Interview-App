@@ -24,6 +24,8 @@ import {
   Home,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { useSelector, useDispatch } from 'react-redux'
+import { logoutRequest } from '../../store/slices/authSlice'
 import LanguageSwitcher from './LanguageSwitcher'
 
 /* ─────────────────────── Sub-components ─────────────────────── */
@@ -94,13 +96,7 @@ function LandingBar({ navigate }) {
             </button>
           ))}
 
-          {/* Dashboard link */}
-          <button
-            onClick={() => navigate('dashboard')}
-            className="font-body text-sm text-slate-400 hover:text-white transition-colors duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta rounded"
-          >
-            Dashboard
-          </button>
+
         </nav>
 
         {/* Right actions */}
@@ -108,13 +104,8 @@ function LandingBar({ navigate }) {
           {/* Language Switcher */}
           <LanguageSwitcher />
           
-          {/* CTA */}
-          <button
-            onClick={() => navigate('interview-room')}
-            className="inline-flex items-center gap-2 font-body text-sm font-semibold text-white bg-cta hover:bg-cta/90 px-4 py-2 rounded-lg transition-all duration-200 cursor-pointer hover:-translate-y-0.5 shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta"
-          >
-            {t('navbar.getStarted')}
-          </button>
+          {/* CTA / Auth */}
+          <AuthButtons navigate={navigate} />
         </div>
       </div>
     </header>
@@ -142,16 +133,16 @@ function DashboardBar({ navigate, darkMode, onToggleDark }) {
         <nav className="hidden lg:flex items-center gap-1" aria-label="Dashboard navigation">
           <button
             onClick={() => navigate('landing')}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-body text-xs text-slate-400 hover:text-white hover:bg-slate-700/40 transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-body text-sm text-slate-400 hover:text-white hover:bg-slate-700/40 transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta"
           >
-            <Home size={13} />
+            <Home size={16} />
             {t('navbar.home')}
           </button>
           <button
             onClick={() => navigate('interview-room')}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-body text-xs text-slate-400 hover:text-white hover:bg-slate-700/40 transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-body text-sm text-slate-400 hover:text-white hover:bg-slate-700/40 transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta"
           >
-            <LayoutDashboard size={13} />
+            <LayoutDashboard size={16} />
             {t('navbar.interviewRoom')}
           </button>
         </nav>
@@ -171,15 +162,8 @@ function DashboardBar({ navigate, darkMode, onToggleDark }) {
           <IconBtn icon={Bell} label="Thông báo" badge />
           {/* Settings */}
           <IconBtn icon={Settings} label="Cài đặt" />
-          {/* Avatar */}
-          <div
-            className="flex items-center justify-center w-9 h-9 rounded-full border-2 border-cta/50 bg-cta/10 text-cta cursor-pointer hover:border-cta transition-colors duration-200"
-            role="button"
-            tabIndex={0}
-            aria-label="Hồ sơ người dùng"
-          >
-            <User size={16} />
-          </div>
+          {/* Avatar & Logout */}
+          <DashboardUserMenu navigate={navigate} />
         </div>
       </div>
     </header>
@@ -249,4 +233,61 @@ export default function SharedNavbar({ page, navigate, darkMode, onToggleDark, c
   }
   // default: landing
   return <LandingBar navigate={navigate} />
+}
+
+/* ─────────────────────── Authentication Menu Helpers ─────────────────────── */
+
+function AuthButtons({ navigate }) {
+  const { t } = useTranslation()
+  const { isAuthenticated, user } = useSelector((state) => state.auth)
+
+  if (isAuthenticated) {
+    return (
+      <button
+        onClick={() => navigate('dashboard')}
+        className="inline-flex items-center gap-2 font-body text-sm font-semibold text-white bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-lg transition-all duration-200 cursor-pointer"
+      >
+        Dashboard
+      </button>
+    )
+  }
+
+  return (
+    <button
+      onClick={() => navigate('login')}
+      className="inline-flex items-center gap-2 font-body text-sm font-semibold text-white bg-cta hover:bg-cta/90 px-4 py-2 rounded-lg transition-all duration-200 cursor-pointer shadow-md"
+    >
+      {t('auth.loginTitle') || 'Đăng nhập'}
+    </button>
+  )
+}
+
+function DashboardUserMenu({ navigate }) {
+  const dispatch = useDispatch()
+  const { user } = useSelector((state) => state.auth)
+
+  const handleLogout = () => {
+    dispatch(logoutRequest())
+    navigate('landing')
+  }
+
+  return (
+    <div className="flex items-center gap-3 ml-2">
+      <div className="flex flex-col items-end hidden md:flex">
+        <span className="text-sm font-medium text-white">{user?.name || 'User'}</span>
+        <button 
+          onClick={handleLogout}
+          className="text-xs text-slate-500 hover:text-red-400 transition-colors"
+        >
+          Đăng xuất
+        </button>
+      </div>
+      <div
+        className="flex items-center justify-center w-9 h-9 rounded-full border-2 border-cta/50 bg-cta/10 text-cta cursor-pointer hover:border-cta transition-colors duration-200"
+        title="Hồ sơ"
+      >
+        <User size={16} />
+      </div>
+    </div>
+  )
 }

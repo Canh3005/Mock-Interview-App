@@ -5,6 +5,7 @@
  */
 import { Play, ArrowRight, ChevronRight } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { motion } from 'framer-motion'
 
 export default function HeroSection({ navigate }) {
   const { t } = useTranslation()
@@ -18,11 +19,24 @@ export default function HeroSection({ navigate }) {
   const scrollToFeatures = () =>
     document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.15, delayChildren: 0.2 } }
+  }
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } }
+  }
+
   return (
-    <section className="relative overflow-hidden pt-20 pb-28 sm:pt-28 sm:pb-36">
+    <section className="relative overflow-hidden min-h-[calc(100vh-64px)] flex items-center justify-center py-20 sm:py-28">
 
       {/* ── Background image + layered overlays ── */}
-      <div
+      <motion.div
+        initial={{ scale: 1.1, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 1.5, ease: 'easeOut' }}
         aria-hidden="true"
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: "url('/hero-bg.png')" }}
@@ -38,29 +52,34 @@ export default function HeroSection({ navigate }) {
       />
 
       {/* ── Content ── */}
-      <div className="relative z-10 mx-auto max-w-[760px] px-6 text-center">
+      <motion.div 
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        className="relative z-10 mx-auto max-w-[760px] px-6 text-center"
+      >
 
         {/* Badge */}
-        <span className="inline-flex items-center gap-2 rounded-full border border-cta/25 bg-cta/10 px-3.5 py-1 font-body text-xs font-medium text-cta mb-8">
+        <motion.span variants={itemVariants} className="inline-flex items-center gap-2 rounded-full border border-cta/25 bg-cta/10 px-3.5 py-1 font-body text-xs font-medium text-cta mb-8">
           <span className="w-1.5 h-1.5 rounded-full bg-cta animate-pulse" aria-hidden="true" />
           {t('hero.badge')}
-        </span>
+        </motion.span>
 
         {/* Heading */}
-        <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight tracking-tight mb-6">
+        <motion.h1 variants={itemVariants} className="font-heading text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight tracking-tight mb-6">
           {t('hero.title.main')}&nbsp;
           <span className="text-cta">{t('hero.title.highlight')}</span>
           <br className="hidden sm:block" />
           {t('hero.title.sub')}
-        </h1>
+        </motion.h1>
 
         {/* Sub-description */}
-        <p className="font-body text-base sm:text-lg text-slate-300 leading-relaxed mb-10 max-w-xl mx-auto">
+        <motion.p variants={itemVariants} className="font-body text-base sm:text-lg text-slate-300 leading-relaxed mb-10 max-w-xl mx-auto">
           {t('hero.subtitle')}
-        </p>
+        </motion.p>
 
         {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-center justify-center gap-4">
           {/* Primary */}
           <button
             onClick={() => navigate('interview-room')}
@@ -82,10 +101,10 @@ export default function HeroSection({ navigate }) {
             {t('hero.ctaSecondary')}
             <ChevronRight size={15} />
           </button>
-        </div>
+        </motion.div>
 
         {/* Stats row */}
-        <div className="mt-14 flex flex-col sm:flex-row items-center justify-center gap-8 sm:gap-14">
+        <motion.div variants={itemVariants} className="mt-14 flex flex-col sm:flex-row items-center justify-center gap-8 sm:gap-14">
           {STATS.map(({ value, label }) => (
             <div key={label} className="text-center">
               <div className="font-heading text-2xl sm:text-3xl font-bold text-cta tabular-nums drop-shadow-[0_0_12px_rgba(34,197,94,0.5)]">
@@ -94,8 +113,8 @@ export default function HeroSection({ navigate }) {
               <div className="font-body text-xs text-slate-400 mt-1">{label}</div>
             </div>
           ))}
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </section>
   )
 }

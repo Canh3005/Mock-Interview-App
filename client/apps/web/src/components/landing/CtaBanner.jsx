@@ -4,6 +4,7 @@
  */
 import { Play, ArrowRight } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { motion } from 'framer-motion'
 
 export default function CtaBanner({ navigate }) {
   const { t } = useTranslation()
@@ -11,7 +12,13 @@ export default function CtaBanner({ navigate }) {
   return (
     <section className="py-20 sm:py-24 bg-background border-t border-slate-700/40">
       <div className="mx-auto max-w-[1200px] px-6">
-        <div className="relative overflow-hidden rounded-[16px] bg-primary border border-cta/20 px-8 py-14 text-center shadow-card-hover">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6, ease: 'easeOut' }}
+          viewport={{ once: true, amount: 0.3 }}
+          className="relative overflow-hidden rounded-[16px] bg-primary border border-cta/20 px-8 py-14 text-center shadow-card-hover"
+        >
 
           {/* Ambient glow */}
           <div
@@ -45,7 +52,7 @@ export default function CtaBanner({ navigate }) {
               />
             </button>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   )
