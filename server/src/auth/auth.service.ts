@@ -76,6 +76,7 @@ export class AuthService {
     const userDoc = await this.usersService.findById(userId);
     let avatarUrl = userDoc?.avatarUrl || null;
     let name = userDoc?.name || null;
+    const role = userDoc?.role;
 
     // Use fallback info from identity profiles if name or avatar is missing or default
     if (!avatarUrl || !name || name === 'OAuth User') {
@@ -92,14 +93,14 @@ export class AuthService {
 
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(
-        { sub: userId, email },
+        { sub: userId, email, role },
         {
           secret: process.env.JWT_SECRET || 'super-secret-access-key',
           expiresIn: '15m',
         },
       ),
       this.jwtService.signAsync(
-        { sub: userId, email },
+        { sub: userId, email, role },
         {
           secret: process.env.JWT_REFRESH_SECRET || 'super-secret-refresh-key',
           expiresIn: '7d',
@@ -114,7 +115,7 @@ export class AuthService {
     return {
       accessToken,
       refreshToken,
-      user: { id: userId, email, name, avatarUrl, linkedProviders }, // Return basic info + providers
+      user: { id: userId, email, name, avatarUrl, role, linkedProviders }, // Return basic info + providers
     };
   }
 }

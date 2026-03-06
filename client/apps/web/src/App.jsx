@@ -6,13 +6,16 @@ import DashboardPage from './components/dashboard/DashboardPage'
 import InterviewRoomPage from './components/interview-room/InterviewRoomPage'
 import LoginPage from './components/auth/LoginPage'
 import RegisterPage from './components/auth/RegisterPage'
+import AdminLayout from './components/admin/AdminLayout'
+import AdminProblemsPage from './components/admin/AdminProblemsPage'
+import AdminTestCasesPage from './components/admin/AdminTestCasesPage'
 import { Loader2 } from 'lucide-react'
 
 export default function App() {
   const [page, setPage] = useState('landing') // 'landing' | 'dashboard' | 'interview-room' | 'login' | 'register'
   
   const dispatch = useDispatch();
-  const { isAuthenticating, isAuthenticated } = useSelector((state) => state.auth);
+  const { isAuthenticating, isAuthenticated, user } = useSelector((state) => state.auth);
 
   useEffect(() => {
     // Attempt silent refresh on mount
@@ -28,10 +31,17 @@ export default function App() {
 
   const navigate = (target) => {
     // Protect private routes
-    if ((target === 'dashboard' || target === 'interview-room') && !isAuthenticated && !isAuthenticating) {
+    if ((target === 'dashboard' || target === 'interview-room' || target.startsWith('admin')) && !isAuthenticated && !isAuthenticating) {
       setPage('login');
       return;
     }
+    
+    // Protect admin routes
+    if (target.startsWith('admin') && isAuthenticated && user?.role !== 'admin') {
+      setPage('dashboard');
+      return;
+    }
+    
     setPage(target);
   }
 
@@ -54,6 +64,20 @@ export default function App() {
   }
   if (page === 'dashboard') {
     return <DashboardPage navigate={navigate} />
+  }
+  if (page === 'admin-problems' || page === 'admin') {
+    return (
+      <AdminLayout navigate={navigate} currentPage={page}>
+        <AdminProblemsPage navigate={navigate} />
+      </AdminLayout>
+    )
+  }
+  if (page === 'admin-testcases') {
+    return (
+      <AdminLayout navigate={navigate} currentPage={page}>
+        <AdminTestCasesPage navigate={navigate} />
+      </AdminLayout>
+    )
   }
   return <LandingPage navigate={navigate} />
 }

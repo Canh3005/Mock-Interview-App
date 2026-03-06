@@ -22,6 +22,7 @@ import {
   Settings,
   User,
   Home,
+  Shield,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useSelector, useDispatch } from 'react-redux'
@@ -116,6 +117,7 @@ function LandingBar({ navigate }) {
 
 function DashboardBar({ navigate, darkMode, onToggleDark }) {
   const { t } = useTranslation()
+  const { user } = useSelector((state) => state.auth)
   return (
     <header
       id="shared-navbar"
@@ -131,6 +133,15 @@ function DashboardBar({ navigate, darkMode, onToggleDark }) {
 
         {/* Centre nav links */}
         <nav className="hidden lg:flex items-center gap-1" aria-label="Dashboard navigation">
+          {user?.role === 'admin' && (
+            <button
+              onClick={() => navigate('admin-problems')}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-body text-sm font-medium text-amber-500 hover:text-amber-400 hover:bg-slate-700/40 transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
+            >
+              <Shield size={16} />
+              Quản trị (Admin)
+            </button>
+          )}
           <button
             onClick={() => navigate('landing')}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-body text-sm text-slate-400 hover:text-white hover:bg-slate-700/40 transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta"
@@ -152,6 +163,16 @@ function DashboardBar({ navigate, darkMode, onToggleDark }) {
           {/* Language Switcher */}
           <LanguageSwitcher />
           
+          {/* Admin toggle for mobile */}
+          {user?.role === 'admin' && (
+            <IconBtn
+              icon={Shield}
+              label={t('navbar.admin') || 'Quản trị viên'}
+              onClick={() => navigate('admin-problems')}
+              className="lg:hidden text-amber-500 border-amber-500/30 hover:border-amber-500/60 hover:text-amber-400"
+            />
+          )}
+
           {/* Dark mode toggle */}
           <IconBtn
             icon={darkMode ? Sun : Moon}
