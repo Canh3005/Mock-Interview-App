@@ -1,44 +1,48 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, ILike } from 'typeorm';
 import { CreateProblemDto } from './dto/create-problem.dto';
 import { UpdateProblemDto } from './dto/update-problem.dto';
-import { Problem, ProblemDocument, ProblemStatus } from './schemas/problem.schema';
-import { ProblemTemplate, ProblemTemplateDocument } from './schemas/problem-template.schema';
+import { Problem, ProblemStatus } from './entities/problem.entity';
+import { ProblemTemplate } from './entities/problem-template.entity';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class ProblemsService {
   constructor(
-    @InjectModel(Problem.name) private problemModel: Model<ProblemDocument>,
-    @InjectModel(ProblemTemplate.name) private problemTemplateModel: Model<ProblemTemplateDocument>,
+    @InjectRepository(Problem) private problemRepository: Repository<Problem>,
+    @InjectRepository(ProblemTemplate) private problemTemplateRepository: Repository<ProblemTemplate>,
   ) {}
 
   async create(createProblemDto: CreateProblemDto) {
-    const createdProblem = new this.problemModel(createProblemDto);
-    return createdProblem.save();
+    const createdProblem = this.problemRepository.create({
+      id: uuidv4(),
+      ...createProblemDto,
+    });
+    return this.problemRepository.save(createdProblem);
   }
 
   async findAll(page = 1, limit = 10, search = '', difficulty = '') {
-    const query: any = {};
+    const where: any = {};
     if (search) {
-      query.title = { $regex: search, $options: 'i' };
+      where.title = ILike(`%${search}%`);
     }
     if (difficulty) {
-      query.difficulty = difficulty;
+      where.difficulty = difficulty;
     }
 
-    const total = await this.problemModel.countDocuments(query);
-    const problems = await this.problemModel
-      .find(query)
-      .skip((page - 1) * limit)
-      .limit(limit)
-      .exec();
+    const [problems, total] = await this.problemRepository.findAndCount({
+      where,
+      skip: (page - 1) * limit,
+      take: limit,
+      order: { createdAt: 'DESC' }, // Assuming we want the latest first
+    });
 
     return { total, page, limit, data: problems };
   }
 
   async findOne(id: string) {
-    const problem = await this.problemModel.findById(id).exec();
+    const problem = await this.problemRepository.findOne({ where: { id } });
     if (!problem) {
       throw new NotFoundException(`Problem #${id} not found`);
     }
@@ -46,32 +50,29 @@ export class ProblemsService {
   }
 
   async update(id: string, updateProblemDto: UpdateProblemDto) {
-    const existingProblem = await this.problemModel
-      .findByIdAndUpdate(id, updateProblemDto, { new: true })
-      .exec();
-    if (!existingProblem) {
+    const problemToUpdate = await this.problemRepository.preload({
+      id,
+      ...updateProblemDto,
+    });
+
+    if (!problemToUpdate) {
       throw new NotFoundException(`Problem #${id} not found`);
     }
-    return existingProblem;
+
+    return this.problemRepository.save(problemToUpdate);
   }
 
   async remove(id: string) {
-    const deletedProblem = await this.problemModel.findByIdAndDelete(id).exec();
-    if (!deletedProblem) {
-      throw new NotFoundException(`Problem #${id} not found`);
-    }
-    await this.problemTemplateModel.deleteMany({ problemId: id }).exec();
-    return deletedProblem;
+    const problem = await this.findOne(id);
+    await this.problemRepository.remove(problem);
+    return problem;
   }
 
   async verify(id: string, solutionCode: string) {
     // Placeholder for actual Engine Verification logic
-    const problem = await this.problemModel.findById(id).exec();
-    if (!problem) {
-      throw new NotFoundException(`Problem #${id} not found`);
-    }
+    const problem = await this.findOne(id);
     // Assume verification passed for now
     problem.status = ProblemStatus.VERIFIED;
-    return problem.save();
+    return this.problemRepository.save(problem);
   }
 }

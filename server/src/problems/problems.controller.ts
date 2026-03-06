@@ -5,7 +5,7 @@ import { UpdateProblemDto } from './dto/update-problem.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
-import { Role } from '../users/schemas/user.schema';
+import { Role } from '../users/entities/user.entity';
 
 @Controller('admin/problems')
 @UseGuards(JwtAuthGuard, RolesGuard)

@@ -1,64 +1,72 @@
 import { ConflictException, Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
-import { User, UserDocument } from './schemas/user.schema';
-import { Identity, IdentityDocument } from './schemas/identity.schema';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { User } from './entities/user.entity';
+import { Identity } from './entities/identity.entity';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectModel(User.name) private userModel: Model<UserDocument>,
-    @InjectModel(Identity.name) private identityModel: Model<IdentityDocument>,
+    @InjectRepository(User) private userRepository: Repository<User>,
+    @InjectRepository(Identity) private identityRepository: Repository<Identity>,
   ) {}
 
-  async create(userDto: Partial<User>): Promise<UserDocument> {
-    const createdUser = new this.userModel(userDto);
-    return createdUser.save();
+  async create(userDto: Partial<User>): Promise<User> {
+    const newUser = this.userRepository.create({
+      id: uuidv4(),
+      ...userDto,
+    });
+    return this.userRepository.save(newUser);
   }
 
-  async findByEmail(email: string): Promise<UserDocument | null> {
-    return this.userModel.findOne({ email }).exec();
+  async findByEmail(email: string): Promise<User | null> {
+    return this.userRepository.findOne({ where: { email } });
   }
 
-  async findById(id: string): Promise<UserDocument | null> {
-    return this.userModel.findById(id).exec();
+  async findById(id: string): Promise<User | null> {
+    return this.userRepository.findOne({ where: { id } });
   }
 
-  async findIdentity(provider: string, providerId: string): Promise<IdentityDocument | null> {
-    return this.identityModel.findOne({ provider, providerId }).populate('userId').exec();
+  async findIdentity(provider: string, providerId: string): Promise<Identity | null> {
+    return this.identityRepository.findOne({ 
+      where: { provider, providerId },
+      relations: ['user'],
+    });
   }
 
   async getUserIdentities(userId: string): Promise<string[]> {
-    const identities = await this.identityModel.find({ userId: userId }).exec();
+    const identities = await this.identityRepository.find({ where: { userId } });
     return identities.map(id => id.provider);
   }
 
-  async getUserFullIdentities(userId: string): Promise<IdentityDocument[]> {
-    return this.identityModel.find({ userId: userId }).exec();
+  async getUserFullIdentities(userId: string): Promise<Identity[]> {
+    return this.identityRepository.find({ where: { userId } });
   }
 
   async linkIdentity(
-    userId: string | Types.ObjectId,
+    userId: string,
     provider: string,
     providerId: string,
     profileData: any = {},
-  ): Promise<IdentityDocument> {
+  ): Promise<Identity> {
     // Check if this identity is already linked to SOMEONE
-    const existing = await this.identityModel.findOne({ provider, providerId });
+    const existing = await this.identityRepository.findOne({ where: { provider, providerId } });
     if (existing) {
-      if (existing.userId.toString() === userId.toString()) {
+      if (existing.userId === userId) {
         return existing; // Already linked to THIS user
       }
       throw new ConflictException('This social account is already linked to another user.');
     }
 
-    const createdIdentity = new this.identityModel({
+    const createdIdentity = this.identityRepository.create({
+      id: uuidv4(),
       userId,
       provider,
       providerId,
       profileData,
     });
-    return createdIdentity.save();
+    return this.identityRepository.save(createdIdentity);
   }
 
   async handleOAuthUser(
@@ -66,7 +74,7 @@ export class UsersService {
     providerId: string,
     profile: any,
     targetUserId?: string, // Pass if performing a link action
-  ): Promise<UserDocument> {
+  ): Promise<User> {
     // 1. If targetUserId is provided, we are in "Account Linking" mode
     if (targetUserId) {
       await this.linkIdentity(targetUserId, provider, providerId, profile);
@@ -78,7 +86,8 @@ export class UsersService {
     // 2. Try to find by existing identity
     const identity = await this.findIdentity(provider, providerId);
     if (identity && identity.userId) {
-      return identity.userId as UserDocument;
+      const user = await this.findById(identity.userId);
+      return user!;
     }
 
     // 3. Not found by identity. Try to link by email IF verified.
@@ -90,7 +99,7 @@ export class UsersService {
       const user = await this.findByEmail(email);
       if (user) {
         // Link identity to existing user
-        await this.linkIdentity((user._id as any).toString(), provider, providerId, profile);
+        await this.linkIdentity(user.id, provider, providerId, profile);
         return user;
       }
     }
@@ -102,13 +111,13 @@ export class UsersService {
       avatarUrl: profile.photos?.[0]?.value || profile._json?.avatar_url,
     });
 
-    await this.linkIdentity((newUser._id as any).toString(), provider, providerId, profile);
+    await this.linkIdentity(newUser.id, provider, providerId, profile);
     return newUser;
   }
 
   async updateRefreshToken(userId: string, hashedToken: string | null): Promise<void> {
-    await this.userModel.findByIdAndUpdate(userId, {
-      refreshTokenHash: hashedToken,
+    await this.userRepository.update(userId, {
+      refreshTokenHash: hashedToken || undefined,
     });
   }
 }

@@ -27,7 +27,7 @@ export class AuthService {
       passwordHash,
     });
 
-    return this.getTokens((newUser._id as any).toString(), newUser.email);
+    return this.getTokens(newUser.id, newUser.email);
   }
 
   async login(loginDto: LoginDto) {
@@ -47,7 +47,7 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    return this.getTokens((user._id as any).toString(), user.email);
+    return this.getTokens(user.id, user.email);
   }
 
   async generateTokensForOAuthUser(userId: string, email: string) {
@@ -65,7 +65,7 @@ export class AuthService {
       throw new UnauthorizedException('Access Denied');
     }
 
-    return this.getTokens((user._id as any).toString(), user.email);
+    return this.getTokens(user.id, user.email);
   }
 
   async logout(userId: string) {

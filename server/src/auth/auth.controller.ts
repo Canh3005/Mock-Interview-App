@@ -116,7 +116,7 @@ export class AuthController {
 
       // 4. Issue tokens and redirect home
       const { accessToken, refreshToken } = await this.authService.generateTokensForOAuthUser(
-        (userDoc._id as any).toString(),
+        userDoc.id.toString(),
         userDoc.email,
       );
 

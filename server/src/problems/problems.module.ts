@@ -1,16 +1,13 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProblemsService } from './problems.service';
 import { ProblemsController } from './problems.controller';
-import { Problem, ProblemSchema } from './schemas/problem.schema';
-import { ProblemTemplate, ProblemTemplateSchema } from './schemas/problem-template.schema';
+import { Problem } from './entities/problem.entity';
+import { ProblemTemplate } from './entities/problem-template.entity';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([
-      { name: Problem.name, schema: ProblemSchema },
-      { name: ProblemTemplate.name, schema: ProblemTemplateSchema },
-    ]),
+    TypeOrmModule.forFeature([Problem, ProblemTemplate]),
   ],
   controllers: [ProblemsController],
   providers: [ProblemsService],

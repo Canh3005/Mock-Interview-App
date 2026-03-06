@@ -1,27 +1,34 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateTestCaseDto } from './dto/create-test-case.dto';
 import { UpdateTestCaseDto } from './dto/update-test-case.dto';
-import { TestCase, TestCaseDocument } from './schemas/test-case.schema';
+import { TestCase } from './entities/test-case.entity';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class TestCasesService {
   constructor(
-    @InjectModel(TestCase.name) private testCaseModel: Model<TestCaseDocument>,
+    @InjectRepository(TestCase) private testCaseRepository: Repository<TestCase>,
   ) {}
 
   async create(createTestCaseDto: CreateTestCaseDto) {
-    const createdTestCase = new this.testCaseModel(createTestCaseDto);
-    return createdTestCase.save();
+    const createdTestCase = this.testCaseRepository.create({
+      id: uuidv4(),
+      ...createTestCaseDto,
+    });
+    return this.testCaseRepository.save(createdTestCase);
   }
 
   async findAllByProblem(problemId: string) {
-    return this.testCaseModel.find({ problemId }).sort({ createdAt: 1 }).exec();
+    return this.testCaseRepository.find({
+      where: { problemId },
+      order: { createdAt: 'ASC' },
+    });
   }
 
   async findOne(id: string) {
-    const testCase = await this.testCaseModel.findById(id).exec();
+    const testCase = await this.testCaseRepository.findOne({ where: { id } });
     if (!testCase) {
       throw new NotFoundException(`TestCase #${id} not found`);
     }
@@ -29,21 +36,22 @@ export class TestCasesService {
   }
 
   async update(id: string, updateTestCaseDto: UpdateTestCaseDto) {
-    const existingTestCase = await this.testCaseModel
-      .findByIdAndUpdate(id, updateTestCaseDto, { new: true })
-      .exec();
-    if (!existingTestCase) {
+    const testCaseToUpdate = await this.testCaseRepository.preload({
+      id,
+      ...updateTestCaseDto,
+    });
+
+    if (!testCaseToUpdate) {
       throw new NotFoundException(`TestCase #${id} not found`);
     }
-    return existingTestCase;
+
+    return this.testCaseRepository.save(testCaseToUpdate);
   }
 
   async remove(id: string) {
-    const deletedTestCase = await this.testCaseModel.findByIdAndDelete(id).exec();
-    if (!deletedTestCase) {
-      throw new NotFoundException(`TestCase #${id} not found`);
-    }
-    return deletedTestCase;
+    const testCase = await this.findOne(id);
+    await this.testCaseRepository.remove(testCase);
+    return testCase;
   }
 
   async uploadBulk(problemId: string, file: Express.Multer.File) {
