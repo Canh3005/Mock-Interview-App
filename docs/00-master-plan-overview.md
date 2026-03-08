@@ -1,14 +1,17 @@
 # KẾ HOẠCH TỔNG THỂ DỰ ÁN: MOCK INTERVIEW AI
 
-Dựa trên bản thiết kế chi tiết Hệ thống Mock Interview AI, dự án được chia thành 4 Phase phát triển từ nền tảng lõi đến mở rộng thương mại B2B.
+Dựa trên bản thiết kế chi tiết Hệ thống Mock Interview AI, dự án được chia thành 7 Phase (Giai đoạn) phát triển từ nền tảng lõi (Core) đến mở rộng thương mại B2B.
 
-Việc chia nhỏ các Phase giúp quản trị rủi ro tốt hơn (đặc biệt là rủi ro về chi phí Token và chống hack Sandbox) và đảm bảo liên tục có thể mang sản phẩm ra thị trường (Time-to-Market) để feedback sớm.
+Việc chia nhỏ các Phase giúp quản trị rủi ro tốt hơn (đặc biệt là rủi ro về chi phí Token và chống hack Sandbox), tránh ôm đồm tính năng ở một thời điểm và đảm bảo liên tục có thể mang sản phẩm ra thị trường (Time-to-Market) để nhận phản hồi (Feedback) sớm nhất.
 
 ## Lộ trình các Phase
 - [Phase 1: MVP Core & Live Coding](./phase-1-mvp-core-execution.md) - *Tạo ra giá trị cốt lõi, tập trung vào khả năng tương tác AI và an toàn hệ thống Sandbox.*
-- [Phase 2: Full Interview Modes & Feedback System](./phase-2-full-interview-and-feedback.md) - *Mở rộng toàn bộ các vòng phỏng vấn chuyên sâu và hệ thống Scorecard báo cáo chân thực.*
-- [Phase 3: Context Engine & Candidate Personalization](./phase-3-context-engine-and-profile.md) - *Xây dựng tính năng "Skill Passport" cá nhân hóa và Gamification để giữ chân người dùng dài hạn.*
-- [Phase 4: Administration, FinOps & B2B Expansion](./phase-4-admin-ops-and-b2b.md) - *Trưởng thành thành sản phẩm thương mại B2B, quản trị chi phí LLM và công cụ cho chuyên gia vận hành.*
+- [Phase 2: Mở rộng Vòng thi Hành vi & Kỹ năng AI](./phase-2-behavioral-and-ai-prompting.md) - *Xây dựng tính năng phỏng vấn HR (Behavioral) và Pair Programming.*
+- [Phase 3: Mở rộng Vòng thi Thiết kế Hệ thống](./phase-3-system-design-whiteboard.md) - *Tập trung vào System Design với Virtual Whiteboard và Diagram Architecture.*
+- [Phase 4: Trải nghiệm Tiền phỏng vấn & Hồ sơ ứng viên](./phase-4-candidate-profile-and-prep.md) - *Xây dựng "Skill Passport", Context Engine ghép nối CV - JD và các chế độ thi.*
+- [Phase 5: Trải nghiệm Hậu phỏng vấn & Cá nhân hóa](./phase-5-post-interview-and-growth.md) - *Scorecard chi tiết, Actionable Learning Path (Lộ trình học tập) và Gamification.*
+- [Phase 6: Vận hành AI, Admin & FinOps](./phase-6-internal-ops-finops.md) - *Quản trị Prompts, kiến thức (Knowledge Base) và giám sát chi phí tự động.*
+- [Phase 7: Mở rộng Doanh nghiệp B2B](./phase-7-b2b-enterprise-portal.md) - *Cổng thông tin cho Doanh nghiệp, White-label và bán gói Campaign phỏng vấn số lượng lớn.*
 
 ## Nguyên tắc Thiết kế Cốt lõi cho Đội ngũ Phát triển
 1. **Zero-Trust với User Code**: Bất cứ đoạn mã nào ứng viên viết trong luồng System Design/Live Coding đều phải chạy trong môi trường cách ly (Sandbox) có giới hạn tài nguyên và tự hủy.
