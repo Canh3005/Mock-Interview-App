@@ -21,6 +21,9 @@ export class ProblemTemplate {
   starterCode: string;
 
   @Column({ type: 'text' })
+  solutionCode: string;
+
+  @Column({ type: 'text' })
   driverCode: string;
 
   @Column({ type: 'int' })

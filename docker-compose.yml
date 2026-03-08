@@ -26,5 +26,50 @@ services:
       - postgres
     restart: always
 
+  # ─── Custom Code Runner (Judge0-compatible API) ──────────────────────────────
+  # Replaces Judge0 + isolate which doesn't work on Docker Desktop for Windows
+  # (because isolate requires cgroup v1, but Docker Desktop uses cgroup v2)
+  code-runner:
+    build:
+      context: ./code-runner
+      dockerfile: Dockerfile
+    container_name: mock-interview-code-runner
+    ports:
+      - "2358:2358"
+    restart: always
+    environment:
+      NODE_ENV: production
+
+  # ─── Judge0 (disabled - isolate incompatible with Docker Desktop/Windows) ──
+  # redis:
+  #   image: redis:7.2.4
+  #   container_name: mock-interview-redis
+  #   command: ["bash", "-c", 'docker-entrypoint.sh --appendonly yes --requirepass "$$REDIS_PASSWORD"']
+  #   environment:
+  #     REDIS_PASSWORD: "SUPER_SECRET_REDIS_PASSWORD"
+  #   volumes:
+  #     - redis_data:/data
+  #   restart: always
+  #
+  # judge0-server:
+  #   image: judge0/judge0:1.13.1
+  #   container_name: mock-interview-judge0-server
+  #   volumes:
+  #     - ./judge0.conf:/judge0.conf:ro
+  #   ports:
+  #     - "2358:2358"
+  #   privileged: true
+  #   restart: always
+  #
+  # judge0-worker:
+  #   image: judge0/judge0:1.13.1
+  #   container_name: mock-interview-judge0-worker
+  #   command: ["./scripts/workers"]
+  #   volumes:
+  #     - ./judge0.conf:/judge0.conf:ro
+  #   privileged: true
+  #   restart: always
+
 volumes:
   postgres_data:
+  # redis_data:

@@ -18,6 +18,15 @@ export class ProblemsController {
     return this.problemsService.create(createProblemDto);
   }
 
+  @Post('import')
+  importBulk(@Body() items: any[]) {
+    // Basic validation: ensure it's an array
+    if (!Array.isArray(items)) {
+      return { successful: 0, failed: 1, errors: [{ index: -1, error: 'Payload must be a JSON array of problems.' }] };
+    }
+    return this.problemsService.importBulk(items);
+  }
+
   @Get()
   findAll(
     @Query('page') page?: string,
@@ -49,7 +58,7 @@ export class ProblemsController {
   }
 
   @Post(':id/verify')
-  verify(@Param('id') id: string, @Body('solutionCode') solutionCode: string) {
-    return this.problemsService.verify(id, solutionCode);
+  verify(@Param('id') id: string) {
+    return this.problemsService.verify(id);
   }
 }

@@ -7,6 +7,8 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { ProblemsModule } from './problems/problems.module';
 import { TestCasesModule } from './test-cases/test-cases.module';
+import { JudgeModule } from './judge/judge.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -30,6 +32,7 @@ import { TestCasesModule } from './test-cases/test-cases.module';
     AuthModule,
     ProblemsModule,
     TestCasesModule,
+    JudgeModule,
   ],
   controllers: [AppController],
   providers: [AppService],

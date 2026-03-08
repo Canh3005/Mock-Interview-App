@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { ProblemTemplate } from './problem-template.entity';
-// Import TestCase entity later when it's created, to establish OneToMany if needed.
+import { TestCase } from '../../test-cases/entities/test-case.entity';
 
 export enum ProblemDifficulty {
   EASY = 'EASY',
@@ -44,8 +44,11 @@ export class Problem {
   @Column({ type: 'text', array: true, default: [] })
   tags: string[];
 
-  @OneToMany(() => ProblemTemplate, (template: ProblemTemplate) => template.problem)
+  @OneToMany(() => ProblemTemplate, (template: ProblemTemplate) => template.problem, { cascade: true })
   templates: ProblemTemplate[];
+
+  @OneToMany(() => TestCase, (testCase: TestCase) => testCase.problem, { cascade: true })
+  testCases: TestCase[];
 
   @CreateDateColumn()
   createdAt: Date;
