@@ -10,6 +10,7 @@ import AdminLayout from './components/admin/AdminLayout'
 import AdminProblemsPage from './components/admin/AdminProblemsPage'
 import AdminTestCasesPage from './components/admin/AdminTestCasesPage'
 import SkillPassportPage from './components/dashboard/profile/SkillPassportPage'
+import InterviewSetupFlow from './components/interview-setup/InterviewSetupFlow'
 import { Loader2 } from 'lucide-react'
 
 export default function App() {
@@ -32,7 +33,7 @@ export default function App() {
 
   const navigate = (target) => {
     // Protect private routes
-    if ((target === 'dashboard' || target === 'interview-room' || target.startsWith('admin')) && !isAuthenticated && !isAuthenticating) {
+    if ((target === 'dashboard' || target === 'interview-room' || target === 'interview-setup' || target.startsWith('admin')) && !isAuthenticated && !isAuthenticating) {
       setPage('login');
       return;
     }
@@ -59,6 +60,9 @@ export default function App() {
   }
   if (page === 'register') {
     return <RegisterPage navigate={navigate} />
+  }
+  if (page === 'interview-setup') {
+    return <InterviewSetupFlow navigate={navigate} />
   }
   if (page === 'interview-room') {
     return <InterviewRoomPage navigate={navigate} />

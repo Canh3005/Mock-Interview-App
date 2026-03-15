@@ -12,6 +12,7 @@ import { BullModule } from '@nestjs/bullmq';
 import { AiModule } from './ai/ai.module';
 import { DocumentsModule } from './documents/documents.module';
 import { JobsModule } from './jobs/jobs.module';
+import { InterviewModule } from './interview/interview.module';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { JobsModule } from './jobs/jobs.module';
     JudgeModule,
     DocumentsModule,
     JobsModule,
+    InterviewModule,
   ],
   controllers: [AppController],
   providers: [AppService],

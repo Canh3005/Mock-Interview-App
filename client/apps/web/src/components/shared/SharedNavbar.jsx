@@ -150,11 +150,11 @@ function DashboardBar({ navigate, darkMode, onToggleDark }) {
             {t('navbar.home')}
           </button>
           <button
-            onClick={() => navigate('interview-room')}
+            onClick={() => navigate('dashboard')}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-body text-sm text-slate-400 hover:text-white hover:bg-slate-700/40 transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta"
           >
             <LayoutDashboard size={16} />
-            {t('navbar.interviewRoom')}
+            {t('navbar.dashboard')}
           </button>
         </nav>
 
@@ -223,7 +223,7 @@ function InterviewBar({ navigate, children }) {
             Dashboard
           </button>
           <span className="text-slate-600">/</span>
-          <span className="text-cta font-medium">{t('navbar.interviewRoom')}</span>
+          <span className="text-cta font-medium">{t('navbar.dashboard')}</span>
         </div>
       </div>
 

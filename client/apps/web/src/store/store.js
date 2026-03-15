@@ -3,6 +3,7 @@ import createSagaMiddleware from 'redux-saga';
 import authReducer from './slices/authSlice';
 import adminProblemsReducer from './slices/adminProblemsSlice';
 import profileReducer from './slices/profileSlice';
+import interviewSetupReducer from './slices/interviewSetupSlice';
 import rootSaga from './sagas/rootSaga';
 
 const sagaMiddleware = createSagaMiddleware();
@@ -12,6 +13,7 @@ export const store = configureStore({
     auth: authReducer,
     adminProblems: adminProblemsReducer,
     profile: profileReducer,
+    interviewSetup: interviewSetupReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ 

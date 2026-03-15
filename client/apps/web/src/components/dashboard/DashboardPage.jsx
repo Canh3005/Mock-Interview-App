@@ -98,7 +98,7 @@ export default function DashboardPage({ navigate = () => {} }) {
                 </button>
               )}
               <button
-                onClick={() => navigate('interview-room')}
+                onClick={() => navigate('interview-setup')}
                 className="inline-flex items-center gap-2 font-body text-sm font-semibold text-white bg-cta hover:bg-cta/90 px-5 py-2.5 rounded-xl transition-all duration-200 cursor-pointer hover:-translate-y-0.5 shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta"
               >
                 <Code2 size={15} />
