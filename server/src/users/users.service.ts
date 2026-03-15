@@ -3,13 +3,18 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { Identity } from './entities/identity.entity';
+import { UserProfile } from './entities/user-profile.entity';
 import { v4 as uuidv4 } from 'uuid';
+import type { GithubProfile } from '../auth/types/auth-request.types.js';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
-    @InjectRepository(Identity) private identityRepository: Repository<Identity>,
+    @InjectRepository(Identity)
+    private identityRepository: Repository<Identity>,
+    @InjectRepository(UserProfile)
+    private userProfileRepository: Repository<UserProfile>,
   ) {}
 
   async create(userDto: Partial<User>): Promise<User> {
@@ -28,16 +33,48 @@ export class UsersService {
     return this.userRepository.findOne({ where: { id } });
   }
 
-  async findIdentity(provider: string, providerId: string): Promise<Identity | null> {
-    return this.identityRepository.findOne({ 
+  async getProfile(userId: string): Promise<UserProfile | null> {
+    let profile = await this.userProfileRepository.findOne({
+      where: { user: { id: userId } },
+    });
+    if (!profile) {
+      // Create a default profile if it doesn't exist
+      const user = await this.findById(userId);
+      if (user) {
+        profile = this.userProfileRepository.create({ user });
+        await this.userProfileRepository.save(profile);
+      }
+    }
+    return profile;
+  }
+
+  async updateProfile(
+    userId: string,
+    data: Partial<UserProfile>,
+  ): Promise<UserProfile> {
+    const profile = await this.getProfile(userId);
+    if (!profile) {
+      throw new Error('User not found');
+    }
+    Object.assign(profile, data);
+    return this.userProfileRepository.save(profile);
+  }
+
+  async findIdentity(
+    provider: string,
+    providerId: string,
+  ): Promise<Identity | null> {
+    return this.identityRepository.findOne({
       where: { provider, providerId },
       relations: ['user'],
     });
   }
 
   async getUserIdentities(userId: string): Promise<string[]> {
-    const identities = await this.identityRepository.find({ where: { userId } });
-    return identities.map(id => id.provider);
+    const identities = await this.identityRepository.find({
+      where: { userId },
+    });
+    return identities.map((id) => id.provider);
   }
 
   async getUserFullIdentities(userId: string): Promise<Identity[]> {
@@ -48,15 +85,19 @@ export class UsersService {
     userId: string,
     provider: string,
     providerId: string,
-    profileData: any = {},
+    profileData: unknown = {},
   ): Promise<Identity> {
     // Check if this identity is already linked to SOMEONE
-    const existing = await this.identityRepository.findOne({ where: { provider, providerId } });
+    const existing = await this.identityRepository.findOne({
+      where: { provider, providerId },
+    });
     if (existing) {
       if (existing.userId === userId) {
         return existing; // Already linked to THIS user
       }
-      throw new ConflictException('This social account is already linked to another user.');
+      throw new ConflictException(
+        'This social account is already linked to another user.',
+      );
     }
 
     const createdIdentity = this.identityRepository.create({
@@ -72,7 +113,7 @@ export class UsersService {
   async handleOAuthUser(
     provider: string,
     providerId: string,
-    profile: any,
+    profile: GithubProfile,
     targetUserId?: string, // Pass if performing a link action
   ): Promise<User> {
     // 1. If targetUserId is provided, we are in "Account Linking" mode
@@ -92,8 +133,9 @@ export class UsersService {
 
     // 3. Not found by identity. Try to link by email IF verified.
     // For GitHub, we often rely on profile.emails being present if public.
-    const email = profile.emails?.[0]?.value || profile._json?.email;
-    const isEmailVerified = profile.emails?.[0]?.verified || profile._json?.email_verified || false;
+    const email = profile.emails?.[0]?.value ?? profile._json?.email;
+    const isEmailVerified =
+      profile.emails?.[0]?.verified ?? profile._json?.email_verified ?? false;
 
     if (email && isEmailVerified) {
       const user = await this.findByEmail(email);
@@ -115,7 +157,10 @@ export class UsersService {
     return newUser;
   }
 
-  async updateRefreshToken(userId: string, hashedToken: string | null): Promise<void> {
+  async updateRefreshToken(
+    userId: string,
+    hashedToken: string | null,
+  ): Promise<void> {
     await this.userRepository.update(userId, {
       refreshTokenHash: hashedToken || undefined,
     });

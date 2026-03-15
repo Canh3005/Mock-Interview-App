@@ -5,9 +5,7 @@ import { TestCasesController } from './test-cases.controller';
 import { TestCase } from './entities/test-case.entity';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([TestCase]),
-  ],
+  imports: [TypeOrmModule.forFeature([TestCase])],
   controllers: [TestCasesController],
   providers: [TestCasesService],
 })

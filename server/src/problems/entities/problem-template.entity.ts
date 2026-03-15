@@ -1,4 +1,13 @@
-import { Entity, Column, PrimaryColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, Index } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+  Index,
+} from 'typeorm';
 import { Problem } from './problem.entity';
 
 @Entity()
@@ -10,7 +19,9 @@ export class ProblemTemplate {
   @Column({ name: 'problem_id' })
   problemId: string;
 
-  @ManyToOne(() => Problem, problem => problem.templates, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Problem, (problem) => problem.templates, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'problem_id' })
   problem: Problem;
 

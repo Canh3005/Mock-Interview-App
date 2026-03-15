@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, UseInterceptors, UploadedFile } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  UseInterceptors,
+  UploadedFile,
+} from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { TestCasesService } from './test-cases.service';
 import { CreateTestCaseDto } from './dto/create-test-case.dto';
@@ -15,9 +26,15 @@ export class TestCasesController {
   constructor(private readonly testCasesService: TestCasesService) {}
 
   @Post('problems/:problemId/testcases')
-  create(@Param('problemId') problemId: string, @Body() createTestCaseDto: CreateTestCaseDto) {
+  create(
+    @Param('problemId') problemId: string,
+    @Body() createTestCaseDto: CreateTestCaseDto,
+  ) {
     // Override problemId from path
-    return this.testCasesService.create({ ...createTestCaseDto, problemId } as any);
+    return this.testCasesService.create({
+      ...createTestCaseDto,
+      problemId,
+    } as any);
   }
 
   @Get('problems/:problemId/testcases')
@@ -31,7 +48,10 @@ export class TestCasesController {
   }
 
   @Patch('testcases/:id')
-  update(@Param('id') id: string, @Body() updateTestCaseDto: UpdateTestCaseDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateTestCaseDto: UpdateTestCaseDto,
+  ) {
     return this.testCasesService.update(id, updateTestCaseDto);
   }
 

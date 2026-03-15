@@ -1,4 +1,13 @@
-import { Entity, Column, PrimaryColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, Index } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+  Index,
+} from 'typeorm';
 import { User } from './user.entity';
 
 @Entity()
@@ -21,7 +30,7 @@ export class Identity {
   providerId: string; // The ID from the provider
 
   @Column({ type: 'jsonb', default: {} })
-  profileData: any; // Raw profile info for extra fields
+  profileData: unknown; // Raw profile info for extra fields
 
   @CreateDateColumn()
   createdAt: Date;

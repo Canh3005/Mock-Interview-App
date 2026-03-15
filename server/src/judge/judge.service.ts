@@ -25,7 +25,8 @@ export interface JudgeSubmissionResult {
 @Injectable()
 export class JudgeService {
   private readonly logger = new Logger(JudgeService.name);
-  private readonly judge0Url = process.env.JUDGE0_URL || 'http://localhost:2358';
+  private readonly judge0Url =
+    process.env.JUDGE0_URL || 'http://localhost:2358';
 
   constructor(private readonly httpService: HttpService) {}
 
@@ -94,7 +95,10 @@ export class JudgeService {
     try {
       // 1. Batch Create
       const createRes = await firstValueFrom(
-        this.httpService.post<any>(`${this.judge0Url}/submissions/batch`, payload),
+        this.httpService.post<any>(
+          `${this.judge0Url}/submissions/batch`,
+          payload,
+        ),
       );
       const tokens = createRes.data.map((item: any) => item.token);
 
@@ -106,38 +110,48 @@ export class JudgeService {
     }
   }
 
-  private async pollSubmissionResult(token: string, maxRetries = 20): Promise<JudgeSubmissionResult> {
+  private async pollSubmissionResult(
+    token: string,
+    maxRetries = 20,
+  ): Promise<JudgeSubmissionResult> {
     for (let i = 0; i < maxRetries; i++) {
       const res = await firstValueFrom(
-        this.httpService.get<any>(`${this.judge0Url}/submissions/${token}?base64_encoded=false`),
+        this.httpService.get<any>(
+          `${this.judge0Url}/submissions/${token}?base64_encoded=false`,
+        ),
       );
-      
+
       if (res.data.status.id >= 3) {
         // Status ID >= 3 means it's finished processing (3=Accepted, 4=Wrong Answer, 5=Time Limit, 6=Compile Error etc.)
         return res.data;
       }
-      
+
       // Wait for 500ms before repolling
       await new Promise((resolve) => setTimeout(resolve, 500));
     }
     throw new Error('Judge0 polling timed out');
   }
 
-  private async pollBatchResults(tokens: string[], maxRetries = 30): Promise<JudgeSubmissionResult[]> {
+  private async pollBatchResults(
+    tokens: string[],
+    maxRetries = 30,
+  ): Promise<JudgeSubmissionResult[]> {
     const tokensStr = tokens.join(',');
-    
+
     for (let i = 0; i < maxRetries; i++) {
       const res = await firstValueFrom(
-        this.httpService.get<any>(`${this.judge0Url}/submissions/batch?tokens=${tokensStr}&base64_encoded=false`),
+        this.httpService.get<any>(
+          `${this.judge0Url}/submissions/batch?tokens=${tokensStr}&base64_encoded=false`,
+        ),
       );
-      
+
       const submissions = res.data.submissions;
       const isAllFinished = submissions.every((sub: any) => sub.status.id >= 3);
-      
+
       if (isAllFinished) {
         return submissions;
       }
-      
+
       // Batch takes longer, poll every 1s
       await new Promise((resolve) => setTimeout(resolve, 1000));
     }

@@ -9,6 +9,7 @@ import RegisterPage from './components/auth/RegisterPage'
 import AdminLayout from './components/admin/AdminLayout'
 import AdminProblemsPage from './components/admin/AdminProblemsPage'
 import AdminTestCasesPage from './components/admin/AdminTestCasesPage'
+import SkillPassportPage from './components/dashboard/profile/SkillPassportPage'
 import { Loader2 } from 'lucide-react'
 
 export default function App() {
@@ -64,6 +65,9 @@ export default function App() {
   }
   if (page === 'dashboard') {
     return <DashboardPage navigate={navigate} />
+  }
+  if (page === 'dashboard-profile') {
+    return <SkillPassportPage navigate={navigate} />
   }
   if (page === 'admin-problems' || page === 'admin') {
     return (

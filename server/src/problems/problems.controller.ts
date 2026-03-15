@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { ProblemsService } from './problems.service';
 import { CreateProblemDto } from './dto/create-problem.dto';
 import { UpdateProblemDto } from './dto/update-problem.dto';
@@ -22,7 +32,13 @@ export class ProblemsController {
   importBulk(@Body() items: any[]) {
     // Basic validation: ensure it's an array
     if (!Array.isArray(items)) {
-      return { successful: 0, failed: 1, errors: [{ index: -1, error: 'Payload must be a JSON array of problems.' }] };
+      return {
+        successful: 0,
+        failed: 1,
+        errors: [
+          { index: -1, error: 'Payload must be a JSON array of problems.' },
+        ],
+      };
     }
     return this.problemsService.importBulk(items);
   }

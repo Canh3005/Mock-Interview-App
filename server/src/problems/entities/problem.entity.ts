@@ -1,4 +1,11 @@
-import { Entity, Column, PrimaryColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
+} from 'typeorm';
 import { ProblemTemplate } from './problem-template.entity';
 import { TestCase } from '../../test-cases/entities/test-case.entity';
 
@@ -44,10 +51,16 @@ export class Problem {
   @Column({ type: 'text', array: true, default: [] })
   tags: string[];
 
-  @OneToMany(() => ProblemTemplate, (template: ProblemTemplate) => template.problem, { cascade: true })
+  @OneToMany(
+    () => ProblemTemplate,
+    (template: ProblemTemplate) => template.problem,
+    { cascade: true },
+  )
   templates: ProblemTemplate[];
 
-  @OneToMany(() => TestCase, (testCase: TestCase) => testCase.problem, { cascade: true })
+  @OneToMany(() => TestCase, (testCase: TestCase) => testCase.problem, {
+    cascade: true,
+  })
   testCases: TestCase[];
 
   @CreateDateColumn()

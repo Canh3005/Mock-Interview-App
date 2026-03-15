@@ -1,9 +1,22 @@
-import { Injectable, UnauthorizedException, BadRequestException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  BadRequestException,
+} from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+
+interface IdentityProfileJson {
+  avatar_url?: string;
+  name?: string;
+}
+
+interface IdentityProfileData {
+  _json?: IdentityProfileJson;
+}
 
 @Injectable()
 export class AuthService {
@@ -72,6 +85,21 @@ export class AuthService {
     await this.usersService.updateRefreshToken(userId, null);
   }
 
+  private getIdentityProfileJson(
+    profileData: unknown,
+  ): IdentityProfileJson | undefined {
+    if (!profileData || typeof profileData !== 'object') {
+      return undefined;
+    }
+
+    const maybeProfileData = profileData as IdentityProfileData;
+    if (!maybeProfileData._json || typeof maybeProfileData._json !== 'object') {
+      return undefined;
+    }
+
+    return maybeProfileData._json;
+  }
+
   private async getTokens(userId: string, email: string) {
     const userDoc = await this.usersService.findById(userId);
     let avatarUrl = userDoc?.avatarUrl || null;
@@ -80,13 +108,15 @@ export class AuthService {
 
     // Use fallback info from identity profiles if name or avatar is missing or default
     if (!avatarUrl || !name || name === 'OAuth User') {
-      const fullIdentities = await this.usersService.getUserFullIdentities(userId);
+      const fullIdentities =
+        await this.usersService.getUserFullIdentities(userId);
       for (const identity of fullIdentities) {
-        if (!avatarUrl && identity.profileData?._json?.avatar_url) {
-          avatarUrl = identity.profileData._json.avatar_url;
+        const profileJson = this.getIdentityProfileJson(identity.profileData);
+        if (!avatarUrl && profileJson?.avatar_url) {
+          avatarUrl = profileJson.avatar_url;
         }
-        if ((!name || name === 'OAuth User') && identity.profileData?._json?.name) {
-          name = identity.profileData._json.name;
+        if ((!name || name === 'OAuth User') && profileJson?.name) {
+          name = profileJson.name;
         }
       }
     }

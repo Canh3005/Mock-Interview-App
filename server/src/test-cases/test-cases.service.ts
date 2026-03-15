@@ -9,7 +9,8 @@ import { v4 as uuidv4 } from 'uuid';
 @Injectable()
 export class TestCasesService {
   constructor(
-    @InjectRepository(TestCase) private testCaseRepository: Repository<TestCase>,
+    @InjectRepository(TestCase)
+    private testCaseRepository: Repository<TestCase>,
   ) {}
 
   async create(createTestCaseDto: CreateTestCaseDto) {
@@ -58,7 +59,13 @@ export class TestCasesService {
     // Placeholder logic for ZIP extraction and parsing
     // In production, this would use a library like yauzl to read the zip,
     // match 1.in with 1.out, and bulk insert into DB/S3.
-    console.log(`Received bulk testcases file for problem ${problemId}`, file.originalname);
-    return { success: true, message: 'Bulk uploaded successfully (Placeholder)' };
+    console.log(
+      `Received bulk testcases file for problem ${problemId}`,
+      file.originalname,
+    );
+    return {
+      success: true,
+      message: 'Bulk uploaded successfully (Placeholder)',
+    };
   }
 }

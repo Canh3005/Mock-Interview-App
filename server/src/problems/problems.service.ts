@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, ILike } from 'typeorm';
 import { CreateProblemDto } from './dto/create-problem.dto';
@@ -13,34 +17,44 @@ import { v4 as uuidv4 } from 'uuid';
 export class ProblemsService {
   constructor(
     @InjectRepository(Problem) private problemRepository: Repository<Problem>,
-    @InjectRepository(ProblemTemplate) private problemTemplateRepository: Repository<ProblemTemplate>,
-    @InjectRepository(TestCase) private testCaseRepository: Repository<TestCase>,
+    @InjectRepository(ProblemTemplate)
+    private problemTemplateRepository: Repository<ProblemTemplate>,
+    @InjectRepository(TestCase)
+    private testCaseRepository: Repository<TestCase>,
     private judgeService: JudgeService,
   ) {}
 
   async create(createProblemDto: any) {
     const id = uuidv4();
     const title = createProblemDto.title || 'untitled';
-    const baseSlug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    const baseSlug = title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
     const slug = `${baseSlug}-${id.substring(0, 8)}`;
 
-    const templates = createProblemDto.templates?.map((t: any) => ({
-      ...t, 
-      id: t.id && String(t.id).length > 20 ? t.id : uuidv4()
-    })) || [];
-    
+    const templates =
+      createProblemDto.templates?.map((t: any) => ({
+        ...t,
+        id: t.id && String(t.id).length > 20 ? t.id : uuidv4(),
+      })) || [];
+
     // Strip temporary numeric UI IDs from testcases and assign valid UUIDs
-    const testCases = createProblemDto.testCases?.map((tc: any) => {
-      const { id: tcId, ...rest } = tc;
-      return { ...rest, id: tcId && String(tcId).length > 20 ? tcId : uuidv4() };
-    }) || [];
+    const testCases =
+      createProblemDto.testCases?.map((tc: any) => {
+        const { id: tcId, ...rest } = tc;
+        return {
+          ...rest,
+          id: tcId && String(tcId).length > 20 ? tcId : uuidv4(),
+        };
+      }) || [];
 
     const createdProblem = this.problemRepository.create({
       id,
       slug,
       ...createProblemDto,
       templates,
-      testCases
+      testCases,
     });
     return this.problemRepository.save(createdProblem);
   }
@@ -76,17 +90,20 @@ export class ProblemsService {
           // Force status to DRAFT regardless of input for safety
           const createDto: CreateProblemDto = {
             ...item,
-            status: 'DRAFT', 
+            status: 'DRAFT',
             // Default to empty array if testCases is missing to prevent validation crash
             testCases: Array.isArray(item.testCases) ? item.testCases : [],
           };
-          
+
           await this.create(createDto);
           return index;
         } catch (error) {
-          throw { index, error: error.message || 'Unknown error during creation' };
+          throw {
+            index,
+            error: error.message || 'Unknown error during creation',
+          };
         }
-      })
+      }),
     );
 
     // Analyze results
@@ -102,12 +119,12 @@ export class ProblemsService {
     return {
       successful,
       failed,
-      errors
+      errors,
     };
   }
 
   async findOne(id: string) {
-    const problem = await this.problemRepository.findOne({ 
+    const problem = await this.problemRepository.findOne({
       where: { id },
       relations: ['templates', 'testCases'],
     });
@@ -121,19 +138,22 @@ export class ProblemsService {
     // Process child entities to assign valid UUIDs to newly added items
     const templates = updateProblemDto.templates?.map((t: any) => ({
       ...t,
-      id: t.id && String(t.id).length > 20 ? t.id : uuidv4()
+      id: t.id && String(t.id).length > 20 ? t.id : uuidv4(),
     }));
-    
+
     const testCases = updateProblemDto.testCases?.map((tc: any) => {
       const { id: tcId, ...rest } = tc;
-      return { ...rest, id: tcId && String(tcId).length > 20 ? tcId : uuidv4() };
+      return {
+        ...rest,
+        id: tcId && String(tcId).length > 20 ? tcId : uuidv4(),
+      };
     });
 
     const updatePayload = {
       id,
       ...updateProblemDto,
       ...(templates && { templates }),
-      ...(testCases && { testCases })
+      ...(testCases && { testCases }),
     };
 
     const problemToUpdate = await this.problemRepository.preload(updatePayload);
@@ -162,11 +182,15 @@ export class ProblemsService {
     }
 
     if (!problem.templates || problem.templates.length === 0) {
-      throw new BadRequestException('Problem has no language templates (enabled languages).');
+      throw new BadRequestException(
+        'Problem has no language templates (enabled languages).',
+      );
     }
 
     if (!problem.testCases || problem.testCases.length === 0) {
-      throw new BadRequestException('Problem has no test cases. Add test cases before verifying.');
+      throw new BadRequestException(
+        'Problem has no test cases. Add test cases before verifying.',
+      );
     }
 
     const testCases = problem.testCases;
@@ -183,23 +207,26 @@ export class ProblemsService {
       // driverCode is the runner that reads stdin, calls Solution, and prints output.
       // Therefore solutionCode MUST come first so that driverCode can reference it.
       const fullCode = template.driverCode
-                        ? `${template.solutionCode}\n\n${template.driverCode}`
-                        : template.solutionCode;
+        ? `${template.solutionCode}\n\n${template.driverCode}`
+        : template.solutionCode;
       try {
         const batchResults = await this.judgeService.runBatchTests(
           language,
           fullCode,
-          testCases.map((tc) => ({ input: tc.inputData, expectedOutput: tc.expectedOutput })),
-          problem.timeLimitMultiplier * (template.timeLimitMs / 1000.0) // Convert ms to s
+          testCases.map((tc) => ({
+            input: tc.inputData,
+            expectedOutput: tc.expectedOutput,
+          })),
+          problem.timeLimitMultiplier * (template.timeLimitMs / 1000.0), // Convert ms to s
         );
 
         let passed = 0;
         const total = testCases.length;
-        
+
         for (let i = 0; i < batchResults.length; i++) {
           const res = batchResults[i];
           const tc = testCases[i];
-          
+
           if (res.status.id === 3) {
             passed++;
           } else {
@@ -209,7 +236,11 @@ export class ProblemsService {
               testCaseId: tc.id,
               input: tc.inputData,
               expectedOutput: tc.expectedOutput,
-              actualOutput: res.compile_output || res.stderr || res.stdout?.trim() || res.status.description,
+              actualOutput:
+                res.compile_output ||
+                res.stderr ||
+                res.stdout?.trim() ||
+                res.status.description,
               statusId: res.status.id,
               statusDescription: res.status.description,
             });
@@ -220,12 +251,18 @@ export class ProblemsService {
         if (passed < total) {
           allLanguagesPassed = false;
         }
-
       } catch (err) {
         // Judge0 API error or timeout
         allLanguagesPassed = false;
-        const errorMessage = err.response?.data?.message || err.response?.data?.error || err.message;
-        resultObj.languages[language] = { passed: 0, total: testCases.length, error: errorMessage };
+        const errorMessage =
+          err.response?.data?.message ||
+          err.response?.data?.error ||
+          err.message;
+        resultObj.languages[language] = {
+          passed: 0,
+          total: testCases.length,
+          error: errorMessage,
+        };
         resultObj.details.push({
           language,
           testCaseId: 'API_ERROR',

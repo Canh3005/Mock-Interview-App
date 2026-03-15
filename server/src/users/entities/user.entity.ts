@@ -1,5 +1,16 @@
-import { Entity, Column, PrimaryColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
+  OneToOne,
+} from 'typeorm';
 import { Identity } from './identity.entity';
+import { UserProfile } from './user-profile.entity';
+import { UserCv } from './user-cv.entity';
+import { JdAnalysis } from './jd-analysis.entity';
 
 export enum Role {
   USER = 'user',
@@ -37,4 +48,13 @@ export class User {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToOne(() => UserProfile, (profile) => profile.user)
+  profile: UserProfile;
+
+  @OneToMany(() => UserCv, (cv) => cv.user)
+  cvs: UserCv[];
+
+  @OneToMany(() => JdAnalysis, (jd) => jd.user)
+  jdAnalyses: JdAnalysis[];
 }

@@ -303,16 +303,17 @@ function DashboardUserMenu({ navigate }) {
           Đăng xuất
         </button>
       </div>
-      <div
-        className="flex overflow-hidden items-center justify-center w-9 h-9 rounded-full border-2 border-cta/50 bg-cta/10 text-cta cursor-pointer hover:border-cta transition-colors duration-200"
-        title="Hồ sơ"
+      <button
+        onClick={() => navigate('dashboard-profile')}
+        className="flex overflow-hidden items-center justify-center w-9 h-9 rounded-full border-2 border-cta/50 bg-cta/10 text-cta cursor-pointer hover:border-cta transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta"
+        title="Skill Passport"
       >
         {user?.avatarUrl ? (
           <img src={user.avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
         ) : (
           <User size={16} />
         )}
-      </div>
+      </button>
     </div>
   )
 }
