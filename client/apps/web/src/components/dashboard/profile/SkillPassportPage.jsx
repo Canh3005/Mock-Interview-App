@@ -1,14 +1,13 @@
 import { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { useTranslation } from 'react-i18next'
 import { fetchProfileRequest } from '../../../store/slices/profileSlice'
 import SharedNavbar from '../../shared/SharedNavbar'
 import StaticProfileForm from './StaticProfileForm'
 import ProfileRadarChart from './ProfileRadarChart'
 import DocumentUploadZone from './DocumentUploadZone'
+import AssessmentHistory from './AssessmentHistory'
 
 export default function SkillPassportPage({ navigate }) {
-  const { t } = useTranslation()
   const dispatch = useDispatch()
   const { data: profile, loading } = useSelector((state) => state.profile)
   const [darkMode, setDarkMode] = useState(true)
@@ -39,10 +38,10 @@ export default function SkillPassportPage({ navigate }) {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            
-            {/* Left Column: Form & Doc Upload */}
-            <div className="lg:col-span-8 flex flex-col gap-6">
-              
+
+            {/* Left Column: Upload + Professional Details */}
+            <div className="lg:col-span-7 flex flex-col gap-6">
+
               {/* Document Processing Card */}
               <div className="bg-slate-800/50 border border-slate-700/60 rounded-2xl p-6 backdrop-blur-sm">
                 <h2 className="text-xl font-heading font-semibold text-white mb-4">Context Injection (CV & JD)</h2>
@@ -69,12 +68,14 @@ export default function SkillPassportPage({ navigate }) {
 
             </div>
 
-            {/* Right Column: Radar Chart */}
-            <div className="lg:col-span-4 flex flex-col gap-6">
-              <div className="bg-slate-800/50 border border-slate-700/60 rounded-2xl p-6 backdrop-blur-sm sticky top-24">
+            {/* Right Column: Radar Chart + Assessment History */}
+            <div className="lg:col-span-5 flex flex-col gap-6">
+              <div className="bg-slate-800/50 border border-slate-700/60 rounded-2xl p-6 backdrop-blur-sm">
                 <h2 className="text-xl font-heading font-semibold text-white mb-4 text-center">Global Capabilities</h2>
                 <ProfileRadarChart />
               </div>
+
+              <AssessmentHistory />
             </div>
 
           </div>

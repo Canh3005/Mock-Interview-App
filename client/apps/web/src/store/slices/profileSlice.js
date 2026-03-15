@@ -14,6 +14,8 @@ const initialState = {
   pollingJobId: null,
   pollingStatus: null, // 'waiting', 'active', 'completed', 'failed'
   pollingResult: null, // JSON result from parsing
+  assessmentHistory: [],
+  historyLoading: false,
 };
 
 const profileSlice = createSlice({
@@ -89,7 +91,26 @@ const profileSlice = createSlice({
       state.pollingJobId = null;
       state.pollingStatus = null;
       state.pollingResult = null;
-    }
+    },
+    fetchAssessmentHistoryRequest: (state) => {
+      state.historyLoading = true;
+    },
+    fetchAssessmentHistorySuccess: (state, action) => {
+      state.historyLoading = false;
+      state.assessmentHistory = action.payload;
+    },
+    fetchAssessmentHistoryFailure: (state) => {
+      state.historyLoading = false;
+    },
+    deleteAssessmentRequest: (state, action) => {
+      // optimistic: remove immediately from list
+      state.assessmentHistory = state.assessmentHistory.filter(
+        (item) => item.id !== action.payload
+      );
+    },
+    deleteAssessmentFailure: () => {
+      // restore on failure by re-fetching (handled in saga)
+    },
   },
 });
 
@@ -98,7 +119,9 @@ export const {
   updateProfileRequest, updateProfileSuccess, updateProfileFailure,
   uploadDocumentRequest, uploadDocumentSuccess, uploadDocumentFailure,
   pollJobStatusRequest, pollJobStatusSuccess, pollJobStatusFailure,
-  resetPollingState
+  resetPollingState,
+  fetchAssessmentHistoryRequest, fetchAssessmentHistorySuccess, fetchAssessmentHistoryFailure,
+  deleteAssessmentRequest, deleteAssessmentFailure,
 } = profileSlice.actions;
 
 export default profileSlice.reducer;

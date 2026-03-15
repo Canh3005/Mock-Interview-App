@@ -1,10 +1,12 @@
-import { call, put, takeLatest, delay, select } from 'redux-saga/effects';
+import { call, put, takeLatest, delay } from 'redux-saga/effects';
 import { profileApi } from '../../api/profile.api';
 import {
   fetchProfileRequest, fetchProfileSuccess, fetchProfileFailure,
   updateProfileRequest, updateProfileSuccess, updateProfileFailure,
   uploadDocumentRequest, uploadDocumentSuccess, uploadDocumentFailure,
-  pollJobStatusRequest, pollJobStatusSuccess, pollJobStatusFailure
+  pollJobStatusRequest, pollJobStatusSuccess, pollJobStatusFailure,
+  fetchAssessmentHistoryRequest, fetchAssessmentHistorySuccess, fetchAssessmentHistoryFailure,
+  deleteAssessmentRequest, deleteAssessmentFailure,
 } from '../slices/profileSlice';
 import { toast } from 'sonner';
 
@@ -78,10 +80,33 @@ function* pollJobStatusSaga(action) {
   }
 }
 
+function* fetchAssessmentHistorySaga() {
+  try {
+    const response = yield call(profileApi.getAssessmentHistory);
+    yield put(fetchAssessmentHistorySuccess(response));
+  } catch {
+    yield put(fetchAssessmentHistoryFailure());
+  }
+}
+
+function* deleteAssessmentSaga(action) {
+  try {
+    yield call(profileApi.deleteAssessment, action.payload);
+    toast.success('Assessment deleted.');
+  } catch {
+    yield put(deleteAssessmentFailure());
+    toast.error('Failed to delete. Please try again.');
+    // Re-fetch to restore optimistic removal
+    yield put(fetchAssessmentHistoryRequest());
+  }
+}
+
 // Watcher Saga
 export function* watchProfileSaga() {
   yield takeLatest(fetchProfileRequest.type, fetchProfileSaga);
   yield takeLatest(updateProfileRequest.type, updateProfileSaga);
   yield takeLatest(uploadDocumentRequest.type, uploadDocumentSaga);
   yield takeLatest(pollJobStatusRequest.type, pollJobStatusSaga);
+  yield takeLatest(fetchAssessmentHistoryRequest.type, fetchAssessmentHistorySaga);
+  yield takeLatest(deleteAssessmentRequest.type, deleteAssessmentSaga);
 }

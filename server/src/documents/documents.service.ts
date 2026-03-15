@@ -262,6 +262,33 @@ export class DocumentsService {
     return { status: 'success', type: 'CV', recordId: cvRecord.id };
   }
 
+  async getAssessmentHistory(userId: string) {
+    const records = await this.jdRepository.find({
+      where: { userId },
+      order: { createdAt: 'DESC' },
+    });
+    return records
+      .filter((r) => r.fitScore !== null && r.fitScore !== undefined)
+      .map((r) => ({
+        id: r.id,
+        originalName: r.originalName,
+        fitScore: r.fitScore,
+        matchReport: r.matchReport as unknown,
+        createdAt: r.createdAt,
+      }));
+  }
+
+  async deleteAssessment(userId: string, assessmentId: string) {
+    const record = await this.jdRepository.findOne({
+      where: { id: assessmentId, userId },
+    });
+    if (!record) {
+      throw new BadRequestException('Assessment not found.');
+    }
+    await this.jdRepository.remove(record);
+    return { message: 'Assessment deleted.' };
+  }
+
   async parseJd(
     userId: string,
     filePath: string,

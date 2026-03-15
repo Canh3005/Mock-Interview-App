@@ -2,6 +2,7 @@ import {
   Controller,
   Post,
   Get,
+  Delete,
   Param,
   UseInterceptors,
   UploadedFile,
@@ -109,6 +110,30 @@ export class DocumentsController {
       file,
       uploadType,
     );
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get JD assessment history for the current user' })
+  @ApiResponse({
+    status: 200,
+    description: 'List of past JD assessments with fitScore and matchReport.',
+  })
+  @Get('history')
+  async getHistory(@Req() req: { user: { id: string } }) {
+    return this.documentsService.getAssessmentHistory(req.user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Delete a JD assessment record' })
+  @ApiResponse({ status: 200, description: 'Assessment deleted.' })
+  @Delete('history/:id')
+  async deleteHistory(
+    @Req() req: { user: { id: string } },
+    @Param('id') id: string,
+  ) {
+    return this.documentsService.deleteAssessment(req.user.id, id);
   }
 
   @UseGuards(JwtAuthGuard)

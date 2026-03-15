@@ -14,4 +14,6 @@ export const profileApi = {
     });
   },
   getJobStatus: (jobId) => axiosClient.get(`/documents/status/${jobId}`),
+  getAssessmentHistory: () => axiosClient.get('/documents/history'),
+  deleteAssessment: (id) => axiosClient.delete(`/documents/history/${id}`),
 };
