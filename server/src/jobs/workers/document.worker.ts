@@ -12,6 +12,7 @@ interface DocumentJobData {
   originalName: string;
   mimeType: string;
   type: DocumentUploadType;
+  extractedText?: string;
 }
 
 @Processor(DOCUMENT_PARSING_QUEUE)
@@ -30,7 +31,8 @@ export class DocumentWorker extends WorkerHost {
       `Processing job ${job.id} of type ${job.name} (Data Type: ${job.data.type})`,
     );
 
-    const { userId, filePath, originalName, mimeType } = job.data;
+    const { userId, filePath, originalName, mimeType, extractedText } =
+      job.data;
 
     switch (job.name as DocumentJobName) {
       case DocumentJobName.PARSE_CV:
@@ -39,6 +41,7 @@ export class DocumentWorker extends WorkerHost {
           filePath,
           originalName,
           mimeType,
+          extractedText,
         );
       case DocumentJobName.PARSE_JD:
         return this.documentsService.parseJd(
@@ -46,6 +49,7 @@ export class DocumentWorker extends WorkerHost {
           filePath,
           originalName,
           mimeType,
+          extractedText,
         );
       default:
         throw new Error(`Unknown job name: ${job.name}`);

@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Type, Schema } from '@google/genai';
 import { GeminiService } from '../ai/gemini.service';
+import { DocumentUploadType } from './enums/document-upload-type.enum.js';
 
 export interface CvJson {
   skills: {
@@ -37,10 +38,21 @@ export interface FitAssessment {
   };
 }
 
+export interface DocumentValidationResult {
+  isRelevant: boolean;
+  detectedType: DocumentUploadType | 'OTHER';
+  confidence: number;
+  reason: string;
+}
+
 export interface IAiProvider {
   extractCvJson(content: string | object): Promise<CvJson>;
   extractJdJson(content: string | object): Promise<JdJson>;
   assessFitScore(cvJson: CvJson, jdJson: JdJson): Promise<FitAssessment>;
+  validateDocumentType(
+    content: string | object,
+    expectedType: DocumentUploadType,
+  ): Promise<DocumentValidationResult>;
 }
 
 @Injectable()
@@ -193,5 +205,71 @@ ${JSON.stringify(jdJson, null, 2)}
     });
 
     return JSON.parse(text || '{}') as FitAssessment;
+  }
+
+  async validateDocumentType(
+    content: string | object,
+    expectedType: DocumentUploadType,
+  ): Promise<DocumentValidationResult> {
+    this.logger.log(
+      `Validating uploaded document against expected type ${expectedType}...`,
+    );
+
+    const validationSchema: Schema = {
+      type: Type.OBJECT,
+      properties: {
+        isRelevant: { type: Type.BOOLEAN },
+        detectedType: { type: Type.STRING },
+        confidence: { type: Type.INTEGER },
+        reason: { type: Type.STRING },
+      },
+      required: ['isRelevant', 'detectedType', 'confidence', 'reason'],
+    };
+
+    const promptText = `Classify the uploaded hiring document.
+Expected type: ${expectedType}.
+
+Rules:
+- Return detectedType as exactly one of: CV, JD, OTHER.
+- A CV is a candidate resume/profile containing personal career history, skills, experience, education, projects, certifications, contact details, or achievements.
+- A JD is a hiring document containing role overview, responsibilities, required skills, qualifications, benefits, company intro, or candidate requirements.
+- If the text is unrelated, too generic, mostly blank, corrupted, or not clearly a CV/JD, use detectedType OTHER and isRelevant false.
+- If detectedType does not match expected type, set isRelevant false.
+- Keep reason short and concrete.`;
+
+    const parts =
+      typeof content === 'string'
+        ? [{ text: `${promptText}\n\nDocument text:\n${content}` }]
+        : [content, { text: promptText }];
+
+    const text = await this.gemini.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: parts,
+      config: {
+        responseMimeType: 'application/json',
+        responseSchema: validationSchema,
+        temperature: 0,
+      },
+    });
+
+    const parsed = JSON.parse(
+      text || '{}',
+    ) as Partial<DocumentValidationResult>;
+    const normalizedType =
+      parsed.detectedType === DocumentUploadType.CV ||
+      parsed.detectedType === DocumentUploadType.JD
+        ? parsed.detectedType
+        : 'OTHER';
+
+    return {
+      isRelevant: Boolean(parsed.isRelevant),
+      detectedType: normalizedType,
+      confidence: Number.isFinite(parsed.confidence)
+        ? Math.max(0, Math.min(100, Number(parsed.confidence)))
+        : 0,
+      reason:
+        parsed.reason?.trim() ||
+        'The document content does not match the expected format.',
+    };
   }
 }

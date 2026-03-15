@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bullmq';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Queue } from 'bullmq';
@@ -11,7 +11,12 @@ import Redis from 'ioredis';
 import { DocumentUploadType } from './enums/document-upload-type.enum.js';
 import { DocumentJobName } from './enums/document-job-name.enum';
 import { DOCUMENT_PARSING_QUEUE } from '../jobs/jobs.constants';
-import { DocumentsAiService, CvJson } from './documents.ai.service';
+import {
+  DocumentsAiService,
+  CvJson,
+  DocumentValidationResult,
+} from './documents.ai.service';
+import { CV_SIGNALS, JD_SIGNALS } from './constants/document-signals.constants';
 import { UserCv } from '../users/entities/user-cv.entity';
 import { JdAnalysis } from '../users/entities/jd-analysis.entity';
 import { UserProfile } from '../users/entities/user-profile.entity';
@@ -40,12 +45,25 @@ export class DocumentsService {
     file: Express.Multer.File,
     type: DocumentUploadType,
   ) {
+    const extractedText = await this.extractTextFromFile(
+      file.path,
+      file.mimetype,
+      file.originalname,
+    );
+    console.log('Extracted text:', extractedText);
+    await this.validateUploadedDocumentContent(
+      extractedText,
+      type,
+      file.originalname,
+    );
+
     const jobData = {
       userId,
       filePath: file.path,
       originalName: file.originalname,
       mimeType: file.mimetype,
       type,
+      extractedText,
     };
 
     const jobName =
@@ -116,18 +134,76 @@ export class DocumentsService {
     return pdfData.text;
   }
 
+  private normalizeExtractedText(text: string): string {
+    return text.replace(/\s+/g, ' ').trim();
+  }
+
+  private countKeywordHits(text: string, signals: string[]): number {
+    return signals.filter((signal) => text.includes(signal)).length;
+  }
+
+  private buildValidationErrorMessage(
+    expectedType: DocumentUploadType,
+    validation: DocumentValidationResult,
+  ): string {
+    if (validation.detectedType === 'OTHER') {
+      return `The uploaded file does not look like a valid ${expectedType}. ${validation.reason}`;
+    }
+
+    return `The uploaded file appears to be a ${validation.detectedType}, not a ${expectedType}. ${validation.reason}`;
+  }
+
+  private async validateUploadedDocumentContent(
+    extractedText: string,
+    expectedType: DocumentUploadType,
+    originalName: string,
+  ): Promise<void> {
+    const normalizedText = this.normalizeExtractedText(extractedText);
+
+    if (normalizedText.length < 120) {
+      throw new BadRequestException(
+        'The uploaded file does not contain enough readable text to verify it as a CV or JD.',
+      );
+    }
+
+    const lowerText = normalizedText.toLowerCase();
+    const cvHits = this.countKeywordHits(lowerText, CV_SIGNALS);
+    const jdHits = this.countKeywordHits(lowerText, JD_SIGNALS);
+    console.log(
+      `Keyword hits for ${originalName}: CV signals=${cvHits}, JD signals=${jdHits}`,
+    );
+    if (cvHits === 0 && jdHits === 0) {
+      throw new BadRequestException(
+        'The uploaded file does not appear to be a CV or a job description.',
+      );
+    }
+
+    const validation = await this.aiService.validateDocumentType(
+      normalizedText.slice(0, 12000),
+      expectedType,
+    );
+
+    if (!validation.isRelevant) {
+      this.logger.warn(
+        `Rejected document ${originalName}. Expected ${expectedType}, detected ${validation.detectedType}, confidence ${validation.confidence}.`,
+      );
+      throw new BadRequestException(
+        this.buildValidationErrorMessage(expectedType, validation),
+      );
+    }
+  }
+
   async parseCv(
     userId: string,
     filePath: string,
     originalName: string,
     mimeType: string,
+    extractedText?: string,
   ): Promise<{ status: string; type: string; recordId: string }> {
-    const extractedText = await this.extractTextFromFile(
-      filePath,
-      mimeType,
-      originalName,
-    );
-    const cvJson = await this.aiService.extractCvJson(extractedText);
+    const documentText =
+      extractedText ||
+      (await this.extractTextFromFile(filePath, mimeType, originalName));
+    const cvJson = await this.aiService.extractCvJson(documentText);
     this.logger.log('CV JSON extracted successfully');
 
     let cvRecord = await this.cvRepository.findOne({ where: { userId } });
@@ -191,6 +267,7 @@ export class DocumentsService {
     filePath: string,
     originalName: string,
     mimeType: string,
+    extractedText?: string,
   ): Promise<{
     status: string;
     type: string;
@@ -198,12 +275,10 @@ export class DocumentsService {
     fitScore?: number;
     gapAnalysis: unknown;
   }> {
-    const extractedText = await this.extractTextFromFile(
-      filePath,
-      mimeType,
-      originalName,
-    );
-    const jdJson = await this.aiService.extractJdJson(extractedText);
+    const documentText =
+      extractedText ||
+      (await this.extractTextFromFile(filePath, mimeType, originalName));
+    const jdJson = await this.aiService.extractJdJson(documentText);
 
     let fitScore: number | undefined;
     let matchReport: unknown;
