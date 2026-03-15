@@ -9,6 +9,7 @@ import { ProblemsModule } from './problems/problems.module';
 import { TestCasesModule } from './test-cases/test-cases.module';
 import { JudgeModule } from './judge/judge.module';
 import { BullModule } from '@nestjs/bullmq';
+import { AiModule } from './ai/ai.module';
 import { DocumentsModule } from './documents/documents.module';
 import { JobsModule } from './jobs/jobs.module';
 
@@ -42,6 +43,7 @@ import { JobsModule } from './jobs/jobs.module';
       }),
       inject: [ConfigService],
     }),
+    AiModule,
     UsersModule,
     AuthModule,
     ProblemsModule,

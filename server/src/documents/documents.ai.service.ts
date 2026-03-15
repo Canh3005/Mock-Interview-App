@@ -1,25 +1,55 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { GoogleGenAI, Type, Schema } from '@google/genai';
+import { Type, Schema } from '@google/genai';
+import { GeminiService } from '../ai/gemini.service';
+
+export interface CvJson {
+  skills: {
+    languages: string[];
+    frameworks: string[];
+    tools: string[];
+  };
+  experiences: Array<{
+    company: string;
+    role: string;
+    duration: string;
+    responsibilities: string[];
+  }>;
+  education: Array<{
+    degree: string;
+    institution: string;
+    year: string;
+  }>;
+}
+
+export interface JdJson {
+  role: string;
+  required_skills: string[];
+  nice_to_have_skills?: string[];
+  minimum_experience_years?: number;
+  key_responsibilities: string[];
+}
+
+export interface FitAssessment {
+  fit_score: number;
+  gap_analysis: {
+    missing_skills: string[];
+    suggestions: string[];
+  };
+}
 
 export interface IAiProvider {
-  extractCvJson(content: any): Promise<any>;
-  extractJdJson(content: any): Promise<any>;
-  assessFitScore(cvJson: any, jdJson: any): Promise<any>;
+  extractCvJson(content: string | object): Promise<CvJson>;
+  extractJdJson(content: string | object): Promise<JdJson>;
+  assessFitScore(cvJson: CvJson, jdJson: JdJson): Promise<FitAssessment>;
 }
 
 @Injectable()
 export class DocumentsAiService implements IAiProvider {
   private readonly logger = new Logger(DocumentsAiService.name);
-  private readonly ai: GoogleGenAI;
 
-  constructor(private configService: ConfigService) {
-    this.ai = new GoogleGenAI({
-      apiKey: this.configService.get<string>('GEMINI_API_KEY'),
-    });
-  }
+  constructor(private gemini: GeminiService) {}
 
-  async extractCvJson(content: any): Promise<any> {
+  async extractCvJson(content: string | object): Promise<CvJson> {
     this.logger.log('Extracting CV JSON via Gemini...');
 
     const cvSchema: Schema = {
@@ -65,14 +95,12 @@ export class DocumentsAiService implements IAiProvider {
 
     const promptText = `Extract the candidate's professional information from this document and return it EXCLUSIVELY in the requested JSON structure. Ignore any fluff.`;
 
-    let parts: any[] = [];
-    if (typeof content === 'string') {
-      parts = [{ text: promptText + `\n\nText:\n${content}` }];
-    } else {
-      parts = [content, { text: promptText }];
-    }
+    const parts =
+      typeof content === 'string'
+        ? [{ text: `${promptText}\n\nText:\n${content}` }]
+        : [content, { text: promptText }];
 
-    const response = await this.ai.models.generateContent({
+    const text = await this.gemini.generateContent({
       model: 'gemini-2.5-flash',
       contents: parts,
       config: {
@@ -82,10 +110,10 @@ export class DocumentsAiService implements IAiProvider {
       },
     });
 
-    return JSON.parse(response.text || '{}');
+    return JSON.parse(text || '{}') as CvJson;
   }
 
-  async extractJdJson(content: any): Promise<any> {
+  async extractJdJson(content: string | object): Promise<JdJson> {
     this.logger.log('Extracting JD JSON via Gemini...');
 
     const jdSchema: Schema = {
@@ -105,14 +133,12 @@ export class DocumentsAiService implements IAiProvider {
 
     const promptText = `Extract the core requirements from this Job Description (JD). Output ONLY in the requested JSON structure.`;
 
-    let parts: any[] = [];
-    if (typeof content === 'string') {
-      parts = [{ text: promptText + `\n\nJD:\n${content}` }];
-    } else {
-      parts = [content, { text: promptText }];
-    }
+    const parts =
+      typeof content === 'string'
+        ? [{ text: `${promptText}\n\nJD:\n${content}` }]
+        : [content, { text: promptText }];
 
-    const response = await this.ai.models.generateContent({
+    const text = await this.gemini.generateContent({
       model: 'gemini-2.5-flash',
       contents: parts,
       config: {
@@ -122,10 +148,10 @@ export class DocumentsAiService implements IAiProvider {
       },
     });
 
-    return JSON.parse(response.text || '{}');
+    return JSON.parse(text || '{}') as JdJson;
   }
 
-  async assessFitScore(cvJson: any, jdJson: any): Promise<any> {
+  async assessFitScore(cvJson: CvJson, jdJson: JdJson): Promise<FitAssessment> {
     this.logger.log('Assessing Fit Score via Gemini...');
 
     const assessSchema: Schema = {
@@ -156,16 +182,16 @@ Expected Job Description (JD):
 ${JSON.stringify(jdJson, null, 2)}
 `;
 
-    const response = await this.ai.models.generateContent({
+    const text = await this.gemini.generateContent({
       model: 'gemini-2.5-flash',
       contents: prompt,
       config: {
         responseMimeType: 'application/json',
         responseSchema: assessSchema,
-        temperature: 0.2, // Let it be a bit more analytical
+        temperature: 0.2,
       },
     });
 
-    return JSON.parse(response.text || '{}');
+    return JSON.parse(text || '{}') as FitAssessment;
   }
 }

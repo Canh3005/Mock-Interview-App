@@ -1,17 +1,12 @@
 import { Module } from '@nestjs/common';
 import { BullModule } from '@nestjs/bullmq';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { DocumentWorker } from './workers/document.worker';
 import { DocumentsModule } from '../documents/documents.module';
-import { UserCv } from '../users/entities/user-cv.entity';
-import { JdAnalysis } from '../users/entities/jd-analysis.entity';
+import { DOCUMENT_PARSING_QUEUE } from './jobs.constants';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([UserCv, JdAnalysis]),
-    BullModule.registerQueue({
-      name: 'document-parsing',
-    }),
+    BullModule.registerQueueAsync({ name: DOCUMENT_PARSING_QUEUE }),
     DocumentsModule,
   ],
   providers: [DocumentWorker],
