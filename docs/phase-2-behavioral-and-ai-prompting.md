@@ -1,5 +1,7 @@
 # Phase 2: Mở rộng Vòng thi Hành vi & Kỹ năng sử dụng AI (Behavioral & AI Prompting)
 
+> **Chi tiết triển khai đã được tách thành các Epic file riêng trong [`docs/phase-2/`](./phase-2/README.md)**
+
 ## Mục tiêu
 Tích hợp các vòng thi đánh giá kỹ năng mềm (Culture Fit, Giao tiếp) và kỹ năng thời đại mới (sử dụng AI trong Pair Programming). Các tính năng này sử dụng nền tảng tương tác AI On-demand đã xây dựng từ Phase 1 và nâng cấp khả năng tương tác tự nhiên, mớm lời (tương tác như Facilitator) và phân tích luồng suy nghĩ.
 
