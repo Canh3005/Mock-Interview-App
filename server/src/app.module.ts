@@ -13,6 +13,7 @@ import { AiModule } from './ai/ai.module';
 import { DocumentsModule } from './documents/documents.module';
 import { JobsModule } from './jobs/jobs.module';
 import { InterviewModule } from './interview/interview.module';
+// import { BehavioralModule } from './behavioral/behavioral.module';
 
 @Module({
   imports: [
@@ -31,6 +32,10 @@ import { InterviewModule } from './interview/interview.module';
           configService.get<string>('POSTGRES_DB') || 'mock_interview_db',
         autoLoadEntities: true,
         synchronize: true, // TODO: Set to false in production and use migrations
+        ssl:
+          configService.get('DB_SSL') === 'true'
+            ? { rejectUnauthorized: false }
+            : false,
       }),
       inject: [ConfigService],
     }),
@@ -53,6 +58,7 @@ import { InterviewModule } from './interview/interview.module';
     DocumentsModule,
     JobsModule,
     InterviewModule,
+    // BehavioralModule,
   ],
   controllers: [AppController],
   providers: [AppService],
