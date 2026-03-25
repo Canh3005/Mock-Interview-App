@@ -13,7 +13,7 @@ import { AiModule } from './ai/ai.module';
 import { DocumentsModule } from './documents/documents.module';
 import { JobsModule } from './jobs/jobs.module';
 import { InterviewModule } from './interview/interview.module';
-// import { BehavioralModule } from './behavioral/behavioral.module';
+import { BehavioralModule } from './behavioral/behavioral.module';
 
 @Module({
   imports: [
@@ -58,7 +58,7 @@ import { InterviewModule } from './interview/interview.module';
     DocumentsModule,
     JobsModule,
     InterviewModule,
-    // BehavioralModule,
+    BehavioralModule,
   ],
   controllers: [AppController],
   providers: [AppService],

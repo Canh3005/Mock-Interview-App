@@ -3,6 +3,7 @@ import authSaga from './authSaga';
 import { watchAdminProblemsSaga } from './adminProblemsSaga';
 import { watchProfileSaga } from './profileSaga';
 import { watchInterviewSetupSaga } from './interviewSetupSaga';
+import { watchBehavioralSaga } from './behavioralSaga';
 
 export default function* rootSaga() {
   yield all([
@@ -10,5 +11,6 @@ export default function* rootSaga() {
     fork(watchAdminProblemsSaga),
     fork(watchProfileSaga),
     fork(watchInterviewSetupSaga),
+    fork(watchBehavioralSaga),
   ]);
 }

@@ -11,6 +11,7 @@ import AdminProblemsPage from './components/admin/AdminProblemsPage'
 import AdminTestCasesPage from './components/admin/AdminTestCasesPage'
 import SkillPassportPage from './components/dashboard/profile/SkillPassportPage'
 import InterviewSetupFlow from './components/interview-setup/InterviewSetupFlow'
+import BehavioralRoomPage from './components/behavioral-room/BehavioralRoomPage'
 import { Loader2 } from 'lucide-react'
 
 export default function App() {
@@ -18,6 +19,7 @@ export default function App() {
   
   const dispatch = useDispatch();
   const { isAuthenticating, isAuthenticated, user } = useSelector((state) => state.auth);
+  const interviewSession = useSelector((state) => state.interviewSetup.session);
 
   useEffect(() => {
     // Attempt silent refresh on mount
@@ -33,7 +35,7 @@ export default function App() {
 
   const navigate = (target) => {
     // Protect private routes
-    if ((target === 'dashboard' || target === 'interview-room' || target === 'interview-setup' || target.startsWith('admin')) && !isAuthenticated && !isAuthenticating) {
+    if ((target === 'dashboard' || target === 'interview-room' || target === 'behavioral-room' || target === 'interview-setup' || target.startsWith('admin')) && !isAuthenticated && !isAuthenticating) {
       setPage('login');
       return;
     }
@@ -66,6 +68,14 @@ export default function App() {
   }
   if (page === 'interview-room') {
     return <InterviewRoomPage navigate={navigate} />
+  }
+  if (page === 'behavioral-room') {
+    return (
+      <BehavioralRoomPage
+        navigate={navigate}
+        interviewSessionId={interviewSession?.sessionId}
+      />
+    )
   }
   if (page === 'dashboard') {
     return <DashboardPage navigate={navigate} />

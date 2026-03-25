@@ -102,7 +102,7 @@ function LoadingScreen({ message }) {
 // ─── Main orchestrator ────────────────────────────────────────────────────────
 export default function InterviewSetupFlow({ navigate }) {
   const dispatch = useDispatch()
-  const { step, missing, summary, loading, session } = useSelector(
+  const { step, missing, summary, loading, session, selectedRounds } = useSelector(
     (s) => s.interviewSetup,
   )
 
@@ -114,12 +114,16 @@ export default function InterviewSetupFlow({ navigate }) {
     }
   }, [dispatch])
 
-  // Navigate to interview room when session is created
+  // Navigate to the correct room when session is created
   useEffect(() => {
     if (step === 'done' && session) {
-      navigate('interview-room')
+      if (selectedRounds.includes('hr_behavioral')) {
+        navigate('behavioral-room')
+      } else {
+        navigate('interview-room')
+      }
     }
-  }, [step, session, navigate])
+  }, [step, session, selectedRounds, navigate])
 
   const handleClose = () => {
     dispatch(resetSetup())

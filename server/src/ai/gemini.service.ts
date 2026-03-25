@@ -20,4 +20,12 @@ export class GeminiService {
     const response = await this.ai.models.generateContent(params);
     return response.text ?? '';
   }
+
+  generateContentStream(params: {
+    model: string;
+    contents: any;
+    config?: any;
+  }) {
+    return this.ai.models.generateContentStream(params);
+  }
 }
