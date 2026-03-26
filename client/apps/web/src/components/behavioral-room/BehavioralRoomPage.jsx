@@ -232,9 +232,31 @@ export default function BehavioralRoomPage({ navigate, interviewSessionId }) {
           </div>
         </main>
 
-        {/* Right: STAR Guide */}
+        {/* Right: STAR Guide or Context Panel */}
         <aside className="w-48 flex-shrink-0 border-l border-slate-800 overflow-y-auto px-2 hidden lg:block">
-          <StarGuidePanel starStatus={starStatus} practiceMode />
+          {[2, 3].includes(currentStage) ? (
+            <div className="flex flex-col gap-2 py-4 px-1">
+              <p className="text-xs text-slate-500 uppercase tracking-wider font-medium">Gợi nhớ</p>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Hãy giải thích <span className="text-amber-400 font-semibold">trade-offs</span>, không chỉ dừng ở cách dùng.
+              </p>
+              <p className="text-xs text-slate-400 leading-relaxed mt-1">
+                Dẫn ví dụ từ <span className="text-blue-400 font-semibold">thực tế dự án</span> của bạn khi có thể.
+              </p>
+            </div>
+          ) : currentStage === 6 ? (
+            <div className="flex flex-col gap-2 py-4 px-1">
+              <p className="text-xs text-slate-500 uppercase tracking-wider font-medium">Gợi nhớ</p>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Câu hỏi tốt thể hiện bạn đã <span className="text-emerald-400 font-semibold">research về công ty</span>.
+              </p>
+              <p className="text-xs text-slate-400 leading-relaxed mt-1">
+                Ưu tiên hỏi về <span className="text-blue-400 font-semibold">roadmap kỹ thuật</span>, technical debt, hoặc cách team đưa ra quyết định.
+              </p>
+            </div>
+          ) : (
+            <StarGuidePanel starStatus={starStatus} practiceMode />
+          )}
         </aside>
       </div>
     </div>

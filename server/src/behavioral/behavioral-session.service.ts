@@ -20,12 +20,17 @@ import { PromptBuilderService, STAGE_NAMES } from './prompt-builder.service';
 import { AIFacilitatorService, TurnContext } from './ai-facilitator.service';
 import { MessageQualityService } from './message-quality.service';
 import { ScoringService } from './scoring.service';
+import { QuestionOrchestratorService } from './question-orchestrator.service';
 import { InterviewSession } from '../interview/entities/interview-session.entity';
 
 const REDIRECT_MESSAGES = {
   obvious:
     'Mình chưa nhận được câu trả lời rõ ràng. Bạn có thể chia sẻ suy nghĩ của mình về câu hỏi vừa rồi không?',
-  thirdOffTopic:
+  offTopicRepeated:
+    'Câu trả lời có vẻ chưa liên quan đến câu hỏi. Để nhắc lại — ',
+  offTopicBridge:
+    'Câu hỏi này có vẻ khó, chúng ta tiếp tục nhé. Nếu muốn quay lại bạn có thể cho tôi biết.',
+  offTopicPersistent:
     'Chúng ta sẽ chuyển sang câu hỏi tiếp theo. Hãy cố gắng tập trung hơn ở các phần sau nhé.',
 };
 
@@ -46,6 +51,7 @@ export class BehavioralSessionService {
     private aiFacilitator: AIFacilitatorService,
     private qualityService: MessageQualityService,
     private scoringService: ScoringService,
+    private orchestrator: QuestionOrchestratorService,
   ) {
     this.redisClient = new Redis({
       host: this.configService.get('REDIS_HOST') || '127.0.0.1',
@@ -87,7 +93,11 @@ export class BehavioralSessionService {
 
     await this.sessionRepo.save(behavioralSession);
 
-    const firstQuestion = this.promptBuilder.buildFirstQuestion(level, 1);
+    const firstQuestion = await this.promptBuilder.buildFirstQuestion(
+      level,
+      1,
+      interviewSession.cvContextSnapshot ?? '',
+    );
 
     // Log the first AI message
     await this.logRepo.save(
@@ -154,7 +164,7 @@ export class BehavioralSessionService {
       return;
     }
 
-    // ── Get/rebuild system prompt ──────────────────────────────────────────
+    // ── Get/rebuild base system prompt ────────────────────────────────────
     let systemPrompt = await this.redisClient.get(
       `system_prompt:${sessionId}:${stage}`,
     );
@@ -164,12 +174,17 @@ export class BehavioralSessionService {
       : undefined;
 
     if (!systemPrompt) {
+      const contextBlock = this.promptBuilder.buildCandidateContextBlock(
+        session.stageSummaries ?? {},
+        stage,
+      );
       systemPrompt = this.promptBuilder.buildSystemPrompt(
         level,
         interviewSession?.cvContextSnapshot ?? '',
         interviewSession?.jdContextSnapshot ?? '',
         stage,
         truncationNote,
+        contextBlock,
       );
       await this.redisClient.setex(
         `system_prompt:${sessionId}:${stage}`,
@@ -178,6 +193,22 @@ export class BehavioralSessionService {
       );
     } else if (truncationNote) {
       systemPrompt += `\n[Lưu ý hệ thống: ${truncationNote}]`;
+    }
+
+    // ── Inject fresh anchor instruction ───────────────────────────────────
+    const coveredForStage = session.coveredCompetencies?.[String(stage)] ?? [];
+    const nextAnchor = this.orchestrator.getNextAnchor(
+      stage,
+      level,
+      coveredForStage,
+    );
+    if (nextAnchor) {
+      const anchorInstruction = this.orchestrator.buildAnchorInstruction(
+        nextAnchor,
+        interviewSession?.cvContextSnapshot ?? '',
+        '',
+      );
+      systemPrompt += `\n\n${anchorInstruction}`;
     }
 
     // ── Build history for this stage ──────────────────────────────────────
@@ -193,19 +224,36 @@ export class BehavioralSessionService {
         parts: [{ text: l.content }],
       }));
 
-    // ── Off-topic counter check ──────────────────────────────────────────
+    // ── Off-topic counter check (4-strike logic) ─────────────────────────
     const offTopicCount =
       this.qualityService.countConsecutiveOffTopic(stageLogs);
+
+    // Strike 3 (offTopicCount === 2): bridge message, chuyển stage nhưng KHÔNG mark INCOMPLETE
+    if (offTopicCount === 2) {
+      await this.saveUserLog(sessionId, stage, level, content, dto, [
+        ...flags,
+        'OFF_TOPIC_BRIDGE',
+      ]);
+      await this.saveAiLog(sessionId, stage, REDIRECT_MESSAGES.offTopicBridge, [
+        'OFF_TOPIC_BRIDGE',
+      ]);
+      this.sendStaticSSE(res, REDIRECT_MESSAGES.offTopicBridge);
+      return;
+    }
+
+    // Strike 4+ (offTopicCount >= 3): mark INCOMPLETE
     if (offTopicCount >= 3) {
-      // Force move on — mark stage incomplete
       await this.saveUserLog(sessionId, stage, level, content, dto, [
         ...flags,
         'OFF_TOPIC_PERSISTENT',
       ]);
-      await this.saveAiLog(sessionId, stage, REDIRECT_MESSAGES.thirdOffTopic, [
-        'OFF_TOPIC_PERSISTENT',
-      ]);
-      this.sendStaticSSE(res, REDIRECT_MESSAGES.thirdOffTopic);
+      await this.saveAiLog(
+        sessionId,
+        stage,
+        REDIRECT_MESSAGES.offTopicPersistent,
+        ['OFF_TOPIC_PERSISTENT'],
+      );
+      this.sendStaticSSE(res, REDIRECT_MESSAGES.offTopicPersistent);
       return;
     }
 
@@ -225,6 +273,7 @@ export class BehavioralSessionService {
         systemPrompt,
         history,
         userMessage: content,
+        stage,
       }),
     ]);
 
@@ -233,6 +282,27 @@ export class BehavioralSessionService {
       relevanceResult.relevant,
       offTopicCount,
     );
+
+    // ── Advance anchor every 2 user turns ────────────────────────────────
+    if (
+      nextAnchor &&
+      !aiFlags.includes('OFF_TOPIC_FIRST') &&
+      !aiFlags.includes('OFF_TOPIC_REPEATED')
+    ) {
+      const userTurnCount =
+        stageLogs.filter((l) => l.role === 'USER').length + 1;
+      if (userTurnCount % 2 === 0) {
+        const currentCovered =
+          session.coveredCompetencies?.[String(stage)] ?? [];
+        if (!currentCovered.includes(nextAnchor.id)) {
+          session.coveredCompetencies = {
+            ...(session.coveredCompetencies ?? {}),
+            [String(stage)]: [...currentCovered, nextAnchor.id],
+          };
+          await this.sessionRepo.save(session);
+        }
+      }
+    }
 
     // ── Save AI response log ─────────────────────────────────────────────
     const aiLog = this.logRepo.create({
@@ -269,9 +339,13 @@ export class BehavioralSessionService {
       where: { id: session.interviewSessionId },
     });
 
-    const firstQuestion = this.promptBuilder.buildFirstQuestion(
+    const cv = interviewSession?.cvContextSnapshot ?? '';
+    const jd = interviewSession?.jdContextSnapshot ?? '';
+
+    const firstQuestion = await this.promptBuilder.buildFirstQuestion(
       session.candidateLevel,
       newStage,
+      cv,
     );
 
     // Log the opening question for new stage
@@ -286,18 +360,95 @@ export class BehavioralSessionService {
       }),
     );
 
-    // Build and cache new system prompt
+    const prevStage = newStage - 1;
+
+    // Build initial system prompt for new stage (no difficulty signal yet)
+    const contextBlock = this.promptBuilder.buildCandidateContextBlock(
+      session.stageSummaries ?? {},
+      newStage,
+    );
     const systemPrompt = this.promptBuilder.buildSystemPrompt(
       session.candidateLevel,
-      interviewSession?.cvContextSnapshot ?? '',
-      interviewSession?.jdContextSnapshot ?? '',
+      cv,
+      jd,
       newStage,
+      undefined,
+      contextBlock,
     );
     await this.redisClient.setex(
       `system_prompt:${sessionId}:${newStage}`,
       7200,
       systemPrompt,
     );
+
+    // Async: summarise previous stage → assess difficulty → re-cache prompt
+    void (async () => {
+      try {
+        const prevLogs = await this.logRepo.find({
+          where: { behavioralSessionId: sessionId, stageNumber: prevStage },
+          order: { timestamp: 'ASC' },
+        });
+        const transcript = prevLogs
+          .filter((l) => l.role !== 'SYSTEM')
+          .map((l) => `${l.role === 'USER' ? 'Ứng viên' : 'AI'}: ${l.content}`)
+          .join('\n');
+
+        const summary = await this.promptBuilder.buildStageSummary(
+          prevStage,
+          STAGE_NAMES[prevStage],
+          transcript,
+        );
+
+        if (summary) {
+          const freshSession = await this.sessionRepo.findOne({
+            where: { id: sessionId },
+          });
+          if (freshSession) {
+            freshSession.stageSummaries = {
+              ...(freshSession.stageSummaries ?? {}),
+              [String(prevStage)]: summary,
+            };
+            await this.sessionRepo.save(freshSession);
+
+            // Re-assess difficulty and rebuild cached prompt
+            const signal =
+              await this.orchestrator.assessStagePerformance(summary);
+            const DIFFICULTY_SIGNALS = {
+              strong:
+                '\nỨng viên đang thể hiện tốt. Tăng độ khó: hỏi về edge cases phức tạp hơn, kỳ vọng câu trả lời có số liệu cụ thể, không gợi ý thêm.',
+              average: '',
+              weak: '\nỨng viên đang gặp khó khăn. Hỏi câu foundation trước, cho thêm thời gian, dùng câu hỏi gợi mở thay vì thách thức trực tiếp.',
+            };
+            const difficultySignal = DIFFICULTY_SIGNALS[signal];
+
+            const updatedContextBlock =
+              this.promptBuilder.buildCandidateContextBlock(
+                freshSession.stageSummaries,
+                newStage,
+              );
+            const updatedPrompt = this.promptBuilder.buildSystemPrompt(
+              freshSession.candidateLevel,
+              cv,
+              jd,
+              newStage,
+              undefined,
+              updatedContextBlock,
+              difficultySignal,
+            );
+            await this.redisClient.setex(
+              `system_prompt:${sessionId}:${newStage}`,
+              7200,
+              updatedPrompt,
+            );
+          }
+        }
+      } catch (err) {
+        this.logger.error(
+          `Async summary/difficulty failed for stage ${prevStage}`,
+          err,
+        );
+      }
+    })();
 
     return {
       currentStage: newStage,

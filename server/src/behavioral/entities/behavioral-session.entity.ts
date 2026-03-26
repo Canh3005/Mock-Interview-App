@@ -40,4 +40,12 @@ export class BehavioralSession {
 
   @Column({ type: 'timestamptz', nullable: true })
   completedAt: Date | null;
+
+  // { "1": ["CULT_LEARNING", "CULT_CONFLICT"], "2": ["TECH_UNDERSTANDING"], ... }
+  @Column({ type: 'jsonb', default: {} })
+  coveredCompetencies: Record<string, string[]>;
+
+  // { "1": "Stage 1 summary...", "2": "Stage 2 summary...", ... }
+  @Column({ type: 'jsonb', default: {} })
+  stageSummaries: Record<string, string>;
 }

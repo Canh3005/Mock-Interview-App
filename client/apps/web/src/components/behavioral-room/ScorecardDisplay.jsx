@@ -12,7 +12,7 @@ import {
   Cell,
   Tooltip,
 } from 'recharts'
-import { ChevronDown, ChevronUp, AlertTriangle, Star, Home, RotateCcw } from 'lucide-react'
+import { ChevronDown, ChevronUp, AlertTriangle, Star, Home, RotateCcw, CheckCircle2, XCircle } from 'lucide-react'
 
 const VERDICT_CONFIG = {
   SENIOR_PASS: { label: 'Senior – Đạt', color: 'text-purple-400', bg: 'bg-purple-500/10 border-purple-500/40' },
@@ -181,6 +181,88 @@ export default function ScorecardDisplay({ scoreData, navigate }) {
           <AccordionStage key={key} stageKey={key} data={data} />
         ))}
       </div>
+
+      {/* Consistency check warning */}
+      {scoreData.consistency_check?.has_contradictions && (
+        <div className="bg-red-500/10 border border-red-500/30 rounded-2xl p-4 flex gap-3">
+          <AlertTriangle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
+          <div>
+            <p className="text-xs font-semibold text-red-400 mb-1">
+              Mâu thuẫn giữa các giai đoạn
+              {scoreData.consistency_check.impact !== 'none' && (
+                <span className="ml-2 text-[10px] px-1.5 py-0.5 rounded bg-red-500/20">
+                  {scoreData.consistency_check.impact === 'significant' ? 'Nghiêm trọng' : 'Nhỏ'}
+                </span>
+              )}
+            </p>
+            <p className="text-xs text-slate-400 leading-relaxed">{scoreData.consistency_check.detail}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Communication quality */}
+      {scoreData.communication_quality && (
+        <div className="bg-slate-800/50 border border-slate-700 rounded-2xl p-4">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-sm font-semibold text-slate-300">Chất lượng giao tiếp</h2>
+            <span className={`text-sm font-bold ${
+              (scoreData.communication_quality.score ?? 0) >= 80 ? 'text-emerald-400' :
+              (scoreData.communication_quality.score ?? 0) >= 60 ? 'text-amber-400' : 'text-red-400'
+            }`}>
+              {scoreData.communication_quality.score ?? 0}/100
+            </span>
+          </div>
+          <div className="flex flex-col gap-2">
+            {[
+              { label: 'Độ rõ ràng', value: scoreData.communication_quality.clarity },
+              { label: 'Súc tích', value: scoreData.communication_quality.conciseness },
+              { label: 'Cấu trúc', value: scoreData.communication_quality.structure },
+            ].map(({ label, value }) => value ? (
+              <div key={label}>
+                <p className="text-[10px] text-slate-500 uppercase tracking-wider mb-0.5">{label}</p>
+                <p className="text-xs text-slate-400 leading-relaxed">{value}</p>
+              </div>
+            ) : null)}
+          </div>
+        </div>
+      )}
+
+      {/* CV claim verification */}
+      {scoreData.cv_claim_verification && (
+        <div className="bg-slate-800/50 border border-slate-700 rounded-2xl p-4">
+          <h2 className="text-sm font-semibold text-slate-300 mb-3">Kiểm chứng CV</h2>
+          {scoreData.cv_claim_verification.verified?.length > 0 && (
+            <div className="mb-3">
+              <p className="text-[10px] text-emerald-400 uppercase tracking-wider font-semibold mb-1.5">
+                ✓ Đã xác nhận
+              </p>
+              <ul className="flex flex-col gap-1">
+                {scoreData.cv_claim_verification.verified.map((item, i) => (
+                  <li key={i} className="flex items-start gap-2 text-xs text-slate-400">
+                    <CheckCircle2 className="w-3 h-3 text-emerald-400 flex-shrink-0 mt-0.5" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {scoreData.cv_claim_verification.unverified_or_inflated?.length > 0 && (
+            <div>
+              <p className="text-[10px] text-amber-400 uppercase tracking-wider font-semibold mb-1.5">
+                ⚠ Chưa xác minh / Có thể thổi phồng
+              </p>
+              <ul className="flex flex-col gap-1">
+                {scoreData.cv_claim_verification.unverified_or_inflated.map((item, i) => (
+                  <li key={i} className="flex items-start gap-2 text-xs text-slate-400">
+                    <XCircle className="w-3 h-3 text-amber-400 flex-shrink-0 mt-0.5" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Actionable feedback */}
       {scoreData.actionable_feedback && (

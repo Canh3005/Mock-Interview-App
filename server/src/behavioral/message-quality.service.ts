@@ -39,6 +39,7 @@ export class MessageQualityService {
       if (
         log.qualityFlags?.includes('OFF_TOPIC_FIRST') ||
         log.qualityFlags?.includes('OFF_TOPIC_REPEATED') ||
+        log.qualityFlags?.includes('OFF_TOPIC_BRIDGE') ||
         log.qualityFlags?.includes('OFF_TOPIC_PERSISTENT')
       ) {
         count++;
@@ -54,6 +55,7 @@ export class MessageQualityService {
     if (relevant) return [];
     if (offTopicCount === 0) return ['OFF_TOPIC_FIRST'];
     if (offTopicCount === 1) return ['OFF_TOPIC_REPEATED'];
+    if (offTopicCount === 2) return ['OFF_TOPIC_BRIDGE'];
     return ['OFF_TOPIC_PERSISTENT'];
   }
 }

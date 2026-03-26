@@ -1,7 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import type { Response } from 'express';
-import { GeminiService } from '../ai/gemini.service';
-import { PromptBuilderService } from './prompt-builder.service';
+import { GroqService } from '../ai/groq.service';
+import {
+  PromptBuilderService,
+  EvaluationMode,
+  STAGE_EVALUATION_MODE,
+} from './prompt-builder.service';
 
 export interface StarStatus {
   situation: boolean;
@@ -28,11 +32,11 @@ const MAX_INPUT_CHARS = 2000;
 @Injectable()
 export class AIFacilitatorService {
   private readonly logger = new Logger(AIFacilitatorService.name);
-  private readonly mainModel = 'gemini-2.5-flash';
-  private readonly miniModel = 'gemini-2.5-flash';
+  private readonly mainModel = 'llama-3.3-70b-versatile';
+  private readonly miniModel = 'llama-3.1-8b-instant';
 
   constructor(
-    private geminiService: GeminiService,
+    private groqService: GroqService,
     private promptBuilder: PromptBuilderService,
   ) {}
 
@@ -62,7 +66,7 @@ Chỉ đánh dấu false nếu câu trả lời HOÀN TOÀN không liên quan đ
 
     try {
       const raw = (
-        await this.geminiService.generateContent({
+        await this.groqService.generateContent({
           model: this.miniModel,
           contents: [{ role: 'user', parts: [{ text: prompt }] }],
           config: { maxOutputTokens: 60 },
@@ -85,7 +89,7 @@ Câu trả lời: "${userMessage}"`;
 
     try {
       const raw = (
-        await this.geminiService.generateContent({
+        await this.groqService.generateContent({
           model: this.miniModel,
           contents: [{ role: 'user', parts: [{ text: prompt }] }],
           config: { maxOutputTokens: 80 },
@@ -110,7 +114,7 @@ Câu trả lời: "${userMessage}"`;
       .join('\n');
     const prompt = `Tóm tắt ngắn gọn (tối đa 200 từ) đoạn hội thoại sau để giữ ngữ cảnh:\n${transcript}`;
     try {
-      const summary = await this.geminiService.generateContent({
+      const summary = await this.groqService.generateContent({
         model: this.miniModel,
         contents: [{ role: 'user', parts: [{ text: prompt }] }],
         config: { maxOutputTokens: 300 },
@@ -128,8 +132,9 @@ Câu trả lời: "${userMessage}"`;
     systemPrompt: string;
     history: TurnContext[];
     userMessage: string;
+    stage?: number;
   }): Promise<{ fullText: string; starStatus: StarStatus }> {
-    const { res, systemPrompt, history, userMessage } = params;
+    const { res, systemPrompt, history, userMessage, stage = 1 } = params;
 
     // Compress old turns if needed
     let contextPrefix = '';
@@ -162,7 +167,8 @@ Câu trả lời: "${userMessage}"`;
     let fullText = '';
 
     try {
-      const stream = await this.geminiService.generateContentStream({
+      console.log('Facilitator prompt contents:', JSON.stringify(contents));
+      const stream = this.groqService.generateContentStream({
         model: this.mainModel,
         contents,
         config: {
@@ -179,8 +185,13 @@ Câu trả lời: "${userMessage}"`;
         }
       }
 
-      // Run STAR check after streaming done
-      const starStatus = await this.checkStarCompleteness(userMessage);
+      // Run STAR check — skip for technical/reverse-interview stages
+      const mode =
+        STAGE_EVALUATION_MODE[stage] ?? EvaluationMode.STAR_BEHAVIORAL;
+      const starStatus =
+        mode === EvaluationMode.STAR_BEHAVIORAL
+          ? await this.checkStarCompleteness(userMessage)
+          : { situation: true, task: true, action: true, result: true };
 
       res.write(
         `data: ${JSON.stringify({ done: true, meta: { starStatus } })}\n\n`,

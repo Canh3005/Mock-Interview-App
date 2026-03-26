@@ -1,5 +1,13 @@
 import { Injectable } from '@nestjs/common';
+import { GroqService } from '../ai/groq.service';
 import { CandidateLevel } from './entities/behavioral-session.entity';
+import {
+  COMPETENCY_ANCHORS,
+  EvaluationMode,
+  STAGE_EVALUATION_MODE,
+} from './competency-anchors.constant';
+
+export { EvaluationMode, STAGE_EVALUATION_MODE };
 
 export const STAGE_NAMES: Record<number, string> = {
   1: 'Culture Fit & Company Alignment',
@@ -60,19 +68,115 @@ Nếu thiếu bất kỳ yếu tố nào, hãy hỏi thêm. KHÔNG trừ điểm
 Trả lời bằng tiếng Việt. Giữ câu trả lời ngắn gọn, tự nhiên như trong một cuộc phỏng vấn thực tế.
 `;
 
+const TECHNICAL_DEPTH_BLOCK = `
+Đây là câu hỏi kỹ thuật. Đánh giá theo 4 chiều:
+- Độ chính xác: Ứng viên có hiểu đúng bản chất không, hay chỉ nhớ syntax?
+- Chiều sâu: Có giải thích được "tại sao" không, không chỉ "làm thế nào"?
+- Trade-offs: Có nhận ra khi nào nên/không nên dùng approach đó không?
+- Ví dụ thực tế: Có dẫn được case từ kinh nghiệm thực tế của bản thân không?
+Nếu câu trả lời còn nông (chỉ ở mức syntax/usage), hãy hỏi thêm về performance implications, edge cases, hoặc "bạn đã gặp vấn đề này trong thực tế chưa?".
+Trả lời bằng tiếng Việt. Giữ câu trả lời ngắn gọn, tự nhiên như trong một cuộc phỏng vấn thực tế.
+`;
+
+const REVERSE_INTERVIEW_BLOCK = `
+Ứng viên đang hỏi bạn về công ty/team. Hãy:
+1. Trả lời như một interviewer thực sự — thành thật, không cần bịa số liệu cụ thể.
+2. Đánh giá ngầm chất lượng câu hỏi: Có chiều sâu chiến lược? Hay chỉ là câu hỏi xã giao?
+3. Nếu ứng viên không hỏi gì, hoặc câu hỏi quá bề mặt (chỉ về lương/môi trường làm việc), hãy gợi ý nhẹ: "Bạn có muốn hỏi thêm về roadmap kỹ thuật hoặc cách team handle technical debt không?" — nhưng không ép buộc.
+Trả lời bằng tiếng Việt.
+`;
+
 @Injectable()
 export class PromptBuilderService {
+  private readonly miniModel = 'llama-3.1-8b-instant';
+
+  constructor(private readonly groqService: GroqService) {}
+
+  // ─── Task 1.5.4: Cross-stage summary (max 150 tokens, async) ─────────────
+
+  async buildStageSummary(
+    stageNumber: number,
+    stageName: string,
+    transcript: string,
+  ): Promise<string> {
+    const prompt =
+      `Dưới đây là hội thoại ${stageName} (Giai đoạn ${stageNumber}). ` +
+      `Tóm tắt trong TỐI ĐA 3 câu:\n` +
+      `1. Điểm mạnh nổi bật nhất của ứng viên trong stage này.\n` +
+      `2. Điểm yếu hoặc thiếu sót đáng chú ý (nếu có).\n` +
+      `3. Một chi tiết cụ thể (từ khoá, dự án, công nghệ, tên) ứng viên đề cập ` +
+      `mà có thể dùng để cá nhân hoá câu hỏi ở stage sau.\n\n` +
+      `Hội thoại:\n${transcript.slice(0, 3000)}`;
+
+    try {
+      const summary = await this.groqService.generateContent({
+        model: this.miniModel,
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
+        config: { maxOutputTokens: 150 },
+      });
+      return summary.trim();
+    } catch {
+      return '';
+    }
+  }
+
+  // Build candidateContextBlock từ stage_summaries để inject vào system prompt
+  buildCandidateContextBlock(
+    stageSummaries: Record<string, string>,
+    currentStage: number,
+  ): string {
+    // Lấy tối đa 2 stage gần nhất trước stage hiện tại
+    const available = Object.entries(stageSummaries)
+      .filter(([k]) => Number(k) < currentStage)
+      .sort(([a], [b]) => Number(b) - Number(a))
+      .slice(0, 2);
+
+    if (available.length === 0) return '';
+
+    const summaryText = available
+      .reverse()
+      .map(([k, v]) => `Stage ${k}: ${v}`)
+      .join('\n');
+
+    // Hard-cap 300 tokens ~ 1200 chars
+    const capped =
+      summaryText.length > 1200
+        ? summaryText.slice(0, 1200) + '...'
+        : summaryText;
+
+    return (
+      `[Bối cảnh ứng viên từ các giai đoạn trước]\n${capped}\n` +
+      `Dựa trên thông tin này, hãy cá nhân hoá câu hỏi và refer lại khi tự nhiên.`
+    );
+  }
+
   buildSystemPrompt(
     level: CandidateLevel,
     cvSnapshot: string,
     jdSnapshot: string,
     stage: number,
     truncationNote?: string,
+    candidateContextBlock?: string,
+    difficultySignal?: string,
   ): string {
-    const persona = PERSONA[level];
+    const persona = PERSONA[level] + (difficultySignal ?? '');
     const stageInstruction = STAGE_INSTRUCTIONS[stage]?.[level] ?? '';
     const truncationBlock = truncationNote
       ? `\n[Lưu ý hệ thống: ${truncationNote}]`
+      : '';
+
+    const mode = STAGE_EVALUATION_MODE[stage] ?? EvaluationMode.STAR_BEHAVIORAL;
+    let evaluationBlock: string;
+    if (mode === EvaluationMode.TECHNICAL_DEPTH) {
+      evaluationBlock = TECHNICAL_DEPTH_BLOCK;
+    } else if (mode === EvaluationMode.REVERSE_INTERVIEW) {
+      evaluationBlock = REVERSE_INTERVIEW_BLOCK;
+    } else {
+      evaluationBlock = STAR_ENFORCEMENT;
+    }
+
+    const contextBlock = candidateContextBlock
+      ? `\n${candidateContextBlock}\n`
       : '';
 
     return `${persona}
@@ -80,57 +184,64 @@ export class PromptBuilderService {
 CV của ứng viên: ${cvSnapshot}
 Vị trí ứng tuyển: ${jdSnapshot}
 Hãy cá nhân hóa câu hỏi dựa trên kinh nghiệm thực tế trong CV này.
-
+${contextBlock}
 ${stageInstruction}
-${STAR_ENFORCEMENT}${truncationBlock}`;
+${evaluationBlock}${truncationBlock}`;
   }
 
-  buildFirstQuestion(level: CandidateLevel, stage: number): string {
-    const openings: Record<number, Record<CandidateLevel, string>> = {
-      1: {
-        junior:
-          'Chào bạn! Hãy kể cho mình nghe về lần bạn phải học một công nghệ mới trong thời gian ngắn nhất?',
-        mid: 'Chào bạn! Khi bạn không đồng ý với một quyết định kỹ thuật trong team, bạn thường xử lý như thế nào?',
-        senior:
-          'Chào bạn! Hãy chia sẻ về một lần bạn chủ động thay đổi văn hóa làm việc hay quy trình kỹ thuật trong team của mình.',
-      },
-      2: {
-        junior:
-          'Bây giờ mình sẽ hỏi về tech stack bạn đang dùng. Bạn có thể giải thích sự khác biệt giữa useEffect và useMemo trong React không?',
-        mid: 'Tiếp theo, mình muốn đi sâu vào tech stack. Hãy kể về một quyết định kỹ thuật liên quan đến state management mà bạn đã phải đánh đổi giữa các giải pháp khác nhau?',
-        senior:
-          'Chuyển sang phần tech stack. Bạn đã từng phải quyết định kiến trúc cho một hệ thống lớn chưa? Hãy mô tả trade-offs bạn đã cân nhắc.',
-      },
-      3: {
-        junior:
-          'Bây giờ mình muốn hiểu cách bạn tư duy về hệ thống. Bạn sẽ thiết kế database schema như thế nào để lưu trữ các phiên phỏng vấn và câu trả lời?',
-        mid: 'Phần tiếp theo về domain knowledge. Nếu hệ thống có hàng nghìn phiên phỏng vấn đồng thời, bạn sẽ tối ưu write operations như thế nào?',
-        senior:
-          'Về mặt kiến trúc hệ thống – nếu cần xây dựng một nền tảng mock interview scalable, bạn sẽ thiết kế event-driven architecture như thế nào?',
-      },
-      4: {
-        junior:
-          'Mình đã xem qua CV của bạn. Hãy kể chi tiết hơn về một tính năng cụ thể bạn đã implement trong dự án gần nhất?',
-        mid: 'Nhìn vào CV của bạn, mình thấy có một số dự án thú vị. Trong đó, bạn đã gặp bug hay performance issue khó nhất nào và xử lý ra sao?',
-        senior:
-          'Từ kinh nghiệm trong CV, hãy kể về một quyết định kiến trúc hoặc kỹ thuật có tầm ảnh hưởng lớn nhất mà bạn đã chủ trì?',
-      },
-      5: {
-        junior:
-          'Câu hỏi về kỹ năng làm việc nhóm: Kể về lần bạn nhận feedback tiêu cực từ một senior dev. Bạn đã phản ứng và xử lý như thế nào?',
-        mid: 'Về kỹ năng cross-functional: Hãy mô tả một tình huống bạn cần thuyết phục Product Owner về một vấn đề kỹ thuật quan trọng.',
-        senior:
-          'Về leadership: Bạn đã từng phải quản lý một tình huống khủng hoảng kỹ thuật chưa? Ví dụ khi một thành viên trong team liên tục gây ra vấn đề production?',
-      },
-      6: {
-        junior:
-          'Đây là phần cuối – bây giờ đến lượt bạn hỏi chúng tôi! Bạn muốn biết gì về vị trí này hoặc công ty?',
-        mid: 'Phần cuối là Reverse Interview – bạn có thể hỏi bất cứ điều gì về team, quy trình, hoặc hướng phát triển kỹ thuật của chúng tôi.',
-        senior:
-          'Cuối cùng – Reverse Interview. Đây là cơ hội để bạn đánh giá chúng tôi. Bạn muốn hiểu gì về chiến lược kỹ thuật và tổ chức của công ty?',
-      },
-    };
+  // Fallback khi AI call thất bại — dùng exampleQuestion của anchor đầu tiên
+  private getFallbackFirstQuestion(
+    level: CandidateLevel,
+    stage: number,
+  ): string {
+    const anchor = (COMPETENCY_ANCHORS[stage] ?? []).find((a) =>
+      a.applicableLevels.includes(level),
+    );
+    if (anchor) return anchor.exampleQuestion;
+    return `Hãy bắt đầu ${STAGE_NAMES[stage]}.`;
+  }
 
-    return openings[stage]?.[level] ?? `Hãy bắt đầu ${STAGE_NAMES[stage]}.`;
+  // AI rephrase anchor intent thành câu hỏi mở đầu tự nhiên, cá nhân hoá theo CV
+  async buildFirstQuestion(
+    level: CandidateLevel,
+    stage: number,
+    cvSnapshot: string,
+  ): Promise<string> {
+    const anchor = (COMPETENCY_ANCHORS[stage] ?? []).find((a) =>
+      a.applicableLevels.includes(level),
+    );
+
+    if (!anchor) return `Hãy bắt đầu ${STAGE_NAMES[stage]}.`;
+
+    const stageName = STAGE_NAMES[stage];
+    const cvHint = cvSnapshot
+      ? `\nCV ứng viên (tóm tắt): ${cvSnapshot.slice(0, 400)}`
+      : '';
+
+    const stageOpener =
+      stage === 1
+        ? 'Mở đầu buổi phỏng vấn bằng câu chào ngắn và câu hỏi đầu tiên.'
+        : `Chuyển sang giai đoạn "${stageName}", mở đầu bằng 1 câu chuyển ngắn và câu hỏi.`;
+
+    const prompt =
+      `Bạn là interviewer. ${stageOpener}\n` +
+      `Competency cần đánh giá: ${anchor.competency}\n` +
+      `Intent: ${anchor.intent}\n` +
+      `Scope: ${anchor.scope}\n` +
+      `Ví dụ tham khảo (KHÔNG dùng verbatim, hãy rephrase tự nhiên): "${anchor.exampleQuestion}"` +
+      cvHint +
+      `\n\nViết câu hỏi mở đầu bằng tiếng Việt, tối đa 2-3 câu, tự nhiên như trong phỏng vấn thực tế. Chỉ trả về câu hỏi, không giải thích thêm.`;
+
+    try {
+      const result = await this.groqService.generateContent({
+        model: this.miniModel,
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
+        config: { maxOutputTokens: 300 },
+      });
+      console.log('[buildFirstQuestion] result:', result);
+      return result.trim() || this.getFallbackFirstQuestion(level, stage);
+    } catch {
+      return this.getFallbackFirstQuestion(level, stage);
+    }
   }
 }
