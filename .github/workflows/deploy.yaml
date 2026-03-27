@@ -23,12 +23,22 @@ jobs:
           VITE_API_URL: ${{ secrets.VITE_API_URL }}
         run: npm ci && npm run build
 
+      - name: Preflight SSH connectivity
+        run: |
+          echo "Checking TCP connectivity to ${EC2_HOST}:${EC2_PORT}..."
+          nc -zv -w 10 "$EC2_HOST" "$EC2_PORT"
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_PORT: ${{ secrets.EC2_PORT || '22' }}
+
       - name: Upload frontend to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
+          port: ${{ secrets.EC2_PORT || '22' }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
+          timeout: 60s
           source: "client/apps/web/dist/*"
           target: "/tmp/frontend-build"
           strip_components: 4
@@ -37,8 +47,11 @@ jobs:
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
+          port: ${{ secrets.EC2_PORT || '22' }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
+          timeout: 60s
+          command_timeout: 30m
           script: |
             set -e
             cd ~/app/Mock-Interview-App && git pull origin main
