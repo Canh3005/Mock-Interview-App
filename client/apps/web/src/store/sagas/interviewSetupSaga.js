@@ -4,6 +4,9 @@ import {
   preflightRequest,
   preflightSuccess,
   preflightFailure,
+  saveContextRequest,
+  saveContextSuccess,
+  saveContextFailure,
   initSessionRequest,
   initSessionSuccess,
   initSessionFailure,
@@ -17,6 +20,20 @@ function* preflightSaga() {
   } catch (err) {
     const msg = err.response?.data?.message || 'Không thể kiểm tra ngữ cảnh phỏng vấn.';
     yield put(preflightFailure(msg));
+    toast.error(msg);
+  }
+}
+
+function* saveContextSaga(action) {
+  try {
+    yield call(interviewApi.updateContext, {
+      cv: action.payload.cv,
+      jd: action.payload.jd,
+    });
+    yield put(saveContextSuccess());
+  } catch (err) {
+    const msg = err.response?.data?.message || 'Không thể lưu thông tin CV/JD.';
+    yield put(saveContextFailure(msg));
     toast.error(msg);
   }
 }
@@ -40,5 +57,6 @@ function* initSessionSaga() {
 
 export function* watchInterviewSetupSaga() {
   yield takeLatest(preflightRequest.type, preflightSaga);
+  yield takeLatest(saveContextRequest.type, saveContextSaga);
   yield takeLatest(initSessionRequest.type, initSessionSaga);
 }

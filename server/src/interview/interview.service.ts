@@ -8,6 +8,7 @@ import {
   CandidateLevel,
 } from './entities/interview-session.entity';
 import { InitSessionDto } from './dto/init-session.dto';
+import { UpdateContextDto } from './dto/update-context.dto';
 import { CvJson, JdJson } from '../documents/documents.ai.service';
 
 const ROUND_DURATIONS: Record<string, number> = {
@@ -59,6 +60,8 @@ export class InterviewService {
       ready: true,
       missing: [],
       summary: { cvSnippet, jdSnippet },
+      cv: cvJson,
+      jd: jdJson,
     };
   }
 
@@ -109,6 +112,23 @@ export class InterviewService {
     );
 
     return { sessionId: session.id, candidateLevel, estimatedDuration };
+  }
+
+  async updateContext(
+    userId: string,
+    dto: UpdateContextDto,
+  ): Promise<{ updated: boolean }> {
+    const pipeline = this.redisClient.pipeline();
+    if (dto.cv) {
+      pipeline.set(`cv_context:${userId}`, JSON.stringify(dto.cv));
+    }
+    if (dto.jd) {
+      pipeline.set(`jd_context:${userId}`, JSON.stringify(dto.jd));
+    }
+    await pipeline.exec();
+    console.log(await this.redisClient.get(`cv_context:${userId}`));
+    console.log(await this.redisClient.get(`jd_context:${userId}`));
+    return { updated: true };
   }
 
   // ─── Private helpers ───────────────────────────────────────────────────────

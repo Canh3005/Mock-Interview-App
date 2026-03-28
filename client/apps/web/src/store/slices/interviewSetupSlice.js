@@ -9,6 +9,8 @@ const initialState = {
   // preflight
   missing: [],
   summary: null, // { cvSnippet, jdSnippet }
+  cv: null,      // full CvJson
+  jd: null,      // full JdJson
 
   // mode
   selectedMode: null, // 'practice' | 'combat'
@@ -42,9 +44,11 @@ const interviewSetupSlice = createSlice({
     },
     preflightSuccess(state, action) {
       state.loading = false;
-      const { ready, missing, summary } = action.payload;
+      const { ready, missing, summary, cv, jd } = action.payload;
       if (ready) {
         state.summary = summary;
+        state.cv = cv;
+        state.jd = jd;
         state.step = 'context_confirm';
       } else {
         state.missing = missing;
@@ -86,6 +90,22 @@ const interviewSetupSlice = createSlice({
       }
     },
 
+    // ─── Save context (edit CV/JD before interview) ────────────────────────
+    saveContextRequest(state, action) {
+      state.loading = true;
+      state.error = null;
+      state.cv = action.payload.cv;
+      state.jd = action.payload.jd;
+    },
+    saveContextSuccess(state) {
+      state.loading = false;
+      state.step = 'mode_select';
+    },
+    saveContextFailure(state, action) {
+      state.loading = false;
+      state.error = action.payload;
+    },
+
     // ─── Session init ──────────────────────────────────────────────────────
     initSessionRequest(state) {
       state.step = 'initializing';
@@ -120,6 +140,9 @@ export const {
   setCombatPermissions,
   proceedFromCombatPermission,
   toggleRound,
+  saveContextRequest,
+  saveContextSuccess,
+  saveContextFailure,
   initSessionRequest,
   initSessionSuccess,
   initSessionFailure,
