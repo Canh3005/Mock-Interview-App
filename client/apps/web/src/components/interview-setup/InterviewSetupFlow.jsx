@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Loader2, X, ChevronDown, ChevronUp } from 'lucide-react'
+import { Loader2, X, ChevronDown, ChevronUp, AlertTriangle } from 'lucide-react'
 import {
   preflightRequest,
   saveContextRequest,
@@ -19,7 +19,7 @@ function MissingContextModal({ missing, onGoUpload, onCancel }) {
   return (
     <div className="flex flex-col items-center text-center gap-6 py-2">
       <div className="w-14 h-14 rounded-full bg-amber-500/15 flex items-center justify-center">
-        <span className="text-3xl">⚠️</span>
+        <AlertTriangle className="w-8 h-8 text-amber-400" />
       </div>
       <div>
         <h2 className="text-xl font-heading font-bold text-white mb-2">
@@ -364,16 +364,19 @@ export default function InterviewSetupFlow({ navigate }) {
     }
   }, [dispatch])
 
+  const selectedMode = useSelector((s) => s.interviewSetup.selectedMode)
+
   // Navigate to the correct room when session is created
   useEffect(() => {
     if (step === 'done' && session) {
       if (selectedRounds.includes('hr_behavioral')) {
-        navigate('behavioral-room')
+        // Combat mode → CombatInterviewRoom, Practice → BehavioralRoomPage
+        navigate(selectedMode === 'combat' ? 'combat-room' : 'behavioral-room')
       } else {
         navigate('interview-room')
       }
     }
-  }, [step, session, selectedRounds, navigate])
+  }, [step, session, selectedRounds, selectedMode, navigate])
 
   const handleClose = () => {
     dispatch(resetSetup())

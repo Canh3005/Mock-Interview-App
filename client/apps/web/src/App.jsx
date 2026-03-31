@@ -12,6 +12,8 @@ import AdminTestCasesPage from './components/admin/AdminTestCasesPage'
 import SkillPassportPage from './components/dashboard/profile/SkillPassportPage'
 import InterviewSetupFlow from './components/interview-setup/InterviewSetupFlow'
 import BehavioralRoomPage from './components/behavioral-room/BehavioralRoomPage'
+import CombatInterviewRoom from './components/combat-room/CombatInterviewRoom'
+import ScoringPage from './components/scoring/ScoringPage'
 import { Loader2 } from 'lucide-react'
 
 export default function App() {
@@ -76,6 +78,18 @@ export default function App() {
         interviewSessionId={interviewSession?.sessionId}
       />
     )
+  }
+  if (page === 'combat-room') {
+    return (
+      <CombatInterviewRoom
+        interviewSessionId={interviewSession?.sessionId}
+        navigate={navigate}
+      />
+    )
+  }
+  if (page === 'scoring') {
+    const scoringMode = interviewSession?.mode === 'combat' ? 'combat' : 'behavioral'
+    return <ScoringPage navigate={navigate} mode={scoringMode} />
   }
   if (page === 'dashboard') {
     return <DashboardPage navigate={navigate} />

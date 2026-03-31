@@ -8,12 +8,10 @@ import {
   nextStageRequest,
   completeSessionRequest,
   tickTimer,
-  resetBehavioral,
 } from '../../store/slices/behavioralSlice'
 import StageProgressPanel from './StageProgressPanel'
 import ChatInterface from './ChatInterface'
 import StarGuidePanel from './StarGuidePanel'
-import ScorecardDisplay from './ScorecardDisplay'
 
 // ─── Timer display ────────────────────────────────────────────────────────────
 function formatTime(seconds) {
@@ -45,14 +43,12 @@ export default function BehavioralRoomPage({ navigate, interviewSessionId }) {
   const dispatch = useDispatch()
   const {
     status,
-    sessionId,
     currentStage,
     stageName,
     candidateLevel,
     isStreaming,
     isTransitioning,
     isScoring,
-    scoreData,
     starStatus,
     elapsedSeconds,
     error,
@@ -123,26 +119,10 @@ export default function BehavioralRoomPage({ navigate, interviewSessionId }) {
     )
   }
 
-  // ─── Scoring screen ─────────────────────────────────────────────────────
-  if (status === 'completing' || (status === 'completed' && !scoreData)) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="flex flex-col items-center gap-3">
-          <Loader2 className="w-10 h-10 text-cta animate-spin" />
-          <p className="text-slate-400 text-sm">AI đang phân tích buổi phỏng vấn của bạn...</p>
-          <p className="text-slate-600 text-xs">Quá trình này mất khoảng 15-30 giây</p>
-        </div>
-      </div>
-    )
-  }
-
-  // ─── Scorecard ──────────────────────────────────────────────────────────
-  if (status === 'completed' && scoreData) {
-    return (
-      <div className="min-h-screen bg-background overflow-y-auto">
-        <ScorecardDisplay scoreData={scoreData} navigate={navigate} />
-      </div>
-    )
+  // ─── Navigate to scoring page when completing/completed ─────────────────
+  if (status === 'completing' || status === 'completed') {
+    navigate('scoring')
+    return null
   }
 
   // ─── Main interview room ─────────────────────────────────────────────────

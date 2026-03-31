@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Mic, MicOff, Send, AlertTriangle } from 'lucide-react'
+import { Mic, MicOff, Send, AlertTriangle, Bot, User } from 'lucide-react'
 import { useVoiceInput } from '../../hooks/useVoiceInput'
 import { sendMessage } from '../../store/slices/behavioralSlice'
 
@@ -8,7 +8,7 @@ const MAX_CHARS = 2000
 const WARN_CHARS = 1600
 const MIN_CHARS = 100
 
-function ChatBubble({ msg, isStreamingTarget, streamingText }) {
+function ChatBubble({ msg, isStreamingTarget, streamingText, userAvatar }) {
   const isAi = msg.role === 'ai'
   const content = isStreamingTarget ? streamingText : msg.content
 
@@ -16,7 +16,7 @@ function ChatBubble({ msg, isStreamingTarget, streamingText }) {
     <div className={`flex gap-3 ${isAi ? 'justify-start' : 'justify-end'}`}>
       {isAi && (
         <div className="w-8 h-8 rounded-full bg-cta/20 border border-cta/40 flex items-center justify-center flex-shrink-0 mt-1">
-          <span className="text-sm">🤖</span>
+          <Bot className="w-4 h-4 text-cta" />
         </div>
       )}
 
@@ -42,8 +42,12 @@ function ChatBubble({ msg, isStreamingTarget, streamingText }) {
       </div>
 
       {!isAi && (
-        <div className="w-8 h-8 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center flex-shrink-0 mt-1">
-          <span className="text-sm">👤</span>
+        <div className="w-8 h-8 rounded-full border border-slate-600 flex-shrink-0 mt-1 overflow-hidden flex items-center justify-center bg-slate-700">
+          {userAvatar ? (
+            <img src={userAvatar} alt="User" className="w-full h-full object-cover" />
+          ) : (
+            <User className="w-4 h-4 text-slate-400" />
+          )}
         </div>
       )}
     </div>
@@ -55,6 +59,7 @@ export default function ChatInterface() {
   const { messages, isStreaming, streamingText, currentStage } = useSelector(
     (s) => s.behavioral,
   )
+  const { user } = useSelector((s) => s.auth)
 
   const [text, setText] = useState('')
   const [voiceMode, setVoiceMode] = useState(false)
@@ -162,6 +167,7 @@ export default function ChatInterface() {
               msg={msg}
               isStreamingTarget={isStreamTarget}
               streamingText={streamingText}
+              userAvatar={user?.avatarUrl}
             />
           )
         })}
@@ -170,8 +176,8 @@ export default function ChatInterface() {
         {isStreaming &&
           messages[messages.length - 1]?.role === 'user' && (
             <div className="flex gap-3 justify-start">
-              <div className="w-8 h-8 rounded-full bg-cta/20 border border-cta/40 flex items-center justify-center flex-shrink-0 mt-1">
-                <span className="text-sm">🤖</span>
+              <div className="w-8 h-8 rounded-full bg-cta/20 border border-cta/40 flex items-center justify-center flex-shrink-0 mt-1 overflow-hidden">
+                <Bot className="w-4 h-4 text-cta" />
               </div>
               <div className="max-w-[78%] px-4 py-3 rounded-2xl text-sm bg-slate-800 border border-slate-700 text-slate-100 rounded-tl-md">
                 {streamingText ? (
@@ -234,7 +240,7 @@ export default function ChatInterface() {
               placeholder={
                 voiceMode
                   ? isListening
-                    ? '🎤 Đang lắng nghe...'
+                    ? 'Đang lắng nghe...'
                     : 'Nhấn mic để bắt đầu nói...'
                   : 'Nhập câu trả lời của bạn... (Enter để gửi)'
               }

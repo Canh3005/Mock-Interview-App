@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { Target, Swords } from 'lucide-react'
+import { Target, Swords, AlertTriangle } from 'lucide-react'
 import { selectMode, proceedFromMode } from '../../../store/slices/interviewSetupSlice'
 
 const MODES = [
@@ -82,7 +82,8 @@ export default function ModeSelectionStep() {
                   {/* Combat warning — show when selected */}
                   {isSelected && mode.warning && (
                     <div className="mt-3 p-3 rounded-lg bg-orange-500/10 border border-orange-500/30 text-orange-300 text-xs leading-relaxed">
-                      ⚠️ {mode.warning}
+                      <AlertTriangle className="w-3.5 h-3.5 flex-shrink-0 inline mr-1.5" />
+                      {mode.warning}
                     </div>
                   )}
                 </div>
