@@ -1,21 +1,24 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { useDispatch } from 'react-redux'
-import { Loader2, Camera, Mic, CheckCircle2, XCircle } from 'lucide-react'
+import { Loader2, Camera, Mic, CheckCircle2, XCircle, AlertTriangle, UserCheck, Users, UserX } from 'lucide-react'
 import {
   setCombatPermissions,
   proceedFromCombatPermission,
   selectMode,
 } from '../../../store/slices/interviewSetupSlice'
+import { faceDetector } from '../../../services/FaceDetector'
 
 export default function CombatPermissionGate() {
   const dispatch = useDispatch()
   const videoRef = useRef(null)
   const streamRef = useRef(null)
 
-  const [status, setStatus] = useState('requesting') // requesting | granted | denied | no_face
-  const [faceDetected, setFaceDetected] = useState(null) // null | true | false
+  const [status, setStatus] = useState('requesting') // requesting | granted | denied
+  const [faceStatus, setFaceStatus] = useState('loading') // loading | ok | no_face | multi_face
+  const [faceCount, setFaceCount] = useState(0)
   const [previewReady, setPreviewReady] = useState(false)
 
+  // ─── Request permissions ──────────────────────────────────────────────────
   useEffect(() => {
     let cancelled = false
 
@@ -30,27 +33,8 @@ export default function CombatPermissionGate() {
           return
         }
         streamRef.current = stream
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream
-          videoRef.current.onloadedmetadata = () => {
-            if (!cancelled) setPreviewReady(true)
-          }
-        }
         dispatch(setCombatPermissions({ webcam: 'granted', microphone: 'granted' }))
         setStatus('granted')
-
-        // Simple face present check after 1.5s (video stream is live)
-        setTimeout(() => {
-          if (!cancelled) {
-            // Heuristic: if video track is active and has dimensions → face likely present
-            const track = stream.getVideoTracks()[0]
-            const settings = track?.getSettings()
-            const hasVideo = settings?.width > 0 && settings?.height > 0
-            setFaceDetected(hasVideo)
-            dispatch(setCombatPermissions({ faceDetected: hasVideo }))
-            if (!hasVideo) setStatus('no_face')
-          }
-        }, 1500)
       } catch {
         if (!cancelled) {
           setStatus('denied')
@@ -66,22 +50,85 @@ export default function CombatPermissionGate() {
     }
   }, [dispatch])
 
+  // ─── Assign stream to video ───────────────────────────────────────────────
+  useEffect(() => {
+    if (status !== 'granted' || !streamRef.current) return
+    const video = videoRef.current
+    if (!video) return
+    video.srcObject = streamRef.current
+    if (video.readyState >= 1) {
+      setPreviewReady(true)
+    } else {
+      video.addEventListener('loadedmetadata', () => setPreviewReady(true), { once: true })
+    }
+  }, [status])
+
+  // ─── Init face detector & start detection ─────────────────────────────────
+  const onFaceResult = useCallback(({ faceCount: count }) => {
+    setFaceCount(count)
+    if (count === 1) {
+      setFaceStatus('ok')
+    } else if (count === 0) {
+      setFaceStatus('no_face')
+    } else {
+      setFaceStatus('multi_face')
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!previewReady || !videoRef.current) return
+    let cancelled = false
+
+    async function startDetection() {
+      const ready = await faceDetector.init()
+      if (cancelled) return
+      if (ready) {
+        // Run every 800ms for responsive feedback in permission gate
+        faceDetector.start(videoRef.current, onFaceResult, 800)
+      } else {
+        // Fallback: assume face present if video track is active
+        const track = streamRef.current?.getVideoTracks()[0]
+        const settings = track?.getSettings()
+        setFaceStatus(settings?.width > 0 ? 'ok' : 'no_face')
+      }
+    }
+
+    startDetection()
+    return () => {
+      cancelled = true
+      faceDetector.stop()
+    }
+  }, [previewReady, onFaceResult])
+
+  // ─── Sync face status to Redux ────────────────────────────────────────────
+  useEffect(() => {
+    if (faceStatus === 'loading') return
+    dispatch(setCombatPermissions({ faceDetected: faceStatus === 'ok' }))
+  }, [faceStatus, dispatch])
+
   const handleProceed = () => {
+    // Stop detector — will be re-initialized in CombatInterviewRoom
+    faceDetector.stop()
     dispatch(proceedFromCombatPermission())
   }
 
   const handleSwitchToPractice = () => {
+    faceDetector.stop()
     streamRef.current?.getTracks().forEach((t) => t.stop())
     dispatch(selectMode('practice'))
-    dispatch(proceedFromCombatPermission()) // goes to round_select
+    dispatch(proceedFromCombatPermission())
   }
 
   const handleRetry = () => {
     setStatus('requesting')
-    setFaceDetected(null)
+    setFaceStatus('loading')
+    setFaceCount(0)
     setPreviewReady(false)
+    faceDetector.stop()
     streamRef.current?.getTracks().forEach((t) => t.stop())
   }
+
+  const canProceed = faceStatus === 'ok'
 
   // ─── Requesting ───────────────────────────────────────────────────────────
   if (status === 'requesting') {
@@ -125,7 +172,7 @@ export default function CombatPermissionGate() {
     )
   }
 
-  // ─── Granted (with preview) ───────────────────────────────────────────────
+  // ─── Granted (with preview + face detection) ──────────────────────────────
   return (
     <div className="flex flex-col gap-5">
       <div className="text-center">
@@ -141,20 +188,34 @@ export default function CombatPermissionGate() {
           muted
           playsInline
           className="w-full h-full object-cover"
+          style={{ transform: 'scaleX(-1)' }}
         />
         {!previewReady && (
           <div className="absolute inset-0 flex items-center justify-center">
             <Loader2 className="w-6 h-6 text-slate-500 animate-spin" />
           </div>
         )}
+
         {/* Face detection badge */}
-        {faceDetected !== null && previewReady && (
+        {previewReady && faceStatus !== 'loading' && (
           <div className={`absolute top-2 right-2 flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium
-            ${faceDetected ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-red-500/20 text-red-400 border border-red-500/30'}`}>
-            {faceDetected
-              ? <><CheckCircle2 className="w-3.5 h-3.5" /> Phát hiện 1 khuôn mặt</>
-              : <><XCircle className="w-3.5 h-3.5" /> Không nhận diện được</>
-            }
+            ${faceStatus === 'ok'
+              ? 'bg-green-500/20 text-green-400 border border-green-500/30'
+              : faceStatus === 'multi_face'
+              ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+              : 'bg-red-500/20 text-red-400 border border-red-500/30'
+            }`}
+          >
+            {faceStatus === 'ok' && <><UserCheck className="w-3.5 h-3.5" /> 1 khuôn mặt</>}
+            {faceStatus === 'no_face' && <><UserX className="w-3.5 h-3.5" /> Không nhận diện được</>}
+            {faceStatus === 'multi_face' && <><Users className="w-3.5 h-3.5" /> {faceCount} khuôn mặt</>}
+          </div>
+        )}
+
+        {/* Loading face detector */}
+        {previewReady && faceStatus === 'loading' && (
+          <div className="absolute top-2 right-2 flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-slate-700/80 text-slate-300 border border-slate-600">
+            <Loader2 className="w-3.5 h-3.5 animate-spin" /> Đang tải nhận diện...
           </div>
         )}
       </div>
@@ -173,19 +234,26 @@ export default function CombatPermissionGate() {
         </div>
       </div>
 
-      {/* Face not detected warning */}
-      {faceDetected === false && (
-        <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs leading-relaxed">
-          ⚠️ Không nhận diện được khuôn mặt. Hãy điều chỉnh camera hướng thẳng về phía bạn.
+      {/* Face warnings */}
+      {faceStatus === 'no_face' && (
+        <div className="flex items-start gap-2 p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs leading-relaxed">
+          <AlertTriangle className="w-3.5 h-3.5 flex-shrink-0 mt-px" />
+          Không nhận diện được khuôn mặt. Hãy điều chỉnh camera hướng thẳng về phía bạn và đảm bảo đủ ánh sáng.
+        </div>
+      )}
+      {faceStatus === 'multi_face' && (
+        <div className="flex items-start gap-2 p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs leading-relaxed">
+          <Users className="w-3.5 h-3.5 flex-shrink-0 mt-px" />
+          Phát hiện {faceCount} khuôn mặt. Combat Mode yêu cầu chỉ có 1 người trong khung hình. Hãy đảm bảo không có ai khác xuất hiện.
         </div>
       )}
 
       <button
         onClick={handleProceed}
-        disabled={faceDetected === null}
+        disabled={!canProceed}
         className="w-full px-4 py-3 rounded-xl bg-orange-600 hover:bg-orange-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold text-sm transition-colors"
       >
-        Tiếp tục vào Combat Mode
+        {canProceed ? 'Tiếp tục vào Combat Mode' : 'Cần nhận diện đúng 1 khuôn mặt'}
       </button>
     </div>
   )
