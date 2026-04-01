@@ -5,6 +5,7 @@
  */
 import { ttsPlayer } from './TtsPlayer';
 import { ttsFallback } from './TtsFallback';
+import { fetchWithAuth } from '../api/fetchWithAuth';
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
@@ -17,7 +18,6 @@ export class SentenceTtsBuffer {
     this._onFinished = null;
     this._stopped = false;
     this._hasStarted = false; // true sau khi _requestTts được gọi ít nhất 1 lần
-    this._accessToken = null;
     this._voiceOptions = {};
     // Ordered slots to prevent out-of-order TTS playback
     this._slots = {};
@@ -45,8 +45,7 @@ export class SentenceTtsBuffer {
     );
   }
 
-  init(accessToken, voiceOptions = {}) {
-    this._accessToken = accessToken;
+  init(voiceOptions = {}) {
     this._voiceOptions = voiceOptions;
     this._stopped = false;
   }
@@ -90,12 +89,9 @@ export class SentenceTtsBuffer {
     this._slots[slotIndex] = null; // null = pending
 
     try {
-      const res = await fetch(`${BASE_URL}/tts/synthesize`, {
+      const res = await fetchWithAuth(`${BASE_URL}/tts/synthesize`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this._accessToken}`,
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           text: sentence,
           ...this._voiceOptions,

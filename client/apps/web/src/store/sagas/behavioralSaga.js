@@ -42,13 +42,13 @@ function* startSessionSaga(action) {
 }
 
 // ─── SSE streaming saga ───────────────────────────────────────────────────────
-function createSSEChannel(sessionId, payload, accessToken) {
+function createSSEChannel(sessionId, payload) {
   return eventChannel((emit) => {
     let fullText = '';
     let done = false;
 
     behavioralApi
-      .createMessageStream(sessionId, payload, accessToken)
+      .createMessageStream(sessionId, payload)
       .then((response) => {
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
@@ -105,7 +105,6 @@ function createSSEChannel(sessionId, payload, accessToken) {
 function* sendMessageSaga(action) {
   const { content, inputType, voiceTranscript } = action.payload;
   const { sessionId } = yield select((s) => s.behavioral);
-  const accessToken = yield select((s) => s.auth.accessToken);
 
   // Optimistic user message
   yield put(addUserMessage({ content, inputType }));
@@ -115,7 +114,7 @@ function* sendMessageSaga(action) {
     content,
     inputType,
     voiceTranscript,
-  }, accessToken);
+  });
 
   try {
     let fullText = '';

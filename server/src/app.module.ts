@@ -14,6 +14,8 @@ import { DocumentsModule } from './documents/documents.module';
 import { JobsModule } from './jobs/jobs.module';
 import { InterviewModule } from './interview/interview.module';
 import { BehavioralModule } from './behavioral/behavioral.module';
+import { CombatModule } from './combat/combat.module';
+import { TtsModule } from './tts/tts.module';
 
 @Module({
   imports: [
@@ -59,6 +61,8 @@ import { BehavioralModule } from './behavioral/behavioral.module';
     JobsModule,
     InterviewModule,
     BehavioralModule,
+    CombatModule,
+    TtsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
