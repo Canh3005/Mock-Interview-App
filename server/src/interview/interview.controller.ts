@@ -5,6 +5,7 @@ import {
   Put,
   Body,
   Req,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -36,5 +37,18 @@ export class InterviewController {
     @Body() dto: InitSessionDto,
   ) {
     return this.interviewService.initSession(req.user.id, dto);
+  }
+
+  @Get('sessions/in-progress')
+  getInProgressSessions(
+    @Req() req: { user: { id: string } },
+    @Query('limit') limit?: string,
+    @Query('offset') offset?: string,
+  ) {
+    return this.interviewService.getInProgressSessions(
+      req.user.id,
+      limit ? parseInt(limit, 10) : undefined,
+      offset ? parseInt(offset, 10) : undefined,
+    );
   }
 }

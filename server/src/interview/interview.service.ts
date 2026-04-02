@@ -7,9 +7,19 @@ import {
   InterviewSession,
   CandidateLevel,
 } from './entities/interview-session.entity';
+import { BehavioralSession } from '../behavioral/entities/behavioral-session.entity';
 import { InitSessionDto } from './dto/init-session.dto';
 import { UpdateContextDto } from './dto/update-context.dto';
 import { CvJson, JdJson } from '../documents/documents.ai.service';
+
+const STAGE_NAMES: Record<number, string> = {
+  1: 'Culture Fit',
+  2: 'Tech Stack Deep-Dive',
+  3: 'Domain Knowledge',
+  4: 'CV-based Q&A',
+  5: 'Soft Skills',
+  6: 'Reverse Interview',
+};
 
 const ROUND_DURATIONS: Record<string, number> = {
   hr_behavioral: 20,
@@ -26,6 +36,8 @@ export class InterviewService {
   constructor(
     @InjectRepository(InterviewSession)
     private sessionRepo: Repository<InterviewSession>,
+    @InjectRepository(BehavioralSession)
+    private behavioralSessionRepo: Repository<BehavioralSession>,
     private configService: ConfigService,
   ) {
     this.redisClient = new Redis({
@@ -129,6 +141,48 @@ export class InterviewService {
     console.log(await this.redisClient.get(`cv_context:${userId}`));
     console.log(await this.redisClient.get(`jd_context:${userId}`));
     return { updated: true };
+  }
+
+  async getInProgressSessions(
+    userId: string,
+    limit = 5,
+    offset = 0,
+  ): Promise<{ data: unknown[]; total: number }> {
+    const [interviewSessions, total] = await this.sessionRepo.findAndCount({
+      where: { userId },
+      order: { startedAt: 'DESC' },
+      take: limit,
+      skip: offset,
+    });
+
+    if (interviewSessions.length === 0) return { data: [], total };
+
+    const data = await Promise.all(
+      interviewSessions.map(async (session) => {
+        const behavioralSession = await this.behavioralSessionRepo.findOne({
+          where: { interviewSessionId: session.id },
+          order: { startedAt: 'DESC' },
+        });
+        return {
+          sessionId: session.id,
+          mode: session.mode,
+          rounds: session.rounds,
+          candidateLevel: session.candidateLevel,
+          startedAt: session.startedAt,
+          behavioralSession: behavioralSession
+            ? {
+                sessionId: behavioralSession.id,
+                currentStage: behavioralSession.currentStage,
+                stageName:
+                  STAGE_NAMES[behavioralSession.currentStage] ?? 'Unknown',
+                status: behavioralSession.status,
+              }
+            : null,
+        };
+      }),
+    );
+
+    return { data, total };
   }
 
   // ─── Private helpers ───────────────────────────────────────────────────────

@@ -12,10 +12,11 @@ import { useSelector } from 'react-redux'
 import SharedNavbar from '../shared/SharedNavbar'
 import StatCard from './StatCard'
 import RadarChartPlaceholder from './RadarChartPlaceholder'
-import InterviewHistory from './InterviewHistory'
+
 import LearningPath from './LearningPath'
 import SkillBreakdown from './SkillBreakdown'
 import UpcomingSessions from './UpcomingSessions'
+import InProgressSessions from './InProgressSessions'
 
 export default function DashboardPage({ navigate = () => {} }) {
   const { t } = useTranslation()
@@ -132,10 +133,10 @@ export default function DashboardPage({ navigate = () => {} }) {
             </div>
           </div>
 
-          {/* ── Row 3: Interview History (8 cols) + Learning Path (4 cols) ── */}
+          {/* ── Row 3: In-Progress Sessions (8 cols) + Learning Path (4 cols) ── */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
             <div className="lg:col-span-8">
-              <InterviewHistory />
+              <InProgressSessions navigate={navigate} />
             </div>
             <div className="lg:col-span-4">
               <LearningPath />
