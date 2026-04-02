@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Loader2, ChevronRight, CheckCircle2, Clock } from 'lucide-react'
+import { Loader2, ChevronRight, CheckCircle2, Clock, LogOut, AlertTriangle, X } from 'lucide-react'
 import { toast } from 'sonner'
 import {
   startSessionRequest,
@@ -55,7 +55,24 @@ export default function BehavioralRoomPage({ navigate, interviewSessionId }) {
   } = useSelector((s) => s.behavioral)
 
   const [showTransition, setShowTransition] = useState(false)
+  const [showExitModal, setShowExitModal] = useState(false)
+  const [showFinishModal, setShowFinishModal] = useState(false)
   const timerRef = useRef(null)
+
+  const handleExitClick = () => setShowExitModal(true)
+  const handleConfirmExit = () => navigate('dashboard')
+
+  const handleFinishClick = () => {
+    if (currentStage < 6) {
+      setShowFinishModal(true)
+    } else {
+      dispatch(completeSessionRequest())
+    }
+  }
+  const handleConfirmFinish = () => {
+    setShowFinishModal(false)
+    dispatch(completeSessionRequest())
+  }
 
   // Start session on mount
   useEffect(() => {
@@ -131,6 +148,14 @@ export default function BehavioralRoomPage({ navigate, interviewSessionId }) {
       {/* Header */}
       <header className="flex items-center justify-between px-4 py-3 border-b border-slate-800 flex-shrink-0">
         <div className="flex items-center gap-3">
+          <button
+            onClick={handleExitClick}
+            className="flex items-center gap-1.5 text-xs text-slate-400 border border-slate-700 hover:border-red-500/50 hover:text-red-400 px-2.5 py-1.5 rounded-lg transition-colors"
+            title="Thoát phỏng vấn"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+            Thoát
+          </button>
           <span className="text-sm font-semibold text-white">HR & Behavioral</span>
           <span className="text-slate-600">·</span>
           <span className="text-sm text-slate-400">
@@ -159,6 +184,20 @@ export default function BehavioralRoomPage({ navigate, interviewSessionId }) {
               {candidateLevel === 'senior' ? 'Senior' : candidateLevel === 'mid' ? 'Mid-level' : 'Junior'}
             </span>
           )}
+
+          {/* Finish button */}
+          <button
+            onClick={handleFinishClick}
+            disabled={isStreaming || isScoring}
+            className={`flex items-center gap-1.5 text-xs border px-2.5 py-1.5 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
+              currentStage >= 6
+                ? 'text-emerald-400 border-emerald-500/40 hover:bg-emerald-500/10'
+                : 'text-red-400 border-red-500/40 hover:bg-red-500/10'
+            }`}
+          >
+            <CheckCircle2 className="w-3.5 h-3.5" />
+            Kết thúc & Chấm điểm
+          </button>
         </div>
       </header>
 
@@ -239,6 +278,106 @@ export default function BehavioralRoomPage({ navigate, interviewSessionId }) {
           )}
         </aside>
       </div>
+
+      {/* ── Exit Modal ── */}
+      <AnimatePresence>
+        {showExitModal && (
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-4"
+            onClick={() => setShowExitModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
+              transition={{ duration: 0.15 }}
+              className="bg-slate-900 border border-red-500/30 rounded-2xl p-6 max-w-sm w-full shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-start gap-3 mb-4">
+                <div className="w-10 h-10 rounded-full bg-red-500/15 border border-red-500/30 flex items-center justify-center flex-shrink-0">
+                  <AlertTriangle className="w-5 h-5 text-red-400" />
+                </div>
+                <div>
+                  <h3 className="text-white font-semibold text-base mb-1">Thoát phỏng vấn?</h3>
+                  <p className="text-slate-400 text-sm leading-relaxed">
+                    Phiên phỏng vấn sẽ bị hủy và{' '}
+                    <span className="text-red-400 font-medium">không được chấm điểm</span>.
+                    Tiến trình và câu trả lời hiện tại sẽ mất hoàn toàn.
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setShowExitModal(false)}
+                  className="flex-1 px-4 py-2.5 rounded-xl border border-slate-700 text-slate-300 hover:bg-slate-800 transition-colors text-sm font-medium"
+                >
+                  Tiếp tục thi
+                </button>
+                <button
+                  onClick={handleConfirmExit}
+                  className="flex-1 px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-semibold text-sm transition-colors"
+                >
+                  Thoát
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ── Early Finish Modal ── */}
+      <AnimatePresence>
+        {showFinishModal && (
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-4"
+            onClick={() => setShowFinishModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
+              transition={{ duration: 0.15 }}
+              className="bg-slate-900 border border-red-500/30 rounded-2xl p-6 max-w-sm w-full shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-full bg-red-500/15 border border-red-500/30 flex items-center justify-center flex-shrink-0">
+                    <AlertTriangle className="w-5 h-5 text-red-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-white font-semibold text-base mb-1">Kết thúc sớm?</h3>
+                    <p className="text-slate-400 text-sm leading-relaxed">
+                      Bạn mới hoàn thành{' '}
+                      <span className="text-red-400 font-medium">{currentStage}/6 giai đoạn</span>.
+                      Kết thúc sớm sẽ ảnh hưởng đến điểm số — các giai đoạn chưa hoàn thành sẽ không được tính.
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowFinishModal(false)}
+                  className="text-slate-500 hover:text-slate-300 transition-colors ml-2 flex-shrink-0"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setShowFinishModal(false)}
+                  className="flex-1 px-4 py-2.5 rounded-xl border border-slate-700 text-slate-300 hover:bg-slate-800 transition-colors text-sm font-medium"
+                >
+                  Tiếp tục thi
+                </button>
+                <button
+                  onClick={handleConfirmFinish}
+                  className="flex-1 px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-semibold text-sm transition-colors"
+                >
+                  Vẫn kết thúc
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

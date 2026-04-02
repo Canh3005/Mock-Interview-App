@@ -269,7 +269,7 @@ export default function InProgressSessions({ navigate }) {
 
   function handleResume(session) {
     dispatch(resumeSession({ sessionId: session.sessionId, candidateLevel: session.candidateLevel }))
-    navigate('combat-room')
+    navigate(session.mode === 'combat' ? 'combat-room' : 'behavioral-room')
   }
 
   if (loading) {
