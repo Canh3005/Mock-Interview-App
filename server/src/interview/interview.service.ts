@@ -138,8 +138,6 @@ export class InterviewService {
       pipeline.set(`jd_context:${userId}`, JSON.stringify(dto.jd));
     }
     await pipeline.exec();
-    console.log(await this.redisClient.get(`cv_context:${userId}`));
-    console.log(await this.redisClient.get(`jd_context:${userId}`));
     return { updated: true };
   }
 

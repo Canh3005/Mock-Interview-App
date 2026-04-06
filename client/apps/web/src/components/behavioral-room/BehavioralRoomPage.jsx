@@ -8,7 +8,9 @@ import {
   nextStageRequest,
   completeSessionRequest,
   tickTimer,
+  resetBehavioral,
 } from '../../store/slices/behavioralSlice'
+import { resetSetup } from '../../store/slices/interviewSetupSlice'
 import StageProgressPanel from './StageProgressPanel'
 import ChatInterface from './ChatInterface'
 import StarGuidePanel from './StarGuidePanel'
@@ -60,7 +62,11 @@ export default function BehavioralRoomPage({ navigate, interviewSessionId }) {
   const timerRef = useRef(null)
 
   const handleExitClick = () => setShowExitModal(true)
-  const handleConfirmExit = () => navigate('dashboard')
+  const handleConfirmExit = () => {
+    dispatch(resetBehavioral())
+    dispatch(resetSetup())
+    navigate('dashboard')
+  }
 
   const handleFinishClick = () => {
     if (currentStage < 6) {

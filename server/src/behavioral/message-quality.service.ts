@@ -7,6 +7,7 @@ import { SendMessageDto } from './dto/send-message.dto';
 export class MessageQualityService {
   constructor(private readonly aiFacilitator: AIFacilitatorService) {}
 
+  // Processes the input message for quality issues, returning the (possibly modified) content and any flags raised
   processInputQuality(dto: SendMessageDto): {
     content: string;
     flags: string[];

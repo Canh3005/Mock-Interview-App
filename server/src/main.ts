@@ -6,6 +6,9 @@ import cookieParser from 'cookie-parser';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  // Disable ETag to prevent 304 responses on dynamic API data
+  app.getHttpAdapter().getInstance().set('etag', false);
+
   // Use cookie parser for HttpOnly Refresh Tokens
   app.use(cookieParser());
 

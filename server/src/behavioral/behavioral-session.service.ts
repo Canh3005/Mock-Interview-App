@@ -9,6 +9,9 @@ import { Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
 import Redis from 'ioredis';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
+import { BEHAVIORAL_SCORING_QUEUE } from '../jobs/jobs.constants';
 import {
   BehavioralSession,
   CandidateLevel,
@@ -22,6 +25,9 @@ import { MessageQualityService } from './message-quality.service';
 import { ScoringService } from './scoring.service';
 import { QuestionOrchestratorService } from './question-orchestrator.service';
 import { InterviewSession } from '../interview/entities/interview-session.entity';
+import { CombatTransitionService } from '../combat/combat-transition.service';
+import { MultimodalHintService } from '../combat/multimodal-hint.service';
+import { MultimodalScoringService } from '../combat/multimodal-scoring.service';
 
 const REDIRECT_MESSAGES = {
   obvious:
@@ -52,6 +58,10 @@ export class BehavioralSessionService {
     private qualityService: MessageQualityService,
     private scoringService: ScoringService,
     private orchestrator: QuestionOrchestratorService,
+    private combatTransition: CombatTransitionService,
+    private multimodalHint: MultimodalHintService,
+    private multimodalScoring: MultimodalScoringService,
+    @InjectQueue(BEHAVIORAL_SCORING_QUEUE) private scoringQueue: Queue,
   ) {
     this.redisClient = new Redis({
       host: this.configService.get('REDIS_HOST') || '127.0.0.1',
@@ -84,6 +94,46 @@ export class BehavioralSessionService {
 
     const level = interviewSession.candidateLevel as CandidateLevel;
 
+    // // ── Idempotency: resume existing IN_PROGRESS session ──────────────────
+    // const existingSession = await this.sessionRepo.findOne({
+    //   where: {
+    //     interviewSessionId: dto.interviewSessionId,
+    //     status: 'IN_PROGRESS',
+    //   },
+    //   order: { startedAt: 'DESC' },
+    // });
+
+    // if (existingSession) {
+    //   this.logger.log(
+    //     `Resuming behavioral session ${existingSession.id} at stage ${existingSession.currentStage} [${level}]`,
+    //   );
+
+    //   // Ensure system prompt is cached for current stage (may have expired)
+    //   const cacheKey = `system_prompt:${existingSession.id}:${existingSession.currentStage}`;
+    //   const cached = await this.redisClient.get(cacheKey);
+    //   if (!cached) {
+    //     const systemPrompt = this.promptBuilder.buildSystemPrompt(
+    //       level,
+    //       interviewSession.cvContextSnapshot ?? '',
+    //       interviewSession.jdContextSnapshot ?? '',
+    //       existingSession.currentStage,
+    //     );
+    //     await this.redisClient.setex(cacheKey, 7200, systemPrompt);
+    //   }
+
+    //   const stageName = STAGE_NAMES[existingSession.currentStage];
+    //   const resumeGreeting = `Chào mừng bạn quay lại! Chúng ta đang ở **${stageName}** (Giai đoạn ${existingSession.currentStage}/6). Hãy tiếp tục từ nơi chúng ta đã dừng nhé.`;
+
+    //   return {
+    //     sessionId: existingSession.id,
+    //     currentStage: existingSession.currentStage,
+    //     firstQuestion: resumeGreeting,
+    //     candidateLevel: level,
+    //     stageName,
+    //   };
+    // }
+
+    // ── Create new session ────────────────────────────────────────────────
     const behavioralSession = this.sessionRepo.create({
       interviewSessionId: dto.interviewSessionId,
       candidateLevel: level,
@@ -197,6 +247,7 @@ export class BehavioralSessionService {
 
     // ── Inject fresh anchor instruction ───────────────────────────────────
     const coveredForStage = session.coveredCompetencies?.[String(stage)] ?? [];
+    console.log(`Covered competencies for stage ${stage}:`, coveredForStage);
     const nextAnchor = this.orchestrator.getNextAnchor(
       stage,
       level,
@@ -209,8 +260,11 @@ export class BehavioralSessionService {
         '',
       );
       systemPrompt += `\n\n${anchorInstruction}`;
+    } else {
+      // Hết anchor — đào sâu tự do vào CV thay vì hỏi chung chung
+      systemPrompt += `\n\n[Hướng dẫn khi đã cover đủ competency] Chọn một công nghệ hoặc quyết định kỹ thuật cụ thể trong CV ứng viên và hỏi sâu vào đó. KHÔNG hỏi kiểu "kể về dự án" hay "kinh nghiệm của bạn" — thay vào đó hỏi vào một chi tiết implementation cụ thể, ví dụ: tại sao chọn X thay vì Y, đã gặp vấn đề gì khi dùng X, hoặc X hoạt động như thế nào bên dưới.`;
     }
-
+    console.log(`Final system prompt for stage ${stage}:\n`, systemPrompt);
     // ── Build history for this stage ──────────────────────────────────────
     const stageLogs = await this.logRepo.find({
       where: { behavioralSessionId: sessionId, stageNumber: stage },
@@ -257,14 +311,64 @@ export class BehavioralSessionService {
       return;
     }
 
-    // ── Save user log ─────────────────────────────────────────────────────
-    await this.saveUserLog(sessionId, stage, level, content, dto, flags);
+    // ── Combat mode: multimodal hint injection ────────────────────────────
+    const isCombat = interviewSession?.mode === 'combat';
+    if (isCombat && dto.multimodalContext) {
+      const hint = this.multimodalHint.buildHint(dto.multimodalContext);
+      if (hint) systemPrompt += hint;
+    }
+
+    // ── Combat mode: pre-compute transition decision ───────────────────────
+    if (isCombat && dto.stageElapsedMs !== undefined) {
+      const totalBudget = dto.totalBudgetMs ?? 1_200_000;
+      const stageBudget = this.combatTransition.getStageBudget(
+        stage,
+        totalBudget,
+      );
+      const offTopicCount =
+        this.qualityService.countConsecutiveOffTopic(stageLogs);
+      const turnsInStage =
+        dto.turnsInStage ??
+        stageLogs.filter((l) => l.role === 'USER').length + 1;
+      const decision = this.combatTransition.evaluateTransition(level, stage, {
+        turnsInStage,
+        stageElapsedMs: dto.stageElapsedMs,
+        timeBudgetMs: stageBudget,
+        drillDepth: 0,
+        lastResponseQuality: 'adequate',
+        offTopicCount,
+      });
+      if (decision.shouldTransition && decision.transitionPhrase) {
+        // Skip AI call entirely — send transition phrase as static SSE
+        await this.saveUserLog(sessionId, stage, level, content, dto, flags);
+        const transitionMeta = {
+          combatTransition: {
+            shouldTransition: true,
+            reason: decision.reason,
+            nextStage: decision.nextStage,
+            transitionPhrase: decision.transitionPhrase,
+          },
+        };
+        this.sendStaticSSEWithMeta(
+          res,
+          decision.transitionPhrase,
+          transitionMeta,
+        );
+        await this.saveAiLog(sessionId, stage, decision.transitionPhrase, [
+          'STAGE_TRANSITION',
+        ]);
+        return;
+      }
+    }
 
     // ── Run relevance check in parallel with main stream ─────────────────
     const lastAiMsg = stageLogs
       .filter((l) => l.role === 'AI_FACILITATOR')
       .pop();
     const currentQuestion = lastAiMsg?.content ?? '';
+
+    // ── Save user log ─────────────────────────────────────────────────────
+    await this.saveUserLog(sessionId, stage, level, content, dto, flags);
 
     const [relevanceResult, streamResult] = await Promise.all([
       this.aiFacilitator.checkRelevance(currentQuestion, content),
@@ -282,7 +386,9 @@ export class BehavioralSessionService {
       relevanceResult.relevant,
       offTopicCount,
     );
-
+    console.log(
+      nextAnchor ? `Next anchor: ${nextAnchor.id}` : 'No more anchors to cover',
+    );
     // ── Advance anchor every 2 user turns ────────────────────────────────
     if (
       nextAnchor &&
@@ -291,6 +397,7 @@ export class BehavioralSessionService {
     ) {
       const userTurnCount =
         stageLogs.filter((l) => l.role === 'USER').length + 1;
+      console.log(`User turn count for stage ${stage}:`, userTurnCount);
       if (userTurnCount % 2 === 0) {
         const currentCovered =
           session.coveredCompetencies?.[String(stage)] ?? [];
@@ -457,9 +564,31 @@ export class BehavioralSessionService {
     };
   }
 
-  // ─── Complete & trigger scoring ───────────────────────────────────────────
+  // ─── Complete & enqueue scoring ──────────────────────────────────────────
 
   async completeSession(sessionId: string): Promise<{ status: string }> {
+    const session = await this.getSessionOrThrow(sessionId);
+
+    if (session.status !== 'IN_PROGRESS') {
+      // Already scoring or completed — idempotent
+      return { status: session.status };
+    }
+
+    session.status = 'SCORING';
+    await this.sessionRepo.save(session);
+
+    await this.scoringQueue.add(
+      'score-session',
+      { sessionId },
+      { attempts: 3, backoff: { type: 'exponential', delay: 5000 } },
+    );
+
+    return { status: 'scoring_in_progress' };
+  }
+
+  // ─── Called by BehavioralScoringWorker ───────────────────────────────────
+
+  async processScoring(sessionId: string): Promise<void> {
     const session = await this.getSessionOrThrow(sessionId);
 
     const interviewSession = await this.interviewSessionRepo.findOne({
@@ -471,26 +600,37 @@ export class BehavioralSessionService {
       order: { stageNumber: 'ASC', timestamp: 'ASC' },
     });
 
-    // Score asynchronously
-    this.scoringService
-      .evaluateSession(
-        logs,
-        session.candidateLevel,
-        interviewSession?.cvContextSnapshot ?? '',
-        interviewSession?.jdContextSnapshot ?? '',
-      )
-      .then(async (score) => {
-        session.finalScore = score as unknown as Record<string, unknown>;
-        session.status = 'COMPLETED';
-        session.completedAt = new Date();
-        await this.sessionRepo.save(session);
-        this.logger.log(`Session ${sessionId} scored: ${score.total_score}`);
-      })
-      .catch((err) => {
-        this.logger.error(`Scoring failed for ${sessionId}`, err);
-      });
+    const isCombat = interviewSession?.mode === 'combat';
 
-    return { status: 'scoring_in_progress' };
+    const score = await this.scoringService.evaluateSession(
+      logs,
+      session.candidateLevel,
+      interviewSession?.cvContextSnapshot ?? '',
+      interviewSession?.jdContextSnapshot ?? '',
+    );
+
+    session.finalScore = score as unknown as Record<string, unknown>;
+
+    if (isCombat) {
+      const multimodalScore = await this.multimodalScoring
+        .scoreSession(sessionId)
+        .catch((err) => {
+          this.logger.warn(`Multimodal scoring failed for ${sessionId}`, err);
+          return null;
+        });
+      if (multimodalScore) {
+        session.finalScore = {
+          ...(session.finalScore ?? {}),
+          multimodal: multimodalScore,
+        };
+      }
+    }
+
+    session.status = 'COMPLETED';
+    session.completedAt = new Date();
+    await this.sessionRepo.save(session);
+
+    this.logger.log(`Session ${sessionId} scored: ${score.total_score}`);
   }
 
   // ─── Get score ────────────────────────────────────────────────────────────
@@ -569,16 +709,34 @@ export class BehavioralSessionService {
   }
 
   private sendStaticSSE(res: Response, message: string): void {
+    this.sendStaticSSEWithMeta(res, message, {});
+  }
+
+  private sendStaticSSEWithMeta(
+    res: Response,
+    message: string,
+    extraMeta: Record<string, unknown>,
+  ): void {
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
     res.setHeader('X-Accel-Buffering', 'no');
     res.flushHeaders();
 
-    // Send as a single token then done
     res.write(`data: ${JSON.stringify({ token: message, done: false })}\n\n`);
     res.write(
-      `data: ${JSON.stringify({ done: true, meta: { starStatus: { situation: true, task: true, action: true, result: true } } })}\n\n`,
+      `data: ${JSON.stringify({
+        done: true,
+        meta: {
+          starStatus: {
+            situation: true,
+            task: true,
+            action: true,
+            result: true,
+          },
+          ...extraMeta,
+        },
+      })}\n\n`,
     );
     res.end();
   }

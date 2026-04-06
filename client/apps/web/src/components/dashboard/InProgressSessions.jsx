@@ -17,6 +17,7 @@ import {
 } from 'lucide-react'
 import { interviewApi } from '../../api/interview.api'
 import { resumeSession } from '../../store/slices/interviewSetupSlice'
+import { resetBehavioral } from '../../store/slices/behavioralSlice'
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -269,6 +270,7 @@ export default function InProgressSessions({ navigate }) {
 
   function handleResume(session) {
     dispatch(resumeSession({ sessionId: session.sessionId, candidateLevel: session.candidateLevel }))
+    dispatch(resetBehavioral())
     navigate(session.mode === 'combat' ? 'combat-room' : 'behavioral-room')
   }
 

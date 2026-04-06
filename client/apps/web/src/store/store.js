@@ -5,9 +5,10 @@ import adminProblemsReducer from './slices/adminProblemsSlice';
 import profileReducer from './slices/profileSlice';
 import interviewSetupReducer from './slices/interviewSetupSlice';
 import behavioralReducer from './slices/behavioralSlice';
-import rootSaga from './sagas/rootSaga';
+import combatOrchestratorReducer from './slices/combatOrchestratorSlice';
+import combatEngineReducer from './slices/combatEngineSlice';
 
-const sagaMiddleware = createSagaMiddleware();
+export const sagaMiddleware = createSagaMiddleware();
 
 export const store = configureStore({
   reducer: {
@@ -16,16 +17,17 @@ export const store = configureStore({
     profile: profileReducer,
     interviewSetup: interviewSetupReducer,
     behavioral: behavioralReducer,
+    combatOrchestrator: combatOrchestratorReducer,
+    combatEngine: combatEngineReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ 
       thunk: false,
       serializableCheck: {
-        ignoredActions: ['profile/uploadDocumentRequest'],
-        ignoredActionPaths: ['payload.file'],
+        ignoredActions: ['profile/uploadDocumentRequest', 'combat/startEngine'],
+        ignoredActionPaths: ['payload.file', 'payload.mediaStream', 'payload.videoElement'],
       }
     }).concat(sagaMiddleware),
   devTools: process.env.NODE_ENV !== 'production',
 });
 
-sagaMiddleware.run(rootSaga);

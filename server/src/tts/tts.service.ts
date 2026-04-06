@@ -77,7 +77,7 @@ export class TtsService {
     const vcn = options.voice ?? voiceMap[level] ?? 'ThuHien';
     // speed: iFlytek range 0-100, default 50; input is 0.5–2.0 speaking rate → map to 0–100
     const speed =
-      options.speed != null ? Math.round((options.speed / 2.0) * 100) : 70;
+      options.speed != null ? Math.round((options.speed / 2.0) * 100) : 80;
 
     return new Promise<Buffer>((resolve, reject) => {
       const authUrl = this.buildAuthUrl();

@@ -133,8 +133,16 @@ Câu trả lời: "${userMessage}"`;
     history: TurnContext[];
     userMessage: string;
     stage?: number;
+    extraMeta?: Record<string, unknown>;
   }): Promise<{ fullText: string; starStatus: StarStatus }> {
-    const { res, systemPrompt, history, userMessage, stage = 1 } = params;
+    const {
+      res,
+      systemPrompt,
+      history,
+      userMessage,
+      stage = 1,
+      extraMeta,
+    } = params;
 
     // Compress old turns if needed
     let contextPrefix = '';
@@ -167,7 +175,6 @@ Câu trả lời: "${userMessage}"`;
     let fullText = '';
 
     try {
-      console.log('Facilitator prompt contents:', JSON.stringify(contents));
       const stream = this.groqService.generateContentStream({
         model: this.mainModel,
         contents,
@@ -194,7 +201,7 @@ Câu trả lời: "${userMessage}"`;
           : { situation: true, task: true, action: true, result: true };
 
       res.write(
-        `data: ${JSON.stringify({ done: true, meta: { starStatus } })}\n\n`,
+        `data: ${JSON.stringify({ done: true, meta: { starStatus, ...(extraMeta ?? {}) } })}\n\n`,
       );
       res.end();
 
@@ -202,7 +209,7 @@ Câu trả lời: "${userMessage}"`;
     } catch (err) {
       this.logger.error('Streaming error', err);
       res.write(
-        `data: ${JSON.stringify({ done: true, error: 'LLM error', meta: { starStatus: { situation: true, task: true, action: true, result: true } } })}\n\n`,
+        `data: ${JSON.stringify({ done: true, error: 'LLM error', meta: { starStatus: { situation: true, task: true, action: true, result: true }, ...(extraMeta ?? {}) } })}\n\n`,
       );
       res.end();
       return {

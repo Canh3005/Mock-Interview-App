@@ -23,9 +23,12 @@ export class QuestionOrchestratorService {
       a.applicableLevels.includes(level),
     );
 
-    // Tìm anchor chưa hỏi
-    const next = anchors.find((a) => !coveredCompetencies.includes(a.id));
-    return next ?? null;
+    const uncovered = anchors.filter(
+      (a) => !coveredCompetencies.includes(a.id),
+    );
+    if (uncovered.length === 0) return null;
+
+    return uncovered[Math.floor(Math.random() * uncovered.length)];
   }
 
   // Kiểm tra stage đã cover đủ minimum required chưa

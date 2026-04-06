@@ -7,6 +7,7 @@ import {
   resetSetup,
   initSessionRequest,
 } from '../../store/slices/interviewSetupSlice'
+import { resetBehavioral } from '../../store/slices/behavioralSlice'
 import ModeSelectionStep from './steps/ModeSelectionStep'
 import CombatPermissionGate from './steps/CombatPermissionGate'
 import RoundSelectionStep from './steps/RoundSelectionStep'
@@ -370,7 +371,8 @@ export default function InterviewSetupFlow({ navigate }) {
   useEffect(() => {
     if (step === 'done' && session) {
       if (selectedRounds.includes('hr_behavioral')) {
-        // Combat mode → CombatInterviewRoom, Practice → BehavioralRoomPage
+        // Clear stale behavioral state before entering the room so first render sees status='idle'
+        dispatch(resetBehavioral())
         navigate(selectedMode === 'combat' ? 'combat-room' : 'behavioral-room')
       } else {
         navigate('interview-room')

@@ -13,6 +13,7 @@ class TtsPlayer {
     if (!this._ctx) {
       this._ctx = new (window.AudioContext || window.webkitAudioContext)();
       this._gainNode = this._ctx.createGain();
+      this._gainNode.gain.value = 2.0; // Boost volume above device default
       this._gainNode.connect(this._ctx.destination);
     }
     // Resume if suspended (autoplay policy)

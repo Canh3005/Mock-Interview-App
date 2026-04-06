@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { GroqService } from '../ai/groq.service';
 import { CandidateLevel } from './entities/behavioral-session.entity';
 import {
+  CompetencyAnchor,
   COMPETENCY_ANCHORS,
   EvaluationMode,
   STAGE_EVALUATION_MODE,
@@ -18,11 +19,61 @@ export const STAGE_NAMES: Record<number, string> = {
   6: 'Reverse Interview',
 };
 
-const PERSONA: Record<CandidateLevel, string> = {
-  junior: `Bạn là một Mentor thân thiện và kiên nhẫn. Nhiệm vụ của bạn là dẫn dắt ứng viên khám phá câu trả lời của họ thay vì phán xét. Nếu ứng viên thiếu ý, hãy mớm lời nhẹ nhàng bằng câu hỏi gợi mở.`,
-  mid: `Bạn là một Senior Engineer đang phỏng vấn. Bạn lắng nghe kỹ và hay vặn vẹo về hiệu năng, tính tự chủ, và cam kết dài hạn. Chỉ mớm lời nếu ứng viên im lặng > 15 giây hoặc lạc đề hoàn toàn.`,
-  senior: `Bạn là một Engineering Manager / Tech Lead đang đánh giá ứng viên cấp cao. Bạn tập trung vào bức tranh tổng thể, trade-offs kỹ thuật, và khả năng dẫn dắt team. Ít mớm lời, nhiều câu hỏi đào sâu.`,
-};
+// Extract tên vị trí từ JD — ưu tiên parse JSON nếu JD là structured object
+function extractRoleTitle(jdSnapshot: string): string {
+  if (!jdSnapshot) return 'kỹ thuật';
+  try {
+    const parsed = JSON.parse(jdSnapshot) as Record<string, unknown>;
+    if (typeof parsed.role === 'string' && parsed.role)
+      return parsed.role.slice(0, 60);
+  } catch {
+    // JD là plain text, fallback xuống dưới
+  }
+  const first = jdSnapshot.split(/[\n,.\-–(]/)[0].trim();
+  return first.slice(0, 60) || 'kỹ thuật';
+}
+
+function buildPersona(level: CandidateLevel, roleTitle: string): string {
+  const personas: Record<CandidateLevel, string> = {
+    junior: `Bạn là Minh — Tech Lead với 8 năm kinh nghiệm trong lĩnh vực ${roleTitle}, đang phỏng vấn ứng viên Junior. Bạn nhớ rõ cảm giác hồi hộp khi đi phỏng vấn lần đầu nên bạn tạo không khí thoải mái ngay từ đầu.
+
+Phong cách phỏng vấn của bạn:
+- Nói chuyện tự nhiên, không đọc script — câu hỏi ngắn gọn, rõ ý
+- Khi ứng viên trả lời đúng hướng, bạn gật đầu bằng "Ừ, nghe có lý đấy, thế thì..." rồi đào sâu thêm một chút
+- Khi ứng viên lạc đề hoặc không rõ, bạn chờ họ kết thúc câu rồi hỏi lại: "Ý bạn là... [paraphrase]? Hay là...?"
+- Khi ứng viên bí, bạn gợi ý nhẹ bằng cách dẫn về kinh nghiệm thực tế của họ: "Thử nghĩ xem, ở dự án [X trong CV], bạn đã làm gì khi gặp tình huống tương tự?"
+- Không bao giờ nói "Sai rồi" — thay vào đó: "Hmm, thú vị. Bạn có thể giải thích thêm tại sao chọn cách đó không?"
+
+Mục tiêu của bạn: đánh giá potential và tư duy học hỏi, không phải kiến thức hoàn hảo.
+Trả lời bằng tiếng Việt. Mỗi lượt chỉ hỏi đúng 1 câu — không bao giờ stack nhiều câu hỏi cùng lúc.`,
+
+    mid: `Bạn là Hưng — Senior ${roleTitle} với 6 năm kinh nghiệm, đang phỏng vấn ứng viên Mid-level. Bạn đã ngồi phỏng vấn hàng chục người nên bạn nhận ra ngay khi ai đó đang nói vague hay nói thật.
+
+Phong cách phỏng vấn của bạn:
+- Lắng nghe hoàn toàn — nhưng ghi chú mental về những điểm chưa rõ để hỏi sau
+- Khi câu trả lời chung chung ("chúng tôi đã tối ưu performance"), bạn hỏi vào một điểm cụ thể nhất: "Tối ưu theo hướng nào?" — chỉ một câu, không liệt kê nhiều câu hỏi
+- Khi ứng viên nói đúng, bạn không vội khen — bạn đẩy thêm: "OK, vậy nếu traffic tăng 10x thì approach đó còn hold không?"
+- Với câu trả lời textbook (chỉ lý thuyết, không có thực tế), bạn hỏi thẳng: "Bạn đã thực sự áp dụng điều này chưa? Trong context nào?"
+- Nếu ứng viên không biết, bạn để họ thừa nhận — không dẫn dắt đến đáp án
+
+Mục tiêu của bạn: phân biệt người thực sự làm được việc với người nói hay nhưng thiếu depth thực tế.
+Trả lời bằng tiếng Việt. Mỗi lượt chỉ hỏi đúng 1 câu — không bao giờ stack nhiều câu hỏi cùng lúc.`,
+
+    senior: `Bạn là Lan — Engineering Manager với 12 năm kinh nghiệm, hiện quản lý team kỹ thuật. Bạn đang tuyển Senior ${roleTitle} — vị trí sẽ ảnh hưởng lớn đến roadmap kỹ thuật và văn hóa team.
+
+Phong cách phỏng vấn của bạn:
+- Câu hỏi của bạn luôn có hai lớp: lớp nổi (tình huống cụ thể) và lớp sâu (tư duy, giá trị, trade-off)
+- Bạn không quan tâm đến "giải pháp đúng" — bạn quan tâm đến quá trình ra quyết định và khả năng nhận ra khi nào mình sai
+- Khi ứng viên nêu thành công, bạn hỏi về thất bại: "Và nếu làm lại, bạn sẽ thay đổi gì?"
+- Khi ứng viên nêu ý kiến mạnh, bạn challenge nhẹ để xem họ có giữ vững quan điểm hay đổi ngay: "Hmm, có người argue ngược lại rằng... Bạn nghĩ sao?"
+- Bạn chú ý đến cách ứng viên nói về đồng nghiệp và team cũ — có blame người khác không? Có take ownership không?
+- Bạn nói ít hơn ứng viên trong mọi lượt — câu hỏi ngắn, không giải thích dài dòng
+
+Mục tiêu của bạn: đánh giá khả năng tác động ở tầm hệ thống và con người, không chỉ kỹ thuật đơn thuần.
+Trả lời bằng tiếng Việt. Mỗi lượt chỉ hỏi đúng 1 câu — không bao giờ stack nhiều câu hỏi cùng lúc.`,
+  };
+  return personas[level];
+}
 
 const STAGE_INSTRUCTIONS: Record<number, Record<CandidateLevel, string>> = {
   1: {
@@ -58,32 +109,32 @@ const STAGE_INSTRUCTIONS: Record<number, Record<CandidateLevel, string>> = {
 };
 
 const STAR_ENFORCEMENT = `
-Khi đánh giá câu trả lời, hãy kiểm tra ứng viên có đề cập đủ 4 yếu tố STAR:
-- Situation (Bối cảnh): Họ đang ở đâu, dự án nào?
-- Task (Nhiệm vụ): Họ phải làm gì?
-- Action (Hành động): Họ đã làm gì cụ thể? (Đây là phần quan trọng nhất)
-- Result (Kết quả): Kết quả định lượng được không? (Con số, %, thời gian)
+Hướng dẫn follow-up tự nhiên khi câu trả lời còn thiếu:
+- Nếu ứng viên không rõ bối cảnh (dự án nào, team mấy người, thời điểm nào): hỏi một câu định vị — "Dự án đó quy mô thế nào?" hoặc "Lúc đó bạn đang ở công ty nào?"
+- Nếu ứng viên kể việc đã làm nhưng không rõ tại sao họ được giao: hỏi — "Tại sao task đó lại đến tay bạn?"
+- Nếu ứng viên mô tả hành động nhưng quá chung ("tôi tối ưu", "tôi refactor"): hỏi vào một điểm cụ thể nhất — "Phần cụ thể bạn tự tay làm là gì?"
+- Nếu ứng viên không đề cập kết quả: hỏi tự nhiên — "Sau đó kết quả ra sao?" hoặc "Bạn biết mình đã làm đúng vì điều gì?"
 
-Nếu thiếu bất kỳ yếu tố nào, hãy hỏi thêm. KHÔNG trừ điểm ngay, hãy cho ứng viên cơ hội bổ sung. Khi trích dẫn lời ứng viên trong đánh giá, hãy dùng dấu ngoặc kép.
-Trả lời bằng tiếng Việt. Giữ câu trả lời ngắn gọn, tự nhiên như trong một cuộc phỏng vấn thực tế.
+Quan trọng: hỏi từng điểm một, không liệt kê tất cả cùng lúc. Giọng điệu tò mò, không phải chấm bài.
 `;
 
 const TECHNICAL_DEPTH_BLOCK = `
-Đây là câu hỏi kỹ thuật. Đánh giá theo 4 chiều:
-- Độ chính xác: Ứng viên có hiểu đúng bản chất không, hay chỉ nhớ syntax?
-- Chiều sâu: Có giải thích được "tại sao" không, không chỉ "làm thế nào"?
-- Trade-offs: Có nhận ra khi nào nên/không nên dùng approach đó không?
-- Ví dụ thực tế: Có dẫn được case từ kinh nghiệm thực tế của bản thân không?
-Nếu câu trả lời còn nông (chỉ ở mức syntax/usage), hãy hỏi thêm về performance implications, edge cases, hoặc "bạn đã gặp vấn đề này trong thực tế chưa?".
-Trả lời bằng tiếng Việt. Giữ câu trả lời ngắn gọn, tự nhiên như trong một cuộc phỏng vấn thực tế.
+Hướng dẫn follow-up khi câu trả lời kỹ thuật còn nông:
+- Nếu ứng viên chỉ mô tả cách dùng (syntax/API) mà không giải thích bản chất: hỏi — "Tại sao nó hoạt động được như vậy?" hoặc "Bên dưới nó làm gì?"
+- Nếu ứng viên không nhắc đến giới hạn hoặc trade-off: hỏi — "Khi nào thì cách này không còn phù hợp?"
+- Nếu câu trả lời nghe như lý thuyết, chưa thấy thực tế: hỏi — "Bạn đã gặp tình huống này trong dự án thực chưa? Xảy ra như thế nào?"
+- Nếu ứng viên đưa ra solution nhưng không đo lường: hỏi — "Bạn biết nó cải thiện được gì, đo bằng cách nào?"
+
+Quan trọng: mỗi lượt chỉ đào sâu vào một điểm, không hỏi nhiều chiều cùng lúc.
 `;
 
 const REVERSE_INTERVIEW_BLOCK = `
-Ứng viên đang hỏi bạn về công ty/team. Hãy:
-1. Trả lời như một interviewer thực sự — thành thật, không cần bịa số liệu cụ thể.
-2. Đánh giá ngầm chất lượng câu hỏi: Có chiều sâu chiến lược? Hay chỉ là câu hỏi xã giao?
-3. Nếu ứng viên không hỏi gì, hoặc câu hỏi quá bề mặt (chỉ về lương/môi trường làm việc), hãy gợi ý nhẹ: "Bạn có muốn hỏi thêm về roadmap kỹ thuật hoặc cách team handle technical debt không?" — nhưng không ép buộc.
-Trả lời bằng tiếng Việt.
+Ứng viên đang hỏi bạn về công ty/team. Hãy trả lời như một interviewer thực sự — thành thật, tự nhiên, không bịa số liệu cụ thể.
+
+Sau khi trả lời, tuỳ tình huống:
+- Nếu câu hỏi của ứng viên có chiều sâu (hỏi về technical roadmap, engineering culture, trade-off quyết định kỹ thuật...): ghi nhận nội tâm, trả lời thực chất
+- Nếu câu hỏi bề mặt (chỉ hỏi về lương, giờ làm, môi trường chung chung): trả lời ngắn, rồi mở cửa nhẹ — "Bạn có muốn hỏi thêm về cách team mình làm việc về mặt kỹ thuật không?"
+- Nếu ứng viên không hỏi gì: gợi ý tự nhiên — "Thường thì ứng viên hay muốn biết về... Bạn có tò mò điều gì không?"
 `;
 
 @Injectable()
@@ -159,10 +210,22 @@ export class PromptBuilderService {
     candidateContextBlock?: string,
     difficultySignal?: string,
   ): string {
-    const persona = PERSONA[level] + (difficultySignal ?? '');
-    const stageInstruction = STAGE_INSTRUCTIONS[stage]?.[level] ?? '';
-    const truncationBlock = truncationNote
-      ? `\n[Lưu ý hệ thống: ${truncationNote}]`
+    // Cap CV/JD để tránh prompt phình to — CV thực tế có thể 5000+ chars
+    const cvCapped =
+      cvSnapshot.length > 600 ? cvSnapshot.slice(0, 600) + '...' : cvSnapshot;
+    const jdCapped =
+      jdSnapshot.length > 300 ? jdSnapshot.slice(0, 300) + '...' : jdSnapshot;
+
+    const roleTitle = extractRoleTitle(jdSnapshot);
+    const basePersona = buildPersona(level, roleTitle);
+    const persona = difficultySignal
+      ? `${basePersona}\n\n[Điều chỉnh độ khó] ${difficultySignal}`
+      : basePersona;
+
+    const rawStageInstruction = STAGE_INSTRUCTIONS[stage]?.[level] ?? '';
+    const stageInstruction = rawStageInstruction
+      ? rawStageInstruction +
+        '\n[Lưu ý bắt buộc] Câu "Ví dụ" trong hướng dẫn trên chỉ là minh họa định hướng — TUYỆT ĐỐI không hỏi nguyên văn hoặc paraphrase câu đó. Hãy tự đặt câu hỏi mới, cùng competency nhưng hoàn toàn khác từ ngữ và góc độ, được cá nhân hoá theo CV ứng viên.'
       : '';
 
     const mode = STAGE_EVALUATION_MODE[stage] ?? EvaluationMode.STAR_BEHAVIORAL;
@@ -179,26 +242,55 @@ export class PromptBuilderService {
       ? `\n${candidateContextBlock}\n`
       : '';
 
+    const truncationBlock = truncationNote
+      ? `\n[Lưu ý hệ thống: ${truncationNote}]`
+      : '';
+
+    // Thứ tự: persona → stage goal → CV/JD context → candidate history → evaluation rules
+    // CV/JD đặt sau stage instruction để AI đã có "lens" trước khi đọc context
     return `${persona}
 
-CV của ứng viên: ${cvSnapshot}
-Vị trí ứng tuyển: ${jdSnapshot}
-Hãy cá nhân hóa câu hỏi dựa trên kinh nghiệm thực tế trong CV này.
-${contextBlock}
 ${stageInstruction}
+
+CV của ứng viên (tóm tắt): ${cvCapped}
+Vị trí ứng tuyển: ${jdCapped}
+${contextBlock}
 ${evaluationBlock}${truncationBlock}`;
   }
 
-  // Fallback khi AI call thất bại — dùng exampleQuestion của anchor đầu tiên
+  // Random pick anchor theo level — dùng chung cho buildFirstQuestion và fallback
+  private pickRandomAnchor(
+    stage: number,
+    level: CandidateLevel,
+  ): CompetencyAnchor | null {
+    const anchors = (COMPETENCY_ANCHORS[stage] ?? []).filter((a) =>
+      a.applicableLevels.includes(level),
+    );
+    if (anchors.length === 0) return null;
+    return anchors[Math.floor(Math.random() * anchors.length)];
+  }
+
+  // Fallback khi AI call thất bại — random anchor, hoặc câu mở đầu stage-specific
   private getFallbackFirstQuestion(
     level: CandidateLevel,
     stage: number,
   ): string {
-    const anchor = (COMPETENCY_ANCHORS[stage] ?? []).find((a) =>
-      a.applicableLevels.includes(level),
-    );
+    const anchor = this.pickRandomAnchor(stage, level);
     if (anchor) return anchor.exampleQuestion;
-    return `Hãy bắt đầu ${STAGE_NAMES[stage]}.`;
+
+    // Fallback stage-specific — meaningful với ứng viên, không cần AI
+    const stageDefaults: Record<number, string> = {
+      1: 'Bạn có thể kể về một dự án gần đây mà bạn học được nhiều nhất không?',
+      2: 'Trong stack kỹ thuật bạn đang dùng, công nghệ nào bạn hiểu sâu nhất và vì sao?',
+      3: 'Bạn hiểu domain của vị trí này đến mức nào? Thử mô tả một bài toán kỹ thuật điển hình.',
+      4: 'Trong CV, dự án nào bạn tự hào nhất về mặt kỹ thuật? Bạn đóng góp cụ thể phần nào?',
+      5: 'Kể về một tình huống bạn phải làm việc với người có quan điểm khác mình.',
+      6: 'Bạn có câu hỏi nào muốn hỏi về team hoặc công ty không?',
+    };
+    return (
+      stageDefaults[stage] ??
+      'Bạn có thể giới thiệu ngắn về kinh nghiệm kỹ thuật của mình không?'
+    );
   }
 
   // AI rephrase anchor intent thành câu hỏi mở đầu tự nhiên, cá nhân hoá theo CV
@@ -207,12 +299,12 @@ ${evaluationBlock}${truncationBlock}`;
     stage: number,
     cvSnapshot: string,
   ): Promise<string> {
-    const anchor = (COMPETENCY_ANCHORS[stage] ?? []).find((a) =>
-      a.applicableLevels.includes(level),
-    );
+    const anchor = this.pickRandomAnchor(stage, level);
+    if (!anchor) return this.getFallbackFirstQuestion(level, stage);
 
-    if (!anchor) return `Hãy bắt đầu ${STAGE_NAMES[stage]}.`;
-
+    const interviewerName = { junior: 'Minh', mid: 'Hưng', senior: 'Lan' }[
+      level
+    ];
     const stageName = STAGE_NAMES[stage];
     const cvHint = cvSnapshot
       ? `\nCV ứng viên (tóm tắt): ${cvSnapshot.slice(0, 400)}`
@@ -224,21 +316,22 @@ ${evaluationBlock}${truncationBlock}`;
         : `Chuyển sang giai đoạn "${stageName}", mở đầu bằng 1 câu chuyển ngắn và câu hỏi.`;
 
     const prompt =
-      `Bạn là interviewer. ${stageOpener}\n` +
+      `Bạn là ${interviewerName}, interviewer. ${stageOpener}\n` +
       `Competency cần đánh giá: ${anchor.competency}\n` +
       `Intent: ${anchor.intent}\n` +
       `Scope: ${anchor.scope}\n` +
-      `Ví dụ tham khảo (KHÔNG dùng verbatim, hãy rephrase tự nhiên): "${anchor.exampleQuestion}"` +
       cvHint +
-      `\n\nViết câu hỏi mở đầu bằng tiếng Việt, tối đa 2-3 câu, tự nhiên như trong phỏng vấn thực tế. Chỉ trả về câu hỏi, không giải thích thêm.`;
-
+      `\n\nViết câu hỏi mở đầu bằng tiếng Việt, tối đa 2-3 câu, tự nhiên như trong phỏng vấn thực tế. ` +
+      `Chỉ trả về câu hỏi, không giải thích thêm. ` +
+      `Tránh mọi mở đầu sáo rỗng: "Kể về lần...", "Hãy mô tả một tình huống...", "Bạn có thể chia sẻ...", "Hãy bắt đầu..." — ` +
+      `thay vào đó hỏi trực tiếp, cụ thể, cá nhân hoá theo CV ứng viên.`;
+    console.log(`Prompt for building first question:\n${prompt}`);
     try {
       const result = await this.groqService.generateContent({
         model: this.miniModel,
         contents: [{ role: 'user', parts: [{ text: prompt }] }],
-        config: { maxOutputTokens: 300 },
+        config: { maxOutputTokens: 150 },
       });
-      console.log('[buildFirstQuestion] result:', result);
       return result.trim() || this.getFallbackFirstQuestion(level, stage);
     } catch {
       return this.getFallbackFirstQuestion(level, stage);

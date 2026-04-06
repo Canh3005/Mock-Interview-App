@@ -123,6 +123,13 @@ const interviewSetupSlice = createSlice({
       state.step = 'round_select';
     },
 
+    // ─── Resume (direct re-entry for in-progress sessions) ────────────────
+    resumeSession(state, action) {
+      // action.payload: { sessionId, candidateLevel }
+      state.session = { ...action.payload, estimatedDuration: 0 };
+      state.step = 'done';
+    },
+
     // ─── Reset ────────────────────────────────────────────────────────────
     resetSetup() {
       return initialState;
@@ -146,6 +153,7 @@ export const {
   initSessionRequest,
   initSessionSuccess,
   initSessionFailure,
+  resumeSession,
   resetSetup,
 } = interviewSetupSlice.actions;
 

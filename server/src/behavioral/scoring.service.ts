@@ -57,6 +57,15 @@ export interface FinalScore {
   actionable_feedback: string;
 }
 
+const STAGE_BREAKDOWN_KEYS: Array<keyof FinalScore['breakdown']> = [
+  'stage_1_culture_fit',
+  'stage_2_tech_stack',
+  'stage_3_domain',
+  'stage_4_cv_deepdive',
+  'stage_5_soft_skills',
+  'stage_6_reverse_interview',
+];
+
 @Injectable()
 export class ScoringService {
   private readonly logger = new Logger(ScoringService.name);
@@ -70,12 +79,13 @@ export class ScoringService {
     cvSnapshot: string,
     jdSnapshot: string,
   ): Promise<FinalScore> {
-    const transcript = this.buildTranscript(logs);
+    const { transcript, presentStages } = this.buildTranscript(logs);
     const prompt = this.buildEvaluationPrompt(
       transcript,
       candidateLevel,
       cvSnapshot,
       jdSnapshot,
+      presentStages,
     );
 
     let attempt = 0;
@@ -102,6 +112,8 @@ export class ScoringService {
         if (!jsonMatch) throw new Error('No JSON found in response');
 
         const parsed = JSON.parse(jsonMatch[0]) as FinalScore;
+        // Force-zero stages that had no transcript data — LLM must not hallucinate scores
+        this.zeroAbsentStages(parsed, presentStages);
         return parsed;
       } catch (err: any) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
@@ -114,7 +126,10 @@ export class ScoringService {
     return this.buildFallbackScore(candidateLevel);
   }
 
-  private buildTranscript(logs: BehavioralStageLog[]): string {
+  private buildTranscript(logs: BehavioralStageLog[]): {
+    transcript: string;
+    presentStages: Set<number>;
+  } {
     // Group by stage, limit to 6000 tokens equiv (~24000 chars)
     const MAX_CHARS = 24000;
     const grouped: Record<number, BehavioralStageLog[]> = {};
@@ -123,10 +138,12 @@ export class ScoringService {
       grouped[log.stageNumber].push(log);
     }
 
+    const presentStages = new Set<number>();
     let transcript = '';
     for (let s = 1; s <= 6; s++) {
       const stageLogs = grouped[s] ?? [];
       if (stageLogs.length === 0) continue;
+      presentStages.add(s);
       transcript += `\n=== Giai đoạn ${s}: ${stageLogs[0].stageName ?? ''} ===\n`;
       for (const log of stageLogs) {
         if (log.role === 'SYSTEM') continue;
@@ -142,7 +159,43 @@ export class ScoringService {
     if (transcript.length > MAX_CHARS) {
       transcript = transcript.slice(0, MAX_CHARS) + '\n...[Đã cắt bớt]';
     }
-    return transcript;
+    return { transcript, presentStages };
+  }
+
+  /**
+   * Overwrite scores for stages that were never reached in the session.
+   * This prevents LLM hallucination on absent stages.
+   */
+  private zeroAbsentStages(
+    score: FinalScore,
+    presentStages: Set<number>,
+  ): void {
+    STAGE_BREAKDOWN_KEYS.forEach((key, idx) => {
+      const stageNumber = idx + 1;
+      if (!presentStages.has(stageNumber)) {
+        const zeroed: ScoreBreakdown = {
+          score: 0,
+          feedback: 'Giai đoạn này chưa được thực hiện trong buổi phỏng vấn.',
+          highlights: [],
+          red_flags: [],
+        };
+        if (key === 'stage_4_cv_deepdive') zeroed.cv_quotes_used = [];
+        score.breakdown[key] = zeroed;
+      }
+    });
+
+    // Recalculate total_score from only present stages
+    const presentKeys = STAGE_BREAKDOWN_KEYS.filter((_, idx) =>
+      presentStages.has(idx + 1),
+    );
+    if (presentKeys.length > 0) {
+      const avg =
+        presentKeys.reduce((sum, k) => sum + score.breakdown[k].score, 0) /
+        presentKeys.length;
+      score.total_score = Math.round(avg);
+    } else {
+      score.total_score = 0;
+    }
   }
 
   private buildEvaluationPrompt(
@@ -150,12 +203,22 @@ export class ScoringService {
     level: CandidateLevel,
     cvSnapshot: string,
     jdSnapshot: string,
+    presentStages: Set<number>,
   ): string {
+    const absentStages = [1, 2, 3, 4, 5, 6].filter(
+      (s) => !presentStages.has(s),
+    );
+    const absentNote =
+      absentStages.length > 0
+        ? `\nCHÚ Ý: Các giai đoạn sau KHÔNG có trong transcript (ứng viên chưa đến): [${absentStages.join(', ')}]. Với các giai đoạn này, đặt score=0, feedback="Chưa thực hiện", highlights=[], red_flags=[].`
+        : '';
+
     return `Bạn là một Hiring Manager chuyên nghiệp. Chấm điểm ứng viên dưới đây dựa trên buổi phỏng vấn behavioral.
 
 Trình độ ứng viên: ${level}
 CV: ${cvSnapshot.slice(0, 1000)}
 JD: ${jdSnapshot.slice(0, 500)}
+${absentNote}
 
 TRANSCRIPT PHỎNG VẤN:
 ${transcript}

@@ -1,4 +1,4 @@
-import { call, put, select, takeLatest } from 'redux-saga/effects';
+import { call, put, select, takeLatest, delay } from 'redux-saga/effects';
 import { interviewApi } from '../../api/interview.api';
 import {
   preflightRequest,
@@ -14,6 +14,8 @@ import {
 import { toast } from 'sonner';
 
 function* preflightSaga() {
+  // Small debounce — absorbs React Strict Mode double-mount in development
+  yield delay(50);
   try {
     const data = yield call(interviewApi.preflight);
     yield put(preflightSuccess(data));

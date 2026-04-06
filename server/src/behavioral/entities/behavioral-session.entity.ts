@@ -9,7 +9,7 @@ import {
 import { InterviewSession } from '../../interview/entities/interview-session.entity';
 
 export type CandidateLevel = 'junior' | 'mid' | 'senior';
-export type BehavioralSessionStatus = 'IN_PROGRESS' | 'COMPLETED';
+export type BehavioralSessionStatus = 'IN_PROGRESS' | 'SCORING' | 'COMPLETED';
 
 @Entity('behavioral_sessions')
 export class BehavioralSession {
