@@ -70,6 +70,17 @@ export default function CombatInterviewRoom({ interviewSessionId, navigate }) {
     return () => cleanup();
   }, []);
 
+  // ── Start multimodal engine once sessionId is available ──────────────────────
+  const engineStartedRef = useRef(false);
+  useEffect(() => {
+    if (!sessionId || engineStartedRef.current || !mediaStreamRef.current) return;
+    engineStartedRef.current = true;
+    dispatch({
+      type: COMBAT_START_ENGINE,
+      payload: { mediaStream: mediaStreamRef.current, sessionId, videoElement: videoRef.current },
+    });
+  }, [sessionId]);
+
   async function initCombatSession() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -80,13 +91,6 @@ export default function CombatInterviewRoom({ interviewSessionId, navigate }) {
       if (videoRef.current) videoRef.current.srcObject = stream;
 
       dispatch({ type: COMBAT_START_SESSION, payload: { interviewSessionId, inputMode: 'voice' } });
-
-      setTimeout(() => {
-        dispatch({
-          type: COMBAT_START_ENGINE,
-          payload: { mediaStream: stream, sessionId: null, videoElement: videoRef.current },
-        });
-      }, 2000);
     } catch (err) {
       console.error('[CombatRoom] Init failed:', err);
     }

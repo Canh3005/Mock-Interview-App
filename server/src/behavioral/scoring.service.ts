@@ -112,8 +112,9 @@ export class ScoringService {
         if (!jsonMatch) throw new Error('No JSON found in response');
 
         const parsed = JSON.parse(jsonMatch[0]) as FinalScore;
-        // Force-zero stages that had no transcript data — LLM must not hallucinate scores
+        // Zero absent stages, then recompute total_score as average of present stages
         this.zeroAbsentStages(parsed, presentStages);
+        parsed.total_score = this.calcTotalScore(parsed, presentStages);
         return parsed;
       } catch (err: any) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
@@ -183,19 +184,20 @@ export class ScoringService {
         score.breakdown[key] = zeroed;
       }
     });
+  }
 
-    // Recalculate total_score from only present stages
+  private calcTotalScore(
+    score: FinalScore,
+    presentStages: Set<number>,
+  ): number {
     const presentKeys = STAGE_BREAKDOWN_KEYS.filter((_, idx) =>
       presentStages.has(idx + 1),
     );
-    if (presentKeys.length > 0) {
-      const avg =
-        presentKeys.reduce((sum, k) => sum + score.breakdown[k].score, 0) /
-        presentKeys.length;
-      score.total_score = Math.round(avg);
-    } else {
-      score.total_score = 0;
-    }
+    if (presentKeys.length === 0) return 0;
+    const avg =
+      presentKeys.reduce((sum, k) => sum + score.breakdown[k].score, 0) /
+      presentKeys.length;
+    return Math.round(avg);
   }
 
   private buildEvaluationPrompt(
@@ -225,7 +227,6 @@ ${transcript}
 
 Yêu cầu: Trả về JSON theo schema sau (không giải thích thêm, chỉ JSON):
 {
-  "total_score": <0-100>,
   "candidate_level_confirmed": "<junior|mid|senior>",
   "breakdown": {
     "stage_1_culture_fit": { "score": <0-100>, "feedback": "<string>", "highlights": ["<string>"], "red_flags": ["<string — phải trích dẫn lời ứng viên bằng dấu ngoặc kép>"] },

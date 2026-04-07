@@ -255,7 +255,9 @@ ${stageInstruction}
 CV của ứng viên (tóm tắt): ${cvCapped}
 Vị trí ứng tuyển: ${jdCapped}
 ${contextBlock}
-${evaluationBlock}${truncationBlock}`;
+${evaluationBlock}${truncationBlock}
+
+[Quy tắc xưng hô bắt buộc] Luôn xưng "tôi", gọi ứng viên là "bạn". Tuyệt đối không dùng anh/chị/em trong bất kỳ câu nào.`;
   }
 
   // Random pick anchor theo level — dùng chung cho buildFirstQuestion và fallback
@@ -322,6 +324,7 @@ ${evaluationBlock}${truncationBlock}`;
       `Scope: ${anchor.scope}\n` +
       cvHint +
       `\n\nViết câu hỏi mở đầu bằng tiếng Việt, tối đa 2-3 câu, tự nhiên như trong phỏng vấn thực tế. ` +
+      `Xưng "tôi", gọi ứng viên là "bạn" — không dùng anh/chị/em. ` +
       `Chỉ trả về câu hỏi, không giải thích thêm. ` +
       `Tránh mọi mở đầu sáo rỗng: "Kể về lần...", "Hãy mô tả một tình huống...", "Bạn có thể chia sẻ...", "Hãy bắt đầu..." — ` +
       `thay vào đó hỏi trực tiếp, cụ thể, cá nhân hoá theo CV ứng viên.`;

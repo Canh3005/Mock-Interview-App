@@ -347,13 +347,11 @@ function* combatCompleteSaga(action) {
 // ─── Multimodal engine start saga ─────────────────────────────────────────────
 function* combatStartEngineSaga(action) {
   const { mediaStream, sessionId, videoElement } = action.payload;
-  const accessToken = yield select((s) => s.auth.accessToken);
   yield put(engineStatusChanged('loading'));
   yield call(
     [multimodalEngine, multimodalEngine.start],
     mediaStream,
     sessionId,
-    accessToken,
     videoElement,
   );
   yield put(engineStatusChanged('running'));

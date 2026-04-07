@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CombatMetricsLog } from './entities/combat-metrics-log.entity';
+import { CombatSessionAggregate } from './entities/combat-session-aggregate.entity';
 import { CombatMetricsService } from './combat-metrics.service';
 import { CombatTransitionService } from './combat-transition.service';
 import { MultimodalHintService } from './multimodal-hint.service';
@@ -9,7 +9,7 @@ import { CombatController } from './combat.controller';
 import { AiModule } from '../ai/ai.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([CombatMetricsLog]), AiModule],
+  imports: [TypeOrmModule.forFeature([CombatSessionAggregate]), AiModule],
   controllers: [CombatController],
   providers: [
     CombatMetricsService,
