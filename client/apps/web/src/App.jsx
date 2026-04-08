@@ -14,7 +14,6 @@ import InterviewSetupFlow from './components/interview-setup/InterviewSetupFlow'
 import BehavioralRoomPage from './components/behavioral-room/BehavioralRoomPage'
 import CombatInterviewRoom from './components/combat-room/CombatInterviewRoom'
 import ScoringPage from './components/scoring/ScoringPage'
-import MultimodalScoreCard from './components/scoring/MultimodalScoreCard'
 import { Loader2 } from 'lucide-react'
 
 export default function App() {
@@ -23,7 +22,7 @@ export default function App() {
   const dispatch = useDispatch();
   const { isAuthenticating, isAuthenticated, user } = useSelector((state) => state.auth);
   const interviewSession = useSelector((state) => state.interviewSetup.session);
-  const scoreData = useSelector((state) => state.behavioral.scoreData);
+
 
   useEffect(() => {
     // Attempt silent refresh on mount
@@ -91,10 +90,7 @@ export default function App() {
   }
   if (page === 'scoring') {
     const scoringMode = interviewSession?.mode === 'combat' ? 'combat' : 'behavioral'
-    const extraSections = scoringMode === 'combat'
-      ? <MultimodalScoreCard multimodal={scoreData?.multimodal} />
-      : null
-    return <ScoringPage navigate={navigate} mode={scoringMode} extraSections={extraSections} />
+    return <ScoringPage navigate={navigate} mode={scoringMode} />
   }
   if (page === 'dashboard') {
     return <DashboardPage navigate={navigate} />

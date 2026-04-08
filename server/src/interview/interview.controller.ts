@@ -6,6 +6,7 @@ import {
   Body,
   Req,
   Query,
+  Param,
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -50,5 +51,10 @@ export class InterviewController {
       limit ? parseInt(limit, 10) : undefined,
       offset ? parseInt(offset, 10) : undefined,
     );
+  }
+
+  @Get('sessions/:interviewSessionId/all-sessions')
+  getAllSessions(@Param('interviewSessionId') interviewSessionId: string) {
+    return this.interviewService.getAllSessionsForInterview(interviewSessionId);
   }
 }

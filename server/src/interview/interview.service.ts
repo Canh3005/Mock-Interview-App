@@ -46,6 +46,33 @@ export class InterviewService {
     });
   }
 
+  async getAllSessionsForInterview(interviewSessionId: string) {
+    const interviewSession = await this.sessionRepo.findOne({
+      where: { id: interviewSessionId },
+    });
+
+    if (!interviewSession) {
+      throw new BadRequestException('Interview session not found');
+    }
+
+    // Fetch behavioral session
+    const behavioralSession = await this.behavioralSessionRepo.findOne({
+      where: { interviewSessionId },
+    });
+
+    // Return structure with all session types
+    // Other sessions (liveCoding, prompt, systemDesign) will be populated when available
+    return {
+      interviewSessionId,
+      sessions: {
+        behavioral: behavioralSession || null,
+        liveCoding: null,
+        prompt: null,
+        systemDesign: null,
+      },
+    };
+  }
+
   async preflight(userId: string) {
     const [rawCv, rawJd] = await Promise.all([
       this.redisClient.get(`cv_context:${userId}`),
