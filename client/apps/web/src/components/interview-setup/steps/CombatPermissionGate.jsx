@@ -1,13 +1,16 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { useDispatch } from 'react-redux'
-import { Loader2, Camera, Mic, CheckCircle2, XCircle, AlertTriangle, UserCheck, Users, UserX } from 'lucide-react'
+import { Loader2, CheckCircle2, XCircle, AlertTriangle, UserCheck, Users, UserX } from 'lucide-react'
 import {
   setCombatPermissions,
+  initSessionRequest,
   proceedFromCombatPermission,
   selectMode,
-  initSessionRequest,
 } from '../../../store/slices/interviewSetupSlice'
 import { faceDetector } from '../../../services/FaceDetector'
+import {
+  getCombatReadinessSnapshot,
+} from '../../../services/proctoring/combatProctoring'
 
 export default function CombatPermissionGate() {
   const dispatch = useDispatch()
@@ -18,6 +21,8 @@ export default function CombatPermissionGate() {
   const [faceStatus, setFaceStatus] = useState('loading') // loading | ok | no_face | multi_face
   const [faceCount, setFaceCount] = useState(0)
   const [previewReady, setPreviewReady] = useState(false)
+  const [readinessSnapshot, setReadinessSnapshot] = useState(null)
+  const [readinessTick, setReadinessTick] = useState(0)
 
   // ─── Request permissions ──────────────────────────────────────────────────
   useEffect(() => {
@@ -101,6 +106,34 @@ export default function CombatPermissionGate() {
     }
   }, [previewReady, onFaceResult])
 
+  useEffect(() => {
+    if (status !== 'granted' || faceStatus !== 'ok' || !streamRef.current) return
+
+    const updateSnapshot = () => {
+      setReadinessSnapshot(
+        getCombatReadinessSnapshot({
+          stream: streamRef.current,
+          minViewportRatio: 0.7,
+        }),
+      )
+    }
+
+    const intervalId = window.setInterval(updateSnapshot, 250)
+    document.addEventListener('visibilitychange', updateSnapshot)
+    window.addEventListener('focus', updateSnapshot)
+    window.addEventListener('blur', updateSnapshot)
+    window.addEventListener('resize', updateSnapshot)
+    updateSnapshot()
+
+    return () => {
+      clearInterval(intervalId)
+      document.removeEventListener('visibilitychange', updateSnapshot)
+      window.removeEventListener('focus', updateSnapshot)
+      window.removeEventListener('blur', updateSnapshot)
+      window.removeEventListener('resize', updateSnapshot)
+    }
+  }, [status, faceStatus, readinessTick, dispatch])
+
   // ─── Sync face status to Redux ────────────────────────────────────────────
   useEffect(() => {
     if (faceStatus === 'loading') return
@@ -108,6 +141,11 @@ export default function CombatPermissionGate() {
   }, [faceStatus, dispatch])
 
   const handleProceed = () => {
+    if (!readinessSnapshot?.ready) {
+      setReadinessTick((tick) => tick + 1)
+      return
+    }
+
     // Stop detector — will be re-initialized in CombatInterviewRoom
     faceDetector.stop()
     dispatch(initSessionRequest())
@@ -130,6 +168,34 @@ export default function CombatPermissionGate() {
   }
 
   const canProceed = faceStatus === 'ok'
+  const readinessItems = [
+    {
+      key: 'camera',
+      label: 'Camera đang hoạt động',
+      ok: readinessSnapshot?.cameraReady ?? false,
+    },
+    {
+      key: 'microphone',
+      label: 'Microphone đang hoạt động',
+      ok: readinessSnapshot?.microphoneReady ?? false,
+    },
+    {
+      key: 'tab',
+      label: 'Tab đang hiển thị',
+      ok: readinessSnapshot?.tabVisible ?? false,
+    },
+    {
+      key: 'focus',
+      label: 'Cửa sổ đang focus',
+      ok: readinessSnapshot?.windowFocused ?? false,
+    },
+    {
+      key: 'viewport',
+      label: 'Kích thước cửa sổ đủ lớn',
+      ok: (readinessSnapshot?.viewportRatio ?? 0) >= 0.7,
+    },
+  ]
+  const readinessReady = !!readinessSnapshot?.ready
 
   // ─── Requesting ───────────────────────────────────────────────────────────
   if (status === 'requesting') {
@@ -221,19 +287,46 @@ export default function CombatPermissionGate() {
         )}
       </div>
 
-      {/* Device status row */}
-      <div className="flex gap-3">
-        <div className="flex-1 flex items-center gap-2 bg-slate-800 rounded-xl p-3 border border-slate-700">
-          <Camera className="w-4 h-4 text-green-400" />
-          <span className="text-slate-300 text-xs font-medium">Webcam</span>
-          <CheckCircle2 className="w-3.5 h-3.5 text-green-400 ml-auto" />
+      {faceStatus === 'ok' && (
+        <div className={`rounded-xl border p-4 ${readinessReady ? 'bg-emerald-500/10 border-emerald-500/30' : 'bg-slate-800/60 border-slate-700'}`}>
+          <div className="flex items-start justify-between gap-3 mb-3">
+            <div>
+              <p className="text-sm font-semibold text-white">
+                {readinessReady ? 'Bạn đã sẵn sàng' : 'Bạn chưa sẵn sàng'}
+              </p>
+              <p className="text-xs text-slate-400 mt-1">
+                {readinessReady
+                  ? 'Bạn có thể bấm "Vào phỏng vấn" để bắt đầu Combat Mode.'
+                  : 'Giữ tab đang mở, focus cửa sổ và đảm bảo kích thước màn hình đủ lớn. Hệ thống sẽ tự kiểm tra liên tục.'}
+              </p>
+            </div>
+            {!readinessReady && (
+              <button
+                onClick={() => setReadinessTick((tick) => tick + 1)}
+                className="shrink-0 px-3 py-1.5 rounded-lg bg-slate-700 text-slate-200 text-xs font-medium hover:bg-slate-600 transition-colors"
+              >
+                Kiểm tra lại
+              </button>
+            )}
+          </div>
+          <div className="grid gap-2 sm:grid-cols-2">
+            {readinessItems.map((item) => (
+              <div
+                key={item.key}
+                className={`flex items-center gap-2 rounded-lg px-3 py-2 text-xs border ${item.ok ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300' : 'border-slate-700 bg-slate-900/40 text-slate-400'}`}
+              >
+                <CheckCircle2 className={`w-3.5 h-3.5 ${item.ok ? 'text-emerald-400' : 'text-slate-500'}`} />
+                {item.label}
+              </div>
+            ))}
+          </div>
+          {!readinessReady && readinessSnapshot && (
+            <p className="mt-3 text-[11px] text-slate-500">
+              Tỷ lệ viewport hiện tại: {(readinessSnapshot.viewportRatio * 100).toFixed(0)}%
+            </p>
+          )}
         </div>
-        <div className="flex-1 flex items-center gap-2 bg-slate-800 rounded-xl p-3 border border-slate-700">
-          <Mic className="w-4 h-4 text-green-400" />
-          <span className="text-slate-300 text-xs font-medium">Microphone</span>
-          <CheckCircle2 className="w-3.5 h-3.5 text-green-400 ml-auto" />
-        </div>
-      </div>
+      )}
 
       {/* Face warnings */}
       {faceStatus === 'no_face' && (
@@ -251,10 +344,10 @@ export default function CombatPermissionGate() {
 
       <button
         onClick={handleProceed}
-        disabled={!canProceed}
+        disabled={!canProceed || !readinessReady}
         className="w-full px-4 py-3 rounded-xl bg-orange-600 hover:bg-orange-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold text-sm transition-colors"
       >
-        {canProceed ? 'Tiếp tục vào Combat Mode' : 'Cần nhận diện đúng 1 khuôn mặt'}
+        {readinessReady ? 'Vào phỏng vấn' : 'Chưa sẵn sàng'}
       </button>
     </div>
   )
