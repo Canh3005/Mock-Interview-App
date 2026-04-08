@@ -16,8 +16,9 @@ import {
   BarChart2,
 } from 'lucide-react'
 import { interviewApi } from '../../api/interview.api'
+import { behavioralApi } from '../../api/behavioral.api'
 import { resumeSession } from '../../store/slices/interviewSetupSlice'
-import { resetBehavioral } from '../../store/slices/behavioralSlice'
+import { resetBehavioral, scoringPolled } from '../../store/slices/behavioralSlice'
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -69,7 +70,7 @@ function SkeletonList({ count = 6 }) {
 
 // ─── Session Row ──────────────────────────────────────────────────────────────
 
-function SessionRow({ session, onResume }) {
+function SessionRow({ session, onResume, onViewResult }) {
   const isCompleted = session.behavioralSession?.status === 'COMPLETED'
   const stage = session.behavioralSession?.currentStage ?? 1
   const stageName = session.behavioralSession?.stageName ?? 'Giai đoạn 1'
@@ -131,7 +132,10 @@ function SessionRow({ session, onResume }) {
 
       {/* Action button */}
       {isCompleted ? (
-        <button className="shrink-0 flex items-center gap-1.5 font-body text-xs font-medium text-slate-400 bg-slate-700/40 border border-slate-600/40 hover:bg-slate-700/60 transition-colors duration-200 cursor-pointer px-3 py-1.5 rounded-full">
+        <button
+          onClick={() => onViewResult(session)}
+          className="shrink-0 flex items-center gap-1.5 font-body text-xs font-medium text-slate-400 bg-slate-700/40 border border-slate-600/40 hover:bg-slate-700/60 transition-colors duration-200 cursor-pointer px-3 py-1.5 rounded-full"
+        >
           <BarChart2 size={11} />
           Kết quả
         </button>
@@ -150,7 +154,7 @@ function SessionRow({ session, onResume }) {
 
 // ─── All Sessions Modal (infinite scroll) ─────────────────────────────────────
 
-function AllSessionsModal({ onResume, onClose }) {
+function AllSessionsModal({ onResume, onViewResult, onClose }) {
   const [sessions, setSessions] = useState([])
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(true)
@@ -231,6 +235,7 @@ function AllSessionsModal({ onResume, onClose }) {
                   key={session.sessionId}
                   session={session}
                   onResume={(s) => { onResume(s); onClose() }}
+                  onViewResult={(s) => { onViewResult(s); onClose() }}
                 />
               ))}
               {/* Sentinel for infinite scroll */}
@@ -269,9 +274,19 @@ export default function InProgressSessions({ navigate }) {
   }, [])
 
   function handleResume(session) {
-    dispatch(resumeSession({ sessionId: session.sessionId, candidateLevel: session.candidateLevel }))
+    dispatch(resumeSession({ sessionId: session.sessionId, candidateLevel: session.candidateLevel, mode: session.mode }))
     dispatch(resetBehavioral())
     navigate(session.mode === 'combat' ? 'combat-room' : 'behavioral-room')
+  }
+
+  async function handleViewResult(session) {
+    dispatch(resetBehavioral())
+    dispatch(resumeSession({ sessionId: session.sessionId, candidateLevel: session.candidateLevel, mode: session.mode }))
+    try {
+      const res = await behavioralApi.getScore(session.behavioralSession?.sessionId ?? session.sessionId)
+      dispatch(scoringPolled({ status: res.status, score: res.score }))
+    } catch (_) {}
+    navigate('scoring')
   }
 
   if (loading) {
@@ -317,7 +332,7 @@ export default function InProgressSessions({ navigate }) {
         {/* Session list — max DASHBOARD_LIMIT */}
         <div className="flex flex-col gap-3">
           {sessions.map((session) => (
-            <SessionRow key={session.sessionId} session={session} onResume={handleResume} />
+            <SessionRow key={session.sessionId} session={session} onResume={handleResume} onViewResult={handleViewResult} />
           ))}
         </div>
       </div>
@@ -325,6 +340,7 @@ export default function InProgressSessions({ navigate }) {
       {showModal && (
         <AllSessionsModal
           onResume={handleResume}
+          onViewResult={handleViewResult}
           onClose={() => setShowModal(false)}
         />
       )}

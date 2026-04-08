@@ -5,6 +5,7 @@ import {
   setCombatPermissions,
   proceedFromCombatPermission,
   selectMode,
+  initSessionRequest,
 } from '../../../store/slices/interviewSetupSlice'
 import { faceDetector } from '../../../services/FaceDetector'
 
@@ -109,7 +110,7 @@ export default function CombatPermissionGate() {
   const handleProceed = () => {
     // Stop detector — will be re-initialized in CombatInterviewRoom
     faceDetector.stop()
-    dispatch(proceedFromCombatPermission())
+    dispatch(initSessionRequest())
   }
 
   const handleSwitchToPractice = () => {

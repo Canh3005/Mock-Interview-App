@@ -49,7 +49,7 @@ function* initSessionSaga() {
       mode: selectedMode,
       rounds: selectedRounds,
     });
-    yield put(initSessionSuccess(data));
+    yield put(initSessionSuccess({ ...data, mode: selectedMode }));
   } catch (err) {
     const msg = err.response?.data?.message || 'Không thể khởi tạo phiên phỏng vấn.';
     yield put(initSessionFailure(msg));

@@ -6,6 +6,7 @@ import {
   saveContextRequest,
   resetSetup,
   initSessionRequest,
+  proceedFromRoundSelect,
 } from '../../store/slices/interviewSetupSlice'
 import { resetBehavioral } from '../../store/slices/behavioralSlice'
 import ModeSelectionStep from './steps/ModeSelectionStep'
@@ -391,6 +392,10 @@ export default function InterviewSetupFlow({ navigate }) {
   }
 
   const handleStartSession = () => {
+    if (selectedMode === 'combat') {
+      dispatch(proceedFromRoundSelect())
+      return
+    }
     dispatch(initSessionRequest())
   }
 

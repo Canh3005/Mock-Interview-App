@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 // step flow:
 // 'idle' → preflight_loading → context_missing | context_confirm
-// → mode_select → (combat? combat_permission :) round_select → initializing → done
+// → mode_select → round_select → (combat? combat_permission :) initializing → done
 const initialState = {
   step: 'idle',
 
@@ -69,10 +69,11 @@ const interviewSetupSlice = createSlice({
       state.selectedMode = action.payload; // 'practice' | 'combat'
     },
     proceedFromMode(state) {
+      state.step = 'round_select';
+    },
+    proceedFromRoundSelect(state) {
       if (state.selectedMode === 'combat') {
         state.step = 'combat_permission';
-      } else {
-        state.step = 'round_select';
       }
     },
     setCombatPermissions(state, action) {
@@ -144,6 +145,7 @@ export const {
   confirmContext,
   selectMode,
   proceedFromMode,
+  proceedFromRoundSelect,
   setCombatPermissions,
   proceedFromCombatPermission,
   toggleRound,
