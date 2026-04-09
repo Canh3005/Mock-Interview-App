@@ -28,6 +28,7 @@ import { InterviewSession } from '../interview/entities/interview-session.entity
 import { CombatTransitionService } from '../combat/combat-transition.service';
 import { MultimodalHintService } from '../combat/multimodal-hint.service';
 import { MultimodalScoringService } from '../combat/multimodal-scoring.service';
+import { IntegrityCalculatorService } from '../combat/integrity-calculator.service';
 
 const REDIRECT_MESSAGES = {
   obvious:
@@ -61,6 +62,7 @@ export class BehavioralSessionService {
     private combatTransition: CombatTransitionService,
     private multimodalHint: MultimodalHintService,
     private multimodalScoring: MultimodalScoringService,
+    private integrityCalculator: IntegrityCalculatorService,
     @InjectQueue(BEHAVIORAL_SCORING_QUEUE) private scoringQueue: Queue,
   ) {
     this.redisClient = new Redis({
@@ -602,29 +604,75 @@ export class BehavioralSessionService {
 
     const isCombat = interviewSession?.mode === 'combat';
 
-    const score = await this.scoringService.evaluateSession(
-      logs,
-      session.candidateLevel,
-      interviewSession?.cvContextSnapshot ?? '',
-      interviewSession?.jdContextSnapshot ?? '',
-    );
+    const [scoreResult, multimodalResult, integrityResult] =
+      await Promise.allSettled([
+        this.scoringService.evaluateSession(
+          logs,
+          session.candidateLevel,
+          interviewSession?.cvContextSnapshot ?? '',
+          interviewSession?.jdContextSnapshot ?? '',
+        ),
+        isCombat
+          ? this.multimodalScoring.scoreSession(sessionId)
+          : Promise.resolve(null),
+        isCombat
+          ? this.integrityCalculator.calculateIntegrity(
+              session.interviewSessionId,
+              sessionId,
+            )
+          : Promise.resolve(null),
+      ]);
 
-    session.finalScore = score as unknown as Record<string, unknown>;
+    const score =
+      scoreResult.status === 'fulfilled'
+        ? scoreResult.value
+        : await this.scoringService.evaluateSession(
+            logs,
+            session.candidateLevel,
+            interviewSession?.cvContextSnapshot ?? '',
+            interviewSession?.jdContextSnapshot ?? '',
+          );
 
-    if (isCombat) {
-      const multimodalScore = await this.multimodalScoring
-        .scoreSession(sessionId)
-        .catch((err) => {
-          this.logger.warn(`Multimodal scoring failed for ${sessionId}`, err);
-          return null;
-        });
-      if (multimodalScore) {
-        session.finalScore = {
-          ...(session.finalScore ?? {}),
-          multimodal: multimodalScore,
-        };
-      }
+    const finalScore: Record<string, unknown> = {
+      ...(score as unknown as Record<string, unknown>),
+    };
+
+    if (multimodalResult.status === 'fulfilled' && multimodalResult.value) {
+      finalScore.multimodal = multimodalResult.value;
+    } else if (multimodalResult.status === 'rejected') {
+      this.logger.warn(
+        `Multimodal scoring failed for ${sessionId}`,
+        multimodalResult.reason,
+      );
     }
+
+    if (integrityResult.status === 'fulfilled' && integrityResult.value) {
+      finalScore.integrity = integrityResult.value;
+    } else if (integrityResult.status === 'rejected') {
+      this.logger.warn(
+        `Integrity scoring failed for ${sessionId}`,
+        integrityResult.reason,
+      );
+    }
+
+    if (isCombat && finalScore.multimodal && finalScore.integrity) {
+      const behavioral = score.total_score ?? 0;
+      const softSkill =
+        ((finalScore.multimodal as Record<string, unknown>)
+          .overall_soft_skill_score as number) ?? 0;
+      const integrityScore =
+        ((finalScore.integrity as Record<string, unknown>)
+          .integrity_score as number) ?? 100;
+      const baseScore = behavioral * 0.65 + softSkill * 0.35;
+      const integrityPenalty =
+        integrityScore >= 85 ? 0 : (85 - integrityScore) * 0.5;
+      finalScore.overall_combat_score = Math.max(
+        0,
+        Math.round(baseScore - integrityPenalty),
+      );
+    }
+
+    session.finalScore = finalScore;
 
     session.status = 'COMPLETED';
     session.completedAt = new Date();

@@ -156,6 +156,10 @@ class MultimodalEngine {
     return { ...this._latestSnapshot };
   }
 
+  getFaceCount() {
+    return this._eyeAnalyzer.getLastFaceCount?.() ?? 0;
+  }
+
   /** Gọi từ FillerWordCounter khi nhận transcript STT */
   feedTranscript(text) {
     this._fillerCounter.processTranscript(text);

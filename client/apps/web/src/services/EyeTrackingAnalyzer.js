@@ -17,6 +17,7 @@ export class EyeTrackingAnalyzer {
     this._onFrame = null;    // (EyeTrackingFrame) => void
     this._resultsListeners = []; // Extra listeners (e.g. MicroExpressionDetector)
     this._ready = false;
+    this._lastFaceCount = 0;
   }
 
   /** Register an additional raw-results listener without re-registering onResults */
@@ -34,7 +35,7 @@ export class EyeTrackingAnalyzer {
         `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${f}`,
     });
     this._faceMesh.setOptions({
-      maxNumFaces: 1,
+      maxNumFaces: 3,
       refineLandmarks: true,
       minDetectionConfidence: 0.5,
       minTrackingConfidence: 0.5,
@@ -63,6 +64,10 @@ export class EyeTrackingAnalyzer {
     }
   }
 
+  getLastFaceCount() {
+    return this._lastFaceCount;
+  }
+
   async _capture() {
     if (!this._videoEl || this._videoEl.readyState < 2) return;
     this._canvas.width = this._videoEl.videoWidth || 320;
@@ -73,6 +78,7 @@ export class EyeTrackingAnalyzer {
 
   _handleResults(results) {
     const ts = Date.now();
+    this._lastFaceCount = results.multiFaceLandmarks?.length ?? 0;
     if (!results.multiFaceLandmarks || results.multiFaceLandmarks.length === 0) {
       this._onFrame?.({ ts, gaze: 'away', awayAngleDeg: 90 });
       return;

@@ -13,6 +13,7 @@ import { resetSetup } from '../../store/slices/interviewSetupSlice';
 import { COMBAT_STATES } from '../../services/CombatOrchestrator';
 import { multimodalEngine } from '../../services/MultimodalEngine';
 import { VoiceActivityDetector } from '../../services/VoiceActivityDetector';
+import { CombatProctoringMonitor } from '../../services/proctoring/combatProctoring';
 import CombatHeader from './CombatHeader';
 import CombatSidebar from './CombatSidebar';
 import CombatChatArea from './CombatChatArea';
@@ -48,6 +49,10 @@ export default function CombatInterviewRoom({ interviewSessionId, navigate }) {
   const audioCtxRef    = useRef(null);
   const initDoneRef    = useRef(false);
   const sessionTextRef = useRef('');
+  const proctoringMonitorRef = useRef(null);
+  const aiSpeakingRef = useRef(isAiSpeaking);
+  const combatStateRef = useRef(combatState);
+  const lastTranscriptTsRef = useRef(0);
 
   const [transcript,      setTranscript]      = useState('');
   const [textInput,       setTextInput]       = useState('');
@@ -55,6 +60,14 @@ export default function CombatInterviewRoom({ interviewSessionId, navigate }) {
   const [elapsedMs,       setElapsedMs]       = useState(0);
   const [showExitModal,   setShowExitModal]   = useState(false);
   const [showFinishModal, setShowFinishModal] = useState(false);
+
+  useEffect(() => {
+    aiSpeakingRef.current = isAiSpeaking;
+  }, [isAiSpeaking]);
+
+  useEffect(() => {
+    combatStateRef.current = combatState;
+  }, [combatState]);
 
   // ── Timer ──────────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -81,6 +94,29 @@ export default function CombatInterviewRoom({ interviewSessionId, navigate }) {
     });
   }, [sessionId]);
 
+  useEffect(() => {
+    if (!sessionId) return;
+
+    const monitor = new CombatProctoringMonitor({
+      sessionId,
+      interviewSessionId,
+      isAiSpeaking: () => aiSpeakingRef.current,
+      getFaceCount: () => multimodalEngine.getFaceCount?.() ?? 0,
+      getVadResult: () => vadRef.current?.getLastResult?.() ?? null,
+      getLastTranscriptTs: () => lastTranscriptTsRef.current,
+      getOrchestratorState: () => combatStateRef.current,
+    });
+    proctoringMonitorRef.current = monitor;
+    monitor.start();
+
+    return () => {
+      monitor.stop();
+      if (proctoringMonitorRef.current === monitor) {
+        proctoringMonitorRef.current = null;
+      }
+    };
+  }, [sessionId]);
+
   async function initCombatSession() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -100,6 +136,7 @@ export default function CombatInterviewRoom({ interviewSessionId, navigate }) {
   useEffect(() => {
     if (combatState === COMBAT_STATES.CANDIDATE_THINKING) {
       setTimeout(() => { if (inputMode === 'voice') startSTT(); }, 200);
+      startSilenceWatch();
     }
     if (combatState === COMBAT_STATES.CANDIDATE_SPEAKING) startSilenceWatch();
     if ([COMBAT_STATES.AI_ASKING, COMBAT_STATES.AI_FOLLOW_UP, COMBAT_STATES.AI_PROCESSING].includes(combatState)) {
@@ -132,7 +169,9 @@ export default function CombatInterviewRoom({ interviewSessionId, navigate }) {
       if (final) {
         sessionTextRef.current += final;
         multimodalEngine.feedTranscript(final);
+        lastTranscriptTsRef.current = Date.now();
       }
+      if (interim) lastTranscriptTsRef.current = Date.now();
       setTranscript((sessionTextRef.current + interim).trim());
     };
 
@@ -249,6 +288,8 @@ export default function CombatInterviewRoom({ interviewSessionId, navigate }) {
   function cleanup() {
     stopSTT();
     stopSilenceWatch();
+    proctoringMonitorRef.current?.stop();
+    proctoringMonitorRef.current = null;
     mediaStreamRef.current?.getTracks().forEach((t) => t.stop());
     multimodalEngine.stop();
   }

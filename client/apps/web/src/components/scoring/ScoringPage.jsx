@@ -1,21 +1,53 @@
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Loader2 } from 'lucide-react';
 import ScorecardDisplay from './ScorecardDisplay';
+import { interviewApi } from '../../api/interview.api';
 
 /**
  * Standalone scoring page shared by both BehavioralRoom and CombatRoom.
  *
  * Props:
- *   navigate  — app router function
- *   mode      — 'behavioral' | 'combat'
+ *   navigate      — app router function
+ *   mode          — 'behavioral' | 'combat'
+ *   interviewSessionId — session ID to fetch all rounds from
  *   extraSections — (optional) React node rendered below scorecard for combat-specific data
  */
-export default function ScoringPage({ navigate, mode = 'behavioral', extraSections }) {
+export default function ScoringPage({
+  navigate,
+  mode = 'behavioral',
+  interviewSessionId,
+  extraSections
+}) {
   const { status, scoreData } = useSelector((s) => s.behavioral);
+  const [allSessions, setAllSessions] = useState(null);
+  const [selectedSessionType, setSelectedSessionType] = useState('behavioral');
+  const [isLoadingSessions, setIsLoadingSessions] = useState(false);
 
   const isLoading = status === 'completing' || (status === 'completed' && !scoreData);
 
-  if (isLoading) {
+  // Fetch all sessions for this interview
+  useEffect(() => {
+    if (interviewSessionId) {
+      setIsLoadingSessions(true);
+      interviewApi
+        .getAllSessionsForInterview(interviewSessionId)
+        .then((data) => {
+          setAllSessions(data.sessions);
+          // Auto-select first available non-null session
+          const firstAvailable = Object.entries(data.sessions).find(
+            ([_, session]) => session !== null
+          );
+          if (firstAvailable) {
+            setSelectedSessionType(firstAvailable[0]);
+          }
+        })
+        .catch((err) => console.error('Failed to fetch sessions:', err))
+        .finally(() => setIsLoadingSessions(false));
+    }
+  }, [interviewSessionId]);
+
+  if (isLoading || isLoadingSessions) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-3">
@@ -27,18 +59,56 @@ export default function ScoringPage({ navigate, mode = 'behavioral', extraSectio
     );
   }
 
+  // Get the score data for the selected session type
+  const currentSessionData = allSessions?.[selectedSessionType];
+  const displayScore = selectedSessionType === 'behavioral' ? scoreData : currentSessionData?.finalScore;
+
+  // Session type labels
+  const SESSION_LABELS = {
+    behavioral: 'Behavioral',
+    liveCoding: 'Live Coding',
+    prompt: 'AI Prompting',
+    systemDesign: 'System Design',
+  };
+
+  // Available sessions (non-null)
+  const availableSessions = allSessions
+    ? Object.entries(allSessions).filter(([_, session]) => session !== null)
+    : [];
+
   return (
     <div className="min-h-screen bg-background overflow-y-auto">
-      {mode === 'combat' && (
-        <div className="max-w-2xl mx-auto pt-6 px-4">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-xs px-2.5 py-1 rounded-full bg-red-500/10 border border-red-500/30 text-red-400 font-medium">
-              Combat Mode
-            </span>
+      {/* Session Type Tabs */}
+      {availableSessions.length > 1 && (
+        <div className="border-b border-slate-700 sticky top-0 z-10 bg-background">
+          <div className="max-w-2xl mx-auto px-4">
+            <div className="flex gap-2 overflow-x-auto">
+              {availableSessions.map(([sessionType]) => (
+                <button
+                  key={sessionType}
+                  onClick={() => setSelectedSessionType(sessionType)}
+                  className={`px-4 py-3 font-medium text-sm whitespace-nowrap transition-colors ${
+                    selectedSessionType === sessionType
+                      ? 'text-cta border-b-2 border-cta'
+                      : 'text-slate-400 hover:text-slate-300'
+                  }`}
+                >
+                  {SESSION_LABELS[sessionType]}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       )}
-      <ScorecardDisplay scoreData={scoreData} navigate={navigate} />
+
+      {/* Scorecard for selected session */}
+      <ScorecardDisplay
+        scoreData={displayScore}
+        navigate={navigate}
+        isCombat={mode === 'combat'}
+      />
+
+      {/* Extra sections */}
       {extraSections && (
         <div className="max-w-2xl mx-auto pb-8 px-4 flex flex-col gap-6">
           {extraSections}

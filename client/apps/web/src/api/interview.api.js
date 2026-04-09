@@ -9,4 +9,7 @@ export const interviewApi = {
 
   getInterviewHistory: ({ limit, offset } = {}) =>
     axiosClient.get('/interview/sessions/in-progress', { params: { limit, offset } }),
+
+  getAllSessionsForInterview: (interviewSessionId) =>
+    axiosClient.get(`/interview/sessions/${interviewSessionId}/all-sessions`),
 };

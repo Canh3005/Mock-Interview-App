@@ -17,6 +17,7 @@ export class VoiceActivityDetector {
     this._intervalId = null;
     this.onSpeechStart = null;   // () => void
     this.onSilence = null;       // (durationMs) => void — gọi liên tục khi im lặng
+    this._lastResult = { isSpeaking: false, silenceDurationMs: 0, rmsLevel: 0 };
   }
 
   /** Bắt đầu monitoring. onTick(result) gọi mỗi 100ms */
@@ -24,6 +25,7 @@ export class VoiceActivityDetector {
     if (this._intervalId) return;
     this._intervalId = setInterval(() => {
       const result = this.detect();
+      this._lastResult = result;
       onTick?.(result);
       if (!result.isSpeaking) {
         this.onSilence?.(result.silenceDurationMs);
@@ -40,6 +42,7 @@ export class VoiceActivityDetector {
       this._intervalId = null;
     }
     this._silenceStart = null;
+    this._lastResult = { isSpeaking: false, silenceDurationMs: 0, rmsLevel: 0 };
   }
 
   /** Snapshot tức thì — gọi theo yêu cầu */
@@ -65,6 +68,10 @@ export class VoiceActivityDetector {
 
   get isSpeaking() {
     return this.detect().isSpeaking;
+  }
+
+  getLastResult() {
+    return this._lastResult;
   }
 }
 
