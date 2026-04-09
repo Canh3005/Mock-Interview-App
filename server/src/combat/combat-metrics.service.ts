@@ -96,35 +96,23 @@ export class CombatMetricsService {
   ): Promise<void> {
     const normalized = this.normalizeEventDto(dto);
     const session = await this.ensureProctoringSession(behavioralSessionId);
-    const insertResult: unknown = await this.eventRepo.query(
-      `
-        INSERT INTO proctoring_events (
-          client_event_id,
-          proctoring_session_id,
-          ts,
-          event_type,
-          severity,
-          duration_ms,
-          metadata
-        )
-        VALUES ($1, $2, $3, $4, $5, $6, $7::jsonb)
-        ON CONFLICT (client_event_id) DO NOTHING
-        RETURNING id
-      `,
-      [
-        normalized.clientEventId,
-        session.id,
-        normalized.ts,
-        normalized.eventType,
-        normalized.severity,
-        normalized.durationMs ?? null,
-        normalized.metadata != null
-          ? JSON.stringify(normalized.metadata)
-          : null,
-      ],
-    );
 
-    if (!Array.isArray(insertResult) || insertResult.length === 0) return;
+    // Skip if event already exists
+    const existing = await this.eventRepo.findOneBy({
+      clientEventId: normalized.clientEventId,
+    });
+    if (existing) return;
+
+    // Insert using repository (respects naming strategy)
+    await this.eventRepo.save({
+      clientEventId: normalized.clientEventId,
+      proctoringSessionId: session.id,
+      ts: normalized.ts,
+      eventType: normalized.eventType,
+      severity: normalized.severity,
+      durationMs: normalized.durationMs ?? null,
+      metadata: normalized.metadata ?? null,
+    });
 
     await this.incrementCounters(session, normalized.severity);
   }
