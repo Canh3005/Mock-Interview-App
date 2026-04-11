@@ -9,6 +9,7 @@ import {
 export type CandidateLevel = 'junior' | 'mid' | 'senior';
 export type InterviewMode = 'practice' | 'combat';
 export type SessionStatus = 'IN_PROGRESS' | 'COMPLETED' | 'ABANDONED';
+export type InterviewLanguage = 'vi' | 'en' | 'ja';
 
 @Entity('interview_sessions')
 export class InterviewSession {
@@ -44,6 +45,9 @@ export class InterviewSession {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @Column({ type: 'varchar', length: 5, default: 'vi' })
+  language: InterviewLanguage = 'vi';
 
   @Column({ type: 'timestamptz', nullable: true })
   finishedAt: Date;

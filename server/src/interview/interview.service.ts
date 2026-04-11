@@ -143,6 +143,7 @@ export class InterviewService {
       status: 'IN_PROGRESS',
       cvContextSnapshot: rawCv,
       jdContextSnapshot: rawJd,
+      language: dto.language ?? 'vi',
     });
 
     await this.sessionRepo.save(session);

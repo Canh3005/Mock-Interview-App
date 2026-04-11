@@ -16,7 +16,7 @@ class SynthesizeDto {
   voice?: string;
   speed?: number;
   level?: string;
-  language?: 'vi' | 'en';
+  language?: 'vi' | 'en' | 'ja';
 }
 
 @UseGuards(JwtAuthGuard)

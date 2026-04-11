@@ -9,6 +9,7 @@ import {
   proceedFromRoundSelect,
 } from '../../store/slices/interviewSetupSlice'
 import { resetBehavioral } from '../../store/slices/behavioralSlice'
+import { resetCombatOrchestrator } from '../../store/slices/combatOrchestratorSlice'
 import ModeSelectionStep from './steps/ModeSelectionStep'
 import CombatPermissionGate from './steps/CombatPermissionGate'
 import RoundSelectionStep from './steps/RoundSelectionStep'
@@ -361,9 +362,6 @@ export default function InterviewSetupFlow({ navigate }) {
   // Trigger preflight on mount
   useEffect(() => {
     dispatch(preflightRequest())
-    return () => {
-      // Keep session in store on done so interview room can read it
-    }
   }, [dispatch])
 
   const selectedMode = useSelector((s) => s.interviewSetup.selectedMode)
@@ -372,8 +370,9 @@ export default function InterviewSetupFlow({ navigate }) {
   useEffect(() => {
     if (step === 'done' && session) {
       if (selectedRounds.includes('hr_behavioral')) {
-        // Clear stale behavioral state before entering the room so first render sees status='idle'
+        // Clear stale state before entering the room so first render sees clean slate
         dispatch(resetBehavioral())
+        if (selectedMode === 'combat') dispatch(resetCombatOrchestrator())
         navigate(selectedMode === 'combat' ? 'combat-room' : 'behavioral-room')
       } else {
         navigate('interview-room')

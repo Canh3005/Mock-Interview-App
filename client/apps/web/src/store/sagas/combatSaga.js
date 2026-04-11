@@ -160,7 +160,8 @@ function* combatStartSessionSaga(action) {
 
     // TTS the first question
     const level = data.candidateLevel ?? 'mid';
-    sentenceTtsBuffer.init({ level, language: 'vi' });
+    const { selectedLanguage: combatLang } = yield select((s) => s.interviewSetup);
+    sentenceTtsBuffer.init({ level, language: combatLang ?? 'vi' });
     sentenceTtsBuffer.reset();
     sentenceTtsBuffer.appendToken(data.firstQuestion);
     sentenceTtsBuffer.flush();

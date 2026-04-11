@@ -42,12 +42,13 @@ function* saveContextSaga(action) {
 
 function* initSessionSaga() {
   try {
-    const { selectedMode, selectedRounds } = yield select(
+    const { selectedMode, selectedRounds, selectedLanguage } = yield select(
       (s) => s.interviewSetup,
     );
     const data = yield call(interviewApi.initSession, {
       mode: selectedMode,
       rounds: selectedRounds,
+      language: selectedLanguage ?? 'vi',
     });
     yield put(initSessionSuccess({ ...data, mode: selectedMode }));
   } catch (err) {

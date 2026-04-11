@@ -146,8 +146,9 @@ export default function CombatPermissionGate() {
       return
     }
 
-    // Stop detector — will be re-initialized in CombatInterviewRoom
+    // Stop detector and release stream — CombatInterviewRoom will open a new one
     faceDetector.stop()
+    streamRef.current?.getTracks().forEach((t) => t.stop())
     dispatch(initSessionRequest())
   }
 

@@ -15,6 +15,7 @@ import BehavioralRoomPage from './components/behavioral-room/BehavioralRoomPage'
 import CombatInterviewRoom from './components/combat-room/CombatInterviewRoom'
 import ScoringPage from './components/scoring/ScoringPage'
 import { Loader2 } from 'lucide-react'
+import { resetSetup } from './store/slices/interviewSetupSlice'
 
 export default function App() {
   const [page, setPage] = useState('landing') // 'landing' | 'dashboard' | 'interview-room' | 'login' | 'register'
@@ -49,6 +50,7 @@ export default function App() {
       return;
     }
     
+    if (target === 'interview-setup') dispatch(resetSetup());
     setPage(target);
   }
 

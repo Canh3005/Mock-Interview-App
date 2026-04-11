@@ -24,22 +24,75 @@ import { AIFacilitatorService, TurnContext } from './ai-facilitator.service';
 import { MessageQualityService } from './message-quality.service';
 import { ScoringService } from './scoring.service';
 import { QuestionOrchestratorService } from './question-orchestrator.service';
-import { InterviewSession } from '../interview/entities/interview-session.entity';
+import {
+  InterviewSession,
+  InterviewLanguage,
+} from '../interview/entities/interview-session.entity';
 import { CombatTransitionService } from '../combat/combat-transition.service';
 import { MultimodalHintService } from '../combat/multimodal-hint.service';
 import { MultimodalScoringService } from '../combat/multimodal-scoring.service';
 import { IntegrityCalculatorService } from '../combat/integrity-calculator.service';
 
-const REDIRECT_MESSAGES = {
-  obvious:
-    'Mình chưa nhận được câu trả lời rõ ràng. Bạn có thể chia sẻ suy nghĩ của mình về câu hỏi vừa rồi không?',
-  offTopicRepeated:
-    'Câu trả lời có vẻ chưa liên quan đến câu hỏi. Để nhắc lại — ',
-  offTopicBridge:
-    'Câu hỏi này có vẻ khó, chúng ta tiếp tục nhé. Nếu muốn quay lại bạn có thể cho tôi biết.',
-  offTopicPersistent:
-    'Chúng ta sẽ chuyển sang câu hỏi tiếp theo. Hãy cố gắng tập trung hơn ở các phần sau nhé.',
-};
+function getRedirectMessages(lang: InterviewLanguage): Record<string, string> {
+  if (lang === 'en') {
+    return {
+      obvious:
+        "I didn't get a clear answer. Could you share your thoughts on the previous question?",
+      offTopicRepeated:
+        "Your response doesn't seem related to the question. To recap — ",
+      offTopicBridge:
+        "That question seems challenging — let's move on. Feel free to revisit it if you'd like.",
+      offTopicPersistent:
+        "We'll move on to the next question. Please try to stay focused in the following sections.",
+    };
+  }
+  if (lang === 'ja') {
+    return {
+      obvious:
+        '明確な回答が得られませんでした。先ほどの質問についての考えを教えていただけますか？',
+      offTopicRepeated: '回答が質問と関係ないようです。改めて確認しますと — ',
+      offTopicBridge:
+        'この質問は難しそうですね。続けましょう。戻りたい場合はお知らせください。',
+      offTopicPersistent:
+        '次の質問に進みます。以降のセクションでは集中するようにしてください。',
+    };
+  }
+  return {
+    obvious:
+      'Mình chưa nhận được câu trả lời rõ ràng. Bạn có thể chia sẻ suy nghĩ của mình về câu hỏi vừa rồi không?',
+    offTopicRepeated:
+      'Câu trả lời có vẻ chưa liên quan đến câu hỏi. Để nhắc lại — ',
+    offTopicBridge:
+      'Câu hỏi này có vẻ khó, chúng ta tiếp tục nhé. Nếu muốn quay lại bạn có thể cho tôi biết.',
+    offTopicPersistent:
+      'Chúng ta sẽ chuyển sang câu hỏi tiếp theo. Hãy cố gắng tập trung hơn ở các phần sau nhé.',
+  };
+}
+
+function getDifficultySignals(lang: InterviewLanguage): Record<string, string> {
+  if (lang === 'en') {
+    return {
+      strong:
+        '\nThe candidate is performing well. Increase difficulty: ask about more complex edge cases, expect answers with specific metrics, provide no additional hints.',
+      average: '',
+      weak: '\nThe candidate is struggling. Start with foundational questions, allow more time, use open-ended prompts instead of direct challenges.',
+    };
+  }
+  if (lang === 'ja') {
+    return {
+      strong:
+        '\n候補者は好調です。難易度を上げてください：より複雑なエッジケースについて質問し、具体的な数値を含む回答を期待し、ヒントは与えないこと。',
+      average: '',
+      weak: '\n候補者は苦労しています。まず基礎的な質問から始め、時間を多く与え、直接的なチャレンジではなくオープンエンドのプロンプトを使ってください。',
+    };
+  }
+  return {
+    strong:
+      '\nỨng viên đang thể hiện tốt. Tăng độ khó: hỏi về edge cases phức tạp hơn, kỳ vọng câu trả lời có số liệu cụ thể, không gợi ý thêm.',
+    average: '',
+    weak: '\nỨng viên đang gặp khó khăn. Hỏi câu foundation trước, cho thêm thời gian, dùng câu hỏi gợi mở thay vì thách thức trực tiếp.',
+  };
+}
 
 @Injectable()
 export class BehavioralSessionService {
@@ -145,10 +198,13 @@ export class BehavioralSessionService {
 
     await this.sessionRepo.save(behavioralSession);
 
+    const sessionLang: InterviewLanguage = interviewSession.language ?? 'vi';
+
     const firstQuestion = await this.promptBuilder.buildFirstQuestion(
       level,
       1,
       interviewSession.cvContextSnapshot ?? '',
+      sessionLang,
     );
 
     // Log the first AI message
@@ -169,6 +225,10 @@ export class BehavioralSessionService {
       interviewSession.cvContextSnapshot ?? '',
       interviewSession.jdContextSnapshot ?? '',
       1,
+      undefined,
+      undefined,
+      undefined,
+      sessionLang,
     );
     await this.redisClient.setex(
       `system_prompt:${behavioralSession.id}:1`,
@@ -205,14 +265,17 @@ export class BehavioralSessionService {
       where: { id: session.interviewSessionId },
     });
 
+    const lang: InterviewLanguage = interviewSession?.language ?? 'vi';
+    const redirectMessages = getRedirectMessages(lang);
+
     // ── Input quality guard ────────────────────────────────────────────────
     const { content, flags } = this.qualityService.processInputQuality(dto);
 
     // ── Rule-based pre-filter ──────────────────────────────────────────────
     if (this.qualityService.isObviouslyIrrelevant(content)) {
       await this.saveUserLog(sessionId, stage, level, content, dto, flags);
-      this.sendStaticSSE(res, REDIRECT_MESSAGES.obvious);
-      await this.saveAiLog(sessionId, stage, REDIRECT_MESSAGES.obvious);
+      this.sendStaticSSE(res, redirectMessages.obvious);
+      await this.saveAiLog(sessionId, stage, redirectMessages.obvious);
       return;
     }
 
@@ -229,6 +292,7 @@ export class BehavioralSessionService {
       const contextBlock = this.promptBuilder.buildCandidateContextBlock(
         session.stageSummaries ?? {},
         stage,
+        lang,
       );
       systemPrompt = this.promptBuilder.buildSystemPrompt(
         level,
@@ -237,6 +301,8 @@ export class BehavioralSessionService {
         stage,
         truncationNote,
         contextBlock,
+        undefined,
+        lang,
       );
       await this.redisClient.setex(
         `system_prompt:${sessionId}:${stage}`,
@@ -290,10 +356,10 @@ export class BehavioralSessionService {
         ...flags,
         'OFF_TOPIC_BRIDGE',
       ]);
-      await this.saveAiLog(sessionId, stage, REDIRECT_MESSAGES.offTopicBridge, [
+      await this.saveAiLog(sessionId, stage, redirectMessages.offTopicBridge, [
         'OFF_TOPIC_BRIDGE',
       ]);
-      this.sendStaticSSE(res, REDIRECT_MESSAGES.offTopicBridge);
+      this.sendStaticSSE(res, redirectMessages.offTopicBridge);
       return;
     }
 
@@ -306,10 +372,10 @@ export class BehavioralSessionService {
       await this.saveAiLog(
         sessionId,
         stage,
-        REDIRECT_MESSAGES.offTopicPersistent,
+        redirectMessages.offTopicPersistent,
         ['OFF_TOPIC_PERSISTENT'],
       );
-      this.sendStaticSSE(res, REDIRECT_MESSAGES.offTopicPersistent);
+      this.sendStaticSSE(res, redirectMessages.offTopicPersistent);
       return;
     }
 
@@ -450,11 +516,13 @@ export class BehavioralSessionService {
 
     const cv = interviewSession?.cvContextSnapshot ?? '';
     const jd = interviewSession?.jdContextSnapshot ?? '';
+    const nextStageLang: InterviewLanguage = interviewSession?.language ?? 'vi';
 
     const firstQuestion = await this.promptBuilder.buildFirstQuestion(
       session.candidateLevel,
       newStage,
       cv,
+      nextStageLang,
     );
 
     // Log the opening question for new stage
@@ -475,6 +543,7 @@ export class BehavioralSessionService {
     const contextBlock = this.promptBuilder.buildCandidateContextBlock(
       session.stageSummaries ?? {},
       newStage,
+      nextStageLang,
     );
     const systemPrompt = this.promptBuilder.buildSystemPrompt(
       session.candidateLevel,
@@ -483,6 +552,8 @@ export class BehavioralSessionService {
       newStage,
       undefined,
       contextBlock,
+      undefined,
+      nextStageLang,
     );
     await this.redisClient.setex(
       `system_prompt:${sessionId}:${newStage}`,
@@ -506,6 +577,7 @@ export class BehavioralSessionService {
           prevStage,
           STAGE_NAMES[prevStage],
           transcript,
+          nextStageLang,
         );
 
         if (summary) {
@@ -522,18 +594,14 @@ export class BehavioralSessionService {
             // Re-assess difficulty and rebuild cached prompt
             const signal =
               await this.orchestrator.assessStagePerformance(summary);
-            const DIFFICULTY_SIGNALS = {
-              strong:
-                '\nỨng viên đang thể hiện tốt. Tăng độ khó: hỏi về edge cases phức tạp hơn, kỳ vọng câu trả lời có số liệu cụ thể, không gợi ý thêm.',
-              average: '',
-              weak: '\nỨng viên đang gặp khó khăn. Hỏi câu foundation trước, cho thêm thời gian, dùng câu hỏi gợi mở thay vì thách thức trực tiếp.',
-            };
-            const difficultySignal = DIFFICULTY_SIGNALS[signal];
+            const difficultySignals = getDifficultySignals(nextStageLang);
+            const difficultySignal = difficultySignals[signal];
 
             const updatedContextBlock =
               this.promptBuilder.buildCandidateContextBlock(
                 freshSession.stageSummaries,
                 newStage,
+                nextStageLang,
               );
             const updatedPrompt = this.promptBuilder.buildSystemPrompt(
               freshSession.candidateLevel,
@@ -543,6 +611,7 @@ export class BehavioralSessionService {
               undefined,
               updatedContextBlock,
               difficultySignal,
+              nextStageLang,
             );
             await this.redisClient.setex(
               `system_prompt:${sessionId}:${newStage}`,

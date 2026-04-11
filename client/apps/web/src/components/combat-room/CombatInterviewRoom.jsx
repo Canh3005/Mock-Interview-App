@@ -143,7 +143,7 @@ export default function CombatInterviewRoom({ interviewSessionId, navigate }) {
       stopSTT();
       stopSilenceWatch();
     }
-    if (combatState === COMBAT_STATES.COMPLETED) navigate('scoring');
+    if (combatState === COMBAT_STATES.COMPLETED) { cleanup(); navigate('scoring'); }
   }, [combatState]);
 
   // ── STT ────────────────────────────────────────────────────────────────────

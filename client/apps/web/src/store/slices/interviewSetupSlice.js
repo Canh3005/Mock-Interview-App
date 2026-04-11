@@ -12,6 +12,9 @@ const initialState = {
   cv: null,      // full CvJson
   jd: null,      // full JdJson
 
+  // language
+  selectedLanguage: 'vi', // 'vi' | 'en' | 'ja'
+
   // mode
   selectedMode: null, // 'practice' | 'combat'
 
@@ -41,6 +44,7 @@ const interviewSetupSlice = createSlice({
       state.step = 'preflight_loading';
       state.loading = true;
       state.error = null;
+      state.session = null; // clear stale session so navigate effect doesn't fire early
     },
     preflightSuccess(state, action) {
       state.loading = false;
@@ -65,6 +69,9 @@ const interviewSetupSlice = createSlice({
     confirmContext(state) {
       state.step = 'mode_select';
     },
+    selectLanguage(state, action) {
+      state.selectedLanguage = action.payload; // 'vi' | 'en' | 'ja'
+    },
     selectMode(state, action) {
       state.selectedMode = action.payload; // 'practice' | 'combat'
     },
@@ -75,11 +82,13 @@ const interviewSetupSlice = createSlice({
       if (state.selectedMode === 'combat') {
         state.step = 'combat_permission';
       }
+      // practice mode: initSessionRequest will be dispatched by the caller
     },
     setCombatPermissions(state, action) {
       state.combatPermissions = { ...state.combatPermissions, ...action.payload };
     },
     proceedFromCombatPermission(state) {
+      // Only used when user switches from combat → practice inside permission gate
       state.step = 'round_select';
     },
     toggleRound(state, action) {
@@ -143,6 +152,7 @@ export const {
   preflightSuccess,
   preflightFailure,
   confirmContext,
+  selectLanguage,
   selectMode,
   proceedFromMode,
   proceedFromRoundSelect,

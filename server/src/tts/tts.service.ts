@@ -3,24 +3,32 @@ import { ConfigService } from '@nestjs/config';
 import * as crypto from 'crypto';
 import WebSocket from 'ws';
 
-// Vietnamese voices: 'ThuHien' (natural) or 'xiaoyun'
+// Vietnamese voices
 const VOICE_MAP: Record<string, string> = {
-  junior: 'xiaoyun',
-  mid: 'xiaoyun',
-  senior: 'xiaoyun',
+  junior: 'x2_ViVn_ThuHien',
+  mid: 'x2_ViVn_ThuHien',
+  senior: 'x2_ViVn_ThuHien',
 };
 
+// English voices
 const VOICE_MAP_EN: Record<string, string> = {
-  junior: 'Catherine',
-  mid: 'Catherine',
-  senior: 'Catherine',
+  junior: 'x4_EnUs_Gavin_assist',
+  mid: 'x4_EnUs_Gavin_assist',
+  senior: 'x4_EnUk_Ashleigh_assist',
+};
+
+// Japanese voices
+const VOICE_MAP_JA: Record<string, string> = {
+  junior: 'x2_JaJp_ZhongCun',
+  mid: 'x2_JaJp_ZhongCun',
+  senior: 'x2_JaJp_Otoya',
 };
 
 export interface SynthesizeOptions {
   voice?: string;
   speed?: number;
   level?: string;
-  language?: 'vi' | 'en';
+  language?: 'vi' | 'en' | 'ja';
 }
 
 @Injectable()
@@ -73,11 +81,19 @@ export class TtsService {
 
     const level = options.level ?? 'mid';
     const lang = options.language ?? 'vi';
-    const voiceMap = lang === 'en' ? VOICE_MAP_EN : VOICE_MAP;
-    const vcn = options.voice ?? voiceMap[level] ?? 'ThuHien';
+    const voiceMap =
+      lang === 'en' ? VOICE_MAP_EN : lang === 'ja' ? VOICE_MAP_JA : VOICE_MAP;
+    const vcn = options.voice ?? voiceMap[level] ?? 'x2_ViVn_ThuHien';
     // speed: iFlytek range 0-100, default 50; input is 0.5–2.0 speaking rate → map to 0–100
     const speed =
-      options.speed != null ? Math.round((options.speed / 2.0) * 100) : 80;
+      options.speed != null ? Math.round((options.speed / 2.0) * 100) : 50;
+
+    // Japanese requires tte=Unicode (UTF-16 LE), other languages use UTF8
+    const tte = lang === 'ja' ? 'Unicode' : 'UTF8';
+    const textEncoded =
+      lang === 'ja'
+        ? Buffer.from(text, 'utf16le').toString('base64')
+        : Buffer.from(text, 'utf-8').toString('base64');
 
     return new Promise<Buffer>((resolve, reject) => {
       const authUrl = this.buildAuthUrl();
@@ -86,7 +102,7 @@ export class TtsService {
 
       ws.on('open', () => {
         this.logger.debug(
-          `TTS request: vcn=${vcn} text="${text.slice(0, 30)}..."`,
+          `TTS request: vcn=${vcn} lang=${lang} text="${text.slice(0, 30)}..."`,
         );
         const payload = {
           common: { app_id: this.appId },
@@ -97,11 +113,11 @@ export class TtsService {
             speed,
             volume: 50,
             pitch: 50,
-            tte: 'UTF8',
+            tte,
           },
           data: {
             status: 2,
-            text: Buffer.from(text, 'utf-8').toString('base64'),
+            text: textEncoded,
           },
         };
         ws.send(JSON.stringify(payload));

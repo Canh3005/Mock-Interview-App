@@ -1,6 +1,33 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { Target, Swords, AlertTriangle } from 'lucide-react'
-import { selectMode, proceedFromMode } from '../../../store/slices/interviewSetupSlice'
+import { Target, Swords, AlertTriangle, Globe } from 'lucide-react'
+import { selectMode, proceedFromMode, selectLanguage } from '../../../store/slices/interviewSetupSlice'
+
+const LANGUAGES = [
+  {
+    key: 'vi',
+    label: 'Tiếng Việt',
+    badge: 'VI',
+    badgeColor: 'bg-red-500/15 text-red-400',
+    borderActive: 'border-red-500',
+    ringActive: 'ring-red-500/30',
+  },
+  {
+    key: 'en',
+    label: 'English',
+    badge: 'EN',
+    badgeColor: 'bg-sky-500/15 text-sky-400',
+    borderActive: 'border-sky-500',
+    ringActive: 'ring-sky-500/30',
+  },
+  {
+    key: 'ja',
+    label: '日本語',
+    badge: 'JA',
+    badgeColor: 'bg-pink-500/15 text-pink-400',
+    borderActive: 'border-pink-500',
+    ringActive: 'ring-pink-500/30',
+  },
+]
 
 const MODES = [
   {
@@ -36,6 +63,7 @@ const MODES = [
 export default function ModeSelectionStep() {
   const dispatch = useDispatch()
   const selectedMode = useSelector((s) => s.interviewSetup.selectedMode)
+  const selectedLanguage = useSelector((s) => s.interviewSetup.selectedLanguage)
 
   const canProceed = !!selectedMode
 
@@ -101,6 +129,37 @@ export default function ModeSelectionStep() {
             </button>
           )
         })}
+      </div>
+
+      {/* Language selector */}
+      <div className="flex flex-col gap-2">
+        <div className="flex items-center gap-2 text-slate-400 text-xs">
+          <Globe className="w-3.5 h-3.5" />
+          <span>Ngôn ngữ phỏng vấn</span>
+        </div>
+        <div className="flex gap-2">
+          {LANGUAGES.map((lang) => {
+            const isSelected = selectedLanguage === lang.key
+            return (
+              <button
+                key={lang.key}
+                onClick={() => dispatch(selectLanguage(lang.key))}
+                className={[
+                  'flex-1 py-2 px-3 rounded-xl border text-sm font-medium transition-all duration-200',
+                  'bg-slate-800/60 hover:bg-slate-800',
+                  isSelected
+                    ? `${lang.borderActive} ring-2 ${lang.ringActive} text-white`
+                    : 'border-slate-700 text-slate-400',
+                ].join(' ')}
+              >
+                <span className={`text-xs px-1.5 py-0.5 rounded font-semibold mr-1.5 ${lang.badgeColor}`}>
+                  {lang.badge}
+                </span>
+                {lang.label}
+              </button>
+            )
+          })}
+        </div>
       </div>
 
       <button
