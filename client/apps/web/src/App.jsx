@@ -13,7 +13,9 @@ import SkillPassportPage from './components/dashboard/profile/SkillPassportPage'
 import InterviewSetupFlow from './components/interview-setup/InterviewSetupFlow'
 import BehavioralRoomPage from './components/behavioral-room/BehavioralRoomPage'
 import CombatInterviewRoom from './components/combat-room/CombatInterviewRoom'
+import DSASessionPage from './components/dsa/DSASessionPage'
 import ScoringPage from './components/scoring/ScoringPage'
+import ProblemBankPage from './components/practice/ProblemBankPage'
 import { Loader2 } from 'lucide-react'
 import { resetSetup } from './store/slices/interviewSetupSlice'
 
@@ -39,7 +41,7 @@ export default function App() {
 
   const navigate = (target) => {
     // Protect private routes
-    if ((target === 'dashboard' || target === 'interview-room' || target === 'behavioral-room' || target === 'interview-setup' || target.startsWith('admin')) && !isAuthenticated && !isAuthenticating) {
+    if ((target === 'dashboard' || target === 'interview-room' || target === 'behavioral-room' || target === 'dsa-room' || target === 'interview-setup' || target === 'practice-problems' || target === 'practice-session' || target.startsWith('admin')) && !isAuthenticated && !isAuthenticating) {
       setPage('login');
       return;
     }
@@ -90,9 +92,24 @@ export default function App() {
       />
     )
   }
+  if (page === 'dsa-room') {
+    return <DSASessionPage navigate={navigate} />
+  }
+  if (page === 'practice-problems') {
+    return <ProblemBankPage navigate={navigate} />
+  }
+  if (page === 'practice-session') {
+    return <DSASessionPage navigate={navigate} />
+  }
   if (page === 'scoring') {
     const scoringMode = interviewSession?.mode === 'combat' ? 'combat' : 'behavioral'
-    return <ScoringPage navigate={navigate} mode={scoringMode} />
+    return (
+      <ScoringPage
+        navigate={navigate}
+        mode={scoringMode}
+        interviewSessionId={interviewSession?.sessionId}
+      />
+    )
   }
   if (page === 'dashboard') {
     return <DashboardPage navigate={navigate} />

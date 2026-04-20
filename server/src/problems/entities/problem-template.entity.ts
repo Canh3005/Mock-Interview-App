@@ -43,6 +43,9 @@ export class ProblemTemplate {
   @Column({ type: 'int' })
   memoryLimitKb: number;
 
+  @Column({ type: 'boolean', default: true })
+  isEnabled: boolean;
+
   @CreateDateColumn()
   createdAt: Date;
 

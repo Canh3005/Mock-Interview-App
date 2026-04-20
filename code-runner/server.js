@@ -29,9 +29,9 @@ const STATUS = {
 // Maps Judge0 language IDs to execution config
 const LANGUAGES = {
   // Python 3
-  71:  { name: 'Python 3',   ext: 'py',   run: (f)         => ['python3', [f]] },
+  71:  { name: 'Python 3',   ext: 'py',   run: (f)         => ['python', [f]] },
   // Python 2
-  70:  { name: 'Python 2',   ext: 'py',   run: (f)         => ['python2', [f]] },
+  70:  { name: 'Python 2',   ext: 'py',   run: (f)         => ['python', [f]] },
   // Node.js
   93:  { name: 'Node.js',    ext: 'js',   run: (f)         => ['node', [f]] },
   // C++ (GCC)
@@ -160,8 +160,8 @@ async function runCode(sourceCode, languageId, stdin, expectedOutput, cpuTimeLim
       };
     }
 
-    // ── Compare output (trim trailing whitespace/newlines like Judge0) ──
-    const actual   = (run.stdout || '').replace(/\r\n/g, '\n').trimEnd();
+    // ── Compare output: driver writes result to stderr, stdout is user logs ──
+    const actual   = (run.stderr || '').replace(/\r\n/g, '\n').trimEnd();
     const expected = (expectedOutput || '').replace(/\r\n/g, '\n').trimEnd();
     const accepted = actual === expected;
 
@@ -195,7 +195,7 @@ function processSubmission(token, sub) {
     // Mark as processing
     const entry = store.get(token);
     if (entry) { entry.status = STATUS.PROCESSING; }
-
+    console.log('source code received for token', sub.source_code);
     const result = await runCode(
       sub.source_code,
       sub.language_id,
@@ -204,6 +204,7 @@ function processSubmission(token, sub) {
       sub.cpu_time_limit,
     );
     store.set(token, { token, ...result });
+    console.log('result', result);
     console.log(`[${token}] done → status=${result.status.description}`);
   });
 }

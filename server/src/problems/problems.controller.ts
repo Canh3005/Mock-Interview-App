@@ -12,10 +12,33 @@ import {
 import { ProblemsService } from './problems.service';
 import { CreateProblemDto } from './dto/create-problem.dto';
 import { UpdateProblemDto } from './dto/update-problem.dto';
+import { VerifyProblemDto } from './dto/verify-problem.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { Role } from '../users/entities/user.entity';
+
+@Controller('problems')
+export class PublicProblemsController {
+  constructor(private readonly problemsService: ProblemsService) {}
+
+  @Get('public')
+  findPublic(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+    @Query('search') search?: string,
+    @Query('difficulty') difficulty?: string,
+    @Query('tag') tag?: string,
+  ) {
+    return this.problemsService.findPublic(
+      page ? parseInt(page, 10) : 1,
+      limit ? parseInt(limit, 10) : 20,
+      search,
+      difficulty,
+      tag,
+    );
+  }
+}
 
 @Controller('admin/problems')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -74,7 +97,7 @@ export class ProblemsController {
   }
 
   @Post(':id/verify')
-  verify(@Param('id') id: string) {
-    return this.problemsService.verify(id);
+  verify(@Param('id') id: string, @Body() dto: VerifyProblemDto) {
+    return this.problemsService.verify(id, dto);
   }
 }
