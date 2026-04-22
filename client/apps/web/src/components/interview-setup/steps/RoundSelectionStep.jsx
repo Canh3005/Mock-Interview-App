@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { toggleRound } from '../../../store/slices/interviewSetupSlice'
 import { CheckSquare, Square, Clock, Lock, Users, Terminal, Bot, Network, Target, Swords } from 'lucide-react'
+import DSAConfigPanel from '../dsa/DSAConfigPanel'
 
 const ROUNDS = [
   {
@@ -18,7 +19,7 @@ const ROUNDS = [
     label: 'DSA & Live Coding',
     description: 'Giải thuật, Clean Code, Time/Space Complexity. Sandbox an toàn.',
     duration: 30,
-    available: false,
+    available: true,
     Icon: Terminal,
     iconColor: 'text-blue-400',
     iconBg: 'bg-blue-500/10',
@@ -47,11 +48,13 @@ const ROUNDS = [
 
 export default function RoundSelectionStep({ onStart }) {
   const dispatch = useDispatch()
-  const { selectedRounds, selectedMode } = useSelector((s) => s.interviewSetup)
+  const { selectedRounds, selectedMode, dsaConfig } = useSelector((s) => s.interviewSetup)
 
   const estimatedTotal = selectedRounds.reduce((sum, key) => {
     const r = ROUNDS.find((r) => r.key === key)
-    return sum + (r?.duration ?? 0)
+    if (!r) return sum
+    const duration = key === 'dsa' ? dsaConfig.problemCount * r.duration : r.duration
+    return sum + duration
   }, 0)
 
   const canStart = selectedRounds.length > 0
@@ -76,50 +79,52 @@ export default function RoundSelectionStep({ onStart }) {
           const disabled = !round.available
 
           return (
-            <button
-              key={round.key}
-              disabled={disabled}
-              onClick={() => !disabled && dispatch(toggleRound(round.key))}
-              className={[
-                'w-full text-left rounded-xl border p-4 transition-all duration-200',
-                disabled
-                  ? 'opacity-50 cursor-not-allowed bg-slate-800/30 border-slate-700/50'
-                  : isSelected
-                    ? 'bg-slate-800 border-cta ring-1 ring-cta/30'
-                    : 'bg-slate-800/60 border-slate-700 hover:bg-slate-800',
-              ].join(' ')}
-            >
-              <div className="flex items-start gap-3">
-                <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${round.iconBg}`}>
-                  <round.Icon className={`w-5 h-5 ${round.iconColor}`} />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1 flex-wrap">
-                    <span className="font-semibold text-white text-sm">{round.label}</span>
-                    <span className="flex items-center gap-1 text-xs text-slate-500">
-                      <Clock className="w-3 h-3" />
-                      ~{round.duration} phút
-                    </span>
-                    {!round.available && (
-                      <span className="flex items-center gap-1 text-xs bg-slate-700 text-slate-400 px-2 py-0.5 rounded-full">
-                        <Lock className="w-3 h-3" />
-                        Sắp ra mắt
+            <div key={round.key}>
+              <button
+                disabled={disabled}
+                onClick={() => !disabled && dispatch(toggleRound(round.key))}
+                className={[
+                  'w-full text-left rounded-xl border p-4 transition-all duration-200',
+                  disabled
+                    ? 'opacity-50 cursor-not-allowed bg-slate-800/30 border-slate-700/50'
+                    : isSelected
+                      ? 'bg-slate-800 border-cta ring-1 ring-cta/30'
+                      : 'bg-slate-800/60 border-slate-700 hover:bg-slate-800',
+                ].join(' ')}
+              >
+                <div className="flex items-start gap-3">
+                  <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${round.iconBg}`}>
+                    <round.Icon className={`w-5 h-5 ${round.iconColor}`} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1 flex-wrap">
+                      <span className="font-semibold text-white text-sm">{round.label}</span>
+                      <span className="flex items-center gap-1 text-xs text-slate-500">
+                        <Clock className="w-3 h-3" />
+                        ~{round.duration} phút
                       </span>
+                      {!round.available && (
+                        <span className="flex items-center gap-1 text-xs bg-slate-700 text-slate-400 px-2 py-0.5 rounded-full">
+                          <Lock className="w-3 h-3" />
+                          Sắp ra mắt
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-slate-400 text-xs leading-relaxed">{round.description}</p>
+                  </div>
+                  <div className="flex-shrink-0 mt-0.5">
+                    {disabled ? (
+                      <Square className="w-4 h-4 text-slate-700" />
+                    ) : isSelected ? (
+                      <CheckSquare className="w-4 h-4 text-cta" />
+                    ) : (
+                      <Square className="w-4 h-4 text-slate-600" />
                     )}
                   </div>
-                  <p className="text-slate-400 text-xs leading-relaxed">{round.description}</p>
                 </div>
-                <div className="flex-shrink-0 mt-0.5">
-                  {disabled ? (
-                    <Square className="w-4 h-4 text-slate-700" />
-                  ) : isSelected ? (
-                    <CheckSquare className="w-4 h-4 text-cta" />
-                  ) : (
-                    <Square className="w-4 h-4 text-slate-600" />
-                  )}
-                </div>
-              </div>
-            </button>
+              </button>
+              {round.key === 'dsa' && isSelected && <DSAConfigPanel />}
+            </div>
           )
         })}
       </div>

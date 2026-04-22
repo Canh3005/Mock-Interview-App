@@ -58,8 +58,10 @@ function* createProblemSaga(action) {
 function* updateProblemSaga(action) {
   try {
     const { id, data } = action.payload;
-    const response = yield call(axiosClient.patch, `/admin/problems/${id}`, data);
-    yield put(updateProblemSuccess(response));
+    yield call(axiosClient.patch, `/admin/problems/${id}`, data);
+    // Re-fetch to get fresh DB state with all relations (templates, testCases)
+    const fresh = yield call(axiosClient.get, `/admin/problems/${id}`);
+    yield put(updateProblemSuccess(fresh));
   } catch (error) {
     yield put(updateProblemFailure(error.message));
   }
@@ -78,11 +80,9 @@ function* deleteProblemSaga(action) {
 
 function* verifyProblemSaga(action) {
   try {
-    const { id } = action.payload;
-    // Calling POST /admin/problems/:id/verify (No body required based on the backend changes)
-    const response = yield call(axiosClient.post, `/admin/problems/${id}/verify`);
+    const { id, templates, testCases } = action.payload;
+    const response = yield call(axiosClient.post, `/admin/problems/${id}/verify`, { templates, testCases });
     yield put(verifyProblemSuccess(response));
-    // Re-fetch the problem to get updated status
     yield put(fetchProblemByIdStart(id));
   } catch (error) {
     yield put(verifyProblemFailure(error.response?.data?.message || error.message));

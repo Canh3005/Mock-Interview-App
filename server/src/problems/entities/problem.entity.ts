@@ -51,6 +51,9 @@ export class Problem {
   @Column({ type: 'text', array: true, default: [] })
   tags: string[];
 
+  @Column({ type: 'text', array: true, default: [] })
+  hints: string[];
+
   @OneToMany(
     () => ProblemTemplate,
     (template: ProblemTemplate) => template.problem,

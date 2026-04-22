@@ -13,7 +13,8 @@ export const JUDGE0_LANGUAGE_MAP: Record<string, number> = {
 };
 
 export interface JudgeSubmissionResult {
-  stdout: string | null;
+  stdout: string | null;   // user print statements (cout/print)
+  output: string | null;   // driver-formatted return value (from stderr)
   time: string;
   memory: number;
   stderr: string | null;
@@ -122,8 +123,8 @@ export class JudgeService {
       );
 
       if (res.data.status.id >= 3) {
-        // Status ID >= 3 means it's finished processing (3=Accepted, 4=Wrong Answer, 5=Time Limit, 6=Compile Error etc.)
-        return res.data;
+        const d = res.data;
+        return { ...d, output: d.stderr ?? null, stdout: d.stdout ?? null };
       }
 
       // Wait for 500ms before repolling
@@ -149,7 +150,8 @@ export class JudgeService {
       const isAllFinished = submissions.every((sub: any) => sub.status.id >= 3);
 
       if (isAllFinished) {
-        return submissions;
+        console.log('Batch results received:', submissions);
+        return submissions.map((d: any) => ({ ...d, output: d.stderr ?? null, stdout: d.stdout ?? null }));
       }
 
       // Batch takes longer, poll every 1s

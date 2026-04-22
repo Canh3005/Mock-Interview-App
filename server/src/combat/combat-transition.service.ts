@@ -15,11 +15,11 @@ export interface TransitionDecision {
 
 const STAGE_TIME_ALLOCATION: Record<number, number> = {
   1: 0.15,
-  2: 0.20,
-  3: 0.20,
-  4: 0.20,
+  2: 0.2,
+  3: 0.2,
+  4: 0.2,
   5: 0.15,
-  6: 0.10,
+  6: 0.1,
 };
 
 const MAX_TURNS: Record<string, number> = {

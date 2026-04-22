@@ -6,7 +6,7 @@
  *   Row 3: InterviewHistory (col-span-8) + LearningPath (col-span-4)
  */
 import { useState, useEffect } from 'react'
-import { Github, Code2, Target, Award, Activity } from 'lucide-react'
+import { Github, Code2, Target, Award, Activity, BookOpen } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import SharedNavbar from '../shared/SharedNavbar'
@@ -98,6 +98,13 @@ export default function DashboardPage({ navigate = () => {} }) {
                   {t('auth.linkingGitHub')}
                 </button>
               )}
+              <button
+                onClick={() => navigate('practice-problems')}
+                className="inline-flex items-center gap-2 font-body text-sm font-semibold text-slate-200 bg-slate-700 hover:bg-slate-600 px-5 py-2.5 rounded-xl transition-all duration-200 cursor-pointer hover:-translate-y-0.5"
+              >
+                <BookOpen size={15} />
+                Luyện tập thuật toán
+              </button>
               <button
                 onClick={() => navigate('interview-setup')}
                 className="inline-flex items-center gap-2 font-body text-sm font-semibold text-white bg-cta hover:bg-cta/90 px-5 py-2.5 rounded-xl transition-all duration-200 cursor-pointer hover:-translate-y-0.5 shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta"

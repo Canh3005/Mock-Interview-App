@@ -7,6 +7,8 @@ import interviewSetupReducer from './slices/interviewSetupSlice';
 import behavioralReducer from './slices/behavioralSlice';
 import combatOrchestratorReducer from './slices/combatOrchestratorSlice';
 import combatEngineReducer from './slices/combatEngineSlice';
+import dsaSessionReducer from './slices/dsaSessionSlice'
+import practiceDSAReducer from './slices/practiceDSASlice';
 
 export const sagaMiddleware = createSagaMiddleware();
 
@@ -19,6 +21,8 @@ export const store = configureStore({
     behavioral: behavioralReducer,
     combatOrchestrator: combatOrchestratorReducer,
     combatEngine: combatEngineReducer,
+    dsaSession: dsaSessionReducer,
+    practiceDSA: practiceDSAReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ShieldCheck, CheckCircle2, Clock, Save, AlertCircle, Plus, Trash2 } from 'lucide-react';
 import Editor from "@monaco-editor/react";
@@ -20,14 +20,21 @@ export default function ProblemEditor({ onCancel }) {
   
   // Editor Form State
   const [formData, setFormData] = useState({
-    title: '', difficulty: 'EASY', tags: '', description: '', timeLimitMultiplier: 1.0, testCases: []
+    title: '', difficulty: 'EASY', tags: '', description: '', timeLimitMultiplier: 1.0, testCases: [], hints: ['', '', ''],
   });
   const [templates, setTemplates] = useState({});
   const [activeLang, setActiveLang] = useState('python');
   const [codeView, setCodeView] = useState('solutionCode'); // 'starterCode', 'solutionCode', 'driverCode'
+  const loadedProblemId = useRef(null);
 
   useEffect(() => {
+    const incomingId = currentProblem?.id ?? null;
+    // Only re-initialize editor when switching to a different problem, not on every save/verify re-fetch
+    if (incomingId === loadedProblemId.current) return;
+    loadedProblemId.current = incomingId;
+
     if (currentProblem) {
+      const loadedHints = [0, 1, 2].map((i) => currentProblem.hints?.[i] ?? '')
       setFormData({
         title: currentProblem.title || '',
         difficulty: currentProblem.difficulty || 'EASY',
@@ -35,13 +42,14 @@ export default function ProblemEditor({ onCancel }) {
         description: currentProblem.description || '',
         timeLimitMultiplier: currentProblem.timeLimitMultiplier || 1.0,
         testCases: currentProblem.testCases || [],
+        hints: loadedHints,
       });
 
       const initialTemplates = {};
       LANGUAGES.forEach(lang => {
         const found = currentProblem.templates?.find(t => t.languageId === lang.id);
         if (found) {
-          initialTemplates[lang.id] = { enabled: true, ...found, languageId: lang.id };
+          initialTemplates[lang.id] = { ...found, languageId: lang.id, enabled: found.isEnabled !== false };
         } else {
           initialTemplates[lang.id] = { enabled: false, languageId: lang.id, starterCode: lang.defaultStarter, solutionCode: '', driverCode: '', timeLimitMs: lang.defaultTimer, memoryLimitKb: 128000 };
         }
@@ -61,7 +69,8 @@ export default function ProblemEditor({ onCancel }) {
     const payload = {
       ...formData,
       tags: formData.tags.split(',').map(t => t.trim()).filter(Boolean),
-      templates: Object.values(templates).filter(t => t.enabled),
+      hints: (formData.hints ?? []).map(h => h.trim()).filter(Boolean),
+      templates: Object.values(templates).map(t => ({ ...t, isEnabled: t.enabled })),
     };
 
     if (currentProblem?.id) {
@@ -72,11 +81,15 @@ export default function ProblemEditor({ onCancel }) {
   };
 
   const handleVerify = () => {
-    if (currentProblem?.id) {
-      dispatch(verifyProblemStart({ id: currentProblem.id }));
-    } else {
+    if (!currentProblem?.id) {
       alert("Hãy lưu nháp bài tập vào cơ sở dữ liệu trước khi duyệt.");
+      return;
     }
+    dispatch(verifyProblemStart({
+      id: currentProblem.id,
+      templates: Object.values(templates).map(t => ({ ...t, isEnabled: t.enabled })),
+      testCases: formData.testCases,
+    }));
   };
 
   const handleToggleLang = (langId) => {
@@ -194,12 +207,38 @@ export default function ProblemEditor({ onCancel }) {
             <div className="mt-4">
               <label className="block text-sm font-medium mb-2 text-slate-300">Mô tả Markdown</label>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-64">
-                 <textarea 
+                 <textarea
                    value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})}
                    className="bg-slate-900/50 border border-slate-700 rounded-lg p-4 font-mono text-sm text-slate-300 focus:outline-none focus:border-cta h-full resize-none" placeholder="Markdown here..."/>
                  <div className="bg-slate-900/30 border border-slate-700 rounded-lg p-4 prose prose-invert max-w-none overflow-y-auto w-full">
                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{formData.description}</ReactMarkdown>
                  </div>
+              </div>
+            </div>
+
+            <div className="border-t border-slate-700/60 pt-6">
+              <div className="flex items-center gap-2 mb-1">
+                <label className="block text-sm font-medium text-slate-300">Hints (tối đa 3)</label>
+                <span className="text-xs text-slate-500">— hiển thị tuần tự, user phải unlock từng hint</span>
+              </div>
+              <div className="space-y-3 mt-3">
+                {[0, 1, 2].map((i) => (
+                  <div key={i} className="flex gap-3 items-start">
+                    <span className="mt-2.5 text-xs font-mono text-slate-500 w-12 shrink-0">Hint {i + 1}</span>
+                    <textarea
+                      rows={2}
+                      value={formData.hints?.[i] ?? ''}
+                      onChange={e => {
+                        const next = [0, 1, 2].map((j) =>
+                          j === i ? e.target.value : (formData.hints?.[j] ?? '')
+                        )
+                        setFormData({ ...formData, hints: next })
+                      }}
+                      placeholder={`Gợi ý ${i + 1}... (để trống nếu không dùng)`}
+                      className="flex-1 bg-slate-900/50 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-300 font-mono focus:outline-none focus:border-cta focus:ring-1 focus:ring-cta/50 resize-none"
+                    />
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -308,8 +347,13 @@ export default function ProblemEditor({ onCancel }) {
                 </thead>
                 <tbody className="divide-y divide-slate-700/60">
                   {formData.testCases.map((tc, idx) => (
-                    <tr key={idx} className="bg-transparent hover:bg-slate-700/20 transition-colors">
+                    <tr key={idx} className={`hover:bg-slate-700/20 transition-colors ${tc.isHidden ? 'bg-amber-500/5' : 'bg-transparent'}`}>
                       <td className="px-4 py-3">
+                        {tc.isHidden && (
+                          <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-1.5 py-0.5 rounded bg-amber-500/15 border border-amber-500/30 text-amber-400 mb-1">
+                            Large Input
+                          </span>
+                        )}
                         <textarea className="w-full bg-slate-900/80 border border-slate-700 rounded text-xs font-mono p-2 text-slate-300 resize-y focus:outline-none focus:border-cta" rows={2} value={tc.inputData} onChange={(e) => {
                           const newTc = [...formData.testCases];
                           newTc[idx].inputData = e.target.value;

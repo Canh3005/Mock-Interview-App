@@ -224,7 +224,12 @@ export class ProblemsService {
       if (toDelete.length) await this.testCaseRepository.remove(toDelete);
     }
 
-    await this.problemRepository.save(problem);
+    await this.problemRepository
+      .createQueryBuilder()
+      .update()
+      .set(scalarFields)
+      .where('id = :id', { id })
+      .execute();
     return this.problemRepository.findOne({
       where: { id },
       relations: ['templates', 'testCases'],
