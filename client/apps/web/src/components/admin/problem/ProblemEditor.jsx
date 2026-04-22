@@ -15,7 +15,7 @@ const LANGUAGES = [
 
 export default function ProblemEditor({ onCancel }) {
   const dispatch = useDispatch();
-  const { currentProblem, verifyResult, verifyLoading } = useSelector(state => state.adminProblems);
+  const { currentProblem, verifyResult, verifyLoading, loading } = useSelector(state => state.adminProblems);
   const [activeTab, setActiveTab] = useState('general'); // 'general' | 'content' | 'testcases'
   
   // Editor Form State
@@ -107,6 +107,35 @@ export default function ProblemEditor({ onCancel }) {
   };
 
   const currentTemplate = templates[activeLang] || {};
+
+  if (loading && !currentProblem) {
+    return (
+      <div className="max-w-6xl mx-auto flex flex-col gap-6 font-body pb-12 animate-pulse">
+        <div className="flex items-center justify-between">
+          <div className="space-y-2">
+            <div className="h-7 w-56 bg-slate-700/60 rounded-lg" />
+            <div className="h-4 w-40 bg-slate-700/40 rounded" />
+          </div>
+          <div className="flex gap-3">
+            <div className="h-9 w-16 bg-slate-700/60 rounded-lg" />
+            <div className="h-9 w-28 bg-slate-700/60 rounded-lg" />
+            <div className="h-9 w-32 bg-slate-700/60 rounded-lg" />
+          </div>
+        </div>
+        <div className="flex gap-4 border-b border-slate-700/60 pb-0">
+          {[1, 2, 3].map(i => <div key={i} className="h-10 w-28 bg-slate-700/40 rounded-t-lg" />)}
+        </div>
+        <div className="bg-slate-800/40 border border-slate-700/60 rounded-xl p-6 min-h-[500px] space-y-5">
+          {[1, 2, 3, 4].map(i => (
+            <div key={i} className="space-y-2">
+              <div className="h-4 w-32 bg-slate-700/50 rounded" />
+              <div className="h-10 w-full bg-slate-700/30 rounded-lg" />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-6xl mx-auto flex flex-col gap-6 animate-in slide-in-from-bottom-4 duration-500 font-body pb-12">

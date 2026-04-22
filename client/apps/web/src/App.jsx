@@ -98,7 +98,7 @@ export default function App() {
   if (page === 'practice-problems') {
     return <ProblemBankPage navigate={navigate} />
   }
-  if (page === 'practice-session') {
+  if (page === 'dsa-room-solo') {
     return <DSASessionPage navigate={navigate} />
   }
   if (page === 'scoring') {

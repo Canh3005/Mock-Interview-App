@@ -380,8 +380,9 @@ export class ProblemsService {
         await this.testCaseRepository.remove(toDeleteTc);
       }
 
-      problem.status = ProblemStatus.VERIFIED;
-      await this.problemRepository.save(problem);
+      await this.problemRepository.update(id, {
+        status: ProblemStatus.VERIFIED,
+      });
       resultObj.verified = true;
     } else {
       resultObj.verified = false;
