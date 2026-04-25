@@ -31,7 +31,12 @@ import { RoundOrchestratorService } from '../interview/round-orchestrator.servic
     AiModule,
   ],
   controllers: [LiveCodingController],
-  providers: [LiveCodingService, LiveCodingAiService, LiveCodingScoringService, RoundOrchestratorService],
+  providers: [
+    LiveCodingService,
+    LiveCodingAiService,
+    LiveCodingScoringService,
+    RoundOrchestratorService,
+  ],
   exports: [LiveCodingService],
 })
 export class LiveCodingModule {}
