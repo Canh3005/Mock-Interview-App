@@ -65,7 +65,9 @@ export default function ScoringPage({
 
   // Get the score data for the selected session type
   const currentSessionData = allSessions?.[selectedSessionType];
-  const displayScore = selectedSessionType === 'behavioral' ? scoreData : currentSessionData?.finalScore;
+  const displayScore = selectedSessionType === 'behavioral'
+    ? (allSessions?.behavioral?.finalScore ?? scoreData)
+    : currentSessionData?.finalScore;
 
   // Session type labels
   const SESSION_LABELS = {

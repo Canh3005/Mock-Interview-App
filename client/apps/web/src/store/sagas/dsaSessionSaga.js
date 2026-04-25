@@ -19,7 +19,7 @@ import {
   debriefReady,
   debriefTimeout,
 } from '../slices/dsaSessionSlice'
-import { initSessionSuccess } from '../slices/interviewSetupSlice'
+import { initSessionSuccess, setScoringInitialTab } from '../slices/interviewSetupSlice'
 
 // ─── Start DSA round (triggered from behavioralSaga after nextRound='dsa') ──
 
@@ -147,6 +147,7 @@ function* pollForDebrief(sessionId) {
         if (data.nextRound) {
           // Future rounds — extend here if needed
         } else {
+          yield put(setScoringInitialTab('liveCoding'))
           yield put(debriefReady(data.score))
         }
         return
