@@ -28,6 +28,8 @@ import {
   scoringFailure,
   SEND_MESSAGE,
 } from '../slices/behavioralSlice';
+import { startDSARound } from '../slices/dsaSessionSlice';
+import { requestRoundTransition } from '../slices/interviewSetupSlice';
 
 // ─── Start session saga ───────────────────────────────────────────────────────
 function* startSessionSaga(action) {
@@ -169,8 +171,17 @@ function* completeSaga() {
       attempts++;
       try {
         const result = yield call(behavioralApi.getScore, sessionId);
-        yield put(scoringPolled(result));
-        if (result.status === 'COMPLETED') break;
+        if (result.status === 'COMPLETED') {
+          if (result.nextRound === 'dsa') {
+            console.log('Transitioning to DSA round with sessionId:', result.interviewSessionId ?? sessionId);
+            yield put(requestRoundTransition({
+              interviewSessionId: result.interviewSessionId ?? sessionId,
+            }));
+          } else {
+            yield put(scoringPolled(result));
+          }
+          break;
+        }
       } catch {
         // ignore polling error, keep trying
       }

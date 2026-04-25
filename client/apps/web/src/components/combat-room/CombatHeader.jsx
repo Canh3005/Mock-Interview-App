@@ -85,7 +85,7 @@ export default function CombatHeader({
           className={`flex items-center gap-1.5 text-xs border px-2.5 py-1.5 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${finishStyle}`}
         >
           <CheckCircle2 className="w-3.5 h-3.5" />
-          Kết thúc & Chấm điểm
+          Kết thúc
         </button>
 
         <div className="flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full bg-red-500/10 border border-red-500/30 text-red-400">

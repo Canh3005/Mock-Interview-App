@@ -35,6 +35,7 @@ const adminProblemsSlice = createSlice({
     fetchProblemByIdStart(state, action) {
       state.loading = true;
       state.error = null;
+      state.currentProblem = null;
     },
     fetchProblemByIdSuccess(state, action) {
       state.loading = false;

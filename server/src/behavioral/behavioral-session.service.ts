@@ -32,6 +32,7 @@ import { CombatTransitionService } from '../combat/combat-transition.service';
 import { MultimodalHintService } from '../combat/multimodal-hint.service';
 import { MultimodalScoringService } from '../combat/multimodal-scoring.service';
 import { IntegrityCalculatorService } from '../combat/integrity-calculator.service';
+import { RoundOrchestratorService } from '../interview/round-orchestrator.service';
 
 function getRedirectMessages(lang: InterviewLanguage): Record<string, string> {
   if (lang === 'en') {
@@ -117,6 +118,7 @@ export class BehavioralSessionService {
     private multimodalScoring: MultimodalScoringService,
     private integrityCalculator: IntegrityCalculatorService,
     @InjectQueue(BEHAVIORAL_SCORING_QUEUE) private scoringQueue: Queue,
+    private roundOrchestrator: RoundOrchestratorService,
   ) {
     this.redisClient = new Redis({
       host: this.configService.get('REDIS_HOST') || '127.0.0.1',
@@ -755,11 +757,22 @@ export class BehavioralSessionService {
   async getScore(sessionId: string): Promise<{
     status: string;
     score: Record<string, unknown> | null;
+    nextRound: string | null;
+    interviewSessionId: string;
   }> {
     const session = await this.getSessionOrThrow(sessionId);
+    const nextRound =
+      session.status === 'COMPLETED'
+        ? await this.roundOrchestrator.getNextRound(
+            session.interviewSessionId,
+            'hr_behavioral',
+          )
+        : null;
     return {
       status: session.status,
       score: session.finalScore,
+      nextRound,
+      interviewSessionId: session.interviewSessionId,
     };
   }
 

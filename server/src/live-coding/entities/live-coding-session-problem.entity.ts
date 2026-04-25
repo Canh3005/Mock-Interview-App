@@ -61,4 +61,13 @@ export class LiveCodingSessionProblem {
 
   @Column({ type: 'jsonb', default: [] })
   unlockedHints!: number[];
+
+  @Column({ type: 'int', nullable: true })
+  timeUsedMs!: number | null;
+
+  @Column({ type: 'int', nullable: true })
+  hintsUsed!: number | null;
+
+  @Column({ type: 'int', nullable: true })
+  runsUsed!: number | null;
 }

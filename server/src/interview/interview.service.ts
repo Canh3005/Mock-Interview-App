@@ -8,6 +8,8 @@ import {
   CandidateLevel,
 } from './entities/interview-session.entity';
 import { BehavioralSession } from '../behavioral/entities/behavioral-session.entity';
+import { LiveCodingSession } from '../live-coding/entities/live-coding-session.entity';
+import { LiveCodingSessionProblem } from '../live-coding/entities/live-coding-session-problem.entity';
 import { InitSessionDto } from './dto/init-session.dto';
 import { UpdateContextDto } from './dto/update-context.dto';
 import { CvJson, JdJson } from '../documents/documents.ai.service';
@@ -38,6 +40,10 @@ export class InterviewService {
     private sessionRepo: Repository<InterviewSession>,
     @InjectRepository(BehavioralSession)
     private behavioralSessionRepo: Repository<BehavioralSession>,
+    @InjectRepository(LiveCodingSession)
+    private liveCodingSessionRepo: Repository<LiveCodingSession>,
+    @InjectRepository(LiveCodingSessionProblem)
+    private liveCodingSessionProblemRepo: Repository<LiveCodingSessionProblem>,
     private configService: ConfigService,
   ) {
     this.redisClient = new Redis({
@@ -55,18 +61,34 @@ export class InterviewService {
       throw new BadRequestException('Interview session not found');
     }
 
-    // Fetch behavioral session
-    const behavioralSession = await this.behavioralSessionRepo.findOne({
-      where: { interviewSessionId },
-    });
+    const [behavioralSession, liveCodingSession] = await Promise.all([
+      this.behavioralSessionRepo.findOne({ where: { interviewSessionId } }),
+      this.liveCodingSessionRepo.findOne({ where: { interviewSessionId } }),
+    ]);
 
-    // Return structure with all session types
-    // Other sessions (liveCoding, prompt, systemDesign) will be populated when available
+    let liveCodingData: Record<string, unknown> | null = null;
+    if (liveCodingSession) {
+      const sessionProblems = await this.liveCodingSessionProblemRepo.find({
+        where: { sessionId: liveCodingSession.id },
+        order: { order: 'ASC' },
+      });
+      liveCodingData = {
+        id: liveCodingSession.id,
+        status: liveCodingSession.status,
+        finalScore: liveCodingSession.finalScore,
+        problemIds: sessionProblems.map((sp) => sp.problemId),
+        finalCode: Object.fromEntries(
+          sessionProblems.map((sp) => [sp.problemId, sp.finalCode]),
+        ),
+        language: sessionProblems[0]?.language ?? 'python',
+      };
+    }
+
     return {
       interviewSessionId,
       sessions: {
         behavioral: behavioralSession || null,
-        liveCoding: null,
+        liveCoding: liveCodingData,
         prompt: null,
         systemDesign: null,
       },

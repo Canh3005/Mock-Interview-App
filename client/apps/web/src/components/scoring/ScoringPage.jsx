@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Loader2 } from 'lucide-react';
 import ScorecardDisplay from './ScorecardDisplay';
+import DSAScoringTab from './DSAScoringTab';
 import { interviewApi } from '../../api/interview.api';
 
 /**
@@ -17,14 +18,16 @@ export default function ScoringPage({
   navigate,
   mode = 'behavioral',
   interviewSessionId,
+  initialTab,
   extraSections
 }) {
   const { status, scoreData } = useSelector((s) => s.behavioral);
   const [allSessions, setAllSessions] = useState(null);
-  const [selectedSessionType, setSelectedSessionType] = useState('behavioral');
+  const [selectedSessionType, setSelectedSessionType] = useState(initialTab ?? 'behavioral');
   const [isLoadingSessions, setIsLoadingSessions] = useState(false);
 
-  const isLoading = status === 'completing' || (status === 'completed' && !scoreData);
+  const isLoading = initialTab !== 'liveCoding' &&
+    (status === 'completing' || (status === 'completed' && !scoreData));
 
   // Fetch all sessions for this interview
   useEffect(() => {
@@ -34,12 +37,13 @@ export default function ScoringPage({
         .getAllSessionsForInterview(interviewSessionId)
         .then((data) => {
           setAllSessions(data.sessions);
-          // Auto-select first available non-null session
-          const firstAvailable = Object.entries(data.sessions).find(
-            ([_, session]) => session !== null
-          );
-          if (firstAvailable) {
-            setSelectedSessionType(firstAvailable[0]);
+          // Honour initialTab if that session exists, otherwise pick first available
+          const sessions = data.sessions;
+          if (initialTab && sessions[initialTab] !== null && sessions[initialTab] !== undefined) {
+            setSelectedSessionType(initialTab);
+          } else {
+            const firstAvailable = Object.entries(sessions).find(([, s]) => s !== null);
+            if (firstAvailable) setSelectedSessionType(firstAvailable[0]);
           }
         })
         .catch((err) => console.error('Failed to fetch sessions:', err))
@@ -102,11 +106,16 @@ export default function ScoringPage({
       )}
 
       {/* Scorecard for selected session */}
-      <ScorecardDisplay
-        scoreData={displayScore}
-        navigate={navigate}
-        isCombat={mode === 'combat'}
-      />
+      {selectedSessionType === 'liveCoding'
+        ? <DSAScoringTab session={currentSessionData} />
+        : (
+          <ScorecardDisplay
+            scoreData={displayScore}
+            navigate={navigate}
+            isCombat={mode === 'combat'}
+          />
+        )
+      }
 
       {/* Extra sections */}
       {extraSections && (

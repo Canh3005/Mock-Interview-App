@@ -54,6 +54,12 @@ export class Problem {
   @Column({ type: 'text', array: true, default: [] })
   hints: string[];
 
+  @Column({ type: 'varchar', nullable: true, default: null })
+  optimalTimeComplexity: string | null;
+
+  @Column({ type: 'varchar', nullable: true, default: null })
+  optimalSpaceComplexity: string | null;
+
   @OneToMany(
     () => ProblemTemplate,
     (template: ProblemTemplate) => template.problem,

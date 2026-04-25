@@ -13,6 +13,7 @@ import { QuestionOrchestratorService } from './question-orchestrator.service';
 import { InterviewSession } from '../interview/entities/interview-session.entity';
 import { CombatModule } from '../combat/combat.module';
 import { BEHAVIORAL_SCORING_QUEUE } from '../jobs/jobs.constants';
+import { InterviewModule } from '../interview/interview.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { BEHAVIORAL_SCORING_QUEUE } from '../jobs/jobs.constants';
     ]),
     BullModule.registerQueueAsync({ name: BEHAVIORAL_SCORING_QUEUE }),
     CombatModule,
+    InterviewModule,
   ],
   controllers: [BehavioralController],
   providers: [

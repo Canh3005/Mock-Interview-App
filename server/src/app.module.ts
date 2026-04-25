@@ -16,6 +16,8 @@ import { InterviewModule } from './interview/interview.module';
 import { BehavioralModule } from './behavioral/behavioral.module';
 import { CombatModule } from './combat/combat.module';
 import { TtsModule } from './tts/tts.module';
+import { LiveCodingModule } from './live-coding/live-coding.module';
+import { PracticeDSAModule } from './practice-dsa/practice-dsa.module';
 
 @Module({
   imports: [
@@ -63,6 +65,8 @@ import { TtsModule } from './tts/tts.module';
     BehavioralModule,
     CombatModule,
     TtsModule,
+    LiveCodingModule,
+    PracticeDSAModule,
   ],
   controllers: [AppController],
   providers: [AppService],

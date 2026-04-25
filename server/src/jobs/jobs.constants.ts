@@ -7,3 +7,9 @@ export const BEHAVIORAL_SCORING_QUEUE =
 export const BehavioralScoringJobName = {
   SCORE_SESSION: 'score-session',
 } as const;
+
+export const DSA_DEBRIEF_QUEUE = process.env.DSA_DEBRIEF_QUEUE || 'dsa-debrief';
+
+export const DsaDebriefJobName = {
+  DEBRIEF_SESSION: 'debrief-session',
+} as const;

@@ -28,8 +28,20 @@ const initialState = {
   // rounds
   selectedRounds: [],
 
+  // DSA config (only relevant when 'dsa' is in selectedRounds)
+  dsaConfig: {
+    problemCount: 1,  // 1 | 2 | 3
+  },
+
   // session result
   session: null, // { sessionId, candidateLevel, estimatedDuration }
+
+  // round transition (behavioral → dsa)
+  roundTransitionPending: false,
+  pendingNextRoundInterviewId: null,
+
+  // scoring page initial tab (set before navigate('scoring'))
+  scoringInitialTab: 'behavioral',
 
   loading: false,
   error: null,
@@ -91,6 +103,9 @@ const interviewSetupSlice = createSlice({
       // Only used when user switches from combat → practice inside permission gate
       state.step = 'round_select';
     },
+    setDsaProblemCount(state, action) {
+      state.dsaConfig.problemCount = action.payload; // 1 | 2 | 3
+    },
     toggleRound(state, action) {
       const round = action.payload;
       if (state.selectedRounds.includes(round)) {
@@ -140,6 +155,21 @@ const interviewSetupSlice = createSlice({
       state.step = 'done';
     },
 
+    // ─── Round transition (behavioral → dsa) ──────────────────────────────
+    requestRoundTransition(state, action) {
+      state.roundTransitionPending = true;
+      state.pendingNextRoundInterviewId = action.payload.interviewSessionId;
+    },
+    confirmRoundTransition(state) {
+      state.roundTransitionPending = false;
+      state.pendingNextRoundInterviewId = null;
+    },
+
+    // ─── Scoring initial tab ───────────────────────────────────────────────
+    setScoringInitialTab(state, action) {
+      state.scoringInitialTab = action.payload; // 'behavioral' | 'liveCoding'
+    },
+
     // ─── Reset ────────────────────────────────────────────────────────────
     resetSetup() {
       return initialState;
@@ -148,6 +178,10 @@ const interviewSetupSlice = createSlice({
 });
 
 export const {
+  setDsaProblemCount,
+  requestRoundTransition,
+  confirmRoundTransition,
+  setScoringInitialTab,
   preflightRequest,
   preflightSuccess,
   preflightFailure,

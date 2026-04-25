@@ -202,7 +202,7 @@ export default function BehavioralRoomPage({ navigate, interviewSessionId }) {
             }`}
           >
             <CheckCircle2 className="w-3.5 h-3.5" />
-            Kết thúc & Chấm điểm
+            Kết thúc
           </button>
         </div>
       </header>
@@ -250,7 +250,7 @@ export default function BehavioralRoomPage({ navigate, interviewSessionId }) {
                   className="flex items-center gap-1.5 text-xs text-emerald-400 border border-emerald-500/40 hover:bg-emerald-500/10 px-3 py-1.5 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   <CheckCircle2 className="w-3 h-3" />
-                  Kết thúc & Chấm điểm
+                  Kết thúc
                 </button>
               )}
             </div>
