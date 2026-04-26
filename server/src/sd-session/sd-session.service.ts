@@ -1,10 +1,14 @@
 import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { SDSession } from './entities/sd-session.entity';
+import { SDSession, SDPhase } from './entities/sd-session.entity';
 import { SDProblem } from '../sd-problem/entities/sd-problem.entity';
 import { InterviewSession } from '../interview/entities/interview-session.entity';
 import { CreateSDSessionDto } from './dto/create-sd-session.dto';
+import {
+  ArchitectureNodeDto,
+  ArchitectureEdgeDto,
+} from './dto/update-sd-session.dto';
 
 @Injectable()
 export class SDSessionService {
@@ -63,6 +67,54 @@ export class SDSessionService {
     });
     if (!session) throw new NotFoundException(`SDSession #${id} not found`);
     return session;
+  }
+
+  async updateArchitecture({
+    id,
+    nodes,
+    edges,
+  }: {
+    id: string;
+    nodes: ArchitectureNodeDto[];
+    edges: ArchitectureEdgeDto[];
+  }): Promise<void> {
+    const session: SDSession | null = await this.sdSessionRepository.findOne({
+      where: { id },
+    });
+    if (!session) throw new NotFoundException(`SDSession #${id} not found`);
+    await this.sdSessionRepository.update(id, {
+      architectureJSON: { nodes, edges },
+    });
+  }
+
+  async updatePhase({
+    id,
+    phase,
+  }: {
+    id: string;
+    phase: SDPhase;
+  }): Promise<void> {
+    const session: SDSession | null = await this.sdSessionRepository.findOne({
+      where: { id },
+    });
+    if (!session) throw new NotFoundException(`SDSession #${id} not found`);
+    await this.sdSessionRepository.update(id, { phase });
+    this.logger.log(`SDSession ${id} phase → ${phase}`);
+  }
+
+  async appendTranscript({
+    id,
+    entry,
+  }: {
+    id: string;
+    entry: Record<string, unknown>;
+  }): Promise<void> {
+    const session: SDSession | null = await this.sdSessionRepository.findOne({
+      where: { id },
+    });
+    if (!session) throw new NotFoundException(`SDSession #${id} not found`);
+    session.transcriptHistory = [...session.transcriptHistory, entry];
+    await this.sdSessionRepository.save(session);
   }
 
   private async _selectProblem(candidateLevel?: string): Promise<SDProblem> {
