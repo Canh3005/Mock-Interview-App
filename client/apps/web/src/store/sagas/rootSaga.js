@@ -7,6 +7,7 @@ import { watchBehavioralSaga } from './behavioralSaga';
 import { watchCombat } from './combatSaga';
 import { watchDsaSessionSaga } from './dsaSessionSaga';
 import { watchPracticeDSASaga } from './practiceDSASaga';
+import { watchSDProblemSaga } from './sdProblemSaga';
 
 export default function* rootSaga() {
   yield all([
@@ -18,5 +19,6 @@ export default function* rootSaga() {
     fork(watchCombat),
     fork(watchDsaSessionSaga),
     fork(watchPracticeDSASaga),
+    fork(watchSDProblemSaga),
   ]);
 }

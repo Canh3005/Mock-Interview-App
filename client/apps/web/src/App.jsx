@@ -9,6 +9,7 @@ import RegisterPage from './components/auth/RegisterPage'
 import AdminLayout from './components/admin/AdminLayout'
 import AdminProblemsPage from './components/admin/AdminProblemsPage'
 import AdminTestCasesPage from './components/admin/AdminTestCasesPage'
+import AdminSDProblemsPage from './components/admin/AdminSDProblemsPage'
 import SkillPassportPage from './components/dashboard/profile/SkillPassportPage'
 import InterviewSetupFlow from './components/interview-setup/InterviewSetupFlow'
 import RoundTransitionScreen from './components/interview-setup/RoundTransitionScreen'
@@ -98,6 +99,13 @@ export default function App() {
       return (
         <AdminLayout navigate={navigate} currentPage={page}>
           <AdminTestCasesPage navigate={navigate} />
+        </AdminLayout>
+      )
+    }
+    if (page === 'admin-sd-problems') {
+      return (
+        <AdminLayout navigate={navigate} currentPage={page}>
+          <AdminSDProblemsPage />
         </AdminLayout>
       )
     }

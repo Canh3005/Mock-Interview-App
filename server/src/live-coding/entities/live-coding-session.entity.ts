@@ -18,8 +18,8 @@ export interface RunResult {
   status: 'AC' | 'WA' | 'TLE' | 'RE' | 'CE';
   timeMs: number | null;
   input?: string;
-  stdout?: string;       // user print statements (cout/print in user code)
-  output?: string;       // driver-formatted return value
+  stdout?: string; // user print statements (cout/print in user code)
+  output?: string; // driver-formatted return value
   expectedOutput?: string;
   compileError?: string;
 }

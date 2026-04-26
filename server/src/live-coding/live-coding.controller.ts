@@ -75,11 +75,17 @@ export class LiveCodingController {
       timeUsedMs?: number;
     },
   ) {
-    return this.liveCodingService.submitProblem(id, body.problemId, body.code, body.language, {
-      hintsUsed: body.hintsUsed,
-      approachText: body.approachText,
-      timeUsedMs: body.timeUsedMs,
-    });
+    return this.liveCodingService.submitProblem(
+      id,
+      body.problemId,
+      body.code,
+      body.language,
+      {
+        hintsUsed: body.hintsUsed,
+        approachText: body.approachText,
+        timeUsedMs: body.timeUsedMs,
+      },
+    );
   }
 
   @Post('sessions/:id/idle')

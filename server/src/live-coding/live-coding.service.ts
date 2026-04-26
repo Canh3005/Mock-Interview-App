@@ -316,7 +316,8 @@ export class LiveCodingService {
     sp.submittedAt = new Date();
     if (meta?.hintsUsed !== undefined) sp.hintsUsed = meta.hintsUsed;
     if (meta?.timeUsedMs !== undefined) sp.timeUsedMs = meta.timeUsedMs;
-    if (meta?.approachText !== undefined && !sp.approachText) sp.approachText = meta.approachText;
+    if (meta?.approachText !== undefined && !sp.approachText)
+      sp.approachText = meta.approachText;
     sp.runsUsed = sp.runHistory?.length ?? 0;
     await this.sessionProblemRepo.save(sp);
 
@@ -389,7 +390,7 @@ export class LiveCodingService {
         })),
         Number(problem.timeLimitMultiplier),
       );
-      console.log('results', judgeResults);
+    console.log('results', judgeResults);
     const results: RunResult[] = testCases.map((tc, idx) => {
       const jr = judgeResults[idx];
       const statusId = jr.status.id;
@@ -489,19 +490,30 @@ export class LiveCodingService {
         const testResults = lastRun
           ? {
               visible: {
-                passed: lastRun.results.filter((r) => !r.isHidden && r.status === 'AC').length,
+                passed: lastRun.results.filter(
+                  (r) => !r.isHidden && r.status === 'AC',
+                ).length,
                 total: lastRun.results.filter((r) => !r.isHidden).length,
               },
               hidden: {
-                passed: lastRun.results.filter((r) => r.isHidden && r.status === 'AC').length,
+                passed: lastRun.results.filter(
+                  (r) => r.isHidden && r.status === 'AC',
+                ).length,
                 total: lastRun.results.filter((r) => r.isHidden).length,
               },
             }
-          : { visible: { passed: 0, total: 0 }, hidden: { passed: 0, total: 0 } };
+          : {
+              visible: { passed: 0, total: 0 },
+              hidden: { passed: 0, total: 0 },
+            };
 
-        const complexity = debrief.complexityAnalysis as Record<string, string> | undefined;
+        const complexity = debrief.complexityAnalysis as
+          | Record<string, string>
+          | undefined;
         const timeLimitMs = problem
-          ? { EASY: 20 * 60000, MEDIUM: 35 * 60000, HARD: 50 * 60000 }[problem.difficulty] ?? 35 * 60000
+          ? ({ EASY: 20 * 60000, MEDIUM: 35 * 60000, HARD: 50 * 60000 }[
+              problem.difficulty
+            ] ?? 35 * 60000)
           : 35 * 60000;
 
         const score = this.scoringService.compute({
@@ -511,7 +523,7 @@ export class LiveCodingService {
           runsUsed: sp.runsUsed ?? sp.runHistory.length,
           hintsUsed: sp.hintsUsed ?? 0,
           timedOut: false,
-          approachVerdict: (debrief.approachVerdict as string | null) as any,
+          approachVerdict: debrief.approachVerdict as string | null as any,
           actualTimeComplexity: complexity?.submitted ?? null,
           actualSpaceComplexity: null,
           optimalTimeComplexity: problem?.optimalTimeComplexity ?? null,

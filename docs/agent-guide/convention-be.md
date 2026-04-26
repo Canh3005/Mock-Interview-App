@@ -171,6 +171,47 @@ Mọi error message bằng tiếng Anh.
 - Xóa import và biến không dùng
 - Không để `console.log` debug
 
+## Pagination — Endpoint trả nhiều bản ghi
+
+**Bắt buộc áp dụng** cho mọi endpoint GET trả về list (không phải lookup by ID).
+
+**Controller:**
+```typescript
+@Get()
+async findAll(@Query('page') page?: string, @Query('limit') limit?: string) {
+  return this.featureService.findAll({
+    page: page ? parseInt(page, 10) : 1,
+    limit: limit ? parseInt(limit, 10) : 10,
+  });
+}
+```
+
+**Service:**
+```typescript
+async findAll({ page, limit }: { page: number; limit: number }): Promise<{
+  data: Feature[];
+  total: number;
+  page: number;
+  limit: number;
+}> {
+  const [data, total]: [Feature[], number] = await this.repo.findAndCount({
+    order: { createdAt: 'DESC' },
+    skip: (page - 1) * limit,
+    take: limit,
+  });
+  return { data, total, page, limit };
+}
+```
+
+**Response shape chuẩn:**
+```json
+{ "data": [...], "total": 42, "page": 1, "limit": 10 }
+```
+
+- Default: `page=1`, `limit=10`
+- Không trả raw array — luôn wrap trong `{ data, total, page, limit }`
+- Public query endpoint dùng random/filter (không cần phân trang) có thể trả array trực tiếp
+
 ## Redis Pattern
 
 ```typescript
@@ -193,4 +234,5 @@ if (cached) return JSON.parse(cached) as Feature;
 - [ ] Mọi loop có điều kiện dừng rõ ràng
 - [ ] Error message bằng tiếng Anh
 - [ ] Import không dùng đã xóa
+- [ ] GET list endpoint trả `{ data, total, page, limit }` — không trả raw array
 - [ ] `npm run lint` pass

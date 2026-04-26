@@ -13,8 +13,8 @@ export const JUDGE0_LANGUAGE_MAP: Record<string, number> = {
 };
 
 export interface JudgeSubmissionResult {
-  stdout: string | null;   // user print statements (cout/print)
-  output: string | null;   // driver-formatted return value (from stderr)
+  stdout: string | null; // user print statements (cout/print)
+  output: string | null; // driver-formatted return value (from stderr)
   time: string;
   memory: number;
   stderr: string | null;
@@ -151,7 +151,11 @@ export class JudgeService {
 
       if (isAllFinished) {
         console.log('Batch results received:', submissions);
-        return submissions.map((d: any) => ({ ...d, output: d.stderr ?? null, stdout: d.stdout ?? null }));
+        return submissions.map((d: any) => ({
+          ...d,
+          output: d.stderr ?? null,
+          stdout: d.stdout ?? null,
+        }));
       }
 
       // Batch takes longer, poll every 1s

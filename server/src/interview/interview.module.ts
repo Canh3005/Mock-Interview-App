@@ -9,7 +9,14 @@ import { LiveCodingSession } from '../live-coding/entities/live-coding-session.e
 import { LiveCodingSessionProblem } from '../live-coding/entities/live-coding-session-problem.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([InterviewSession, BehavioralSession, LiveCodingSession, LiveCodingSessionProblem])],
+  imports: [
+    TypeOrmModule.forFeature([
+      InterviewSession,
+      BehavioralSession,
+      LiveCodingSession,
+      LiveCodingSessionProblem,
+    ]),
+  ],
   controllers: [InterviewController],
   providers: [InterviewService, RoundOrchestratorService],
   exports: [InterviewService, RoundOrchestratorService],

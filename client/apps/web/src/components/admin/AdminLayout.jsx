@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, FileCode2, Database, Users, LogOut, ArrowLeft } from 'lucide-react';
+import { FileCode2, Database, LogOut, ArrowLeft, Network } from 'lucide-react';
 import { useDispatch } from 'react-redux';
 import { logoutRequest } from '../../store/slices/authSlice';
 
@@ -56,6 +56,18 @@ export default function AdminLayout({ children, navigate, currentPage }) {
             <Database className="w-5 h-5" />
             Upload Test Cases
           </button>
+
+          <button
+            onClick={() => navigate('admin-sd-problems')}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium cursor-pointer ${
+              currentPage === 'admin-sd-problems'
+                ? 'bg-cta/15 text-cta border border-cta/30'
+                : 'text-slate-400 hover:bg-slate-800 hover:text-white border border-transparent'
+            }`}
+          >
+            <Network className="w-5 h-5" />
+            System Design
+          </button>
         </nav>
 
         <div className="p-4 border-t border-slate-700/60">
@@ -73,7 +85,7 @@ export default function AdminLayout({ children, navigate, currentPage }) {
       <main className="flex-1 flex flex-col overflow-hidden bg-background">
         <header className="h-16 border-b border-slate-700/60 bg-slate-900/50 backdrop-blur flex items-center px-8 z-10 sticky top-0 shrink-0">
           <h1 className="text-lg font-heading font-semibold text-white capitalize">
-            {currentPage === 'admin-problems' ? 'Quản lý Bài tập' : (currentPage === 'admin-testcases' ? 'Upload Test Cases' : 'Dashboard Admin')}
+            {currentPage === 'admin-problems' ? 'Quản lý Bài tập' : currentPage === 'admin-testcases' ? 'Upload Test Cases' : currentPage === 'admin-sd-problems' ? 'System Design Problems' : 'Dashboard Admin'}
           </h1>
         </header>
 

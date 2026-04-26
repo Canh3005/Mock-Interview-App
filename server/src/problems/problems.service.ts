@@ -202,7 +202,8 @@ export class ProblemsService {
       await this.problemTemplateRepository.upsert(incoming, ['id']);
       const incomingIds = new Set(incoming.map((t) => t.id));
       const toDelete = problem.templates.filter((t) => !incomingIds.has(t.id));
-      if (toDelete.length) await this.problemTemplateRepository.remove(toDelete);
+      if (toDelete.length)
+        await this.problemTemplateRepository.remove(toDelete);
     }
 
     if (rawTestCases) {

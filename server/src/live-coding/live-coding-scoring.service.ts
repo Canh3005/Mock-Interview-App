@@ -5,9 +5,12 @@ const COMPLEXITY_RANK: Record<string, number> = {
   'O(log n)': 1,
   'O(n)': 2,
   'O(n log n)': 3,
-  'O(n^2)': 4, 'O(n²)': 4,
-  'O(n^3)': 5, 'O(n³)': 5,
-  'O(2^n)': 6, 'O(2ⁿ)': 6,
+  'O(n^2)': 4,
+  'O(n²)': 4,
+  'O(n^3)': 5,
+  'O(n³)': 5,
+  'O(2^n)': 6,
+  'O(2ⁿ)': 6,
   'O(n!)': 7,
 };
 
@@ -50,11 +53,23 @@ export class LiveCodingScoringService {
       input.optimalSpaceComplexity,
     );
     const thinkAloud = this.scoreThinkAloud(input.approachVerdict);
-    const timeEfficiency = this.scoreTimeEfficiency(input.timeUsedMs, input.timeLimitMs, input.timedOut);
+    const timeEfficiency = this.scoreTimeEfficiency(
+      input.timeUsedMs,
+      input.timeLimitMs,
+      input.timedOut,
+    );
     const runEfficiency = this.scoreRunEfficiency(input.runsUsed);
     const hintPenalty = Math.min(15, input.hintsUsed * 5);
 
-    const total = Math.max(0, correctness + complexity + thinkAloud + timeEfficiency + runEfficiency - hintPenalty);
+    const total = Math.max(
+      0,
+      correctness +
+        complexity +
+        thinkAloud +
+        timeEfficiency +
+        runEfficiency -
+        hintPenalty,
+    );
 
     return {
       correctness,
@@ -69,12 +84,14 @@ export class LiveCodingScoringService {
   }
 
   private scoreCorrectness(testResults: ScoringInput['testResults']): number {
-    const visibleScore = testResults.visible.total > 0
-      ? (testResults.visible.passed / testResults.visible.total) * 15
-      : 0;
-    const hiddenScore = testResults.hidden.total > 0
-      ? (testResults.hidden.passed / testResults.hidden.total) * 30
-      : 0;
+    const visibleScore =
+      testResults.visible.total > 0
+        ? (testResults.visible.passed / testResults.visible.total) * 15
+        : 0;
+    const hiddenScore =
+      testResults.hidden.total > 0
+        ? (testResults.hidden.passed / testResults.hidden.total) * 30
+        : 0;
     return Math.round(visibleScore + hiddenScore);
   }
 
@@ -84,12 +101,20 @@ export class LiveCodingScoringService {
     optimalTime: string | null,
     optimalSpace: string | null,
   ): number {
-    const timeScore = this.complexityGap(actualTime, optimalTime, [16, 10, 4, 0]);
+    const timeScore = this.complexityGap(
+      actualTime,
+      optimalTime,
+      [16, 10, 4, 0],
+    );
     const spaceScore = this.complexityGap(actualSpace, optimalSpace, [4, 0]);
     return timeScore + spaceScore;
   }
 
-  private complexityGap(actual: string | null, optimal: string | null, thresholds: number[]): number {
+  private complexityGap(
+    actual: string | null,
+    optimal: string | null,
+    thresholds: number[],
+  ): number {
     if (!actual || !optimal) return 0;
     const actualRank = COMPLEXITY_RANK[actual.trim()] ?? null;
     const optimalRank = COMPLEXITY_RANK[optimal.trim()] ?? null;
@@ -100,28 +125,36 @@ export class LiveCodingScoringService {
 
   private scoreThinkAloud(verdict: ScoringInput['approachVerdict']): number {
     switch (verdict) {
-      case 'STRONG':   return 15;
-      case 'ADEQUATE': return 9;
-      case 'WEAK':     return 3;
-      default:         return 0;
+      case 'STRONG':
+        return 15;
+      case 'ADEQUATE':
+        return 9;
+      case 'WEAK':
+        return 3;
+      default:
+        return 0;
     }
   }
 
-  private scoreTimeEfficiency(timeUsedMs: number | null, timeLimitMs: number, timedOut: boolean): number {
+  private scoreTimeEfficiency(
+    timeUsedMs: number | null,
+    timeLimitMs: number,
+    timedOut: boolean,
+  ): number {
     if (timedOut || timeUsedMs === null) return 0;
     const ratio = timeUsedMs / timeLimitMs;
-    if (ratio <= 0.50) return 10;
-    if (ratio <= 0.70) return 7;
-    if (ratio <= 0.90) return 4;
-    if (ratio <= 1.00) return 1;
+    if (ratio <= 0.5) return 10;
+    if (ratio <= 0.7) return 7;
+    if (ratio <= 0.9) return 4;
+    if (ratio <= 1.0) return 1;
     return 0;
   }
 
   private scoreRunEfficiency(runsUsed: number): number {
-    if (runsUsed === 0)  return 5;
-    if (runsUsed <= 3)   return 10;
-    if (runsUsed <= 7)   return 7;
-    if (runsUsed <= 12)  return 4;
+    if (runsUsed === 0) return 5;
+    if (runsUsed <= 3) return 10;
+    if (runsUsed <= 7) return 7;
+    if (runsUsed <= 12) return 4;
     return 1;
   }
 

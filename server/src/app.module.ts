@@ -18,6 +18,8 @@ import { CombatModule } from './combat/combat.module';
 import { TtsModule } from './tts/tts.module';
 import { LiveCodingModule } from './live-coding/live-coding.module';
 import { PracticeDSAModule } from './practice-dsa/practice-dsa.module';
+import { SDProblemModule } from './sd-problem/sd-problem.module';
+import { SDSessionModule } from './sd-session/sd-session.module';
 
 @Module({
   imports: [
@@ -67,6 +69,8 @@ import { PracticeDSAModule } from './practice-dsa/practice-dsa.module';
     TtsModule,
     LiveCodingModule,
     PracticeDSAModule,
+    SDProblemModule,
+    SDSessionModule,
   ],
   controllers: [AppController],
   providers: [AppService],
