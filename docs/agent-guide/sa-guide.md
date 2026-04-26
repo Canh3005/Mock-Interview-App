@@ -1,5 +1,34 @@
 # SA Guide
 
+## 0. SA Needed Check — CHẠY ĐẦU TIÊN
+
+Đọc `BA.md`, kiểm tra các điều kiện sau. Nếu **ít nhất 1 điều kiện đúng** → SA cần thiết, tiếp tục từ mục 1.
+
+| Điều kiện | Ví dụ |
+|-----------|-------|
+| BA có flag Risk HIGH | AI streaming, WebSocket/SSE mới, state machine >3 stages, concurrent write |
+| BA để ngỏ architectural decision | "lưu ở đâu?", "dùng transport nào?", "sync hay async?" chưa được chốt |
+| Feature cần ≥2 module mới tương tác với nhau theo cách chưa có precedent trong codebase | SDSession + AI Evaluator + WebSocket channel cùng lúc |
+| BA không có File Estimate hoặc File Estimate thiếu implementation detail | Không rõ file nào sửa, pattern nào reuse |
+
+**Nếu KHÔNG có điều kiện nào đúng → SA không cần thiết.**
+
+Khi đó: báo người dùng theo format sau rồi dừng, không viết HOW.md:
+
+```
+SA SKIP — BA.md đủ để code trực tiếp.
+
+Lý do skip: [1 câu — vd. "BA có File Estimate đầy đủ, không có Risk HIGH, không có architectural decision mở"]
+
+Bước tiếp theo:
+- BE: `be <feature>`
+- FE: `fe <feature>`
+
+Dev sẽ đọc trực tiếp từ BA.md.
+```
+
+---
+
 ## 1. Trước khi viết HOW.md
 
 **Bắt buộc đọc:**
