@@ -10,6 +10,7 @@ import combatEngineReducer from './slices/combatEngineSlice';
 import dsaSessionReducer from './slices/dsaSessionSlice'
 import practiceDSAReducer from './slices/practiceDSASlice';
 import sdProblemReducer from './slices/sdProblemSlice';
+import sdSessionReducer from './slices/sdSessionSlice';
 
 export const sagaMiddleware = createSagaMiddleware();
 
@@ -25,6 +26,7 @@ export const store = configureStore({
     dsaSession: dsaSessionReducer,
     practiceDSA: practiceDSAReducer,
     sdProblem: sdProblemReducer,
+    sdSession: sdSessionReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ 

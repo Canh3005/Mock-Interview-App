@@ -18,6 +18,7 @@ import CombatInterviewRoom from './components/combat-room/CombatInterviewRoom'
 import DSASessionPage from './components/dsa/DSASessionPage'
 import ScoringPage from './components/scoring/ScoringPage'
 import ProblemBankPage from './components/practice/ProblemBankPage'
+import SDRoomPage from './components/sd-room/SDRoomPage'
 import { Loader2 } from 'lucide-react'
 import { resetSetup } from './store/slices/interviewSetupSlice'
 
@@ -44,7 +45,7 @@ export default function App() {
     if (
       (target === 'dashboard' || target === 'interview-room' || target === 'behavioral-room' ||
         target === 'dsa-room' || target === 'interview-setup' || target === 'practice-problems' ||
-        target === 'practice-session' || target.startsWith('admin')) &&
+        target === 'practice-session' || target === 'sd-room' || target.startsWith('admin')) &&
       !isAuthenticated && !isAuthenticating
     ) {
       setPage('login')
@@ -75,6 +76,14 @@ export default function App() {
     if (page === 'dsa-room')         return <DSASessionPage navigate={navigate} />
     if (page === 'dsa-room-solo')    return <DSASessionPage navigate={navigate} />
     if (page === 'practice-problems') return <ProblemBankPage navigate={navigate} />
+    if (page === 'sd-room')
+      return (
+        <SDRoomPage
+          navigate={navigate}
+          sdSessionId={interviewSession?.sdSessionId}
+          interviewSessionId={interviewSession?.sessionId}
+        />
+      )
     if (page === 'scoring') {
       const scoringMode = interviewSession?.mode === 'combat' ? 'combat' : 'behavioral'
       return (
