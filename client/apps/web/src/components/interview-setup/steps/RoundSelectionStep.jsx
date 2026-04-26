@@ -2,6 +2,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { toggleRound } from '../../../store/slices/interviewSetupSlice'
 import { CheckSquare, Square, Clock, Lock, Users, Terminal, Bot, Network, Target, Swords } from 'lucide-react'
 import DSAConfigPanel from '../dsa/DSAConfigPanel'
+import SDConfigPanel from '../sd/SDConfigPanel'
 
 const ROUNDS = [
   {
@@ -38,8 +39,8 @@ const ROUNDS = [
     key: 'system_design',
     label: 'System Design (Whiteboard)',
     description: 'Thiết kế kiến trúc bằng Drag & Drop. AI đọc JSON diagram.',
-    duration: 30,
-    available: false,
+    duration: 45,
+    available: true,
     Icon: Network,
     iconColor: 'text-yellow-400',
     iconBg: 'bg-yellow-500/10',
@@ -124,6 +125,7 @@ export default function RoundSelectionStep({ onStart }) {
                 </div>
               </button>
               {round.key === 'dsa' && isSelected && <DSAConfigPanel />}
+              {round.key === 'system_design' && isSelected && <SDConfigPanel />}
             </div>
           )
         })}

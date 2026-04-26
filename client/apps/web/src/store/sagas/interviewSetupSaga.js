@@ -1,5 +1,6 @@
 import { call, put, select, takeLatest, delay } from 'redux-saga/effects';
 import { interviewApi } from '../../api/interview.api';
+import { sdSessionApi } from '../../api/sdSession';
 import {
   preflightRequest,
   preflightSuccess,
@@ -42,7 +43,7 @@ function* saveContextSaga(action) {
 
 function* initSessionSaga() {
   try {
-    const { selectedMode, selectedRounds, selectedLanguage } = yield select(
+    const { selectedMode, selectedRounds, selectedLanguage, sdConfig } = yield select(
       (s) => s.interviewSetup,
     );
     const data = yield call(interviewApi.initSession, {
@@ -50,7 +51,18 @@ function* initSessionSaga() {
       rounds: selectedRounds,
       language: selectedLanguage ?? 'vi',
     });
-    yield put(initSessionSuccess({ ...data, mode: selectedMode }));
+
+    let sdSessionId = null;
+    if (selectedRounds.includes('system_design')) {
+      const sdData = yield call(sdSessionApi.create, {
+        interviewSessionId: data.sessionId,
+        durationMinutes: sdConfig.durationMinutes,
+        enableCurveball: sdConfig.enableCurveball,
+      });
+      sdSessionId = sdData.sdSessionId;
+    }
+
+    yield put(initSessionSuccess({ ...data, mode: selectedMode, sdSessionId }));
   } catch (err) {
     const msg = err.response?.data?.message || 'Không thể khởi tạo phiên phỏng vấn.';
     yield put(initSessionFailure(msg));
