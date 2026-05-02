@@ -73,10 +73,12 @@ export class SDInterviewerService {
   async streamMessage({
     sessionId,
     userMessage,
+    isSilenceTrigger = false,
     res,
   }: {
     sessionId: string;
     userMessage: string;
+    isSilenceTrigger?: boolean;
     res: Response;
   }): Promise<void> {
     const session: SDSession | null = await this.sdSessionRepo.findOne({
@@ -107,7 +109,12 @@ export class SDInterviewerService {
 
     if (fullText === '') return;
 
-    await this._appendTranscript(session, userMessage, fullText);
+    await this._appendTranscript(
+      session,
+      userMessage,
+      fullText,
+      isSilenceTrigger,
+    );
     const newPhase: SDPhase | null = await this._processTransition(
       session,
       fullText,
@@ -392,6 +399,7 @@ export class SDInterviewerService {
     session: SDSession,
     userMessage: string,
     aiResponse: string,
+    isSilenceTrigger = false,
   ): Promise<void> {
     const cleanResponse: string = aiResponse
       .replace('[PHASE_COMPLETE]', '')
@@ -399,7 +407,7 @@ export class SDInterviewerService {
     const now: string = new Date().toISOString();
     const newEntries: TranscriptEntry[] = [
       {
-        role: 'user',
+        role: isSilenceTrigger ? 'system-trigger' : 'user',
         content: userMessage,
         timestamp: now,
         phase: session.phase,

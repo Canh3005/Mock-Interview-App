@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { phaseUpdated } from './sdSessionSlice';
 
 const initialState = {
   chatHistory: [],     // [{ role: 'user'|'ai'|'hint', content, timestamp }]
@@ -8,6 +9,7 @@ const initialState = {
   loading: false,
   hintLoading: false,
   error: null,
+  silenceCount: 0,     // số lần silence trigger đã fire trong phase hiện tại (max 2)
 };
 
 const sdInterviewerSlice = createSlice({
@@ -44,6 +46,11 @@ const sdInterviewerSlice = createSlice({
         content: action.payload.userMessage,
         timestamp: new Date().toISOString(),
       });
+    },
+    silenceTriggerRequest(state) {
+      state.silenceCount += 1;
+      state.loading = true;
+      state.streamingMessage = '';
     },
     streamChunk(state, action) {
       state.streamingMessage = (state.streamingMessage + action.payload).replace('[PHASE_COMPLETE]', '');
@@ -85,6 +92,11 @@ const sdInterviewerSlice = createSlice({
       return initialState;
     },
   },
+  extraReducers: (builder) => {
+    builder.addCase(phaseUpdated, (state) => {
+      state.silenceCount = 0;
+    });
+  },
 });
 
 export const {
@@ -92,6 +104,7 @@ export const {
   startSessionDone,
   startSessionFailure,
   sendMessageRequest,
+  silenceTriggerRequest,
   streamChunk,
   streamDone,
   streamFailure,

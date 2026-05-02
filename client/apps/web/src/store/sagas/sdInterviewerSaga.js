@@ -7,6 +7,7 @@ import {
   startSessionDone,
   startSessionFailure,
   sendMessageRequest,
+  silenceTriggerRequest,
   streamChunk,
   streamDone,
   streamFailure,
@@ -123,6 +124,55 @@ function _createSSEChannel(sessionId, userMessage) {
   });
 }
 
+function _createSilenceChannel(sessionId, { userMessage, silenceCount }) {
+  return eventChannel((emit) => {
+    let fullText = '';
+    let done = false;
+
+    sdInterviewerApi
+      .createSilenceTriggerStream(sessionId, { userMessage, silenceCount })
+      .then((response) => {
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+
+        function pump() {
+          reader
+            .read()
+            .then(({ done: streamDone, value }) => {
+              if (streamDone) {
+                if (!done) emit(END);
+                return;
+              }
+              const text = decoder.decode(value, { stream: true });
+              const lines = text.split('\n');
+              for (const line of lines) {
+                if (!line.startsWith('data: ')) continue;
+                try {
+                  const json = JSON.parse(line.slice(6));
+                  if (json.error) { emit({ type: 'error', error: json.error }); emit(END); return; }
+                  if (json.token !== undefined) { fullText += json.token; emit({ type: 'chunk', token: json.token }); }
+                  if (json.done === true) {
+                    done = true;
+                    emit({ type: 'done', fullText: fullText.replace('[PHASE_COMPLETE]', '').trim(), meta: json.meta });
+                    emit(END);
+                    return;
+                  }
+                } catch {
+                  // ignore malformed line
+                }
+              }
+              pump();
+            })
+            .catch((err) => { emit({ type: 'error', error: err.message || 'Stream read error' }); emit(END); });
+        }
+        pump();
+      })
+      .catch((err) => { emit({ type: 'error', error: err.message || 'Connection error' }); emit(END); });
+
+    return () => {};
+  });
+}
+
 function* _handleStartSession() {
   const sessionId = yield select((s) => s.sdSession.sessionId);
   if (!sessionId) return;
@@ -179,6 +229,39 @@ function* _handleSendMessage(action) {
   }
 }
 
+function* _handleSilenceTrigger(action) {
+  const { triggerType, nodes } = action.payload;
+  const sessionId = yield select((s) => s.sdSession.sessionId);
+  const silenceCount = yield select((s) => s.sdInterviewer.silenceCount);
+
+  if (!sessionId) return;
+
+  const userMessage =
+    triggerType === 'DRAWING_SILENCE'
+      ? `[CANVAS_ONLY_ACTIVE:${silenceCount}: ${nodes}]`
+      : `[CANDIDATE_SILENT:${silenceCount}]`;
+
+  const channel = yield call(_createSilenceChannel, sessionId, { userMessage, silenceCount });
+
+  try {
+    while (true) {
+      const event = yield take(channel);
+      if (event.type === 'chunk') {
+        yield put(streamChunk(event.token));
+      } else if (event.type === 'done') {
+        yield put(streamDone({ fullText: event.fullText, meta: event.meta }));
+        break;
+      } else if (event.type === 'error') {
+        // Silence trigger errors are silent — no toast, just stop loading
+        yield put(streamFailure(''));
+        break;
+      }
+    }
+  } finally {
+    if (yield cancelled()) channel.close();
+  }
+}
+
 function* _handleRequestHint() {
   const sessionId = yield select((s) => s.sdSession.sessionId);
   if (!sessionId) return;
@@ -195,5 +278,6 @@ function* _handleRequestHint() {
 export function* watchSDInterviewerSaga() {
   yield takeLatest(startSessionRequest.type, _handleStartSession);
   yield takeLatest(sendMessageRequest.type, _handleSendMessage);
+  yield takeLatest(silenceTriggerRequest.type, _handleSilenceTrigger);
   yield takeLatest(requestHintRequest.type, _handleRequestHint);
 }

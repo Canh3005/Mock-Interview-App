@@ -18,5 +18,12 @@ export const sdInterviewerApi = {
       body: JSON.stringify(payload),
     }),
 
+  createSilenceTriggerStream: (sessionId, { userMessage, silenceCount }) =>
+    fetchWithAuth(`${BASE_URL}/sd-sessions/${sessionId}/message`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userMessage, isSilenceTrigger: true, silenceCount }),
+    }),
+
   requestHint: (sessionId) => axiosClient.post(`/sd-sessions/${sessionId}/hint`),
 };

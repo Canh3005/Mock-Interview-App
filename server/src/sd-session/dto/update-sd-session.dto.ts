@@ -67,4 +67,3 @@ export class UpdatePhaseDto {
   @IsIn(['CLARIFICATION', 'DESIGN', 'DEEP_DIVE', 'WRAP_UP', 'COMPLETED'])
   phase!: SDPhase;
 }
-

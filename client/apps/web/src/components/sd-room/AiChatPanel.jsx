@@ -7,6 +7,7 @@ import {
   sendMessageRequest,
   requestHintRequest,
 } from '../../store/slices/sdInterviewerSlice'
+import { useSilenceDetection } from '../../hooks/useSilenceDetection'
 
 function _formatTime(iso) {
   return new Date(iso).toTimeString().slice(0, 8)
@@ -46,8 +47,12 @@ export default function AiChatPanel() {
   const dispatch = useDispatch()
   const { chatHistory, streamingMessage, componentCoverage, hintsUsed, loading, hintLoading } =
     useSelector((s) => s.sdInterviewer)
+  const phase = useSelector((s) => s.sdSession.phase)
   const [inputValue, setInputValue] = useState('')
   const bottomRef = useRef(null)
+
+  // isListening hardcoded false until voice input is integrated into SD room
+  const { cancelTriggers } = useSilenceDetection({ phase, isAiLoading: loading, isListening: false })
 
   useEffect(() => {
     dispatch(startSessionRequest())
@@ -77,6 +82,14 @@ export default function AiChatPanel() {
       }
     },
     [_handleSend],
+  )
+
+  const _handleInputChange = useCallback(
+    (e) => {
+      cancelTriggers()
+      setInputValue(e.target.value)
+    },
+    [cancelTriggers],
   )
 
   return (
@@ -140,7 +153,7 @@ export default function AiChatPanel() {
       <div className="px-3 pb-3 flex gap-2">
         <textarea
           value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
+          onChange={_handleInputChange}
           onKeyDown={_handleKeyDown}
           placeholder={t('sdRoom.aiChat.inputPlaceholder')}
           disabled={loading}

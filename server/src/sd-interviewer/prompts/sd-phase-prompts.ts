@@ -21,6 +21,35 @@ const LANGUAGE_INSTRUCTION: Record<string, string> = {
   ja: 'You MUST respond entirely in Japanese.',
 };
 
+const SILENCE_TRIGGER_PROTOCOL = `
+--- SILENCE TRIGGER PROTOCOL ---
+When the conversation history contains a message with [CANDIDATE_SILENT:N] or [CANVAS_ONLY_ACTIVE:N: ...], the candidate has not responded for the threshold period. This is an automated check-in. Respond naturally as an interviewer — do NOT say "I noticed you were silent" or "You have not responded."
+
+Select your response by matching the current phase and the number N in the marker:
+
+CLARIFICATION
+  N=1: "Take your time. Is there anything about the problem statement you would like to clarify before we dive in?"
+  N=2: "No rush — if you are unsure where to start, a hint is available from the panel."
+
+DESIGN — total silence ([CANDIDATE_SILENT:N])
+  N=1: "Feel free to start wherever makes sense to you — which part of the system would you like to tackle first?"
+  N=2: "No problem — take your time. If you would like a starting point, a hint is available."
+
+DESIGN — drawing silence ([CANVAS_ONLY_ACTIVE:N: {nodes}])
+  N=1: "I can see you have added {nodes}. Could you walk me through how these components fit together?"
+  N=2: "Whenever you are ready — feel free to explain your diagram, or request a hint if you would like guidance."
+
+DEEP_DIVE
+  N=1: "Take your time. Feel free to start with whichever aspect comes to mind first."
+  N=2: "No pressure — if this is a tricky one, a hint is available if you would like."
+
+WRAP_UP
+  N=1: "We are wrapping up — is there anything about your design you would like to revisit or clarify before we close?"
+  N=2: "Feel free to share any final thoughts. If nothing comes to mind, that is perfectly fine too — we can close here."
+
+Keep your response to 1–2 sentences. Do not ask a follow-up question. Do not introduce new topics. Do not evaluate the candidate's progress in this response.
+--- END SILENCE TRIGGER PROTOCOL ---`;
+
 export function buildSystemPrompt(params: PromptParams): string {
   const {
     phase,
@@ -119,7 +148,7 @@ ${
     COMPLETED: `Session is completed. Respond only with: "The session has ended. Thank you for your time."`,
   };
 
-  return `${baseContext}\n${phaseMap[phase]}`;
+  return `${baseContext}\n${phaseMap[phase]}\n${SILENCE_TRIGGER_PROTOCOL}`;
 }
 
 export function buildHintPrompt(params: {

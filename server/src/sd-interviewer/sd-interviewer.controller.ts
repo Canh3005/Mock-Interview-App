@@ -35,6 +35,7 @@ export class SDInterviewerController {
     await this.sdInterviewerService.streamMessage({
       sessionId,
       userMessage: dto.userMessage,
+      isSilenceTrigger: dto.isSilenceTrigger,
       res,
     });
   }

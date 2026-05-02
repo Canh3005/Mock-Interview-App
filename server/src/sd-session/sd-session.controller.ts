@@ -53,5 +53,4 @@ export class SDSessionController {
   async updatePhase(@Param('id') id: string, @Body() dto: UpdatePhaseDto) {
     return this.sdSessionService.updatePhase({ id, phase: dto.phase });
   }
-
 }
