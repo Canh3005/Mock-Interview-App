@@ -21,6 +21,7 @@ import { PracticeDSAModule } from './practice-dsa/practice-dsa.module';
 import { SDProblemModule } from './sd-problem/sd-problem.module';
 import { SDSessionModule } from './sd-session/sd-session.module';
 import { SDInterviewerModule } from './sd-interviewer/sd-interviewer.module';
+import { SDEvaluatorModule } from './sd-evaluator/sd-evaluator.module';
 
 @Module({
   imports: [
@@ -73,6 +74,7 @@ import { SDInterviewerModule } from './sd-interviewer/sd-interviewer.module';
     SDProblemModule,
     SDSessionModule,
     SDInterviewerModule,
+    SDEvaluatorModule,
   ],
   controllers: [AppController],
   providers: [AppService],

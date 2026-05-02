@@ -63,6 +63,9 @@ export class SDSession {
   @Column({ type: 'jsonb', nullable: true })
   curveballArchitectureSnapshot!: { nodes: unknown[]; edges: unknown[] } | null;
 
+  @Column({ type: 'jsonb', nullable: true })
+  evaluationResult!: Record<string, unknown> | null;
+
   @CreateDateColumn()
   createdAt!: Date;
 

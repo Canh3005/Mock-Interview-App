@@ -7,6 +7,7 @@ import SDCanvas from './SDCanvas'
 import NodeLibrary from './NodeLibrary'
 import RightPanel from './RightPanel'
 import ResizeDivider from '../shared/ui/ResizeDivider'
+import EvaluationLoadingOverlay from './EvaluationLoadingOverlay'
 
 const RIGHT_PANEL_MIN = 240
 const RIGHT_PANEL_MAX = 560
@@ -126,7 +127,7 @@ export default function SDRoomPage({ navigate, sdSessionId }) {
     )
 
   return (
-    <div className="h-screen flex flex-col bg-background">
+    <div className="h-screen flex flex-col bg-background relative">
       <nav className="h-11 bg-slate-900 border-b border-slate-800 flex items-center justify-between px-4 shrink-0">
         <PhaseProgressBar phase={phase} />
         <div className="flex items-center gap-4">
@@ -149,6 +150,7 @@ export default function SDRoomPage({ navigate, sdSessionId }) {
         <ResizeDivider onMouseDown={handleResizeStart} />
         <RightPanel width={rightWidth} />
       </div>
+      <EvaluationLoadingOverlay />
     </div>
   )
 }

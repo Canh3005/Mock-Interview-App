@@ -17,6 +17,7 @@ import {
   requestHintFailure,
 } from '../slices/sdInterviewerSlice';
 import { phaseUpdated } from '../slices/sdSessionSlice';
+import { triggerEvaluation } from '../slices/sdEvaluatorSlice';
 
 function _createStartChannel(sessionId) {
   return eventChannel((emit) => {
@@ -215,6 +216,8 @@ function* _handleSendMessage(action) {
           yield put(phaseUpdated(event.meta.phase));
           if (event.meta.phase !== 'COMPLETED') {
             yield put(startSessionRequest());
+          } else {
+            yield put(triggerEvaluation(sessionId));
           }
         }
         break;
