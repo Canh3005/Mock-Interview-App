@@ -33,7 +33,7 @@ function LockedCanvasOverlay() {
   )
 }
 
-function SDCanvasInner({ savedJSON, dispatch }) {
+function SDCanvasInner({ savedJSON, dispatch, isViewOnly }) {
   const { screenToFlowPosition } = useReactFlow()
 
   const [nodes, setNodes, onNodesChange] = useNodesState(savedJSON?.nodes ?? [])
@@ -77,6 +77,7 @@ function SDCanvasInner({ savedJSON, dispatch }) {
 
   const handleConnect = useCallback(
     (params) => {
+      if (isViewOnly) return
       const label = window.prompt('Edge label (optional):', '') ?? ''
       setEdges((eds) => {
         const newEdges = addEdge({ ...params, label, animated: false }, eds)
@@ -84,11 +85,12 @@ function SDCanvasInner({ savedJSON, dispatch }) {
         return newEdges
       })
     },
-    [setEdges, nodes, dispatchChange]
+    [setEdges, nodes, dispatchChange, isViewOnly]
   )
 
   const handleDrop = useCallback(
     (event) => {
+      if (isViewOnly) return
       event.preventDefault()
       const type = event.dataTransfer.getData('nodeType')
       if (!type) return
@@ -108,7 +110,7 @@ function SDCanvasInner({ savedJSON, dispatch }) {
         return updated
       })
     },
-    [setNodes, edges, dispatchChange, screenToFlowPosition]
+    [setNodes, edges, dispatchChange, screenToFlowPosition, isViewOnly]
   )
 
   return (
@@ -116,11 +118,14 @@ function SDCanvasInner({ savedJSON, dispatch }) {
       nodes={nodes}
       edges={edges}
       nodeTypes={NODE_TYPES}
-      onNodesChange={handleNodesChange}
-      onEdgesChange={handleEdgesChange}
-      onConnect={handleConnect}
-      onDrop={handleDrop}
+      onNodesChange={isViewOnly ? undefined : handleNodesChange}
+      onEdgesChange={isViewOnly ? undefined : handleEdgesChange}
+      onConnect={isViewOnly ? undefined : handleConnect}
+      onDrop={isViewOnly ? undefined : handleDrop}
       onDragOver={(e) => e.preventDefault()}
+      nodesDraggable={!isViewOnly}
+      nodesConnectable={!isViewOnly}
+      elementsSelectable={!isViewOnly}
       fitView
     >
       <Background />
@@ -129,7 +134,7 @@ function SDCanvasInner({ savedJSON, dispatch }) {
   )
 }
 
-export default function SDCanvas({ isLocked }) {
+export default function SDCanvas({ isLocked, isViewOnly }) {
   const dispatch = useDispatch()
   const savedJSON = useSelector((s) => s.sdSession.architectureJSON)
 
@@ -138,7 +143,7 @@ export default function SDCanvas({ isLocked }) {
   return (
     <div className="flex-1 h-full">
       <ReactFlowProvider>
-        <SDCanvasInner savedJSON={savedJSON} dispatch={dispatch} />
+        <SDCanvasInner savedJSON={savedJSON} dispatch={dispatch} isViewOnly={isViewOnly} />
       </ReactFlowProvider>
     </div>
   )

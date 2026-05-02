@@ -10,6 +10,7 @@ const initialState = {
   hintLoading: false,
   error: null,
   silenceCount: 0,     // số lần silence trigger đã fire trong phase hiện tại (max 2)
+  drawingComplete: false, // DESIGN phase: true sau khi user ấn Done Drawing
 };
 
 const sdInterviewerSlice = createSlice({
@@ -49,6 +50,11 @@ const sdInterviewerSlice = createSlice({
     },
     silenceTriggerRequest(state) {
       state.silenceCount += 1;
+      state.loading = true;
+      state.streamingMessage = '';
+    },
+    drawingCompleteRequest(state) {
+      state.drawingComplete = true;
       state.loading = true;
       state.streamingMessage = '';
     },
@@ -95,6 +101,7 @@ const sdInterviewerSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(phaseUpdated, (state) => {
       state.silenceCount = 0;
+      state.drawingComplete = false;
     });
   },
 });
@@ -105,6 +112,7 @@ export const {
   startSessionFailure,
   sendMessageRequest,
   silenceTriggerRequest,
+  drawingCompleteRequest,
   streamChunk,
   streamDone,
   streamFailure,

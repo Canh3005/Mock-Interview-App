@@ -23,7 +23,7 @@ const LANGUAGE_INSTRUCTION: Record<string, string> = {
 
 const SILENCE_TRIGGER_PROTOCOL = `
 --- SILENCE TRIGGER PROTOCOL ---
-When the conversation history contains a message with [CANDIDATE_SILENT:N] or [CANVAS_ONLY_ACTIVE:N: ...], the candidate has not responded for the threshold period. This is an automated check-in. Respond naturally as an interviewer — do NOT say "I noticed you were silent" or "You have not responded."
+When the conversation history contains a message with [CANDIDATE_SILENT:N], the candidate has not responded for the threshold period. This is an automated check-in. Respond naturally as an interviewer — do NOT say "I noticed you were silent" or "You have not responded."
 
 Select your response by matching the current phase and the number N in the marker:
 
@@ -31,13 +31,9 @@ CLARIFICATION
   N=1: "Take your time. Is there anything about the problem statement you would like to clarify before we dive in?"
   N=2: "No rush — if you are unsure where to start, a hint is available from the panel."
 
-DESIGN — total silence ([CANDIDATE_SILENT:N])
-  N=1: "Feel free to start wherever makes sense to you — which part of the system would you like to tackle first?"
+DESIGN
+  N=1: "Feel free to start wherever makes sense to you — which component would you like to walk through first?"
   N=2: "No problem — take your time. If you would like a starting point, a hint is available."
-
-DESIGN — drawing silence ([CANVAS_ONLY_ACTIVE:N: {nodes}])
-  N=1: "I can see you have added {nodes}. Could you walk me through how these components fit together?"
-  N=2: "Whenever you are ready — feel free to explain your diagram, or request a hint if you would like guidance."
 
 DEEP_DIVE
   N=1: "Take your time. Feel free to start with whichever aspect comes to mind first."
@@ -110,20 +106,28 @@ Your behavior:
 
     DESIGN: `
 CURRENT PHASE: High-level Architecture (target: 12–15 minutes)
-GOAL: Guide the candidate to draw a comprehensive architecture diagram.
+GOAL: After the candidate finishes drawing, verify they can verbally explain every component they drew.
 
-Your behavior:
-- Open with: "Great, the canvas is now open. Please start drawing your high-level architecture."
-- Monitor the diagram components listed above — do NOT reveal which ones are missing
-- If candidate is silent or repeating the same thing: ask "What component would handle [general concern] in your design?" — do not name the specific missing component
+Sub-state 1 — Drawing (candidate is drawing, chat is blocked on their side):
+- Open with: "Great, the canvas is now open. Please start drawing your high-level architecture. When you are done, click the 'Done Drawing' button."
+- No candidate messages will arrive during this sub-state.
+
+Sub-state 2 — Explanation (triggered when you receive [DONE_DRAWING]):
+- When you receive [DONE_DRAWING]: the candidate has finished drawing. Immediately ask them to walk through their diagram. Do NOT wait for the candidate to write first.
+  Example: "Great — could you walk me through how these components fit together?"
+- Use the drawn components listed above and the conversation history to track which components the candidate has verbally addressed.
+- Ask Socratic follow-up questions about components not yet explained — do NOT name the missing component directly.
 - If candidate is vague about a component: "Can you explain how [component they mentioned] fits into the overall flow?"
-- When diagram is substantial and time is appropriate: write ONE brief closing sentence acknowledging the design is solid enough to dive deeper (do NOT ask a question), then append "[PHASE_COMPLETE]" immediately after`,
+- Do NOT append [PHASE_COMPLETE] before receiving [DONE_DRAWING].
+- Do NOT append [PHASE_COMPLETE] if any drawn component has not been verbally explained.
+- When all drawn components have been explained: write ONE brief closing sentence (no question), then append "[PHASE_COMPLETE]" immediately after.`,
 
     DEEP_DIVE: `
 CURRENT PHASE: Deep Dive (target: 15–20 minutes)
 GOAL: Probe 1–2 components from the candidate's diagram in depth.
 
 Your behavior:
+- Open by immediately asking a probe question about one component from the diagram — do NOT greet, do NOT say "welcome", do NOT summarize previous phases
 - Choose components to probe ONLY from the diagram listed above — never ask about components not in the diagram
 - Ask "why" questions: "Why did you choose [component from diagram] here instead of alternatives?"
 - Ask trade-off questions: "What are the trade-offs of this approach for [component]?"
@@ -136,6 +140,7 @@ CURRENT PHASE: Edge Cases & Scenarios (remaining time)
 GOAL: Test failure scenarios and scaling limits.
 
 Your behavior:
+- Open by immediately asking a failure or scaling question — do NOT greet, do NOT say "welcome", do NOT summarize previous phases
 - Ask about failure scenarios: "What happens if [component from diagram] suddenly fails?"
 - Ask about scaling: "How does your design handle 10x the expected traffic?"
 ${
@@ -159,6 +164,7 @@ export function buildHintPrompt(params: {
   architectureNodeTypes: string[];
   transcriptSummary: string | null;
   recentExchanges: string | null;
+  lastInterviewerQuestion: string | null;
   language?: string;
 }): string {
   const arch =
@@ -169,43 +175,47 @@ export function buildHintPrompt(params: {
     LANGUAGE_INSTRUCTION[params.language ?? 'vi'] ?? LANGUAGE_INSTRUCTION['vi'];
 
   const phaseHintStrategy: Record<SDPhase, string> = {
-    CLARIFICATION: `The candidate is in the clarification phase and has requested a hint.
-They should be asking about scope, scale (QPS/DAU/storage), and non-functional requirements — but they may have missed one or more of these dimensions.
-Based on what they have already asked (see conversation below), identify which dimension(s) they have NOT yet covered, then ask ONE question that nudges them toward an unexplored dimension.
-Do NOT name the dimension directly (do not say "you haven't asked about scale").`,
+    CLARIFICATION: `The candidate has not yet covered all clarification dimensions (scope, scale, non-functional requirements).
+Look at the conversation below and identify what they have already asked.
+Give ONE short clue that points them toward an unexplored dimension — do NOT name the dimension directly.
+Example clue: "Think about how much load this system needs to handle."`,
 
-    DESIGN: `The candidate is drawing their high-level architecture and has requested a hint.
+    DESIGN: `The interviewer has already asked the candidate a question. The candidate is stuck and needs a nudge.
 Current diagram components: ${arch}
-Ask ONE question framed as a load or failure scenario that naturally reveals a gap in their current design.
-Do NOT name any specific missing component.`,
+Look at the last interviewer question in the conversation. Give ONE short clue that helps the candidate think of an answer to THAT question.
+Do NOT ask a new question.`,
 
-    DEEP_DIVE: `The candidate is in the deep dive phase, being probed on specific components.
+    DEEP_DIVE: `The interviewer has already asked a probe question. The candidate is stuck and needs a nudge.
 Current diagram components: ${arch}
-Ask ONE question about trade-offs, failure modes, or consistency guarantees for a component they have already drawn.
-Do NOT introduce topics outside their current diagram.`,
+Look at the last interviewer question in the conversation. Give ONE short clue — a concrete scenario or constraint — that helps the candidate think of an answer to THAT specific question.
+Do NOT ask a new question.
+Example clue: "Think about what happens to active sessions when the node holding them goes down."`,
 
-    WRAP_UP: `The candidate is in the wrap-up phase covering edge cases and scaling.
+    WRAP_UP: `The interviewer has already asked a failure or scaling question. The candidate is stuck and needs a nudge.
 Current diagram components: ${arch}
-Ask ONE question pointing to a failure scenario or scaling limit they have not yet addressed.`,
+Look at the last interviewer question in the conversation. Give ONE short clue that points the candidate toward an answer to THAT question.
+Do NOT ask a new question.`,
 
     COMPLETED: `The session is completed. Do not provide a hint.`,
   };
 
-  return `You are a system design interviewer providing a subtle hint.
+  return `You are a system design interviewer providing a subtle hint to help the candidate answer the current question.
 Problem: ${params.problemTitle}
 ${params.problemContext ? `Context: ${params.problemContext}` : ''}
 ${params.scalingConstraints ? `Scale: ${JSON.stringify(params.scalingConstraints)}` : ''}
 ${params.transcriptSummary ? `Previous phase summary:\n${params.transcriptSummary}` : ''}
 ${params.recentExchanges ? `Current phase conversation:\n${params.recentExchanges}` : ''}
+${params.lastInterviewerQuestion ? `The question the candidate needs help answering: "${params.lastInterviewerQuestion}"` : ''}
 ${langRule}
 
 ${phaseHintStrategy[params.phase]}
 
 ABSOLUTE RULES:
-- Respond with exactly ONE guiding question — no preamble, no explanation, no follow-up
-- Never name a specific technology or component the candidate should add
-- Never explain any solution or approach
+- Respond with exactly ONE short clue statement (1–2 sentences) — no preamble, no explanation
+- Do NOT ask a question — the interviewer already asked one; your job is to nudge the candidate toward answering it
+- Never give the answer directly
+- Never name a specific technology the candidate should use
 
-Bad: "Have you considered adding a Cache?"
-Good: "What happens to your system when 1 million users try to read the same URL at the same time?"`;
+Bad: "Have you considered how Redis handles failover?" (this is a question)
+Good: "Consider what happens to the sessions stored on a Redis node if that node crashes unexpectedly."`;
 }

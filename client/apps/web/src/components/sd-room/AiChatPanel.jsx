@@ -1,11 +1,12 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { MessageSquare, Lightbulb, Send } from 'lucide-react'
+import { CheckSquare, MessageSquare, Lightbulb, Send } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import {
   startSessionRequest,
   sendMessageRequest,
   requestHintRequest,
+  drawingCompleteRequest,
 } from '../../store/slices/sdInterviewerSlice'
 import { useSilenceDetection } from '../../hooks/useSilenceDetection'
 
@@ -45,14 +46,22 @@ function ChatBubble({ msg }) {
 export default function AiChatPanel() {
   const { t } = useTranslation()
   const dispatch = useDispatch()
-  const { chatHistory, streamingMessage, componentCoverage, hintsUsed, loading, hintLoading } =
+  const { chatHistory, streamingMessage, componentCoverage, hintsUsed, loading, hintLoading, drawingComplete } =
     useSelector((s) => s.sdInterviewer)
   const phase = useSelector((s) => s.sdSession.phase)
+  const architectureJSON = useSelector((s) => s.sdSession.architectureJSON)
   const [inputValue, setInputValue] = useState('')
   const bottomRef = useRef(null)
 
-  // isListening hardcoded false until voice input is integrated into SD room
-  const { cancelTriggers } = useSilenceDetection({ phase, isAiLoading: loading, isListening: false })
+  const isDrawingSubState = phase === 'DESIGN' && !drawingComplete
+  const hasNodes = (architectureJSON?.nodes?.length ?? 0) > 0
+
+  const { cancelTriggers } = useSilenceDetection({
+    phase,
+    isAiLoading: loading,
+    isListening: false,
+    isDrawingSubState,
+  })
 
   useEffect(() => {
     dispatch(startSessionRequest())
@@ -64,15 +73,22 @@ export default function AiChatPanel() {
 
   const _handleSend = useCallback(() => {
     const text = inputValue.trim()
-    if (!text || loading) return
+    if (!text || loading || isDrawingSubState) return
     dispatch(sendMessageRequest({ userMessage: text }))
     setInputValue('')
-  }, [inputValue, loading, dispatch])
+  }, [inputValue, loading, isDrawingSubState, dispatch])
 
   const _handleHint = useCallback(() => {
     if (hintLoading || loading) return
     dispatch(requestHintRequest())
   }, [hintLoading, loading, dispatch])
+
+  const _handleDoneDrawing = useCallback(() => {
+    if (!hasNodes || loading) return
+    const confirmed = window.confirm(t('sdRoom.aiChat.doneDrawingConfirm'))
+    if (!confirmed) return
+    dispatch(drawingCompleteRequest())
+  }, [hasNodes, loading, dispatch, t])
 
   const _handleKeyDown = useCallback(
     (e) => {
@@ -135,6 +151,20 @@ export default function AiChatPanel() {
         <div ref={bottomRef} />
       </div>
 
+      {/* Done Drawing button — only in DESIGN drawing sub-state */}
+      {isDrawingSubState && (
+        <div className="px-3 py-2 border-t border-slate-800">
+          <button
+            onClick={_handleDoneDrawing}
+            disabled={!hasNodes || loading}
+            className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-cta text-cta-foreground text-xs font-medium hover:bg-cta/90 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          >
+            <CheckSquare className="w-3.5 h-3.5" />
+            {t('sdRoom.aiChat.doneDrawing')}
+          </button>
+        </div>
+      )}
+
       {/* Hint button */}
       <div className="px-3 py-2 border-t border-slate-800">
         <button
@@ -155,14 +185,18 @@ export default function AiChatPanel() {
           value={inputValue}
           onChange={_handleInputChange}
           onKeyDown={_handleKeyDown}
-          placeholder={t('sdRoom.aiChat.inputPlaceholder')}
-          disabled={loading}
+          placeholder={
+            isDrawingSubState
+              ? t('sdRoom.aiChat.drawingPlaceholder')
+              : t('sdRoom.aiChat.inputPlaceholder')
+          }
+          disabled={loading || isDrawingSubState}
           rows={2}
           className="flex-1 resize-none text-xs bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 placeholder:text-slate-500 outline-none focus:border-cta disabled:opacity-50 transition-colors"
         />
         <button
           onClick={_handleSend}
-          disabled={!inputValue.trim() || loading}
+          disabled={!inputValue.trim() || loading || isDrawingSubState}
           className="self-end px-3 py-2 rounded-lg bg-cta text-cta-foreground text-xs font-medium hover:bg-cta/90 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         >
           <Send className="w-4 h-4" />

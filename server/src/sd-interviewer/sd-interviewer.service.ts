@@ -33,9 +33,9 @@ const PHASE_MAX_MS: Record<SDPhase, number> = {
 };
 
 const PHASE_MIN_MS: Record<SDPhase, number> = {
-  CLARIFICATION: 5 * 60 * 1000,
-  DESIGN: 8 * 60 * 1000,
-  DEEP_DIVE: 10 * 60 * 1000,
+  CLARIFICATION: 0,
+  DESIGN: 0,
+  DEEP_DIVE: 0,
   WRAP_UP: 0,
   COMPLETED: 0,
 };
@@ -43,7 +43,7 @@ const PHASE_MIN_MS: Record<SDPhase, number> = {
 // Minimum user exchanges (not counting system-trigger) before AI signal is accepted
 const PHASE_MIN_EXCHANGES: Record<SDPhase, number> = {
   CLARIFICATION: 3,
-  DESIGN: 4,
+  DESIGN: 2,
   DEEP_DIVE: 3,
   WRAP_UP: 0,
   COMPLETED: 0,
@@ -232,6 +232,10 @@ export class SDInterviewerService {
       architectureNodeTypes: this._getNodeTypes(session),
       transcriptSummary: this._getLatestSummary(history),
       recentExchanges: this._getCurrentPhaseExchanges(history, session.phase),
+      lastInterviewerQuestion: this._getLastInterviewerQuestion(
+        history,
+        session.phase,
+      ),
       language: session.language,
     });
 
@@ -321,6 +325,17 @@ export class SDInterviewerService {
       .reverse()
       .find((e) => e.role === 'summary');
     return summary ? summary.content : null;
+  }
+
+  private _getLastInterviewerQuestion(
+    history: TranscriptEntry[],
+    phase: SDPhase,
+  ): string | null {
+    const entry = history
+      .slice()
+      .reverse()
+      .find((e) => e.phase === phase && e.role === 'ai');
+    return entry ? entry.content : null;
   }
 
   private _getNodeTypes(session: SDSession): string[] {

@@ -70,6 +70,7 @@ export default function SDRoomPage({ navigate, sdSessionId }) {
   const { t } = useTranslation()
   const dispatch = useDispatch()
   const { loading, error, phase, autoSaveStatus } = useSelector((s) => s.sdSession)
+  const drawingComplete = useSelector((s) => s.sdInterviewer.drawingComplete)
   const [rightWidth, setRightWidth] = useState(RIGHT_PANEL_DEFAULT)
 
   const handleResizeStart = useCallback((e) => {
@@ -100,6 +101,7 @@ export default function SDRoomPage({ navigate, sdSessionId }) {
   }, [sdSessionId, dispatch])
 
   const isCanvasLocked = phase === 'CLARIFICATION'
+  const isCanvasViewOnly = !isCanvasLocked && (phase !== 'DESIGN' || drawingComplete)
   if (loading)
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -142,7 +144,7 @@ export default function SDRoomPage({ navigate, sdSessionId }) {
       <div className="flex flex-1 overflow-hidden gap-0 p-1.5 pt-1">
         <NodeLibrary />
         <div className="flex-1 flex flex-col rounded-xl overflow-hidden border border-slate-800/60 ml-1.5">
-          <SDCanvas isLocked={isCanvasLocked} />
+          <SDCanvas isLocked={isCanvasLocked} isViewOnly={isCanvasViewOnly} />
         </div>
         <ResizeDivider onMouseDown={handleResizeStart} />
         <RightPanel width={rightWidth} />
