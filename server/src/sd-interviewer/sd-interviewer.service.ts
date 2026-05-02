@@ -252,12 +252,24 @@ export class SDInterviewerService {
   }
 
   private _computeCoverage(session: SDSession): number {
-    const expected: string[] = session.problem.expectedComponents;
-    if (!session.architectureJSON || expected.length === 0) return 0;
+    if (!session.architectureJSON) return 0;
+    const refNodes = (session.problem.referenceArchitecture?.nodes ?? []) as {
+      type?: string;
+    }[];
+    const expectedTypes: string[] = [
+      ...new Set(
+        refNodes.map((n) => (n.type ?? '').toLowerCase()).filter(Boolean),
+      ),
+    ];
+    if (expectedTypes.length === 0) return 0;
     const arch = session.architectureJSON as unknown as ArchitectureJSON;
-    const presentTypes: Set<string> = new Set(arch.nodes.map((n) => n.type));
-    const matched: number = expected.filter((c) => presentTypes.has(c)).length;
-    return matched / expected.length;
+    const presentTypes: Set<string> = new Set(
+      arch.nodes.map((n) => n.type.toLowerCase()),
+    );
+    const matched: number = expectedTypes.filter((t) =>
+      presentTypes.has(t),
+    ).length;
+    return matched / expectedTypes.length;
   }
 
   private _checkCurveballEligible(

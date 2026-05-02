@@ -157,22 +157,25 @@ export class SDEvaluatorService {
   }
 
   private _computeComponentCoverage(session: SDSession): DimensionResult {
-    const nodes = (session.architectureJSON?.nodes ?? []) as {
+    const candidateNodes = (session.architectureJSON?.nodes ?? []) as {
       type?: string;
     }[];
     const drawn: Set<string> = new Set(
-      nodes.map((n) => (n.type ?? '').toLowerCase()).filter(Boolean),
+      candidateNodes.map((n) => (n.type ?? '').toLowerCase()).filter(Boolean),
     );
-    const expected: string[] = session.problem.expectedComponents ?? [];
-    const matched: string[] = expected.filter((c) =>
-      drawn.has(c.toLowerCase()),
-    );
-    const missing: string[] = expected.filter(
-      (c) => !drawn.has(c.toLowerCase()),
-    );
+    const refNodes = (session.problem.referenceArchitecture?.nodes ?? []) as {
+      type?: string;
+    }[];
+    const expectedTypes: string[] = [
+      ...new Set(
+        refNodes.map((n) => (n.type ?? '').toLowerCase()).filter(Boolean),
+      ),
+    ];
+    const matched: string[] = expectedTypes.filter((t) => drawn.has(t));
+    const missing: string[] = expectedTypes.filter((t) => !drawn.has(t));
     const score: number =
-      expected.length > 0
-        ? Math.round((matched.length / expected.length) * 25)
+      expectedTypes.length > 0
+        ? Math.round((matched.length / expectedTypes.length) * 25)
         : 0;
     return {
       dimension: 'componentCoverage',
