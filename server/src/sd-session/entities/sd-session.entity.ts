@@ -39,6 +39,9 @@ export class SDSession {
   @Column({ type: 'boolean', default: true })
   enableCurveball!: boolean;
 
+  @Column({ type: 'varchar', length: 5, default: 'vi' })
+  language!: string; // 'vi' | 'en' | 'ja'
+
   @Column({ type: 'int' })
   durationMinutes!: number;
 
@@ -50,6 +53,15 @@ export class SDSession {
 
   @Column({ type: 'varchar', length: 20, default: 'IN_PROGRESS' })
   status!: SDSessionStatus;
+
+  @Column({ type: 'int', default: 0 })
+  hintsUsed!: number;
+
+  @Column({ type: 'timestamptz', nullable: true })
+  curveballInjectedAt!: Date | null;
+
+  @Column({ type: 'jsonb', nullable: true })
+  curveballArchitectureSnapshot!: { nodes: unknown[]; edges: unknown[] } | null;
 
   @CreateDateColumn()
   createdAt!: Date;

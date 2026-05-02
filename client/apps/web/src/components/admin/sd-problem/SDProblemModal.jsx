@@ -3,7 +3,7 @@ import { X, Loader2 } from 'lucide-react';
 import SDProblemForm from './SDProblemForm';
 
 const EMPTY = {
-  title: '', domain: '', targetRole: [], targetLevel: 'mid', difficulty: 'medium',
+  title: '', context: '', domain: '', targetRole: [], targetLevel: 'mid', difficulty: 'medium',
   estimatedDuration: 45, expectedComponents: '', tags: '',
   scalingConstraints: '', referenceArchitecture: '', curveBallScenarios: '',
 };
@@ -17,6 +17,7 @@ function _toFormState(problem) {
   if (!problem) return EMPTY;
   return {
     title: problem.title ?? '',
+    context: problem.context ?? '',
     domain: problem.domain ?? '',
     targetRole: problem.targetRole ?? [],
     targetLevel: problem.targetLevel ?? 'mid',
@@ -41,6 +42,7 @@ export default function SDProblemModal({ problem, saving, onSave, onClose }) {
     e.preventDefault();
     onSave({
       title: form.title,
+      context: form.context.trim() || null,
       domain: form.domain,
       targetRole: form.targetRole,
       targetLevel: form.targetLevel,

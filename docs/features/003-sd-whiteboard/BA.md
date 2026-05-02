@@ -90,10 +90,9 @@ System Design là vòng thi đòi hỏi ứng viên vẽ sơ đồ kiến trúc 
 6. Mỗi 30s → gửi ArchitectureJSON tới `/sd-sessions/:id` để auto-save (throttled)
 7. AI Interviewer Engine (Epic 3) nhận JSON diff realtime → theo dõi `componentCoverage` và `phase` để quyết định khi nào inject curveball
 
-**Walkthrough Song Song**
-1. Ứng viên có thể click "🎤 Ghi âm" hoặc nhập text vào chat box khi đang vẽ
-2. Voice/Text transcript được gắn timestamp → lưu vào `transcriptHistory`
-3. Cả voice lẫn text đều vào transcript (không toggle, luôn có cả 2 option)
+**Giải Thích Thiết Kế**
+1. Ứng viên giải thích thiết kế trực tiếp qua AI Chat (tab duy nhất trên right panel)
+2. AI Interviewer đọc và phản hồi trong thời gian thực từ kênh chat
 
 **Phase Transition (DEEP_DIVE, EDGE_CASES)**
 1. Khi AI chuyển sang phase DEEP_DIVE/EDGE_CASES, backend PATCH `phase` update
@@ -101,7 +100,7 @@ System Design là vòng thi đòi hỏi ứng viên vẽ sơ đồ kiến trúc 
 3. ArchitectureJSON vẫn được ghi lại mỗi thay đổi
 
 **Kết Thúc Session**
-1. Khi session end (hết giờ hoặc ứng viên click "Kết thúc"), backend lưu final `architectureJSON` + `transcriptHistory`
+1. Khi session end (hết giờ hoặc ứng viên click "Kết thúc"), backend lưu final `architectureJSON` + `transcriptHistory` (chat log với AI)
 2. FE chuyển sang Debrief phase → load final diagram (read-only) để so sánh với reference architecture
 
 ### Edge Cases & Business Rules
@@ -120,7 +119,7 @@ System Design là vòng thi đòi hỏi ứng viên vẽ sơ đồ kiến trúc 
 - **Canvas chỉ unlock khi `phase !== 'CLARIFICATION'`** → không thể bỏ qua clarification phase bằng cách hack
 - **Diagram rỗng được phép kết thúc session** → không yêu cầu tối thiểu số node (evaluation sẽ tính thấp)
 - **Mỗi change → JSON export → auto-save mỗi 30s** → ứng viên không phải manual save
-- **Transcript (voice + text) luôn được ghi** → không có skip/discard option
+- **Transcript (AI chat) luôn được ghi** → không có skip/discard option
 
 ---
 
@@ -196,22 +195,6 @@ Then load last saved ArchitectureJSON → restore diagram ngay lập tức
      ứng viên thấy diagram đã vẽ trước khi reload (không mất dữ liệu)
 
 ---
-
-**AC 6: Walkthrough Input (Voice + Text)**
-Given canvas unlock, ứng viên đang vẽ
-When click "🎤 Ghi âm" → speak → stop
-Then voice transcript được convert thành text, gắn timestamp
-     Lưu vào transcriptHistory (ngoài JSON diagram)
-
-Given canvas unlock
-When ứng viên nhập text vào chat box → send
-Then text transcript gắn timestamp, lưu vào transcriptHistory
-     Hiển thị realtime trong chat panel
-
-Given voice transcript confidence < 70%
-When STT return low confidence result
-Then hiển thị "Xin bạn xác nhận: [text]" → user edit → confirm
-     Confirmed text được lưu (không chứa lỗi STT)
 
 ---
 

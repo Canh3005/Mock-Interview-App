@@ -36,6 +36,9 @@ export class SDProblem {
   @Column()
   title!: string;
 
+  @Column({ type: 'text', nullable: true })
+  context!: string | null;
+
   @Column()
   domain!: string;
 

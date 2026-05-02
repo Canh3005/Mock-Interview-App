@@ -1,12 +1,16 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { setSdConfig } from '../../../store/slices/interviewSetupSlice';
-import { Zap } from 'lucide-react';
+import { Zap, Globe } from 'lucide-react';
+import ToggleSwitch from '../../shared/ui/ToggleSwitch';
 
 const DURATION_OPTIONS = [45, 60];
+
+const LANGUAGE_LABELS = { vi: 'Tiếng Việt', en: 'English', ja: '日本語' };
 
 export default function SDConfigPanel() {
   const dispatch = useDispatch();
   const { durationMinutes, enableCurveball } = useSelector((s) => s.interviewSetup.sdConfig);
+  const selectedLanguage = useSelector((s) => s.interviewSetup.selectedLanguage);
 
   return (
     <div className="mt-3 ml-12 p-3 bg-slate-900/60 rounded-lg border border-slate-700/50 space-y-3">
@@ -35,18 +39,19 @@ export default function SDConfigPanel() {
           <Zap className="w-3.5 h-3.5 text-yellow-400" />
           <span className="text-xs text-slate-400 font-medium">Curveball Scenarios</span>
         </div>
-        <button
-          onClick={() => dispatch(setSdConfig({ enableCurveball: !enableCurveball }))}
-          className={[
-            'relative w-10 h-5 rounded-full transition-colors',
-            enableCurveball ? 'bg-cta' : 'bg-slate-700',
-          ].join(' ')}
-        >
-          <span className={[
-            'absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform',
-            enableCurveball ? 'translate-x-5' : 'translate-x-0.5',
-          ].join(' ')} />
-        </button>
+        <ToggleSwitch
+          checked={enableCurveball}
+          onChange={(val) => dispatch(setSdConfig({ enableCurveball: val }))}
+        />
+      </div>
+
+      <div className="flex items-center gap-2 text-xs text-slate-500">
+        <Globe className="w-3.5 h-3.5 flex-shrink-0" />
+        <span>
+          Ngôn ngữ phỏng vấn:{' '}
+          <span className="text-slate-300 font-medium">{LANGUAGE_LABELS[selectedLanguage] ?? selectedLanguage}</span>
+          <span className="ml-1 text-slate-600">· đổi ở bước Chọn chế độ</span>
+        </span>
       </div>
     </div>
   );

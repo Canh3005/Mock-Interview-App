@@ -118,14 +118,6 @@ async updatePhase({ id, phase }: { id: string; phase: SDPhase }): Promise<void> 
   this.logger.log(`SDSession ${id} phase → ${phase}`);
 }
 
-async appendTranscript(
-  { id, entry }: { id: string; entry: Record<string, unknown> }
-): Promise<void> {
-  const session: SDSession | null = await this.sdSessionRepository.findOne({ where: { id } });
-  if (!session) throw new NotFoundException(`SDSession #${id} not found`);
-  const history: Record<string, unknown>[] = [...session.transcriptHistory, entry];
-  await this.sdSessionRepository.update(id, { transcriptHistory: history });
-}
 ```
 
 ---
@@ -148,14 +140,6 @@ async updatePhase(@Param('id') id: string, @Body() dto: UpdatePhaseDto) {
   return this.sdSessionService.updatePhase({ id, phase: dto.phase });
 }
 
-@Patch(':id/transcript')
-@ApiOperation({ summary: 'Append transcript entry (voice or text)' })
-async appendTranscript(
-  @Param('id') id: string,
-  @Body() dto: AppendTranscriptDto,
-) {
-  return this.sdSessionService.appendTranscript({ id, entry: { ...dto } });
-}
 ```
 
 ### API Contract — Story 1
@@ -164,7 +148,6 @@ async appendTranscript(
 |--------|------|------|--------------|----------|
 | PATCH | /sd-sessions/:id/architecture | JWT | `{ nodes: [...], edges: [...] }` | 200 `{}` |
 | PATCH | /sd-sessions/:id/phase | JWT | `{ phase: "DESIGN"\|"DEEP_DIVE"\|... }` | 200 `{}` |
-| PATCH | /sd-sessions/:id/transcript | JWT | `{ text, timestamp, source: "voice"\|"text" }` | 200 `{}` |
 
 Các endpoint hiện có (từ Epic 1) giữ nguyên:
 - POST /sd-sessions — tạo session
@@ -198,8 +181,6 @@ export const sdSessionApi = {
     axiosClient.patch(`/sd-sessions/${id}/architecture`, architectureJSON),
   updatePhase: (id, phase) =>
     axiosClient.patch(`/sd-sessions/${id}/phase`, { phase }),
-  appendTranscript: (id, entry) =>
-    axiosClient.patch(`/sd-sessions/${id}/transcript`, entry),
 };
 ```
 
@@ -224,9 +205,6 @@ const initialState = {
   lastSavedAt: null,        // timestamp ms
   autoSaveStatus: 'idle',   // 'idle' | 'saving' | 'saved' | 'error'
 
-  // transcript
-  transcriptHistory: [],    // [{ text, timestamp, source, needsConfirm? }]
-
   loading: false,
   error: null,
 };
@@ -238,7 +216,6 @@ Actions cần có:
 - `setArchitectureJSON(json)` — saga dispatch sau debounce 2s
 - `autoSaveStart()` / `autoSaveSuccess()` / `autoSaveFailure()`
 - `phaseUpdated(phase)` — saga dispatch khi polling detect phase change
-- `transcriptAppended(entry)` — sau khi PATCH thành công
 
 ---
 
@@ -311,21 +288,9 @@ function* _pollPhase() {
   }
 }
 
-// 5. Append transcript
-function* _handleAppendTranscript(action) {
-  try {
-    const { sessionId } = yield select(s => s.sdSession)
-    yield call(sdSessionApi.appendTranscript, sessionId, action.payload)
-    yield put(transcriptAppended(action.payload))
-  } catch {
-    // Non-critical — transcript không được lưu nhưng không crash session
-  }
-}
-
 export function* watchSDSessionSaga() {
   yield takeLatest(loadRequest.type, _handleLoad)
   yield takeLatest(canvasChanged.type, _handleCanvasChanged)
-  yield takeLatest(appendTranscriptRequest.type, _handleAppendTranscript)
 }
 ```
 
@@ -372,10 +337,12 @@ npm install @xyflow/react
 
 ```
 src/components/sd-room/
-├── SDRoomPage.jsx          — Layout chính (3 panel: NodeLibrary + Canvas + WalkthroughPanel)
+├── SDRoomPage.jsx          — Layout chính (NodeLibrary + Canvas + RightPanel)
 ├── SDCanvas.jsx            — React Flow canvas
 ├── NodeLibrary.jsx         — Sidebar với draggable node types
-└── WalkthroughPanel.jsx    — Voice + Text input + transcript history
+├── RightPanel.jsx          — Tab AI Chat + Phase Guide
+├── AiChatPanel.jsx         — Chat với AI Interviewer
+└── PhaseGuidePanel.jsx     — Hướng dẫn phase hiện tại
 ```
 
 ---
@@ -384,7 +351,7 @@ src/components/sd-room/
 
 Layout 3 panel:
 ```
-[NodeLibrary 240px] | [SDCanvas flex-1] | [WalkthroughPanel 320px]
+[NodeLibrary 240px] | [SDCanvas flex-1] | [RightPanel 320px]
 ```
 
 Trách nhiệm:
@@ -517,22 +484,6 @@ Mỗi item: `draggable`, `onDragStart` → `e.dataTransfer.setData('nodeType', t
 
 ---
 
-#### `WalkthroughPanel.jsx` — TẠO MỚI
-
-Layout:
-```
-[Transcript history area - scrollable]
-─────────────────────────────────────
-[🎤 Ghi âm button] | [Text input + Send]
-```
-
-Trách nhiệm:
-- `useVoiceInput()` hook (tái dùng từ behavioral round)
-- Khi voice stop: nếu transcript non-empty → dispatch `appendTranscriptRequest({ text, timestamp: new Date().toISOString(), source: 'voice' })`
-- Khi text send: dispatch `appendTranscriptRequest({ text, timestamp: ..., source: 'text' })`
-- Render transcript history từ `s.sdSession.transcriptHistory` — mỗi entry hiển thị `[HH:mm:ss] 🎤/💬 text`
-- STT low confidence: **không detect ở FE level** (Web Speech API không expose confidence đủ reliable) — transcript được append trực tiếp
-
 ---
 
 #### `App.jsx` — SỬA: thêm sd-room route
@@ -579,12 +530,6 @@ if (page === 'sd-room') {
       "external": "External"
     }
   },
-  "walkthrough": {
-    "voiceButton": "Hold to record",
-    "textPlaceholder": "Explain your design...",
-    "send": "Send",
-    "transcript": "Walkthrough"
-  },
   "phase": {
     "CLARIFICATION": "Clarification",
     "DESIGN": "Architecture",
@@ -604,7 +549,6 @@ if (page === 'sd-room') {
 | `client/apps/web/src/components/sd-room/SDRoomPage.jsx` | Tạo mới |
 | `client/apps/web/src/components/sd-room/SDCanvas.jsx` | Tạo mới |
 | `client/apps/web/src/components/sd-room/NodeLibrary.jsx` | Tạo mới |
-| `client/apps/web/src/components/sd-room/WalkthroughPanel.jsx` | Tạo mới |
 | `client/apps/web/src/i18n/locales/en.json` | Sửa |
 | `client/apps/web/src/i18n/locales/vi.json` | Sửa |
 | `client/apps/web/src/i18n/locales/ja.json` | Sửa |
@@ -622,7 +566,6 @@ Tổng Story 3: **8 / 10** ✓
 |----------|----------|
 | GET /sd-sessions/:id fail khi load | `loadFailure` → hiển thị error message + retry button |
 | PATCH /architecture fail (network) | `autoSaveFailure` → indicator "⚠ Chưa lưu", saga retry lần sau (30s) |
-| PATCH /transcript fail | Log silently — không crash session, transcript lost là acceptable |
 | Phase polling fail | Log silently — retry 5s sau |
 | React Flow throw | ErrorBoundary wrap `SDCanvas` → fallback "Canvas không khả dụng, tải lại trang" |
 

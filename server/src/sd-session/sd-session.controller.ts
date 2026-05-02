@@ -13,7 +13,6 @@ import { CreateSDSessionDto } from './dto/create-sd-session.dto';
 import {
   UpdateArchitectureDto,
   UpdatePhaseDto,
-  AppendTranscriptDto,
 } from './dto/update-sd-session.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
@@ -55,15 +54,4 @@ export class SDSessionController {
     return this.sdSessionService.updatePhase({ id, phase: dto.phase });
   }
 
-  @Patch(':id/transcript')
-  @ApiOperation({ summary: 'Append a transcript entry (voice or text)' })
-  async appendTranscript(
-    @Param('id') id: string,
-    @Body() dto: AppendTranscriptDto,
-  ) {
-    return this.sdSessionService.appendTranscript({
-      id,
-      entry: { text: dto.text, timestamp: dto.timestamp, source: dto.source },
-    });
-  }
 }

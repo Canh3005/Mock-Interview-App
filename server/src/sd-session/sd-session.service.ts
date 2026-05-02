@@ -47,6 +47,7 @@ export class SDSessionService {
         phase: 'CLARIFICATION',
         enableCurveball: dto.enableCurveball,
         durationMinutes: dto.durationMinutes,
+        language: dto.language ?? 'vi',
         architectureJSON: null,
         transcriptHistory: [],
         status: 'IN_PROGRESS',
@@ -100,21 +101,6 @@ export class SDSessionService {
     if (!session) throw new NotFoundException(`SDSession #${id} not found`);
     await this.sdSessionRepository.update(id, { phase });
     this.logger.log(`SDSession ${id} phase → ${phase}`);
-  }
-
-  async appendTranscript({
-    id,
-    entry,
-  }: {
-    id: string;
-    entry: Record<string, unknown>;
-  }): Promise<void> {
-    const session: SDSession | null = await this.sdSessionRepository.findOne({
-      where: { id },
-    });
-    if (!session) throw new NotFoundException(`SDSession #${id} not found`);
-    session.transcriptHistory = [...session.transcriptHistory, entry];
-    await this.sdSessionRepository.save(session);
   }
 
   private async _selectProblem(candidateLevel?: string): Promise<SDProblem> {

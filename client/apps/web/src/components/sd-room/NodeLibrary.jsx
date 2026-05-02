@@ -4,20 +4,22 @@ import { NODE_LIBRARY } from './SDNodeTypes'
 export default function NodeLibrary() {
   const { t } = useTranslation()
 
-  const handleDragStart = (e, type) => {
+  const _handleDragStart = (e, type) => {
     e.dataTransfer.setData('nodeType', type)
     e.dataTransfer.effectAllowed = 'move'
   }
 
   return (
-    <aside className="w-60 h-full bg-card border-r border-border flex flex-col overflow-y-auto">
-      <div className="px-4 py-3 border-b border-border">
-        <h2 className="text-sm font-semibold text-foreground">{t('sdRoom.nodeLibrary.title')}</h2>
+    <div className="w-52 flex-shrink-0 flex flex-col rounded-xl overflow-hidden bg-slate-900 border border-slate-800/60">
+      <div className="px-4 py-2.5 border-b border-slate-800 flex-shrink-0">
+        <h2 className="text-xs font-semibold text-slate-300 uppercase tracking-wide">
+          {t('sdRoom.nodeLibrary.title')}
+        </h2>
       </div>
-      <div className="flex-1 overflow-y-auto px-3 py-2 space-y-4">
+      <div className="flex-1 overflow-y-auto px-3 py-3 space-y-4">
         {NODE_LIBRARY.map(({ category, items }) => (
           <div key={category}>
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
+            <p className="text-[10px] font-medium text-slate-500 uppercase tracking-wider mb-1.5">
               {t(`sdRoom.nodeLibrary.categories.${category}`)}
             </p>
             <div className="space-y-1">
@@ -25,8 +27,8 @@ export default function NodeLibrary() {
                 <div
                   key={type}
                   draggable
-                  onDragStart={(e) => handleDragStart(e, type)}
-                  className="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-foreground bg-background border border-border cursor-grab hover:border-cta hover:bg-cta/5 transition-colors select-none"
+                  onDragStart={(e) => _handleDragStart(e, type)}
+                  className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs text-slate-300 bg-slate-800 border border-slate-700 cursor-grab hover:border-cta hover:text-white hover:bg-slate-700 transition-colors select-none"
                 >
                   <span className="truncate">{label}</span>
                 </div>
@@ -35,6 +37,6 @@ export default function NodeLibrary() {
           </div>
         ))}
       </div>
-    </aside>
+    </div>
   )
 }

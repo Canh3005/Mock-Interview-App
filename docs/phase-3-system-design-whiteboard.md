@@ -83,9 +83,7 @@ Không gian vẽ kiến trúc — tương đương bảng trắng trong phỏng 
 - **Node library chuẩn** (drag & drop): Load Balancer, API Gateway, Web Server, Cache (Redis), Message Queue (Kafka/SQS), Database (SQL/NoSQL), Object Storage (S3), CDN, Client, Worker, External Service — mỗi node có icon nhận diện ngay
 - **Connection có label**: Edge nối giữa hai node có label mô tả loại data flow (HTTP, gRPC, Pub/Sub, Read, Write…)
 - **JSON Metadata Extraction tự động**: Mỗi khi diagram thay đổi (debounced 2s), canvas export `ArchitectureJSON = { nodes: [...], edges: [...] }` vào session state — đây là input duy nhất cho AI, không dùng screenshot
-- **Walkthrough input — 2 mode song song** (luôn hiển thị, không cần toggle):
-  - **Voice**: Ứng viên giữ phím ghi âm để giải thích flow; dùng Web Speech API (`useVoiceInput` hook — tái sử dụng từ behavioral round), transcript gắn timestamp vào session
-  - **Text**: Ứng viên nhập text trực tiếp vào chat box — cùng transcript pipeline với voice, không phân biệt khi evaluate
+- **Giải thích thiết kế qua AI Chat**: Ứng viên giải thích trực tiếp với AI Interviewer qua chat panel — AI phản hồi real-time và đánh giá trade-off articulation từ lịch sử chat
 - **Auto-save**: Diagram lưu vào server mỗi 30s — không mất khi reload
 - **Canvas mở locked**: Ứng viên không thể vẽ ngay khi vào session — canvas chỉ unlock sau khi AI Interviewer xác nhận ứng viên đã xong Clarification phase
 
@@ -252,4 +250,4 @@ Epic 2 và Epic 3 có thể triển khai song song sau khi Epic 0 + 1 done — W
 | STT provider | Web Speech API — tái sử dụng `useVoiceInput` hook từ behavioral round, không có external service |
 | Practice Mode AI output | Text only — không có TTS. TTS thuộc Combat Mode (phase sau) |
 | Curveball default | Bật — ứng viên có thể tắt khi chọn round |
-| Voice Walkthrough | Không toggle — luôn có cả Voice lẫn Text input song song |
+| Walkthrough tab | Đã bỏ — ứng viên giải thích thiết kế qua AI Chat duy nhất |

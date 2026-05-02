@@ -1,9 +1,11 @@
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   ReactFlow,
+  ReactFlowProvider,
   useNodesState,
   useEdgesState,
+  useReactFlow,
   addEdge,
   Background,
   Controls,
@@ -31,10 +33,8 @@ function LockedCanvasOverlay() {
   )
 }
 
-export default function SDCanvas({ isLocked }) {
-  const dispatch = useDispatch()
-  const savedJSON = useSelector((s) => s.sdSession.architectureJSON)
-  const canvasRef = useRef(null)
+function SDCanvasInner({ savedJSON, dispatch }) {
+  const { screenToFlowPosition } = useReactFlow()
 
   const [nodes, setNodes, onNodesChange] = useNodesState(savedJSON?.nodes ?? [])
   const [edges, setEdges, onEdgesChange] = useEdgesState(savedJSON?.edges ?? [])
@@ -91,13 +91,9 @@ export default function SDCanvas({ isLocked }) {
     (event) => {
       event.preventDefault()
       const type = event.dataTransfer.getData('nodeType')
-      if (!type || !canvasRef.current) return
+      if (!type) return
 
-      const bounds = canvasRef.current.getBoundingClientRect()
-      const position = {
-        x: event.clientX - bounds.left - 60,
-        y: event.clientY - bounds.top - 30,
-      }
+      const position = screenToFlowPosition({ x: event.clientX, y: event.clientY })
 
       const newNode = {
         id: makeNodeId(),
@@ -112,27 +108,38 @@ export default function SDCanvas({ isLocked }) {
         return updated
       })
     },
-    [setNodes, edges, dispatchChange]
+    [setNodes, edges, dispatchChange, screenToFlowPosition]
   )
+
+  return (
+    <ReactFlow
+      nodes={nodes}
+      edges={edges}
+      nodeTypes={NODE_TYPES}
+      onNodesChange={handleNodesChange}
+      onEdgesChange={handleEdgesChange}
+      onConnect={handleConnect}
+      onDrop={handleDrop}
+      onDragOver={(e) => e.preventDefault()}
+      fitView
+    >
+      <Background />
+      <Controls />
+    </ReactFlow>
+  )
+}
+
+export default function SDCanvas({ isLocked }) {
+  const dispatch = useDispatch()
+  const savedJSON = useSelector((s) => s.sdSession.architectureJSON)
 
   if (isLocked) return <LockedCanvasOverlay />
 
   return (
-    <div ref={canvasRef} className="flex-1 h-full">
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        nodeTypes={NODE_TYPES}
-        onNodesChange={handleNodesChange}
-        onEdgesChange={handleEdgesChange}
-        onConnect={handleConnect}
-        onDrop={handleDrop}
-        onDragOver={(e) => e.preventDefault()}
-        fitView
-      >
-        <Background />
-        <Controls />
-      </ReactFlow>
+    <div className="flex-1 h-full">
+      <ReactFlowProvider>
+        <SDCanvasInner savedJSON={savedJSON} dispatch={dispatch} />
+      </ReactFlowProvider>
     </div>
   )
 }

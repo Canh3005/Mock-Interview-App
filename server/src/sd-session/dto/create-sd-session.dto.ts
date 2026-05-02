@@ -1,5 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsBoolean, IsNumber, IsUUID } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsBoolean,
+  IsNumber,
+  IsUUID,
+  IsIn,
+  IsOptional,
+} from 'class-validator';
 
 export class CreateSDSessionDto {
   @ApiProperty({ example: 'uuid-of-interview-session' })
@@ -14,4 +21,9 @@ export class CreateSDSessionDto {
   @ApiProperty({ example: true })
   @IsBoolean()
   enableCurveball!: boolean;
+
+  @ApiProperty({ example: 'vi', enum: ['vi', 'en', 'ja'] })
+  @IsOptional()
+  @IsIn(['vi', 'en', 'ja'])
+  language?: string;
 }

@@ -13,8 +13,6 @@ const initialState = {
   lastSavedAt: null,
   autoSaveStatus: 'idle',
 
-  transcriptHistory: [],
-
   loading: false,
   error: null,
 }
@@ -28,7 +26,7 @@ const sdSessionSlice = createSlice({
       state.error = null
     },
     loadSuccess(state, action) {
-      const { id, interviewSessionId, phase, enableCurveball, durationMinutes, problem, architectureJSON, transcriptHistory } = action.payload
+      const { id, interviewSessionId, phase, enableCurveball, durationMinutes, problem, architectureJSON } = action.payload
       state.sessionId = id
       state.interviewSessionId = interviewSessionId
       state.phase = phase ?? 'CLARIFICATION'
@@ -36,7 +34,6 @@ const sdSessionSlice = createSlice({
       state.durationMinutes = durationMinutes ?? 45
       state.problem = problem ?? null
       state.architectureJSON = architectureJSON ?? null
-      state.transcriptHistory = transcriptHistory ?? []
       state.loading = false
       state.error = null
     },
@@ -70,11 +67,6 @@ const sdSessionSlice = createSlice({
       state.phase = action.payload
     },
 
-    appendTranscriptRequest() {},
-    transcriptAppended(state, action) {
-      state.transcriptHistory = [...state.transcriptHistory, action.payload]
-    },
-
     resetSDSession() {
       return initialState
     },
@@ -92,8 +84,6 @@ export const {
   autoSaveSuccess,
   autoSaveFailure,
   phaseUpdated,
-  appendTranscriptRequest,
-  transcriptAppended,
   resetSDSession,
 } = sdSessionSlice.actions
 

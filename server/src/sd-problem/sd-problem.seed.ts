@@ -5,6 +5,8 @@ export const SD_PROBLEM_SEEDS: Partial<SDProblem>[] = [
   // ─── 1. URL Shortener (Pastebin / Bit.ly) ───────────────────────────────────
   {
     title: 'Design a URL Shortener (Pastebin / Bit.ly)',
+    context:
+      "When you paste a long URL like 'https://example.com/very/long/path?with=params' into Bit.ly, you get back a short link like 'bit.ly/3xK9mZ'. Anyone clicking that short link is redirected to the original. Pastebin works similarly but stores text snippets instead. Your task is to design the service that creates short links (or paste IDs), stores the content, and resolves them at scale.",
     domain: 'url-shortener',
     targetRole: ['backend', 'full-stack'],
     targetLevel: 'mid',
@@ -88,6 +90,8 @@ export const SD_PROBLEM_SEEDS: Partial<SDProblem>[] = [
   // ─── 2. Twitter Timeline & Search ──────────────────────────────────────────
   {
     title: 'Design Twitter Timeline & Search',
+    context:
+      "When you open Twitter/X, you see a feed of tweets from people you follow — that is your home timeline. You can also search for any tweet by keyword and get results in seconds. Your task is to design the backend that powers both features: efficiently building each user's timeline when they post or load their feed, and indexing tweets so they are searchable in real time.",
     domain: 'social-feed',
     targetRole: ['backend', 'full-stack'],
     targetLevel: 'senior',
@@ -217,6 +221,8 @@ export const SD_PROBLEM_SEEDS: Partial<SDProblem>[] = [
   // ─── 3. Web Crawler ─────────────────────────────────────────────────────────
   {
     title: 'Design a Web Crawler',
+    context:
+      'Google indexes billions of web pages by continuously visiting URLs, extracting their text content, following the links inside, and queuing new URLs to visit. Without this crawler, search results would not exist. Your task is to design a distributed web crawler that discovers, fetches, deduplicates, and indexes pages at internet scale.',
     domain: 'web-crawler',
     targetRole: ['backend', 'data-eng'],
     targetLevel: 'senior',
@@ -316,6 +322,8 @@ export const SD_PROBLEM_SEEDS: Partial<SDProblem>[] = [
   // ─── 4. Personal Finance Manager (Mint.com) ─────────────────────────────────
   {
     title: 'Design a Personal Finance Manager (Mint.com)',
+    context:
+      'Mint.com lets users link their bank accounts and credit cards. The app automatically categorizes transactions, tracks monthly budgets per category, and sends alerts when spending approaches the limit. Your task is to design the backend that syncs financial data from multiple bank APIs, categorizes it, and serves a spending dashboard.',
     domain: 'fintech',
     targetRole: ['backend', 'full-stack'],
     targetLevel: 'mid',
@@ -452,6 +460,8 @@ export const SD_PROBLEM_SEEDS: Partial<SDProblem>[] = [
   // ─── 5. Key-Value Cache / Query Cache ───────────────────────────────────────
   {
     title: 'Design a Distributed Key-Value Cache',
+    context:
+      'Redis and Memcached are in-memory stores used to cache expensive database queries and serve hot data with sub-millisecond latency. Your task is to design a distributed key-value cache from scratch — covering how data is partitioned across nodes, how cache misses fall back to the database, and how the system evicts old entries when memory is full.',
     domain: 'distributed-cache',
     targetRole: ['backend'],
     targetLevel: 'mid',
@@ -550,6 +560,8 @@ export const SD_PROBLEM_SEEDS: Partial<SDProblem>[] = [
   // ─── 6. Amazon Sales Rank ────────────────────────────────────────────────────
   {
     title: 'Design Amazon Sales Ranking by Category',
+    context:
+      'On Amazon, every product displays a sales rank such as "#1 Best Seller in Electronics". These ranks update based on recent purchases and differ per category. Your task is to design the system that ingests sales transactions, computes rankings across millions of products and hundreds of categories, and serves them at low latency.',
     domain: 'analytics-ranking',
     targetRole: ['backend', 'data-eng'],
     targetLevel: 'senior',
@@ -651,6 +663,8 @@ export const SD_PROBLEM_SEEDS: Partial<SDProblem>[] = [
   // ─── 7. Scaling to Millions of Users on AWS ─────────────────────────────────
   {
     title: 'Design a System That Scales to Millions of Users on AWS',
+    context:
+      'You have a simple web app running on one server with one database — fine for hundreds of users, but it collapses under millions. Your task is to design the evolution of this system using AWS services: from a single box to a globally scalable, highly available architecture that handles traffic spikes without downtime.',
     domain: 'cloud-scaling',
     targetRole: ['backend', 'full-stack'],
     targetLevel: 'senior',
@@ -733,6 +747,8 @@ export const SD_PROBLEM_SEEDS: Partial<SDProblem>[] = [
   // ─── 8. Social Graph (Shortest Path) ────────────────────────────────────────
   {
     title: 'Design a Social Graph — Find Shortest Connection Path',
+    context:
+      'LinkedIn\'s "How are you connected?" feature shows the shortest path between two users — for example: You → Alice → Bob → Target. Your task is to design the distributed graph system that finds these shortest connection paths across billions of social relationships in under 1 second.',
     domain: 'social-graph',
     targetRole: ['backend', 'data-eng'],
     targetLevel: 'staff',
@@ -851,6 +867,8 @@ export const SD_PROBLEM_SEEDS: Partial<SDProblem>[] = [
   //          System Design Interview Vol.1 (Alex Xu), cloud provider docs
   {
     title: 'Design an API Rate Limiter',
+    context:
+      'When an API client sends too many requests in a short period, the server returns a 429 Too Many Requests error. Your task is to design the rate limiting middleware that enforces per-user and per-endpoint request limits — similar to what Stripe uses to protect its payment APIs — without adding more than a few milliseconds of overhead per request.',
     domain: 'rate-limiter',
     targetRole: ['backend'],
     targetLevel: 'mid',
@@ -964,6 +982,8 @@ export const SD_PROBLEM_SEEDS: Partial<SDProblem>[] = [
   // Real numbers: 500M DAU, 100B msgs/day (2023 Meta reports), 115k msg/s avg
   {
     title: 'Design a Real-time Chat System (WhatsApp)',
+    context:
+      "WhatsApp lets you send a text message that appears on the recipient's phone in real time. If they are offline, they get a push notification and see the message when they reconnect. Messages must not be lost, duplicated, or delivered out of order. Your task is to design the backend that handles real-time delivery, offline queuing, and cross-device sync at scale.",
     domain: 'chat-system',
     targetRole: ['backend', 'full-stack'],
     targetLevel: 'senior',
@@ -1102,6 +1122,8 @@ export const SD_PROBLEM_SEEDS: Partial<SDProblem>[] = [
   // Real numbers: 10M active drivers, 2M location updates/s, 100k surge requests
   {
     title: 'Design a Ride-sharing Service (Uber)',
+    context:
+      'When you open Uber and request a ride, the app finds a nearby available driver, shows live GPS tracking on both sides, and notifies the driver with pickup details. Your task is to design the backend that continuously ingests driver location updates, matches riders to drivers, and manages the ride lifecycle in real time.',
     domain: 'ride-sharing',
     targetRole: ['backend'],
     targetLevel: 'senior',
@@ -1254,6 +1276,8 @@ export const SD_PROBLEM_SEEDS: Partial<SDProblem>[] = [
   // Key facts: presigned S3 URL, multipart 5-10MB chunks, WebSocket + polling hybrid
   {
     title: 'Design a File Storage & Sync Service (Dropbox)',
+    context:
+      'Dropbox lets you upload a file on your laptop and have it automatically appear on your phone within seconds. Multiple devices stay in sync, and files can be shared with collaborators. Your task is to design the backend that handles large file uploads, stores them durably in the cloud, and keeps all connected devices in sync.',
     domain: 'file-storage',
     targetRole: ['backend', 'full-stack'],
     targetLevel: 'senior',
@@ -1392,6 +1416,8 @@ export const SD_PROBLEM_SEEDS: Partial<SDProblem>[] = [
   // Real numbers: 500hrs/min uploaded, 100M DAU, 1B hrs watched/day (YouTube 2023)
   {
     title: 'Design a Video Streaming Platform (YouTube)',
+    context:
+      'When you upload a video to YouTube, it becomes available for streaming in multiple resolutions within minutes. Viewers worldwide can watch it smoothly regardless of their internet speed, with quality adapting automatically. Your task is to design the pipeline that processes uploaded videos into multiple formats and the infrastructure that streams them to a global audience.',
     domain: 'video-streaming',
     targetRole: ['backend', 'full-stack'],
     targetLevel: 'senior',
@@ -1548,6 +1574,8 @@ export const SD_PROBLEM_SEEDS: Partial<SDProblem>[] = [
   // Real numbers: Google 8.5B searches/day → ~100k autocomplete QPS, p99 < 100ms requirement
   {
     title: 'Design Search Autocomplete (Typeahead)',
+    context:
+      'When you type "app" into the Google search bar, suggestions like "apple", "app store", and "application download" appear instantly below the input. Your task is to design the backend system that generates these real-time prefix-based search suggestions as users type, serving millions of users with sub-100ms response times.',
     domain: 'search-autocomplete',
     targetRole: ['backend', 'full-stack'],
     targetLevel: 'mid',
@@ -1679,6 +1707,8 @@ export const SD_PROBLEM_SEEDS: Partial<SDProblem>[] = [
   // Real numbers: Meta 1B+ notifications/day; APNs 2M connections/server (2016 WWDC)
   {
     title: 'Design a Scalable Notification System',
+    context:
+      'When someone likes your Instagram post, your phone buzzes with a push notification within seconds. The same event can also send an email or SMS depending on user preferences. Your task is to design the notification pipeline that reliably routes and delivers millions of alerts per day across iOS push, Android push, email, and SMS channels.',
     domain: 'notification-system',
     targetRole: ['backend'],
     targetLevel: 'mid',
@@ -1812,14 +1842,19 @@ export const SD_PROBLEM_SEEDS: Partial<SDProblem>[] = [
 
 export async function seedSDProblems(dataSource: DataSource): Promise<void> {
   const repo = dataSource.getRepository(SDProblem);
-  const existing = await repo.count();
-  if (existing > 0) {
-    console.log(
-      `[seed] SD problems already seeded (${existing} records). Skipping.`,
-    );
-    return;
+  let updated = 0;
+  let created = 0;
+
+  for (const seed of SD_PROBLEM_SEEDS) {
+    const existing = await repo.findOne({ where: { title: seed.title } });
+    if (existing) {
+      await repo.update(existing.id, seed as any);
+      updated++;
+    } else {
+      await repo.save(repo.create(seed as SDProblem));
+      created++;
+    }
   }
-  const entities = repo.create(SD_PROBLEM_SEEDS as SDProblem[]);
-  await repo.save(entities);
-  console.log(`[seed] Seeded ${entities.length} SD problems.`);
+
+  console.log(`[seed] SD problems: ${updated} updated, ${created} created.`);
 }

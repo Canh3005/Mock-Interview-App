@@ -2,7 +2,6 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   IsString,
   IsNotEmpty,
-  IsNumber,
   IsIn,
   IsArray,
   ValidateNested,
@@ -69,18 +68,3 @@ export class UpdatePhaseDto {
   phase!: SDPhase;
 }
 
-export class AppendTranscriptDto {
-  @ApiProperty({ example: 'I would use a load balancer here.' })
-  @IsString()
-  @IsNotEmpty()
-  text!: string;
-
-  @ApiProperty({ example: '2025-01-01T00:00:00.000Z' })
-  @IsString()
-  @IsNotEmpty()
-  timestamp!: string;
-
-  @ApiProperty({ enum: ['voice', 'text'] })
-  @IsIn(['voice', 'text'])
-  source!: 'voice' | 'text';
-}

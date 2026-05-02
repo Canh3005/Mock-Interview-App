@@ -58,6 +58,7 @@ function* initSessionSaga() {
         interviewSessionId: data.sessionId,
         durationMinutes: sdConfig.durationMinutes,
         enableCurveball: sdConfig.enableCurveball,
+        language: selectedLanguage ?? 'vi',
       });
       sdSessionId = sdData.sdSessionId;
     }

@@ -12,8 +12,6 @@ import {
   autoSaveSuccess,
   autoSaveFailure,
   phaseUpdated,
-  appendTranscriptRequest,
-  transcriptAppended,
 } from '../slices/sdSessionSlice'
 
 function* _handleLoad(action) {
@@ -73,18 +71,7 @@ function* _pollPhase() {
   }
 }
 
-function* _handleAppendTranscript(action) {
-  try {
-    const { sessionId } = yield select((s) => s.sdSession)
-    yield call(sdSessionApi.appendTranscript, sessionId, action.payload)
-    yield put(transcriptAppended(action.payload))
-  } catch {
-    // non-critical, transcript lost is acceptable
-  }
-}
-
 export function* watchSDSessionSaga() {
   yield takeLatest(loadRequest.type, _handleLoad)
   yield takeLatest(canvasChanged.type, _handleCanvasChanged)
-  yield takeLatest(appendTranscriptRequest.type, _handleAppendTranscript)
 }

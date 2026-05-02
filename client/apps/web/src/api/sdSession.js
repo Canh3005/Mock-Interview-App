@@ -7,6 +7,4 @@ export const sdSessionApi = {
     axiosClient.patch(`/sd-sessions/${id}/architecture`, architectureJSON),
   updatePhase: (id, phase) =>
     axiosClient.patch(`/sd-sessions/${id}/phase`, { phase }),
-  appendTranscript: (id, entry) =>
-    axiosClient.patch(`/sd-sessions/${id}/transcript`, entry),
 };

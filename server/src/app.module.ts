@@ -20,6 +20,7 @@ import { LiveCodingModule } from './live-coding/live-coding.module';
 import { PracticeDSAModule } from './practice-dsa/practice-dsa.module';
 import { SDProblemModule } from './sd-problem/sd-problem.module';
 import { SDSessionModule } from './sd-session/sd-session.module';
+import { SDInterviewerModule } from './sd-interviewer/sd-interviewer.module';
 
 @Module({
   imports: [
@@ -71,6 +72,7 @@ import { SDSessionModule } from './sd-session/sd-session.module';
     PracticeDSAModule,
     SDProblemModule,
     SDSessionModule,
+    SDInterviewerModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -31,6 +31,16 @@ export default function SDProblemForm({ form, onChange }) {
         </FieldRow>
       </div>
 
+      <FieldRow label="Context (mô tả real-world cho thí sinh)">
+        <textarea
+          className={textareaCls}
+          style={{ minHeight: 80 }}
+          value={form.context}
+          onChange={(e) => onChange('context', e.target.value)}
+          placeholder="When you type 'app' into the Google search bar, suggestions appear instantly below the input. Your task is to design..."
+        />
+      </FieldRow>
+
       <FieldRow label="Target Role">
         <div className="flex gap-2">
           {ROLES.map((r) => (

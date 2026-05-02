@@ -11,6 +11,7 @@ import dsaSessionReducer from './slices/dsaSessionSlice'
 import practiceDSAReducer from './slices/practiceDSASlice';
 import sdProblemReducer from './slices/sdProblemSlice';
 import sdSessionReducer from './slices/sdSessionSlice';
+import sdInterviewerReducer from './slices/sdInterviewerSlice';
 
 export const sagaMiddleware = createSagaMiddleware();
 
@@ -27,6 +28,7 @@ export const store = configureStore({
     practiceDSA: practiceDSAReducer,
     sdProblem: sdProblemReducer,
     sdSession: sdSessionReducer,
+    sdInterviewer: sdInterviewerReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ 

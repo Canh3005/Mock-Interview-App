@@ -11,6 +11,8 @@ import {
 import { resetBehavioral } from '../../store/slices/behavioralSlice'
 import { resetCombatOrchestrator } from '../../store/slices/combatOrchestratorSlice'
 import { resetDSASession, startDSARound } from '../../store/slices/dsaSessionSlice'
+import { resetSDSession } from '../../store/slices/sdSessionSlice'
+import { resetInterviewer } from '../../store/slices/sdInterviewerSlice'
 import ModeSelectionStep from './steps/ModeSelectionStep'
 import CombatPermissionGate from './steps/CombatPermissionGate'
 import RoundSelectionStep from './steps/RoundSelectionStep'
@@ -379,6 +381,10 @@ export default function InterviewSetupFlow({ navigate }) {
         dispatch(resetDSASession())
         dispatch(startDSARound({ interviewSessionId: session.sessionId }))
         navigate('dsa-room')
+      } else if (selectedRounds.includes('system_design')) {
+        dispatch(resetSDSession())
+        dispatch(resetInterviewer())
+        navigate('sd-room')
       } else {
         navigate('interview-room')
       }

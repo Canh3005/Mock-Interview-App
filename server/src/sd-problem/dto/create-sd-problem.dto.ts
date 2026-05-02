@@ -31,6 +31,14 @@ export class CreateSDProblemDto {
   @IsNotEmpty()
   title!: string;
 
+  @ApiProperty({
+    required: false,
+    example: 'When you paste a long URL into Bit.ly...',
+  })
+  @IsOptional()
+  @IsString()
+  context?: string | null;
+
   @ApiProperty({ example: 'url-shortener' })
   @IsString()
   @IsNotEmpty()
