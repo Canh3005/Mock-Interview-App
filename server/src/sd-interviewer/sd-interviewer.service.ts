@@ -28,7 +28,7 @@ const PHASE_MAX_MS: Record<SDPhase, number> = {
   CLARIFICATION: 12 * 60 * 1000,
   DESIGN: 15 * 60 * 1000,
   DEEP_DIVE: 20 * 60 * 1000,
-  WRAP_UP: Infinity,
+  WRAP_UP: 10 * 60 * 1000,
   COMPLETED: 0,
 };
 

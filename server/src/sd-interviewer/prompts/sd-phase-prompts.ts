@@ -148,7 +148,8 @@ ${
     ? `- THIS IS YOUR PRIMARY QUESTION FOR THIS TURN — inject this curveball scenario: "${curveballPrompt}"`
     : '- Ask general failure and scaling questions based on the current diagram'
 }
-- Do NOT append "[PHASE_COMPLETE]" — this phase ends by session timeout`,
+- When you have asked at least 2 failure/scaling questions AND the candidate has responded to each, AND the curveball (if injected) has been addressed: write ONE brief closing statement (no question), then append "[PHASE_COMPLETE]" immediately after
+  GOOD: "That covers the key failure scenarios and scaling considerations for this design.[PHASE_COMPLETE]"`,
 
     COMPLETED: `Session is completed. Respond only with: "The session has ended. Thank you for your time."`,
   };
