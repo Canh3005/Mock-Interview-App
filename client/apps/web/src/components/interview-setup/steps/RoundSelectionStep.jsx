@@ -31,6 +31,7 @@ const ROUNDS = [
     description: 'Debug code với AI nội bộ. Chấm điểm tư duy Chain-of-Thought.',
     duration: 20,
     available: false,
+    hidden: true,
     Icon: Bot,
     iconColor: 'text-green-400',
     iconBg: 'bg-green-500/10',
@@ -75,7 +76,7 @@ export default function RoundSelectionStep({ onStart }) {
       </div>
 
       <div className="flex flex-col gap-2">
-        {ROUNDS.map((round) => {
+        {ROUNDS.filter((r) => !r.hidden).map((round) => {
           const isSelected = selectedRounds.includes(round.key)
           const disabled = !round.available
 
