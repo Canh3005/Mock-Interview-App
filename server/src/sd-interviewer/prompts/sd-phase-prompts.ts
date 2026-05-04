@@ -188,9 +188,9 @@ Do NOT ask a new question.`,
 
     DEEP_DIVE: `The interviewer has already asked a probe question. The candidate is stuck and needs a nudge.
 Current diagram components: ${arch}
-Look at the last interviewer question in the conversation. Give ONE short clue — a concrete scenario or constraint — that helps the candidate think of an answer to THAT specific question.
-Do NOT ask a new question.
-Example clue: "Think about what happens to active sessions when the node holding them goes down."`,
+Look at "The question the candidate needs help answering" field above. Give ONE short clue — a concrete scenario or constraint — that nudges the candidate toward answering THAT specific question.
+Do NOT ask a new question. The clue must directly relate to the question above, not to any example below.
+Example format only (different problem): "Consider what happens to write throughput when all requests must go through a single primary node."`,
 
     WRAP_UP: `The interviewer has already asked a failure or scaling question. The candidate is stuck and needs a nudge.
 Current diagram components: ${arch}
@@ -213,10 +213,11 @@ ${phaseHintStrategy[params.phase]}
 
 ABSOLUTE RULES:
 - Respond with exactly ONE short clue statement (1–2 sentences) — no preamble, no explanation
-- Do NOT ask a question — the interviewer already asked one; your job is to nudge the candidate toward answering it
+- Do NOT ask a question of any form — the interviewer already asked one; your job is to nudge the candidate toward answering it
+- The clue MUST directly address "The question the candidate needs help answering" shown above
 - Never give the answer directly
 - Never name a specific technology the candidate should use
 
-Bad: "Have you considered how Redis handles failover?" (this is a question)
-Good: "Consider what happens to the sessions stored on a Redis node if that node crashes unexpectedly."`;
+Bad (asks a question): "Have you considered what happens when requests are distributed unevenly?"
+Good (statement clue): "Consider that each server only sees its own slice of traffic, so local counters alone cannot represent the global request rate."`;
 }

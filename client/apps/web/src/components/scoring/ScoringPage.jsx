@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { Loader2 } from 'lucide-react';
 import ScorecardDisplay from './ScorecardDisplay';
 import DSAScoringTab from './DSAScoringTab';
+import SDScoringTab from '../sd-debrief/SDScoringTab';
 import { interviewApi } from '../../api/interview.api';
 
 /**
@@ -22,6 +23,7 @@ export default function ScoringPage({
   extraSections
 }) {
   const { status, scoreData } = useSelector((s) => s.behavioral);
+  const sdEvaluatorStatus = useSelector((s) => s.sdEvaluator.status);
   const [allSessions, setAllSessions] = useState(null);
   const [selectedSessionType, setSelectedSessionType] = useState(initialTab ?? 'behavioral');
   const [isLoadingSessions, setIsLoadingSessions] = useState(false);
@@ -50,6 +52,23 @@ export default function ScoringPage({
         .finally(() => setIsLoadingSessions(false));
     }
   }, [interviewSessionId]);
+
+  useEffect(() => {
+    if (
+      sdEvaluatorStatus === 'completed' &&
+      interviewSessionId &&
+      allSessions?.systemDesign?.evaluationResult == null
+    ) {
+      setIsLoadingSessions(true);
+      interviewApi
+        .getAllSessionsForInterview(interviewSessionId)
+        .then((data) => {
+          setAllSessions(data.sessions);
+        })
+        .catch((err) => console.error('Failed to re-fetch sessions:', err))
+        .finally(() => setIsLoadingSessions(false));
+    }
+  }, [sdEvaluatorStatus]);
 
   if (isLoading || isLoadingSessions) {
     return (
@@ -108,15 +127,17 @@ export default function ScoringPage({
       )}
 
       {/* Scorecard for selected session */}
-      {selectedSessionType === 'liveCoding'
-        ? <DSAScoringTab session={currentSessionData} />
-        : (
-          <ScorecardDisplay
-            scoreData={displayScore}
-            navigate={navigate}
-            isCombat={mode === 'combat'}
-          />
-        )
+      {selectedSessionType === 'systemDesign'
+        ? <SDScoringTab session={currentSessionData} navigate={navigate} />
+        : selectedSessionType === 'liveCoding'
+          ? <DSAScoringTab session={currentSessionData} />
+          : (
+            <ScorecardDisplay
+              scoreData={displayScore}
+              navigate={navigate}
+              isCombat={mode === 'combat'}
+            />
+          )
       }
 
       {/* Extra sections */}

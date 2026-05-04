@@ -1,17 +1,28 @@
 import { ScalingConstraints } from '../../sd-problem/entities/sd-problem.entity';
 
+const LANGUAGE_INSTRUCTION: Record<string, string> = {
+  vi: 'You MUST respond entirely in Vietnamese.',
+  en: 'You MUST respond entirely in English.',
+  ja: 'You MUST respond entirely in Japanese.',
+};
+
 export function buildScalabilityPrompt({
   problemTitle,
   scalingConstraints,
   nodeTypes,
   edges,
+  language,
 }: {
   problemTitle: string;
   scalingConstraints: ScalingConstraints | null;
   nodeTypes: string[];
   edges: unknown[];
+  language?: string;
 }): string {
+  const langRule =
+    LANGUAGE_INSTRUCTION[language ?? 'vi'] ?? LANGUAGE_INSTRUCTION['vi'];
   return `You are evaluating a system design interview answer.
+${langRule}
 
 Problem: ${problemTitle}
 Scaling constraints: ${JSON.stringify(scalingConstraints)}
@@ -30,11 +41,16 @@ Return ONLY valid JSON, no explanation outside the JSON:
 export function buildTradeoffPrompt({
   problemTitle,
   transcriptHistory,
+  language,
 }: {
   problemTitle: string;
   transcriptHistory: unknown[];
+  language?: string;
 }): string {
+  const langRule =
+    LANGUAGE_INSTRUCTION[language ?? 'vi'] ?? LANGUAGE_INSTRUCTION['vi'];
   return `You are evaluating a system design interview transcript.
+${langRule}
 
 Problem: ${problemTitle}
 Transcript (chronological, with phase labels):
@@ -59,11 +75,16 @@ IMPORTANT: If no trade-off has a grounded quote, score MUST be 0 and tradeoffs M
 export function buildCommunicationPrompt({
   problemTitle,
   transcriptHistory,
+  language,
 }: {
   problemTitle: string;
   transcriptHistory: unknown[];
+  language?: string;
 }): string {
+  const langRule =
+    LANGUAGE_INSTRUCTION[language ?? 'vi'] ?? LANGUAGE_INSTRUCTION['vi'];
   return `You are evaluating the communication quality of a system design interview.
+${langRule}
 
 Problem: ${problemTitle}
 Transcript:
@@ -78,6 +99,86 @@ Return ONLY valid JSON, no explanation outside the JSON:
 { "score": <number 0–15>, "reasoning": "<1–2 sentences>" }`;
 }
 
+export function buildAnnotationPrompt({
+  problemTitle,
+  transcriptHistory,
+  language,
+}: {
+  problemTitle: string;
+  transcriptHistory: unknown[];
+  language?: string;
+}): string {
+  const langRule =
+    LANGUAGE_INSTRUCTION[language ?? 'vi'] ?? LANGUAGE_INSTRUCTION['vi'];
+  return `You are reviewing a system design interview transcript.
+${langRule}
+
+Problem: "${problemTitle}"
+
+Candidate responses (JSON array — interviewer turns already removed, each entry includes its entryIndex in the full conversation):
+${JSON.stringify(transcriptHistory, null, 2)}
+
+For each notable candidate response:
+
+Annotation types:
+- "green": explicit trade-off articulated, correct technical depth, or successful adaptation
+- "yellow": concept mentioned but lacked depth, skipped capacity estimate, or answer was vague
+- "red": direct question not answered, significant architecture gap, or technically incorrect statement
+
+Rules:
+- Only annotate entries that are clearly notable. Skip trivial or filler responses.
+- Maximum 6 annotations total.
+- comment must be 1 sentence, specific — cite the exact concept or gap.
+- Use the entryIndex field from the entry object exactly as given. Do NOT compute positions yourself.
+
+Return JSON only — no text outside JSON:
+[{ "entryIndex": <number>, "type": "green"|"yellow"|"red", "comment": "<1-sentence>" }]`;
+}
+
+export function buildSuggestionsPrompt({
+  problemTitle,
+  dimensions,
+  language,
+}: {
+  problemTitle: string;
+  dimensions: Array<{
+    dimension: string;
+    score: number;
+    maxScore: number;
+    data?: Record<string, unknown>;
+  }>;
+  language?: string;
+}): string {
+  const scoringDims: typeof dimensions = dimensions.filter(
+    (d) => d.maxScore > 0,
+  );
+  const sorted: typeof dimensions = [...scoringDims].sort(
+    (a, b) => a.score / a.maxScore - b.score / b.maxScore,
+  );
+  const weakest: typeof dimensions = sorted.slice(0, 2);
+  const missingComponents: unknown = weakest[0]?.data?.missingComponents;
+  const langRule =
+    LANGUAGE_INSTRUCTION[language ?? 'vi'] ?? LANGUAGE_INSTRUCTION['vi'];
+  return `You are giving actionable feedback after a system design interview.
+${langRule}
+
+Problem: "${problemTitle}"
+
+Dimension scores:
+${scoringDims.map((d) => `- ${d.dimension}: ${d.score}/${d.maxScore}`).join('\n')}
+
+Weakest dimensions: ${weakest.map((d) => d.dimension).join(', ')}
+${missingComponents ? `Missing components: ${(missingComponents as string[]).join(', ')}` : ''}
+
+Write exactly 2–3 actionable suggestions. Each suggestion:
+- Is specific to this problem and the weak dimension (not generic advice like "study more")
+- Tells the candidate exactly what to practice or add next time
+- Is 1–2 sentences
+
+Return JSON only:
+{ "suggestions": ["<suggestion 1>", "<suggestion 2>", "<optional suggestion 3>"] }`;
+}
+
 export function buildCurveballPrompt({
   problemTitle,
   curveballScenarioPrompt,
@@ -85,6 +186,7 @@ export function buildCurveballPrompt({
   beforeNodeTypes,
   afterNodeTypes,
   curveballAdaptation,
+  language,
 }: {
   problemTitle: string;
   curveballScenarioPrompt: string;
@@ -92,8 +194,12 @@ export function buildCurveballPrompt({
   beforeNodeTypes: string[];
   afterNodeTypes: string[];
   curveballAdaptation: unknown;
+  language?: string;
 }): string {
+  const langRule =
+    LANGUAGE_INSTRUCTION[language ?? 'vi'] ?? LANGUAGE_INSTRUCTION['vi'];
   return `You are evaluating how a candidate adapted their architecture after a curveball scenario.
+${langRule}
 
 Problem: ${problemTitle}
 Curveball given: "${curveballScenarioPrompt}"

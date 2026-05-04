@@ -20,6 +20,8 @@ import {
   buildTradeoffPrompt,
   buildCommunicationPrompt,
   buildCurveballPrompt,
+  buildAnnotationPrompt,
+  buildSuggestionsPrompt,
 } from './prompts/evaluation-prompts';
 
 const FAST_MODEL = 'llama-3.1-8b-instant';
@@ -125,6 +127,14 @@ export class SDEvaluatorService {
 
     await pushAndUpdate(this._computeComponentCoverage(session));
     await this._runAiDimensions({ session, hasCurveball, pushAndUpdate });
+
+    const scoringDimensions: DimensionResult[] = [...completedDimensions];
+    await Promise.allSettled([
+      this._annotateTranscript(session).then(pushAndUpdate),
+      this._generateSuggestions({ session, scoringDimensions }).then(
+        pushAndUpdate,
+      ),
+    ]);
 
     const evaluationResult: Record<string, unknown> = this._computeFinalScore(
       completedDimensions,
@@ -249,6 +259,7 @@ export class SDEvaluatorService {
       scalingConstraints: session.problem.scalingConstraints,
       nodeTypes,
       edges,
+      language: session.language,
     });
     try {
       const raw: string = await this._callWithTimeout(prompt);
@@ -275,6 +286,7 @@ export class SDEvaluatorService {
     const prompt: string = buildTradeoffPrompt({
       problemTitle: session.problem.title,
       transcriptHistory: transcript,
+      language: session.language,
     });
     try {
       const raw: string = await this._callWithTimeout(prompt);
@@ -301,6 +313,7 @@ export class SDEvaluatorService {
     const prompt: string = buildCommunicationPrompt({
       problemTitle: session.problem.title,
       transcriptHistory: transcript,
+      language: session.language,
     });
     try {
       const raw: string = await this._callWithTimeout(prompt);
@@ -354,6 +367,7 @@ export class SDEvaluatorService {
       beforeNodeTypes: beforeTypes,
       afterNodeTypes: afterTypes,
       curveballAdaptation: diff,
+      language: session.language,
     });
     try {
       const raw: string = await this._callWithTimeout(prompt);
@@ -406,5 +420,92 @@ export class SDEvaluatorService {
     if (score >= 60) return 'Good';
     if (score >= 45) return 'Developing';
     return 'Needs Work';
+  }
+
+  private async _annotateTranscript(
+    session: SDSession,
+  ): Promise<DimensionResult> {
+    const transcript = (session.transcriptHistory ?? []) as Array<{
+      role: string;
+    }>;
+    const filtered = transcript.filter(
+      (e) => e.role === 'user' || e.role === 'ai',
+    );
+    // Only send candidate turns to the annotation prompt.
+    // Pre-bake entryIndex so the AI cannot reference ai entries.
+    const candidateEntries = filtered
+      .map((entry, idx) => ({ ...entry, entryIndex: idx }))
+      .filter((e) => e.role === 'user');
+    if (candidateEntries.length === 0) {
+      return {
+        dimension: 'annotations',
+        score: 0,
+        maxScore: 0,
+        data: { annotations: [] },
+      };
+    }
+    try {
+      const raw: string = await this._callWithTimeout(
+        buildAnnotationPrompt({
+          problemTitle: session.problem.title,
+          transcriptHistory: candidateEntries,
+          language: session.language,
+        }),
+      );
+      let annotations: unknown[] = [];
+      try {
+        annotations = JSON.parse(raw.trim()) as unknown[];
+      } catch {
+        /* fallback: empty */
+      }
+      return {
+        dimension: 'annotations',
+        score: 0,
+        maxScore: 0,
+        data: { annotations },
+      };
+    } catch {
+      return {
+        dimension: 'annotations',
+        score: 0,
+        maxScore: 0,
+        data: { annotations: [] },
+      };
+    }
+  }
+
+  private async _generateSuggestions({
+    session,
+    scoringDimensions,
+  }: {
+    session: SDSession;
+    scoringDimensions: DimensionResult[];
+  }): Promise<DimensionResult> {
+    try {
+      const raw: string = await this._callWithTimeout(
+        buildSuggestionsPrompt({
+          problemTitle: session.problem.title,
+          dimensions: scoringDimensions,
+          language: session.language,
+        }),
+      );
+      const parsed = JSON.parse(raw.trim()) as { suggestions?: unknown[] };
+      const suggestions: unknown[] = Array.isArray(parsed.suggestions)
+        ? parsed.suggestions
+        : [];
+      return {
+        dimension: 'suggestions',
+        score: 0,
+        maxScore: 0,
+        data: { suggestions },
+      };
+    } catch {
+      return {
+        dimension: 'suggestions',
+        score: 0,
+        maxScore: 0,
+        data: { suggestions: [] },
+      };
+    }
   }
 }

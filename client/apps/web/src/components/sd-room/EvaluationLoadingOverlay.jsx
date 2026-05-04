@@ -1,6 +1,7 @@
-import { useSelector } from 'react-redux'
-import { CheckCircle2, Loader2, Clock, AlertCircle } from 'lucide-react'
+import { useSelector, useDispatch } from 'react-redux'
+import { CheckCircle2, Loader2, Clock, AlertCircle, ArrowRight } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { setScoringInitialTab } from '../../store/slices/interviewSetupSlice'
 
 const BASE_DIMENSIONS = [
   'componentCoverage',
@@ -45,8 +46,9 @@ function DimensionRow({ dimensionKey, completedDimensions, status }) {
   )
 }
 
-export default function EvaluationLoadingOverlay() {
+export default function EvaluationLoadingOverlay({ navigate }) {
   const { t } = useTranslation()
+  const dispatch = useDispatch()
   const { status, completedDimensions, finalScore, hintPenalty, gradeBand, error } =
     useSelector((s) => s.sdEvaluator)
 
@@ -70,7 +72,16 @@ export default function EvaluationLoadingOverlay() {
           ))}
         </div>
         {status === 'completed' && (
-          <EvaluationResult finalScore={finalScore} hintPenalty={hintPenalty} gradeBand={gradeBand} t={t} />
+          <>
+            <EvaluationResult finalScore={finalScore} hintPenalty={hintPenalty} gradeBand={gradeBand} t={t} />
+            <button
+              onClick={() => { dispatch(setScoringInitialTab('systemDesign')); navigate('scoring'); }}
+              className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg bg-cta text-white text-sm font-medium hover:bg-cta/90 transition-colors"
+            >
+              {t('sdRoom.evaluation.viewResults')}
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </>
         )}
         {status === 'failed' && (
           <div className="flex items-center gap-2 text-sm text-red-400 bg-red-400/10 rounded-lg px-4 py-3">

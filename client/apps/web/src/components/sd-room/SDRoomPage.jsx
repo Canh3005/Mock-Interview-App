@@ -150,7 +150,7 @@ export default function SDRoomPage({ navigate, sdSessionId }) {
         <ResizeDivider onMouseDown={handleResizeStart} />
         <RightPanel width={rightWidth} />
       </div>
-      <EvaluationLoadingOverlay />
+      <EvaluationLoadingOverlay navigate={navigate} />
     </div>
   )
 }

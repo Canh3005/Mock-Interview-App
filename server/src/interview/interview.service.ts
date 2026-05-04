@@ -10,6 +10,7 @@ import {
 import { BehavioralSession } from '../behavioral/entities/behavioral-session.entity';
 import { LiveCodingSession } from '../live-coding/entities/live-coding-session.entity';
 import { LiveCodingSessionProblem } from '../live-coding/entities/live-coding-session-problem.entity';
+import { SDSession } from '../sd-session/entities/sd-session.entity';
 import { InitSessionDto } from './dto/init-session.dto';
 import { UpdateContextDto } from './dto/update-context.dto';
 import { CvJson, JdJson } from '../documents/documents.ai.service';
@@ -44,6 +45,8 @@ export class InterviewService {
     private liveCodingSessionRepo: Repository<LiveCodingSession>,
     @InjectRepository(LiveCodingSessionProblem)
     private liveCodingSessionProblemRepo: Repository<LiveCodingSessionProblem>,
+    @InjectRepository(SDSession)
+    private sdSessionRepo: Repository<SDSession>,
     private configService: ConfigService,
   ) {
     this.redisClient = new Redis({
@@ -84,13 +87,18 @@ export class InterviewService {
       };
     }
 
+    const sdSession: SDSession | null = await this.sdSessionRepo.findOne({
+      where: { interviewSessionId },
+      relations: ['problem'],
+    });
+
     return {
       interviewSessionId,
       sessions: {
         behavioral: behavioralSession || null,
         liveCoding: liveCodingData,
         prompt: null,
-        systemDesign: null,
+        systemDesign: sdSession ?? null,
       },
     };
   }

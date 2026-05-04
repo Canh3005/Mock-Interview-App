@@ -7,6 +7,7 @@ import { InterviewSession } from './entities/interview-session.entity';
 import { BehavioralSession } from '../behavioral/entities/behavioral-session.entity';
 import { LiveCodingSession } from '../live-coding/entities/live-coding-session.entity';
 import { LiveCodingSessionProblem } from '../live-coding/entities/live-coding-session-problem.entity';
+import { SDSession } from '../sd-session/entities/sd-session.entity';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { LiveCodingSessionProblem } from '../live-coding/entities/live-coding-se
       BehavioralSession,
       LiveCodingSession,
       LiveCodingSessionProblem,
+      SDSession,
     ]),
   ],
   controllers: [InterviewController],
