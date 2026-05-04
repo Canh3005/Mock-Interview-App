@@ -7,7 +7,9 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Clock, Wifi, WifiOff } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
 import SharedNavbar from '../shared/SharedNavbar'
+import { ROUTES } from '../../router/routes'
 import VideoPanel from './VideoPanel'
 import CodeEditorPanel from './CodeEditorPanel'
 import FloatingToolbar from './FloatingToolbar'
@@ -25,7 +27,8 @@ function useSessionTimer() {
   return `${h}:${m}:${s}`
 }
 
-export default function InterviewRoomPage({ navigate = () => {} }) {
+export default function InterviewRoomPage() {
+  const navigate = useNavigate();
   const { t } = useTranslation()
   // Force dark mode for this page
   useEffect(() => {
@@ -70,7 +73,7 @@ export default function InterviewRoomPage({ navigate = () => {} }) {
       onMouseLeave={stopDrag}
     >
       {/* ── Shared Navbar (interview-room variant) ── */}
-      <SharedNavbar page="interview-room" navigate={navigate}>
+      <SharedNavbar page="interview-room">
         {/* Session timer */}
         <div className="flex items-center gap-1.5 font-['Fira_Code',monospace] text-xs text-slate-300 bg-slate-800/60 px-3 py-1.5 rounded-full border border-slate-700/50">
           <Clock size={12} className="text-cta" />
@@ -103,7 +106,7 @@ export default function InterviewRoomPage({ navigate = () => {} }) {
         <button
           onClick={() => {
             if (window.confirm(t('interviewRoom.confirmEnd'))) {
-              navigate('dashboard')
+              navigate(ROUTES.DASHBOARD)
             }
           }}
           aria-label={t('interviewRoom.endSession')}

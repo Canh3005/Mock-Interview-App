@@ -4,9 +4,12 @@
  */
 import { Play, ArrowRight } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { ROUTES } from '../../router/routes'
 
-export default function CtaBanner({ navigate }) {
+export default function CtaBanner() {
+  const navigate = useNavigate();
   const { t } = useTranslation()
   
   return (
@@ -41,7 +44,7 @@ export default function CtaBanner({ navigate }) {
             </p>
 
             <button
-              onClick={() => navigate('interview-room')}
+              onClick={() => navigate(ROUTES.INTERVIEW_ROOM)}
               className="group inline-flex items-center gap-2 font-body text-sm font-semibold text-white bg-cta hover:bg-cta/90 px-7 py-3.5 rounded-xl transition-all duration-200 cursor-pointer hover:-translate-y-0.5 shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta focus-visible:ring-offset-2 focus-visible:ring-offset-primary"
             >
               <Play size={15} className="fill-white" />

@@ -4,6 +4,6 @@
  */
 import SharedNavbar from '../shared/SharedNavbar'
 
-export default function LandingNavbar({ navigate }) {
-  return <SharedNavbar page="landing" navigate={navigate} />
+export default function LandingNavbar() {
+  return <SharedNavbar page="landing" />
 }

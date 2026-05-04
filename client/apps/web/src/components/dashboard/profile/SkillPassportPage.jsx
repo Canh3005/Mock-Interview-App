@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import { fetchProfileRequest } from '../../../store/slices/profileSlice'
 import SharedNavbar from '../../shared/SharedNavbar'
 import StaticProfileForm from './StaticProfileForm'
@@ -7,7 +8,8 @@ import ProfileRadarChart from './ProfileRadarChart'
 import DocumentUploadZone from './DocumentUploadZone'
 import AssessmentHistory from './AssessmentHistory'
 
-export default function SkillPassportPage({ navigate }) {
+export default function SkillPassportPage() {
+  const navigate = useNavigate();
   const dispatch = useDispatch()
   const { data: profile, loading } = useSelector((state) => state.profile)
   const [darkMode, setDarkMode] = useState(true)
@@ -25,7 +27,6 @@ export default function SkillPassportPage({ navigate }) {
       <div className="min-h-screen bg-background text-text-base font-body transition-colors duration-300 pb-20">
         <SharedNavbar
           page="dashboard"
-          navigate={navigate}
           darkMode={darkMode}
           onToggleDark={() => setDarkMode(d => !d)}
         />

@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { ROUTES } from '../../router/routes'
 import {
   RadarChart,
   PolarGrid,
@@ -91,7 +93,8 @@ function AccordionStage({ stageKey, data }) {
   )
 }
 
-export default function ScorecardDisplay({ scoreData, navigate }) {
+export default function ScorecardDisplay({ scoreData }) {
+  const navigate = useNavigate();
   if (!scoreData) return null
 
   const verdict = VERDICT_CONFIG[scoreData.overall_verdict] ?? VERDICT_CONFIG.SCORING_ERROR
@@ -277,14 +280,14 @@ export default function ScorecardDisplay({ scoreData, navigate }) {
       {/* Actions */}
       <div className="flex gap-3">
         <button
-          onClick={() => navigate('dashboard')}
+          onClick={() => navigate(ROUTES.DASHBOARD)}
           className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-700 text-slate-300 hover:bg-slate-800 transition-colors text-sm font-medium"
         >
           <Home className="w-4 h-4" />
           Về trang chủ
         </button>
         <button
-          onClick={() => navigate('interview-setup')}
+          onClick={() => navigate(ROUTES.INTERVIEW_SETUP)}
           className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-cta hover:bg-cta/90 text-black font-semibold text-sm transition-colors"
         >
           <RotateCcw className="w-4 h-4" />

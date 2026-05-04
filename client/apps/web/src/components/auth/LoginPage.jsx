@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { loginRequest } from '../../store/slices/authSlice';
 import { useTranslation } from 'react-i18next';
 import { ChevronLeft, Code2, Github } from 'lucide-react';
+import { ROUTES } from '../../router/routes';
 
-export default function LoginPage({ navigate }) {
+export default function LoginPage() {
+  const navigate = useNavigate();
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { loading, error: authError } = useSelector((state) => state.auth);
@@ -53,7 +56,7 @@ export default function LoginPage({ navigate }) {
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10">
         <button
-          onClick={() => navigate('landing')}
+          onClick={() => navigate(ROUTES.LANDING)}
           className="flex items-center gap-2 mb-8 text-slate-400 hover:text-white transition-colors cursor-pointer"
         >
           <ChevronLeft size={16} />
@@ -145,7 +148,7 @@ export default function LoginPage({ navigate }) {
             
             <div className="mt-6">
               <button
-                onClick={() => navigate('register')}
+                onClick={() => navigate(ROUTES.REGISTER)}
                 className="w-full flex justify-center py-2 text-sm font-medium text-slate-400 hover:text-white transition-colors"
               >
                 {t('auth.noAccount')} <span className="text-cta ml-1">{t('auth.registerTitle')}</span>

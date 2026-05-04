@@ -1,7 +1,9 @@
 import { useSelector, useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import { CheckCircle2, Loader2, Clock, AlertCircle, ArrowRight } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { setScoringInitialTab } from '../../store/slices/interviewSetupSlice'
+import { ROUTES } from '../../router/routes'
 
 const BASE_DIMENSIONS = [
   'componentCoverage',
@@ -46,9 +48,10 @@ function DimensionRow({ dimensionKey, completedDimensions, status }) {
   )
 }
 
-export default function EvaluationLoadingOverlay({ navigate }) {
+export default function EvaluationLoadingOverlay() {
   const { t } = useTranslation()
   const dispatch = useDispatch()
+  const navigate = useNavigate()
   const { status, completedDimensions, finalScore, hintPenalty, gradeBand, error } =
     useSelector((s) => s.sdEvaluator)
 
@@ -75,7 +78,7 @@ export default function EvaluationLoadingOverlay({ navigate }) {
           <>
             <EvaluationResult finalScore={finalScore} hintPenalty={hintPenalty} gradeBand={gradeBand} t={t} />
             <button
-              onClick={() => { dispatch(setScoringInitialTab('systemDesign')); navigate('scoring'); }}
+              onClick={() => { dispatch(setScoringInitialTab('systemDesign')); navigate(ROUTES.SCORING); }}
               className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg bg-cta text-white text-sm font-medium hover:bg-cta/90 transition-colors"
             >
               {t('sdRoom.evaluation.viewResults')}

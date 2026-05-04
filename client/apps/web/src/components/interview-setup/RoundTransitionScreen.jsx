@@ -1,22 +1,25 @@
 import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import { ArrowRight, Code2 } from 'lucide-react'
 import { confirmRoundTransition } from '../../store/slices/interviewSetupSlice'
 import { resetDSASession, startDSARound } from '../../store/slices/dsaSessionSlice'
+import { ROUTES } from '../../router/routes'
 
 const ROUND_LABELS = {
   hr_behavioral: 'Behavioral',
   dsa: 'Live Coding',
 }
 
-export default function RoundTransitionScreen({ navigate }) {
+export default function RoundTransitionScreen() {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
   const { pendingNextRoundInterviewId, dsaConfig } = useSelector((s) => s.interviewSetup)
 
   const handleStart = () => {
     dispatch(confirmRoundTransition())
     dispatch(resetDSASession())
     dispatch(startDSARound({ interviewSessionId: pendingNextRoundInterviewId }))
-    navigate('dsa-room')
+    navigate(ROUTES.DSA_ROOM)
   }
 
   return (

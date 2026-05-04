@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { ROUTES } from '../../router/routes';
 import {
   COMBAT_START_SESSION,
   COMBAT_SEND_MESSAGE,
@@ -28,8 +30,10 @@ const SILENCE_AUTO_SKIP_MS  = 30000;
 const AUTO_SEND_SILENCE_MS  = 3000;
 const MIN_WORDS_FOR_AUTO_SEND = 5;
 
-export default function CombatInterviewRoom({ interviewSessionId, navigate }) {
+export default function CombatInterviewRoom() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const interviewSessionId = useSelector((s) => s.interviewSetup.session?.sessionId);
 
   const {
     sessionId, currentStage, stageName, candidateLevel,
@@ -143,7 +147,7 @@ export default function CombatInterviewRoom({ interviewSessionId, navigate }) {
       stopSTT();
       stopSilenceWatch();
     }
-    if (combatState === COMBAT_STATES.COMPLETED) { cleanup(); navigate('scoring'); }
+    if (combatState === COMBAT_STATES.COMPLETED) { cleanup(); navigate(ROUTES.SCORING); }
   }, [combatState]);
 
   // ── STT ────────────────────────────────────────────────────────────────────
@@ -269,7 +273,7 @@ export default function CombatInterviewRoom({ interviewSessionId, navigate }) {
     dispatch(resetBehavioral());
     dispatch(resetCombatOrchestrator());
     dispatch(resetSetup());
-    navigate('dashboard');
+    navigate(ROUTES.DASHBOARD);
   }
 
   function handleFinishClick() {

@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { ROUTES } from '../../router/routes';
 import { Loader2 } from 'lucide-react';
 import ScorecardDisplay from './ScorecardDisplay';
 import DSAScoringTab from './DSAScoringTab';
@@ -15,13 +17,13 @@ import { interviewApi } from '../../api/interview.api';
  *   interviewSessionId — session ID to fetch all rounds from
  *   extraSections — (optional) React node rendered below scorecard for combat-specific data
  */
-export default function ScoringPage({
-  navigate,
-  mode = 'behavioral',
-  interviewSessionId,
-  initialTab,
-  extraSections
-}) {
+export default function ScoringPage() {
+  const navigate = useNavigate();
+  const { session, scoringInitialTab } = useSelector((s) => s.interviewSetup);
+  const mode = session?.mode === 'combat' ? 'combat' : 'behavioral';
+  const interviewSessionId = session?.sessionId;
+  const initialTab = scoringInitialTab;
+
   const { status, scoreData } = useSelector((s) => s.behavioral);
   const sdEvaluatorStatus = useSelector((s) => s.sdEvaluator.status);
   const [allSessions, setAllSessions] = useState(null);
@@ -128,24 +130,18 @@ export default function ScoringPage({
 
       {/* Scorecard for selected session */}
       {selectedSessionType === 'systemDesign'
-        ? <SDScoringTab session={currentSessionData} navigate={navigate} />
+        ? <SDScoringTab session={currentSessionData} />
         : selectedSessionType === 'liveCoding'
           ? <DSAScoringTab session={currentSessionData} />
           : (
             <ScorecardDisplay
               scoreData={displayScore}
-              navigate={navigate}
               isCombat={mode === 'combat'}
             />
           )
       }
 
       {/* Extra sections */}
-      {extraSections && (
-        <div className="max-w-2xl mx-auto pb-8 px-4 flex flex-col gap-6">
-          {extraSections}
-        </div>
-      )}
     </div>
   );
 }

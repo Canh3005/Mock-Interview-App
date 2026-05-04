@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import { ROUTES } from '../../router/routes'
 import { Loader2, X, ChevronDown, ChevronUp, AlertTriangle } from 'lucide-react'
 import {
   preflightRequest,
@@ -356,14 +358,16 @@ function LoadingScreen({ message }) {
 }
 
 // ─── Main orchestrator ────────────────────────────────────────────────────────
-export default function InterviewSetupFlow({ navigate }) {
+export default function InterviewSetupFlow() {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
   const { step, missing, cv, jd, loading, session, selectedRounds } = useSelector(
     (s) => s.interviewSetup,
   )
 
-  // Trigger preflight on mount
+  // Reset setup state and trigger preflight on mount
   useEffect(() => {
+    dispatch(resetSetup())
     dispatch(preflightRequest())
   }, [dispatch])
 
@@ -376,29 +380,29 @@ export default function InterviewSetupFlow({ navigate }) {
         // Clear stale state before entering the room so first render sees clean slate
         dispatch(resetBehavioral())
         if (selectedMode === 'combat') dispatch(resetCombatOrchestrator())
-        navigate(selectedMode === 'combat' ? 'combat-room' : 'behavioral-room')
+        navigate(selectedMode === 'combat' ? ROUTES.COMBAT_ROOM : ROUTES.BEHAVIORAL_ROOM)
       } else if (selectedRounds.includes('dsa')) {
         dispatch(resetDSASession())
         dispatch(startDSARound({ interviewSessionId: session.sessionId }))
-        navigate('dsa-room')
+        navigate(ROUTES.DSA_ROOM)
       } else if (selectedRounds.includes('system_design')) {
         dispatch(resetSDSession())
         dispatch(resetInterviewer())
-        navigate('sd-room')
+        navigate(ROUTES.SD_ROOM)
       } else {
-        navigate('interview-room')
+        navigate(ROUTES.INTERVIEW_ROOM)
       }
     }
   }, [step, session, selectedRounds, selectedMode, navigate])
 
   const handleClose = () => {
     dispatch(resetSetup())
-    navigate('dashboard')
+    navigate(ROUTES.DASHBOARD)
   }
 
   const handleGoUpload = () => {
     dispatch(resetSetup())
-    navigate('dashboard-profile')
+    navigate(ROUTES.DASHBOARD_PROFILE)
   }
 
   const handleStartSession = () => {

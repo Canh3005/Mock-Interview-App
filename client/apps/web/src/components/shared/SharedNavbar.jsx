@@ -1,17 +1,3 @@
-/**
- * SharedNavbar — Unified top navigation bar for all pages
- *
- * Props:
- *   navigate   : (page: string) => void   — from App.jsx state router
- *   page       : 'landing' | 'dashboard' | 'interview-room'
- *   darkMode   : boolean (optional, used only by dashboard toggle)
- *   onToggleDark: () => void (optional)
- *
- * Behaviour per page:
- *   landing       — Logo + anchor links (Tính năng / Cách hoạt động) + CTA "Bắt đầu ngay" → dashboard
- *   dashboard     — Logo + breadcrumb + nav links (Trang chủ / Phòng phỏng vấn) + dark toggle + notification + settings + avatar
- *   interview-room— Compact bar: back chevron + breadcrumb + session meta (timer, connection badge appear via slots)
- */
 import {
   Code2,
   LayoutDashboard,
@@ -26,17 +12,19 @@ import {
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useSelector, useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import { logoutRequest } from '../../store/slices/authSlice'
+import { ROUTES } from '../../router/routes'
 import LanguageSwitcher from './LanguageSwitcher'
 
 /* ─────────────────────── Sub-components ─────────────────────── */
 
-/** Logo mark — identical across all pages */
-function Brand({ navigate, compact = false }) {
+function Brand({ compact = false }) {
   const { t } = useTranslation()
+  const navigate = useNavigate()
   return (
     <button
-      onClick={() => navigate('landing')}
+      onClick={() => navigate(ROUTES.LANDING)}
       className="flex items-center gap-2.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta rounded"
       aria-label={t('navbar.backToHome')}
     >
@@ -52,7 +40,6 @@ function Brand({ navigate, compact = false }) {
   )
 }
 
-/** Icon action button used in dashboard / interview room */
 function IconBtn({ icon: Icon, label, onClick, badge = false, className = '' }) {
   return (
     <button
@@ -70,7 +57,7 @@ function IconBtn({ icon: Icon, label, onClick, badge = false, className = '' }) 
 
 /* ─────────────────────── Landing Navbar ─────────────────────── */
 
-function LandingBar({ navigate }) {
+function LandingBar() {
   const { t } = useTranslation()
   const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
 
@@ -80,12 +67,11 @@ function LandingBar({ navigate }) {
       className="sticky top-0 z-50 border-b border-slate-700/60 bg-background/80 backdrop-blur-md"
     >
       <div className="max-w-[1400px] mx-auto px-6 h-16 flex items-center justify-between gap-4">
-        <Brand navigate={navigate} />
+        <Brand />
 
-        {/* Desktop nav links */}
         <nav className="hidden md:flex items-center gap-6" aria-label="Landing navigation">
           {[
-            { label: t('navbar.features'),      id: 'features'     },
+            { label: t('navbar.features'),   id: 'features'     },
             { label: t('navbar.howItWorks'), id: 'how-it-works' },
           ].map(({ label, id }) => (
             <button
@@ -96,17 +82,11 @@ function LandingBar({ navigate }) {
               {label}
             </button>
           ))}
-
-
         </nav>
 
-        {/* Right actions */}
         <div className="flex items-center gap-3">
-          {/* Language Switcher */}
           <LanguageSwitcher />
-          
-          {/* CTA / Auth */}
-          <AuthButtons navigate={navigate} />
+          <AuthButtons />
         </div>
       </div>
     </header>
@@ -115,8 +95,9 @@ function LandingBar({ navigate }) {
 
 /* ─────────────────────── Dashboard Navbar ─────────────────────── */
 
-function DashboardBar({ navigate, darkMode, onToggleDark }) {
+function DashboardBar({ darkMode, onToggleDark }) {
   const { t } = useTranslation()
+  const navigate = useNavigate()
   const { user } = useSelector((state) => state.auth)
   return (
     <header
@@ -124,18 +105,16 @@ function DashboardBar({ navigate, darkMode, onToggleDark }) {
       className="sticky top-0 z-40 border-b border-slate-700/60 bg-background/80 backdrop-blur-md"
     >
       <div className="max-w-[1400px] mx-auto px-6 h-16 flex items-center justify-between gap-4">
-        {/* Logo + breadcrumb */}
         <div className="flex items-center gap-3">
-          <Brand navigate={navigate} />
+          <Brand />
           <span className="font-body text-xs text-slate-500 hidden md:block">/</span>
           <span className="font-heading text-sm font-medium text-cta hidden md:block">Dashboard</span>
         </div>
 
-        {/* Centre nav links */}
         <nav className="hidden lg:flex items-center gap-1" aria-label="Dashboard navigation">
           {user?.role === 'admin' && (
             <button
-              onClick={() => navigate('admin-problems')}
+              onClick={() => navigate(ROUTES.ADMIN)}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-body text-sm font-medium text-amber-500 hover:text-amber-400 hover:bg-slate-700/40 transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
             >
               <Shield size={16} />
@@ -143,14 +122,14 @@ function DashboardBar({ navigate, darkMode, onToggleDark }) {
             </button>
           )}
           <button
-            onClick={() => navigate('landing')}
+            onClick={() => navigate(ROUTES.LANDING)}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-body text-sm text-slate-400 hover:text-white hover:bg-slate-700/40 transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta"
           >
             <Home size={16} />
             {t('navbar.home')}
           </button>
           <button
-            onClick={() => navigate('dashboard')}
+            onClick={() => navigate(ROUTES.DASHBOARD)}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-body text-sm text-slate-400 hover:text-white hover:bg-slate-700/40 transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta"
           >
             <LayoutDashboard size={16} />
@@ -158,33 +137,24 @@ function DashboardBar({ navigate, darkMode, onToggleDark }) {
           </button>
         </nav>
 
-        {/* Right actions */}
         <div className="flex items-center gap-2">
-          {/* Language Switcher */}
           <LanguageSwitcher />
-          
-          {/* Admin toggle for mobile */}
           {user?.role === 'admin' && (
             <IconBtn
               icon={Shield}
               label={t('navbar.admin') || 'Quản trị viên'}
-              onClick={() => navigate('admin-problems')}
+              onClick={() => navigate(ROUTES.ADMIN)}
               className="lg:hidden text-amber-500 border-amber-500/30 hover:border-amber-500/60 hover:text-amber-400"
             />
           )}
-
-          {/* Dark mode toggle */}
           <IconBtn
             icon={darkMode ? Sun : Moon}
             label={darkMode ? 'Chuyển sang light mode' : 'Chuyển sang dark mode'}
             onClick={onToggleDark}
           />
-          {/* Notification */}
           <IconBtn icon={Bell} label="Thông báo" badge />
-          {/* Settings */}
           <IconBtn icon={Settings} label="Cài đặt" />
-          {/* Avatar & Logout */}
-          <DashboardUserMenu navigate={navigate} />
+          <DashboardUserMenu />
         </div>
       </div>
     </header>
@@ -193,31 +163,29 @@ function DashboardBar({ navigate, darkMode, onToggleDark }) {
 
 /* ─────────────────────── Interview Room Navbar ─────────────────────── */
 
-function InterviewBar({ navigate, children }) {
+function InterviewBar({ children }) {
   const { t } = useTranslation()
+  const navigate = useNavigate()
   return (
     <header
       id="shared-navbar"
       className="sticky top-0 z-50 h-16 flex-shrink-0 flex items-center justify-between px-4 border-b border-slate-700/50 bg-[#0D1424]/90 backdrop-blur-sm"
     >
-      {/* Left: back + brand + breadcrumb */}
       <div className="flex items-center gap-3">
         <button
-          onClick={() => navigate('dashboard')}
+          onClick={() => navigate(ROUTES.DASHBOARD)}
           aria-label={t('navbar.backToDashboard')}
           className="flex items-center justify-center w-8 h-8 rounded-lg text-slate-400 hover:text-white hover:bg-slate-700/60 transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta"
         >
           <ChevronLeft size={16} />
         </button>
 
-        {/* Brand — đồng nhất với Landing & Dashboard */}
-        <Brand navigate={navigate} />
+        <Brand />
 
-        {/* Breadcrumb */}
         <div className="hidden md:flex items-center gap-1.5 font-body text-sm">
           <span className="text-slate-500">/</span>
           <button
-            onClick={() => navigate('dashboard')}
+            onClick={() => navigate(ROUTES.DASHBOARD)}
             className="text-slate-500 hover:text-slate-300 transition-colors duration-150 cursor-pointer focus-visible:outline-none"
           >
             Dashboard
@@ -227,9 +195,7 @@ function InterviewBar({ navigate, children }) {
         </div>
       </div>
 
-      {/* Right slot: session timer, connection badge, end-session — passed as children */}
       <div className="flex items-center gap-2">
-        {/* Language Switcher */}
         <LanguageSwitcher />
         {children}
       </div>
@@ -239,33 +205,32 @@ function InterviewBar({ navigate, children }) {
 
 /* ─────────────────────── Main export ─────────────────────── */
 
-export default function SharedNavbar({ page, navigate, darkMode, onToggleDark, children }) {
+export default function SharedNavbar({ page, darkMode, onToggleDark, children }) {
   if (page === 'interview-room') {
-    return <InterviewBar navigate={navigate}>{children}</InterviewBar>
+    return <InterviewBar>{children}</InterviewBar>
   }
   if (page === 'dashboard') {
     return (
       <DashboardBar
-        navigate={navigate}
         darkMode={darkMode}
         onToggleDark={onToggleDark}
       />
     )
   }
-  // default: landing
-  return <LandingBar navigate={navigate} />
+  return <LandingBar />
 }
 
 /* ─────────────────────── Authentication Menu Helpers ─────────────────────── */
 
-function AuthButtons({ navigate }) {
+function AuthButtons() {
   const { t } = useTranslation()
-  const { isAuthenticated, user } = useSelector((state) => state.auth)
+  const navigate = useNavigate()
+  const { isAuthenticated } = useSelector((state) => state.auth)
 
   if (isAuthenticated) {
     return (
       <button
-        onClick={() => navigate('dashboard')}
+        onClick={() => navigate(ROUTES.DASHBOARD)}
         className="inline-flex items-center gap-2 font-body text-sm font-semibold text-white bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-lg transition-all duration-200 cursor-pointer"
       >
         Dashboard
@@ -275,7 +240,7 @@ function AuthButtons({ navigate }) {
 
   return (
     <button
-      onClick={() => navigate('login')}
+      onClick={() => navigate(ROUTES.LOGIN)}
       className="inline-flex items-center gap-2 font-body text-sm font-semibold text-white bg-cta hover:bg-cta/90 px-4 py-2 rounded-lg transition-all duration-200 cursor-pointer shadow-md"
     >
       {t('auth.loginTitle') || 'Đăng nhập'}
@@ -283,20 +248,21 @@ function AuthButtons({ navigate }) {
   )
 }
 
-function DashboardUserMenu({ navigate }) {
+function DashboardUserMenu() {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
   const { user } = useSelector((state) => state.auth)
 
   const handleLogout = () => {
     dispatch(logoutRequest())
-    navigate('landing')
+    navigate(ROUTES.LANDING)
   }
 
   return (
     <div className="flex items-center gap-3 ml-2">
       <div className="flex flex-col items-end hidden md:flex">
         <span className="text-sm font-medium text-white">{user?.name || 'User'}</span>
-        <button 
+        <button
           onClick={handleLogout}
           className="text-xs text-slate-500 cursor-pointer hover:text-red-400 transition-colors"
         >
@@ -304,7 +270,7 @@ function DashboardUserMenu({ navigate }) {
         </button>
       </div>
       <button
-        onClick={() => navigate('dashboard-profile')}
+        onClick={() => navigate(ROUTES.DASHBOARD_PROFILE)}
         className="flex overflow-hidden items-center justify-center w-9 h-9 rounded-full border-2 border-cta/50 bg-cta/10 text-cta cursor-pointer hover:border-cta transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta"
         title="Skill Passport"
       >

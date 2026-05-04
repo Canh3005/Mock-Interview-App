@@ -5,9 +5,12 @@
  */
 import { Play, ArrowRight, ChevronRight } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { ROUTES } from '../../router/routes'
 
-export default function HeroSection({ navigate }) {
+export default function HeroSection() {
+  const navigate = useNavigate();
   const { t } = useTranslation()
   
   const STATS = [
@@ -82,7 +85,7 @@ export default function HeroSection({ navigate }) {
         <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-center justify-center gap-4">
           {/* Primary */}
           <button
-            onClick={() => navigate('interview-room')}
+            onClick={() => navigate(ROUTES.INTERVIEW_ROOM)}
             className="group inline-flex items-center gap-2 font-body text-sm font-semibold text-white bg-cta hover:bg-cta/90 px-6 py-3 rounded-xl transition-all duration-200 cursor-pointer hover:-translate-y-0.5 shadow-md w-full sm:w-auto justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta"
           >
             <Play size={15} className="fill-white" />

@@ -11,7 +11,7 @@ import HowItWorksSection from './HowItWorksSection'
 import CtaBanner         from './CtaBanner'
 import LandingFooter     from './LandingFooter'
 
-export default function LandingPage({ navigate }) {
+export default function LandingPage() {
   // Force dark mode (consistent with Dashboard & Interview Room)
   useEffect(() => {
     document.documentElement.classList.add('dark')
@@ -19,12 +19,12 @@ export default function LandingPage({ navigate }) {
 
   return (
     <div className="min-h-screen bg-background text-text-base font-body antialiased">
-      <LandingNavbar     navigate={navigate} />
+      <LandingNavbar />
       <main>
-        <HeroSection       navigate={navigate} />
+        <HeroSection />
         <FeaturesSection   />
         <HowItWorksSection />
-        <CtaBanner         navigate={navigate} />
+        <CtaBanner />
       </main>
       <LandingFooter />
     </div>

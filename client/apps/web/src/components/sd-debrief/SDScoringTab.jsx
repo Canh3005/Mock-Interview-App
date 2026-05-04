@@ -73,7 +73,7 @@ function ReferenceWalkthrough({ session, evaluationResult }) {
   )
 }
 
-export default function SDScoringTab({ session, navigate }) {
+export default function SDScoringTab({ session }) {
   const { t } = useTranslation()
   const dispatch = useDispatch()
   const sdEvaluatorStatus = useSelector((s) => s.sdEvaluator.status)

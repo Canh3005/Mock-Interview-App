@@ -1,5 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import { ROUTES } from '../../router/routes'
 import {
   Search, ChevronLeft, ChevronRight, CheckCircle2,
   BookOpen, Loader2, Code2, SlidersHorizontal,
@@ -18,8 +20,9 @@ const DIFF_LABEL  = { EASY: 'Easy', MEDIUM: 'Medium', HARD: 'Hard' }
 const DIFFICULTIES = ['', 'EASY', 'MEDIUM', 'HARD']
 const DIFF_OPTION_LABEL = { '': 'Tất cả độ khó', EASY: 'Easy', MEDIUM: 'Medium', HARD: 'Hard' }
 
-export default function ProblemBankPage({ navigate }) {
+export default function ProblemBankPage() {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
   const { problems, total, currentPage, limit, filters, loading, error, solvedProblemIds, problemLoading } =
     useSelector((state) => state.practiceDSA)
 
@@ -51,7 +54,7 @@ export default function ProblemBankPage({ navigate }) {
 
   useEffect(() => {
     if (prevProblemLoadingRef.current && !problemLoading) {
-      navigate('dsa-room-solo')
+      navigate(ROUTES.DSA_ROOM_SOLO)
     }
     prevProblemLoadingRef.current = problemLoading
   }, [problemLoading, navigate])
@@ -68,7 +71,6 @@ export default function ProblemBankPage({ navigate }) {
 
         <SharedNavbar
           page="dashboard"
-          navigate={navigate}
           darkMode={darkMode}
           onToggleDark={() => setDarkMode((d) => !d)}
         />

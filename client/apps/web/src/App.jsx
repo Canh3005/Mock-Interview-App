@@ -1,130 +1,85 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { checkAuthRequest } from './store/slices/authSlice'
+import { ROUTES } from './router/routes'
+import ProtectedRoute from './router/ProtectedRoute'
+import GuestRoute from './router/GuestRoute'
+import AdminRoute from './router/AdminRoute'
+import InterviewRoomRoute from './router/InterviewRoomRoute'
+
 import LandingPage from './components/landing/LandingPage'
-import DashboardPage from './components/dashboard/DashboardPage'
-import InterviewRoomPage from './components/interview-room/InterviewRoomPage'
 import LoginPage from './components/auth/LoginPage'
 import RegisterPage from './components/auth/RegisterPage'
+import DashboardPage from './components/dashboard/DashboardPage'
+import SkillPassportPage from './components/dashboard/profile/SkillPassportPage'
+import InterviewSetupFlow from './components/interview-setup/InterviewSetupFlow'
+import RoundTransitionScreen from './components/interview-setup/RoundTransitionScreen'
+import InterviewRoomPage from './components/interview-room/InterviewRoomPage'
+import BehavioralRoomPage from './components/behavioral-room/BehavioralRoomPage'
+import CombatInterviewRoom from './components/combat-room/CombatInterviewRoom'
+import DSASessionPage from './components/dsa/DSASessionPage'
+import SDRoomPage from './components/sd-room/SDRoomPage'
+import ScoringPage from './components/scoring/ScoringPage'
+import ProblemBankPage from './components/practice/ProblemBankPage'
 import AdminLayout from './components/admin/AdminLayout'
 import AdminProblemsPage from './components/admin/AdminProblemsPage'
 import AdminTestCasesPage from './components/admin/AdminTestCasesPage'
 import AdminSDProblemsPage from './components/admin/AdminSDProblemsPage'
-import SkillPassportPage from './components/dashboard/profile/SkillPassportPage'
-import InterviewSetupFlow from './components/interview-setup/InterviewSetupFlow'
-import RoundTransitionScreen from './components/interview-setup/RoundTransitionScreen'
-import BehavioralRoomPage from './components/behavioral-room/BehavioralRoomPage'
-import CombatInterviewRoom from './components/combat-room/CombatInterviewRoom'
-import DSASessionPage from './components/dsa/DSASessionPage'
-import ScoringPage from './components/scoring/ScoringPage'
-import ProblemBankPage from './components/practice/ProblemBankPage'
-import SDRoomPage from './components/sd-room/SDRoomPage'
-import { Loader2 } from 'lucide-react'
-import { resetSetup } from './store/slices/interviewSetupSlice'
 
-export default function App() {
-  const [page, setPage] = useState('landing')
-
+function AppRoutes() {
   const dispatch = useDispatch()
-  const { isAuthenticating, isAuthenticated, user } = useSelector((state) => state.auth)
-  const interviewSession = useSelector((state) => state.interviewSetup.session)
   const roundTransitionPending = useSelector((s) => s.interviewSetup.roundTransitionPending)
-  const scoringInitialTab = useSelector((s) => s.interviewSetup.scoringInitialTab)
 
   useEffect(() => {
     dispatch(checkAuthRequest())
   }, [dispatch])
 
-  useEffect(() => {
-    if (isAuthenticated && (page === 'login' || page === 'register')) {
-      setPage('dashboard')
-    }
-  }, [isAuthenticated, page])
-
-  const navigate = (target) => {
-    if (
-      (target === 'dashboard' || target === 'interview-room' || target === 'behavioral-room' ||
-        target === 'dsa-room' || target === 'interview-setup' || target === 'practice-problems' ||
-        target === 'practice-session' || target === 'sd-room' || target.startsWith('admin')) &&
-      !isAuthenticated && !isAuthenticating
-    ) {
-      setPage('login')
-      return
-    }
-    if (target.startsWith('admin') && isAuthenticated && user?.role !== 'admin') {
-      setPage('dashboard')
-      return
-    }
-    if (target === 'interview-setup') dispatch(resetSetup())
-    setPage(target)
-  }
-
-  const renderPage = () => {
-    if (isAuthenticating) {
-      return (
-        <div className="min-h-screen flex items-center justify-center bg-background">
-          <Loader2 className="w-8 h-8 text-cta animate-spin" />
-        </div>
-      )
-    }
-    if (page === 'login')            return <LoginPage navigate={navigate} />
-    if (page === 'register')         return <RegisterPage navigate={navigate} />
-    if (page === 'interview-setup')  return <InterviewSetupFlow navigate={navigate} />
-    if (page === 'interview-room')   return <InterviewRoomPage navigate={navigate} />
-    if (page === 'behavioral-room')  return <BehavioralRoomPage navigate={navigate} interviewSessionId={interviewSession?.sessionId} />
-    if (page === 'combat-room')      return <CombatInterviewRoom interviewSessionId={interviewSession?.sessionId} navigate={navigate} />
-    if (page === 'dsa-room')         return <DSASessionPage navigate={navigate} />
-    if (page === 'dsa-room-solo')    return <DSASessionPage navigate={navigate} />
-    if (page === 'practice-problems') return <ProblemBankPage navigate={navigate} />
-    if (page === 'sd-room')
-      return (
-        <SDRoomPage
-          navigate={navigate}
-          sdSessionId={interviewSession?.sdSessionId}
-          interviewSessionId={interviewSession?.sessionId}
-        />
-      )
-    if (page === 'scoring') {
-      const scoringMode = interviewSession?.mode === 'combat' ? 'combat' : 'behavioral'
-      return (
-        <ScoringPage
-          navigate={navigate}
-          mode={scoringMode}
-          interviewSessionId={interviewSession?.sessionId}
-          initialTab={scoringInitialTab}
-        />
-      )
-    }
-    if (page === 'dashboard')        return <DashboardPage navigate={navigate} />
-    if (page === 'dashboard-profile') return <SkillPassportPage navigate={navigate} />
-    if (page === 'admin-problems' || page === 'admin') {
-      return (
-        <AdminLayout navigate={navigate} currentPage={page}>
-          <AdminProblemsPage navigate={navigate} />
-        </AdminLayout>
-      )
-    }
-    if (page === 'admin-testcases') {
-      return (
-        <AdminLayout navigate={navigate} currentPage={page}>
-          <AdminTestCasesPage navigate={navigate} />
-        </AdminLayout>
-      )
-    }
-    if (page === 'admin-sd-problems') {
-      return (
-        <AdminLayout navigate={navigate} currentPage={page}>
-          <AdminSDProblemsPage />
-        </AdminLayout>
-      )
-    }
-    return <LandingPage navigate={navigate} />
-  }
-
   return (
     <>
-      {renderPage()}
-      {roundTransitionPending && <RoundTransitionScreen navigate={navigate} />}
+      <Routes>
+        <Route path={ROUTES.LANDING} element={<LandingPage />} />
+
+        <Route element={<GuestRoute />}>
+          <Route path={ROUTES.LOGIN} element={<LoginPage />} />
+          <Route path={ROUTES.REGISTER} element={<RegisterPage />} />
+        </Route>
+
+        <Route element={<ProtectedRoute />}>
+          <Route path={ROUTES.DASHBOARD} element={<DashboardPage />} />
+          <Route path={ROUTES.DASHBOARD_PROFILE} element={<SkillPassportPage />} />
+          <Route path={ROUTES.INTERVIEW_SETUP} element={<InterviewSetupFlow />} />
+          <Route path={ROUTES.PRACTICE_PROBLEMS} element={<ProblemBankPage />} />
+          <Route path={ROUTES.DSA_ROOM_SOLO} element={<DSASessionPage />} />
+
+          <Route element={<InterviewRoomRoute />}>
+            <Route path={ROUTES.INTERVIEW_ROOM} element={<InterviewRoomPage />} />
+            <Route path={ROUTES.BEHAVIORAL_ROOM} element={<BehavioralRoomPage />} />
+            <Route path={ROUTES.COMBAT_ROOM} element={<CombatInterviewRoom />} />
+            <Route path={ROUTES.DSA_ROOM} element={<DSASessionPage />} />
+            <Route path={ROUTES.SD_ROOM} element={<SDRoomPage />} />
+            <Route path={ROUTES.SCORING} element={<ScoringPage />} />
+          </Route>
+
+          <Route element={<AdminRoute />}>
+            <Route path={ROUTES.ADMIN} element={<AdminLayout><AdminProblemsPage /></AdminLayout>} />
+            <Route path={ROUTES.ADMIN_TESTCASES} element={<AdminLayout><AdminTestCasesPage /></AdminLayout>} />
+            <Route path={ROUTES.ADMIN_SD_PROBLEMS} element={<AdminLayout><AdminSDProblemsPage /></AdminLayout>} />
+          </Route>
+        </Route>
+
+        <Route path="*" element={<Navigate to={ROUTES.LANDING} replace />} />
+      </Routes>
+
+      {roundTransitionPending && <RoundTransitionScreen />}
     </>
+  )
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <AppRoutes />
+    </BrowserRouter>
   )
 }

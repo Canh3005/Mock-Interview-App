@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState, useCallback, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import { ROUTES } from '../../router/routes'
 import { Play, Send, ChevronUp, ChevronDown, CheckCircle2, Code2, MessageSquare, ArrowLeft, RotateCcw } from 'lucide-react'
 import { toast } from 'sonner'
 import ReactMarkdown from 'react-markdown'
@@ -83,7 +85,8 @@ function TestcasePanel({ testCases }) {
   )
 }
 
-export default function DSASessionPage({ navigate }) {
+export default function DSASessionPage() {
+  const navigate = useNavigate();
   const dispatch = useDispatch()
   const {
     sessionId, problems, sessionProblems, activeProblemId, problemProgress,
@@ -198,7 +201,7 @@ export default function DSASessionPage({ navigate }) {
       setConsoleTab('result')
     }
   }, [runResults])
-  useEffect(() => { if (scoringStatus === 'completed') navigate('scoring') }, [scoringStatus, navigate])
+  useEffect(() => { if (scoringStatus === 'completed') navigate(ROUTES.SCORING) }, [scoringStatus, navigate])
 
   // Per-problem elapsed timer (interview mode only, ticks every second during CODE phase)
   useEffect(() => {
@@ -299,7 +302,7 @@ export default function DSASessionPage({ navigate }) {
         {/* Back button (practice mode only) */}
         {mode === 'solo' && (
           <button
-            onClick={() => navigate('practice-problems')}
+            onClick={() => navigate(ROUTES.PRACTICE_PROBLEMS)}
             className="flex items-center gap-1.5 px-2 h-7 rounded-lg text-slate-500 hover:text-slate-200 hover:bg-slate-800/60 transition-colors flex-shrink-0 text-xs"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
@@ -711,14 +714,14 @@ export default function DSASessionPage({ navigate }) {
             <p className="text-slate-400 text-sm">Bạn đã hoàn thành bài tập này.</p>
             <div className="flex gap-3 pt-1">
               <button
-                onClick={() => navigate('practice-problems')}
+                onClick={() => navigate(ROUTES.PRACTICE_PROBLEMS)}
                 className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-sm font-medium text-slate-200 transition-colors"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
                 Thử bài khác
               </button>
               <button
-                onClick={() => navigate('dashboard')}
+                onClick={() => navigate(ROUTES.DASHBOARD)}
                 className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-cta hover:bg-cta/90 text-black text-sm font-semibold transition-colors"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />

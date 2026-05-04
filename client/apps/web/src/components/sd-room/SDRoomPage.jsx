@@ -1,5 +1,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import { ROUTES } from '../../router/routes'
 import { Loader2, AlertTriangle, CheckCircle2, Clock, AlertCircle, LogOut } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { loadRequest, resetSDSession } from '../../store/slices/sdSessionSlice'
@@ -67,9 +69,11 @@ function PhaseProgressBar({ phase }) {
   )
 }
 
-export default function SDRoomPage({ navigate, sdSessionId }) {
+export default function SDRoomPage() {
   const { t } = useTranslation()
   const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const sdSessionId = useSelector((s) => s.interviewSetup.session?.sdSessionId)
   const { loading, error, phase, autoSaveStatus } = useSelector((s) => s.sdSession)
   const drawingComplete = useSelector((s) => s.sdInterviewer.drawingComplete)
   const [rightWidth, setRightWidth] = useState(RIGHT_PANEL_DEFAULT)
@@ -133,7 +137,7 @@ export default function SDRoomPage({ navigate, sdSessionId }) {
         <div className="flex items-center gap-4">
           <AutoSaveIndicator status={autoSaveStatus} />
           <button
-            onClick={() => navigate('dashboard')}
+            onClick={() => navigate(ROUTES.DASHBOARD)}
             className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-300 transition-colors"
           >
             <LogOut className="w-3.5 h-3.5" />
@@ -150,7 +154,7 @@ export default function SDRoomPage({ navigate, sdSessionId }) {
         <ResizeDivider onMouseDown={handleResizeStart} />
         <RightPanel width={rightWidth} />
       </div>
-      <EvaluationLoadingOverlay navigate={navigate} />
+      <EvaluationLoadingOverlay />
     </div>
   )
 }

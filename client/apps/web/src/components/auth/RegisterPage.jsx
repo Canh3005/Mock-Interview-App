@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { registerRequest } from '../../store/slices/authSlice';
 import { useTranslation } from 'react-i18next';
 import { ChevronLeft, Code2 } from 'lucide-react';
+import { ROUTES } from '../../router/routes';
 
-export default function RegisterPage({ navigate }) {
+export default function RegisterPage() {
+  const navigate = useNavigate();
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { loading, error } = useSelector((state) => state.auth);
@@ -25,7 +28,7 @@ export default function RegisterPage({ navigate }) {
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10">
         <button
-          onClick={() => navigate('landing')}
+          onClick={() => navigate(ROUTES.LANDING)}
           className="flex items-center gap-2 mb-8 text-slate-400 hover:text-white transition-colors cursor-pointer"
         >
           <ChevronLeft size={16} />
@@ -124,7 +127,7 @@ export default function RegisterPage({ navigate }) {
 
             <div className="mt-6">
               <button
-                onClick={() => navigate('login')}
+                onClick={() => navigate(ROUTES.LOGIN)}
                 className="w-full flex justify-center py-2.5 px-4 border border-slate-600 rounded-lg shadow-sm text-sm font-medium text-slate-300 bg-slate-800/50 hover:bg-slate-700/50 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cta"
               >
                 {t('auth.loginTitle') || 'Đăng nhập ngay'}

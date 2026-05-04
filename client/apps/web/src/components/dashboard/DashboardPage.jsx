@@ -9,7 +9,9 @@ import { useState, useEffect } from 'react'
 import { Github, Code2, Target, Award, Activity, BookOpen } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import SharedNavbar from '../shared/SharedNavbar'
+import { ROUTES } from '../../router/routes'
 import StatCard from './StatCard'
 import RadarChartPlaceholder from './RadarChartPlaceholder'
 
@@ -18,7 +20,8 @@ import SkillBreakdown from './SkillBreakdown'
 import UpcomingSessions from './UpcomingSessions'
 import InProgressSessions from './InProgressSessions'
 
-export default function DashboardPage({ navigate = () => {} }) {
+export default function DashboardPage() {
+  const navigate = useNavigate();
   const { t } = useTranslation()
   const token = useSelector((state) => state.auth.accessToken)
   const user = useSelector((state) => state.auth.user)
@@ -67,7 +70,6 @@ export default function DashboardPage({ navigate = () => {} }) {
         {/* ── Shared Navbar ── */}
         <SharedNavbar
           page="dashboard"
-          navigate={navigate}
           darkMode={darkMode}
           onToggleDark={() => setDarkMode(d => !d)}
         />
@@ -99,14 +101,14 @@ export default function DashboardPage({ navigate = () => {} }) {
                 </button>
               )}
               <button
-                onClick={() => navigate('practice-problems')}
+                onClick={() => navigate(ROUTES.PRACTICE_PROBLEMS)}
                 className="inline-flex items-center gap-2 font-body text-sm font-semibold text-slate-200 bg-slate-700 hover:bg-slate-600 px-5 py-2.5 rounded-xl transition-all duration-200 cursor-pointer hover:-translate-y-0.5"
               >
                 <BookOpen size={15} />
                 Luyện tập thuật toán
               </button>
               <button
-                onClick={() => navigate('interview-setup')}
+                onClick={() => navigate(ROUTES.INTERVIEW_SETUP)}
                 className="inline-flex items-center gap-2 font-body text-sm font-semibold text-white bg-cta hover:bg-cta/90 px-5 py-2.5 rounded-xl transition-all duration-200 cursor-pointer hover:-translate-y-0.5 shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta"
               >
                 <Code2 size={15} />
@@ -143,7 +145,7 @@ export default function DashboardPage({ navigate = () => {} }) {
           {/* ── Row 3: In-Progress Sessions (8 cols) + Learning Path (4 cols) ── */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
             <div className="lg:col-span-8">
-              <InProgressSessions navigate={navigate} />
+              <InProgressSessions />
             </div>
             <div className="lg:col-span-4">
               <LearningPath />

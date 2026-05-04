@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import { ROUTES } from '../../router/routes'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Loader2, ChevronRight, CheckCircle2, Clock, LogOut, AlertTriangle, X } from 'lucide-react'
 import { toast } from 'sonner'
@@ -41,8 +43,10 @@ function StageTransitionOverlay({ stageName }) {
 }
 
 // ─── Main BehavioralRoomPage ──────────────────────────────────────────────────
-export default function BehavioralRoomPage({ navigate, interviewSessionId }) {
+export default function BehavioralRoomPage() {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const interviewSessionId = useSelector((s) => s.interviewSetup.session?.sessionId)
   const {
     status,
     currentStage,
@@ -65,7 +69,7 @@ export default function BehavioralRoomPage({ navigate, interviewSessionId }) {
   const handleConfirmExit = () => {
     dispatch(resetBehavioral())
     dispatch(resetSetup())
-    navigate('dashboard')
+    navigate(ROUTES.DASHBOARD)
   }
 
   const handleFinishClick = () => {
@@ -132,7 +136,7 @@ export default function BehavioralRoomPage({ navigate, interviewSessionId }) {
           <p className="text-red-400 font-semibold">Không thể khởi tạo phiên phỏng vấn</p>
           <p className="text-slate-500 text-sm">{error}</p>
           <button
-            onClick={() => navigate('dashboard')}
+            onClick={() => navigate(ROUTES.DASHBOARD)}
             className="px-5 py-2 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 text-sm hover:bg-slate-700 transition-colors"
           >
             Về trang chủ
@@ -143,10 +147,11 @@ export default function BehavioralRoomPage({ navigate, interviewSessionId }) {
   }
 
   // ─── Navigate to scoring page when completing/completed ─────────────────
-  if (status === 'completing' || status === 'completed') {
-    navigate('scoring')
-    return null
-  }
+  useEffect(() => {
+    if (status === 'completing' || status === 'completed') {
+      navigate(ROUTES.SCORING)
+    }
+  }, [status, navigate])
 
   // ─── Main interview room ─────────────────────────────────────────────────
   return (

@@ -4,6 +4,8 @@
  */
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import { ROUTES } from '../../router/routes'
 import {
   Play,
   Clock,
@@ -255,8 +257,9 @@ function AllSessionsModal({ onResume, onViewResult, onClose }) {
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
-export default function InProgressSessions({ navigate }) {
+export default function InProgressSessions() {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
   const [sessions, setSessions] = useState([])
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(true)
@@ -276,7 +279,7 @@ export default function InProgressSessions({ navigate }) {
   function handleResume(session) {
     dispatch(resumeSession({ sessionId: session.sessionId, candidateLevel: session.candidateLevel, mode: session.mode }))
     dispatch(resetBehavioral())
-    navigate(session.mode === 'combat' ? 'combat-room' : 'behavioral-room')
+    navigate(session.mode === 'combat' ? ROUTES.COMBAT_ROOM : ROUTES.BEHAVIORAL_ROOM)
   }
 
   async function handleViewResult(session) {
@@ -286,7 +289,7 @@ export default function InProgressSessions({ navigate }) {
       const res = await behavioralApi.getScore(session.behavioralSession?.sessionId ?? session.sessionId)
       dispatch(scoringPolled({ status: res.status, score: res.score }))
     } catch (_) {}
-    navigate('scoring')
+    navigate(ROUTES.SCORING)
   }
 
   if (loading) {
