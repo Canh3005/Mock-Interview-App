@@ -23,34 +23,32 @@ export class CombatController {
     private readonly integrityService: IntegrityCalculatorService,
   ) {}
 
-  // Task 3.10 — Ingest multimodal metrics batch
   @Post('sessions/:id/metrics')
   @HttpCode(HttpStatus.NO_CONTENT)
   ingestMetrics(
-    @Param('id') behavioralSessionId: string,
+    @Param('id') interviewSessionId: string,
     @Body() dto: IngestMetricsDto,
   ) {
-    return this.metricsService.ingest(behavioralSessionId, dto);
+    return this.metricsService.ingest(interviewSessionId, dto);
   }
 
-  // Task 4.1 — Ingest proctoring events (tab/focus monitoring)
   @Post('sessions/:id/proctoring-event')
   @HttpCode(HttpStatus.NO_CONTENT)
   ingestProctoringEvent(
-    @Param('id') behavioralSessionId: string,
+    @Param('id') interviewSessionId: string,
     @Body() dto: ProctoringEventDto,
   ) {
-    return this.metricsService.ingestProctoringEvent(behavioralSessionId, dto);
+    return this.metricsService.ingestProctoringEvent(interviewSessionId, dto);
   }
 
   @Post('sessions/:id/proctoring-event/batch')
   @HttpCode(HttpStatus.NO_CONTENT)
   ingestProctoringEventBatch(
-    @Param('id') behavioralSessionId: string,
+    @Param('id') interviewSessionId: string,
     @Body() dto: ProctoringEventBatchDto,
   ) {
     return this.metricsService.ingestProctoringEventBatch(
-      behavioralSessionId,
+      interviewSessionId,
       dto.events ?? [],
     );
   }

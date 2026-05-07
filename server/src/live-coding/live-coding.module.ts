@@ -13,6 +13,7 @@ import { ProblemTemplate } from '../problems/entities/problem-template.entity';
 import { TestCase } from '../test-cases/entities/test-case.entity';
 import { JudgeModule } from '../judge/judge.module';
 import { AiModule } from '../ai/ai.module';
+import { CombatModule } from '../combat/combat.module';
 import { DSA_DEBRIEF_QUEUE } from '../jobs/jobs.constants';
 import { RoundOrchestratorService } from '../interview/round-orchestrator.service';
 
@@ -29,6 +30,7 @@ import { RoundOrchestratorService } from '../interview/round-orchestrator.servic
     BullModule.registerQueueAsync({ name: DSA_DEBRIEF_QUEUE }),
     JudgeModule,
     AiModule,
+    CombatModule,
   ],
   controllers: [LiveCodingController],
   providers: [

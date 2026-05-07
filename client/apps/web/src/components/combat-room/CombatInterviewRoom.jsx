@@ -94,7 +94,7 @@ export default function CombatInterviewRoom() {
     engineStartedRef.current = true;
     dispatch({
       type: COMBAT_START_ENGINE,
-      payload: { mediaStream: mediaStreamRef.current, sessionId, videoElement: videoRef.current },
+      payload: { mediaStream: mediaStreamRef.current, sessionId: interviewSessionId, videoElement: videoRef.current },
     });
   }, [sessionId]);
 

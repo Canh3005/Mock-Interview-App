@@ -36,9 +36,9 @@ export class MultimodalScoringService {
   ) {}
 
   async scoreSession(
-    behavioralSessionId: string,
+    interviewSessionId: string,
   ): Promise<MultimodalScore | null> {
-    const agg = await this.aggRepo.findOneBy({ behavioralSessionId });
+    const agg = await this.aggRepo.findOneBy({ interviewSessionId });
     if (!agg) return null;
 
     // ── Eye-Tracking Score ────────────────────────────────────────────────────

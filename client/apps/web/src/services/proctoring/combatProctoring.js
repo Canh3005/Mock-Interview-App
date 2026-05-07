@@ -316,20 +316,20 @@ export class CombatProctoringMonitor {
   }
 
   _onBeforeUnload() {
-    if (!this.buffer.length || !navigator.sendBeacon || !this.sessionId) return
+    if (!this.buffer.length || !navigator.sendBeacon || !this.interviewSessionId) return
     const payload = JSON.stringify({ events: this.buffer })
     navigator.sendBeacon(
-      `${API_BASE_URL}/combat/sessions/${this.sessionId}/proctoring-event/batch`,
+      `${API_BASE_URL}/combat/sessions/${this.interviewSessionId}/proctoring-event/batch`,
       payload,
     )
   }
 
   async _flushBufferedFromIdb() {
     const pending = await idbGetAll()
-    if (!pending.length || !this.sessionId) return
+    if (!pending.length || !this.interviewSessionId) return
 
     try {
-      await combatApi.ingestProctoringEventBatch(this.sessionId, {
+      await combatApi.ingestProctoringEventBatch(this.interviewSessionId, {
         events: pending,
       })
       await idbDeleteMany(pending.map((e) => e.clientEventId))
@@ -339,11 +339,11 @@ export class CombatProctoringMonitor {
   }
 
   _enqueue(event) {
-    if (!this.sessionId) return
+    if (!this.interviewSessionId) return
 
     const fullEvent = {
       clientEventId: event.clientEventId ?? randomId(),
-      sessionId: this.sessionId,
+      sessionId: this.interviewSessionId,
       ts: event.ts ?? Date.now(),
       eventType: event.eventType ?? event.type,
       type: event.type ?? event.eventType,
@@ -362,7 +362,7 @@ export class CombatProctoringMonitor {
         const batch = this.buffer.splice(0, this.buffer.length)
         batch.forEach((item) => {
           combatApi
-            .ingestProctoringEvent(this.sessionId, item)
+            .ingestProctoringEvent(this.interviewSessionId, item)
             .then(() => idbDeleteMany([item.clientEventId]))
             .catch(() => {})
         })

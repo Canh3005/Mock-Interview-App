@@ -6,17 +6,16 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { BehavioralSession } from '../../behavioral/entities/behavioral-session.entity';
+import { InterviewSession } from '../../interview/entities/interview-session.entity';
 
-// TODO: extend this model with LiveCodingSession and SystemDesignSession
 @Entity('combat_session_aggregate')
 export class CombatSessionAggregate {
-  @PrimaryColumn({ type: 'uuid' })
-  behavioralSessionId: string;
+  @PrimaryColumn({ type: 'uuid', name: 'interview_session_id' })
+  interviewSessionId: string;
 
-  @ManyToOne(() => BehavioralSession, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'behavioralSessionId' })
-  behavioralSession: BehavioralSession;
+  @ManyToOne(() => InterviewSession, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'interview_session_id' })
+  interviewSession: InterviewSession;
 
   // ── Eye tracking ────────────────────────────────────────────────────────────
   @Column({ type: 'int', default: 0 })

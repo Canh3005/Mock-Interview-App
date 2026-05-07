@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback, useMemo } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { ROUTES } from '../../router/routes'
@@ -24,6 +24,8 @@ import CodeEditor from './CodeEditor'
 import RunResultPanel from './RunResultPanel'
 import AIChat from './AIChat'
 import SessionTimer from './SessionTimer'
+import CameraPreview from './CameraPreview'
+import { useDSACombat } from '../../hooks/useDSACombat'
 
 const fmtMs = (ms) => {
   const s = Math.floor(ms / 1000)
@@ -93,6 +95,10 @@ export default function DSASessionPage() {
     aiConversation, lastRunResults, scoringStatus, mode, templates, editorCode, testCases: allTestCases,
     unlockedHints, codePhaseStartedAt, pendingNextProblemId,
   } = useSelector((s) => s.dsaSession)
+
+  const interviewSessionId = useSelector((s) => s.interviewSetup.session?.sessionId)
+  const videoRef = useRef(null)
+  const { mediaStream } = useDSACombat({ mode, interviewSessionId, videoRef, aiConversation })
 
   const activeSessionProblem = sessionProblems.find((sp) => sp.problemId === activeProblemId)
   const currentLanguage = activeSessionProblem?.language ?? 'python'
@@ -704,6 +710,12 @@ export default function DSASessionPage() {
           </div>
         </div>
       )}
+
+      {/* Hidden video element used by MultimodalEngine for face/expression analysis */}
+      <video ref={videoRef} muted playsInline style={{ display: 'none' }} />
+
+      {/* Combat camera preview */}
+      <CameraPreview mediaStream={mediaStream} />
 
       {/* Practice success overlay */}
       {mode === 'solo' && practiceSubmitDone && (

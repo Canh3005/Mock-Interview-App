@@ -6,7 +6,6 @@ import { IngestMetricsDto } from './dto/ingest-metrics.dto';
 import { ProctoringEventDto } from './dto/proctoring-event.dto';
 import { ProctoringEvent } from './entities/proctoring-event.entity';
 import { ProctoringSession } from './entities/proctoring-session.entity';
-import { BehavioralSession } from '../behavioral/entities/behavioral-session.entity';
 
 @Injectable()
 export class CombatMetricsService {
@@ -19,19 +18,19 @@ export class CombatMetricsService {
     private eventRepo: Repository<ProctoringEvent>,
     @InjectRepository(ProctoringSession)
     private proctoringSessionRepo: Repository<ProctoringSession>,
-    @InjectRepository(BehavioralSession)
-    private behavioralSessionRepo: Repository<BehavioralSession>,
   ) {}
 
   async ingest(
-    behavioralSessionId: string,
+    interviewSessionId: string,
     dto: IngestMetricsDto,
   ): Promise<void> {
-    let agg = await this.aggRepo.findOneBy({ behavioralSessionId });
+    let agg: CombatSessionAggregate | null = await this.aggRepo.findOneBy({
+      interviewSessionId,
+    });
 
     if (!agg) {
       agg = this.aggRepo.create({
-        behavioralSessionId,
+        interviewSessionId,
         sessionStartTs: dto.batchStartTs,
         eyeTotalFrames: 0,
         eyeScreenFrames: 0,
@@ -74,7 +73,7 @@ export class CombatMetricsService {
     // ── Stress peak minutes ───────────────────────────────────────────────────
     const hasStress = validExprs.some((f) => f.expression === 'stressed');
     if (hasStress && agg.sessionStartTs) {
-      const minute = Math.floor(
+      const minute: number = Math.floor(
         (dto.batchStartTs - Number(agg.sessionStartTs)) / 60_000,
       );
       if (!agg.stressPeakMinutes.includes(minute)) {
@@ -85,25 +84,24 @@ export class CombatMetricsService {
     await this.aggRepo.save(agg);
 
     this.logger.debug(
-      `Aggregate updated for session ${behavioralSessionId} ` +
+      `Aggregate updated for interview session ${interviewSessionId} ` +
         `[eye: ${agg.eyeTotalFrames}, filler: ${agg.fillerFrameCount}, expr: ${agg.exprTotalValid}]`,
     );
   }
 
   async ingestProctoringEvent(
-    behavioralSessionId: string,
+    interviewSessionId: string,
     dto: ProctoringEventDto,
   ): Promise<void> {
-    const normalized = this.normalizeEventDto(dto);
-    const session = await this.ensureProctoringSession(behavioralSessionId);
+    const normalized = this._normalizeEventDto(dto);
+    const session: ProctoringSession =
+      await this._ensureProctoringSession(interviewSessionId);
 
-    // Skip if event already exists
-    const existing = await this.eventRepo.findOneBy({
+    const existing: ProctoringEvent | null = await this.eventRepo.findOneBy({
       clientEventId: normalized.clientEventId,
     });
     if (existing) return;
 
-    // Insert using repository (respects naming strategy)
     await this.eventRepo.save({
       clientEventId: normalized.clientEventId,
       proctoringSessionId: session.id,
@@ -114,20 +112,20 @@ export class CombatMetricsService {
       metadata: normalized.metadata ?? null,
     });
 
-    await this.incrementCounters(session, normalized.severity);
+    await this._incrementCounters(session, normalized.severity);
   }
 
   async ingestProctoringEventBatch(
-    behavioralSessionId: string,
+    interviewSessionId: string,
     events: ProctoringEventDto[],
   ): Promise<void> {
     if (!events?.length) return;
     for (const event of events) {
-      await this.ingestProctoringEvent(behavioralSessionId, event);
+      await this.ingestProctoringEvent(interviewSessionId, event);
     }
   }
 
-  private normalizeEventDto(dto: ProctoringEventDto): {
+  private _normalizeEventDto(dto: ProctoringEventDto): {
     clientEventId: string;
     ts: number;
     eventType: string;
@@ -135,10 +133,10 @@ export class CombatMetricsService {
     durationMs?: number;
     metadata?: Record<string, unknown>;
   } {
-    const eventType = dto.eventType ?? dto.type;
-    const severity = dto.severity ?? 'LOW';
-    const clientEventId =
-      dto.clientEventId ?? this.buildFallbackClientEventId(dto);
+    const eventType: string = dto.eventType ?? dto.type;
+    const severity: 'LOW' | 'MEDIUM' | 'HIGH' = dto.severity ?? 'LOW';
+    const clientEventId: string =
+      dto.clientEventId ?? this._buildFallbackClientEventId(dto);
     return {
       clientEventId,
       ts: dto.ts,
@@ -149,26 +147,18 @@ export class CombatMetricsService {
     };
   }
 
-  private buildFallbackClientEventId(dto: ProctoringEventDto): string {
-    const eventType = dto.eventType ?? dto.type;
+  private _buildFallbackClientEventId(dto: ProctoringEventDto): string {
+    const eventType: string = dto.eventType ?? dto.type;
     return `${eventType}:${dto.ts}:${dto.durationMs ?? 0}`;
   }
 
-  private async ensureProctoringSession(
-    behavioralSessionId: string,
+  private async _ensureProctoringSession(
+    interviewSessionId: string,
   ): Promise<ProctoringSession> {
-    const behavioralSession = await this.behavioralSessionRepo.findOne({
-      where: { id: behavioralSessionId },
-    });
-
-    if (!behavioralSession) {
-      throw new Error(`Behavioral session not found: ${behavioralSessionId}`);
-    }
-
-    const interviewSessionId = behavioralSession.interviewSessionId;
-    let session = await this.proctoringSessionRepo.findOne({
-      where: { interviewSessionId },
-    });
+    let session: ProctoringSession | null =
+      await this.proctoringSessionRepo.findOne({
+        where: { interviewSessionId },
+      });
 
     if (!session) {
       session = await this.proctoringSessionRepo.save(
@@ -186,7 +176,7 @@ export class CombatMetricsService {
     return session;
   }
 
-  private async incrementCounters(
+  private async _incrementCounters(
     session: ProctoringSession,
     severity: 'LOW' | 'MEDIUM' | 'HIGH',
   ): Promise<void> {

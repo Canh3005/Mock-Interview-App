@@ -25,7 +25,7 @@ export class IntegrityCalculatorService {
 
   async calculateIntegrity(
     interviewSessionId: string,
-    behavioralSessionId: string,
+    behavioralSessionId?: string | null,
   ): Promise<Record<string, unknown>> {
     let proctoringSession = await this.sessionRepo.findOne({
       where: { interviewSessionId },
@@ -49,9 +49,10 @@ export class IntegrityCalculatorService {
     });
 
     const baseDeductions = this.calculateBaseDeductions(events);
-    const adjustments = await this.calculateCorrelations(
-      behavioralSessionId,
+    const adjustments = await this._calculateCorrelations(
+      interviewSessionId,
       events,
+      behavioralSessionId ?? null,
     );
     const finalScore = this.calculateFinalIntegrityScore(
       baseDeductions,
@@ -105,16 +106,17 @@ export class IntegrityCalculatorService {
     }, 0);
   }
 
-  private async calculateCorrelations(
-    behavioralSessionId: string,
+  private async _calculateCorrelations(
+    interviewSessionId: string,
     events: ProctoringEvent[],
+    behavioralSessionId: string | null,
   ): Promise<CorrelationAdjustment[]> {
     const adjustments: CorrelationAdjustment[] = [];
 
     const tabHiddenEvents = events.filter((e) => e.eventType === 'TAB_HIDDEN');
     if (tabHiddenEvents.length > 0) {
       const screenPct =
-        await this.correlationQuery.getSessionGazePercent(behavioralSessionId);
+        await this.correlationQuery.getSessionGazePercent(interviewSessionId);
       if (screenPct >= 70) {
         adjustments.push({
           type: 'mitigation',
@@ -144,29 +146,32 @@ export class IntegrityCalculatorService {
       }
     }
 
-    for (const event of events.filter(
-      (e) => e.eventType === 'TAB_HIDDEN' && (e.durationMs ?? 0) > 5000,
-    )) {
-      const scoreBefore = await this.correlationQuery.getRelevanceScoreNear(
-        behavioralSessionId,
-        event.ts,
-        'before',
-      );
-      const scoreAfter = await this.correlationQuery.getRelevanceScoreNear(
-        behavioralSessionId,
-        event.ts + (event.durationMs ?? 0),
-        'after',
-      );
-      if (
-        scoreBefore != null &&
-        scoreAfter != null &&
-        scoreAfter > scoreBefore + 0.3
-      ) {
-        adjustments.push({
-          type: 'aggravation',
-          points: -10,
-          reason: `Response quality spike ${scoreBefore.toFixed(2)}→${scoreAfter.toFixed(2)} sau TAB_HIDDEN`,
-        });
+    // Relevance correlation only available for behavioral rounds
+    if (behavioralSessionId) {
+      for (const event of events.filter(
+        (e) => e.eventType === 'TAB_HIDDEN' && (e.durationMs ?? 0) > 5000,
+      )) {
+        const scoreBefore = await this.correlationQuery.getRelevanceScoreNear(
+          behavioralSessionId,
+          event.ts,
+          'before',
+        );
+        const scoreAfter = await this.correlationQuery.getRelevanceScoreNear(
+          behavioralSessionId,
+          event.ts + (event.durationMs ?? 0),
+          'after',
+        );
+        if (
+          scoreBefore != null &&
+          scoreAfter != null &&
+          scoreAfter > scoreBefore + 0.3
+        ) {
+          adjustments.push({
+            type: 'aggravation',
+            points: -10,
+            reason: `Response quality spike ${scoreBefore.toFixed(2)}→${scoreAfter.toFixed(2)} sau TAB_HIDDEN`,
+          });
+        }
       }
     }
 
@@ -176,7 +181,7 @@ export class IntegrityCalculatorService {
     if (secondVoiceEvents.length > 0) {
       const dominant =
         await this.correlationQuery.getSessionDominantExpression(
-          behavioralSessionId,
+          interviewSessionId,
         );
       if (dominant === 'stressed') {
         adjustments.push({

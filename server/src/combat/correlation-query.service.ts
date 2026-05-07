@@ -14,16 +14,16 @@ export class CorrelationQueryService {
     private logRepo: Repository<BehavioralStageLog>,
   ) {}
 
-  async getSessionGazePercent(behavioralSessionId: string): Promise<number> {
-    const agg = await this.aggRepo.findOneBy({ behavioralSessionId });
+  async getSessionGazePercent(interviewSessionId: string): Promise<number> {
+    const agg = await this.aggRepo.findOneBy({ interviewSessionId });
     if (!agg || agg.eyeTotalFrames === 0) return -1;
     return Math.round((agg.eyeScreenFrames / agg.eyeTotalFrames) * 100);
   }
 
   async getSessionDominantExpression(
-    behavioralSessionId: string,
+    interviewSessionId: string,
   ): Promise<'confident' | 'stressed' | 'neutral' | null> {
-    const agg = await this.aggRepo.findOneBy({ behavioralSessionId });
+    const agg = await this.aggRepo.findOneBy({ interviewSessionId });
     if (!agg || agg.exprTotalValid === 0) return null;
 
     const neutralCount = Math.max(

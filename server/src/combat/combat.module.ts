@@ -12,7 +12,6 @@ import { IntegrityCalculatorService } from './integrity-calculator.service';
 import { CombatController } from './combat.controller';
 import { AiModule } from '../ai/ai.module';
 import { BehavioralStageLog } from '../behavioral/entities/behavioral-stage-log.entity';
-import { BehavioralSession } from '../behavioral/entities/behavioral-session.entity';
 
 @Module({
   imports: [
@@ -21,7 +20,6 @@ import { BehavioralSession } from '../behavioral/entities/behavioral-session.ent
       ProctoringSession,
       ProctoringEvent,
       BehavioralStageLog,
-      BehavioralSession,
     ]),
     AiModule,
   ],

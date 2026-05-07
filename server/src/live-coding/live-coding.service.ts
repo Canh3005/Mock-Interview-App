@@ -25,6 +25,8 @@ import { JudgeService, JudgeSubmissionResult } from '../judge/judge.service';
 import { LiveCodingAiService } from './live-coding-ai.service';
 import { LiveCodingScoringService } from './live-coding-scoring.service';
 import { RoundOrchestratorService } from '../interview/round-orchestrator.service';
+import { IntegrityCalculatorService } from '../combat/integrity-calculator.service';
+import { MultimodalScoringService } from '../combat/multimodal-scoring.service';
 import { DSA_DEBRIEF_QUEUE, DsaDebriefJobName } from '../jobs/jobs.constants';
 
 @Injectable()
@@ -48,6 +50,8 @@ export class LiveCodingService {
     private readonly aiService: LiveCodingAiService,
     private readonly scoringService: LiveCodingScoringService,
     private readonly orchestrator: RoundOrchestratorService,
+    private readonly integrityCalculator: IntegrityCalculatorService,
+    private readonly multimodalScoring: MultimodalScoringService,
     @InjectQueue(DSA_DEBRIEF_QUEUE) private readonly debriefQueue: Queue,
   ) {}
 
@@ -523,6 +527,7 @@ export class LiveCodingService {
           runsUsed: sp.runsUsed ?? sp.runHistory.length,
           hintsUsed: sp.hintsUsed ?? 0,
           timedOut: false,
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           approachVerdict: debrief.approachVerdict as string | null as any,
           actualTimeComplexity: complexity?.submitted ?? null,
           actualSpaceComplexity: null,
@@ -540,6 +545,24 @@ export class LiveCodingService {
     session.finalScore = finalScore;
     session.status = 'COMPLETED';
     await this.sessionRepo.save(session);
+
+    if (session.mode === 'combat' && session.interviewSessionId) {
+      const nextRound = await this.orchestrator.getNextRound(
+        session.interviewSessionId,
+        'dsa',
+      );
+      const isLastRound = nextRound === null;
+      await Promise.allSettled([
+        isLastRound
+          ? this.multimodalScoring.scoreSession(session.interviewSessionId)
+          : Promise.resolve(),
+        isLastRound
+          ? this.integrityCalculator.calculateIntegrity(
+              session.interviewSessionId,
+            )
+          : Promise.resolve(),
+      ]);
+    }
   }
 
   // ─── Helpers ────────────────────────────────────────────────────────────

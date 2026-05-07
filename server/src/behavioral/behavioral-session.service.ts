@@ -675,6 +675,14 @@ export class BehavioralSessionService {
 
     const isCombat = interviewSession?.mode === 'combat';
 
+    const nextRound = isCombat
+      ? await this.roundOrchestrator.getNextRound(
+          session.interviewSessionId,
+          'hr_behavioral',
+        )
+      : null;
+    const isLastRound = nextRound === null;
+
     const [scoreResult, multimodalResult, integrityResult] =
       await Promise.allSettled([
         this.scoringService.evaluateSession(
@@ -683,10 +691,10 @@ export class BehavioralSessionService {
           interviewSession?.cvContextSnapshot ?? '',
           interviewSession?.jdContextSnapshot ?? '',
         ),
-        isCombat
-          ? this.multimodalScoring.scoreSession(sessionId)
+        isCombat && isLastRound
+          ? this.multimodalScoring.scoreSession(session.interviewSessionId)
           : Promise.resolve(null),
-        isCombat
+        isCombat && isLastRound
           ? this.integrityCalculator.calculateIntegrity(
               session.interviewSessionId,
               sessionId,
