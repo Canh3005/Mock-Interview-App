@@ -4,6 +4,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
+import { WalletService } from '../wallet/wallet.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { RegisterDto } from './dto/register.dto';
@@ -22,6 +23,7 @@ interface IdentityProfileData {
 export class AuthService {
   constructor(
     private usersService: UsersService,
+    private walletService: WalletService,
     private jwtService: JwtService,
   ) {}
 
@@ -38,6 +40,11 @@ export class AuthService {
       email: registerDto.email,
       name: registerDto.name,
       passwordHash,
+    });
+
+    await this.walletService.createWalletWithBonus({
+      userId: newUser.id,
+      email: newUser.email,
     });
 
     return this.getTokens(newUser.id, newUser.email);

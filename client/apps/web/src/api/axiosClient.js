@@ -50,8 +50,8 @@ axiosClient.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // If error is 401 and we are not trying to refresh the token itself to prevent infinite loops
-    if (error.response?.status === 401 && !originalRequest._retry && originalRequest.url !== '/auth/refresh') {
+    const AUTH_SKIP_REFRESH = ['/auth/refresh', '/auth/login', '/auth/logout'];
+    if (error.response?.status === 401 && !originalRequest._retry && !AUTH_SKIP_REFRESH.includes(originalRequest.url)) {
       
       if (isRefreshing) {
         // If already refreshing, wait for it to finish

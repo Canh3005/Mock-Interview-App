@@ -4,7 +4,7 @@ User có một ví Credit gắn liền với tài khoản của mình. Ngay sau 
 
 ## WHY
 
-Đây là nền tảng của toàn bộ hệ thống monetization. Nếu user không thấy số dư Credit của mình, họ không có lý do tâm lý để nạp thêm — không có "ví" thì không có "tiêu". Signup bonus 20 Credit tồn tại để user có thể trải nghiệm trọn vẹn ít nhất 1 phiên luyện tập ngay sau đăng ký, trước khi hệ thống yêu cầu thanh toán — đây là cơ chế acquisition quan trọng nhất, quyết định conversion từ visitor sang active user.
+Đây là nền tảng của toàn bộ hệ thống monetization. Nếu user không thấy số dư Credit của mình, họ không có lý do tâm lý để nạp thêm — không có "ví" thì không có "tiêu". Signup bonus 5 Credit tồn tại để user có thể trải nghiệm trọn vẹn ít nhất 1 phiên luyện tập ngay sau đăng ký, trước khi hệ thống yêu cầu thanh toán — đây là cơ chế acquisition quan trọng nhất, quyết định conversion từ visitor sang active user.
 
 ## Epic Context
 
@@ -17,7 +17,7 @@ Thuộc **Epic 1 — Credit Wallet Core**. Đây là story đầu tiên và nề
 
 **In:**
 - Ví Credit (Wallet) tự động tạo khi user đăng ký tài khoản mới (1 tài khoản = 1 ví, không thể tạo nhiều)
-- Tự động tặng 5 Credit vào ví khi user hoàn thành đăng ký và xác thực tài khoản lần đầu
+- Tự động tặng 5 Credit vào ví ngay khi user hoàn thành đăng ký tài khoản lần đầu (hệ thống hiện tại chưa có xác thực email — bonus tặng ngay khi tài khoản được tạo)
 - Ghi nhận giao dịch BONUS: "Quà tặng đăng ký" vào lịch sử ví
 - Hiển thị số dư Credit cố định trên header ở toàn bộ màn hình sau khi đăng nhập
 - Số dư trên header cập nhật realtime khi Credit thay đổi (không cần reload trang)
@@ -38,9 +38,9 @@ Thuộc **Epic 1 — Credit Wallet Core**. Đây là story đầu tiên và nề
 
 ### Happy Path
 
-1. User hoàn thành form đăng ký và xác thực tài khoản (verify email hoặc OTP)
+1. User hoàn thành form đăng ký (hệ thống hiện tại chưa có bước xác thực email)
 2. Hệ thống tự động tạo Wallet gắn với tài khoản vừa tạo — user không thấy bước này, xảy ra ngầm
-3. Hệ thống tự động cộng 5 Credit vào Wallet, ghi nhận giao dịch BONUS với ghi chú "Quà tặng đăng ký"
+3. Hệ thống kiểm tra email chưa từng nhận bonus → tự động cộng 5 Credit vào Wallet, ghi nhận giao dịch BONUS với ghi chú "Quà tặng đăng ký"
 4. User được redirect vào trang chính sau đăng ký → trên header xuất hiện "5 Credit" ngay lập tức
 5. Từ đây trở đi, dù user ở bất kỳ trang nào (Dashboard, Session, Settings, History) — số dư Credit luôn hiển thị trên header
 6. Khi Credit thay đổi (ví dụ sau khi nạp thêm hoặc bị trừ ở story khác) → số dư trên header cập nhật ngay không cần reload
@@ -51,9 +51,9 @@ Thuộc **Epic 1 — Credit Wallet Core**. Đây là story đầu tiên và nề
 - User đã từng đăng ký với email A, sau đó xóa tài khoản và đăng ký lại bằng email A → KHÔNG nhận thêm signup bonus lần 2
 - Hệ thống kiểm tra email đã từng nhận bonus trước khi credit — không phải kiểm tra tài khoản còn tồn tại hay không
 
-**Đăng ký chưa xác thực:**
-- User submit form đăng ký nhưng chưa verify email/OTP → Wallet chưa được tạo, bonus chưa được tặng
-- Chỉ tạo Wallet và tặng bonus SAU KHI tài khoản được activate thành công
+**Đăng ký chưa xác thực (scope tương lai):**
+- Hệ thống hiện tại chưa có email verification — Wallet và bonus được tạo ngay khi tài khoản được tạo thành công
+- Khi hệ thống mở rộng thêm xác thực email: chỉ tạo Wallet và tặng bonus SAU KHI tài khoản được activate
 
 **Lỗi kỹ thuật khi tặng bonus:**
 - Tài khoản được tạo thành công nhưng bước cộng bonus bị lỗi → tài khoản vẫn hoạt động bình thường, hệ thống tự retry cộng bonus trong vòng 5 phút
@@ -71,7 +71,7 @@ Thuộc **Epic 1 — Credit Wallet Core**. Đây là story đầu tiên và nề
 
 ## Acceptance Criteria
 
-- Given user vừa hoàn thành đăng ký tài khoản mới và xác thực thành công, When user được redirect vào trang chính, Then header hiển thị "5 Credit" ngay lập tức mà không cần user làm thêm bất kỳ thao tác nào.
+- Given user vừa hoàn thành form đăng ký tài khoản mới (email lần đầu sử dụng), When user được redirect vào trang chính, Then header hiển thị "5 Credit" ngay lập tức mà không cần user làm thêm bất kỳ thao tác nào.
 
 - Given user đã có tài khoản với 15 Credit đang hiển thị trên header, When user chuyển từ trang Dashboard sang trang Settings và quay lại, Then số dư 15 Credit vẫn hiển thị chính xác và không bị reset về 0 hay mất đi.
 

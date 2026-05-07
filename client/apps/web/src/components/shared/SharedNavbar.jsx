@@ -9,6 +9,7 @@ import {
   User,
   Home,
   Shield,
+  Coins,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useSelector, useDispatch } from 'react-redux'
@@ -18,6 +19,18 @@ import { ROUTES } from '../../router/routes'
 import LanguageSwitcher from './LanguageSwitcher'
 
 /* ─────────────────────── Sub-components ─────────────────────── */
+
+function CreditBadge() {
+  const { t } = useTranslation()
+  const { balance } = useSelector((state) => state.wallet)
+  if (balance === null) return null
+  return (
+    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700/60 text-slate-300 text-xs font-medium">
+      <Coins size={13} className="text-cta" />
+      <span>{balance} {t('wallet.credits')}</span>
+    </div>
+  )
+}
 
 function Brand({ compact = false }) {
   const { t } = useTranslation()
@@ -138,6 +151,7 @@ function DashboardBar({ darkMode, onToggleDark }) {
         </nav>
 
         <div className="flex items-center gap-2">
+          <CreditBadge />
           <LanguageSwitcher />
           {user?.role === 'admin' && (
             <IconBtn
@@ -196,6 +210,7 @@ function InterviewBar({ children }) {
       </div>
 
       <div className="flex items-center gap-2">
+        <CreditBadge />
         <LanguageSwitcher />
         {children}
       </div>

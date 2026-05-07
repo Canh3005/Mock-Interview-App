@@ -22,6 +22,7 @@ import { SDProblemModule } from './sd-problem/sd-problem.module';
 import { SDSessionModule } from './sd-session/sd-session.module';
 import { SDInterviewerModule } from './sd-interviewer/sd-interviewer.module';
 import { SDEvaluatorModule } from './sd-evaluator/sd-evaluator.module';
+import { WalletModule } from './wallet/wallet.module';
 
 @Module({
   imports: [
@@ -75,6 +76,7 @@ import { SDEvaluatorModule } from './sd-evaluator/sd-evaluator.module';
     SDSessionModule,
     SDInterviewerModule,
     SDEvaluatorModule,
+    WalletModule,
   ],
   controllers: [AppController],
   providers: [AppService],
