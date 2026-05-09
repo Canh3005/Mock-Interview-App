@@ -64,6 +64,16 @@ Thuộc **Epic 1 — Credit Wallet Core**. Story này là cổng kiểm soát gi
 5. Toast xuất hiện: "Bạn còn 3 Credit. Nạp thêm để không bị gián đoạn phiên tiếp theo." kèm nút "Nạp Credit"
 6. Toast tự đóng sau 5 giây hoặc user đóng thủ công — không block phiên đang chạy
 
+### Happy Path — Chọn nhiều Round trong một phiên
+
+1. User ở màn hình cấu hình phiên, chọn 3 round: DSA Combat (3 Credit) + Behavioral Interview (4 Credit) + System Design (8 Credit)
+2. Hệ thống tính tổng: 3 + 4 + 8 = 15 Credit
+3. Kiểm tra số dư (ví dụ 20 Credit) ≥ 15 Credit → đủ điều kiện
+4. Hệ thống trừ 15 Credit trong một thao tác nguyên tử duy nhất — tạo 1 giao dịch SPEND: "Phiên 3 round (DSA + Behavioral + System Design)"
+5. Số dư header cập nhật từ 20 → 5 Credit ngay lập tức
+6. Toàn bộ phiên (tất cả các round) bắt đầu bình thường
+7. Kiểm tra số dư còn lại: 5 Credit = ngưỡng cảnh báo → toast xuất hiện: "Bạn còn 5 Credit. Nạp thêm để không bị gián đoạn phiên tiếp theo."
+
 ### Happy Path — Không đủ Credit
 
 1. User có 3 Credit, nhấn "Bắt đầu System Design" (cần 8 Credit)
@@ -110,6 +120,10 @@ Thuộc **Epic 1 — Credit Wallet Core**. Story này là cổng kiểm soát gi
 - Given user có 3 Credit, When user cố bắt đầu System Design (cần 8 Credit), Then hệ thống chặn và hiển thị thông báo "Cần 8 Credit — Hiện có 3 Credit — Thiếu 5 Credit" kèm nút "Nạp Credit", và Credit không bị trừ.
 
 - Given user có 6 Credit và vừa trừ 3 Credit để bắt đầu DSA (còn 3 Credit), When deduction thành công, Then toast "Bạn còn 3 Credit, nạp thêm để không bị gián đoạn" xuất hiện trong vòng 2 giây và header cập nhật về 3 ngay lập tức.
+
+- Given user chọn 3 round (DSA 3 Credit + Behavioral 4 Credit + System Design 8 Credit) và có 20 Credit, When user xác nhận bắt đầu, Then hệ thống trừ tổng 15 Credit trong 1 giao dịch duy nhất, header hiển thị 5 Credit, toast cảnh báo thấp Credit xuất hiện, và toàn bộ 3 round bắt đầu.
+
+- Given user chọn 2 round (DSA 3 Credit + System Design 8 Credit = 11 Credit) nhưng chỉ có 8 Credit, When user xác nhận bắt đầu, Then hệ thống chặn với thông báo "Cần 11 Credit — Hiện có 8 Credit — Thiếu 3 Credit", không trừ Credit, không tạo round nào.
 
 - Given user mở 2 tab và cả 2 cùng nhấn bắt đầu DSA (cần 3 Credit) khi ví có 3 Credit, When cả 2 request cùng đến server, Then chỉ 1 phiên được tạo và Credit trừ đúng 1 lần — tab còn lại nhận thông báo "Không đủ Credit".
 

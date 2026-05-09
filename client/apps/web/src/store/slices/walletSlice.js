@@ -16,6 +16,9 @@ const walletSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
+    setBalance: (state, action) => {
+      state.balance = action.payload;
+    },
     resetWallet: (state) => {
       state.balance = null;
       state.loading = false;
@@ -28,6 +31,7 @@ export const {
   fetchBalanceRequest,
   fetchBalanceSuccess,
   fetchBalanceFailure,
+  setBalance,
   resetWallet,
 } = walletSlice.actions;
 

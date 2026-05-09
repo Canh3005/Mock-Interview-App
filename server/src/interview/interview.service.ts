@@ -2,6 +2,7 @@ import { Injectable, Logger, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
+import { WalletService } from '../wallet/wallet.service';
 import Redis from 'ioredis';
 import {
   InterviewSession,
@@ -31,6 +32,16 @@ const ROUND_DURATIONS: Record<string, number> = {
   system_design: 30,
 };
 
+// TODO: re-enable when credit gate is active
+// const ROUND_CREDIT_COST: Record<string, number> = {
+//   hr_behavioral: 4,
+//   dsa: 3,
+//   system_design: 8,
+//   ai_prompting: 2,
+// };
+
+const LOW_BALANCE_THRESHOLD = 5;
+
 @Injectable()
 export class InterviewService {
   private readonly logger = new Logger(InterviewService.name);
@@ -48,6 +59,7 @@ export class InterviewService {
     @InjectRepository(SDSession)
     private sdSessionRepo: Repository<SDSession>,
     private configService: ConfigService,
+    private walletService: WalletService,
   ) {
     this.redisClient = new Redis({
       host: this.configService.get('REDIS_HOST') || '127.0.0.1',
@@ -141,6 +153,8 @@ export class InterviewService {
     sessionId: string;
     candidateLevel: CandidateLevel;
     estimatedDuration: number;
+    newBalance: number | null;
+    lowBalance: boolean;
   }> {
     const [rawCv, rawJd] = await Promise.all([
       this.redisClient.get(`cv_context:${userId}`),
@@ -165,6 +179,21 @@ export class InterviewService {
       0,
     );
 
+    // TODO: re-enable credit gate after wallet migration for existing accounts
+    // const totalCost: number = dto.rounds.reduce(
+    //   (sum, r) => sum + (ROUND_CREDIT_COST[r] ?? 0),
+    //   0,
+    // );
+    // if (totalCost > 0) {
+    //   const roundNames: string = dto.rounds.join(', ');
+    //   newBalance = await this.walletService.deductCredit({
+    //     userId,
+    //     amount: totalCost,
+    //     description: `Interview session: ${roundNames}`,
+    //   });
+    // }
+    const newBalance: number | null = null;
+
     const session = this.sessionRepo.create({
       userId,
       mode: dto.mode,
@@ -181,7 +210,13 @@ export class InterviewService {
       `Session ${session.id} created for user ${userId} [${candidateLevel} / ${dto.mode}]`,
     );
 
-    return { sessionId: session.id, candidateLevel, estimatedDuration };
+    return {
+      sessionId: session.id,
+      candidateLevel,
+      estimatedDuration,
+      newBalance,
+      lowBalance: newBalance !== null && newBalance < LOW_BALANCE_THRESHOLD,
+    };
   }
 
   async updateContext(

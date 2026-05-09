@@ -51,6 +51,7 @@ const initialState = {
 
   loading: false,
   error: null,
+  creditError: null, // { code, required, current, deficit } | null
 };
 
 const interviewSetupSlice = createSlice({
@@ -140,11 +141,23 @@ const interviewSetupSlice = createSlice({
       state.error = action.payload;
     },
 
+    // ─── Credit error ──────────────────────────────────────────────────────
+    setCreditError(state, action) {
+      state.loading = false;
+      state.error = null;
+      state.creditError = action.payload;
+      state.step = 'round_select';
+    },
+    clearCreditError(state) {
+      state.creditError = null;
+    },
+
     // ─── Session init ──────────────────────────────────────────────────────
     initSessionRequest(state) {
       state.step = 'initializing';
       state.loading = true;
       state.error = null;
+      state.creditError = null;
     },
     initSessionSuccess(state, action) {
       state.loading = false;
@@ -210,6 +223,8 @@ export const {
   initSessionSuccess,
   initSessionFailure,
   resumeSession,
+  setCreditError,
+  clearCreditError,
   resetSetup,
 } = interviewSetupSlice.actions;
 

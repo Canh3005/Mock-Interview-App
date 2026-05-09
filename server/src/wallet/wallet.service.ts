@@ -1,4 +1,8 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, QueryFailedError, Repository } from 'typeorm';
 import { Wallet } from './entities/wallet.entity';
@@ -37,11 +41,75 @@ export class WalletService {
     await this._claimSignupBonus({ wallet: savedWallet, email });
   }
 
-  async getBalance(userId: string): Promise<number> {
+  // async deductCredit({
+  //   userId,
+  //   amount,
+  //   description,
+  // }: {
+  //   userId: string;
+  //   amount: number;
+  //   description: string;
+  // }): Promise<number> {
+  //   const queryRunner = this.dataSource.createQueryRunner();
+  //   await queryRunner.connect();
+  //   await queryRunner.startTransaction();
+
+  //   try {
+  //     const wallet: Wallet | null = await queryRunner.manager.findOne(Wallet, {
+  //       where: { userId },
+  //       lock: { mode: 'pessimistic_write' },
+  //     });
+
+  //     // if (!wallet) throw new NotFoundException('Wallet not found');
+
+  //     if (wallet.balance < amount) {
+  //       throw new BadRequestException({
+  //         code: 'INSUFFICIENT_CREDITS',
+  //         required: amount,
+  //         current: wallet.balance,
+  //         deficit: amount - wallet.balance,
+  //       });
+  //     }
+
+  //     wallet.balance -= amount;
+  //     await queryRunner.manager.save(wallet);
+
+  //     const tx: WalletTransaction = queryRunner.manager.create(
+  //       WalletTransaction,
+  //       {
+  //         walletId: wallet.id,
+  //         type: TransactionType.DEBIT,
+  //         amount,
+  //         description,
+  //       },
+  //     );
+  //     await queryRunner.manager.save(tx);
+
+  //     await queryRunner.commitTransaction();
+  //     this.logger.log(
+  //       `Deducted ${amount} credits from user ${userId}. New balance: ${wallet.balance}`,
+  //     );
+
+  //     return wallet.balance;
+  //   } catch (error) {
+  //     await queryRunner.rollbackTransaction();
+  //     throw error;
+  //   } finally {
+  //     await queryRunner.release();
+  //   }
+  // }
+
+  async getBalance(userId: string, email?: string): Promise<number> {
     const wallet: Wallet | null = await this.walletRepo.findOne({
       where: { userId },
     });
-    if (!wallet) throw new NotFoundException('Wallet not found');
+    if (!wallet) {
+      if (email) {
+        await this.createWalletWithBonus({ userId, email });
+        return SIGNUP_BONUS;
+      }
+      return 0;
+    }
     return wallet.balance;
   }
 

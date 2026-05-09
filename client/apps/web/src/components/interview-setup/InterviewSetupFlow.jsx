@@ -9,6 +9,7 @@ import {
   resetSetup,
   initSessionRequest,
   proceedFromRoundSelect,
+  clearCreditError,
 } from '../../store/slices/interviewSetupSlice'
 import { resetBehavioral } from '../../store/slices/behavioralSlice'
 import { resetCombatOrchestrator } from '../../store/slices/combatOrchestratorSlice'
@@ -18,6 +19,7 @@ import { resetInterviewer } from '../../store/slices/sdInterviewerSlice'
 import ModeSelectionStep from './steps/ModeSelectionStep'
 import CombatPermissionGate from './steps/CombatPermissionGate'
 import RoundSelectionStep from './steps/RoundSelectionStep'
+import InsufficientCreditModal from './InsufficientCreditModal'
 
 // ─── Missing context modal ────────────────────────────────────────────────────
 function MissingContextModal({ missing, onGoUpload, onCancel }) {
@@ -361,7 +363,7 @@ function LoadingScreen({ message }) {
 export default function InterviewSetupFlow() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const { step, missing, cv, jd, loading, session, selectedRounds } = useSelector(
+  const { step, missing, cv, jd, loading, session, selectedRounds, creditError } = useSelector(
     (s) => s.interviewSetup,
   )
 
@@ -405,6 +407,15 @@ export default function InterviewSetupFlow() {
     navigate(ROUTES.DASHBOARD_PROFILE)
   }
 
+  const handleClearCreditError = () => {
+    dispatch(clearCreditError())
+  }
+
+  const handleTopUp = () => {
+    dispatch(resetSetup())
+    navigate(ROUTES.DASHBOARD) // TODO: replace with ROUTES.PURCHASE when story 014 is done
+  }
+
   const handleStartSession = () => {
     if (selectedMode === 'combat') {
       dispatch(proceedFromRoundSelect())
@@ -419,6 +430,16 @@ export default function InterviewSetupFlow() {
 
   // ─── Render step content ─────────────────────────────────────────────────
   const renderStep = () => {
+    if (creditError) {
+      return (
+        <InsufficientCreditModal
+          creditError={creditError}
+          onClose={handleClearCreditError}
+          onTopUp={handleTopUp}
+        />
+      )
+    }
+
     switch (step) {
       case 'idle':
       case 'preflight_loading':

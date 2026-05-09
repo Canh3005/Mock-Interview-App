@@ -8,6 +8,7 @@ import { BehavioralSession } from '../behavioral/entities/behavioral-session.ent
 import { LiveCodingSession } from '../live-coding/entities/live-coding-session.entity';
 import { LiveCodingSessionProblem } from '../live-coding/entities/live-coding-session-problem.entity';
 import { SDSession } from '../sd-session/entities/sd-session.entity';
+import { WalletModule } from '../wallet/wallet.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { SDSession } from '../sd-session/entities/sd-session.entity';
       LiveCodingSessionProblem,
       SDSession,
     ]),
+    WalletModule,
   ],
   controllers: [InterviewController],
   providers: [InterviewService, RoundOrchestratorService],

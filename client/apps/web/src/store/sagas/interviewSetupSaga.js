@@ -11,8 +11,12 @@ import {
   initSessionRequest,
   initSessionSuccess,
   initSessionFailure,
+  setCreditError,
 } from '../slices/interviewSetupSlice';
+import { setBalance } from '../slices/walletSlice';
 import { toast } from 'sonner';
+
+const LOW_BALANCE_THRESHOLD = 5;
 
 function* preflightSaga() {
   // Small debounce — absorbs React Strict Mode double-mount in development
@@ -52,6 +56,17 @@ function* initSessionSaga() {
       language: selectedLanguage ?? 'vi',
     });
 
+    if (typeof data.newBalance === 'number') {
+      yield put(setBalance(data.newBalance));
+      if (data.newBalance === 0) {
+        toast.warning('Bạn đã hết Credit sau phiên này. Nạp thêm để tiếp tục luyện tập.');
+      } else if (data.newBalance < LOW_BALANCE_THRESHOLD) {
+        toast.warning(
+          `Bạn còn ${data.newBalance} Credit. Nạp thêm để không bị gián đoạn phiên tiếp theo.`,
+        );
+      }
+    }
+
     let sdSessionId = null;
     if (selectedRounds.includes('system_design')) {
       const sdData = yield call(sdSessionApi.create, {
@@ -65,7 +80,12 @@ function* initSessionSaga() {
 
     yield put(initSessionSuccess({ ...data, mode: selectedMode, sdSessionId }));
   } catch (err) {
-    const msg = err.response?.data?.message || 'Không thể khởi tạo phiên phỏng vấn.';
+    const errData = err.response?.data;
+    if (errData?.code === 'INSUFFICIENT_CREDITS') {
+      yield put(setCreditError(errData));
+      return;
+    }
+    const msg = errData?.message || 'Không thể khởi tạo phiên phỏng vấn.';
     yield put(initSessionFailure(msg));
     toast.error(msg);
   }
