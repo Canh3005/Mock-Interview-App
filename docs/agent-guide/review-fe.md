@@ -1,11 +1,12 @@
 # FE Review Checklist
 
-Đọc `BA.md` + `HOW.md` + `git diff` trước khi review. Mục tiêu: đối chiếu code với spec, không chỉ đọc code đơn thuần.
+Đọc `BA.md` + `HOW.md` nếu có + Dev done report nếu có + `git diff` trước khi review. Nếu SA đã skip và không có `HOW.md`, review trực tiếp theo BA business flow, acceptance criteria, convention FE, và diff. Mục tiêu: đối chiếu code với spec, không chỉ đọc code đơn thuần.
 
 ## 1. Đúng spec chưa?
 
 - [ ] UI có thực sự làm WHAT trong `BA.md` không?
-- [ ] Tất cả các điểm trong `HOW.md > Frontend Changes` đã được implement không?
+- [ ] Nếu có `HOW.md`: UI/API integration có tuân thủ architecture decisions, contracts, boundaries, và quality guardrails không?
+- [ ] Nếu có Dev done report: acceptance mapping và verification có khớp diff thực tế không?
 
 ## 2. Redux Pattern
 

@@ -1,11 +1,12 @@
 # BE Review Checklist
 
-Đọc `BA.md` + `HOW.md` + `git diff` trước khi review. Mục tiêu: đối chiếu code với spec, không chỉ đọc code đơn thuần.
+Đọc `BA.md` + `HOW.md` nếu có + Dev done report nếu có + `git diff` trước khi review. Nếu SA đã skip và không có `HOW.md`, review trực tiếp theo BA business flow, acceptance criteria, convention BE, và diff. Mục tiêu: đối chiếu code với spec, không chỉ đọc code đơn thuần.
 
 ## 1. Đúng spec chưa?
 
 - [ ] Code có thực sự làm WHAT trong `BA.md` không?
-- [ ] Tất cả các điểm trong `HOW.md > Backend Changes` đã được implement không? Có bước nào bị bỏ qua không?
+- [ ] Nếu có `HOW.md`: code có tuân thủ architecture decisions, system boundaries, contracts, và quality guardrails không?
+- [ ] Nếu có Dev done report: acceptance mapping và verification có khớp diff thực tế không?
 
 ## 2. Structure & Pattern
 

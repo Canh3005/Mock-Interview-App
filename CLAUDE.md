@@ -18,18 +18,24 @@
 | Lệnh | Vai trò | Đọc trước | Output |
 |------|---------|-----------|--------|
 | `ba <feature>` | BA Agent | `ba-guide.md` + `docs/features/` | `docs/features/<NNN>-<feature>/BA.md` |
-| `sa <feature>` | SA Agent | `sa-guide.md` + `BA.md` + `convention-be.md` + `convention-fe.md` + codebase | `docs/features/<NNN>-<feature>/HOW.md` |
-| `be <feature>` | Dev BE | `HOW.md` (hoặc `BA.md` nếu SA skip) + `convention-be.md` | code — KHÔNG commit |
-| `fe <feature>` | Dev FE | `HOW.md` (hoặc `BA.md` nếu SA skip) + `convention-fe.md` + code BE hiện tại | code — KHÔNG commit |
-| `review be <feature>` | Reviewer BE | `BA.md` + `HOW.md` + `review-be.md` + `git diff` | `docs/features/<NNN>-<feature>/REVIEW-BE.md` |
-| `review fe <feature>` | Reviewer FE | `BA.md` + `HOW.md` + `review-fe.md` + `git diff` | `docs/features/<NNN>-<feature>/REVIEW-FE.md` |
+| `sa <feature>` | SA Agent | `sa-guide.md` + `BA.md` + `convention-be.md` + `convention-fe.md` + codebase | `docs/features/<NNN>-<feature>/HOW.md` (architecture brief) |
+| `be <feature>` | Dev BE | `dev-guide.md` + `HOW.md` (hoặc `BA.md` nếu SA skip) + `convention-be.md` | code + done report — KHÔNG commit |
+| `fe <feature>` | Dev FE | `dev-guide.md` + `HOW.md` (hoặc `BA.md` nếu SA skip) + `convention-fe.md` + code BE hiện tại | code + done report — KHÔNG commit |
+| `review be <feature>` | Reviewer BE | `BA.md` + `HOW.md` nếu có + Dev done report nếu có + `review-be.md` + `git diff` | `docs/features/<NNN>-<feature>/REVIEW-BE.md` |
+| `review fe <feature>` | Reviewer FE | `BA.md` + `HOW.md` nếu có + Dev done report nếu có + `review-fe.md` + `git diff` | `docs/features/<NNN>-<feature>/REVIEW-FE.md` |
 | `fix <mô tả>` | Quick Fix | file liên quan trực tiếp | code — KHÔNG commit |
 
-Convention và review checklist: `docs/agent-guide/`
+Convention, dev guide, và review checklist: `docs/agent-guide/`
 
 **Commit rule:** Commit SAU KHI review approved. Không commit sớm hơn.
 
 **Feedback loop:** Nếu bạn chưa approve output của bước nào — agent đó sửa theo comment của bạn, không chuyển sang bước tiếp theo.
+
+**Handoff rule:** Mỗi bước chỉ chuyển giao artifact thuộc trách nhiệm của mình.
+- BA → mô tả nghiệp vụ: WHAT/WHY/SCOPE/Business Flow/Acceptance Criteria.
+- SA → architecture brief: decisions/boundaries/contracts/quality guardrails khi cần.
+- Dev → code + done report: implementation, acceptance mapping, verification.
+- Reviewer → verdict: approve hoặc request changes dựa trên BA/HOW/diff.
 
 ---
 
@@ -57,7 +63,7 @@ Nếu mid-task phát hiện thay đổi lớn hơn dự kiến — DỪNG, báo 
 
 **Đọc trước:** `docs/agent-guide/sa-guide.md` + `BA.md` + files codebase liên quan trực tiếp.
 
-**Thinking process và output format:** xem `sa-guide.md`.
+**Thinking process và output format:** xem `sa-guide.md`. SA viết architecture brief: decisions, boundaries, contracts, quality guardrails. SA không viết implementation checklist thay Dev.
 
 **Bước đầu tiên bắt buộc:** chạy SA Needed Check (mục 0 trong `sa-guide.md`).
 - Nếu SA không cần → báo người dùng, redirect sang `be`/`fe`. KHÔNG viết HOW.md.
@@ -70,32 +76,34 @@ Nếu mid-task phát hiện thay đổi lớn hơn dự kiến — DỪNG, báo 
 ## Dev BE
 
 **Đọc trước:**
-- Nếu HOW.md tồn tại: đọc `HOW.md` + `docs/agent-guide/convention-be.md`
-- Nếu HOW.md không tồn tại (SA đã skip): đọc `BA.md` (SCOPE + File Estimate + Acceptance Criteria) + `docs/agent-guide/convention-be.md` + các file codebase được nhắc trong BA File Estimate
+- `docs/agent-guide/dev-guide.md`
+- Nếu HOW.md tồn tại: đọc `HOW.md` như architecture constraints + `docs/agent-guide/convention-be.md`; Dev tự xác định file/function cụ thể theo codebase
+- Nếu HOW.md không tồn tại (SA đã skip): đọc `BA.md` (WHAT, WHY, Epic Context, SCOPE, Business Flow, Acceptance Criteria, Risk nếu có) + `docs/agent-guide/convention-be.md`, sau đó tự scan module/service/controller/entity gần nhất trong codebase để xác định file cần sửa
 
 Nếu thông tin còn thiếu sau khi đọc — hỏi bạn, không tự quyết.
 
-**Done khi:** Lint pass (`npm run lint`). KHÔNG commit.
+**Done khi:** code đúng BA/HOW, done report có acceptance mapping, verification theo `dev-guide.md` đã chạy hoặc nêu rõ lý do không chạy được. KHÔNG commit.
 
 ---
 
 ## Dev FE
 
 **Đọc trước:**
-- Nếu HOW.md tồn tại: đọc `HOW.md` + `docs/agent-guide/convention-fe.md` + code BE vừa viết
-- Nếu HOW.md không tồn tại (SA đã skip): đọc `BA.md` (SCOPE + File Estimate + User Flow) + `docs/agent-guide/convention-fe.md` + code BE vừa viết để biết API contract
+- `docs/agent-guide/dev-guide.md`
+- Nếu HOW.md tồn tại: đọc `HOW.md` như architecture/API constraints + `docs/agent-guide/convention-fe.md` + code BE vừa viết; Dev tự xác định route/api/saga/component cụ thể theo codebase
+- Nếu HOW.md không tồn tại (SA đã skip): đọc `BA.md` (WHAT, WHY, Epic Context, SCOPE, Business Flow, Acceptance Criteria, Risk nếu có) + `docs/agent-guide/convention-fe.md` + code BE vừa viết để biết API contract, sau đó tự scan route/api/saga/component gần nhất trong codebase để xác định file cần sửa
 
 Nếu thông tin còn thiếu sau khi đọc — hỏi bạn, không tự quyết.
 
-**Done khi:** UI chạy được trên browser, lint pass. KHÔNG commit.
+**Done khi:** UI/API integration đúng BA/HOW, done report có acceptance mapping, verification theo `dev-guide.md` đã chạy hoặc nêu rõ lý do không chạy được. KHÔNG commit.
 
 ---
 
 ## Reviewer
 
 **Đọc trước:**
-- `review be`: `BA.md` + `HOW.md` + `docs/agent-guide/review-be.md` + `git diff`
-- `review fe`: `BA.md` + `HOW.md` + `docs/agent-guide/review-fe.md` + `git diff`
+- `review be`: `BA.md` + `HOW.md` nếu có + Dev done report nếu có + `docs/agent-guide/review-be.md` + `git diff`
+- `review fe`: `BA.md` + `HOW.md` nếu có + Dev done report nếu có + `docs/agent-guide/review-fe.md` + `git diff`
 
 Review đối chiếu với spec — không chỉ check convention.
 

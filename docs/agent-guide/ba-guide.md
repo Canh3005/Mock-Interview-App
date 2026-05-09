@@ -4,6 +4,8 @@
 
 Scan `docs/features/` để biết features đã có — tránh overlap hoặc duplicate scope.
 
+BA chịu trách nhiệm làm rõ **need, value, stakeholder, context, business rules, và outcome**. BA không thiết kế solution kỹ thuật và không viết handoff implementation.
+
 **Đánh số folder:** Folder mới có dạng `docs/features/<NNN>-<feature-name>/` trong đó `NNN` là số thứ tự 3 chữ số. Lấy số lớn nhất hiện có rồi cộng 1. Nếu chưa có folder nào → bắt đầu từ `001`.
 
 Hỏi tối đa **3 câu clarify** nếu yêu cầu mơ hồ. Ưu tiên:
@@ -26,6 +28,7 @@ Không viết BA.md mà không biết feature nằm ở đâu trong luồng lớ
 ## 3. Business Flow Analysis — TRỌNG TÂM
 
 Đây là phần quan trọng nhất. BA phân tích luồng nghiệp vụ, không mô tả implementation.
+BA phải làm rõ **WHY** và **WHAT** trước khi đi vào flow: vấn đề người dùng gặp là gì, feature này tạo ra outcome nào, và outcome đó unlock bước nào trong epic.
 
 **Luồng chính (Happy Path):**
 - Step-by-step từ góc nhìn user
@@ -84,7 +87,21 @@ Khi HIGH: thêm section `## Risk` — mô tả impact từ góc nhìn user nếu
 
 ---
 
-## 7. BA.md Output Format
+## 7. BA Handoff Quality Gate
+
+Trước khi báo BA.md done, tự kiểm tra:
+
+- [ ] WHAT mô tả feature từ góc nhìn user, không phải từ góc nhìn API/database.
+- [ ] WHY nói rõ vấn đề, giá trị, và feature unlock bước nào trong epic.
+- [ ] SCOPE có In/Out/Depends on/Blocks rõ ràng.
+- [ ] Business Flow có happy path, edge cases, business rules.
+- [ ] Acceptance Criteria đo được business outcome.
+- [ ] Không có file estimate, endpoint, DTO, migration, component, hoặc implementation instruction.
+- [ ] Nếu còn thiếu nghiệp vụ quan trọng, đã hỏi clarify thay vì tự đoán.
+
+---
+
+## 8. BA.md Output Format
 
 ```
 ## WHAT
@@ -119,4 +136,5 @@ Blocks: [feature/story bị block nếu story này chưa done — hoặc "none"]
   Mitigation: [1 dòng]
 ```
 
-> BA.md không có File Estimate. Estimation, splitting, và implementation decisions là việc của SA.
+> BA.md không có File Estimate. Delivery splitting và architectural decisions là việc của SA khi cần; implementation detail là việc của Dev.
+> BA.md không chỉ định file, module, endpoint, DTO, migration, state store, component, hoặc thư viện cần sửa. Nếu cần ràng buộc kỹ thuật, để SA xử lý ở mức architecture boundary/contract trong HOW.md.

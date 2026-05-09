@@ -1,15 +1,42 @@
 # SA Guide
 
-## 0. SA Needed Check — CHẠY ĐẦU TIÊN
+## 0. Vai trò của SA
 
-Đọc `BA.md`, kiểm tra các điều kiện sau. Nếu **ít nhất 1 điều kiện đúng** → SA cần thiết, tiếp tục từ mục 1.
+SA không phải Dev lead viết task list chi tiết. SA chịu trách nhiệm biến nhu cầu nghiệp vụ trong `BA.md` thành **architecture direction** đủ rõ để Dev tự implement đúng hướng.
+
+Theo thực tế ở các tổ chức engineering trưởng thành:
+- BA tập trung vào need, value, stakeholder, context, business rules, và outcome.
+- SA tập trung vào system boundary, integration, trade-off, quality attributes, risk, constraints, và governance.
+- Dev chịu trách nhiệm implementation detail: file nào sửa, function nào tách, DTO/entity/component cụ thể viết ra sao.
+
+**SA được làm:**
+- Chọn hoặc xác nhận pattern kiến trúc khi có nhiều hướng hợp lý.
+- Xác định boundary giữa BE/FE/shared service/external dependency.
+- Chốt contract ở mức hệ thống: API behavior, event, state transition, data ownership, auth boundary.
+- Nêu risk kỹ thuật, quality attributes, rollback/compatibility concern, migration concern.
+- Split delivery khi một feature quá rộng hoặc rủi ro để làm trong một lượt.
+
+**SA không làm:**
+- Không viết checklist file-by-file kiểu "sửa file A thêm method B".
+- Không viết pseudo-code chi tiết thay Dev.
+- Không chốt tên private method, reducer, component con, DTO field phụ nếu không phải public contract.
+- Không đưa implementation recipe cho phần đã có precedent rõ trong codebase.
+- Không biến HOW.md thành tutorial coding.
+
+---
+
+## 1. SA Needed Check — CHẠY ĐẦU TIÊN
+
+Đọc `BA.md`, kiểm tra các điều kiện sau. Nếu **ít nhất 1 điều kiện đúng** → SA cần thiết, tiếp tục từ mục 2.
 
 | Điều kiện | Ví dụ |
 |-----------|-------|
 | BA có flag Risk HIGH | AI streaming, WebSocket/SSE mới, state machine >3 stages, concurrent write |
-| BA để ngỏ architectural decision | "lưu ở đâu?", "dùng transport nào?", "sync hay async?" chưa được chốt |
-| Feature cần ≥2 module mới tương tác với nhau theo cách chưa có precedent trong codebase | SDSession + AI Evaluator + WebSocket channel cùng lúc |
-| BA Business Flow để ngỏ cách xử lý edge case quan trọng | Không rõ fallback khi AI fail, không rõ state nào được phép transition sang state nào |
+| Có architectural decision chưa được chốt | storage, transport, sync/async, queue, cache, ownership boundary |
+| Feature chạm ≥2 bounded context/module theo cách chưa có precedent | Behavioral + Wallet + Interview Session; SDSession + AI Evaluator + SSE |
+| Có thay đổi contract cross-team/cross-layer | API public, event payload, data model shared, auth/permission boundary |
+| Có quality attribute cần trade-off | latency, availability, consistency, cost, observability, privacy |
+| BA Business Flow để ngỏ edge case quan trọng | AI fail fallback, state transition hợp lệ, refund/deduction idempotency |
 
 **Nếu KHÔNG có điều kiện nào đúng → SA không cần thiết.**
 
@@ -18,7 +45,7 @@ Khi đó: báo người dùng theo format sau rồi dừng, không viết HOW.md
 ```
 SA SKIP — BA.md đủ để code trực tiếp.
 
-Lý do skip: [1 câu — vd. "BA có File Estimate đầy đủ, không có Risk HIGH, không có architectural decision mở"]
+Lý do skip: [1 câu — vd. "BA đã chốt rõ WHAT/WHY, SCOPE, Business Flow, Acceptance Criteria; không có Risk HIGH hoặc architectural decision mở"]
 
 Bước tiếp theo:
 - BE: `be <feature>`
@@ -29,55 +56,55 @@ Dev sẽ đọc trực tiếp từ BA.md.
 
 ---
 
-## 1. Trước khi viết HOW.md
+## 2. Trước khi viết HOW.md
 
 **Bắt buộc đọc:**
-1. `BA.md` — hiểu WHAT, SCOPE, Business Flow, Acceptance Criteria, Risk
-2. Files codebase liên quan trực tiếp (không đọc toàn bộ — chỉ module/service gần nhất với feature)
+1. `BA.md` — hiểu WHAT, WHY, Epic Context, SCOPE, Business Flow, Acceptance Criteria, Risk.
+2. Codebase liên quan trực tiếp — chỉ để hiểu precedent, boundary, naming hiện có, integration đang dùng.
+3. `convention-be.md` và `convention-fe.md` — để không propose hướng lệch convention.
 
-Mục tiêu: biết pattern đang dùng để không propose lệch, biết cái gì đã có để tái dùng.
+Mục tiêu không phải tìm mọi file cần sửa. Mục tiêu là biết hệ thống hiện tại có pattern nào nên reuse, điểm nào là constraint, và chỗ nào cần decision.
 
-Nếu WHAT không khả thi kỹ thuật — **DỪNG**, báo người dùng trước, không viết HOW.
-
----
-
-## 2. Complexity Budget — BẮT BUỘC
-
-**1 HOW = ≤10 files thay đổi.**
-
-SA ước tính file count trước khi viết HOW:
-- ≤10 → tiến hành bình thường
-- >10 → SA tự split (xem mục 3), không cần hỏi BA
+Nếu WHAT không khả thi kỹ thuật hoặc BA thiếu nghiệp vụ quan trọng — **DỪNG**, báo người dùng trước, không viết HOW.
 
 ---
 
-## 3. Story Splitting — Khi nào và cách tách
+## 3. Architecture Scope Budget
 
-SA là người quyết định có cần split hay không, dựa trên file count và complexity — không phải BA.
+SA kiểm soát complexity bằng **change surface**, không bằng số file.
 
-Nếu file count >10 sau khi SA phân tích: **DỪNG**, tự split thành Story 1 / Story 2 trong HOW.md, báo người dùng trước khi code.
+Một HOW.md nên chỉ bao phủ tối đa:
+- 1 bounded context chính
+- 1 integration mới hoặc 1 contract mới
+- 1 state machine hoặc 1 workflow chính
+- 1 nhóm quality attributes chính cần trade-off
+
+Nếu vượt quá mức này → split delivery.
 
 | Dấu hiệu | Cách split |
 |----------|-----------|
-| BE và FE có thể làm song song sau khi có API contract | Story 1: entity + API. Story 2: FE + saga |
-| Cần DB schema mới VÀ business logic phức tạp | Story 1: schema + API skeleton. Story 2: business logic + FE |
-| Có AI integration mới | Story 1: AI service + basic call. Story 2: evaluation logic + FE display |
-| Có real-time channel mới (SSE/WebSocket) | Story 1: infra + echo endpoint. Story 2: business feature dùng channel |
-| Feature phụ thuộc vào feature khác chưa done | Tách thành 2 story độc lập có thứ tự rõ |
+| BE contract và FE experience có thể tách sau khi contract ổn định | Story 1: contract + backend behavior. Story 2: FE experience |
+| Có schema/data ownership mới và business logic phức tạp | Story 1: data model + contract. Story 2: workflow behavior |
+| Có AI integration mới | Story 1: AI boundary + fallback contract. Story 2: scoring/evaluation UX |
+| Có real-time channel mới | Story 1: channel architecture + lifecycle. Story 2: business behavior qua channel |
+| Có payment/credit/concurrent write | Story 1: idempotency + consistency model. Story 2: user-facing flow |
+| Phụ thuộc feature khác chưa done | Tách story theo thứ tự dependency rõ |
 
-Sau khi split, mỗi story vẫn phải ≤10 files. Nếu vẫn >10 → split tiếp.
+Sau khi split, mỗi story phải có outcome độc lập, review được, rollback được.
 
 ---
 
 ## 4. Options Analysis — Khi nào cần
 
 Bắt buộc present ≥2 options khi có architectural decision quan trọng:
-- Transport layer mới (REST vs WebSocket vs SSE)
-- Storage strategy (DB vs Redis vs in-memory)
-- Processing model (sync vs async queue)
-- AI call pattern (streaming vs batch)
+- Transport layer mới: REST vs WebSocket vs SSE
+- Storage strategy: DB vs Redis vs in-memory
+- Processing model: sync request vs async queue
+- AI call pattern: streaming vs batch
+- Consistency model: strong consistency vs eventual consistency
+- Ownership boundary: module nào là source of truth
 
-Không cần options analysis cho quyết định hiển nhiên (thêm DTO field, CRUD endpoint mới).
+Không cần options analysis cho quyết định hiển nhiên đã có precedent rõ trong codebase.
 
 **Format:**
 ```
@@ -96,16 +123,20 @@ Không cần options analysis cho quyết định hiển nhiên (thêm DTO field
 
 ---
 
-## 5. Stability Checklist
+## 5. Stability & Quality Attributes
 
-Kiểm tra trước khi viết HOW. Nếu có vấn đề → ghi vào section `Stability Notes`, không bỏ qua.
+SA phải nêu rõ các ràng buộc vận hành nếu feature có rủi ro tương ứng:
 
-- [ ] External call (AI, HTTP) có timeout không? Giá trị cụ thể?
-- [ ] Nếu step N fail, state trước đó có bị corrupt không? (cần rollback/cleanup?)
-- [ ] Race condition khi nhiều request cùng lúc trên cùng resource?
-- [ ] Cache key unique per user/session? TTL bao lâu?
-- [ ] BullMQ job có retry logic? Nếu fail liên tục — dead letter queue?
-- [ ] AI response trống/invalid/timeout → fallback là gì?
+- Latency: user có chờ realtime không? timeout budget là bao nhiêu?
+- Availability/fallback: external dependency fail thì user thấy gì?
+- Consistency: concurrent request có thể double-write/double-charge không?
+- Idempotency: retry có tạo side effect lặp không?
+- Observability: cần log/metric nào để debug production?
+- Privacy/security: data nhạy cảm nào đi qua AI/external service?
+- Migration/compatibility: schema/contract cũ có bị phá không?
+- Rollback: nếu release lỗi thì có cách disable hoặc revert hành vi không?
+
+Không cần giải thích implementation chi tiết, nhưng phải đủ để Dev biết guardrail nào không được vi phạm.
 
 ---
 
@@ -113,56 +144,75 @@ Kiểm tra trước khi viết HOW. Nếu có vấn đề → ghi vào section `
 
 Áp dụng khi story có AI integration.
 
+SA chốt ở mức contract và safety:
+- Input nào được gửi vào AI, input nào bị cấm gửi vì privacy.
+- Output schema bắt buộc và behavior khi output invalid.
+- Streaming hay batch, dựa trên trải nghiệm user trong BA.
+- Timeout budget và fallback user-facing.
+- Log gì để debug mà không lộ dữ liệu nhạy cảm.
+
 **Streaming vs Batch:**
-- User chờ real-time response → SSE (`Content-Type: text/event-stream`)
-- Background / không cần real-time → BullMQ job
+- User chờ real-time response → SSE (`Content-Type: text/event-stream`) hoặc pattern streaming hiện có.
+- Background / không cần real-time → BullMQ job hoặc async pattern hiện có.
 
-**Prompt phải có trong HOW — dạng template đầy đủ, không pseudo-code:**
-```typescript
-const prompt = `You are evaluating a system design interview answer.
-
-Question: ${question}
-Candidate answer: ${answer}
-
-Evaluate on three dimensions:
-- correctness (1–10): technical accuracy
-- depth (1–10): level of detail and nuance
-- communication (1–10): clarity and structure
-
-Return JSON only:
-{ "correctness": number, "depth": number, "communication": number, "feedback": string }`;
-```
+**Prompt trong HOW.md:**
+- Chỉ viết prompt template đầy đủ khi prompt là contract sản phẩm hoặc ảnh hưởng trực tiếp đến safety/evaluation.
+- Nếu không, ghi prompt requirements: role, input variables, output schema, constraints, invalid-output fallback.
 
 **Fallback bắt buộc:**
-- AI timeout (>30s) → trả lỗi có message cụ thể, không hang request
-- AI trả về không phải JSON hợp lệ → log error + trả fallback response đã định nghĩa trước
+- AI timeout → trả lỗi có message cụ thể hoặc fallback đã định nghĩa, không hang request.
+- AI trả output invalid → log lỗi + trả fallback response đã định nghĩa trước.
 
 ---
 
 ## 7. HOW.md Output Format
 
+HOW.md là **Architecture Brief**, không phải implementation checklist.
+
 ```
 ## Overview
-[Approach tóm tắt — 1–2 câu, nêu rõ pattern chính được dùng]
+[Approach tóm tắt — 1–2 câu, nêu pattern chính và outcome kỹ thuật cần đạt]
 
-## Architectural Decisions
-[Options analysis theo format ở mục 3 — bỏ qua nếu không có decision quan trọng]
+## Business Alignment
+[Mapping ngắn từ BA: WHAT/WHY nào đang được bảo vệ bởi kiến trúc này]
 
-## Backend Changes (server/)
-[Mỗi file: tên đường dẫn + thay đổi cụ thể — đủ để Dev không cần hỏi thêm]
+## Architecture Decisions
+[Options analysis chỉ cho decision quan trọng. Nếu không có decision lớn: "N/A — follow existing pattern"]
 
-## Frontend Changes (client/apps/web/)
-[Mỗi file: tên đường dẫn + thay đổi cụ thể]
+## System Boundaries
+[Module/domain nào owns data/hành vi nào; BE/FE/shared/external service tương tác ở mức nào]
 
-## API Contract
-[Endpoint mới: method, path, auth required, request body, response shape]
+## Contracts
+[API/event/state contract ở mức public boundary: method/path nếu cần, auth, request/response shape quan trọng, state transitions. Không liệt kê file cần sửa]
 
-## Stability Notes
-[Timeout values, error handling, cache TTL, retry logic — hoặc "N/A"]
+## Data & State
+[Source of truth, lifecycle, consistency/idempotency/migration concern nếu có]
+
+## Quality & Stability Notes
+[Timeout, fallback, retry, observability, privacy/security, rollback/compatibility — hoặc "N/A"]
+
+## Delivery Slices
+[Nếu cần split: Story 1/2 với outcome độc lập. Nếu không cần: "Single delivery slice"]
 
 ## Not Changing
-[Những gì KHÔNG đụng tới]
+[Những gì KHÔNG đụng tới để tránh scope creep]
 
-## File Count
-Tổng files thay đổi: X / 10
+## Dev Ownership
+Dev tự xác định file/function/component cụ thể dựa trên convention và codebase hiện có. HOW.md chỉ ràng buộc architecture decisions, contracts, boundaries, và quality guardrails.
 ```
+
+---
+
+## 8. SA Handoff Quality Gate
+
+Trước khi báo HOW.md done, tự kiểm tra:
+
+- [ ] HOW.md trace được về WHAT/WHY/SCOPE trong BA.md.
+- [ ] Không có checklist file-by-file hoặc pseudo-code chi tiết thay Dev.
+- [ ] Decision quan trọng có options analysis hoặc ghi rõ follow existing pattern.
+- [ ] System boundaries/source of truth rõ ràng.
+- [ ] Contract public boundary đủ để BE/FE không hiểu lệch.
+- [ ] Data/state lifecycle và consistency/idempotency concern đã nêu nếu có.
+- [ ] Quality guardrails đã nêu cho latency, fallback, observability, privacy/security, rollback nếu relevant.
+- [ ] Delivery slice độc lập, review được, rollback được; nếu không thì đã split.
+- [ ] Nếu BA thiếu nghiệp vụ hoặc mâu thuẫn, đã dừng và hỏi thay vì tự bịa business rule.
