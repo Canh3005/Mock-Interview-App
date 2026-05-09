@@ -15,7 +15,56 @@ Hỏi tối đa **3 câu clarify** nếu yêu cầu mơ hồ. Ưu tiên:
 
 ---
 
-## 2. Epic Context — BẮT BUỘC
+## 2. Khi input là plan/overview tổng quan
+
+Nếu người dùng yêu cầu chạy BA cho một file plan/overview dài, roadmap, epic brief, hoặc tài liệu mô tả nhiều product surface, BA **không được** nhồi toàn bộ nội dung vào một `BA.md`.
+
+Trước khi viết BA.md, BA phải tự tách overview thành các **feature slice vừa đủ, độc lập**, rồi viết `BA.md` riêng cho từng slice trong các folder khác nhau dưới `docs/features/`.
+
+### Nhận diện overview cần tách
+
+Xem input là overview tổng quan nếu có ít nhất 1 dấu hiệu:
+- Nhiều user surface khác nhau, ví dụ public page, detail page, admin workflow, AI engine, analytics.
+- Nhiều actor khác nhau, ví dụ candidate, admin/curator, interviewer, AI system.
+- Nhiều outcome độc lập có thể release riêng.
+- Tài liệu mô tả cả domain model, workflow, search/filter, scoring, analytics, curation, localization, hoặc integration trong cùng một file.
+
+### Feature slicing rule
+
+Mỗi feature slice nên:
+- Có một primary actor rõ ràng.
+- Tạo một business outcome cụ thể, đo được.
+- Có happy path riêng và acceptance criteria riêng.
+- Có thể được Dev/Review độc lập mà không cần đọc toàn bộ epic để hiểu story.
+- Ghi rõ `Depends on` và `Blocks` thay vì gom dependency vào cùng một BA.md.
+
+Không tách feature theo implementation layer như database/API/UI. Tách theo hành vi nghiệp vụ hoặc outcome người dùng nhìn thấy.
+
+Ví dụ tách đúng:
+- Candidate browse/search question bank.
+- Candidate view question detail and start practice.
+- AI engine selects interview probes from curated bank.
+- Admin curates and publishes probes.
+- Analytics tracks probe quality and practice outcome.
+
+Ví dụ tách sai:
+- Create tables for question bank.
+- Build question bank APIs.
+- Build question bank UI components.
+
+### Quy trình khi chạy BA từ overview
+
+1. Đọc overview và scan `docs/features/` để tránh trùng scope.
+2. Lập feature breakdown ngắn: tên feature, actor, outcome, depends on, blocks.
+3. Nếu overview đủ rõ và người dùng đã yêu cầu "chạy luồng BA" hoặc tương đương, tiếp tục tạo các folder feature và `BA.md` theo breakdown.
+4. Nếu còn thiếu ranh giới nghiệp vụ quan trọng, hỏi tối đa 3 câu trước khi tạo nhiều `BA.md`.
+5. Đánh số nhiều folder mới liên tiếp từ số lớn nhất hiện có + 1.
+
+Mỗi `BA.md` được viết như một story độc lập, nhưng phần `Epic Context` phải nói rõ nó nằm ở đâu trong overview/epic tổng.
+
+---
+
+## 3. Epic Context — BẮT BUỘC
 
 BA.md phải định vị feature trong epic của nó:
 - Feature này giải quyết bước nào trong epic?
@@ -25,7 +74,7 @@ Không viết BA.md mà không biết feature nằm ở đâu trong luồng lớ
 
 ---
 
-## 3. Business Flow Analysis — TRỌNG TÂM
+## 4. Business Flow Analysis — TRỌNG TÂM
 
 Đây là phần quan trọng nhất. BA phân tích luồng nghiệp vụ, không mô tả implementation.
 BA phải làm rõ **WHY** và **WHAT** trước khi đi vào flow: vấn đề người dùng gặp là gì, feature này tạo ra outcome nào, và outcome đó unlock bước nào trong epic.
@@ -47,7 +96,7 @@ BA phải làm rõ **WHY** và **WHAT** trước khi đi vào flow: vấn đề 
 
 ---
 
-## 4. Acceptance Criteria — BẮT BUỘC
+## 5. Acceptance Criteria — BẮT BUỘC
 
 Mỗi story ít nhất **2 acceptance criteria** theo format:
 
@@ -64,7 +113,7 @@ Acceptance criteria phải phản ánh **business outcome**, không phải techn
 
 ---
 
-## 5. Dependency Detection
+## 6. Dependency Detection
 
 Kiểm tra trước khi viết SCOPE:
 
@@ -74,7 +123,7 @@ Kiểm tra trước khi viết SCOPE:
 
 ---
 
-## 6. Risk Flag
+## 7. Risk Flag
 
 Flag **HIGH** nếu có ít nhất 1 trong:
 - Luồng AI với output không deterministic ảnh hưởng trực tiếp đến trải nghiệm candidate
@@ -87,7 +136,7 @@ Khi HIGH: thêm section `## Risk` — mô tả impact từ góc nhìn user nếu
 
 ---
 
-## 7. BA Handoff Quality Gate
+## 8. BA Handoff Quality Gate
 
 Trước khi báo BA.md done, tự kiểm tra:
 
@@ -96,12 +145,13 @@ Trước khi báo BA.md done, tự kiểm tra:
 - [ ] SCOPE có In/Out/Depends on/Blocks rõ ràng.
 - [ ] Business Flow có happy path, edge cases, business rules.
 - [ ] Acceptance Criteria đo được business outcome.
+- [ ] Nếu input là overview/plan dài, đã tách thành các feature slice độc lập thay vì viết một BA.md quá rộng.
 - [ ] Không có file estimate, endpoint, DTO, migration, component, hoặc implementation instruction.
 - [ ] Nếu còn thiếu nghiệp vụ quan trọng, đã hỏi clarify thay vì tự đoán.
 
 ---
 
-## 8. BA.md Output Format
+## 9. BA.md Output Format
 
 ```
 ## WHAT

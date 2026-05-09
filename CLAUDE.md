@@ -1,5 +1,11 @@
 # Final Project — AI Agent Guide
 
+## Entrypoint Rule
+
+Treat `CLAUDE.md` as the first document to read before running any agent flow in this repository.
+
+When the user asks for a workflow such as `ba`, `sa`, `be`, `fe`, `review`, or `fix`, start here, then follow the matching guide and feature documents listed below.
+
 ## Project Structure
 
 | Folder | Role | Tech |
