@@ -150,6 +150,11 @@ export default function QuestionBankFilters({
     _applySearch(searchInput);
   };
 
+  const _handleReset = () => {
+    setSearchInput('');
+    onReset();
+  };
+
   return (
     <form onSubmit={_handleSubmit} className="border border-slate-700/60 bg-slate-900/50 rounded-lg p-4 flex flex-wrap gap-3 items-end">
       <SearchControl
@@ -165,7 +170,7 @@ export default function QuestionBankFilters({
         allLabel={allLabel}
         onChange={onChange}
       />
-      <button type="button" onClick={onReset} className="h-10 px-3 rounded-lg border border-slate-700/70 bg-slate-800/80 text-slate-300 hover:border-slate-500 hover:bg-slate-700 hover:text-white" aria-label={t('questionBank.filters.reset')}>
+      <button type="button" onClick={_handleReset} className="h-10 px-3 rounded-lg border border-slate-700/70 bg-slate-800/80 text-slate-300 hover:border-slate-500 hover:bg-slate-700 hover:text-white" aria-label={t('questionBank.filters.reset')}>
         <RotateCcw className="w-4 h-4" />
       </button>
     </form>

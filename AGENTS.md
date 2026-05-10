@@ -1,7 +1,6 @@
 # Bootstrap Cho Codex Agent
 
-Trước khi chạy bất kỳ workflow nào trong repository này, phải đọc
-`CLAUDE.md` trước.
+Khi nào tôi bảo chạy luồng `ba`, `sa`, `be`, `fe`, `review`, `test`, `pa`, và `fix` , phải đọc`CLAUDE.md` trước. Nếu không thì thôi, cứ làm đúng yêu cầu
 
 `CLAUDE.md` là entrypoint chuẩn cho các luồng agent như `ba`, `sa`, `be`,
 `fe`, `review`, `test`, `pa`, và `fix`. Sau khi đọc file này, tiếp tục theo
