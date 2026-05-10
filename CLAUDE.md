@@ -4,7 +4,7 @@
 
 Treat `CLAUDE.md` as the first document to read before running any agent flow in this repository.
 
-When the user asks for a workflow such as `ba`, `sa`, `be`, `fe`, `review`, `pa`, or `fix`, start here, then follow the matching guide and feature documents listed below.
+When the user asks for a workflow such as `ba`, `sa`, `be`, `fe`, `review`, `test`, `pa`, or `fix`, start here, then follow the matching guide and feature documents listed below.
 
 ## Project Structure
 
@@ -30,12 +30,13 @@ When the user asks for a workflow such as `ba`, `sa`, `be`, `fe`, `review`, `pa`
 | `fe <feature>` | Dev FE | `dev-guide.md` + `HOW.md` (hoặc `BA.md` nếu SA skip) + `convention-fe.md` + code BE hiện tại | code + done report — KHÔNG commit |
 | `review be <feature>` | Reviewer BE | `BA.md` + `HOW.md` nếu có + Dev done report nếu có + `review-be.md` + `git diff` | `docs/features/<NNN>-<feature>/REVIEW-BE.md` |
 | `review fe <feature>` | Reviewer FE | `BA.md` + `HOW.md` nếu có + Dev done report nếu có + `review-fe.md` + `git diff` | `docs/features/<NNN>-<feature>/REVIEW-FE.md` |
+| `test <feature>` hoặc `test <NNN>` | Test Agent | `test-guide.md` + `BA.md` + `HOW.md` nếu có + `WALKTHROUGH.md` + review reports nếu có + codebase liên quan | `docs/features/<NNN>-<feature>/TEST.md` |
 | `pa <mô tả lỗi>` | Process Auditor | `pa-guide.md` + artifact liên quan + `docs/agent-guide/` | audit record + distilled guide updates |
 | `fix <mô tả>` | Quick Fix | file liên quan trực tiếp | code — KHÔNG commit |
 
 Convention, dev guide, và review checklist: `docs/agent-guide/`
 
-**Audit learning rule:** Trước khi chạy `ba`, `sa`, `be`, `fe`, `review`, hoặc `fix`, đọc `docs/agent-audits/INDEX.md` nếu tồn tại. Chỉ mở audit record chi tiết khi `applies_to`, role, domain, hoặc symptom khớp request hiện tại; không đọc toàn bộ `docs/agent-audits/` theo mặc định.
+**Audit learning rule:** Trước khi chạy `ba`, `sa`, `be`, `fe`, `review`, `test`, hoặc `fix`, đọc `docs/agent-audits/INDEX.md` nếu tồn tại. Chỉ mở audit record chi tiết khi `applies_to`, role, domain, hoặc symptom khớp request hiện tại; không đọc toàn bộ `docs/agent-audits/` theo mặc định.
 
 **Commit rule:** Commit SAU KHI review approved. Không commit sớm hơn.
 
@@ -46,6 +47,7 @@ Convention, dev guide, và review checklist: `docs/agent-guide/`
 - SA → architecture brief: decisions/boundaries/contracts/quality guardrails khi cần.
 - Dev → code + done report: implementation, acceptance mapping, verification.
 - Reviewer → verdict: approve hoặc request changes dựa trên BA/HOW/diff.
+- Test → test case matrix + automated/manual split + execution result trong `TEST.md`.
 
 ---
 
@@ -119,6 +121,23 @@ Review đối chiếu với spec — không chỉ check convention.
 
 **Verdict APPROVE:** implement đúng spec, không có critical issue.
 **Verdict REQUEST CHANGES:** có ít nhất 1 critical issue → Dev sửa → Reviewer review lại.
+
+---
+
+## Test Agent
+
+**Trigger:** `test <feature>` hoặc `test <NNN>`. Dùng sau khi bạn đã review code và muốn chạy luồng test cho feature.
+
+**Đọc trước:**
+- `docs/agent-guide/test-guide.md`
+- Feature artifacts: `BA.md`, `HOW.md` nếu có, `WALKTHROUGH.md`, `REVIEW-BE.md` / `REVIEW-FE.md` nếu có
+- Code path liên quan trong BE/FE theo walkthrough và diff hiện tại
+
+**Nhiệm vụ:** tạo test case matrix từ business flow, acceptance criteria, contracts và walkthrough; phân loại test case nào agent tự động test được, test case nào cần bạn test thủ công; chạy phần automated phù hợp với tool hiện có; ghi kết quả vào `docs/features/<NNN>-<feature>/TEST.md`.
+
+**Tooling mặc định hiện tại:** BE dùng Jest/Supertest trong `server/`. FE hiện chỉ có build check; UI E2E cần setup Playwright trước khi có thể tự động click CRUD flow trong browser.
+
+**Done khi:** `TEST.md` tồn tại/cập nhật, có test case matrix, automated/manual split, command đã chạy, kết quả pass/fail/blocker, và phần manual còn lại nếu có. KHÔNG commit.
 
 ---
 
