@@ -158,7 +158,6 @@ export default function PublicQuestionBankPage() {
     limit,
     filters,
     loading,
-    taxonomyLoading,
     error,
   } = useSelector((state) => state.questionBank);
   const appLocale = useQuestionBankLocale({ dispatch, filters, i18n });
@@ -182,7 +181,6 @@ export default function PublicQuestionBankPage() {
           <QuestionBankFilters
             filters={filters}
             taxonomy={taxonomy}
-            loading={loading || taxonomyLoading}
             onChange={handleFilterChange}
             onReset={handleReset}
           />

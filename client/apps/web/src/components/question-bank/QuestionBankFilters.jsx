@@ -1,10 +1,12 @@
-import { useEffect, useMemo, useState } from 'react';
-import { RotateCcw, Search, SlidersHorizontal } from 'lucide-react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { RotateCcw, Search } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { SelectField } from '../admin/question-bank/QuestionBankFormFields';
 
 const controlClass =
   'h-10 rounded-lg border border-slate-700/70 bg-slate-950/70 text-sm text-slate-200 shadow-inner shadow-black/10 outline-none transition-all duration-150 hover:border-slate-500/80 hover:bg-slate-900 focus:border-cta focus:ring-2 focus:ring-cta/20';
+
+const SEARCH_DEBOUNCE_MS = 400;
 
 const taxonomyControls = [
   ['roleFamily', 'role', 'roleFamilies'],
@@ -107,12 +109,12 @@ function FilterSelects({ filters, taxonomy, techTagOptions, allLabel, onChange }
 export default function QuestionBankFilters({
   filters,
   taxonomy,
-  loading,
   onChange,
   onReset,
 }) {
   const { t } = useTranslation();
   const [searchInput, setSearchInput] = useState(filters.search);
+  const lastAppliedSearchRef = useRef(filters.search);
   const allLabel = t('questionBank.filters.all');
   const techTagOptions = useMemo(
     () => [{ key: '', label: allLabel }, ..._techTagOptions(taxonomy)],
@@ -120,12 +122,32 @@ export default function QuestionBankFilters({
   );
 
   useEffect(() => {
+    if (filters.search === lastAppliedSearchRef.current) return;
+    lastAppliedSearchRef.current = filters.search;
     setSearchInput(filters.search);
   }, [filters.search]);
 
+  const _applySearch = useCallback(
+    (value) => {
+      const nextSearch = value.trim();
+      if (nextSearch === filters.search) return;
+      lastAppliedSearchRef.current = nextSearch;
+      onChange({ search: nextSearch });
+    },
+    [filters.search, onChange],
+  );
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      _applySearch(searchInput);
+    }, SEARCH_DEBOUNCE_MS);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [_applySearch, searchInput]);
+
   const _handleSubmit = (event) => {
     event.preventDefault();
-    onChange({ search: searchInput.trim() });
+    _applySearch(searchInput);
   };
 
   return (
@@ -143,10 +165,6 @@ export default function QuestionBankFilters({
         allLabel={allLabel}
         onChange={onChange}
       />
-      <button type="submit" disabled={loading} className="h-10 px-4 rounded-lg border border-cta/30 bg-cta/15 text-cta hover:bg-cta/20 disabled:opacity-60 font-semibold text-sm flex items-center gap-2">
-        <SlidersHorizontal className="w-4 h-4" />
-        {t('questionBank.filters.apply')}
-      </button>
       <button type="button" onClick={onReset} className="h-10 px-3 rounded-lg border border-slate-700/70 bg-slate-800/80 text-slate-300 hover:border-slate-500 hover:bg-slate-700 hover:text-white" aria-label={t('questionBank.filters.reset')}>
         <RotateCcw className="w-4 h-4" />
       </button>
