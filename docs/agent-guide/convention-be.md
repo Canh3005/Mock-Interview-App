@@ -1,5 +1,11 @@
 # Backend Convention (NestJS)
 
+## Cổng kiểm tra ngôn ngữ artifact
+
+Khi BE Dev tạo/cập nhật artifact trong `docs/features/` hoặc ghi done report, phần giải thích phải dùng tiếng Việt rõ ràng. Chỉ giữ tiếng Anh cho command, route, API contract, status kỹ thuật, exception gốc, field/code identifier, tên class/function/module hoặc thuật ngữ cần đối chiếu trực tiếp.
+
+Lưu ý riêng BE: error message, exception message và API response trả về từ backend vẫn dùng tiếng Anh theo rule kỹ thuật. Rule tiếng Việt áp dụng cho artifact, walkthrough, review note và done report, không áp dụng cho message trả về API.
+
 ## Module Structure
 
 Mỗi feature là một module độc lập:
@@ -235,4 +241,5 @@ if (cached) return JSON.parse(cached) as Feature;
 - [ ] Error message bằng tiếng Anh
 - [ ] Import không dùng đã xóa
 - [ ] GET list endpoint trả `{ data, total, page, limit }` — không trả raw array
+- [ ] Artifact/done report liên quan đã đạt cổng kiểm tra ngôn ngữ: giải thích bằng tiếng Việt rõ ràng, chỉ giữ tiếng Anh cho command/route/API/status/field/code/exception cần đối chiếu
 - [ ] `npm run lint` pass

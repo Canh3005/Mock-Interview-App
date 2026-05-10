@@ -38,6 +38,8 @@ Convention, dev guide, và review checklist: `docs/agent-guide/`
 
 **Artifact language rule:** Các file agent viết ra trong `docs/features/` và `docs/agent-guide/` mặc định dùng tiếng Việt rõ ràng, dễ đọc. Chỉ dùng tiếng Anh khi đó là tên tool, command, route, API contract, status kỹ thuật, exception gốc, hoặc thuật ngữ cần đối chiếu trực tiếp. Không lạm dụng tiếng Anh trong phần giải thích, ghi chú, test case, acceptance mapping hoặc verdict nếu người dùng không yêu cầu.
 
+**Cổng kiểm tra ngôn ngữ artifact:** Trước khi báo done cho mọi luồng `ba`, `sa`, `be`, `fe`, `review`, `test`, `pa`, hoặc `fix` có tạo/cập nhật artifact trong `docs/features/` hoặc `docs/agent-guide/`, agent phải tự rà lại artifact đó và sửa các cụm tiếng Anh không cần thiết sang tiếng Việt. Các từ như `candidate`, `public`, `read model`, `projection`, `fallback`, `empty state`, `sort`, `filter`, `review verdict` chỉ giữ tiếng Anh khi đang là tên field/API/status/code; trong câu giải thích phải viết là ứng viên, công khai/cho ứng viên, mô hình đọc, dữ liệu rút gọn, dự phòng, trạng thái rỗng, sắp xếp, bộ lọc, kết luận review.
+
 **Audit learning rule:** Trước khi chạy `ba`, `sa`, `be`, `fe`, `review`, `test`, hoặc `fix`, đọc `docs/agent-audits/INDEX.md` nếu tồn tại. Chỉ mở audit record chi tiết khi `applies_to`, role, domain, hoặc symptom khớp request hiện tại; không đọc toàn bộ `docs/agent-audits/` theo mặc định.
 
 **Commit rule:** Commit SAU KHI review approved. Không commit sớm hơn.

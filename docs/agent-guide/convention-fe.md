@@ -1,5 +1,11 @@
 # Frontend Convention (React + Redux-Saga)
 
+## Cổng kiểm tra ngôn ngữ artifact
+
+Khi FE Dev tạo/cập nhật artifact trong `docs/features/` hoặc ghi done report, phần giải thích phải dùng tiếng Việt rõ ràng. Chỉ giữ tiếng Anh cho command, route, API contract, status kỹ thuật, exception gốc, field/code identifier, tên component/slice/saga/API function hoặc thuật ngữ cần đối chiếu trực tiếp.
+
+Rule này khác với UI i18n: UI visible text vẫn phải dùng `t()` và đủ `en`, `vi`, `ja`; artifact/walkthrough/review/done report thì mặc định viết tiếng Việt rõ ràng.
+
 ## File Structure
 
 Mỗi feature mới thêm vào:
@@ -308,4 +314,5 @@ Child panel (AiPanel, NotesPanel) chỉ render `<div className="flex flex-col h-
 - [ ] Room page dùng `slate-*` palette, không dùng `bg-card`/`border-border` trong panel
 - [ ] Tabbed panel → tách `RightPanel.jsx` riêng, child chỉ `flex flex-col h-full`
 - [ ] Không có emoji làm icon UI (dùng lucide-react)
+- [ ] Artifact/done report liên quan đã đạt cổng kiểm tra ngôn ngữ: giải thích bằng tiếng Việt rõ ràng, chỉ giữ tiếng Anh cho command/route/API/status/field/code/exception cần đối chiếu
 - [ ] `npm run lint` pass

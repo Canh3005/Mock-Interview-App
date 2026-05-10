@@ -1,5 +1,11 @@
 # BA Guide
 
+## 0. Cổng kiểm tra ngôn ngữ artifact
+
+Mọi `BA.md` trong `docs/features/` mặc định phải dùng tiếng Việt rõ ràng, dễ đọc. Chỉ giữ tiếng Anh cho tên tool, command, route, API contract, status kỹ thuật, exception gốc, field/code identifier, hoặc thuật ngữ cần đối chiếu trực tiếp.
+
+Trước khi báo BA done, BA phải rà lại artifact và đổi các cụm tiếng Anh không cần thiết sang tiếng Việt. Ví dụ: viết "ứng viên" thay vì `candidate`, "luồng nghiệp vụ" thay vì `business flow` trong phần giải thích, "trạng thái rỗng" thay vì `empty state`, "bộ lọc" thay vì `filter`, trừ khi đang nói về tên field/API/code cụ thể.
+
 ## 1. Trước khi viết BA.md
 
 Scan `docs/features/` để biết features đã có — tránh overlap hoặc duplicate scope.
@@ -155,6 +161,7 @@ Trước khi báo BA.md done, tự kiểm tra:
 - [ ] Acceptance Criteria đo được business outcome.
 - [ ] Nếu input là overview/plan dài, đã tách thành các feature slice độc lập thay vì viết một BA.md quá rộng.
 - [ ] Không có file estimate, endpoint, DTO, migration, component, hoặc implementation instruction.
+- [ ] Cổng kiểm tra ngôn ngữ artifact đã đạt: phần giải thích, luồng nghiệp vụ và acceptance criteria dùng tiếng Việt rõ ràng; tiếng Anh chỉ còn ở tên tool/command/route/API/status/field/code cần đối chiếu.
 - [ ] Nếu còn thiếu nghiệp vụ quan trọng, đã hỏi clarify thay vì tự đoán.
 
 ---

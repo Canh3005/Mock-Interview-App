@@ -1,5 +1,11 @@
 # FE Review Checklist
 
+## 0. Cổng kiểm tra ngôn ngữ artifact
+
+Mọi `REVIEW-FE.md` hoặc review response mặc định phải dùng tiếng Việt rõ ràng, dễ đọc. Chỉ giữ tiếng Anh cho tên tool, command, route, API contract, status kỹ thuật, exception gốc, field/code identifier, hoặc thuật ngữ cần đối chiếu trực tiếp.
+
+Trước khi báo review done, Reviewer phải rà lại findings, notes và verdict. Viết "kết luận", "vấn đề", "mức critical/minor", "đạt/chưa đạt" bằng tiếng Việt trong phần giải thích; chỉ giữ `APPROVE`, `REQUEST CHANGES`, command, route, exception hoặc code identifier khi cần đối chiếu.
+
 Đọc `BA.md` + `HOW.md` nếu có + Dev done report nếu có + `git diff` trước khi review. Đọc thêm `docs/agent-audits/INDEX.md` nếu tồn tại và chỉ mở audit record liên quan tới FE/review/domain hiện tại. Nếu SA đã skip và không có `HOW.md`, review trực tiếp theo BA business flow, acceptance criteria, convention FE, và diff. Mục tiêu: đối chiếu code với spec, không chỉ đọc code đơn thuần.
 
 ## 1. Đúng spec chưa?
@@ -38,6 +44,10 @@
 - [ ] Error state được hiển thị khi request thất bại?
 - [ ] Production create/edit workflow có form có cấu trúc phù hợp với user thật, không dùng JSON/raw payload editor làm luồng chính?
 - [ ] Nếu có JSON editor/import/export, nó có được BA/HOW cho phép rõ và chỉ là luồng phụ không?
+
+## 7. Ngôn ngữ artifact
+
+- [ ] Review findings, notes và verdict dùng tiếng Việt rõ ràng; tiếng Anh chỉ còn ở command, route, API/status/field/code, exception gốc hoặc verdict keyword bắt buộc.
 
 ## Severity Guide
 
