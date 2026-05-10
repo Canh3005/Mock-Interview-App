@@ -6,7 +6,7 @@
  *   Row 3: InterviewHistory (col-span-8) + LearningPath (col-span-4)
  */
 import { useState, useEffect } from 'react'
-import { Github, Code2, Target, Award, Activity, BookOpen } from 'lucide-react'
+import { Github, Code2, Target, Award, Activity, BookOpen, BookOpenCheck } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
@@ -106,6 +106,13 @@ export default function DashboardPage() {
               >
                 <BookOpen size={15} />
                 Luyện tập thuật toán
+              </button>
+              <button
+                onClick={() => navigate(ROUTES.QUESTION_BANK)}
+                className="inline-flex items-center gap-2 font-body text-sm font-semibold text-slate-200 bg-slate-700 hover:bg-slate-600 px-5 py-2.5 rounded-xl transition-all duration-200 cursor-pointer hover:-translate-y-0.5"
+              >
+                <BookOpenCheck size={15} />
+                {t('questionBank.navLabel')}
               </button>
               <button
                 onClick={() => navigate(ROUTES.INTERVIEW_SETUP)}

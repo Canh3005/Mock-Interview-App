@@ -1,10 +1,8 @@
 # BA Guide
 
-## 0. Cổng kiểm tra ngôn ngữ artifact
+## 0. Ngôn ngữ artifact
 
 Mọi `BA.md` trong `docs/features/` mặc định phải dùng tiếng Việt rõ ràng, dễ đọc. Chỉ giữ tiếng Anh cho tên tool, command, route, API contract, status kỹ thuật, exception gốc, field/code identifier, hoặc thuật ngữ cần đối chiếu trực tiếp.
-
-Trước khi báo BA done, BA phải rà lại artifact và đổi các cụm tiếng Anh không cần thiết sang tiếng Việt. Ví dụ: viết "ứng viên" thay vì `candidate`, "luồng nghiệp vụ" thay vì `business flow` trong phần giải thích, "trạng thái rỗng" thay vì `empty state`, "bộ lọc" thay vì `filter`, trừ khi đang nói về tên field/API/code cụ thể.
 
 ## 1. Trước khi viết BA.md
 
@@ -16,10 +14,27 @@ BA chịu trách nhiệm làm rõ **need, value, stakeholder, context, business 
 
 **Đánh số folder:** Folder mới có dạng `docs/features/<NNN>-<feature-name>/` trong đó `NNN` là số thứ tự 3 chữ số. Lấy số lớn nhất hiện có rồi cộng 1. Nếu chưa có folder nào → bắt đầu từ `001`.
 
-Hỏi tối đa **3 câu clarify** nếu yêu cầu mơ hồ. Ưu tiên:
-- Ai là người dùng (candidate, interviewer, admin)?
-- Flow kết thúc như thế nào (kết quả, trạng thái, bước tiếp)?
-- Feature này thuộc epic nào? Phụ thuộc vào gì đã có chưa?
+### Cổng làm rõ trước khi viết BA.md
+
+Nếu yêu cầu của người dùng còn mơ hồ, quá rộng, có nhiều cách hiểu, hoặc thiếu ranh giới nghiệp vụ quan trọng, BA phải dừng ở bước làm rõ thay vì tự suy đoán rồi viết `BA.md`.
+
+BA cần làm theo thứ tự:
+1. Tóm tắt lại ý tưởng hiện tại theo cách hiểu của mình trong 2-4 câu.
+2. Chỉ ra điểm còn mơ hồ hoặc có thể hiểu theo nhiều hướng, ví dụ người dùng chính, kết quả cuối, phạm vi, phụ thuộc, dữ liệu đầu vào, trạng thái sau cùng.
+3. Hỏi tối đa **3 câu làm rõ** quan trọng nhất. Ưu tiên:
+   - Ai là người dùng chính, ví dụ ứng viên, người phỏng vấn, quản trị viên?
+   - Luồng kết thúc như thế nào, gồm kết quả, trạng thái, hoặc bước tiếp theo?
+   - Tính năng này thuộc epic nào và phụ thuộc vào phần nào đã có?
+4. Nếu đã có đủ cơ sở, đề xuất một phiên bản tính năng đã chỉnh lại để người dùng xác nhận trước khi tạo hoặc cập nhật `BA.md`.
+
+Chỉ được viết `BA.md` khi tối thiểu đã rõ:
+- Người dùng chính và người liên quan.
+- Vấn đề cần giải quyết và giá trị nghiệp vụ.
+- Kết quả cuối người dùng hoặc hệ thống nhận được.
+- Phạm vi làm và không làm.
+- Vị trí trong epic, phần phụ thuộc, và phần bị chặn nếu chưa làm.
+
+Nếu sau tối đa 3 câu hỏi vẫn thiếu thông tin quyết định phạm vi, BA phải ghi rõ phần đang thiếu và chờ người dùng xác nhận. Không được lấp khoảng trống bằng quyết định kỹ thuật hoặc giả định âm thầm.
 
 ---
 
@@ -161,8 +176,7 @@ Trước khi báo BA.md done, tự kiểm tra:
 - [ ] Acceptance Criteria đo được business outcome.
 - [ ] Nếu input là overview/plan dài, đã tách thành các feature slice độc lập thay vì viết một BA.md quá rộng.
 - [ ] Không có file estimate, endpoint, DTO, migration, component, hoặc implementation instruction.
-- [ ] Cổng kiểm tra ngôn ngữ artifact đã đạt: phần giải thích, luồng nghiệp vụ và acceptance criteria dùng tiếng Việt rõ ràng; tiếng Anh chỉ còn ở tên tool/command/route/API/status/field/code cần đối chiếu.
-- [ ] Nếu còn thiếu nghiệp vụ quan trọng, đã hỏi clarify thay vì tự đoán.
+- [ ] Nếu yêu cầu mơ hồ hoặc còn thiếu nghiệp vụ quan trọng, đã chạy cổng làm rõ: tóm tắt cách hiểu, nêu điểm chưa rõ, hỏi tối đa 3 câu, và chỉ viết BA.md sau khi phạm vi đã đủ rõ.
 
 ---
 

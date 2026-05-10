@@ -13,6 +13,7 @@ export const ROUTES = {
   SD_ROOM: '/sd-room',
   SCORING: '/scoring',
   PRACTICE_PROBLEMS: '/practice-problems',
+  QUESTION_BANK: '/question-bank',
   ADMIN: '/admin',
   ADMIN_TESTCASES: '/admin/testcases',
   ADMIN_SD_PROBLEMS: '/admin/sd-problems',

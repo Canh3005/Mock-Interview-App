@@ -1,10 +1,8 @@
 # FE Review Checklist
 
-## 0. Cổng kiểm tra ngôn ngữ artifact
+## 0. Ngôn ngữ artifact
 
 Mọi `REVIEW-FE.md` hoặc review response mặc định phải dùng tiếng Việt rõ ràng, dễ đọc. Chỉ giữ tiếng Anh cho tên tool, command, route, API contract, status kỹ thuật, exception gốc, field/code identifier, hoặc thuật ngữ cần đối chiếu trực tiếp.
-
-Trước khi báo review done, Reviewer phải rà lại findings, notes và verdict. Viết "kết luận", "vấn đề", "mức critical/minor", "đạt/chưa đạt" bằng tiếng Việt trong phần giải thích; chỉ giữ `APPROVE`, `REQUEST CHANGES`, command, route, exception hoặc code identifier khi cần đối chiếu.
 
 Đọc `BA.md` + `HOW.md` nếu có + Dev done report nếu có + `git diff` trước khi review. Đọc thêm `docs/agent-audits/INDEX.md` nếu tồn tại và chỉ mở audit record liên quan tới FE/review/domain hiện tại. Nếu SA đã skip và không có `HOW.md`, review trực tiếp theo BA business flow, acceptance criteria, convention FE, và diff. Mục tiêu: đối chiếu code với spec, không chỉ đọc code đơn thuần.
 
@@ -37,6 +35,7 @@ Trước khi báo review done, Reviewer phải rà lại findings, notes và ver
 - [ ] Không có `console.log` debug còn sót?
 - [ ] Không có import không dùng?
 - [ ] Không có `TODO` hay `FIXME` còn sót (trừ i18n placeholder đã biết)?
+- [ ] Diff có tự tạo component điều khiển UI mới như input/select/combobox/checkbox/bộ lọc/sắp xếp không? Nếu có, đã kiểm tra component tương đương trong cùng khu vực tính năng hoặc thư viện UI dùng chung và dùng lại khi phù hợp chưa?
 
 ## 6. UX cơ bản
 
@@ -45,14 +44,10 @@ Trước khi báo review done, Reviewer phải rà lại findings, notes và ver
 - [ ] Production create/edit workflow có form có cấu trúc phù hợp với user thật, không dùng JSON/raw payload editor làm luồng chính?
 - [ ] Nếu có JSON editor/import/export, nó có được BA/HOW cho phép rõ và chỉ là luồng phụ không?
 
-## 7. Ngôn ngữ artifact
-
-- [ ] Review findings, notes và verdict dùng tiếng Việt rõ ràng; tiếng Anh chỉ còn ở command, route, API/status/field/code, exception gốc hoặc verdict keyword bắt buộc.
-
 ## Severity Guide
 
 - **critical** — sai logic, i18n miss, production workflow bắt user nhập JSON/raw payload, không đúng spec → PHẢI sửa
-- **minor** — code smell, naming, style → nên sửa nhưng không block
+- **minor** — code smell, naming, style, tự tạo component điều khiển UI trùng component tùy biến đã có → nên sửa nhưng không block nếu không làm sai luồng
 
 ## Output Format
 

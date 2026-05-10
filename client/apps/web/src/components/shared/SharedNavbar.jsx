@@ -10,6 +10,7 @@ import {
   Home,
   Shield,
   Coins,
+  BookOpenCheck,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useSelector, useDispatch } from 'react-redux'
@@ -147,6 +148,13 @@ function DashboardBar({ darkMode, onToggleDark }) {
           >
             <LayoutDashboard size={16} />
             {t('navbar.dashboard')}
+          </button>
+          <button
+            onClick={() => navigate(ROUTES.QUESTION_BANK)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-body text-sm text-slate-400 hover:text-white hover:bg-slate-700/40 transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta"
+          >
+            <BookOpenCheck size={16} />
+            {t('navbar.questionBank')}
           </button>
         </nav>
 

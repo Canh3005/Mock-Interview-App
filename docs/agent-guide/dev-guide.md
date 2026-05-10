@@ -1,10 +1,8 @@
 # Dev Guide
 
-## 0.1. Cổng kiểm tra ngôn ngữ artifact
+## 0.1. Ngôn ngữ artifact
 
 Mọi artifact Dev tạo hoặc cập nhật trong `docs/features/`, đặc biệt `WALKTHROUGH.md` và done report, mặc định phải dùng tiếng Việt rõ ràng, dễ đọc. Chỉ giữ tiếng Anh cho tên tool, command, route, API contract, status kỹ thuật, exception gốc, field/code identifier, hoặc thuật ngữ cần đối chiếu trực tiếp.
-
-Trước khi báo done, Dev phải rà lại `WALKTHROUGH.md`, done report và ghi chú verification. Các cụm như `candidate`, `public`, `fallback`, `empty state`, `loading state`, `error state`, `acceptance mapping` phải được viết bằng tiếng Việt trong câu giải thích, trừ khi đang là tên field/API/code hoặc heading bắt buộc.
 
 ## 0. Vai trò của Dev
 
@@ -36,6 +34,7 @@ Trước khi sửa file, Dev phải tự kiểm tra:
 - [ ] Có điểm nào mâu thuẫn giữa BA và HOW không?
 - [ ] Có API contract hoặc BE behavior cần FE chờ không?
 - [ ] Có dữ liệu/schema/auth/i18n/async/error state nào dễ bị bỏ sót không?
+- [ ] Nếu thêm component điều khiển UI như input, select, checkbox, combobox, bộ lọc hoặc sắp xếp, đã tìm component tương đương trong cùng khu vực tính năng hoặc thư viện UI dùng chung chưa?
 - [ ] Nếu có UI nhập/sửa dữ liệu production, BA/HOW đã đủ rõ cách user thao tác chưa? Nếu chưa, không tự thay bằng JSON/raw payload editor.
 
 Nếu thiếu thông tin nghiệp vụ quan trọng hoặc BA/HOW mâu thuẫn — **DỪNG**, hỏi người dùng. Không tự bịa business rule.
@@ -51,13 +50,12 @@ Riêng với production UI: JSON/raw payload editor, textarea DTO, hoặc form b
 Dev làm theo thứ tự:
 
 1. Đọc artifacts: `BA.md`, `HOW.md` nếu có, convention tương ứng.
-2. Scan code gần nhất để reuse pattern hiện có.
+2. Rà code gần nhất để dùng lại mẫu hiện có; với component điều khiển UI, ưu tiên component sẵn có trong cùng khu vực tính năng hoặc thư viện UI dùng chung trước khi tự tạo component cục bộ.
 3. Xác định change set tối thiểu đủ đạt acceptance criteria.
 4. Implement theo convention.
 5. Tự review diff trước khi báo done.
 6. Viết hoặc cập nhật `WALKTHROUGH.md` trong folder feature.
 7. Chạy verification phù hợp.
-8. Chạy cổng kiểm tra ngôn ngữ artifact cho `WALKTHROUGH.md` và done report nếu có artifact/docs được tạo hoặc cập nhật.
 
 Không cần tạo implementation plan dài trong docs. Nếu feature phức tạp, Dev có thể nêu ngắn trong update trước khi sửa file.
 
@@ -136,5 +134,3 @@ Khi báo done, Dev phải nêu ngắn:
 ```
 
 Done report không thay thế review. Review vẫn là bước riêng.
-
-Trước khi gửi done report, kiểm tra ngôn ngữ artifact: summary, acceptance mapping, verification notes và risk/notes phải dùng tiếng Việt rõ ràng; chỉ giữ tiếng Anh cho command, route, API contract, status kỹ thuật, exception gốc, field/code identifier hoặc wording gốc cần đối chiếu.

@@ -1,6 +1,6 @@
 # Backend Convention (NestJS)
 
-## Cổng kiểm tra ngôn ngữ artifact
+## Ngôn ngữ artifact
 
 Khi BE Dev tạo/cập nhật artifact trong `docs/features/` hoặc ghi done report, phần giải thích phải dùng tiếng Việt rõ ràng. Chỉ giữ tiếng Anh cho command, route, API contract, status kỹ thuật, exception gốc, field/code identifier, tên class/function/module hoặc thuật ngữ cần đối chiếu trực tiếp.
 
@@ -241,5 +241,4 @@ if (cached) return JSON.parse(cached) as Feature;
 - [ ] Error message bằng tiếng Anh
 - [ ] Import không dùng đã xóa
 - [ ] GET list endpoint trả `{ data, total, page, limit }` — không trả raw array
-- [ ] Artifact/done report liên quan đã đạt cổng kiểm tra ngôn ngữ: giải thích bằng tiếng Việt rõ ràng, chỉ giữ tiếng Anh cho command/route/API/status/field/code/exception cần đối chiếu
 - [ ] `npm run lint` pass

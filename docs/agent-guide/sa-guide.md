@@ -1,10 +1,8 @@
 # SA Guide
 
-## 0.1. Cổng kiểm tra ngôn ngữ artifact
+## 0.1. Ngôn ngữ artifact
 
 Mọi `HOW.md` trong `docs/features/` mặc định phải dùng tiếng Việt rõ ràng, dễ đọc. Chỉ giữ tiếng Anh cho tên tool, command, route, API contract, status kỹ thuật, exception gốc, field/code identifier, hoặc thuật ngữ cần đối chiếu trực tiếp.
-
-Trước khi báo HOW done hoặc SA skip, SA phải rà lại artifact/message và đổi các cụm tiếng Anh không cần thiết sang tiếng Việt. Ví dụ: viết "ứng viên" thay vì `candidate`, "mô hình đọc" thay vì `read model`, "dữ liệu rút gọn" thay vì `projection`, "dự phòng" thay vì `fallback`, "trạng thái rỗng" thay vì `empty state`, trừ khi đang nói về tên field/API/code cụ thể.
 
 ## 0. Vai trò của SA
 
@@ -243,5 +241,4 @@ Trước khi báo HOW.md done, tự kiểm tra:
 - [ ] Quality guardrails đã nêu cho latency, fallback, observability, privacy/security, rollback nếu relevant.
 - [ ] Nếu có UI nhập/sửa dữ liệu production, HOW.md nêu rõ UX boundary và không để Dev dùng JSON/raw payload editor làm luồng chính.
 - [ ] Delivery slice độc lập, review được, rollback được; nếu không thì đã split.
-- [ ] Cổng kiểm tra ngôn ngữ artifact đã đạt: phần giải thích, ghi chú, decision, boundary và guardrail dùng tiếng Việt rõ ràng; tiếng Anh chỉ còn ở tên tool/command/route/API/status/field/code cần đối chiếu.
 - [ ] Nếu BA thiếu nghiệp vụ hoặc mâu thuẫn, đã dừng và hỏi thay vì tự bịa business rule.

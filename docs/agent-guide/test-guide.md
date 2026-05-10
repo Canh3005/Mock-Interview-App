@@ -1,10 +1,8 @@
 # Test Agent Guide
 
-## 0.1. Cổng kiểm tra ngôn ngữ artifact
+## 0.1. Ngôn ngữ artifact
 
 Mọi `TEST.md` và test done report mặc định phải dùng tiếng Việt rõ ràng, dễ đọc. Chỉ giữ tiếng Anh cho tên tool, command, route, API contract, status kỹ thuật, exception gốc, field/code identifier, hoặc thuật ngữ cần đối chiếu trực tiếp.
-
-Trước khi báo test done, Test Agent phải rà lại ma trận test case, kết quả lệnh, ghi chú thủ công/bị chặn và verdict. Viết "kịch bản", "loại", "kết quả", "ghi chú", "cần test thủ công" bằng tiếng Việt; chỉ giữ `PASS`, `FAIL`, `PARTIAL`, `BLOCKED`, command, route, exception hoặc code identifier khi cần đối chiếu.
 
 ## 0. Vai trò của Test Agent
 
@@ -163,8 +161,6 @@ docs/features/<NNN>-<feature>/TEST.md
 
 Ngôn ngữ mặc định của `TEST.md` là **tiếng Việt dễ đọc**. Chỉ dùng tiếng Anh khi đó là tên tool, command, route, status kỹ thuật, exception gốc, hoặc wording gốc cần đối chiếu. Không viết cả báo cáo bằng tiếng Anh nếu người dùng không yêu cầu.
 
-Trước khi lưu `TEST.md`, bắt buộc chạy cổng kiểm tra ngôn ngữ artifact: đổi các cụm tiếng Anh không cần thiết trong phần tóm tắt, ma trận test case, ghi chú, manual/blocked notes và verdict sang tiếng Việt. Không dùng tiếng Anh chỉ vì template cũ hoặc codebase đang dùng English.
-
 Format:
 
 ```markdown
@@ -232,5 +228,3 @@ PASS / FAIL / PARTIAL / BLOCKED
 ```
 
 Nếu có failure, nêu rõ file/test case nào fail và behavior nào không đúng. Không tự sửa feature code trong test flow trừ khi người dùng yêu cầu chuyển sang `fix`.
-
-Done report chỉ được gửi sau khi cổng kiểm tra ngôn ngữ artifact đã đạt cho `TEST.md` và phần trả lời cuối.

@@ -1,10 +1,8 @@
 # Process Auditor Guide
 
-## 0.1. Cổng kiểm tra ngôn ngữ artifact
+## 0.1. Ngôn ngữ artifact
 
 Mọi audit record, guide update và báo cáo PA mặc định phải dùng tiếng Việt rõ ràng, dễ đọc. Chỉ giữ tiếng Anh cho tên tool, command, route, API contract, status kỹ thuật, exception gốc, field/code identifier, hoặc thuật ngữ cần đối chiếu trực tiếp.
-
-Trước khi báo PA done, PA phải rà lại audit record, `docs/agent-audits/INDEX.md` và các guide đã sửa. Các phần như observed failure, impact, root cause, missed guardrail, evidence và guide changes phải viết bằng tiếng Việt trong phần giải thích; chỉ giữ English khi đó là label/template/status cần đối chiếu hoặc tên kỹ thuật gốc.
 
 ## 0. Vai trò của PA
 
@@ -168,4 +166,3 @@ PA done khi:
 - Audit record được tạo hoặc cập nhật trong `docs/agent-audits/`.
 - Guide liên quan đã được cập nhật.
 - User biết lỗi hiện tại có cần follow-up dev/review riêng không.
-- Cổng kiểm tra ngôn ngữ artifact đã đạt cho audit record, index, guide update và báo cáo PA.

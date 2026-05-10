@@ -15,6 +15,7 @@ import sdInterviewerReducer from './slices/sdInterviewerSlice';
 import sdEvaluatorReducer from './slices/sdEvaluatorSlice';
 import walletReducer from './slices/walletSlice';
 import questionBankAdminReducer from './slices/questionBankAdminSlice';
+import questionBankReducer from './slices/questionBankSlice';
 
 export const sagaMiddleware = createSagaMiddleware();
 
@@ -35,6 +36,7 @@ export const store = configureStore({
     sdEvaluator: sdEvaluatorReducer,
     wallet: walletReducer,
     questionBankAdmin: questionBankAdminReducer,
+    questionBank: questionBankReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ 
