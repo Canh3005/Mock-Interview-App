@@ -25,6 +25,12 @@ const questionBankSlice = createSlice({
     loading: false,
     taxonomyLoading: false,
     error: null,
+    detail: null,
+    detailLoading: false,
+    detailError: null,
+    submitLoading: false,
+    submitError: null,
+    currentAttempt: null,
   },
   reducers: {
     fetchTaxonomyRequest: (state) => {
@@ -62,6 +68,41 @@ const questionBankSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
+    fetchQuestionProbeDetailRequest: (state) => {
+      state.detailLoading = true;
+      state.detailError = null;
+    },
+    fetchQuestionProbeDetailSuccess: (state, action) => {
+      state.detailLoading = false;
+      state.detail = action.payload;
+    },
+    fetchQuestionProbeDetailFailure: (state, action) => {
+      state.detailLoading = false;
+      state.detailError = action.payload;
+    },
+    clearQuestionProbeDetail: (state) => {
+      state.detail = null;
+      state.detailError = null;
+      state.currentAttempt = null;
+      state.submitError = null;
+    },
+    submitQuestionPracticeAttemptRequest: (state) => {
+      state.submitLoading = true;
+      state.submitError = null;
+    },
+    submitQuestionPracticeAttemptSuccess: (state, action) => {
+      state.submitLoading = false;
+      state.currentAttempt = action.payload;
+    },
+    submitQuestionPracticeAttemptFailure: (state, action) => {
+      state.submitLoading = false;
+      state.submitError = action.payload;
+    },
+    resetQuestionPracticeAttempt: (state) => {
+      state.currentAttempt = null;
+      state.submitError = null;
+      state.submitLoading = false;
+    },
   },
 });
 
@@ -74,6 +115,14 @@ export const {
   fetchQuestionProbesRequest,
   fetchQuestionProbesSuccess,
   fetchQuestionProbesFailure,
+  fetchQuestionProbeDetailRequest,
+  fetchQuestionProbeDetailSuccess,
+  fetchQuestionProbeDetailFailure,
+  clearQuestionProbeDetail,
+  submitQuestionPracticeAttemptRequest,
+  submitQuestionPracticeAttemptSuccess,
+  submitQuestionPracticeAttemptFailure,
+  resetQuestionPracticeAttempt,
 } = questionBankSlice.actions;
 
 export default questionBankSlice.reducer;

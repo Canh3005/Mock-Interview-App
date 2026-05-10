@@ -1,0 +1,116 @@
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import {
+  QUESTION_PROBE_LANGUAGES,
+  QuestionProbeLanguage,
+} from './constants/question-bank-taxonomy.constants';
+import {
+  QuestionProbe,
+  QuestionProbeLocalizedContent,
+} from './entities/question-probe.entity';
+import { QuestionBankPublicProjectionService } from './question-bank-public-projection.service';
+import {
+  PublicProbeDetailRequest,
+  PublicQuestionProbeCard,
+  PublicQuestionProbeDetail,
+} from './question-bank-public.types';
+import { QuestionBankRelatedService } from './question-bank-related.service';
+
+@Injectable()
+export class QuestionBankDetailService {
+  constructor(
+    @InjectRepository(QuestionProbe)
+    private readonly probeRepository: Repository<QuestionProbe>,
+    private readonly projectionService: QuestionBankPublicProjectionService,
+    private readonly relatedService: QuestionBankRelatedService,
+  ) {}
+
+  async getPublicProbeDetail({
+    probeId,
+    query,
+  }: {
+    probeId: string;
+    query: PublicProbeDetailRequest;
+  }): Promise<PublicQuestionProbeDetail> {
+    const locale: QuestionProbeLanguage = this._language({
+      value: query.locale,
+      field: 'locale',
+      required: false,
+    });
+    const relatedLimit: number = this._nonNegativeInteger({
+      value: query.relatedLimit,
+      field: 'relatedLimit',
+      defaultValue: 3,
+      maxValue: 6,
+    });
+    const probe: QuestionProbe | null = await this.probeRepository.findOne({
+      where: { id: probeId, status: 'active' },
+    });
+    if (!probe) throw new NotFoundException('Question probe not found');
+
+    const card: PublicQuestionProbeCard = this.projectionService.toPublicCard({
+      probe,
+      locale,
+    });
+    const content: QuestionProbeLocalizedContent | null =
+      this.projectionService.contentForLocale({
+        probe,
+        locale: card.resolvedLocale,
+      });
+    const relatedQuestions: PublicQuestionProbeCard[] =
+      await this.relatedService.findRelatedQuestions({
+        probe,
+        locale,
+        relatedLimit,
+      });
+
+    return {
+      ...card,
+      guidance: content?.guidance ?? [],
+      commonMistakes: content?.commonMistakes ?? [],
+      relatedQuestions,
+    };
+  }
+
+  private _nonNegativeInteger({
+    value,
+    field,
+    defaultValue,
+    maxValue,
+  }: {
+    value?: string;
+    field: string;
+    defaultValue: number;
+    maxValue?: number;
+  }): number {
+    if (!value) return defaultValue;
+    const parsed: number = Number.parseInt(value, 10);
+    if (!Number.isInteger(parsed) || parsed < 0) {
+      throw new BadRequestException(`Invalid ${field}`);
+    }
+    if (maxValue !== undefined && parsed > maxValue) return maxValue;
+    return parsed;
+  }
+
+  private _language({
+    value,
+    field,
+    required,
+  }: {
+    value?: string;
+    field: string;
+    required: boolean;
+  }): QuestionProbeLanguage {
+    if (!value && !required) return 'vi';
+    if (!value) throw new BadRequestException(`Invalid ${field}`);
+    if (QUESTION_PROBE_LANGUAGES.includes(value as QuestionProbeLanguage)) {
+      return value as QuestionProbeLanguage;
+    }
+    throw new BadRequestException(`Invalid ${field}`);
+  }
+}

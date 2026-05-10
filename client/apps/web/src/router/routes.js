@@ -14,6 +14,7 @@ export const ROUTES = {
   SCORING: '/scoring',
   PRACTICE_PROBLEMS: '/practice-problems',
   QUESTION_BANK: '/question-bank',
+  QUESTION_BANK_DETAIL: '/question-bank/:probeId',
   ADMIN: '/admin',
   ADMIN_TESTCASES: '/admin/testcases',
   ADMIN_SD_PROBLEMS: '/admin/sd-problems',

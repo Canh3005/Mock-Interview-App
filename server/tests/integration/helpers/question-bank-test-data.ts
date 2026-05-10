@@ -1,6 +1,6 @@
-import { InterviewSetDraftDto } from '../../src/question-bank/dto/interview-set-curation.dto';
-import { InterviewSet } from '../../src/question-bank/entities/interview-set.entity';
-import { QuestionProbe } from '../../src/question-bank/entities/question-probe.entity';
+import { InterviewSetDraftDto } from '../../../src/question-bank/dto/interview-set-curation.dto';
+import { InterviewSet } from '../../../src/question-bank/entities/interview-set.entity';
+import { QuestionProbe } from '../../../src/question-bank/entities/question-probe.entity';
 
 export function createLocalizedContent(title: string) {
   return {

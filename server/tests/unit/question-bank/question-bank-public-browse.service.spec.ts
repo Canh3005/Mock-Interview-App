@@ -1,8 +1,8 @@
 import { BadRequestException } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { QuestionProbe } from './entities/question-probe.entity';
-import { QuestionBankService } from './question-bank.service';
-import { QuestionProbeValidationService } from './question-probe-validation.service';
+import { QuestionProbe } from '../../../src/question-bank/entities/question-probe.entity';
+import { QuestionBankPublicBrowseService } from '../../../src/question-bank/question-bank-public-browse.service';
+import { QuestionBankPublicProjectionService } from '../../../src/question-bank/question-bank-public-projection.service';
 
 interface MockQueryBuilder {
   where: jest.Mock;
@@ -14,23 +14,19 @@ interface MockQueryBuilder {
   getManyAndCount: jest.Mock;
 }
 
-describe('QuestionBankService public probes', () => {
-  let service: QuestionBankService;
+describe('QuestionBankPublicBrowseService', () => {
+  let service: QuestionBankPublicBrowseService;
   let queryBuilder: MockQueryBuilder;
   let probeRepository: { createQueryBuilder: jest.Mock };
-  let validationService: { validate: jest.Mock };
 
   beforeEach(() => {
     queryBuilder = _createQueryBuilder();
     probeRepository = {
       createQueryBuilder: jest.fn(() => queryBuilder),
     };
-    validationService = {
-      validate: jest.fn(),
-    };
-    service = new QuestionBankService(
-      validationService as unknown as QuestionProbeValidationService,
+    service = new QuestionBankPublicBrowseService(
       probeRepository as unknown as Repository<QuestionProbe>,
+      new QuestionBankPublicProjectionService(),
     );
   });
 

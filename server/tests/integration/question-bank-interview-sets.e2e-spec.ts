@@ -1,6 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
-import { Role } from '../src/users/entities/user.entity';
+import { Role } from '../../src/users/entities/user.entity';
 import {
   cleanupQuestionBankE2eData,
   createQuestionBankE2eContext,

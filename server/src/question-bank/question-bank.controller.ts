@@ -1,11 +1,28 @@
-import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { JwtAuthRequest } from '../auth/types/auth-request.types';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import {
+  PublicProbeDetailRequest,
   PublicProbeListRequest,
+  PublicQuestionProbeDetail,
   PublicQuestionProbeListResponse,
-  QuestionBankService,
-} from './question-bank.service';
+  SubmitQuestionPracticeAttemptRequest,
+  SubmitQuestionPracticeAttemptResponse,
+} from './question-bank-public.types';
+import { QuestionBankDetailService } from './question-bank-detail.service';
+import { QuestionBankPublicBrowseService } from './question-bank-public-browse.service';
+import { QuestionBankService } from './question-bank.service';
+import { QuestionPracticeAttemptService } from './question-practice-attempt.service';
 import { QuestionBankTaxonomy } from './constants/question-bank-taxonomy.constants';
 import { ValidateQuestionProbeDto } from './dto/validate-question-probe.dto';
 import { ProbeValidationResult } from './question-probe-validation.types';
@@ -13,7 +30,12 @@ import { ProbeValidationResult } from './question-probe-validation.types';
 @ApiTags('question-bank')
 @Controller('question-bank')
 export class QuestionBankController {
-  constructor(private readonly questionBankService: QuestionBankService) {}
+  constructor(
+    private readonly questionBankService: QuestionBankService,
+    private readonly publicBrowseService: QuestionBankPublicBrowseService,
+    private readonly detailService: QuestionBankDetailService,
+    private readonly practiceAttemptService: QuestionPracticeAttemptService,
+  ) {}
 
   @Get('taxonomy')
   @ApiOperation({ summary: 'Get canonical question bank taxonomy' })
@@ -59,6 +81,35 @@ export class QuestionBankController {
       search,
       sort,
     };
-    return this.questionBankService.listPublicProbes({ query });
+    return this.publicBrowseService.listPublicProbes({ query });
+  }
+
+  @Get('probes/:probeId')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get active question probe detail for candidates' })
+  getPublicProbeDetail(
+    @Param('probeId') probeId: string,
+    @Query('locale') locale?: string,
+    @Query('relatedLimit') relatedLimit?: string,
+  ): Promise<PublicQuestionProbeDetail> {
+    const query: PublicProbeDetailRequest = { locale, relatedLimit };
+    return this.detailService.getPublicProbeDetail({ probeId, query });
+  }
+
+  @Post('probes/:probeId/practice-attempts')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Create a single-question practice attempt' })
+  submitPracticeAttempt(
+    @Req() req: JwtAuthRequest,
+    @Param('probeId') probeId: string,
+    @Body() request: SubmitQuestionPracticeAttemptRequest,
+  ): Promise<SubmitQuestionPracticeAttemptResponse> {
+    return this.practiceAttemptService.submitPracticeAttempt({
+      candidateId: req.user.id,
+      probeId,
+      request,
+    });
   }
 }

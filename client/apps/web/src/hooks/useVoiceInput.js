@@ -4,7 +4,11 @@ import { useState, useRef, useCallback, useEffect } from 'react';
  * Custom hook for Web Speech API voice input.
  * Returns { isListening, transcript, isSupported, startListening, stopListening, resetTranscript }
  */
-export function useVoiceInput({ lang = 'vi-VN', silenceTimeout = 3000 } = {}) {
+export function useVoiceInput({
+  lang = 'vi-VN',
+  silenceTimeout = 3000,
+  continuous = false,
+} = {}) {
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [isSupported, setIsSupported] = useState(false);
@@ -36,7 +40,7 @@ export function useVoiceInput({ lang = 'vi-VN', silenceTimeout = 3000 } = {}) {
 
     const recognition = new SpeechRecognition();
     recognition.lang = lang;
-    recognition.continuous = false;
+    recognition.continuous = continuous;
     recognition.interimResults = true;
     recognition.maxAlternatives = 1;
 
@@ -97,7 +101,7 @@ export function useVoiceInput({ lang = 'vi-VN', silenceTimeout = 3000 } = {}) {
     } catch (e) {
       console.warn('SpeechRecognition start error:', e);
     }
-  }, [lang, silenceTimeout]);
+  }, [continuous, lang, silenceTimeout]);
 
   const stopListening = useCallback(() => {
     clearSilenceTimer();

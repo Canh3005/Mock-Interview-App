@@ -3,11 +3,17 @@ import { toast } from 'sonner';
 import { questionBankApi } from '../../api/questionBank.api';
 import {
   fetchQuestionProbesFailure,
+  fetchQuestionProbeDetailFailure,
+  fetchQuestionProbeDetailRequest,
+  fetchQuestionProbeDetailSuccess,
   fetchQuestionProbesRequest,
   fetchQuestionProbesSuccess,
   fetchTaxonomyFailure,
   fetchTaxonomyRequest,
   fetchTaxonomySuccess,
+  submitQuestionPracticeAttemptFailure,
+  submitQuestionPracticeAttemptRequest,
+  submitQuestionPracticeAttemptSuccess,
 } from '../slices/questionBankSlice';
 
 function _messageFromError(error, fallback) {
@@ -62,7 +68,43 @@ function* _handleFetchProbes(action) {
   }
 }
 
+function* _handleFetchProbeDetail(action) {
+  try {
+    const { probeId, locale, relatedLimit = 3 } = action.payload;
+    const response = yield call(questionBankApi.getProbeDetail, {
+      probeId,
+      params: { locale, relatedLimit },
+    });
+    yield put(fetchQuestionProbeDetailSuccess(response));
+  } catch (error) {
+    const message = _messageFromError(error, 'Unable to load question detail.');
+    yield put(fetchQuestionProbeDetailFailure(message));
+    toast.error(message);
+  }
+}
+
+function* _handleSubmitPracticeAttempt(action) {
+  try {
+    const { probeId, data } = action.payload;
+    const response = yield call(questionBankApi.submitPracticeAttempt, {
+      probeId,
+      data,
+    });
+    yield put(submitQuestionPracticeAttemptSuccess(response));
+    toast.success('Answer submitted. Feedback is being prepared.');
+  } catch (error) {
+    const message = _messageFromError(error, 'Unable to submit your answer.');
+    yield put(submitQuestionPracticeAttemptFailure(message));
+    toast.error(message);
+  }
+}
+
 export function* watchQuestionBankSaga() {
   yield takeLatest(fetchTaxonomyRequest.type, _handleFetchTaxonomy);
   yield takeLatest(fetchQuestionProbesRequest.type, _handleFetchProbes);
+  yield takeLatest(fetchQuestionProbeDetailRequest.type, _handleFetchProbeDetail);
+  yield takeLatest(
+    submitQuestionPracticeAttemptRequest.type,
+    _handleSubmitPracticeAttempt,
+  );
 }

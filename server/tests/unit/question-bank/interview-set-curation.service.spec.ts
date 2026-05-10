@@ -1,12 +1,12 @@
 import { BadRequestException, ConflictException } from '@nestjs/common';
 import { In, Repository } from 'typeorm';
-import { InterviewSet } from './entities/interview-set.entity';
-import { QuestionProbe } from './entities/question-probe.entity';
-import { InterviewSetCurationService } from './interview-set-curation.service';
+import { InterviewSet } from '../../../src/question-bank/entities/interview-set.entity';
+import { QuestionProbe } from '../../../src/question-bank/entities/question-probe.entity';
+import { InterviewSetCurationService } from '../../../src/question-bank/interview-set-curation.service';
 import {
   createInterviewSetPayload,
   createMockInterviewSet,
-} from '../../test/helpers/question-bank-test-data';
+} from './helpers/question-bank-test-data';
 
 describe('InterviewSetCurationService', () => {
   let service: InterviewSetCurationService;

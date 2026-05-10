@@ -25,7 +25,7 @@ Backend:
 
 - [question-bank.controller.ts](../../../server/src/question-bank/question-bank.controller.ts): route `GET /question-bank/probes` có `JwtAuthGuard`.
 - [question-bank.service.ts](../../../server/src/question-bank/question-bank.service.ts): chuẩn hóa query, validate taxonomy, lọc/sắp xếp/phân trang, map dữ liệu rút gọn an toàn.
-- [question-bank.service.spec.ts](../../../server/src/question-bank/question-bank.service.spec.ts): test query active, dữ liệu rút gọn không lộ field nội bộ, dự phòng ngôn ngữ và bộ lọc không hợp lệ.
+- [question-bank-public-browse.service.spec.ts](../../../server/tests/unit/question-bank/question-bank-public-browse.service.spec.ts): test query active, dữ liệu rút gọn không lộ field nội bộ, dự phòng ngôn ngữ và bộ lọc không hợp lệ.
 
 Frontend:
 

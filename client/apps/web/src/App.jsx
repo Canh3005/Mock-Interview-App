@@ -23,6 +23,7 @@ import SDRoomPage from './components/sd-room/SDRoomPage'
 import ScoringPage from './components/scoring/ScoringPage'
 import ProblemBankPage from './components/practice/ProblemBankPage'
 import PublicQuestionBankPage from './components/question-bank/PublicQuestionBankPage'
+import QuestionProbeDetailPage from './components/question-bank/QuestionProbeDetailPage'
 import AdminLayout from './components/admin/AdminLayout'
 import AdminProblemsPage from './components/admin/AdminProblemsPage'
 import AdminTestCasesPage from './components/admin/AdminTestCasesPage'
@@ -53,6 +54,7 @@ function AppRoutes() {
           <Route path={ROUTES.INTERVIEW_SETUP} element={<InterviewSetupFlow />} />
           <Route path={ROUTES.PRACTICE_PROBLEMS} element={<ProblemBankPage />} />
           <Route path={ROUTES.QUESTION_BANK} element={<PublicQuestionBankPage />} />
+          <Route path={ROUTES.QUESTION_BANK_DETAIL} element={<QuestionProbeDetailPage />} />
           <Route path={ROUTES.DSA_ROOM_SOLO} element={<DSASessionPage />} />
 
           <Route element={<InterviewRoomRoute />}>

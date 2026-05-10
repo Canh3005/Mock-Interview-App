@@ -4,12 +4,13 @@ import { PassportModule } from '@nestjs/passport';
 import { Test, TestingModule } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
-import { JwtStrategy } from '../../src/auth/strategies/jwt.strategy';
-import { InterviewSet } from '../../src/question-bank/entities/interview-set.entity';
-import { QuestionProbeAuditLog } from '../../src/question-bank/entities/question-probe-audit-log.entity';
-import { QuestionProbe } from '../../src/question-bank/entities/question-probe.entity';
-import { QuestionBankModule } from '../../src/question-bank/question-bank.module';
-import { Role } from '../../src/users/entities/user.entity';
+import { JwtStrategy } from '../../../src/auth/strategies/jwt.strategy';
+import { InterviewSet } from '../../../src/question-bank/entities/interview-set.entity';
+import { QuestionPracticeAttempt } from '../../../src/question-bank/entities/question-practice-attempt.entity';
+import { QuestionProbeAuditLog } from '../../../src/question-bank/entities/question-probe-audit-log.entity';
+import { QuestionProbe } from '../../../src/question-bank/entities/question-probe.entity';
+import { QuestionBankModule } from '../../../src/question-bank/question-bank.module';
+import { Role } from '../../../src/users/entities/user.entity';
 
 export interface QuestionBankE2eContext {
   app: INestApplication;
@@ -34,7 +35,12 @@ export async function createQuestionBankE2eContext(): Promise<QuestionBankE2eCon
         username: process.env.POSTGRES_USER || 'postgres',
         password: process.env.POSTGRES_PASSWORD || 'postgres',
         database: process.env.POSTGRES_DB || 'mock_interview_db',
-        entities: [QuestionProbe, QuestionProbeAuditLog, InterviewSet],
+        entities: [
+          QuestionProbe,
+          QuestionPracticeAttempt,
+          QuestionProbeAuditLog,
+          InterviewSet,
+        ],
         synchronize: true,
         ssl:
           process.env.DB_SSL === 'true'

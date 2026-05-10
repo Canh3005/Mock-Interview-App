@@ -74,6 +74,16 @@ Với CRUD, ưu tiên tự động hóa:
 
 ## 5. Tooling hiện tại và đề xuất
 
+### Quy ước vị trí test file
+
+Không đặt `*.spec.*`, `*.test.*`, e2e spec, hoặc test helper trong `src/` hay trong folder module code. Product code và test code phải tách rời để module code không bị trộn với verification artifact.
+
+- Backend unit/service test: `server/tests/unit/**`.
+- Backend API integration/e2e test và Supertest helper: `server/tests/integration/**`.
+- Frontend Playwright mock/real-flow test và helper: `client/apps/web/tests/integration/**`.
+- Helper mới đặt trong `tests/<unit|integration>/helpers` gần lớp test đang dùng. Chỉ tạo shared helper ngoài layer khi có nhu cầu dùng chung thật sự và phải nằm dưới `tests/`, không nằm trong `src/`.
+- Tên domain/module có chữ `test`, ví dụ `test-cases`, không tính là test artifact nếu đó là product code.
+
 ### Backend
 
 Repo hiện có trong `server/`:
@@ -136,7 +146,7 @@ Luồng làm việc:
 2. Đọc artifacts và code path liên quan.
 3. Lập test case matrix trước khi chạy.
 4. Xác định test nào đã có automation sẵn, test nào cần viết thêm test file.
-5. Trước khi viết test/helper mới, kiểm tra helper có sẵn trong `server/test/helpers`, `client/apps/web/e2e/helpers`, và các spec gần nhất. Ưu tiên tái sử dụng hoặc mở rộng helper hiện có cho payload mẫu, seed data, JWT/session, mock route, app setup và cleanup. Nếu cần thêm helper mới, đặt vào folder helper đúng lớp test và export bằng named export để các test sau dùng lại được.
+5. Trước khi viết test/helper mới, kiểm tra helper có sẵn trong `server/tests/unit/helpers`, `server/tests/integration/helpers`, `client/apps/web/tests/integration/helpers`, và các spec gần nhất. Ưu tiên tái sử dụng hoặc mở rộng helper hiện có cho payload mẫu, seed data, JWT/session, mock route, app setup và cleanup. Nếu cần thêm helper mới, đặt vào folder helper đúng lớp test và export bằng named export để các test sau dùng lại được.
 6. Nếu viết thêm test file/config, chỉ sửa file test, helper test hoặc config test cần thiết; không sửa product code trừ khi người dùng yêu cầu fix.
 7. Chạy command hẹp nhất trước, rồi mở rộng khi cần:
    - BE liên quan: test file/spec cụ thể nếu có.

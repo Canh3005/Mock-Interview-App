@@ -1,5 +1,7 @@
 import { ArrowRight, BadgeInfo, Languages, Signal } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
+import { ROUTES } from '../../router/routes';
 
 function _taxonomyLabel({ t, group, key }) {
   if (!key) return '';
@@ -112,10 +114,13 @@ function CardFooter({ probe }) {
           </span>
         ) : null}
       </div>
-      <button type="button" disabled title={t('questionBank.card.detailPending')} className="inline-flex items-center gap-1.5 rounded-lg border border-slate-700 bg-slate-800/80 px-3 py-2 text-xs font-semibold text-slate-500 disabled:cursor-not-allowed">
+      <Link
+        to={`${ROUTES.QUESTION_BANK}/${probe.id}`}
+        className="inline-flex items-center gap-1.5 rounded-lg border border-cta/40 bg-cta/10 px-3 py-2 text-xs font-semibold text-cta hover:bg-cta/20"
+      >
         {t('questionBank.card.open')}
         <ArrowRight className="w-3.5 h-3.5" />
-      </button>
+      </Link>
     </div>
   );
 }

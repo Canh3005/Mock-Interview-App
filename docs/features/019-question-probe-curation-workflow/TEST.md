@@ -46,7 +46,7 @@ Kết quả tự động hiện tại: **pass**. Đã bổ sung API e2e với da
 | --- | --- | --- | --- |
 | `npm run test -- interview-set-curation.service.spec.ts --runInBand` | `server/` | Pass | 7 test pass. Có warning TS151002 sẵn từ `ts-jest`, không làm fail test. |
 | `npm run test:e2e -- question-bank-interview-sets.e2e-spec.ts --runInBand` | `server/` | Pass | 3 API e2e test pass với controller, guard, service, TypeORM và database thật. Có warning `pg` deprecation sẵn có. |
-| `npm run test:e2e -- e2e/admin-question-bank-interview-sets.spec.js` | `client/apps/web/` | Pass | 3 Playwright test pass. |
+| `npm run test:e2e -- tests/integration/admin-question-bank-interview-sets.spec.js` | `client/apps/web/` | Pass | 3 Playwright test pass. |
 | `npm run test:e2e` | `client/apps/web/` | Pass | 4 Playwright test pass, gồm cả smoke test. |
 | `npm run test:e2e:real` | `client/apps/web/` | Pass | 1 Playwright real-flow pass với browser thật, frontend thật, backend thật và database thật. Test stub `/auth/refresh` để cấp JWT admin hợp lệ; các API CRUD vẫn gọi backend thật. |
 | `npm run build` | `client/apps/web/` | Pass | Vite build pass. Có warning chunk lớn sẵn có. |
@@ -65,7 +65,7 @@ Kết quả tự động hiện tại: **pass**. Đã bổ sung API e2e với da
 - Không có lỗi tự động trong phạm vi đã cover cho Bộ phỏng vấn.
 - Có hai lớp Playwright: mock API để test UI nhanh/ổn định, và real-flow để test browser + frontend + backend + database thật.
 - API e2e đã cover auth boundary, persisted CRUD, filter thật, publish/retire thật và rule probe active.
-- Setup dùng lại đã được tách vào `server/test/helpers` và `client/apps/web/e2e/helpers` để các test CRUD sau có thể import lại payload mẫu, app setup, cleanup, JWT/session stub và mock API.
+- Setup dùng lại đã được tách vào `server/tests/integration/helpers` và `client/apps/web/tests/integration/helpers` để các test CRUD sau có thể import lại payload mẫu, app setup, cleanup, JWT/session stub và mock API.
 - Browser real-flow chưa test màn hình login thật; test dùng stub `/auth/refresh` để cấp JWT admin hợp lệ cho frontend, còn API quản trị vẫn đi qua backend guard thật.
 
 ## Verdict
