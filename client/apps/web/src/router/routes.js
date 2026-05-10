@@ -16,4 +16,5 @@ export const ROUTES = {
   ADMIN: '/admin',
   ADMIN_TESTCASES: '/admin/testcases',
   ADMIN_SD_PROBLEMS: '/admin/sd-problems',
+  ADMIN_QUESTION_BANK: '/admin/question-bank',
 }

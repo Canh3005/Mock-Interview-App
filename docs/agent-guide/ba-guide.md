@@ -4,6 +4,8 @@
 
 Scan `docs/features/` để biết features đã có — tránh overlap hoặc duplicate scope.
 
+Đọc `docs/agent-audits/INDEX.md` nếu tồn tại. Nếu có audit record áp dụng cho BA, product scope, user flow, acceptance criteria, hoặc domain hiện tại thì mở record đó trước khi viết BA.md. Không đọc toàn bộ audit records theo mặc định.
+
 BA chịu trách nhiệm làm rõ **need, value, stakeholder, context, business rules, và outcome**. BA không thiết kế solution kỹ thuật và không viết handoff implementation.
 
 **Đánh số folder:** Folder mới có dạng `docs/features/<NNN>-<feature-name>/` trong đó `NNN` là số thứ tự 3 chữ số. Lấy số lớn nhất hiện có rồi cộng 1. Nếu chưa có folder nào → bắt đầu từ `001`.
@@ -84,6 +86,11 @@ BA phải làm rõ **WHY** và **WHAT** trước khi đi vào flow: vấn đề 
 - State thay đổi thế nào sau mỗi bước — dùng ngôn ngữ nghiệp vụ ("phiên chuyển sang trạng thái ACTIVE"), không dùng ngôn ngữ kỹ thuật ("update DB column")
 - Kết quả cuối cùng user nhận được
 
+**Production interaction expectation:**
+- Với mỗi hành động người dùng nhập/sửa dữ liệu, BA phải mô tả kỳ vọng thao tác ở mức sản phẩm: người dùng chọn từ danh sách, điền form theo section, upload file, duyệt bảng, kéo thả, xác nhận modal, v.v.
+- Không chấp nhận mô tả mơ hồ kiểu "admin nhập payload" nếu đây là production workflow.
+- JSON/raw payload editor chỉ được xem là luồng production nếu người dùng yêu cầu rõ hoặc actor là technical operator nội bộ; nếu không, mặc định phải là UI có cấu trúc phù hợp với người dùng thật.
+
 **Luồng ngoại lệ (Edge Cases):**
 - Điều kiện boundary: không có data, data rỗng, timeout
 - Business rule vi phạm: sai quyền, sai trạng thái, sai thứ tự
@@ -144,6 +151,7 @@ Trước khi báo BA.md done, tự kiểm tra:
 - [ ] WHY nói rõ vấn đề, giá trị, và feature unlock bước nào trong epic.
 - [ ] SCOPE có In/Out/Depends on/Blocks rõ ràng.
 - [ ] Business Flow có happy path, edge cases, business rules.
+- [ ] Các bước nhập/sửa dữ liệu có expectation production rõ ràng; không để Dev tự suy ra bằng JSON/raw payload editor.
 - [ ] Acceptance Criteria đo được business outcome.
 - [ ] Nếu input là overview/plan dài, đã tách thành các feature slice độc lập thay vì viết một BA.md quá rộng.
 - [ ] Không có file estimate, endpoint, DTO, migration, component, hoặc implementation instruction.

@@ -15,7 +15,7 @@ src/
 
 ## Giới hạn kích thước — BẮT BUỘC
 
-- **File:** tối đa 300 dòng
+- **File:** tối đa 500 dòng
 - **Function/Component:** tối đa 50 dòng
 - Vượt quá → tách thành components nhỏ hơn
 
@@ -148,6 +148,24 @@ function _traverse(node, depth = 0) {
 - Error state phải hiển thị khi request fail
 - Dùng toast notification cho action success/error (không chỉ hiện trong form)
 
+## Production Forms — BẮT BUỘC
+
+Với mọi workflow production nơi user tạo/sửa dữ liệu nghiệp vụ, UI phải là form có cấu trúc theo domain. Admin UI vẫn là production UI nếu admin/curator dùng hằng ngày.
+
+Bắt buộc:
+- Dùng input/select/checkbox/toggle/slider/date picker/tab/section/repeatable list editor phù hợp với kiểu dữ liệu.
+- Với taxonomy hoặc enum, dùng select/combobox/multi-select từ API hoặc constant chuẩn; không bắt user nhớ key nội bộ.
+- Với localized content, dùng tab/section theo locale và label rõ từng field.
+- Với danh sách như expected signals, red flags, scoring hints, follow-ups, dùng add/remove row hoặc repeatable group.
+- Hiển thị validation summary theo field/group khi save hoặc publish fail.
+
+Cấm:
+- Không dùng JSON editor, textarea raw payload, hoặc DTO/schema editor làm luồng chính để create/edit dữ liệu production.
+- Không yêu cầu user nhập object/array JSON thủ công cho nghiệp vụ thường ngày.
+- Không dùng JSON editor để "đi nhanh" nếu BA/HOW mô tả đây là workflow người dùng thật.
+
+Chỉ được dùng JSON editor cho import/export/debug/seed/bulk technical tooling khi BA/HOW cho phép rõ, được label là luồng phụ, và không thay thế form chính.
+
 ## i18n — BẮT BUỘC
 
 Mọi text hiển thị cho user phải dùng `t()`. Thêm key vào **cả 3 file** cùng lúc:
@@ -164,6 +182,8 @@ Mọi text hiển thị cho user phải dùng `t()`. Thêm key vào **cả 3 fil
 ```
 
 Nếu chưa biết dịch vi/ja: dùng `[TODO: translate]` — không để trống.
+
+Riêng `vi.json` phải dùng tiếng Việt có dấu đầy đủ. Không viết fallback không dấu kiểu `Dang xuat`, `Quan ly`, `Tim kiem`; nếu chưa dịch được thì dùng `[TODO: translate]` thay vì bỏ dấu. Thuật ngữ kỹ thuật/domain có thể giữ nguyên tiếng Anh khi đó là tên khái niệm sản phẩm, nhưng phần câu tiếng Việt xung quanh vẫn phải có dấu.
 
 ## DRY
 
@@ -275,14 +295,15 @@ Child panel (AiPanel, NotesPanel) chỉ render `<div className="flex flex-col h-
 
 ## Checklist trước khi báo Done
 
-- [ ] File < 300 dòng, component < 50 dòng
+- [ ] File < 500 dòng, component < 50 dòng
 - [ ] Business logic nằm trong saga, không trong component
 - [ ] Private function có prefix `_`
 - [ ] Không có `Promise.all()` trần
 - [ ] Mọi loop có điều kiện dừng
 - [ ] Saga đã đăng ký trong `rootSaga.js`
-- [ ] Tất cả string dùng `t()`, 3 file i18n đã cập nhật
+- [ ] Tất cả string dùng `t()`, 3 file i18n đã cập nhật, `vi.json` dùng tiếng Việt có dấu
 - [ ] Loading + error state hiển thị đúng
+- [ ] Production create/edit workflow dùng form có cấu trúc, không dùng JSON/raw payload editor làm luồng chính
 - [ ] Import không dùng đã xóa
 - [ ] Room page dùng `slate-*` palette, không dùng `bg-card`/`border-border` trong panel
 - [ ] Tabbed panel → tách `RightPanel.jsx` riêng, child chỉ `flex flex-col h-full`

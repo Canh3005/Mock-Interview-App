@@ -18,7 +18,7 @@ Không tạo repository class riêng — dùng TypeORM `Repository<T>` trực ti
 
 ## Giới hạn kích thước — BẮT BUỘC
 
-- **File:** tối đa 300 dòng
+- **File:** tối đa 500 dòng
 - **Function/method:** tối đa 50 dòng
 - Vượt quá → dấu hiệu cần tách nhỏ, không phải viết tiếp
 
@@ -225,7 +225,7 @@ if (cached) return JSON.parse(cached) as Feature;
 
 ## Checklist trước khi báo Done
 
-- [ ] File < 300 dòng, function < 50 dòng
+- [ ] File < 500 dòng, function < 50 dòng
 - [ ] Explicit type cho mọi biến — không có inference
 - [ ] Không có `any`
 - [ ] Private method có prefix `_`

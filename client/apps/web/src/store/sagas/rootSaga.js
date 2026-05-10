@@ -12,6 +12,7 @@ import { watchSDSessionSaga } from './sdSessionSaga';
 import { watchSDInterviewerSaga } from './sdInterviewerSaga';
 import { watchSDEvaluatorSaga } from './sdEvaluatorSaga';
 import { watchWalletSaga } from './walletSaga';
+import { watchQuestionBankAdminSaga } from './questionBankAdminSaga';
 
 export default function* rootSaga() {
   yield all([
@@ -28,5 +29,6 @@ export default function* rootSaga() {
     fork(watchSDInterviewerSaga),
     fork(watchSDEvaluatorSaga),
     fork(watchWalletSaga),
+    fork(watchQuestionBankAdminSaga),
   ]);
 }

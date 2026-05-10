@@ -4,7 +4,7 @@
 
 Treat `CLAUDE.md` as the first document to read before running any agent flow in this repository.
 
-When the user asks for a workflow such as `ba`, `sa`, `be`, `fe`, `review`, or `fix`, start here, then follow the matching guide and feature documents listed below.
+When the user asks for a workflow such as `ba`, `sa`, `be`, `fe`, `review`, `pa`, or `fix`, start here, then follow the matching guide and feature documents listed below.
 
 ## Project Structure
 
@@ -16,6 +16,7 @@ When the user asks for a workflow such as `ba`, `sa`, `be`, `fe`, `review`, or `
 | `code-runner/` | Code execution sandbox | Express |
 | `docs/features/` | Feature specs per workflow | - |
 | `docs/agent-guide/` | Convention + review checklists | - |
+| `docs/agent-audits/` | PA trace records and process postmortems | - |
 
 ---
 
@@ -29,9 +30,12 @@ When the user asks for a workflow such as `ba`, `sa`, `be`, `fe`, `review`, or `
 | `fe <feature>` | Dev FE | `dev-guide.md` + `HOW.md` (hoặc `BA.md` nếu SA skip) + `convention-fe.md` + code BE hiện tại | code + done report — KHÔNG commit |
 | `review be <feature>` | Reviewer BE | `BA.md` + `HOW.md` nếu có + Dev done report nếu có + `review-be.md` + `git diff` | `docs/features/<NNN>-<feature>/REVIEW-BE.md` |
 | `review fe <feature>` | Reviewer FE | `BA.md` + `HOW.md` nếu có + Dev done report nếu có + `review-fe.md` + `git diff` | `docs/features/<NNN>-<feature>/REVIEW-FE.md` |
+| `pa <mô tả lỗi>` | Process Auditor | `pa-guide.md` + artifact liên quan + `docs/agent-guide/` | audit record + distilled guide updates |
 | `fix <mô tả>` | Quick Fix | file liên quan trực tiếp | code — KHÔNG commit |
 
 Convention, dev guide, và review checklist: `docs/agent-guide/`
+
+**Audit learning rule:** Trước khi chạy `ba`, `sa`, `be`, `fe`, `review`, hoặc `fix`, đọc `docs/agent-audits/INDEX.md` nếu tồn tại. Chỉ mở audit record chi tiết khi `applies_to`, role, domain, hoặc symptom khớp request hiện tại; không đọc toàn bộ `docs/agent-audits/` theo mặc định.
 
 **Commit rule:** Commit SAU KHI review approved. Không commit sớm hơn.
 
@@ -115,3 +119,19 @@ Review đối chiếu với spec — không chỉ check convention.
 
 **Verdict APPROVE:** implement đúng spec, không có critical issue.
 **Verdict REQUEST CHANGES:** có ít nhất 1 critical issue → Dev sửa → Reviewer review lại.
+
+---
+
+## Process Auditor (PA)
+
+**Trigger:** `pa <mô tả lỗi>` hoặc "PA trace xem tại sao lại xảy ra lỗi ...".
+
+**Đọc trước:**
+- `docs/agent-guide/pa-guide.md`
+- Artifact liên quan: `BA.md`, `HOW.md`, `WALKTHROUGH.md`, review report, code/diff nếu cần
+- Các guide trong `docs/agent-guide/`
+- Audit records cũ trong `docs/agent-audits/` nếu có case tương tự
+
+**Nhiệm vụ:** trace vì sao lỗi lọt qua BA/SA/Dev/Review, lưu audit record vào `docs/agent-audits/`, rồi chỉ cập nhật guide bằng rule/checklist đã chưng cất đủ dùng cho lần sau.
+
+**Done khi:** báo root cause, missed guardrail, audit file đã tạo/cập nhật, và guide nào được cập nhật. PA không sửa feature code trừ khi bạn yêu cầu riêng.

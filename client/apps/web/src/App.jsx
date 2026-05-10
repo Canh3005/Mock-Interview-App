@@ -26,6 +26,7 @@ import AdminLayout from './components/admin/AdminLayout'
 import AdminProblemsPage from './components/admin/AdminProblemsPage'
 import AdminTestCasesPage from './components/admin/AdminTestCasesPage'
 import AdminSDProblemsPage from './components/admin/AdminSDProblemsPage'
+import AdminQuestionBankPage from './components/admin/AdminQuestionBankPage'
 
 function AppRoutes() {
   const dispatch = useDispatch()
@@ -65,6 +66,7 @@ function AppRoutes() {
             <Route path={ROUTES.ADMIN} element={<AdminLayout><AdminProblemsPage /></AdminLayout>} />
             <Route path={ROUTES.ADMIN_TESTCASES} element={<AdminLayout><AdminTestCasesPage /></AdminLayout>} />
             <Route path={ROUTES.ADMIN_SD_PROBLEMS} element={<AdminLayout><AdminSDProblemsPage /></AdminLayout>} />
+            <Route path={ROUTES.ADMIN_QUESTION_BANK} element={<AdminLayout><AdminQuestionBankPage /></AdminLayout>} />
           </Route>
         </Route>
 

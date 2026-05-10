@@ -1,0 +1,8 @@
+# Agent Audit Index
+
+Đây là lớp lọc cho các lỗi PA đã trace. Trước khi chạy BA/SA/Dev/Review/Fix, đọc index này trước; chỉ mở audit record chi tiết khi `applies_to`, domain hoặc symptom khớp task hiện tại.
+
+| Date | Title | Applies To | Symptom | Guardrail | Record |
+| --- | --- | --- | --- | --- | --- |
+| 2026-05-09 | JSON editor used as production form | `ba`, `sa`, `dev-fe`, `review-fe`, `production-forms`, `admin-ui` | Admin/curator production workflow bắt user nhập JSON/raw payload | Production create/edit workflow phải dùng form có cấu trúc; JSON editor chỉ là luồng phụ khi BA/HOW cho phép rõ | [2026-05-09-json-editor-production-form.md](2026-05-09-json-editor-production-form.md) |
+| 2026-05-09 | Vietnamese locale without diacritics | `dev-fe`, `review-fe`, `i18n`, `localization` | `vi.json` dùng tiếng Việt không dấu hoặc English fallback không rõ TODO | `vi.json` phải dùng tiếng Việt có dấu; nếu chưa dịch được thì dùng `[TODO: translate]` | [2026-05-09-vi-locale-without-diacritics.md](2026-05-09-vi-locale-without-diacritics.md) |

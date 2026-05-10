@@ -62,6 +62,7 @@ Dev sẽ đọc trực tiếp từ BA.md.
 1. `BA.md` — hiểu WHAT, WHY, Epic Context, SCOPE, Business Flow, Acceptance Criteria, Risk.
 2. Codebase liên quan trực tiếp — chỉ để hiểu precedent, boundary, naming hiện có, integration đang dùng.
 3. `convention-be.md` và `convention-fe.md` — để không propose hướng lệch convention.
+4. `docs/agent-audits/INDEX.md` nếu tồn tại — chỉ mở audit record chi tiết khi áp dụng cho SA, architecture boundary, UX boundary, contract, quality guardrail, hoặc domain hiện tại.
 
 Mục tiêu không phải tìm mọi file cần sửa. Mục tiêu là biết hệ thống hiện tại có pattern nào nên reuse, điểm nào là constraint, và chỗ nào cần decision.
 
@@ -140,7 +141,24 @@ Không cần giải thích implementation chi tiết, nhưng phải đủ để 
 
 ---
 
-## 6. AI Feature Patterns
+## 6. Production UX Boundary
+
+Áp dụng cho mọi story có người dùng thao tác qua UI, kể cả admin/internal admin. SA phải phân biệt rõ:
+
+- Primary production workflow: luồng người dùng làm hằng ngày để tạo/sửa/duyệt dữ liệu.
+- Secondary technical tooling: import/export, debug, migration, seed, bulk operation.
+
+Guardrail bắt buộc:
+
+- Primary production workflow không được dùng JSON/raw payload editor, textarea schema tự do, hoặc bắt user hiểu DTO nội bộ, trừ khi BA ghi rõ actor là technical operator và người dùng đã chấp nhận kiểu thao tác đó.
+- Nếu domain object phức tạp, HOW phải yêu cầu UI có cấu trúc: section, tab, field group, select từ taxonomy, repeatable list editor, localized content editor, validation summary.
+- JSON editor chỉ được phép là luồng phụ cho import/export/debug, phải được label rõ và không thay thế form chính.
+
+Nếu HOW.md có FE scope mà không nêu UX boundary cho workflow nhập liệu phức tạp, SA handoff chưa đủ rõ.
+
+---
+
+## 7. AI Feature Patterns
 
 Áp dụng khi story có AI integration.
 
@@ -165,7 +183,7 @@ SA chốt ở mức contract và safety:
 
 ---
 
-## 7. HOW.md Output Format
+## 8. HOW.md Output Format
 
 HOW.md là **Architecture Brief**, không phải implementation checklist.
 
@@ -191,6 +209,9 @@ HOW.md là **Architecture Brief**, không phải implementation checklist.
 ## Quality & Stability Notes
 [Timeout, fallback, retry, observability, privacy/security, rollback/compatibility — hoặc "N/A"]
 
+## UX Boundary
+[Nếu có UI: primary production workflow là gì, không được dùng raw JSON/payload editor ở đâu, technical/bulk tooling nào chỉ là phụ]
+
 ## Delivery Slices
 [Nếu cần split: Story 1/2 với outcome độc lập. Nếu không cần: "Single delivery slice"]
 
@@ -203,7 +224,7 @@ Dev tự xác định file/function/component cụ thể dựa trên convention 
 
 ---
 
-## 8. SA Handoff Quality Gate
+## 9. SA Handoff Quality Gate
 
 Trước khi báo HOW.md done, tự kiểm tra:
 
@@ -214,5 +235,6 @@ Trước khi báo HOW.md done, tự kiểm tra:
 - [ ] Contract public boundary đủ để BE/FE không hiểu lệch.
 - [ ] Data/state lifecycle và consistency/idempotency concern đã nêu nếu có.
 - [ ] Quality guardrails đã nêu cho latency, fallback, observability, privacy/security, rollback nếu relevant.
+- [ ] Nếu có UI nhập/sửa dữ liệu production, HOW.md nêu rõ UX boundary và không để Dev dùng JSON/raw payload editor làm luồng chính.
 - [ ] Delivery slice độc lập, review được, rollback được; nếu không thì đã split.
 - [ ] Nếu BA thiếu nghiệp vụ hoặc mâu thuẫn, đã dừng và hỏi thay vì tự bịa business rule.

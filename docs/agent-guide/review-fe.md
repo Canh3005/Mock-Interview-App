@@ -1,6 +1,6 @@
 # FE Review Checklist
 
-Đọc `BA.md` + `HOW.md` nếu có + Dev done report nếu có + `git diff` trước khi review. Nếu SA đã skip và không có `HOW.md`, review trực tiếp theo BA business flow, acceptance criteria, convention FE, và diff. Mục tiêu: đối chiếu code với spec, không chỉ đọc code đơn thuần.
+Đọc `BA.md` + `HOW.md` nếu có + Dev done report nếu có + `git diff` trước khi review. Đọc thêm `docs/agent-audits/INDEX.md` nếu tồn tại và chỉ mở audit record liên quan tới FE/review/domain hiện tại. Nếu SA đã skip và không có `HOW.md`, review trực tiếp theo BA business flow, acceptance criteria, convention FE, và diff. Mục tiêu: đối chiếu code với spec, không chỉ đọc code đơn thuần.
 
 ## 1. Đúng spec chưa?
 
@@ -36,10 +36,12 @@
 
 - [ ] Loading state được hiển thị khi đang fetch?
 - [ ] Error state được hiển thị khi request thất bại?
+- [ ] Production create/edit workflow có form có cấu trúc phù hợp với user thật, không dùng JSON/raw payload editor làm luồng chính?
+- [ ] Nếu có JSON editor/import/export, nó có được BA/HOW cho phép rõ và chỉ là luồng phụ không?
 
 ## Severity Guide
 
-- **critical** — sai logic, i18n miss, không đúng spec → PHẢI sửa
+- **critical** — sai logic, i18n miss, production workflow bắt user nhập JSON/raw payload, không đúng spec → PHẢI sửa
 - **minor** — code smell, naming, style → nên sửa nhưng không block
 
 ## Output Format

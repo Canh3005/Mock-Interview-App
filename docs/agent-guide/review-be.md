@@ -1,6 +1,6 @@
 # BE Review Checklist
 
-Đọc `BA.md` + `HOW.md` nếu có + Dev done report nếu có + `git diff` trước khi review. Nếu SA đã skip và không có `HOW.md`, review trực tiếp theo BA business flow, acceptance criteria, convention BE, và diff. Mục tiêu: đối chiếu code với spec, không chỉ đọc code đơn thuần.
+Đọc `BA.md` + `HOW.md` nếu có + Dev done report nếu có + `git diff` trước khi review. Đọc thêm `docs/agent-audits/INDEX.md` nếu tồn tại và chỉ mở audit record liên quan tới BE/review/domain hiện tại. Nếu SA đã skip và không có `HOW.md`, review trực tiếp theo BA business flow, acceptance criteria, convention BE, và diff. Mục tiêu: đối chiếu code với spec, không chỉ đọc code đơn thuần.
 
 ## 1. Đúng spec chưa?
 
@@ -10,7 +10,7 @@
 
 ## 2. Structure & Pattern
 
-- [ ] File < 300 dòng, function/method < 50 dòng?
+- [ ] File < 500 dòng, function/method < 50 dòng?
 - [ ] Module mới có đủ `controller / service / dto / entity` không?
 - [ ] Controller chỉ nhận request + gọi service — không có business logic trong controller?
 - [ ] Không tạo repository class riêng — dùng `@InjectRepository` trực tiếp trong service?
