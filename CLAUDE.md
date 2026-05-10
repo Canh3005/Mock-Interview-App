@@ -36,6 +36,8 @@ When the user asks for a workflow such as `ba`, `sa`, `be`, `fe`, `review`, `tes
 
 Convention, dev guide, và review checklist: `docs/agent-guide/`
 
+**Artifact language rule:** Các file agent viết ra trong `docs/features/` và `docs/agent-guide/` mặc định dùng tiếng Việt rõ ràng, dễ đọc. Chỉ dùng tiếng Anh khi đó là tên tool, command, route, API contract, status kỹ thuật, exception gốc, hoặc thuật ngữ cần đối chiếu trực tiếp. Không lạm dụng tiếng Anh trong phần giải thích, ghi chú, test case, acceptance mapping hoặc verdict nếu người dùng không yêu cầu.
+
 **Audit learning rule:** Trước khi chạy `ba`, `sa`, `be`, `fe`, `review`, `test`, hoặc `fix`, đọc `docs/agent-audits/INDEX.md` nếu tồn tại. Chỉ mở audit record chi tiết khi `applies_to`, role, domain, hoặc symptom khớp request hiện tại; không đọc toàn bộ `docs/agent-audits/` theo mặc định.
 
 **Commit rule:** Commit SAU KHI review approved. Không commit sớm hơn.
@@ -135,7 +137,7 @@ Review đối chiếu với spec — không chỉ check convention.
 
 **Nhiệm vụ:** tạo test case matrix từ business flow, acceptance criteria, contracts và walkthrough; phân loại test case nào agent tự động test được, test case nào cần bạn test thủ công; chạy phần automated phù hợp với tool hiện có; ghi kết quả vào `docs/features/<NNN>-<feature>/TEST.md`.
 
-**Tooling mặc định hiện tại:** BE dùng Jest/Supertest trong `server/`. FE hiện chỉ có build check; UI E2E cần setup Playwright trước khi có thể tự động click CRUD flow trong browser.
+**Tooling mặc định hiện tại:** BE dùng Jest/Supertest trong `server/`. FE dùng Vite build và Playwright E2E trong `client/apps/web/` để tự động kiểm tra CRUD UI khi có thể mock hoặc chuẩn bị API/test data phù hợp.
 
 **Done khi:** `TEST.md` tồn tại/cập nhật, có test case matrix, automated/manual split, command đã chạy, kết quả pass/fail/blocker, và phần manual còn lại nếu có. KHÔNG commit.
 
