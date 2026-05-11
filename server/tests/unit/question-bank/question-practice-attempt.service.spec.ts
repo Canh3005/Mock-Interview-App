@@ -1,8 +1,9 @@
 import { Repository } from 'typeorm';
 import { QuestionPracticeAttempt } from '../../../src/question-bank/entities/question-practice-attempt.entity';
 import { QuestionProbe } from '../../../src/question-bank/entities/question-probe.entity';
-import { QuestionBankPublicProjectionService } from '../../../src/question-bank/question-bank-public-projection.service';
-import { QuestionPracticeAttemptService } from '../../../src/question-bank/question-practice-attempt.service';
+import { QuestionPracticeFeedbackService } from '../../../src/question-bank/services/practice/question-practice-feedback.service';
+import { QuestionPracticeAttemptService } from '../../../src/question-bank/services/practice/question-practice-attempt.service';
+import { QuestionBankPublicProjectionService } from '../../../src/question-bank/services/public/question-bank-public-projection.service';
 
 describe('QuestionPracticeAttemptService', () => {
   let service: QuestionPracticeAttemptService;
@@ -12,6 +13,7 @@ describe('QuestionPracticeAttemptService', () => {
     create: jest.Mock;
     save: jest.Mock;
   };
+  let feedbackService: { enqueueScoring: jest.Mock };
 
   beforeEach(() => {
     probeRepository = { findOne: jest.fn() };
@@ -25,10 +27,12 @@ describe('QuestionPracticeAttemptService', () => {
         ...attempt,
       })),
     };
+    feedbackService = { enqueueScoring: jest.fn(async () => undefined) };
     service = new QuestionPracticeAttemptService(
       probeRepository as unknown as Repository<QuestionProbe>,
       attemptRepository as unknown as Repository<QuestionPracticeAttempt>,
       new QuestionBankPublicProjectionService(),
+      feedbackService as unknown as QuestionPracticeFeedbackService,
     );
   });
 
@@ -89,6 +93,7 @@ describe('QuestionPracticeAttemptService', () => {
     });
     expect(retry.attemptId).toBe('attempt-1');
     expect(attemptRepository.save).toHaveBeenCalledTimes(1);
+    expect(feedbackService.enqueueScoring).toHaveBeenCalledTimes(1);
   });
 });
 

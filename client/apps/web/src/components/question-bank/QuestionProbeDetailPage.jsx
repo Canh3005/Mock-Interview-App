@@ -22,11 +22,14 @@ import { ROUTES } from '../../router/routes';
 import {
   clearQuestionProbeDetail,
   fetchQuestionProbeDetailRequest,
+  pollQuestionPracticeAttemptRequest,
   resetQuestionPracticeAttempt,
+  retryQuestionPracticeFeedbackRequest,
   submitQuestionPracticeAttemptRequest,
 } from '../../store/slices/questionBankSlice';
 import { useVoiceInput } from '../../hooks/useVoiceInput';
 import QuestionProbeCard from './QuestionProbeCard';
+import QuestionPracticeFeedbackPanel from './QuestionPracticeFeedbackPanel';
 
 const SUPPORTED_LOCALES = ['vi', 'en', 'ja'];
 const SPEECH_RECOGNITION_LOCALES = {
@@ -428,8 +431,17 @@ export default function QuestionProbeDetailPage() {
   const [answerText, setAnswerText] = useState('');
   const [clientSubmissionId, setClientSubmissionId] = useState(_submissionId);
   const voiceBaseTextRef = useRef('');
-  const { detail, detailLoading, detailError, submitLoading, submitError, currentAttempt } =
-    useSelector((state) => state.questionBank);
+  const {
+    detail,
+    detailLoading,
+    detailError,
+    submitLoading,
+    submitError,
+    feedbackLoading,
+    feedbackError,
+    retryFeedbackLoading,
+    currentAttempt,
+  } = useSelector((state) => state.questionBank);
   const {
     isListening,
     transcript,
@@ -476,6 +488,18 @@ export default function QuestionProbeDetailPage() {
   useEffect(() => {
     if (currentAttempt && isListening) stopListening();
   }, [currentAttempt, isListening, stopListening]);
+
+  useEffect(() => {
+    const status = currentAttempt?.status;
+    if (!currentAttempt?.attemptId) return undefined;
+    if (!['pending_feedback', 'processing'].includes(status)) return undefined;
+    dispatch(
+      pollQuestionPracticeAttemptRequest({
+        attemptId: currentAttempt.attemptId,
+      }),
+    );
+    return undefined;
+  }, [currentAttempt?.attemptId, currentAttempt?.status, dispatch]);
 
   const handleAnswerInputModeChange = useCallback(
     (mode) => {
@@ -544,6 +568,15 @@ export default function QuestionProbeDetailPage() {
     dispatch(resetQuestionPracticeAttempt());
   }, [dispatch, isListening, resetTranscript, stopListening]);
 
+  const handleRetryFeedback = useCallback(() => {
+    if (!currentAttempt?.attemptId) return;
+    dispatch(
+      retryQuestionPracticeFeedbackRequest({
+        attemptId: currentAttempt.attemptId,
+      }),
+    );
+  }, [currentAttempt?.attemptId, dispatch]);
+
   return (
     <div className={darkMode ? 'dark' : ''}>
       <div className="min-h-screen bg-background text-text-base font-body transition-colors duration-300">
@@ -574,6 +607,13 @@ export default function QuestionProbeDetailPage() {
               <div className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_380px]">
                 <div className="space-y-6">
                   <QuestionContent detail={detail} />
+                  <QuestionPracticeFeedbackPanel
+                    attempt={currentAttempt}
+                    loading={feedbackLoading}
+                    error={feedbackError}
+                    retryLoading={retryFeedbackLoading}
+                    onRetry={handleRetryFeedback}
+                  />
                   <RelatedQuestions questions={detail.relatedQuestions} />
                 </div>
                 <PracticePanel

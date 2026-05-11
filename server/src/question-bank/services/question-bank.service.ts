@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import {
   QUESTION_BANK_TAXONOMY,
   QuestionBankTaxonomy,
-} from './constants/question-bank-taxonomy.constants';
-import { ProbeValidationResult } from './question-probe-validation.types';
-import { QuestionProbeValidationService } from './question-probe-validation.service';
+} from '../constants/question-bank-taxonomy.constants';
+import { QuestionProbeValidationService } from './curation/question-probe-validation.service';
+import { ProbeValidationResult } from '../types/question-probe-validation.types';
 
 @Injectable()
 export class QuestionBankService {

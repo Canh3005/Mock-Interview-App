@@ -1,5 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+export const QUESTION_BANK_PAGE_SIZE = 12;
+
 const initialFilters = {
   search: '',
   roleFamily: '',
@@ -20,7 +22,7 @@ const questionBankSlice = createSlice({
     taxonomy: null,
     total: 0,
     page: 1,
-    limit: 10,
+    limit: QUESTION_BANK_PAGE_SIZE,
     filters: initialFilters,
     loading: false,
     taxonomyLoading: false,
@@ -30,6 +32,9 @@ const questionBankSlice = createSlice({
     detailError: null,
     submitLoading: false,
     submitError: null,
+    feedbackLoading: false,
+    feedbackError: null,
+    retryFeedbackLoading: false,
     currentAttempt: null,
   },
   reducers: {
@@ -85,6 +90,9 @@ const questionBankSlice = createSlice({
       state.detailError = null;
       state.currentAttempt = null;
       state.submitError = null;
+      state.feedbackError = null;
+      state.feedbackLoading = false;
+      state.retryFeedbackLoading = false;
     },
     submitQuestionPracticeAttemptRequest: (state) => {
       state.submitLoading = true;
@@ -101,7 +109,35 @@ const questionBankSlice = createSlice({
     resetQuestionPracticeAttempt: (state) => {
       state.currentAttempt = null;
       state.submitError = null;
+      state.feedbackError = null;
+      state.feedbackLoading = false;
+      state.retryFeedbackLoading = false;
       state.submitLoading = false;
+    },
+    fetchQuestionPracticeAttemptRequest: (state) => {
+      state.feedbackLoading = true;
+      state.feedbackError = null;
+    },
+    fetchQuestionPracticeAttemptSuccess: (state, action) => {
+      state.feedbackLoading = false;
+      state.currentAttempt = action.payload;
+    },
+    fetchQuestionPracticeAttemptFailure: (state, action) => {
+      state.feedbackLoading = false;
+      state.feedbackError = action.payload;
+    },
+    pollQuestionPracticeAttemptRequest: () => {},
+    retryQuestionPracticeFeedbackRequest: (state) => {
+      state.retryFeedbackLoading = true;
+      state.feedbackError = null;
+    },
+    retryQuestionPracticeFeedbackSuccess: (state, action) => {
+      state.retryFeedbackLoading = false;
+      state.currentAttempt = action.payload;
+    },
+    retryQuestionPracticeFeedbackFailure: (state, action) => {
+      state.retryFeedbackLoading = false;
+      state.feedbackError = action.payload;
     },
   },
 });
@@ -123,6 +159,13 @@ export const {
   submitQuestionPracticeAttemptSuccess,
   submitQuestionPracticeAttemptFailure,
   resetQuestionPracticeAttempt,
+  fetchQuestionPracticeAttemptRequest,
+  fetchQuestionPracticeAttemptSuccess,
+  fetchQuestionPracticeAttemptFailure,
+  pollQuestionPracticeAttemptRequest,
+  retryQuestionPracticeFeedbackRequest,
+  retryQuestionPracticeFeedbackSuccess,
+  retryQuestionPracticeFeedbackFailure,
 } = questionBankSlice.actions;
 
 export default questionBankSlice.reducer;

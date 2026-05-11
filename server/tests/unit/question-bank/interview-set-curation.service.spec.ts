@@ -2,7 +2,7 @@ import { BadRequestException, ConflictException } from '@nestjs/common';
 import { In, Repository } from 'typeorm';
 import { InterviewSet } from '../../../src/question-bank/entities/interview-set.entity';
 import { QuestionProbe } from '../../../src/question-bank/entities/question-probe.entity';
-import { InterviewSetCurationService } from '../../../src/question-bank/interview-set-curation.service';
+import { InterviewSetCurationService } from '../../../src/question-bank/services/curation/interview-set-curation.service';
 import {
   createInterviewSetPayload,
   createMockInterviewSet,

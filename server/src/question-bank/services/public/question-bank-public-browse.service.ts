@@ -9,15 +9,17 @@ import {
   QUESTION_PROBE_ROLE_FAMILIES,
   QUESTION_PROBE_TYPES,
   QuestionProbeLanguage,
-} from './constants/question-bank-taxonomy.constants';
-import { QuestionProbe } from './entities/question-probe.entity';
+} from '../../constants/question-bank-taxonomy.constants';
+import { QuestionProbe } from '../../entities/question-probe.entity';
 import { QuestionBankPublicProjectionService } from './question-bank-public-projection.service';
 import {
   PublicProbeListQuery,
   PublicProbeListRequest,
   PublicQuestionProbeCard,
   PublicQuestionProbeListResponse,
-} from './question-bank-public.types';
+} from '../../types/question-bank-public.types';
+
+const PUBLIC_QUESTION_BANK_PAGE_SIZE = 12;
 
 @Injectable()
 export class QuestionBankPublicBrowseService {
@@ -72,7 +74,7 @@ export class QuestionBankPublicBrowseService {
     const limit: number = this._positiveInteger({
       value: request.limit,
       field: 'limit',
-      defaultValue: 10,
+      defaultValue: PUBLIC_QUESTION_BANK_PAGE_SIZE,
       maxValue: 50,
     });
     const sort: 'newest' | 'popular' = this._sort(request.sort);

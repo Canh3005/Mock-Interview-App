@@ -9,8 +9,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { JwtAuthRequest } from '../auth/types/auth-request.types';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { JwtAuthRequest } from '../../auth/types/auth-request.types';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import {
   PublicProbeDetailRequest,
   PublicProbeListRequest,
@@ -18,14 +18,16 @@ import {
   PublicQuestionProbeListResponse,
   SubmitQuestionPracticeAttemptRequest,
   SubmitQuestionPracticeAttemptResponse,
-} from './question-bank-public.types';
-import { QuestionBankDetailService } from './question-bank-detail.service';
-import { QuestionBankPublicBrowseService } from './question-bank-public-browse.service';
-import { QuestionBankService } from './question-bank.service';
-import { QuestionPracticeAttemptService } from './question-practice-attempt.service';
-import { QuestionBankTaxonomy } from './constants/question-bank-taxonomy.constants';
-import { ValidateQuestionProbeDto } from './dto/validate-question-probe.dto';
-import { ProbeValidationResult } from './question-probe-validation.types';
+  QuestionPracticeAttemptFeedbackResponse,
+} from '../types/question-bank-public.types';
+import { QuestionBankService } from '../services/question-bank.service';
+import { QuestionPracticeAttemptService } from '../services/practice/question-practice-attempt.service';
+import { QuestionPracticeFeedbackService } from '../services/practice/question-practice-feedback.service';
+import { QuestionBankDetailService } from '../services/public/question-bank-detail.service';
+import { QuestionBankPublicBrowseService } from '../services/public/question-bank-public-browse.service';
+import { QuestionBankTaxonomy } from '../constants/question-bank-taxonomy.constants';
+import { ValidateQuestionProbeDto } from '../dto/validate-question-probe.dto';
+import { ProbeValidationResult } from '../types/question-probe-validation.types';
 
 @ApiTags('question-bank')
 @Controller('question-bank')
@@ -35,6 +37,7 @@ export class QuestionBankController {
     private readonly publicBrowseService: QuestionBankPublicBrowseService,
     private readonly detailService: QuestionBankDetailService,
     private readonly practiceAttemptService: QuestionPracticeAttemptService,
+    private readonly practiceFeedbackService: QuestionPracticeFeedbackService,
   ) {}
 
   @Get('taxonomy')
@@ -110,6 +113,34 @@ export class QuestionBankController {
       candidateId: req.user.id,
       probeId,
       request,
+    });
+  }
+
+  @Get('practice-attempts/:attemptId')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get single-question practice feedback status' })
+  getPracticeAttemptFeedback(
+    @Req() req: JwtAuthRequest,
+    @Param('attemptId') attemptId: string,
+  ): Promise<QuestionPracticeAttemptFeedbackResponse> {
+    return this.practiceFeedbackService.getAttemptFeedback({
+      candidateId: req.user.id,
+      attemptId,
+    });
+  }
+
+  @Post('practice-attempts/:attemptId/retry-feedback')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Retry single-question practice feedback scoring' })
+  retryPracticeAttemptFeedback(
+    @Req() req: JwtAuthRequest,
+    @Param('attemptId') attemptId: string,
+  ): Promise<QuestionPracticeAttemptFeedbackResponse> {
+    return this.practiceFeedbackService.retryFeedback({
+      candidateId: req.user.id,
+      attemptId,
     });
   }
 }

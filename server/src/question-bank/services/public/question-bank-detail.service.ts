@@ -8,17 +8,17 @@ import { Repository } from 'typeorm';
 import {
   QUESTION_PROBE_LANGUAGES,
   QuestionProbeLanguage,
-} from './constants/question-bank-taxonomy.constants';
+} from '../../constants/question-bank-taxonomy.constants';
 import {
   QuestionProbe,
   QuestionProbeLocalizedContent,
-} from './entities/question-probe.entity';
+} from '../../entities/question-probe.entity';
 import { QuestionBankPublicProjectionService } from './question-bank-public-projection.service';
 import {
   PublicProbeDetailRequest,
   PublicQuestionProbeCard,
   PublicQuestionProbeDetail,
-} from './question-bank-public.types';
+} from '../../types/question-bank-public.types';
 import { QuestionBankRelatedService } from './question-bank-related.service';
 
 @Injectable()

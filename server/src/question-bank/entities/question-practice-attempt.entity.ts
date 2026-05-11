@@ -11,6 +11,10 @@ import {
   QuestionProbeLocalizedContent,
   QuestionProbeScoringHint,
 } from './question-probe.entity';
+import type {
+  ProbeScoringResult,
+  QuestionPracticeFailureCode,
+} from '../types/question-practice-scoring.types';
 
 export type QuestionPracticeAttemptStatus =
   | 'pending_feedback'
@@ -75,6 +79,27 @@ export class QuestionPracticeAttempt {
 
   @Column({ type: 'varchar', length: 30, default: 'pending_feedback' })
   status!: QuestionPracticeAttemptStatus;
+
+  @Column({ type: 'jsonb', nullable: true })
+  feedbackResult!: ProbeScoringResult | null;
+
+  @Column({ type: 'varchar', length: 40, nullable: true })
+  failureCode!: QuestionPracticeFailureCode | null;
+
+  @Column({ type: 'timestamptz', nullable: true })
+  processingStartedAt!: Date | null;
+
+  @Column({ type: 'timestamptz', nullable: true })
+  feedbackReadyAt!: Date | null;
+
+  @Column({ type: 'timestamptz', nullable: true })
+  feedbackFailedAt!: Date | null;
+
+  @Column({ type: 'varchar', length: 40, nullable: true })
+  scoringVersion!: string | null;
+
+  @Column({ type: 'int', default: 0 })
+  retryCount!: number;
 
   @Column({ type: 'jsonb' })
   probeSnapshot!: QuestionPracticeProbeSnapshot;

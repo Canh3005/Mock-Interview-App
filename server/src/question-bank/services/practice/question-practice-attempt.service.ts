@@ -9,18 +9,19 @@ import { Repository } from 'typeorm';
 import {
   QUESTION_PROBE_LANGUAGES,
   QuestionProbeLanguage,
-} from './constants/question-bank-taxonomy.constants';
+} from '../../constants/question-bank-taxonomy.constants';
 import {
   QuestionPracticeAnswerInputType,
   QuestionPracticeAttempt,
   QuestionPracticeProbeSnapshot,
-} from './entities/question-practice-attempt.entity';
-import { QuestionProbe } from './entities/question-probe.entity';
-import { QuestionBankPublicProjectionService } from './question-bank-public-projection.service';
+} from '../../entities/question-practice-attempt.entity';
+import { QuestionProbe } from '../../entities/question-probe.entity';
+import { QuestionBankPublicProjectionService } from '../public/question-bank-public-projection.service';
 import {
   SubmitQuestionPracticeAttemptRequest,
   SubmitQuestionPracticeAttemptResponse,
-} from './question-bank-public.types';
+} from '../../types/question-bank-public.types';
+import { QuestionPracticeFeedbackService } from './question-practice-feedback.service';
 
 @Injectable()
 export class QuestionPracticeAttemptService {
@@ -30,6 +31,7 @@ export class QuestionPracticeAttemptService {
     @InjectRepository(QuestionPracticeAttempt)
     private readonly attemptRepository: Repository<QuestionPracticeAttempt>,
     private readonly projectionService: QuestionBankPublicProjectionService,
+    private readonly feedbackService: QuestionPracticeFeedbackService,
   ) {}
 
   async submitPracticeAttempt({
@@ -103,6 +105,7 @@ export class QuestionPracticeAttemptService {
     });
     const savedAttempt: QuestionPracticeAttempt =
       await this.attemptRepository.save(attempt);
+    await this.feedbackService.enqueueScoring(savedAttempt);
     return this._toAttemptResponse(savedAttempt);
   }
 

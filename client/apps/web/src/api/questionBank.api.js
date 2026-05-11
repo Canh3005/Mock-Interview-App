@@ -7,4 +7,8 @@ export const questionBankApi = {
     axiosClient.get(`/question-bank/probes/${probeId}`, { params }),
   submitPracticeAttempt: ({ probeId, data }) =>
     axiosClient.post(`/question-bank/probes/${probeId}/practice-attempts`, data),
+  getPracticeAttempt: ({ attemptId }) =>
+    axiosClient.get(`/question-bank/practice-attempts/${attemptId}`),
+  retryPracticeFeedback: ({ attemptId }) =>
+    axiosClient.post(`/question-bank/practice-attempts/${attemptId}/retry-feedback`),
 };

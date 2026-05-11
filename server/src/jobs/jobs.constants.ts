@@ -20,3 +20,10 @@ export const SD_EVALUATION_QUEUE =
 export const SdEvaluationJobName = {
   EVALUATE_SESSION: 'evaluate-session',
 } as const;
+
+export const QUESTION_PRACTICE_SCORING_QUEUE =
+  process.env.QUESTION_PRACTICE_SCORING_QUEUE || 'question-practice-scoring';
+
+export const QuestionPracticeScoringJobName = {
+  SCORE_ATTEMPT: 'score-question-practice-attempt',
+} as const;

@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { QuestionProbeStatus } from './constants/question-bank-taxonomy.constants';
+import { QuestionProbeStatus } from '../../constants/question-bank-taxonomy.constants';
 import {
   QuestionProbeAuditAction,
   QuestionProbeAuditLog,
-} from './entities/question-probe-audit-log.entity';
-import { QuestionProbe } from './entities/question-probe.entity';
+} from '../../entities/question-probe-audit-log.entity';
+import { QuestionProbe } from '../../entities/question-probe.entity';
 
 @Injectable()
 export class QuestionProbeAuditService {

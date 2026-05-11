@@ -10,32 +10,32 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { Roles } from '../auth/decorators/roles.decorator';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { RolesGuard } from '../auth/guards/roles.guard';
-import { JwtAuthRequest } from '../auth/types/auth-request.types';
-import { Role } from '../users/entities/user.entity';
+import { Roles } from '../../auth/decorators/roles.decorator';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../../auth/guards/roles.guard';
+import { JwtAuthRequest } from '../../auth/types/auth-request.types';
+import { Role } from '../../users/entities/user.entity';
 import {
   InterviewSetDraftDto,
   TransitionInterviewSetDto,
-} from './dto/interview-set-curation.dto';
+} from '../dto/interview-set-curation.dto';
 import {
   ImportQuestionProbesDto,
   QuestionProbeDraftDto,
   TransitionQuestionProbeDto,
-} from './dto/question-probe-curation.dto';
-import { InterviewSet } from './entities/interview-set.entity';
-import { QuestionProbeAuditLog } from './entities/question-probe-audit-log.entity';
-import { QuestionProbe } from './entities/question-probe.entity';
+} from '../dto/question-probe-curation.dto';
+import { InterviewSet } from '../entities/interview-set.entity';
+import { QuestionProbeAuditLog } from '../entities/question-probe-audit-log.entity';
+import { QuestionProbe } from '../entities/question-probe.entity';
 import {
   ImportQuestionProbesResult,
   ProbeListQuery,
   QuestionProbeCurationService,
-} from './question-probe-curation.service';
+} from '../services/curation/question-probe-curation.service';
 import {
   InterviewSetCurationService,
   InterviewSetListQuery,
-} from './interview-set-curation.service';
+} from '../services/curation/interview-set-curation.service';
 
 @ApiTags('admin/question-bank')
 @Controller('admin/question-bank')

@@ -1,10 +1,9 @@
-import {
-  QuestionProbeLanguage,
-} from './constants/question-bank-taxonomy.constants';
+import { QuestionProbeLanguage } from '../constants/question-bank-taxonomy.constants';
 import {
   QuestionPracticeAnswerInputType,
   QuestionPracticeAttemptStatus,
-} from './entities/question-practice-attempt.entity';
+} from '../entities/question-practice-attempt.entity';
+export type { QuestionPracticeAttemptFeedbackResponse } from './question-practice-scoring.types';
 
 export interface PublicProbeListRequest {
   page?: string;

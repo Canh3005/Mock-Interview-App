@@ -6,10 +6,10 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository, SelectQueryBuilder } from 'typeorm';
-import { QuestionProbeStatus } from './constants/question-bank-taxonomy.constants';
-import { InterviewSetDraftDto } from './dto/interview-set-curation.dto';
-import { InterviewSet } from './entities/interview-set.entity';
-import { QuestionProbe } from './entities/question-probe.entity';
+import { QuestionProbeStatus } from '../../constants/question-bank-taxonomy.constants';
+import { InterviewSetDraftDto } from '../../dto/interview-set-curation.dto';
+import { InterviewSet } from '../../entities/interview-set.entity';
+import { QuestionProbe } from '../../entities/question-probe.entity';
 
 export interface InterviewSetListQuery {
   page: number;

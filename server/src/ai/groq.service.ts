@@ -54,6 +54,25 @@ export class GroqService {
     return completion.choices[0]?.message?.content ?? '';
   }
 
+  async generateJsonContent(params: {
+    model: string;
+    contents: GroqMessage[];
+    config?: { systemInstruction?: string; maxOutputTokens?: number };
+  }): Promise<string> {
+    const messages: Groq.Chat.ChatCompletionMessageParam[] = toOpenAIMessages(
+      params.contents,
+      params.config?.systemInstruction,
+    );
+    const completion: Groq.Chat.ChatCompletion =
+      await this.client.chat.completions.create({
+        model: params.model,
+        messages,
+        max_tokens: params.config?.maxOutputTokens ?? 1024,
+        response_format: { type: 'json_object' },
+      });
+    return completion.choices[0]?.message?.content ?? '';
+  }
+
   async *generateContentStream(params: {
     model: string;
     contents: GroqMessage[];

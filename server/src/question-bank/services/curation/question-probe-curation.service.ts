@@ -6,16 +6,16 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, SelectQueryBuilder } from 'typeorm';
-import { QuestionProbeStatus } from './constants/question-bank-taxonomy.constants';
+import { QuestionProbeStatus } from '../../constants/question-bank-taxonomy.constants';
 import {
   ImportQuestionProbesDto,
   QuestionProbeDraftDto,
-} from './dto/question-probe-curation.dto';
-import { QuestionProbeAuditLog } from './entities/question-probe-audit-log.entity';
-import { QuestionProbe } from './entities/question-probe.entity';
+} from '../../dto/question-probe-curation.dto';
+import { QuestionProbeAuditLog } from '../../entities/question-probe-audit-log.entity';
+import { QuestionProbe } from '../../entities/question-probe.entity';
 import { QuestionProbeAuditService } from './question-probe-audit.service';
 import { QuestionProbeValidationService } from './question-probe-validation.service';
-import { ProbeValidationResult } from './question-probe-validation.types';
+import { ProbeValidationResult } from '../../types/question-probe-validation.types';
 
 export interface ProbeListQuery {
   page: number;

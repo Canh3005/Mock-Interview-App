@@ -1,5 +1,5 @@
-import { QuestionProbeValidationService } from '../../../src/question-bank/question-probe-validation.service';
-import { QUESTION_PROBE_SEEDS } from '../../../src/question-bank/question-probe.seed';
+import { QUESTION_PROBE_SEEDS } from '../../../src/question-bank/seeds/question-probe.seed';
+import { QuestionProbeValidationService } from '../../../src/question-bank/services/curation/question-probe-validation.service';
 
 describe('QUESTION_PROBE_SEEDS', () => {
   const validationService = new QuestionProbeValidationService();

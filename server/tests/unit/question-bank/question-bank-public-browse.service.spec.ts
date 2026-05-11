@@ -1,8 +1,8 @@
 import { BadRequestException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { QuestionProbe } from '../../../src/question-bank/entities/question-probe.entity';
-import { QuestionBankPublicBrowseService } from '../../../src/question-bank/question-bank-public-browse.service';
-import { QuestionBankPublicProjectionService } from '../../../src/question-bank/question-bank-public-projection.service';
+import { QuestionBankPublicBrowseService } from '../../../src/question-bank/services/public/question-bank-public-browse.service';
+import { QuestionBankPublicProjectionService } from '../../../src/question-bank/services/public/question-bank-public-projection.service';
 
 interface MockQueryBuilder {
   where: jest.Mock;
@@ -69,6 +69,8 @@ describe('QuestionBankPublicBrowseService', () => {
     });
     expect(result.data[0]).not.toHaveProperty('expectedSignals');
     expect(result.total).toBe(1);
+    expect(queryBuilder.skip).toHaveBeenCalledWith(0);
+    expect(queryBuilder.take).toHaveBeenCalledWith(12);
   });
 
   it('falls back to an available locale without changing probe identity', async () => {

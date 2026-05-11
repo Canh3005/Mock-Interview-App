@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, SelectQueryBuilder } from 'typeorm';
-import { QuestionProbeLanguage } from './constants/question-bank-taxonomy.constants';
-import { QuestionProbe } from './entities/question-probe.entity';
+import { QuestionProbeLanguage } from '../../constants/question-bank-taxonomy.constants';
+import { QuestionProbe } from '../../entities/question-probe.entity';
 import { QuestionBankPublicProjectionService } from './question-bank-public-projection.service';
-import { PublicQuestionProbeCard } from './question-bank-public.types';
+import { PublicQuestionProbeCard } from '../../types/question-bank-public.types';
 
 @Injectable()
 export class QuestionBankRelatedService {

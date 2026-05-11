@@ -2,12 +2,12 @@ import { Injectable } from '@nestjs/common';
 import {
   QUESTION_PROBE_LANGUAGES,
   QuestionProbeLanguage,
-} from './constants/question-bank-taxonomy.constants';
+} from '../../constants/question-bank-taxonomy.constants';
 import {
   QuestionProbe,
   QuestionProbeLocalizedContent,
-} from './entities/question-probe.entity';
-import { PublicQuestionProbeCard } from './question-bank-public.types';
+} from '../../entities/question-probe.entity';
+import { PublicQuestionProbeCard } from '../../types/question-bank-public.types';
 
 @Injectable()
 export class QuestionBankPublicProjectionService {

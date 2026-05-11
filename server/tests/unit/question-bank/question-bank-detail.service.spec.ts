@@ -1,8 +1,8 @@
 import { Repository } from 'typeorm';
 import { QuestionProbe } from '../../../src/question-bank/entities/question-probe.entity';
-import { QuestionBankDetailService } from '../../../src/question-bank/question-bank-detail.service';
-import { QuestionBankPublicProjectionService } from '../../../src/question-bank/question-bank-public-projection.service';
-import { QuestionBankRelatedService } from '../../../src/question-bank/question-bank-related.service';
+import { QuestionBankDetailService } from '../../../src/question-bank/services/public/question-bank-detail.service';
+import { QuestionBankPublicProjectionService } from '../../../src/question-bank/services/public/question-bank-public-projection.service';
+import { QuestionBankRelatedService } from '../../../src/question-bank/services/public/question-bank-related.service';
 
 describe('QuestionBankDetailService', () => {
   let service: QuestionBankDetailService;

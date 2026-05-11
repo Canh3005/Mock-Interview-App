@@ -3,7 +3,7 @@ import * as path from 'path';
 import { DataSource } from 'typeorm';
 import { QuestionProbeAuditLog } from '../question-bank/entities/question-probe-audit-log.entity';
 import { QuestionProbe } from '../question-bank/entities/question-probe.entity';
-import { seedQuestionProbes } from '../question-bank/question-probe.seed';
+import { seedQuestionProbes } from '../question-bank/seeds/question-probe.seed';
 
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 

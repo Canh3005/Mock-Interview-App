@@ -7,11 +7,11 @@ import {
   QUESTION_PROBE_ROLE_FAMILIES,
   QUESTION_PROBE_STAGES,
   QUESTION_PROBE_TYPES,
-} from './constants/question-bank-taxonomy.constants';
+} from '../../constants/question-bank-taxonomy.constants';
 import {
   ProbeValidationIssue,
   ProbeValidationResult,
-} from './question-probe-validation.types';
+} from '../../types/question-probe-validation.types';
 
 @Injectable()
 export class QuestionProbeValidationService {
