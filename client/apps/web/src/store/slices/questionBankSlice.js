@@ -8,7 +8,7 @@ const initialFilters = {
   level: '',
   type: '',
   competency: '',
-  techTag: '',
+  techTags: [],
   difficulty: '',
   language: '',
   locale: 'vi',

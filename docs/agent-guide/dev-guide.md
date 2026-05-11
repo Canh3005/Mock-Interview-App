@@ -34,12 +34,15 @@ Trước khi sửa file, Dev phải tự kiểm tra:
 - [ ] Có điểm nào mâu thuẫn giữa BA và HOW không?
 - [ ] Có API contract hoặc BE behavior cần FE chờ không?
 - [ ] Có dữ liệu/schema/auth/i18n/async/error state nào dễ bị bỏ sót không?
+- [ ] Nếu HOW có AI/background pipeline nhiều bước, đã mapping từng step và quality guardrail sang code/test hoặc xác định rõ step nào chưa thể làm chưa?
 - [ ] Nếu thêm component điều khiển UI như input, select, checkbox, combobox, bộ lọc hoặc sắp xếp, đã tìm component tương đương trong cùng khu vực tính năng hoặc thư viện UI dùng chung chưa?
 - [ ] Nếu có UI nhập/sửa dữ liệu production, BA/HOW đã đủ rõ cách user thao tác chưa? Nếu chưa, không tự thay bằng JSON/raw payload editor.
 
 Nếu thiếu thông tin nghiệp vụ quan trọng hoặc BA/HOW mâu thuẫn — **DỪNG**, hỏi người dùng. Không tự bịa business rule.
 
 Nếu chỉ thiếu implementation detail — Dev tự đọc codebase và quyết định.
+
+Nếu HOW yêu cầu một pipeline/guardrail cụ thể nhưng Dev chỉ implement được bản rút gọn, đó không phải implementation detail. Dev phải dừng để hỏi/split scope hoặc ghi rõ deferred item đã được user approve trước khi báo done. Không được silently đổi `tool_use` thành prompt JSON, embedding retrieval thành keyword matching, verifier routing thành không có verifier, hoặc bỏ model routing khi HOW đã coi các lớp đó là bắt buộc.
 
 Riêng với production UI: JSON/raw payload editor, textarea DTO, hoặc form bắt người dùng hiểu schema nội bộ không được xem là implementation detail. Nếu BA/HOW không cho phép rõ, Dev phải xây UI có cấu trúc hoặc dừng hỏi/split scope.
 
@@ -110,6 +113,7 @@ Nội dung tối thiểu:
 - User/API flow: các bước thực hiện theo thứ tự.
 - Code path: component, slice/saga/api, controller/service/repository/entity chính.
 - Guardrails/failure: validation, permission, loading/error state, business rule quan trọng.
+- Conformance notes: với feature có HOW phức tạp, ghi rõ các guardrail/pipeline step đã implement và bất kỳ step nào được defer theo approval. Nếu không có deviation thì ghi ngắn “Không có deviation so với HOW”.
 
 Nếu feature chỉ có BE, walkthrough mô tả API/service flow. Nếu feature chỉ có FE, walkthrough mô tả UI/component/state/API integration flow.
 
@@ -134,3 +138,5 @@ Khi báo done, Dev phải nêu ngắn:
 ```
 
 Done report không thay thế review. Review vẫn là bước riêng.
+
+Với AI/background pipeline nhiều bước, `Acceptance Mapping` phải nêu các HOW guardrail chính đã được cover. Nếu có phần chưa cover, `Notes` phải ghi là deferred theo approval nào; nếu chưa có approval thì chưa được báo done.

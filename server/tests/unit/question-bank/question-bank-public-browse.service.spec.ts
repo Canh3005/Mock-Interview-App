@@ -95,6 +95,19 @@ describe('QuestionBankPublicBrowseService', () => {
     });
   });
 
+  it('filters by multiple tech tags using overlap semantics', async () => {
+    queryBuilder.getManyAndCount.mockResolvedValue([[], 0]);
+
+    await service.listPublicProbes({
+      query: { techTags: 'javascript,react,javascript' },
+    });
+
+    expect(queryBuilder.andWhere).toHaveBeenCalledWith(
+      'probe.techTags && :techTags',
+      { techTags: ['javascript', 'react'] },
+    );
+  });
+
   it('rejects invalid canonical filters before querying', async () => {
     await expect(
       service.listPublicProbes({

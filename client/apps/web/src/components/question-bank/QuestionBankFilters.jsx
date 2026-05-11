@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { RotateCcw, Search } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { SelectField } from '../admin/question-bank/QuestionBankFormFields';
+import {
+  SearchableMultiSelectField,
+  SelectField,
+} from '../admin/question-bank/QuestionBankFormFields';
 
 const controlClass =
   'h-10 rounded-lg border border-slate-700/70 bg-slate-950/70 text-sm text-slate-200 shadow-inner shadow-black/10 outline-none transition-all duration-150 hover:border-slate-500/80 hover:bg-slate-900 focus:border-cta focus:ring-2 focus:ring-cta/20';
@@ -66,12 +69,6 @@ function FilterSelects({ filters, taxonomy, techTagOptions, allLabel, onChange }
   }));
   const extraControls = [
     {
-      key: 'techTag',
-      label: t('questionBank.filters.techTag'),
-      value: filters.techTag,
-      options: techTagOptions,
-    },
-    {
       key: 'difficulty',
       label: t('questionBank.filters.difficulty'),
       value: filters.difficulty,
@@ -94,16 +91,41 @@ function FilterSelects({ filters, taxonomy, techTagOptions, allLabel, onChange }
     },
   ];
 
-  return [...controls, ...extraControls].map((control) => (
-    <SelectField
-      key={control.key}
-      label={control.label}
-      value={control.value}
-      options={control.options}
-      onChange={(value) => onChange({ [control.key]: value })}
-      labelClassName="flex flex-col gap-1 text-xs text-slate-400 min-w-[150px] flex-1"
-    />
-  ));
+  return (
+    <>
+      {controls.map((control) => (
+        <SelectField
+          key={control.key}
+          label={control.label}
+          value={control.value}
+          options={control.options}
+          onChange={(value) => onChange({ [control.key]: value })}
+          labelClassName="flex flex-col gap-1 text-xs text-slate-400 min-w-[150px] flex-1"
+        />
+      ))}
+      <SearchableMultiSelectField
+        label={t('questionBank.filters.techTag')}
+        values={filters.techTags ?? []}
+        options={techTagOptions}
+        onChange={(techTags) => onChange({ techTags })}
+        allLabel={allLabel}
+        searchPlaceholder={t('questionBank.filters.searchTechTags')}
+        clearLabel={t('questionBank.filters.clearTechTags')}
+        noOptionsLabel={t('questionBank.filters.noTechTags')}
+        labelClassName="flex flex-col gap-1 text-xs text-slate-400 min-w-[190px] flex-1"
+      />
+      {extraControls.map((control) => (
+        <SelectField
+          key={control.key}
+          label={control.label}
+          value={control.value}
+          options={control.options}
+          onChange={(value) => onChange({ [control.key]: value })}
+          labelClassName="flex flex-col gap-1 text-xs text-slate-400 min-w-[150px] flex-1"
+        />
+      ))}
+    </>
+  );
 }
 
 export default function QuestionBankFilters({
@@ -117,8 +139,8 @@ export default function QuestionBankFilters({
   const lastAppliedSearchRef = useRef(filters.search);
   const allLabel = t('questionBank.filters.all');
   const techTagOptions = useMemo(
-    () => [{ key: '', label: allLabel }, ..._techTagOptions(taxonomy)],
-    [taxonomy, allLabel],
+    () => _techTagOptions(taxonomy),
+    [taxonomy],
   );
 
   useEffect(() => {

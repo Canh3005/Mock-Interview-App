@@ -116,7 +116,7 @@ export class QuestionBankPublicBrowseService {
         allowed: QUESTION_PROBE_COMPETENCIES,
         field: 'competency',
       }),
-      techTag: this._techTag(request.techTag),
+      techTags: this._techTags(request.techTags ?? request.techTag),
       difficulty: this._difficulty(request.difficulty),
       search: this._cleanText(request.search),
       sort,
@@ -143,7 +143,11 @@ export class QuestionBankPublicBrowseService {
     if (query.competency) {
       qb.andWhere(':competency = ANY(probe.competencies)', query);
     }
-    if (query.techTag) qb.andWhere(':techTag = ANY(probe.techTags)', query);
+    if (query.techTags.length > 0) {
+      qb.andWhere('probe.techTags && :techTags', {
+        techTags: query.techTags,
+      });
+    }
     if (query.difficulty) qb.andWhere('probe.difficulty = :difficulty', query);
     if (query.search) {
       qb.andWhere(
@@ -245,14 +249,21 @@ export class QuestionBankPublicBrowseService {
     throw new BadRequestException(`Invalid ${field}`);
   }
 
-  private _techTag(value?: string): string | undefined {
-    const cleanValue: string | undefined = this._cleanText(value);
+  private _techTags(value?: string | string[]): string[] {
+    const cleanValues: string[] = (Array.isArray(value) ? value : [value])
+      .flatMap((item: string | undefined): string[] =>
+        item ? item.split(',') : [],
+      )
+      .map((item: string): string => item.trim())
+      .filter((item: string): boolean => item.length > 0);
     const allowed: string[] = QUESTION_BANK_TAXONOMY.techTagGroups.flatMap(
       (group: { tags: string[] }): string[] => group.tags,
     );
-    if (!cleanValue) return undefined;
-    if (allowed.includes(cleanValue)) return cleanValue;
-    throw new BadRequestException('Invalid techTag');
+    const uniqueValues: string[] = [...new Set(cleanValues)];
+    if (uniqueValues.every((item: string): boolean => allowed.includes(item))) {
+      return uniqueValues;
+    }
+    throw new BadRequestException('Invalid techTags');
   }
 
   private _cleanText(value?: string): string | undefined {

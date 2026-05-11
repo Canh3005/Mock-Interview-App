@@ -49,7 +49,7 @@ function _paramsFromState({ state, page }) {
     level: filters.level || undefined,
     type: filters.type || undefined,
     competency: filters.competency || undefined,
-    techTag: filters.techTag || undefined,
+    techTags: filters.techTags?.length ? filters.techTags.join(',') : undefined,
     difficulty: filters.difficulty || undefined,
     search: filters.search || undefined,
     sort: filters.sort || 'newest',

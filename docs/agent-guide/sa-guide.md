@@ -179,6 +179,14 @@ SA chốt ở mức contract và safety:
 - Timeout budget và fallback user-facing.
 - Log gì để debug mà không lộ dữ liệu nhạy cảm.
 
+Nếu HOW tham chiếu một option khuyến nghị, research note, hoặc pipeline nhiều lớp, SA phải tách rõ:
+
+- `Must-have trong slice hiện tại`: các bước Dev bắt buộc implement để được coi là đúng HOW.
+- `Deferred/hardening`: các lớp có thể làm sau, kèm lý do và risk còn lại.
+- `Không dùng`: các option đã bị loại.
+
+Không để một lớp vừa được mô tả là “optional/bổ sung” vừa xuất hiện trong pipeline contract như yêu cầu bắt buộc mà không có delivery slice riêng. Với AI pipeline có nhiều lớp non-trivial như structured output adapter, embedding retrieval, verifier pass, model routing hoặc observability chuyên biệt, SA phải split thành baseline và hardening story nếu một slice không review được an toàn.
+
 **Streaming vs Batch:**
 - User chờ real-time response → SSE (`Content-Type: text/event-stream`) hoặc pattern streaming hiện có.
 - Background / không cần real-time → BullMQ job hoặc async pattern hiện có.
@@ -246,6 +254,7 @@ Trước khi báo HOW.md done, tự kiểm tra:
 - [ ] Contract public boundary đủ để BE/FE không hiểu lệch.
 - [ ] Data/state lifecycle và consistency/idempotency concern đã nêu nếu có.
 - [ ] Quality guardrails đã nêu cho latency, fallback, observability, privacy/security, rollback nếu relevant.
+- [ ] Với AI/complex pipeline, HOW đã phân loại rõ `must-have trong slice hiện tại` và `deferred/hardening`; không có lớp kỹ thuật bắt buộc bị để mơ hồ.
 - [ ] Nếu có UI nhập/sửa dữ liệu production, HOW.md nêu rõ UX boundary và không để Dev dùng JSON/raw payload editor làm luồng chính.
 - [ ] Delivery slice độc lập, review được, rollback được; nếu không thì đã split.
 - [ ] Nếu BA thiếu nghiệp vụ hoặc mâu thuẫn, đã dừng và hỏi thay vì tự bịa business rule.

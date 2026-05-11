@@ -11,6 +11,8 @@ Mọi `REVIEW-BE.md` hoặc review response mặc định phải dùng tiếng V
 - [ ] Code có thực sự làm WHAT trong `BA.md` không?
 - [ ] Nếu có `HOW.md`: code có tuân thủ architecture decisions, system boundaries, contracts, và quality guardrails không?
 - [ ] Nếu có Dev done report: acceptance mapping và verification có khớp diff thực tế không?
+- [ ] Nếu HOW có AI/background pipeline nhiều bước: từng step bắt buộc có implementation/test/verification tương ứng trong diff hoặc được ghi rõ là deferred theo approval. Bản rút gọn như prompt JSON thay `tool_use`, keyword matching thay embedding retrieval, bỏ verifier routing/model routing khi HOW yêu cầu là **critical**.
+- [ ] `WALKTHROUGH.md` có mô tả flow thật và conformance/deviation so với HOW không? Nếu walkthrough làm người đọc tưởng pipeline đã đủ trong khi code chỉ là MVP, đánh **critical**.
 
 ## 2. Structure & Pattern
 

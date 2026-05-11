@@ -165,6 +165,7 @@ export const QUESTION_BANK_TAXONOMY: QuestionBankTaxonomy = {
         'vue',
         'angular',
         'nextjs',
+        'javascript',
         'typescript',
         'redux',
         'tailwind',

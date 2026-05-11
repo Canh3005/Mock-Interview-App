@@ -15,6 +15,7 @@ export interface PublicProbeListRequest {
   type?: string;
   competency?: string;
   techTag?: string;
+  techTags?: string | string[];
   difficulty?: string;
   search?: string;
   sort?: string;
@@ -29,7 +30,7 @@ export interface PublicProbeListQuery {
   level?: string;
   type?: string;
   competency?: string;
-  techTag?: string;
+  techTags: string[];
   difficulty?: number;
   search?: string;
   sort: 'newest' | 'popular';
