@@ -45,7 +45,7 @@ export class QuestionBankDetailService {
     const relatedLimit: number = this._nonNegativeInteger({
       value: query.relatedLimit,
       field: 'relatedLimit',
-      defaultValue: 3,
+      defaultValue: 4,
       maxValue: 6,
     });
     const probe: QuestionProbe | null = await this.probeRepository.findOne({

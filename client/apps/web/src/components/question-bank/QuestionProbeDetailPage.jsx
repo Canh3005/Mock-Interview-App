@@ -466,7 +466,7 @@ export default function QuestionProbeDetailPage() {
       fetchQuestionProbeDetailRequest({
         probeId,
         locale: displayLocale,
-        relatedLimit: 3,
+        relatedLimit: 4,
       }),
     );
     return undefined;

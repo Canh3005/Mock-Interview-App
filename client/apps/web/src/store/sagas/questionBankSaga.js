@@ -85,7 +85,7 @@ function* _handleFetchProbes(action) {
 
 function* _handleFetchProbeDetail(action) {
   try {
-    const { probeId, locale, relatedLimit = 3 } = action.payload;
+    const { probeId, locale, relatedLimit = 4 } = action.payload;
     const response = yield call(questionBankApi.getProbeDetail, {
       probeId,
       params: { locale, relatedLimit },

@@ -49,7 +49,7 @@ describe('QuestionBankDetailService', () => {
 
     const result = await service.getPublicProbeDetail({
       probeId: 'current-probe',
-      query: { locale: 'en', relatedLimit: '3' },
+      query: { locale: 'en', relatedLimit: '4' },
     });
 
     expect(result).toMatchObject({
@@ -66,7 +66,7 @@ describe('QuestionBankDetailService', () => {
     expect(relatedService.findRelatedQuestions).toHaveBeenCalledWith({
       probe: currentProbe,
       locale: 'en',
-      relatedLimit: 3,
+      relatedLimit: 4,
     });
     expect(result).not.toHaveProperty('expectedSignals');
   });
