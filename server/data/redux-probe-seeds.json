@@ -1,0 +1,1317 @@
+[
+  {
+    "code": "REDUX_JR_TECH_MENTAL_MODEL_001",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["frontend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "communication"],
+    "techTags": ["redux", "react", "typescript"],
+    "difficulty": 2,
+    "intent": "Check whether the candidate understands the core Redux data flow and can explain when shared app state belongs in Redux instead of local React state.",
+    "primaryQuestion": "How does data flow through a Redux app from a user action to the UI update, and what kind of state would you put in Redux instead of local component state?",
+    "expectedSignals": [
+      "Explains dispatching an action that describes what happened.",
+      "Explains reducers calculate the next state from previous state and action.",
+      "Mentions the store notifies subscribers or React-Redux hooks so UI can re-render.",
+      "Distinguishes shared, cross-screen, or workflow state from local input and UI-only state.",
+      "Recognizes Redux is useful for predictability, debugging, and consistent team patterns, not for every state value."
+    ],
+    "redFlags": [
+      "Says Redux replaces all React local state.",
+      "Cannot separate action, reducer, store, and selector responsibilities.",
+      "Describes reducers as directly updating the DOM or calling APIs.",
+      "Chooses Redux only because prop drilling exists, without evaluating state lifetime or ownership."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Describes action dispatch, reducer calculation, store update, selector subscription, and gives a nuanced state-placement example."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands the basic Redux loop and gives a reasonable shared-state example, but misses one nuance such as selector subscriptions."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows Redux vocabulary but cannot map the runtime flow or state ownership clearly."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is mostly buzzwords and does not show practical Redux understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Can you walk through what happens when a user clicks Add to cart in a Redux-based cart?",
+        "purpose": "Force the candidate to map the full dispatch-to-render flow."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "What cart-related state should stay local to a component, if any?",
+        "purpose": "Check whether the candidate avoids overusing Redux."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Redux data flow and state ownership",
+        "displayQuestion": "How does data flow through a Redux app from a user action to the UI update, and what kind of state would you put in Redux instead of local component state?",
+        "displayIntent": "Check the Redux mental model and practical state placement.",
+        "guidance": [
+          "Use a concrete feature such as cart, notifications, or authenticated user state.",
+          "Separate action, reducer, store, selector, and component responsibilities.",
+          "Explain why some state should remain local."
+        ],
+        "commonMistakes": [
+          "Putting every value into Redux by default.",
+          "Treating reducers as places for API calls or DOM work.",
+          "Explaining only terminology without the actual runtime flow."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Luồng dữ liệu Redux và ownership state",
+        "displayQuestion": "Dữ liệu đi qua một app Redux như thế nào từ hành động của user đến khi UI cập nhật, và loại state nào bạn sẽ đưa vào Redux thay vì để ở local component state?",
+        "displayIntent": "Kiểm tra mental model Redux và cách đặt state trong thực tế.",
+        "guidance": [
+          "Dùng một feature cụ thể như giỏ hàng, notification, hoặc trạng thái user đã đăng nhập.",
+          "Tách rõ trách nhiệm của action, reducer, store, selector và component.",
+          "Giải thích vì sao một số state nên giữ ở local."
+        ],
+        "commonMistakes": [
+          "Mặc định đưa mọi giá trị vào Redux.",
+          "Xem reducer là nơi gọi API hoặc thao tác DOM.",
+          "Chỉ nói thuật ngữ mà không mô tả luồng chạy thật."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "Redux のデータフローと state の責務",
+        "displayQuestion": "Redux アプリでは、ユーザー操作から UI 更新までデータはどのように流れますか。また、local component state ではなく Redux に置くべき state はどのようなものですか。",
+        "displayIntent": "Redux のメンタルモデルと実務での state 配置を確認する。",
+        "guidance": [
+          "cart、notification、ログインユーザーなど具体的な機能を例にする。",
+          "action、reducer、store、selector、component の責務を分けて説明する。",
+          "local に残すべき state がある理由も説明する。"
+        ],
+        "commonMistakes": [
+          "すべての値を Redux に入れようとする。",
+          "reducer を API 呼び出しや DOM 操作の場所として扱う。",
+          "用語だけを説明し、実際の実行フローを説明しない。"
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Redux Toolkit Overview",
+        "url": "https://redux.js.org/redux-toolkit/overview/",
+        "note": "Used for modern Redux Toolkit positioning and store/slice concepts."
+      },
+      {
+        "label": "Redux Style Guide",
+        "url": "https://redux.js.org/style-guide/",
+        "note": "Used for state ownership, minimal state, and reducer rules."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REDUX_JR_TECH_REDUCER_IMMUTABILITY_002",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["frontend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving"],
+    "techTags": ["redux", "typescript"],
+    "difficulty": 2,
+    "intent": "Evaluate whether the candidate understands reducer purity, immutable updates, and why Redux Toolkit allows apparent mutation through Immer.",
+    "primaryQuestion": "Why must Redux reducers be pure and immutable, and why is code like state.items.push(item) acceptable inside a Redux Toolkit createSlice reducer?",
+    "expectedSignals": [
+      "States that reducers calculate next state from state and action only.",
+      "Explains reducers must not perform side effects such as API calls, timers, random IDs, or DOM work.",
+      "Explains direct mutation breaks change detection, predictable debugging, and time travel.",
+      "Understands Redux Toolkit wraps reducers with Immer so apparent mutation produces immutable updates.",
+      "Can explain that the same mutating code is unsafe in a plain reducer without Immer."
+    ],
+    "redFlags": [
+      "Says mutation is always safe in any Redux reducer.",
+      "Cannot explain why shallow copying only the top level is insufficient for nested data.",
+      "Puts async requests, Date.now, or Math.random inside reducers.",
+      "Treats Immer as changing JavaScript objects globally."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Clearly distinguishes plain reducer immutability from RTK Immer reducers, covers side effects, and explains nested update risks."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands reducer purity and Immer but gives limited detail on nested references or side effects."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows reducers should not mutate, but cannot explain RTK's apparent mutation model."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not show reliable reducer correctness knowledge."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "red_flag",
+        "question": "What would happen if the same state.items.push(item) code ran in a plain hand-written reducer without Immer?",
+        "purpose": "Check whether the candidate understands the boundary of RTK's safety."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "If you update state.user.profile.name manually, what objects need new references?",
+        "purpose": "Probe nested immutable update reasoning."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Reducer purity and Immer",
+        "displayQuestion": "Why must Redux reducers be pure and immutable, and why is code like state.items.push(item) acceptable inside a Redux Toolkit createSlice reducer?",
+        "displayIntent": "Check reducer correctness, immutability, and Redux Toolkit Immer knowledge.",
+        "guidance": [
+          "Contrast plain reducers with createSlice reducers.",
+          "Explain side effects and nested reference updates.",
+          "Connect immutability to React-Redux updates and Redux DevTools."
+        ],
+        "commonMistakes": [
+          "Assuming all reducer mutation is safe.",
+          "Only copying the top-level object for nested updates.",
+          "Putting asynchronous or random behavior inside reducers."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Reducer pure và Immer",
+        "displayQuestion": "Vì sao Redux reducer phải pure và immutable, và vì sao code như state.items.push(item) lại chấp nhận được bên trong reducer của Redux Toolkit createSlice?",
+        "displayIntent": "Kiểm tra độ đúng của reducer, immutability và hiểu biết về Immer trong Redux Toolkit.",
+        "guidance": [
+          "So sánh plain reducer với reducer trong createSlice.",
+          "Giải thích side effect và việc cập nhật reference lồng nhau.",
+          "Liên hệ immutability với React-Redux update và Redux DevTools."
+        ],
+        "commonMistakes": [
+          "Cho rằng mọi mutation trong reducer đều an toàn.",
+          "Chỉ copy object cấp trên cùng khi update dữ liệu lồng nhau.",
+          "Đưa async hoặc hành vi random vào reducer."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "Reducer の純粋性と Immer",
+        "displayQuestion": "Redux reducer はなぜ pure かつ immutable である必要がありますか。また Redux Toolkit の createSlice reducer 内では、なぜ state.items.push(item) のようなコードが許容されるのですか。",
+        "displayIntent": "reducer の正しさ、immutability、Redux Toolkit の Immer 理解を確認する。",
+        "guidance": [
+          "plain reducer と createSlice reducer を対比する。",
+          "side effect とネストした reference 更新を説明する。",
+          "immutability を React-Redux の更新や Redux DevTools と結びつける。"
+        ],
+        "commonMistakes": [
+          "reducer 内の mutation は常に安全だと考える。",
+          "ネスト更新でトップレベル object だけをコピーする。",
+          "async や random な処理を reducer に入れる。"
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Redux Immutable Update Patterns",
+        "url": "https://redux.js.org/usage/structuring-reducers/immutable-update-patterns",
+        "note": "Used for nested immutable update rules and common mutation mistakes."
+      },
+      {
+        "label": "Redux Style Guide",
+        "url": "https://redux.js.org/style-guide/",
+        "note": "Used for reducer purity, no side effects, and no state mutation rules."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REDUX_MID_TECH_RTK_SLICE_STORE_003",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["frontend", "fullstack"],
+    "levels": ["mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking"],
+    "techTags": ["redux", "react", "typescript"],
+    "difficulty": 3,
+    "intent": "Assess whether the candidate can structure a modern Redux Toolkit feature with slices, typed store setup, and React integration.",
+    "primaryQuestion": "How would you implement a new Redux Toolkit feature slice in a TypeScript React app, from state shape to components dispatching actions?",
+    "expectedSignals": [
+      "Defines a feature-owned initial state and slice reducers with createSlice.",
+      "Explains generated action creators and reducer registration in configureStore.",
+      "Mentions typed RootState, AppDispatch, and typed useSelector/useDispatch wrappers.",
+      "Keeps domain transitions in reducers and UI event handling in components.",
+      "Considers testable reducer cases and clear action names."
+    ],
+    "redFlags": [
+      "Manually writes action type strings and switch reducers without reason in new RTK code.",
+      "Uses any for state and dispatch throughout the app.",
+      "Couples slice reducers to React component instances or browser APIs.",
+      "Creates one large global slice for unrelated features."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Designs a feature slice with typed store integration, generated actions, component hooks, and a testable boundary."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Covers createSlice and store registration but misses typed hooks or testability details."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can create a basic slice but lacks TypeScript and ownership structure."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not show practical Redux Toolkit implementation ability."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "Where would you define RootState, AppDispatch, and typed hooks, and why?",
+        "purpose": "Check TypeScript integration and app-wide contract awareness."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "Can you name the slice state fields and reducers for a notifications feature?",
+        "purpose": "Force concrete feature modeling."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Redux Toolkit slice implementation",
+        "displayQuestion": "How would you implement a new Redux Toolkit feature slice in a TypeScript React app, from state shape to components dispatching actions?",
+        "displayIntent": "Check practical RTK slice, store, and typed hook implementation.",
+        "guidance": [
+          "Use a concrete feature and describe file boundaries.",
+          "Include createSlice, configureStore, RootState, AppDispatch, and typed hooks.",
+          "Explain how components read state and dispatch actions."
+        ],
+        "commonMistakes": [
+          "Using untyped dispatch and selector state.",
+          "Putting unrelated domains into one slice.",
+          "Mixing browser side effects into reducers."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Implement slice bằng Redux Toolkit",
+        "displayQuestion": "Bạn sẽ implement một feature slice mới bằng Redux Toolkit trong app React TypeScript như thế nào, từ state shape đến component dispatch action?",
+        "displayIntent": "Kiểm tra khả năng implement RTK slice, store và typed hook trong thực tế.",
+        "guidance": [
+          "Dùng một feature cụ thể và mô tả ranh giới file.",
+          "Bao gồm createSlice, configureStore, RootState, AppDispatch và typed hooks.",
+          "Giải thích component đọc state và dispatch action ra sao."
+        ],
+        "commonMistakes": [
+          "Dùng dispatch và selector state không có type.",
+          "Gom nhiều domain không liên quan vào một slice.",
+          "Trộn browser side effect vào reducer."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "Redux Toolkit slice の実装",
+        "displayQuestion": "TypeScript React アプリで新しい Redux Toolkit feature slice を実装する場合、state shape から component の action dispatch までどのように設計しますか。",
+        "displayIntent": "実務的な RTK slice、store、typed hook の実装力を確認する。",
+        "guidance": [
+          "具体的な feature を使い、file boundary を説明する。",
+          "createSlice、configureStore、RootState、AppDispatch、typed hooks を含める。",
+          "component が state を読み action を dispatch する流れを説明する。"
+        ],
+        "commonMistakes": [
+          "dispatch や selector state を型付けしない。",
+          "関係のない domain を一つの slice にまとめる。",
+          "browser side effect を reducer に混ぜる。"
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Redux Toolkit Overview",
+        "url": "https://redux.js.org/redux-toolkit/overview/",
+        "note": "Used for createSlice, configureStore, generated actions, and Toolkit defaults."
+      },
+      {
+        "label": "React Redux Hooks API",
+        "url": "https://react-redux.js.org/api/hooks",
+        "note": "Used for useSelector, useDispatch, and React integration guidance."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REDUX_MID_TECH_SELECTOR_PERFORMANCE_004",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["frontend", "fullstack"],
+    "levels": ["mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving"],
+    "techTags": ["redux", "react", "browser_performance"],
+    "difficulty": 3,
+    "intent": "Evaluate selector design, React-Redux subscription behavior, and performance awareness with useSelector.",
+    "primaryQuestion": "A component using useSelector re-renders after almost every action. How would you design selectors and equality checks to avoid unnecessary renders?",
+    "expectedSignals": [
+      "Explains useSelector subscribes to the store and compares selected results by reference equality by default.",
+      "Avoids returning new object or array references from non-memoized selectors.",
+      "Uses multiple focused useSelector calls, shallowEqual, or memoized selectors when appropriate.",
+      "Keeps selectors pure and avoids selecting the entire root state.",
+      "Understands createSelector memoizes derived values when inputs are stable."
+    ],
+    "redFlags": [
+      "Returns state => state from useSelector in a normal component.",
+      "Builds a new object, array, or filtered list in useSelector on every call without memoization.",
+      "Uses deep equality everywhere as the default performance fix.",
+      "Moves all derived values into Redux state just to avoid selector work."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Diagnoses reference instability, applies granular selectors or memoization, and explains trade-offs of shallow/deep equality."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands useSelector reference equality and gives a valid optimization, but misses selector purity or props-based selector nuance."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Recognizes re-render symptoms but cannot identify unstable selector results."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer lacks practical React-Redux performance reasoning."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "What is wrong with useSelector(state => ({ user: state.user, count: state.count })) by default?",
+        "purpose": "Check reference equality understanding."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "When would you use shallowEqual versus createSelector?",
+        "purpose": "Probe selector optimization trade-offs."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "useSelector and selector performance",
+        "displayQuestion": "A component using useSelector re-renders after almost every action. How would you design selectors and equality checks to avoid unnecessary renders?",
+        "displayIntent": "Check selector design, memoization, and React-Redux rendering behavior.",
+        "guidance": [
+          "Explain the default useSelector reference comparison.",
+          "Discuss focused selectors, shallowEqual, and createSelector.",
+          "Mention how to avoid selecting the entire root state."
+        ],
+        "commonMistakes": [
+          "Returning a new object from useSelector on every action.",
+          "Using deep equality as a blanket fix.",
+          "Storing every derived value in Redux state."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "useSelector và hiệu năng selector",
+        "displayQuestion": "Một component dùng useSelector bị re-render sau gần như mọi action. Bạn thiết kế selector và equality check như thế nào để tránh render không cần thiết?",
+        "displayIntent": "Kiểm tra thiết kế selector, memoization và hành vi render của React-Redux.",
+        "guidance": [
+          "Giải thích reference comparison mặc định của useSelector.",
+          "Nói về selector nhỏ, shallowEqual và createSelector.",
+          "Nhắc cách tránh select toàn bộ root state."
+        ],
+        "commonMistakes": [
+          "Trả về object mới từ useSelector sau mỗi action.",
+          "Dùng deep equality như một fix áp dụng mọi nơi.",
+          "Lưu mọi derived value vào Redux state."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "useSelector と selector performance",
+        "displayQuestion": "useSelector を使っている component がほぼすべての action 後に re-render します。不要な render を避けるために selector と equality check をどう設計しますか。",
+        "displayIntent": "selector 設計、memoization、React-Redux の render 挙動を確認する。",
+        "guidance": [
+          "useSelector のデフォルトの reference comparison を説明する。",
+          "小さな selector、shallowEqual、createSelector を比較する。",
+          "root state 全体を select しない設計に触れる。"
+        ],
+        "commonMistakes": [
+          "useSelector から毎回新しい object を返す。",
+          "deep equality をどこでも使う修正として扱う。",
+          "すべての derived value を Redux state に保存する。"
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "React Redux Hooks API",
+        "url": "https://react-redux.js.org/api/hooks",
+        "note": "Used for useSelector reference equality, subscriptions, shallowEqual, and development checks."
+      },
+      {
+        "label": "Redux Deriving Data with Selectors",
+        "url": "https://redux.js.org/usage/deriving-data-selectors",
+        "note": "Used for selector purity, derived data, and createSelector memoization."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REDUX_MID_TECH_NORMALIZED_STATE_005",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["frontend", "fullstack"],
+    "levels": ["mid"],
+    "type": "technical_depth",
+    "competencies": ["system_thinking", "technical_fundamentals"],
+    "techTags": ["redux", "typescript"],
+    "difficulty": 3,
+    "intent": "Assess whether the candidate can model relational client state with normalized structures and avoid deeply nested Redux updates.",
+    "primaryQuestion": "How would you model posts, comments, and users in Redux state so updates stay predictable and selectors remain efficient?",
+    "expectedSignals": [
+      "Separates entity types into tables keyed by ID.",
+      "Stores relationships by IDs rather than duplicating nested objects.",
+      "Uses ordered ID arrays for display order when needed.",
+      "Explains simpler updates and fewer affected references compared with deeply nested state.",
+      "Mentions createEntityAdapter or reusable entity selectors when appropriate."
+    ],
+    "redFlags": [
+      "Stores the same user object duplicated inside every post and comment.",
+      "Updates deeply nested trees by copying only one level.",
+      "Cannot describe how to select comments for a post from normalized state.",
+      "Normalizes tiny local UI state without a reason."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Designs normalized entity state, relationship IDs, ordering, selectors, and update behavior with clear trade-offs."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands byId/allIds normalization but misses selector composition or ordering details."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Recognizes duplication risk but cannot model relational data concretely."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer keeps data nested and does not show Redux state modeling skill."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "How would a selector return a post with its author and comments from normalized tables?",
+        "purpose": "Check selector composition over normalized state."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "When would you avoid normalizing a piece of state?",
+        "purpose": "Check whether the candidate can avoid over-engineering."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Normalized Redux state",
+        "displayQuestion": "How would you model posts, comments, and users in Redux state so updates stay predictable and selectors remain efficient?",
+        "displayIntent": "Check relational state modeling and normalized Redux design.",
+        "guidance": [
+          "Describe the state shape, not just the concept.",
+          "Include IDs, entity maps, ordering, and selectors.",
+          "Explain the update and render-performance benefits."
+        ],
+        "commonMistakes": [
+          "Duplicating nested entity objects across the store.",
+          "Losing display order while normalizing.",
+          "Normalizing simple UI flags that do not need it."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Redux state đã normalize",
+        "displayQuestion": "Bạn sẽ model posts, comments và users trong Redux state như thế nào để update dễ dự đoán và selector vẫn hiệu quả?",
+        "displayIntent": "Kiểm tra khả năng model state dạng quan hệ và thiết kế Redux normalized.",
+        "guidance": [
+          "Mô tả state shape cụ thể, không chỉ nói khái niệm.",
+          "Bao gồm ID, entity map, ordering và selector.",
+          "Giải thích lợi ích về update và render performance."
+        ],
+        "commonMistakes": [
+          "Duplicate object entity lồng nhau ở nhiều nơi trong store.",
+          "Làm mất thứ tự hiển thị khi normalize.",
+          "Normalize cả UI flag đơn giản không cần thiết."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "Normalized Redux state",
+        "displayQuestion": "posts、comments、users を Redux state でどのように model すれば、更新が予測しやすく selector も効率的になりますか。",
+        "displayIntent": "relational state modeling と normalized Redux design を確認する。",
+        "guidance": [
+          "概念だけでなく具体的な state shape を説明する。",
+          "ID、entity map、ordering、selector を含める。",
+          "更新と render performance の利点を説明する。"
+        ],
+        "commonMistakes": [
+          "ネストした entity object を store 内で重複させる。",
+          "normalize するときに表示順を失う。",
+          "単純な UI flag まで不要に normalize する。"
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Redux Normalizing State Shape",
+        "url": "https://redux.js.org/usage/structuring-reducers/normalizing-state-shape",
+        "note": "Used for normalized tables, ID references, ordering, and performance rationale."
+      },
+      {
+        "label": "Redux Toolkit Overview",
+        "url": "https://redux.js.org/redux-toolkit/overview/",
+        "note": "Used for createEntityAdapter as a Toolkit utility for normalized data."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REDUX_MID_TRADE_ASYNC_LOGIC_006",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["frontend", "fullstack"],
+    "levels": ["mid"],
+    "type": "trade_off",
+    "competencies": ["trade_off_analysis", "system_thinking", "technical_fundamentals"],
+    "techTags": ["redux", "typescript"],
+    "difficulty": 3,
+    "intent": "Evaluate the candidate's judgment on where Redux side effects belong and how to choose between components, thunks, listener middleware, and RTK Query.",
+    "primaryQuestion": "Where would you put async logic in a Redux app, and how would you choose between a component effect, createAsyncThunk, listener middleware, and RTK Query?",
+    "expectedSignals": [
+      "States reducers must not contain async logic or side effects.",
+      "Uses component effects for UI-local fetching or component-owned lifecycle concerns.",
+      "Uses thunks or createAsyncThunk for store-aware workflows that need dispatch and getState.",
+      "Uses listener middleware for reactive workflows triggered by actions or state changes.",
+      "Uses RTK Query for server-state fetching, caching, loading states, and invalidation."
+    ],
+    "redFlags": [
+      "Calls APIs directly inside reducers.",
+      "Uses sagas or custom middleware for every async task without explaining the added complexity.",
+      "Keeps duplicate hand-written cache state while also using RTK Query for the same data.",
+      "Cannot discuss cancellation, stale responses, or error paths."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Matches side-effect tools to use cases, explains reducer boundaries, and covers caching, cancellation, and error behavior."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Correctly chooses thunks and RTK Query for common cases, but listener middleware or cancellation details are light."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows async is outside reducers but uses one tool for all cases without trade-off reasoning."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not demonstrate safe Redux side-effect architecture."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_tradeoff",
+        "question": "When would createAsyncThunk be a worse fit than RTK Query?",
+        "purpose": "Check server-state and cache management judgment."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "How would you prevent an older async response from overwriting newer state?",
+        "purpose": "Probe stale response and concurrency reasoning."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Redux async logic trade-offs",
+        "displayQuestion": "Where would you put async logic in a Redux app, and how would you choose between a component effect, createAsyncThunk, listener middleware, and RTK Query?",
+        "displayIntent": "Check side-effect architecture and modern Redux tool selection.",
+        "guidance": [
+          "Start with the rule that reducers have no side effects.",
+          "Compare at least three async locations or tools.",
+          "Include server-state caching and error handling."
+        ],
+        "commonMistakes": [
+          "Calling APIs from reducers.",
+          "Using one async tool for every problem.",
+          "Ignoring cancellation and stale responses."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack",
+          "level": "Mid-level",
+          "type": "trade_off"
+        }
+      },
+      "vi": {
+        "title": "Trade-off async logic trong Redux",
+        "displayQuestion": "Bạn sẽ đặt async logic ở đâu trong app Redux, và chọn giữa component effect, createAsyncThunk, listener middleware và RTK Query như thế nào?",
+        "displayIntent": "Kiểm tra kiến trúc side effect và cách chọn công cụ Redux hiện đại.",
+        "guidance": [
+          "Bắt đầu từ nguyên tắc reducer không có side effect.",
+          "So sánh ít nhất ba nơi hoặc công cụ xử lý async.",
+          "Bao gồm server-state caching và error handling."
+        ],
+        "commonMistakes": [
+          "Gọi API từ reducer.",
+          "Dùng một công cụ async cho mọi vấn đề.",
+          "Bỏ qua cancellation và stale response."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack",
+          "level": "Mid-level",
+          "type": "trade_off"
+        }
+      },
+      "ja": {
+        "title": "Redux async logic の trade-off",
+        "displayQuestion": "Redux アプリで async logic をどこに置きますか。また component effect、createAsyncThunk、listener middleware、RTK Query をどう選び分けますか。",
+        "displayIntent": "side effect architecture と現代 Redux の tool selection を確認する。",
+        "guidance": [
+          "reducer には side effect を置かない原則から始める。",
+          "少なくとも三つの async の場所や tool を比較する。",
+          "server-state caching と error handling を含める。"
+        ],
+        "commonMistakes": [
+          "reducer から API を呼ぶ。",
+          "すべての問題に一つの async tool を使う。",
+          "cancellation や stale response を無視する。"
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack",
+          "level": "Mid-level",
+          "type": "trade_off"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Redux Side Effects Approaches",
+        "url": "https://redux.js.org/usage/side-effects-approaches",
+        "note": "Used for middleware, thunks, listener middleware, and RTK Query recommendations."
+      },
+      {
+        "label": "Redux Writing Logic with Thunks",
+        "url": "https://redux.js.org/usage/writing-logic-thunks",
+        "note": "Used for thunk behavior, dispatch/getState access, and async logic placement."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REDUX_MID_TECH_RTK_QUERY_CACHE_007",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["frontend", "fullstack"],
+    "levels": ["mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking", "problem_solving"],
+    "techTags": ["redux", "react", "typescript"],
+    "difficulty": 3,
+    "intent": "Assess whether the candidate understands RTK Query as server-state infrastructure, especially cache keys, tags, invalidation, and loading/error states.",
+    "primaryQuestion": "How does RTK Query decide whether to use cached data or refetch, and how would you design tags for a posts list and post detail mutation?",
+    "expectedSignals": [
+      "Explains query endpoint plus argument forms a distinct cache entry or cache key.",
+      "Understands active subscriptions can receive cached data without another request.",
+      "Uses tagTypes, providesTags, and invalidatesTags to connect queries and mutations.",
+      "Distinguishes broad list invalidation from specific entity invalidation by ID.",
+      "Mentions generated hooks expose data, loading, fetching, success, and error states."
+    ],
+    "redFlags": [
+      "Treats RTK Query as only a wrapper around fetch with no cache model.",
+      "Invalidates all API data after every mutation without considering scope.",
+      "Stores RTK Query response data redundantly in a normal slice by default.",
+      "Cannot explain list versus entity invalidation."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains cache entry identity, subscriptions, tag granularity, list/detail invalidation, and UI loading/error behavior."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands tags and cache reuse but misses argument-based cache keys or granular invalidation."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows RTK Query fetches data but cannot reason about cache invalidation."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not show practical RTK Query knowledge."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "What tags would getPosts and getPostById provide, and what should editPost invalidate?",
+        "purpose": "Force concrete tag design."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "When would you use manual cache updates instead of tag invalidation?",
+        "purpose": "Probe optimistic update and cache-control judgment."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "RTK Query cache and tags",
+        "displayQuestion": "How does RTK Query decide whether to use cached data or refetch, and how would you design tags for a posts list and post detail mutation?",
+        "displayIntent": "Check RTK Query cache identity, subscriptions, and invalidation design.",
+        "guidance": [
+          "Discuss endpoint arguments and cache entries.",
+          "Design concrete providesTags and invalidatesTags.",
+          "Separate list invalidation from individual entity invalidation."
+        ],
+        "commonMistakes": [
+          "Invalidating the entire API for every mutation.",
+          "Duplicating RTK Query response data in normal slices.",
+          "Ignoring query arguments when thinking about cache identity."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Cache và tag trong RTK Query",
+        "displayQuestion": "RTK Query quyết định dùng cached data hay refetch như thế nào, và bạn sẽ thiết kế tag cho posts list và mutation cập nhật post detail ra sao?",
+        "displayIntent": "Kiểm tra cache identity, subscription và thiết kế invalidation trong RTK Query.",
+        "guidance": [
+          "Nói về endpoint argument và cache entry.",
+          "Thiết kế providesTags và invalidatesTags cụ thể.",
+          "Tách invalidation của list khỏi invalidation của từng entity."
+        ],
+        "commonMistakes": [
+          "Invalidate toàn bộ API sau mọi mutation.",
+          "Duplicate response data của RTK Query vào normal slice.",
+          "Bỏ qua query argument khi nghĩ về cache identity."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "RTK Query cache と tags",
+        "displayQuestion": "RTK Query は cached data を使うか refetch するかをどのように判断しますか。また posts list と post detail mutation の tags をどう設計しますか。",
+        "displayIntent": "RTK Query の cache identity、subscription、invalidation 設計を確認する。",
+        "guidance": [
+          "endpoint argument と cache entry について説明する。",
+          "具体的な providesTags と invalidatesTags を設計する。",
+          "list invalidation と個別 entity invalidation を分ける。"
+        ],
+        "commonMistakes": [
+          "すべての mutation で API 全体を invalidate する。",
+          "RTK Query response data を通常の slice に重複保存する。",
+          "cache identity を考えるときに query argument を無視する。"
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "RTK Query Automated Re-fetching",
+        "url": "https://redux-toolkit.js.org/rtk-query/usage/automated-refetching",
+        "note": "Used for cache tags, query cache keys, subscriptions, and invalidation behavior."
+      },
+      {
+        "label": "Redux Toolkit Overview",
+        "url": "https://redux.js.org/redux-toolkit/overview/",
+        "note": "Used for RTK Query positioning as data fetching and caching for Redux."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REDUX_MID_DEBUG_STALE_UI_008",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["frontend", "fullstack", "qa"],
+    "levels": ["mid"],
+    "type": "debugging",
+    "competencies": ["problem_solving", "technical_fundamentals", "ownership"],
+    "techTags": ["redux", "react", "browser_performance"],
+    "difficulty": 3,
+    "intent": "Evaluate practical Redux debugging when UI does not reflect a dispatched action or server mutation.",
+    "primaryQuestion": "A Redux action appears in Redux DevTools, but the React screen does not update. How would you debug whether the issue is the action, reducer, selector, or component subscription?",
+    "expectedSignals": [
+      "Uses Redux DevTools to inspect action payload and before/after state.",
+      "Checks whether the reducer produced new references for changed data.",
+      "Verifies the selector reads the correct slice and returns a stable, relevant value.",
+      "Checks whether useSelector subscribes to the specific data the component needs.",
+      "Considers RTK Query cache invalidation or stale duplicated state if server data is involved."
+    ],
+    "redFlags": [
+      "Starts rewriting components without confirming state actually changed.",
+      "Only adds force re-render or local state mirrors as a fix.",
+      "Ignores direct mutation and reference equality as possible causes.",
+      "Cannot use DevTools to compare action and state transitions."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Runs an evidence-based debugging flow across action payload, reducer references, selector output, subscription, and cache invalidation."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Checks action and reducer state changes but misses selector reference or RTK Query stale-cache details."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Mentions Redux DevTools but lacks a systematic path from state transition to rendered output."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is guesswork and does not show practical Redux debugging."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "What exact state value would you compare before and after the action in DevTools?",
+        "purpose": "Check concrete evidence gathering."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "Why can direct mutation make the store look changed but the component still not re-render?",
+        "purpose": "Probe reference equality and immutability debugging."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Debug stale Redux UI",
+        "displayQuestion": "A Redux action appears in Redux DevTools, but the React screen does not update. How would you debug whether the issue is the action, reducer, selector, or component subscription?",
+        "displayIntent": "Evaluate practical debugging of stale Redux UI behavior.",
+        "guidance": [
+          "Start from action and state evidence in DevTools.",
+          "Check reducer references and selector output.",
+          "Include RTK Query invalidation if server data is part of the scenario."
+        ],
+        "commonMistakes": [
+          "Forcing a re-render instead of finding the state boundary problem.",
+          "Ignoring direct mutation and reference equality.",
+          "Debugging the component before confirming store state changed."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/QA",
+          "level": "Mid-level",
+          "type": "debugging"
+        }
+      },
+      "vi": {
+        "title": "Debug UI Redux bị stale",
+        "displayQuestion": "Một Redux action xuất hiện trong Redux DevTools nhưng màn hình React không update. Bạn debug như thế nào để biết lỗi nằm ở action, reducer, selector hay component subscription?",
+        "displayIntent": "Đánh giá khả năng debug UI Redux bị stale trong thực tế.",
+        "guidance": [
+          "Bắt đầu từ bằng chứng action và state trong DevTools.",
+          "Kiểm tra reference do reducer tạo ra và output của selector.",
+          "Bao gồm RTK Query invalidation nếu tình huống có server data."
+        ],
+        "commonMistakes": [
+          "Ép re-render thay vì tìm lỗi ở ranh giới state.",
+          "Bỏ qua direct mutation và reference equality.",
+          "Debug component trước khi xác nhận store state đã đổi."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/QA",
+          "level": "Mid-level",
+          "type": "debugging"
+        }
+      },
+      "ja": {
+        "title": "Stale Redux UI の debug",
+        "displayQuestion": "Redux DevTools には action が表示されていますが、React screen が更新されません。action、reducer、selector、component subscription のどこに問題があるかをどう debug しますか。",
+        "displayIntent": "Redux UI が stale になる問題の実践的な debug 力を評価する。",
+        "guidance": [
+          "DevTools の action と state の証拠から始める。",
+          "reducer の reference と selector output を確認する。",
+          "server data が関係するなら RTK Query invalidation も含める。"
+        ],
+        "commonMistakes": [
+          "state boundary の問題を見つけずに re-render を強制する。",
+          "direct mutation と reference equality を無視する。",
+          "store state が変わったか確認する前に component を debug する。"
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/QA",
+          "level": "Mid-level",
+          "type": "debugging"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Redux Style Guide",
+        "url": "https://redux.js.org/style-guide/",
+        "note": "Used for mutation risks, reducer side-effect rules, and state derivation guidance."
+      },
+      {
+        "label": "React Redux Hooks API",
+        "url": "https://react-redux.js.org/api/hooks",
+        "note": "Used for useSelector subscription and reference comparison behavior."
+      },
+      {
+        "label": "RTK Query Automated Re-fetching",
+        "url": "https://redux-toolkit.js.org/rtk-query/usage/automated-refetching",
+        "note": "Used for stale server-state cache and invalidation debugging context."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REDUX_SR_TRADE_LEGACY_MIGRATION_009",
+    "stages": ["stage_2_tech_stack", "stage_4_cv_deep_dive"],
+    "roleFamilies": ["frontend", "fullstack"],
+    "levels": ["senior"],
+    "type": "trade_off",
+    "competencies": ["trade_off_analysis", "system_thinking", "ownership", "impact_measurement"],
+    "techTags": ["redux", "react", "typescript"],
+    "difficulty": 4,
+    "intent": "Evaluate senior judgment for migrating legacy Redux code to Redux Toolkit and RTK Query without destabilizing a production app.",
+    "primaryQuestion": "You inherit a large React app with hand-written Redux reducers, action constants, thunks, and duplicated server cache state. How would you migrate toward Redux Toolkit and RTK Query safely?",
+    "expectedSignals": [
+      "Plans incremental migration by feature or slice rather than a risky rewrite.",
+      "Keeps the existing store contract working while adding configureStore or RTK slices where possible.",
+      "Prioritizes high-churn or high-bug areas and separates client state from server state.",
+      "Uses tests, Redux DevTools traces, and release monitoring to verify behavior.",
+      "Defines rollback, compatibility, and team adoption steps such as typed hooks and conventions."
+    ],
+    "redFlags": [
+      "Proposes a full rewrite without migration boundaries or rollback.",
+      "Migrates to RTK Query without identifying duplicated server-state ownership.",
+      "Cannot explain how to preserve action behavior used by existing middleware or tests.",
+      "Claims Redux Toolkit automatically fixes architecture without changing state modeling."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Shows production migration leadership with slicing strategy, compatibility, testing, server-state cleanup, metrics, and rollback."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Has a practical incremental RTK migration plan but misses observability or compatibility details."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Understands RTK benefits but proposes migration steps that are too broad or risky."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not show senior migration ownership."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_metric",
+        "question": "What metrics or evidence would tell you the migration reduced risk or maintenance cost?",
+        "purpose": "Check impact measurement rather than tool adoption for its own sake."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "Which part would you deliberately leave on legacy Redux for now, and why?",
+        "purpose": "Probe rollout judgment and risk management."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Legacy Redux migration strategy",
+        "displayQuestion": "You inherit a large React app with hand-written Redux reducers, action constants, thunks, and duplicated server cache state. How would you migrate toward Redux Toolkit and RTK Query safely?",
+        "displayIntent": "Assess senior Redux migration planning and rollout risk control.",
+        "guidance": [
+          "Describe an incremental migration path.",
+          "Separate client state migration from server-state migration.",
+          "Include tests, metrics, compatibility, and rollback."
+        ],
+        "commonMistakes": [
+          "Planning a rewrite with no production safety boundary.",
+          "Migrating syntax but keeping duplicated cache ownership.",
+          "Ignoring existing middleware, tests, and action contracts."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack",
+          "level": "Senior",
+          "type": "trade_off"
+        }
+      },
+      "vi": {
+        "title": "Chiến lược migration legacy Redux",
+        "displayQuestion": "Bạn nhận một app React lớn có hand-written Redux reducers, action constants, thunks và server cache state bị duplicate. Bạn sẽ migrate sang Redux Toolkit và RTK Query một cách an toàn như thế nào?",
+        "displayIntent": "Đánh giá khả năng lập kế hoạch migration Redux và kiểm soát rủi ro rollout ở mức senior.",
+        "guidance": [
+          "Mô tả lộ trình migration incremental.",
+          "Tách migration client state khỏi server-state migration.",
+          "Bao gồm test, metric, compatibility và rollback."
+        ],
+        "commonMistakes": [
+          "Lên kế hoạch rewrite không có ranh giới an toàn production.",
+          "Chỉ migrate syntax nhưng vẫn giữ cache ownership bị duplicate.",
+          "Bỏ qua middleware, test và action contract hiện có."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack",
+          "level": "Senior",
+          "type": "trade_off"
+        }
+      },
+      "ja": {
+        "title": "Legacy Redux migration strategy",
+        "displayQuestion": "hand-written Redux reducers、action constants、thunks、重複した server cache state を持つ大規模 React app を引き継いだ場合、Redux Toolkit と RTK Query へ安全に migrate するにはどうしますか。",
+        "displayIntent": "senior レベルの Redux migration planning と rollout risk control を評価する。",
+        "guidance": [
+          "incremental migration path を説明する。",
+          "client state migration と server-state migration を分ける。",
+          "tests、metrics、compatibility、rollback を含める。"
+        ],
+        "commonMistakes": [
+          "production safety boundary なしで rewrite を計画する。",
+          "syntax だけ migrate し、重複した cache ownership を残す。",
+          "既存 middleware、tests、action contracts を無視する。"
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack",
+          "level": "Senior",
+          "type": "trade_off"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Redux Toolkit Overview",
+        "url": "https://redux.js.org/redux-toolkit/overview/",
+        "note": "Used for official RTK recommendation, included utilities, and migration rationale."
+      },
+      {
+        "label": "RTK Query Automated Re-fetching",
+        "url": "https://redux-toolkit.js.org/rtk-query/usage/automated-refetching",
+        "note": "Used for server-state cache and invalidation model."
+      },
+      {
+        "label": "Redux Side Effects Approaches",
+        "url": "https://redux.js.org/usage/side-effects-approaches",
+        "note": "Used for async logic migration and recommended side-effect tools."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REDUX_SR_TECH_STORE_ARCHITECTURE_010",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["frontend", "fullstack"],
+    "levels": ["senior"],
+    "type": "technical_depth",
+    "competencies": ["system_thinking", "technical_fundamentals", "ownership"],
+    "techTags": ["redux", "react", "typescript", "browser_performance"],
+    "difficulty": 4,
+    "intent": "Assess senior-level Redux architecture across store shape, feature boundaries, derived data, code splitting, testing, and operational debugging.",
+    "primaryQuestion": "For a large multi-team React app, how would you design Redux store architecture so features remain isolated, data is derived consistently, and performance is observable?",
+    "expectedSignals": [
+      "Defines feature or domain slice ownership with stable public selectors and actions.",
+      "Keeps Redux state minimal and derives filtered, aggregated, or joined values through selectors.",
+      "Normalizes shared relational data and avoids duplicating server state already managed by RTK Query.",
+      "Considers lazy-loaded features, reducer injection or API endpoint injection when appropriate.",
+      "Plans reducer/selector tests, DevTools workflows, render profiling, and conventions for team consistency."
+    ],
+    "redFlags": [
+      "Creates one central slice that every team modifies.",
+      "Stores every filtered list and computed value as separate state that can drift out of sync.",
+      "Lets components reach into arbitrary internal slice shapes instead of using selectors.",
+      "Ignores render performance and debugging until problems appear in production."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Presents a scalable architecture with slice ownership, selector contracts, normalized data, server-state boundaries, lazy loading, tests, and observability."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Good slice and selector architecture, but lacks code splitting, observability, or team-contract detail."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Understands common Redux patterns but cannot scale them across teams and performance constraints."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too generic to validate senior Redux architecture skill."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "What would be the public contract of a feature slice, and what internal shape should components not depend on?",
+        "purpose": "Check encapsulation and team boundary reasoning."
+      },
+      {
+        "trigger": "missing_metric",
+        "question": "How would you detect that a selector or slice design is causing excessive renders?",
+        "purpose": "Probe performance observability."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Large-scale Redux architecture",
+        "displayQuestion": "For a large multi-team React app, how would you design Redux store architecture so features remain isolated, data is derived consistently, and performance is observable?",
+        "displayIntent": "Evaluate senior Redux architecture for scale, ownership, and performance.",
+        "guidance": [
+          "Cover slice ownership, selector contracts, and derived data.",
+          "Explain normalized state and RTK Query server-state boundaries.",
+          "Include testing, DevTools, profiling, and team conventions."
+        ],
+        "commonMistakes": [
+          "Letting every team edit one shared mega-slice.",
+          "Persisting derived values that can drift out of sync.",
+          "Exposing internal state shape directly to all components."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack",
+          "level": "Senior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Kiến trúc Redux quy mô lớn",
+        "displayQuestion": "Với một app React lớn nhiều team cùng phát triển, bạn thiết kế kiến trúc Redux store như thế nào để feature được cô lập, dữ liệu được derive nhất quán và performance có thể quan sát được?",
+        "displayIntent": "Đánh giá kiến trúc Redux ở mức senior về scale, ownership và performance.",
+        "guidance": [
+          "Bao gồm slice ownership, selector contract và derived data.",
+          "Giải thích normalized state và ranh giới server-state của RTK Query.",
+          "Bao gồm testing, DevTools, profiling và convention cho team."
+        ],
+        "commonMistakes": [
+          "Để mọi team cùng sửa một mega-slice dùng chung.",
+          "Persist derived value khiến dữ liệu có thể lệch nhau.",
+          "Expose trực tiếp internal state shape cho mọi component."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack",
+          "level": "Senior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "大規模 Redux architecture",
+        "displayQuestion": "複数 team が開発する大規模 React app で、feature isolation、consistent derived data、observable performance を保つ Redux store architecture をどう設計しますか。",
+        "displayIntent": "scale、ownership、performance の観点で senior Redux architecture を評価する。",
+        "guidance": [
+          "slice ownership、selector contracts、derived data を含める。",
+          "normalized state と RTK Query の server-state boundary を説明する。",
+          "testing、DevTools、profiling、team conventions を含める。"
+        ],
+        "commonMistakes": [
+          "すべての team が一つの shared mega-slice を編集する。",
+          "同期ずれしうる derived value を state に保存する。",
+          "internal state shape をすべての component に直接公開する。"
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack",
+          "level": "Senior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Redux Style Guide",
+        "url": "https://redux.js.org/style-guide/",
+        "note": "Used for minimal state, derived data, reducer purity, and recommended patterns."
+      },
+      {
+        "label": "Redux Deriving Data with Selectors",
+        "url": "https://redux.js.org/usage/deriving-data-selectors",
+        "note": "Used for selector contracts, derived data, and memoization."
+      },
+      {
+        "label": "Redux Normalizing State Shape",
+        "url": "https://redux.js.org/usage/structuring-reducers/normalizing-state-shape",
+        "note": "Used for normalized state, relational data, and performance implications."
+      }
+    ],
+    "status": "active"
+  }
+]

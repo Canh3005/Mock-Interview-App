@@ -1,0 +1,2492 @@
+[
+  {
+    "code": "REDIS_JR_TECH_DATA_TYPES_001",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "data"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking"],
+    "techTags": ["redis", "schema_design"],
+    "difficulty": 2,
+    "intent": "Check whether the candidate understands Redis as an in-memory data structure store and can choose a Redis type based on the access pattern instead of treating everything as a string.",
+    "primaryQuestion": "How would you choose between Redis strings, hashes, lists, sets, sorted sets, and streams for common backend features?",
+    "expectedSignals": [
+      "Explains strings for simple values, counters, serialized blobs, and binary-safe data.",
+      "Uses hashes for small object-like records and field-level updates.",
+      "Distinguishes lists for ordered push/pop workflows from sets for uniqueness and membership checks.",
+      "Uses sorted sets when rank, score, or range queries matter, such as leaderboards or sliding windows.",
+      "Mentions streams for append-only event logs and consumer-group style processing.",
+      "Connects type choice to command complexity, memory shape, and required read/write operations."
+    ],
+    "redFlags": [
+      "Says Redis is only a key-value string cache.",
+      "Chooses types by naming preference instead of access pattern.",
+      "Cannot explain why sorted sets differ from sets or lists.",
+      "Ignores memory and command-cost implications of storing large serialized blobs."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Maps several feature examples to Redis data types, explains why each type fits, and calls out at least one command or complexity trade-off."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands the major Redis types and gives plausible examples, but misses performance or operational nuance."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can name data types but cannot connect them to concrete access patterns."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is generic cache terminology and does not demonstrate Redis-specific modeling knowledge."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "For a leaderboard with score updates and top-100 reads, which Redis type would you use and which operations would you expect?",
+        "purpose": "Force the candidate to reason about sorted sets and range queries."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "When would you avoid storing one large JSON blob in a Redis string and use a hash or JSON document instead?",
+        "purpose": "Check awareness of update granularity and memory/performance trade-offs."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Redis data type selection",
+        "displayQuestion": "How would you choose between Redis strings, hashes, lists, sets, sorted sets, and streams for common backend features?",
+        "displayIntent": "Check practical Redis data modeling from access patterns.",
+        "guidance": [
+          "Ask for concrete feature examples such as sessions, counters, leaderboards, queues, or event logs.",
+          "Look for reasoning about operations, ordering, uniqueness, score/range access, and memory shape."
+        ],
+        "commonMistakes": [
+          "Treating every Redis value as a serialized string.",
+          "Naming data types without explaining the operation they optimize."
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Chọn kiểu dữ liệu Redis",
+        "displayQuestion": "Bạn sẽ chọn giữa Redis string, hash, list, set, sorted set và stream như thế nào cho các tính năng backend phổ biến?",
+        "displayIntent": "Kiểm tra khả năng model dữ liệu Redis theo access pattern thực tế.",
+        "guidance": [
+          "Yêu cầu ví dụ cụ thể như session, counter, leaderboard, queue hoặc event log.",
+          "Tìm cách ứng viên lý luận về operation, thứ tự, tính duy nhất, score/range access và memory shape."
+        ],
+        "commonMistakes": [
+          "Coi mọi value trong Redis chỉ là một chuỗi serialized.",
+          "Kể tên data type nhưng không giải thích operation nào được tối ưu."
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "Redis データ型の選択",
+        "displayQuestion": "一般的なバックエンド機能で、Redis の string、hash、list、set、sorted set、stream をどのように選びますか。",
+        "displayIntent": "アクセスパターンに基づく Redis データモデリングを確認する。",
+        "guidance": [
+          "session、counter、leaderboard、queue、event log など具体例で説明してもらう。",
+          "操作、順序、一意性、score/range access、memory shape への言及を見る。"
+        ],
+        "commonMistakes": [
+          "すべての Redis value を serialized string として扱う。",
+          "データ型名だけを挙げ、最適化される操作を説明しない。"
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Redis Docs: Redis data types",
+        "url": "https://redis.io/docs/latest/develop/data-types/",
+        "note": "Used for Redis native data type coverage."
+      },
+      {
+        "label": "Redis Docs: Compare data types",
+        "url": "https://redis.io/docs/latest/develop/data-types/compare-data-types/",
+        "note": "Used for access-pattern-driven type selection."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REDIS_JR_TECH_TTL_CACHE_ASIDE_002",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving"],
+    "techTags": ["redis", "caching"],
+    "difficulty": 2,
+    "intent": "Evaluate whether the candidate can explain TTLs, cache-aside flow, stale data, and basic invalidation behavior.",
+    "primaryQuestion": "How would you implement a Redis cache-aside read path with TTLs, and what can go wrong with stale or missing data?",
+    "expectedSignals": [
+      "Describes read-through from Redis first, fallback to the database on miss, then SET with an expiration.",
+      "Explains TTL as an upper bound on cache freshness, not a guarantee that data is always correct.",
+      "Mentions explicit invalidation or update-on-write for important mutable data.",
+      "Understands that overwriting a key can affect its timeout depending on the command used.",
+      "Considers thundering herd or cache stampede when many clients miss the same hot key.",
+      "Mentions negative caching carefully for not-found responses with shorter TTLs."
+    ],
+    "redFlags": [
+      "Assumes TTL fully solves consistency.",
+      "Never discusses invalidation after writes.",
+      "Uses very long TTLs for frequently changing data without a freshness strategy.",
+      "Ignores failure behavior when Redis is unavailable."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Gives a clear cache-aside flow, names stale-data risks, and proposes invalidation plus stampede mitigation."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains cache miss and TTL behavior but misses one production concern such as stampede or negative caching."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows SET/GET and TTL but treats cache correctness as automatic."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is limited to 'put it in Redis' with no read/write flow."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "What TTL would you choose for user profile data versus product price data, and why?",
+        "purpose": "Check freshness and business-risk reasoning."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "How would you reduce load if a hot key expires and thousands of requests miss at once?",
+        "purpose": "Probe stampede mitigation such as jitter, locks, single-flight, or stale-while-revalidate."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Redis TTL cache-aside flow",
+        "displayQuestion": "How would you implement a Redis cache-aside read path with TTLs, and what can go wrong with stale or missing data?",
+        "displayIntent": "Check practical caching flow, expiration, and stale-data reasoning.",
+        "guidance": [
+          "Ask the candidate to walk through cache hit, cache miss, database read, and cache write.",
+          "Push on what happens after the source-of-truth data changes."
+        ],
+        "commonMistakes": [
+          "Believing TTL is the same as consistency.",
+          "Skipping cache stampede and Redis failure behavior."
+        ],
+        "labels": {
+          "role": "Backend",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Cache-aside Redis với TTL",
+        "displayQuestion": "Bạn sẽ triển khai read path cache-aside bằng Redis với TTL như thế nào, và stale data hoặc missing data có thể gây vấn đề gì?",
+        "displayIntent": "Kiểm tra luồng caching thực tế, expiration và cách lý luận về stale data.",
+        "guidance": [
+          "Yêu cầu ứng viên đi qua cache hit, cache miss, đọc database và ghi lại cache.",
+          "Đào sâu điều gì xảy ra sau khi dữ liệu nguồn thay đổi."
+        ],
+        "commonMistakes": [
+          "Nghĩ TTL tương đương với consistency.",
+          "Bỏ qua cache stampede và hành vi khi Redis lỗi."
+        ],
+        "labels": {
+          "role": "Backend",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "TTL 付き Redis cache-aside",
+        "displayQuestion": "TTL を使った Redis の cache-aside read path をどのように実装し、stale data や missing data では何が問題になりますか。",
+        "displayIntent": "実践的な caching flow、expiration、stale data の理解を確認する。",
+        "guidance": [
+          "cache hit、cache miss、database read、cache write を順に説明してもらう。",
+          "source of truth のデータが変わった後の扱いを深掘りする。"
+        ],
+        "commonMistakes": [
+          "TTL を consistency と同じものだと考える。",
+          "cache stampede や Redis 障害時の挙動を省略する。"
+        ],
+        "labels": {
+          "role": "Backend",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Redis Docs: EXPIRE",
+        "url": "https://redis.io/docs/latest/commands/expire/",
+        "note": "Used for key expiration and TTL semantics."
+      },
+      {
+        "label": "Redis Docs: Key eviction",
+        "url": "https://redis.io/docs/latest/develop/reference/eviction/",
+        "note": "Used for cache memory and eviction behavior context."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REDIS_JR_TECH_HASH_MODEL_003",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "data"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving"],
+    "techTags": ["redis", "schema_design"],
+    "difficulty": 2,
+    "intent": "Check whether the candidate can model a simple object in Redis and understand when hashes are better than whole-object string replacement.",
+    "primaryQuestion": "If you need to cache user profile objects in Redis, when would you store each profile as a hash instead of one serialized string?",
+    "expectedSignals": [
+      "Explains hashes as field-value collections under one Redis key.",
+      "Uses hashes when individual fields are read or updated independently.",
+      "Compares HGET/HSET/HGETALL with GET/SET of a serialized object.",
+      "Mentions that hashes are not a replacement for deeply nested relational modeling.",
+      "Discusses key naming, field naming, TTL policy, and source-of-truth ownership.",
+      "Recognizes that very large objects or many fields require memory and command-cost review."
+    ],
+    "redFlags": [
+      "Cannot distinguish a Redis key from a hash field.",
+      "Always serializes complete objects even when only one field changes frequently.",
+      "Assumes Redis hashes provide relational joins or complex nested querying by default.",
+      "Does not mention TTL or invalidation for cached profile data."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains hash modeling with field-level operations, clear key design, TTL/invalidation, and limits of Redis hashes."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands hashes and field updates but misses some operational details."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Uses hashes vaguely as 'objects' without explaining command behavior."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not show practical Redis key/hash modeling."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "What Redis key and hash fields would you create for user id 42?",
+        "purpose": "Make the model concrete."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "What changes if the profile has nested arrays, privacy settings, and frequently updated counters?",
+        "purpose": "Check when hashes stop being a clean fit."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Modeling objects with Redis hashes",
+        "displayQuestion": "If you need to cache user profile objects in Redis, when would you store each profile as a hash instead of one serialized string?",
+        "displayIntent": "Check field-level Redis modeling and hash trade-offs.",
+        "guidance": [
+          "Ask for a concrete key and field layout.",
+          "Look for comparison between HGET/HSET and GET/SET of serialized JSON."
+        ],
+        "commonMistakes": [
+          "Confusing Redis keys with hash fields.",
+          "Ignoring update granularity and cache invalidation."
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Model object bằng Redis hash",
+        "displayQuestion": "Nếu cần cache user profile object trong Redis, khi nào bạn lưu mỗi profile dưới dạng hash thay vì một serialized string?",
+        "displayIntent": "Kiểm tra khả năng model Redis ở mức field và trade-off của hash.",
+        "guidance": [
+          "Yêu cầu một layout key và field cụ thể.",
+          "Tìm phần so sánh giữa HGET/HSET và GET/SET serialized JSON."
+        ],
+        "commonMistakes": [
+          "Nhầm Redis key với hash field.",
+          "Bỏ qua update granularity và cache invalidation."
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "Redis hash で object を表現する",
+        "displayQuestion": "Redis に user profile object を cache する場合、1 つの serialized string ではなく hash として保存するのはどんな時ですか。",
+        "displayIntent": "field-level の Redis modeling と hash の trade-off を確認する。",
+        "guidance": [
+          "具体的な key と field の layout を説明してもらう。",
+          "HGET/HSET と serialized JSON の GET/SET の比較を見る。"
+        ],
+        "commonMistakes": [
+          "Redis key と hash field を混同する。",
+          "更新粒度と cache invalidation を無視する。"
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Redis Docs: Redis hashes",
+        "url": "https://redis.io/docs/latest/develop/data-types/hashes/",
+        "note": "Used for hash field-value modeling."
+      },
+      {
+        "label": "Redis Docs: Compare data types",
+        "url": "https://redis.io/docs/latest/develop/data-types/compare-data-types/",
+        "note": "Used for object modeling trade-offs."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REDIS_JR_TECH_ORDERED_UNIQUE_004",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "communication"],
+    "techTags": ["redis", "caching"],
+    "difficulty": 2,
+    "intent": "Assess whether the candidate can reason about ordered versus unique collections in Redis using lists, sets, and sorted sets.",
+    "primaryQuestion": "How would you decide whether a feature should use a Redis list, set, or sorted set?",
+    "expectedSignals": [
+      "Uses lists for insertion-order sequences, queue-like push/pop, or recent activity windows.",
+      "Uses sets for unique membership, deduplication, and set algebra such as union or intersection.",
+      "Uses sorted sets when unique members also need ordering by score or rank.",
+      "Identifies that list membership checks are not the same as set membership checks.",
+      "Mentions trimming bounded collections such as recent events or leaderboards.",
+      "Gives at least two concrete examples such as notification inbox, tags, leaderboard, or sliding rate limit."
+    ],
+    "redFlags": [
+      "Chooses a list for uniqueness without considering duplicates.",
+      "Chooses a set when ordering is required.",
+      "Does not understand score-based ordering in sorted sets.",
+      "Cannot explain how collection growth will be bounded."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Clearly separates ordering, uniqueness, and scoring requirements and maps each to the correct Redis structure."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Chooses reasonable structures but misses one edge case such as trimming or membership cost."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows the names but confuses list, set, and sorted-set semantics."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too abstract to confirm Redis collection knowledge."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "For a 'recently viewed products' feature, how would you avoid duplicates while keeping recency order?",
+        "purpose": "Probe combined requirements and possible sorted set usage."
+      },
+      {
+        "trigger": "missing_metric",
+        "question": "How many items can this collection grow to, and how would you cap it?",
+        "purpose": "Check operational awareness of unbounded data structures."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Lists, sets, and sorted sets",
+        "displayQuestion": "How would you decide whether a feature should use a Redis list, set, or sorted set?",
+        "displayIntent": "Check collection semantics: order, uniqueness, and score-based ranking.",
+        "guidance": [
+          "Ask for examples where a wrong type would create bugs.",
+          "Look for bounded-growth thinking, not only command names."
+        ],
+        "commonMistakes": [
+          "Using lists for uniqueness without a deduplication plan.",
+          "Using sets when the feature requires rank or recency order."
+        ],
+        "labels": {
+          "role": "Backend",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "List, set và sorted set",
+        "displayQuestion": "Bạn sẽ quyết định một feature nên dùng Redis list, set hay sorted set như thế nào?",
+        "displayIntent": "Kiểm tra ngữ nghĩa collection: thứ tự, tính duy nhất và ranking theo score.",
+        "guidance": [
+          "Hỏi ví dụ mà chọn sai type sẽ gây bug.",
+          "Tìm tư duy giới hạn growth, không chỉ tên command."
+        ],
+        "commonMistakes": [
+          "Dùng list cho uniqueness nhưng không có kế hoạch deduplicate.",
+          "Dùng set khi feature cần rank hoặc recency order."
+        ],
+        "labels": {
+          "role": "Backend",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "list、set、sorted set",
+        "displayQuestion": "ある機能で Redis list、set、sorted set のどれを使うべきか、どのように判断しますか。",
+        "displayIntent": "collection の意味、order、uniqueness、score-based ranking を確認する。",
+        "guidance": [
+          "誤った型選択が bug になる例を聞く。",
+          "command 名だけでなく、bounded growth への意識を見る。"
+        ],
+        "commonMistakes": [
+          "重複排除の計画なしに list で uniqueness を扱う。",
+          "rank や recency order が必要なのに set を使う。"
+        ],
+        "labels": {
+          "role": "Backend",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Redis Docs: Compare data types",
+        "url": "https://redis.io/docs/latest/develop/data-types/compare-data-types/",
+        "note": "Used for collection type comparison."
+      },
+      {
+        "label": "Redis Docs: Redis sorted sets",
+        "url": "https://redis.io/docs/latest/develop/data-types/sorted-sets/",
+        "note": "Used for score and rank semantics."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REDIS_JR_TRADE_PERSISTENCE_005",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "devops"],
+    "levels": ["junior"],
+    "type": "trade_off",
+    "competencies": ["technical_fundamentals", "trade_off_analysis"],
+    "techTags": ["redis", "consistency"],
+    "difficulty": 3,
+    "intent": "Assess understanding of Redis persistence options and when persistence matters for cache versus durable data use cases.",
+    "primaryQuestion": "What are the practical differences between Redis RDB snapshots, AOF, using both, and disabling persistence?",
+    "expectedSignals": [
+      "Explains RDB as point-in-time snapshots with lower write overhead but possible data loss between snapshots.",
+      "Explains AOF as logging write operations with stronger durability options and rewrite/size considerations.",
+      "Recognizes that cache-only deployments may disable persistence if the data can be rebuilt.",
+      "Mentions combining RDB and AOF for different recovery and durability goals.",
+      "Connects persistence choice to recovery time, acceptable data loss, disk I/O, and operational complexity.",
+      "Avoids claiming Redis persistence makes it equivalent to a relational durable database for all workloads."
+    ],
+    "redFlags": [
+      "Says Redis is purely in-memory and cannot persist data.",
+      "Claims AOF has no performance or disk-space cost.",
+      "Enables persistence for every cache without discussing rebuildability.",
+      "Does not mention data loss windows or recovery behavior."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Compares RDB, AOF, both, and no persistence using durability, recovery, disk I/O, and use-case fit."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows RDB and AOF basics but gives limited operational trade-offs."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can define persistence but cannot pick a strategy for a real use case."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer contains incorrect claims about Redis durability."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_tradeoff",
+        "question": "For session storage, what data-loss window is acceptable and how would that affect RDB or AOF settings?",
+        "purpose": "Force durability trade-off reasoning."
+      },
+      {
+        "trigger": "missing_metric",
+        "question": "What would you monitor after enabling AOF on a write-heavy Redis instance?",
+        "purpose": "Check disk, latency, rewrite, and recovery awareness."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Redis persistence trade-offs",
+        "displayQuestion": "What are the practical differences between Redis RDB snapshots, AOF, using both, and disabling persistence?",
+        "displayIntent": "Check whether the candidate can choose Redis persistence based on data-loss tolerance and recovery needs.",
+        "guidance": [
+          "Ask for separate answers for cache-only data and user-session data.",
+          "Listen for disk I/O, recovery time, and acceptable data loss."
+        ],
+        "commonMistakes": [
+          "Assuming Redis persistence has no trade-off.",
+          "Using durable settings for rebuildable cache data without a reason."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Junior",
+          "type": "trade_off"
+        }
+      },
+      "vi": {
+        "title": "Trade-off persistence trong Redis",
+        "displayQuestion": "Khác biệt thực tế giữa Redis RDB snapshot, AOF, dùng cả hai và tắt persistence là gì?",
+        "displayIntent": "Kiểm tra khả năng chọn persistence dựa trên mức chấp nhận mất dữ liệu và nhu cầu recovery.",
+        "guidance": [
+          "Yêu cầu trả lời riêng cho cache-only data và user-session data.",
+          "Lắng nghe các ý về disk I/O, recovery time và acceptable data loss."
+        ],
+        "commonMistakes": [
+          "Nghĩ Redis persistence không có trade-off.",
+          "Dùng durable setting cho dữ liệu cache có thể rebuild mà không có lý do."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Junior",
+          "type": "trade_off"
+        }
+      },
+      "ja": {
+        "title": "Redis persistence の trade-off",
+        "displayQuestion": "Redis の RDB snapshot、AOF、両方の利用、persistence 無効化にはどのような実務上の違いがありますか。",
+        "displayIntent": "data loss tolerance と recovery needs に基づいて persistence を選べるか確認する。",
+        "guidance": [
+          "cache-only data と user-session data で別々に答えてもらう。",
+          "disk I/O、recovery time、acceptable data loss への言及を見る。"
+        ],
+        "commonMistakes": [
+          "Redis persistence に trade-off がないと考える。",
+          "再構築可能な cache data に理由なく durable setting を使う。"
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Junior",
+          "type": "trade_off"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Redis Docs: Redis persistence",
+        "url": "https://redis.io/docs/latest/operate/oss_and_stack/management/persistence/",
+        "note": "Used for RDB, AOF, no persistence, and combined persistence options."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REDIS_JR_DEBUG_STALE_CACHE_006",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "debugging",
+    "competencies": ["problem_solving", "technical_fundamentals", "ownership"],
+    "techTags": ["redis", "caching"],
+    "difficulty": 3,
+    "intent": "Assess practical debugging of stale cache, wrong keys, TTL mistakes, and cache-aside invalidation issues.",
+    "primaryQuestion": "Users report seeing old product data even after the database was updated. How would you debug the Redis cache path?",
+    "expectedSignals": [
+      "Checks whether the request is reading from Redis, database, or another cache layer.",
+      "Inspects the exact cache key, value, TTL, and serialization/version shape.",
+      "Verifies write path invalidation, cache update ordering, and whether deletes are reaching Redis.",
+      "Considers race conditions where an old read repopulates the cache after an update.",
+      "Checks environment or tenant key prefixes to avoid looking at the wrong Redis keyspace.",
+      "Proposes a safe remediation such as targeted invalidation, shorter TTL, versioned keys, or write-through for critical fields."
+    ],
+    "redFlags": [
+      "Immediately flushes all Redis data without checking blast radius.",
+      "Only blames Redis without tracing the application cache path.",
+      "Does not verify the actual key, TTL, and value.",
+      "Ignores race conditions between database writes and cache repopulation."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Gives a structured debug plan from symptom to key inspection, invalidation path, race analysis, and low-risk remediation."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Checks key/value/TTL and invalidation, but misses race or multi-layer cache details."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Suggests clearing cache but lacks root-cause investigation."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is not actionable for a real stale-cache incident."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "red_flag",
+        "question": "What is the risk of running FLUSHALL in production, and what would you do instead?",
+        "purpose": "Check operational safety and blast-radius awareness."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "How would you prove whether the stale value was repopulated after the database update?",
+        "purpose": "Probe timeline, logging, and race-condition analysis."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Debugging stale Redis cache",
+        "displayQuestion": "Users report seeing old product data even after the database was updated. How would you debug the Redis cache path?",
+        "displayIntent": "Check structured debugging of stale cache and invalidation problems.",
+        "guidance": [
+          "Look for concrete inspection of key, TTL, value, and write-path invalidation.",
+          "Push on safe remediation instead of broad cache deletion."
+        ],
+        "commonMistakes": [
+          "Flushing production Redis as the first action.",
+          "Ignoring cache repopulation races after database writes."
+        ],
+        "labels": {
+          "role": "Backend",
+          "level": "Junior",
+          "type": "debugging"
+        }
+      },
+      "vi": {
+        "title": "Debug stale cache Redis",
+        "displayQuestion": "Người dùng báo vẫn thấy dữ liệu sản phẩm cũ dù database đã được cập nhật. Bạn sẽ debug cache path Redis như thế nào?",
+        "displayIntent": "Kiểm tra cách debug có cấu trúc với stale cache và lỗi invalidation.",
+        "guidance": [
+          "Tìm phần kiểm tra cụ thể key, TTL, value và write-path invalidation.",
+          "Đào sâu cách khắc phục an toàn thay vì xóa cache diện rộng."
+        ],
+        "commonMistakes": [
+          "Flush Redis production ngay từ bước đầu.",
+          "Bỏ qua race repopulate cache sau database write."
+        ],
+        "labels": {
+          "role": "Backend",
+          "level": "Junior",
+          "type": "debugging"
+        }
+      },
+      "ja": {
+        "title": "stale Redis cache の debug",
+        "displayQuestion": "database は更新済みなのに、ユーザーが古い product data を見ていると報告しています。Redis cache path をどう debug しますか。",
+        "displayIntent": "stale cache と invalidation 問題の構造的な debug 力を確認する。",
+        "guidance": [
+          "key、TTL、value、write-path invalidation の具体的な確認を見る。",
+          "広範囲な cache 削除ではなく安全な remediation を深掘りする。"
+        ],
+        "commonMistakes": [
+          "最初の対応として production Redis を flush する。",
+          "database write 後の cache repopulation race を無視する。"
+        ],
+        "labels": {
+          "role": "Backend",
+          "level": "Junior",
+          "type": "debugging"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Redis Docs: EXPIRE",
+        "url": "https://redis.io/docs/latest/commands/expire/",
+        "note": "Used for TTL inspection and expiration behavior."
+      },
+      {
+        "label": "Redis Docs: Key eviction",
+        "url": "https://redis.io/docs/latest/develop/reference/eviction/",
+        "note": "Used for cache behavior and memory-pressure context."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REDIS_MID_TRADE_EVICTION_007",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "devops"],
+    "levels": ["mid"],
+    "type": "trade_off",
+    "competencies": ["trade_off_analysis", "system_thinking", "technical_fundamentals"],
+    "techTags": ["redis", "caching"],
+    "difficulty": 4,
+    "intent": "Evaluate whether the candidate can select and reason about Redis maxmemory and eviction policies under memory pressure.",
+    "primaryQuestion": "How would you choose a Redis maxmemory-policy for an application cache, and what metrics would tell you the policy is wrong?",
+    "expectedSignals": [
+      "Explains maxmemory as a configured memory ceiling for the dataset and eviction trigger.",
+      "Compares noeviction, allkeys-lru, allkeys-lfu, volatile-lru, volatile-ttl, and random policies at a practical level.",
+      "Understands volatile policies only evict keys with expiration and can behave like noeviction if no keys have TTLs.",
+      "Connects policy choice to access pattern, such as skewed reads, frequency-based reuse, or TTL-driven freshness.",
+      "Mentions monitoring evicted_keys, keyspace hits/misses, used_memory, rejected writes, latency, and application error rates.",
+      "Accounts for replication/AOF buffers and headroom rather than setting maxmemory to total machine RAM."
+    ],
+    "redFlags": [
+      "Uses noeviction for a cache without explaining write-failure behavior.",
+      "Assumes Redis implements perfect LRU for all keys without approximation or sampling nuance.",
+      "Does not know that volatile policies require TTLs.",
+      "Chooses a policy without considering access patterns or business value of keys."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Selects policies by workload, explains failure modes, and names the Redis/application metrics used to validate the choice."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows common policies and metrics but misses memory headroom or volatile-policy caveats."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can name LRU/LFU but cannot explain when the policy becomes harmful."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer lacks Redis-specific eviction understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_metric",
+        "question": "Which Redis INFO fields or app metrics would you inspect during an eviction incident?",
+        "purpose": "Check observability depth."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "Why might volatile-lru be a bad choice if many important cache keys were created without TTLs?",
+        "purpose": "Probe volatile policy behavior."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Redis eviction policy choice",
+        "displayQuestion": "How would you choose a Redis maxmemory-policy for an application cache, and what metrics would tell you the policy is wrong?",
+        "displayIntent": "Check memory-pressure reasoning and eviction policy trade-offs.",
+        "guidance": [
+          "Ask for a concrete workload and access pattern.",
+          "Look for both Redis metrics and user-facing impact metrics."
+        ],
+        "commonMistakes": [
+          "Choosing LRU by default without validating hit rate.",
+          "Forgetting that volatile policies only consider keys with TTL."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Mid-level",
+          "type": "trade_off"
+        }
+      },
+      "vi": {
+        "title": "Chọn eviction policy Redis",
+        "displayQuestion": "Bạn sẽ chọn Redis maxmemory-policy cho application cache như thế nào, và metric nào cho thấy policy đang sai?",
+        "displayIntent": "Kiểm tra cách lý luận về memory pressure và trade-off eviction policy.",
+        "guidance": [
+          "Yêu cầu workload và access pattern cụ thể.",
+          "Tìm cả Redis metric lẫn metric ảnh hưởng tới user."
+        ],
+        "commonMistakes": [
+          "Chọn LRU mặc định mà không validate hit rate.",
+          "Quên rằng volatile policy chỉ xét các key có TTL."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Mid-level",
+          "type": "trade_off"
+        }
+      },
+      "ja": {
+        "title": "Redis eviction policy の選択",
+        "displayQuestion": "application cache で Redis maxmemory-policy をどう選び、どの metrics で policy が間違っていると判断しますか。",
+        "displayIntent": "memory pressure と eviction policy trade-off の理解を確認する。",
+        "guidance": [
+          "具体的な workload と access pattern を聞く。",
+          "Redis metrics と user-facing impact metrics の両方を見る。"
+        ],
+        "commonMistakes": [
+          "hit rate を検証せず LRU を default として選ぶ。",
+          "volatile policy が TTL 付き key だけを対象にすることを忘れる。"
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Mid-level",
+          "type": "trade_off"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Redis Docs: Key eviction",
+        "url": "https://redis.io/docs/latest/develop/reference/eviction/",
+        "note": "Used for maxmemory and eviction policy behavior."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REDIS_MID_TECH_ATOMICITY_008",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving", "system_thinking"],
+    "techTags": ["redis", "transaction", "consistency"],
+    "difficulty": 4,
+    "intent": "Assess understanding of Redis command atomicity, transactions, WATCH-based optimistic locking, and Lua scripts.",
+    "primaryQuestion": "How would you make a multi-step Redis update atomic, and when would you use MULTI/EXEC, WATCH, or Lua?",
+    "expectedSignals": [
+      "States that individual Redis commands are atomic, but multi-command application sequences can race.",
+      "Explains MULTI/EXEC queues commands and executes them sequentially as one isolated operation.",
+      "Explains WATCH as optimistic locking that aborts EXEC if watched keys change before execution.",
+      "Uses Lua when logic must read, branch, and write atomically on the server.",
+      "Mentions that long-running scripts block other server activity and should stay small.",
+      "Understands that Redis transactions do not provide rollback semantics like many SQL databases."
+    ],
+    "redFlags": [
+      "Assumes pipelining makes commands atomic.",
+      "Claims Redis transactions rollback already executed commands on runtime errors.",
+      "Uses GET then SET for compare-and-set without WATCH or Lua.",
+      "Proposes large business workflows inside Lua without considering blocking latency."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Clearly separates single-command atomicity, transaction isolation, optimistic locking, and Lua server-side branching with caveats."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands MULTI/EXEC and Lua basics but misses WATCH or rollback nuance."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows Redis has transactions but cannot use them for a race-prone update."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer confuses batching, transactions, and distributed locking."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Implement 'decrement stock only if stock is greater than zero'. Would you use WATCH or Lua, and why?",
+        "purpose": "Force concrete atomic read-modify-write reasoning."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "What is the downside of putting complex logic in a Lua script?",
+        "purpose": "Check blocking and maintainability awareness."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Redis atomic updates",
+        "displayQuestion": "How would you make a multi-step Redis update atomic, and when would you use MULTI/EXEC, WATCH, or Lua?",
+        "displayIntent": "Check Redis atomicity, transactions, optimistic locking, and Lua scripting judgment.",
+        "guidance": [
+          "Ask for a read-modify-write example.",
+          "Differentiate transactions from pipelining and from SQL-style rollback."
+        ],
+        "commonMistakes": [
+          "Thinking pipelining provides atomicity.",
+          "Ignoring WATCH or Lua for conditional updates."
+        ],
+        "labels": {
+          "role": "Backend",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Cập nhật atomic trong Redis",
+        "displayQuestion": "Bạn sẽ làm một multi-step Redis update trở nên atomic như thế nào, và khi nào dùng MULTI/EXEC, WATCH hoặc Lua?",
+        "displayIntent": "Kiểm tra atomicity, transaction, optimistic locking và khả năng chọn Lua scripting.",
+        "guidance": [
+          "Yêu cầu ví dụ read-modify-write.",
+          "Phân biệt transaction với pipelining và rollback kiểu SQL."
+        ],
+        "commonMistakes": [
+          "Nghĩ pipelining tạo atomicity.",
+          "Bỏ qua WATCH hoặc Lua cho conditional update."
+        ],
+        "labels": {
+          "role": "Backend",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "Redis の atomic update",
+        "displayQuestion": "multi-step の Redis update を atomic にするにはどうし、MULTI/EXEC、WATCH、Lua はいつ使いますか。",
+        "displayIntent": "Redis atomicity、transaction、optimistic locking、Lua scripting の判断を確認する。",
+        "guidance": [
+          "read-modify-write の例を出してもらう。",
+          "transaction、pipelining、SQL-style rollback を区別する。"
+        ],
+        "commonMistakes": [
+          "pipelining が atomicity を提供すると考える。",
+          "conditional update で WATCH や Lua を無視する。"
+        ],
+        "labels": {
+          "role": "Backend",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Redis Docs: Transactions",
+        "url": "https://redis.io/docs/latest/develop/using-commands/transactions/",
+        "note": "Used for MULTI, EXEC, DISCARD, and WATCH semantics."
+      },
+      {
+        "label": "Redis Docs: Scripting with Lua",
+        "url": "https://redis.io/docs/latest/develop/programmability/eval-intro/",
+        "note": "Used for Lua atomic execution and server-side scripting trade-offs."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REDIS_MID_TRADE_DISTRIBUTED_LOCKS_009",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "devops"],
+    "levels": ["mid"],
+    "type": "trade_off",
+    "competencies": ["trade_off_analysis", "system_thinking", "technical_fundamentals"],
+    "techTags": ["redis", "consistency"],
+    "difficulty": 4,
+    "intent": "Evaluate whether the candidate understands Redis-based locking guarantees, expiration, ownership tokens, and failure modes.",
+    "primaryQuestion": "How would you implement a Redis distributed lock safely, and what guarantees would you not claim?",
+    "expectedSignals": [
+      "Uses SET with NX and expiration to acquire a single-instance lock atomically.",
+      "Uses a unique random token and releases only if the token still matches, typically with Lua.",
+      "Explains why the lock must have an expiration to avoid deadlock after client failure.",
+      "Mentions lock validity time, clock/time assumptions, long-running critical sections, and retry/backoff behavior.",
+      "Distinguishes best-effort coordination from strong correctness requirements that may need a database constraint or consensus system.",
+      "Can discuss Redlock at a high level when multiple independent Redis masters are involved, without overstating guarantees."
+    ],
+    "redFlags": [
+      "Implements lock acquisition with separate SETNX and EXPIRE calls without discussing the race.",
+      "Deletes the lock key without verifying ownership token.",
+      "Claims Redis locks are always safe for financial or exactly-once workflows.",
+      "Uses no TTL and no plan for client crash recovery."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains acquisition, token-based release, TTL, failure modes, and where Redis locks are insufficient."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows SET NX EX and token release but misses broader guarantee boundaries."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can describe a lock key but not safe release or crash behavior."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer proposes unsafe locking primitives."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "red_flag",
+        "question": "What can go wrong if a client deletes a lock key after its TTL expired and another client acquired a new lock?",
+        "purpose": "Check ownership-token reasoning."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "For preventing duplicate payments, would Redis locking be your only protection? Why or why not?",
+        "purpose": "Probe guarantee boundaries and defense in depth."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Redis distributed locks",
+        "displayQuestion": "How would you implement a Redis distributed lock safely, and what guarantees would you not claim?",
+        "displayIntent": "Check lock correctness, ownership, TTLs, and failure-mode judgment.",
+        "guidance": [
+          "Ask for exact acquire and release behavior.",
+          "Push on critical workflows where best-effort locks are not enough."
+        ],
+        "commonMistakes": [
+          "Using SETNX and EXPIRE as separate non-atomic steps.",
+          "Deleting a lock without verifying the owner token."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Mid-level",
+          "type": "trade_off"
+        }
+      },
+      "vi": {
+        "title": "Distributed lock bằng Redis",
+        "displayQuestion": "Bạn sẽ triển khai Redis distributed lock an toàn như thế nào, và những guarantee nào bạn sẽ không khẳng định?",
+        "displayIntent": "Kiểm tra lock correctness, ownership, TTL và khả năng nhận diện failure mode.",
+        "guidance": [
+          "Yêu cầu hành vi acquire và release thật cụ thể.",
+          "Đào sâu các workflow quan trọng nơi best-effort lock là chưa đủ."
+        ],
+        "commonMistakes": [
+          "Dùng SETNX và EXPIRE thành hai bước không atomic.",
+          "Xóa lock mà không verify owner token."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Mid-level",
+          "type": "trade_off"
+        }
+      },
+      "ja": {
+        "title": "Redis distributed lock",
+        "displayQuestion": "Redis distributed lock を安全に実装するにはどうし、どの保証は主張すべきではありませんか。",
+        "displayIntent": "lock correctness、ownership、TTL、failure mode の判断を確認する。",
+        "guidance": [
+          "acquire と release の正確な挙動を聞く。",
+          "best-effort lock だけでは足りない重要 workflow を深掘りする。"
+        ],
+        "commonMistakes": [
+          "SETNX と EXPIRE を atomic でない 2 step として使う。",
+          "owner token を確認せず lock を削除する。"
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Mid-level",
+          "type": "trade_off"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Redis Docs: Distributed Locks with Redis",
+        "url": "https://redis.io/docs/latest/develop/clients/patterns/distributed-locks/",
+        "note": "Used for lock acquisition, Redlock, and safety properties."
+      },
+      {
+        "label": "Redis Docs: Scripting with Lua",
+        "url": "https://redis.io/docs/latest/develop/programmability/eval-intro/",
+        "note": "Used for atomic token-check-and-release patterns."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REDIS_MID_TRADE_PUBSUB_STREAMS_010",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack", "data"],
+    "levels": ["mid"],
+    "type": "trade_off",
+    "competencies": ["trade_off_analysis", "system_thinking", "technical_fundamentals"],
+    "techTags": ["redis", "pubsub", "event_driven_architecture"],
+    "difficulty": 4,
+    "intent": "Check whether the candidate can choose between Redis Pub/Sub, Streams, lists, and external brokers based on delivery guarantees and replay needs.",
+    "primaryQuestion": "When would you use Redis Pub/Sub, Redis Streams, a Redis list queue, or a broker like Kafka/RabbitMQ?",
+    "expectedSignals": [
+      "Explains Pub/Sub as low-latency fan-out where subscribers receive live messages and replay is not the main requirement.",
+      "Explains Streams as append-only event records with IDs, replay/range reads, trimming, and consumer groups.",
+      "Recognizes lists can implement simple queues but lack rich consumer-group metadata and replay semantics.",
+      "Chooses Kafka/RabbitMQ or another broker for stronger durability, routing, long retention, high-throughput event pipelines, or mature operational semantics.",
+      "Discusses at-least-once behavior, acknowledgements, idempotent consumers, and backpressure.",
+      "Connects the choice to business requirements such as missed-message tolerance and operational ownership."
+    ],
+    "redFlags": [
+      "Uses Pub/Sub for durable jobs that must be processed after subscribers reconnect.",
+      "Treats Streams as a complete replacement for Kafka in every scenario.",
+      "Ignores consumer idempotency and retry behavior.",
+      "Cannot articulate delivery guarantees."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Compares each option by replay, durability, fan-out, acknowledgements, retention, and operational fit."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Correctly separates Pub/Sub and Streams but misses broker-level operational differences."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows the features but cannot map them to delivery requirements."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer uses messaging terms without concrete guarantees."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "If a worker is offline for five minutes, which option still lets it process missed messages?",
+        "purpose": "Probe replay and durability requirements."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "What makes Kafka a better fit than Redis Streams for some event pipelines?",
+        "purpose": "Check system-level trade-off analysis beyond Redis features."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Pub/Sub, Streams, and brokers",
+        "displayQuestion": "When would you use Redis Pub/Sub, Redis Streams, a Redis list queue, or a broker like Kafka/RabbitMQ?",
+        "displayIntent": "Check messaging choice based on replay, durability, fan-out, and consumer guarantees.",
+        "guidance": [
+          "Ask about offline consumers and missed messages.",
+          "Look for idempotency and backpressure discussion."
+        ],
+        "commonMistakes": [
+          "Using Pub/Sub where durable processing is required.",
+          "Ignoring consumer acknowledgement and retry semantics."
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Mid-level",
+          "type": "trade_off"
+        }
+      },
+      "vi": {
+        "title": "Pub/Sub, Streams và message broker",
+        "displayQuestion": "Khi nào bạn dùng Redis Pub/Sub, Redis Streams, queue bằng Redis list, hoặc broker như Kafka/RabbitMQ?",
+        "displayIntent": "Kiểm tra lựa chọn messaging dựa trên replay, durability, fan-out và consumer guarantee.",
+        "guidance": [
+          "Hỏi về consumer offline và missed messages.",
+          "Tìm phần bàn về idempotency và backpressure."
+        ],
+        "commonMistakes": [
+          "Dùng Pub/Sub khi cần durable processing.",
+          "Bỏ qua acknowledgement và retry semantics của consumer."
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Mid-level",
+          "type": "trade_off"
+        }
+      },
+      "ja": {
+        "title": "Pub/Sub、Streams、broker",
+        "displayQuestion": "Redis Pub/Sub、Redis Streams、Redis list queue、Kafka/RabbitMQ のような broker はいつ使い分けますか。",
+        "displayIntent": "replay、durability、fan-out、consumer guarantees に基づく messaging 選択を確認する。",
+        "guidance": [
+          "offline consumer と missed messages について聞く。",
+          "idempotency と backpressure の議論を見る。"
+        ],
+        "commonMistakes": [
+          "durable processing が必要な場面で Pub/Sub を使う。",
+          "consumer acknowledgement と retry semantics を無視する。"
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Mid-level",
+          "type": "trade_off"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Redis Docs: Redis Pub/Sub",
+        "url": "https://redis.io/docs/latest/develop/pubsub/",
+        "note": "Used for Pub/Sub messaging semantics."
+      },
+      {
+        "label": "Redis Docs: Redis Streams",
+        "url": "https://redis.io/docs/latest/develop/data-types/streams/",
+        "note": "Used for streams, IDs, trimming, and consumer groups."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REDIS_MID_TECH_STREAMS_CONSUMER_GROUPS_011",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "data"],
+    "levels": ["mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving", "system_thinking"],
+    "techTags": ["redis", "event_driven_architecture", "idempotency"],
+    "difficulty": 4,
+    "intent": "Evaluate detailed understanding of Redis Streams consumer groups, acknowledgements, pending entries, and retry behavior.",
+    "primaryQuestion": "How do Redis Streams consumer groups process messages, and how would you handle pending or stuck messages?",
+    "expectedSignals": [
+      "Explains XADD for appending entries and stream IDs for ordered retrieval.",
+      "Explains XGROUP/XREADGROUP with consumers sharing work within a group.",
+      "Mentions XACK to acknowledge successful processing and the pending entries list for delivered but unacknowledged messages.",
+      "Uses XPENDING, XCLAIM, or XAUTOCLAIM to inspect and recover stuck messages.",
+      "Discusses at-least-once delivery and the need for idempotent consumers.",
+      "Mentions trimming or retention strategy so streams do not grow without bounds."
+    ],
+    "redFlags": [
+      "Assumes stream messages disappear automatically after being read.",
+      "Does not mention acknowledgements or pending entries.",
+      "Ignores duplicate processing and idempotency.",
+      "Allows streams to grow forever with no retention policy."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains consumer group lifecycle, pending recovery, at-least-once processing, idempotency, and retention."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands XREADGROUP and XACK but misses some recovery or retention detail."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can describe Streams generally but not consumer group failure handling."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer suggests Pub/Sub-style semantics instead of Streams semantics."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "A worker crashed after receiving messages but before processing them. What would you see in Redis and how would another worker recover them?",
+        "purpose": "Probe pending entry recovery."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "How would you design the consumer so processing the same message twice does not corrupt data?",
+        "purpose": "Check idempotency thinking."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Redis Streams consumer groups",
+        "displayQuestion": "How do Redis Streams consumer groups process messages, and how would you handle pending or stuck messages?",
+        "displayIntent": "Check Streams processing, acknowledgement, pending recovery, and idempotency.",
+        "guidance": [
+          "Ask the candidate to trace one message from XADD to XACK.",
+          "Push on crash recovery and duplicate processing."
+        ],
+        "commonMistakes": [
+          "Assuming a read removes the message.",
+          "Ignoring pending entries and idempotent processing."
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Consumer group trong Redis Streams",
+        "displayQuestion": "Redis Streams consumer group xử lý message như thế nào, và bạn xử lý pending hoặc stuck message ra sao?",
+        "displayIntent": "Kiểm tra Streams processing, acknowledgement, pending recovery và idempotency.",
+        "guidance": [
+          "Yêu cầu ứng viên trace một message từ XADD tới XACK.",
+          "Đào sâu crash recovery và duplicate processing."
+        ],
+        "commonMistakes": [
+          "Nghĩ read là xóa message.",
+          "Bỏ qua pending entries và idempotent processing."
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "Redis Streams consumer group",
+        "displayQuestion": "Redis Streams consumer group は message をどのように処理し、pending や stuck message をどう扱いますか。",
+        "displayIntent": "Streams processing、acknowledgement、pending recovery、idempotency を確認する。",
+        "guidance": [
+          "1 つの message を XADD から XACK まで trace してもらう。",
+          "crash recovery と duplicate processing を深掘りする。"
+        ],
+        "commonMistakes": [
+          "read すると message が削除されると考える。",
+          "pending entries と idempotent processing を無視する。"
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Redis Docs: Redis Streams",
+        "url": "https://redis.io/docs/latest/develop/data-types/streams/",
+        "note": "Used for stream commands, consumer groups, pending entries, and acknowledgements."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REDIS_MID_TECH_REPLICATION_SENTINEL_012",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "devops"],
+    "levels": ["mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking", "trade_off_analysis"],
+    "techTags": ["redis", "consistency"],
+    "difficulty": 4,
+    "intent": "Check understanding of Redis replication, read scaling, failover, and Sentinel responsibilities.",
+    "primaryQuestion": "How do Redis replication and Sentinel provide high availability, and what consistency caveats should an application expect?",
+    "expectedSignals": [
+      "Explains primary-replica replication where replicas receive a stream of commands from the primary.",
+      "Mentions replicas reconnect and attempt partial resynchronization after link breaks when possible.",
+      "Explains Sentinel monitoring, notifications, client discovery, and automatic failover for non-clustered Redis.",
+      "Discusses asynchronous replication and possible data loss or stale reads around failover.",
+      "Understands Sentinel quorum/majority at a high level and why multiple Sentinels are needed.",
+      "Mentions clients must reconnect or rediscover the new primary after failover."
+    ],
+    "redFlags": [
+      "Claims Redis replication is synchronous by default.",
+      "Assumes failover has zero data-loss risk.",
+      "Runs a single Sentinel and calls it highly available.",
+      "Ignores client-side reconnect/discovery behavior."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains replication and Sentinel roles, asynchronous caveats, failover flow, quorum, and application behavior."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands primary/replica and Sentinel basics but misses stale reads or client discovery."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows replicas exist but cannot explain failover or consistency implications."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer contains unsafe HA assumptions."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_tradeoff",
+        "question": "What can happen to writes acknowledged by the old primary shortly before a failover?",
+        "purpose": "Probe asynchronous replication and data-loss awareness."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "How would your application discover the new primary after Sentinel failover?",
+        "purpose": "Check client integration and operational completeness."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Replication and Sentinel HA",
+        "displayQuestion": "How do Redis replication and Sentinel provide high availability, and what consistency caveats should an application expect?",
+        "displayIntent": "Check Redis HA mechanics and asynchronous consistency caveats.",
+        "guidance": [
+          "Ask for the responsibilities of Redis replicas versus Sentinel.",
+          "Push on failover data loss, stale reads, and client reconnection."
+        ],
+        "commonMistakes": [
+          "Assuming replication is synchronous.",
+          "Treating one Sentinel as a highly available control plane."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Replication và Sentinel HA",
+        "displayQuestion": "Redis replication và Sentinel cung cấp high availability như thế nào, và application cần chấp nhận caveat consistency nào?",
+        "displayIntent": "Kiểm tra cơ chế Redis HA và caveat consistency do asynchronous replication.",
+        "guidance": [
+          "Hỏi trách nhiệm của Redis replica so với Sentinel.",
+          "Đào sâu data loss khi failover, stale read và client reconnect."
+        ],
+        "commonMistakes": [
+          "Giả định replication là synchronous.",
+          "Coi một Sentinel là control plane có high availability."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "Replication と Sentinel HA",
+        "displayQuestion": "Redis replication と Sentinel はどのように high availability を提供し、application はどんな consistency caveat を想定すべきですか。",
+        "displayIntent": "Redis HA の仕組みと asynchronous consistency caveat を確認する。",
+        "guidance": [
+          "Redis replica と Sentinel の責任を分けて聞く。",
+          "failover 時の data loss、stale read、client reconnect を深掘りする。"
+        ],
+        "commonMistakes": [
+          "replication が synchronous だと仮定する。",
+          "1 つの Sentinel を highly available control plane と考える。"
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Redis Docs: Redis replication",
+        "url": "https://redis.io/docs/latest/operate/oss_and_stack/management/replication/",
+        "note": "Used for primary-replica replication behavior."
+      },
+      {
+        "label": "Redis Docs: High availability with Redis Sentinel",
+        "url": "https://redis.io/docs/latest/operate/oss_and_stack/management/sentinel/",
+        "note": "Used for Sentinel monitoring, failover, quorum, and client discovery concepts."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REDIS_MID_TECH_PIPELINING_LATENCY_013",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving", "impact_measurement"],
+    "techTags": ["redis", "caching"],
+    "difficulty": 3,
+    "intent": "Evaluate whether the candidate understands Redis pipelining, round-trip latency, batching limits, and the difference from transactions.",
+    "primaryQuestion": "How does Redis pipelining improve performance, and how is it different from a transaction?",
+    "expectedSignals": [
+      "Explains request/response round-trip time and why many sequential commands are slow over a network.",
+      "Explains pipelining as sending multiple commands without waiting for each individual response.",
+      "States that pipelining reduces client/server round trips but does not make commands atomic by itself.",
+      "Mentions batching limits, response buffering, timeout risk, and memory pressure if a pipeline is too large.",
+      "Compares pipeline to MULTI/EXEC for atomic grouping and to Lua for server-side conditional logic.",
+      "Discusses measuring latency, throughput, p95/p99 response time, and application-level improvement."
+    ],
+    "redFlags": [
+      "Claims pipelining guarantees atomic execution.",
+      "Creates unbounded pipelines for large imports without considering memory and timeouts.",
+      "Only optimizes Redis command speed while ignoring network RTT.",
+      "Cannot distinguish batching from transactions."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains RTT reduction, pipeline sizing, observability, and clear differences from transactions and Lua."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands batching and RTT but misses sizing or atomicity nuance."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows pipelining is faster but cannot explain why or when it is unsafe."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer confuses pipelining with transaction semantics."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_metric",
+        "question": "How would you prove pipelining improved a batch job without hurting p99 latency?",
+        "purpose": "Check measurement discipline."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "What happens if you send a pipeline with hundreds of thousands of commands?",
+        "purpose": "Probe memory, buffering, timeout, and operational risk."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Redis pipelining and RTT",
+        "displayQuestion": "How does Redis pipelining improve performance, and how is it different from a transaction?",
+        "displayIntent": "Check batching performance, network latency, and atomicity boundaries.",
+        "guidance": [
+          "Ask the candidate to compare sequential commands, pipelining, and MULTI/EXEC.",
+          "Look for pipeline sizing and latency measurement."
+        ],
+        "commonMistakes": [
+          "Believing pipelining is atomic.",
+          "Creating huge pipelines without memory or timeout limits."
+        ],
+        "labels": {
+          "role": "Backend",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Redis pipelining và RTT",
+        "displayQuestion": "Redis pipelining cải thiện performance như thế nào, và nó khác transaction ra sao?",
+        "displayIntent": "Kiểm tra batching performance, network latency và ranh giới atomicity.",
+        "guidance": [
+          "Yêu cầu so sánh sequential commands, pipelining và MULTI/EXEC.",
+          "Tìm phần nói về pipeline sizing và đo latency."
+        ],
+        "commonMistakes": [
+          "Tin rằng pipelining là atomic.",
+          "Tạo pipeline rất lớn mà không giới hạn memory hoặc timeout."
+        ],
+        "labels": {
+          "role": "Backend",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "Redis pipelining と RTT",
+        "displayQuestion": "Redis pipelining は performance をどう改善し、transaction とはどう違いますか。",
+        "displayIntent": "batching performance、network latency、atomicity boundary を確認する。",
+        "guidance": [
+          "sequential commands、pipelining、MULTI/EXEC を比較してもらう。",
+          "pipeline sizing と latency measurement への言及を見る。"
+        ],
+        "commonMistakes": [
+          "pipelining が atomic だと信じる。",
+          "memory や timeout の制限なしに巨大な pipeline を作る。"
+        ],
+        "labels": {
+          "role": "Backend",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Redis Docs: Redis pipelining",
+        "url": "https://redis.io/docs/latest/develop/using-commands/pipelining/",
+        "note": "Used for round-trip time and pipelining behavior."
+      },
+      {
+        "label": "Redis Docs: Transactions",
+        "url": "https://redis.io/docs/latest/develop/using-commands/transactions/",
+        "note": "Used to distinguish pipelining from MULTI/EXEC semantics."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REDIS_MID_DEBUG_MEMORY_LATENCY_014",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "devops"],
+    "levels": ["mid"],
+    "type": "debugging",
+    "competencies": ["problem_solving", "technical_fundamentals", "ownership"],
+    "techTags": ["redis", "caching", "alerting"],
+    "difficulty": 4,
+    "intent": "Assess practical debugging of Redis memory growth, latency spikes, and hot-key or large-key problems.",
+    "primaryQuestion": "Redis latency suddenly increased and memory is near the maxmemory limit. How would you investigate before changing configuration?",
+    "expectedSignals": [
+      "Starts with symptoms and scope: affected commands, endpoints, nodes, time window, and recent deploys or traffic changes.",
+      "Checks INFO memory/stats, hit/miss ratio, evicted_keys, expired_keys, connected clients, command stats, and slow logs.",
+      "Looks for large keys, hot keys, unbounded collections, missing TTLs, or accidental key prefix explosions.",
+      "Considers eviction pressure, persistence/AOF rewrite, replication buffers, fork overhead, and network/client backpressure.",
+      "Proposes targeted mitigation such as adding TTLs, trimming collections, fixing key cardinality, batching carefully, or scaling memory.",
+      "Avoids unsafe commands on production without sampling or using safer tooling."
+    ],
+    "redFlags": [
+      "Only increases memory without finding the growth source.",
+      "Runs expensive keyspace scans or blocking commands blindly in production.",
+      "Ignores application traffic or recent releases.",
+      "Does not connect memory pressure to eviction and latency."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Provides a production-safe investigation plan covering metrics, keyspace shape, command behavior, persistence/replication, and targeted mitigation."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Covers core Redis metrics and key inspection but misses one operational factor."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Suggests obvious fixes without enough diagnosis."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would increase production risk during an incident."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "red_flag",
+        "question": "Why can KEYS * be risky on a busy production Redis instance, and what safer approach would you use?",
+        "purpose": "Check production safety around keyspace inspection."
+      },
+      {
+        "trigger": "missing_metric",
+        "question": "Which metrics would distinguish a hot-key problem from overall memory pressure?",
+        "purpose": "Probe diagnostic precision."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Redis memory and latency debugging",
+        "displayQuestion": "Redis latency suddenly increased and memory is near the maxmemory limit. How would you investigate before changing configuration?",
+        "displayIntent": "Check production-safe Redis incident diagnosis.",
+        "guidance": [
+          "Look for a structured investigation before remediation.",
+          "Push on safe keyspace inspection and recent application changes."
+        ],
+        "commonMistakes": [
+          "Increasing memory without root-cause analysis.",
+          "Running blocking keyspace commands on production."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Mid-level",
+          "type": "debugging"
+        }
+      },
+      "vi": {
+        "title": "Debug memory và latency Redis",
+        "displayQuestion": "Redis latency tăng đột ngột và memory gần chạm maxmemory limit. Bạn sẽ điều tra như thế nào trước khi đổi configuration?",
+        "displayIntent": "Kiểm tra khả năng chẩn đoán incident Redis an toàn trong production.",
+        "guidance": [
+          "Tìm một quy trình điều tra có cấu trúc trước khi remediate.",
+          "Đào sâu cách inspect keyspace an toàn và các thay đổi application gần đây."
+        ],
+        "commonMistakes": [
+          "Tăng memory mà không root-cause.",
+          "Chạy command keyspace blocking trên production."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Mid-level",
+          "type": "debugging"
+        }
+      },
+      "ja": {
+        "title": "Redis memory と latency の debug",
+        "displayQuestion": "Redis latency が急に上がり、memory が maxmemory limit に近づいています。configuration を変える前にどう調査しますか。",
+        "displayIntent": "production-safe な Redis incident diagnosis を確認する。",
+        "guidance": [
+          "remediation の前に構造化された調査があるかを見る。",
+          "安全な keyspace inspection と最近の application change を深掘りする。"
+        ],
+        "commonMistakes": [
+          "root cause analysis なしに memory を増やす。",
+          "production で blocking keyspace command を実行する。"
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Mid-level",
+          "type": "debugging"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Redis Docs: Key eviction",
+        "url": "https://redis.io/docs/latest/develop/reference/eviction/",
+        "note": "Used for memory limit, eviction, and INFO metric context."
+      },
+      {
+        "label": "Redis Docs: Redis pipelining",
+        "url": "https://redis.io/docs/latest/develop/using-commands/pipelining/",
+        "note": "Used for latency and batching considerations."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REDIS_SR_TRADE_CLUSTER_SHARDING_015",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack", "devops", "data"],
+    "levels": ["senior"],
+    "type": "trade_off",
+    "competencies": ["trade_off_analysis", "system_thinking", "technical_fundamentals"],
+    "techTags": ["redis", "schema_design", "consistency"],
+    "difficulty": 5,
+    "intent": "Evaluate senior-level understanding of Redis Cluster key distribution, hash slots, multi-key limitations, and operational trade-offs.",
+    "primaryQuestion": "How does Redis Cluster distribute keys, and how would that affect key design for multi-key operations?",
+    "expectedSignals": [
+      "Explains that Redis Cluster splits the keyspace into 16384 hash slots and assigns slots to primary nodes.",
+      "Mentions CRC16-based slot mapping and hash tags for forcing related keys into the same slot when needed.",
+      "Understands clients should follow MOVED/ASK redirections and maintain slot-to-node mapping.",
+      "Discusses limitations and complexity around multi-key commands, transactions, or Lua scripts across different slots.",
+      "Connects key design to data co-location, hot slots, uneven load, resharding, and read/write scaling.",
+      "Mentions failover with replicas and operational concerns during resharding or node replacement."
+    ],
+    "redFlags": [
+      "Assumes Cluster is just replication with no sharding implications.",
+      "Ignores hash slots and cross-slot errors for multi-key operations.",
+      "Uses hash tags everywhere without considering hot-slot concentration.",
+      "Claims clients can ignore MOVED/ASK redirections."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains slots, hash tags, client routing, cross-slot constraints, hot-slot risk, and operational resharding/failover implications."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands hash slots and basic sharding but misses hot-key or client-routing nuance."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows Cluster scales Redis but cannot design keys for multi-key operations."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not demonstrate Redis Cluster mechanics."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "If you need to update cart:{userId}:items and cart:{userId}:total atomically, how would you name the keys in Cluster?",
+        "purpose": "Probe hash tag and co-location reasoning."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "What risk do you create if many hot keys share the same hash tag?",
+        "purpose": "Check hot-slot and load-skew awareness."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Redis Cluster key design",
+        "displayQuestion": "How does Redis Cluster distribute keys, and how would that affect key design for multi-key operations?",
+        "displayIntent": "Check cluster hash slots, key co-location, and cross-slot trade-offs.",
+        "guidance": [
+          "Ask for a concrete key naming example with hash tags.",
+          "Push on hot slots and client redirection behavior."
+        ],
+        "commonMistakes": [
+          "Ignoring cross-slot limitations.",
+          "Using hash tags without thinking about load concentration."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Senior",
+          "type": "trade_off"
+        }
+      },
+      "vi": {
+        "title": "Thiết kế key trong Redis Cluster",
+        "displayQuestion": "Redis Cluster phân phối key như thế nào, và điều đó ảnh hưởng ra sao tới thiết kế key cho multi-key operation?",
+        "displayIntent": "Kiểm tra hash slot, key co-location và trade-off cross-slot.",
+        "guidance": [
+          "Yêu cầu ví dụ key naming cụ thể với hash tag.",
+          "Đào sâu hot slot và hành vi client redirection."
+        ],
+        "commonMistakes": [
+          "Bỏ qua giới hạn cross-slot.",
+          "Dùng hash tag mà không nghĩ tới load concentration."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Senior",
+          "type": "trade_off"
+        }
+      },
+      "ja": {
+        "title": "Redis Cluster の key design",
+        "displayQuestion": "Redis Cluster は key をどのように分散し、それは multi-key operation の key design にどう影響しますか。",
+        "displayIntent": "cluster hash slots、key co-location、cross-slot trade-off を確認する。",
+        "guidance": [
+          "hash tag を使った具体的な key naming 例を聞く。",
+          "hot slots と client redirection behavior を深掘りする。"
+        ],
+        "commonMistakes": [
+          "cross-slot limitation を無視する。",
+          "load concentration を考えずに hash tag を使う。"
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Senior",
+          "type": "trade_off"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Redis Docs: Redis cluster specification",
+        "url": "https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/",
+        "note": "Used for hash slots, CRC16 mapping, redirections, and resharding concepts."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REDIS_SR_TRADE_DURABILITY_CONSISTENCY_016",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack", "devops"],
+    "levels": ["senior"],
+    "type": "trade_off",
+    "competencies": ["trade_off_analysis", "system_thinking", "ownership"],
+    "techTags": ["redis", "consistency", "transaction"],
+    "difficulty": 5,
+    "intent": "Assess senior-level judgment about using Redis for durable or correctness-critical workflows, including persistence, replication, and application-level safeguards.",
+    "primaryQuestion": "For a correctness-critical workflow, how would you decide whether Redis is acceptable as the primary store or only as a cache/coordination layer?",
+    "expectedSignals": [
+      "Starts from business correctness requirements: acceptable data loss, duplicate processing, stale reads, and recovery objectives.",
+      "Compares Redis persistence and replication guarantees with database constraints, transactions, and consensus-backed systems.",
+      "Mentions asynchronous replication and failover windows that can lose acknowledged writes.",
+      "Uses Redis safely as cache, idempotency aid, rate limiter, or derived state when source of truth exists elsewhere.",
+      "Proposes durable source-of-truth patterns such as relational constraints, append-only logs, outbox, or transactional writes when needed.",
+      "Defines verification through tests, failure drills, monitoring, and documented SLO/SLA assumptions."
+    ],
+    "redFlags": [
+      "Uses Redis as the only protection for financial correctness without additional durable safeguards.",
+      "Claims AOF and replication eliminate all data-loss scenarios.",
+      "Does not ask about acceptable consistency and recovery requirements.",
+      "Treats cache, lock, queue, and database roles as interchangeable."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Frames the decision around correctness requirements and maps Redis strengths and limits to a defensible architecture."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Recognizes Redis limits and suggests a source of truth, but lacks failure-drill or observability depth."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Mentions persistence but does not reason about correctness-critical failure modes."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer overclaims Redis guarantees."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "What is the maximum acceptable data loss and duplicate side effect for this workflow?",
+        "purpose": "Force explicit correctness requirements."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "If Redis failover loses a recently acknowledged write, what application-level design prevents a bad user-visible outcome?",
+        "purpose": "Probe defense-in-depth design."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Redis durability and correctness",
+        "displayQuestion": "For a correctness-critical workflow, how would you decide whether Redis is acceptable as the primary store or only as a cache/coordination layer?",
+        "displayIntent": "Check senior judgment on Redis guarantees versus durable source-of-truth requirements.",
+        "guidance": [
+          "Ask for business correctness requirements before technology choice.",
+          "Look for defense in depth: database constraints, logs, idempotency, and failure drills."
+        ],
+        "commonMistakes": [
+          "Overclaiming Redis persistence and replication guarantees.",
+          "Using Redis locks or cache state as the only correctness mechanism."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Senior",
+          "type": "trade_off"
+        }
+      },
+      "vi": {
+        "title": "Durability và correctness với Redis",
+        "displayQuestion": "Với workflow cần correctness cao, bạn quyết định thế nào Redis có thể làm primary store hay chỉ nên làm cache/coordination layer?",
+        "displayIntent": "Kiểm tra judgment senior về guarantee của Redis so với yêu cầu source of truth durable.",
+        "guidance": [
+          "Yêu cầu business correctness requirement trước khi chọn công nghệ.",
+          "Tìm defense in depth: database constraint, log, idempotency và failure drill."
+        ],
+        "commonMistakes": [
+          "Overclaim guarantee của Redis persistence và replication.",
+          "Dùng Redis lock hoặc cache state làm cơ chế correctness duy nhất."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Senior",
+          "type": "trade_off"
+        }
+      },
+      "ja": {
+        "title": "Redis の durability と correctness",
+        "displayQuestion": "correctness-critical な workflow で、Redis を primary store として許容できるか、cache/coordination layer に留めるべきかをどう判断しますか。",
+        "displayIntent": "Redis guarantees と durable source-of-truth requirements の senior judgment を確認する。",
+        "guidance": [
+          "technology choice の前に business correctness requirements を聞く。",
+          "database constraints、logs、idempotency、failure drills など defense in depth を見る。"
+        ],
+        "commonMistakes": [
+          "Redis persistence と replication の guarantees を過大評価する。",
+          "Redis lock や cache state を唯一の correctness mechanism にする。"
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Senior",
+          "type": "trade_off"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Redis Docs: Redis persistence",
+        "url": "https://redis.io/docs/latest/operate/oss_and_stack/management/persistence/",
+        "note": "Used for persistence options and durability trade-offs."
+      },
+      {
+        "label": "Redis Docs: Redis replication",
+        "url": "https://redis.io/docs/latest/operate/oss_and_stack/management/replication/",
+        "note": "Used for asynchronous replication and failover caveats."
+      },
+      {
+        "label": "Redis Docs: Distributed Locks with Redis",
+        "url": "https://redis.io/docs/latest/develop/clients/patterns/distributed-locks/",
+        "note": "Used for coordination guarantee boundaries."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REDIS_SR_DEBUG_HOT_KEY_CLUSTER_017",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack", "devops"],
+    "levels": ["senior"],
+    "type": "debugging",
+    "competencies": ["problem_solving", "system_thinking", "ownership"],
+    "techTags": ["redis", "caching", "alerting"],
+    "difficulty": 5,
+    "intent": "Assess senior incident diagnosis for hot keys, hot slots, cluster imbalance, and cache stampede under high traffic.",
+    "primaryQuestion": "A Redis Cluster has one overloaded primary while other nodes are healthy. How would you diagnose and mitigate the issue?",
+    "expectedSignals": [
+      "Checks whether load is due to a hot key, hot hash slot, uneven slot assignment, client routing problem, or command pattern.",
+      "Correlates node CPU, commandstats, network, latency, key access distribution, and application endpoints.",
+      "Inspects key naming and hash tags for accidental co-location of high-traffic keys.",
+      "Considers large-key operations, unbounded collections, cache stampede, and write amplification.",
+      "Proposes mitigations such as key splitting, local caching, request coalescing, TTL jitter, sharding high-cardinality keys, resharding slots, or moving hot paths.",
+      "Balances immediate mitigation with long-term data-model and workload changes."
+    ],
+    "redFlags": [
+      "Immediately resharding without checking hot-key or hash-tag concentration.",
+      "Assumes adding nodes always fixes a single hot key.",
+      "Ignores client-side behavior and application endpoints.",
+      "Uses broad cache deletion that amplifies database load."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Separates hot key, hot slot, uneven sharding, and command-pattern causes, then proposes staged mitigations with blast-radius control."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Identifies hot-key or slot issues but misses client/app correlation or long-term prevention."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Suggests scaling Redis without diagnosing load concentration."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer lacks Cluster-specific incident reasoning."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "How would hash tags in key names accidentally create a hot slot?",
+        "purpose": "Probe Cluster key design and load-skew understanding."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "What immediate mitigation could reduce user impact while you redesign the cache key model?",
+        "purpose": "Check incident pragmatism."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Debugging hot Redis Cluster nodes",
+        "displayQuestion": "A Redis Cluster has one overloaded primary while other nodes are healthy. How would you diagnose and mitigate the issue?",
+        "displayIntent": "Check hot-key, hot-slot, and cluster-load incident handling.",
+        "guidance": [
+          "Ask how the candidate distinguishes hot key from uneven slot assignment.",
+          "Look for staged mitigation that does not amplify downstream load."
+        ],
+        "commonMistakes": [
+          "Adding nodes without addressing a single hot key.",
+          "Using broad invalidation that creates a database surge."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Senior",
+          "type": "debugging"
+        }
+      },
+      "vi": {
+        "title": "Debug hot node trong Redis Cluster",
+        "displayQuestion": "Một Redis Cluster có một primary bị quá tải trong khi các node khác vẫn khỏe. Bạn sẽ diagnose và mitigate thế nào?",
+        "displayIntent": "Kiểm tra xử lý incident hot key, hot slot và cluster load.",
+        "guidance": [
+          "Hỏi cách phân biệt hot key với slot assignment lệch.",
+          "Tìm staged mitigation không khuếch đại load xuống downstream."
+        ],
+        "commonMistakes": [
+          "Thêm node mà không xử lý single hot key.",
+          "Invalidate diện rộng gây surge xuống database."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Senior",
+          "type": "debugging"
+        }
+      },
+      "ja": {
+        "title": "Redis Cluster hot node の debug",
+        "displayQuestion": "Redis Cluster で 1 つの primary だけが overloaded で、他の node は正常です。どう診断し mitigation しますか。",
+        "displayIntent": "hot key、hot slot、cluster load incident handling を確認する。",
+        "guidance": [
+          "hot key と uneven slot assignment をどう区別するか聞く。",
+          "downstream load を増幅しない staged mitigation を見る。"
+        ],
+        "commonMistakes": [
+          "single hot key を解決せず node を追加する。",
+          "広範囲 invalidation で database surge を起こす。"
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Senior",
+          "type": "debugging"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Redis Docs: Redis cluster specification",
+        "url": "https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/",
+        "note": "Used for slots, hash tags, redirections, and resharding behavior."
+      },
+      {
+        "label": "Redis Docs: Key eviction",
+        "url": "https://redis.io/docs/latest/develop/reference/eviction/",
+        "note": "Used for memory pressure and eviction metrics during incidents."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REDIS_SR_TRADE_RATE_LIMITING_018",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack", "devops", "security"],
+    "levels": ["senior"],
+    "type": "trade_off",
+    "competencies": ["trade_off_analysis", "system_thinking", "technical_fundamentals"],
+    "techTags": ["redis", "security", "caching"],
+    "difficulty": 5,
+    "intent": "Evaluate senior-level design of Redis-backed rate limiting with algorithm choice, atomicity, memory bounds, and abuse cases.",
+    "primaryQuestion": "How would you design a Redis-backed rate limiter, and how would you choose between fixed window, sliding window, and token bucket approaches?",
+    "expectedSignals": [
+      "Compares fixed window simplicity with boundary burst problems.",
+      "Explains sliding window using sorted sets or counters with finer time buckets and the memory/cost trade-off.",
+      "Explains token bucket or leaky bucket semantics for smoothing bursts and replenishment.",
+      "Ensures atomic check-and-update with Lua or carefully chosen Redis primitives.",
+      "Defines keys by actor, route, tenant, IP, or user and sets TTLs to bound memory.",
+      "Discusses fail-open versus fail-closed behavior, observability, abuse patterns, and distributed deployment consistency."
+    ],
+    "redFlags": [
+      "Uses GET then SET without atomicity under concurrent requests.",
+      "Creates per-request keys with no TTL or unbounded sorted sets.",
+      "Does not define actor identity or bypass/abuse cases.",
+      "Claims one algorithm is always best without considering product behavior."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Compares algorithms by user experience, correctness, atomicity, memory bounds, and operational failure behavior."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Designs a workable limiter but misses one senior concern such as fail-open policy or memory bound."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows Redis counters but cannot handle concurrency or boundary bursts."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is not safe under real concurrent traffic."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_tradeoff",
+        "question": "Why can a fixed-window limiter allow more traffic than expected around a window boundary?",
+        "purpose": "Check algorithmic edge-case understanding."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "If Redis is down, should this limiter fail open or fail closed for login attempts versus public catalog reads?",
+        "purpose": "Probe business and security trade-offs."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Redis rate limiter design",
+        "displayQuestion": "How would you design a Redis-backed rate limiter, and how would you choose between fixed window, sliding window, and token bucket approaches?",
+        "displayIntent": "Check rate-limiting algorithms, atomicity, memory bounds, and failure policy.",
+        "guidance": [
+          "Ask for one concrete route and actor identity.",
+          "Look for atomic Redis operations and bounded memory."
+        ],
+        "commonMistakes": [
+          "Using non-atomic read-modify-write.",
+          "Forgetting TTLs and unbounded key/cardinality growth."
+        ],
+        "labels": {
+          "role": "Backend/Security",
+          "level": "Senior",
+          "type": "trade_off"
+        }
+      },
+      "vi": {
+        "title": "Thiết kế rate limiter bằng Redis",
+        "displayQuestion": "Bạn sẽ thiết kế rate limiter dùng Redis như thế nào, và chọn giữa fixed window, sliding window, token bucket ra sao?",
+        "displayIntent": "Kiểm tra thuật toán rate limit, atomicity, giới hạn memory và failure policy.",
+        "guidance": [
+          "Yêu cầu một route và actor identity cụ thể.",
+          "Tìm Redis operation atomic và memory được bound."
+        ],
+        "commonMistakes": [
+          "Dùng read-modify-write không atomic.",
+          "Quên TTL và để key/cardinality tăng không giới hạn."
+        ],
+        "labels": {
+          "role": "Backend/Security",
+          "level": "Senior",
+          "type": "trade_off"
+        }
+      },
+      "ja": {
+        "title": "Redis rate limiter design",
+        "displayQuestion": "Redis-backed rate limiter をどう設計し、fixed window、sliding window、token bucket をどう選びますか。",
+        "displayIntent": "rate-limiting algorithms、atomicity、memory bounds、failure policy を確認する。",
+        "guidance": [
+          "具体的な route と actor identity を聞く。",
+          "atomic Redis operations と bounded memory を見る。"
+        ],
+        "commonMistakes": [
+          "atomic でない read-modify-write を使う。",
+          "TTL を忘れ、key/cardinality が無制限に増える。"
+        ],
+        "labels": {
+          "role": "Backend/Security",
+          "level": "Senior",
+          "type": "trade_off"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Redis Docs: Redis sorted sets",
+        "url": "https://redis.io/docs/latest/develop/data-types/sorted-sets/",
+        "note": "Used for sliding-window and score/range use cases."
+      },
+      {
+        "label": "Redis Docs: Transactions",
+        "url": "https://redis.io/docs/latest/develop/using-commands/transactions/",
+        "note": "Used for atomic check-and-update reasoning."
+      },
+      {
+        "label": "Redis Docs: Scripting with Lua",
+        "url": "https://redis.io/docs/latest/develop/programmability/eval-intro/",
+        "note": "Used for atomic server-side limiter logic."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REDIS_SR_TECH_SECURITY_ACL_019",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "devops", "security"],
+    "levels": ["senior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking", "ownership"],
+    "techTags": ["redis", "security"],
+    "difficulty": 4,
+    "intent": "Check whether the candidate can secure Redis access with ACLs, network isolation, command/key scoping, and operational hygiene.",
+    "primaryQuestion": "What controls would you put around Redis access in production beyond just setting a password?",
+    "expectedSignals": [
+      "Mentions network isolation, private connectivity, TLS where applicable, and avoiding public exposure.",
+      "Uses Redis ACLs to restrict users by commands, key patterns, and authentication credentials.",
+      "Separates application, admin, monitoring, and migration identities with least privilege.",
+      "Discusses dangerous command restrictions, rotation, secret storage, and auditability.",
+      "Mentions client-side timeouts, connection limits, and safe operational access paths.",
+      "Considers data sensitivity in Redis because cached values may contain PII or tokens."
+    ],
+    "redFlags": [
+      "Exposes Redis publicly with only a shared password.",
+      "Uses the default user with broad permissions for every app.",
+      "Does not restrict destructive or administrative commands.",
+      "Ignores secrets rotation and credential leakage."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers network, ACL, command/key scoping, identity separation, secrets hygiene, and safe operations."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Mentions ACLs and network isolation but misses operational identity or data sensitivity."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Only mentions password authentication."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would leave Redis broadly exposed or overprivileged."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "How would you create separate Redis permissions for a web app that only needs cache keys and an admin job that needs migrations?",
+        "purpose": "Probe ACL and least-privilege design."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "Which commands or access patterns would you restrict for a production application user?",
+        "purpose": "Check dangerous command and operational blast-radius awareness."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Securing Redis production access",
+        "displayQuestion": "What controls would you put around Redis access in production beyond just setting a password?",
+        "displayIntent": "Check Redis security controls, ACL design, and operational hygiene.",
+        "guidance": [
+          "Ask for concrete app and admin identities.",
+          "Look for least privilege over commands and key patterns."
+        ],
+        "commonMistakes": [
+          "Using one shared privileged Redis credential.",
+          "Ignoring network exposure and destructive commands."
+        ],
+        "labels": {
+          "role": "Backend/Security",
+          "level": "Senior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Bảo mật truy cập Redis production",
+        "displayQuestion": "Ngoài đặt password, bạn sẽ đặt những control nào quanh truy cập Redis trong production?",
+        "displayIntent": "Kiểm tra Redis security control, thiết kế ACL và operational hygiene.",
+        "guidance": [
+          "Yêu cầu identity cụ thể cho app và admin.",
+          "Tìm least privilege theo command và key pattern."
+        ],
+        "commonMistakes": [
+          "Dùng chung một credential Redis có quyền rộng.",
+          "Bỏ qua network exposure và destructive commands."
+        ],
+        "labels": {
+          "role": "Backend/Security",
+          "level": "Senior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "production Redis access の保護",
+        "displayQuestion": "password 設定以外に、production の Redis access へどのような controls を置きますか。",
+        "displayIntent": "Redis security controls、ACL design、operational hygiene を確認する。",
+        "guidance": [
+          "app と admin の具体的な identities を聞く。",
+          "commands と key patterns に対する least privilege を見る。"
+        ],
+        "commonMistakes": [
+          "1 つの privileged Redis credential を共有する。",
+          "network exposure と destructive commands を無視する。"
+        ],
+        "labels": {
+          "role": "Backend/Security",
+          "level": "Senior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Redis Docs: ACL",
+        "url": "https://redis.io/docs/latest/operate/oss_and_stack/management/security/acl/",
+        "note": "Used for command and key access control concepts."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REDIS_SR_CV_INCIDENT_OPERATIONS_020",
+    "stages": ["stage_4_cv_deep_dive"],
+    "roleFamilies": ["backend", "fullstack", "devops", "data"],
+    "levels": ["senior"],
+    "type": "cv_claim_verification",
+    "competencies": ["ownership", "problem_solving", "impact_measurement", "communication"],
+    "techTags": ["redis", "caching", "alerting", "rollback"],
+    "difficulty": 5,
+    "intent": "Verify real production Redis experience by asking for a concrete incident, migration, or scaling effort with measurable impact.",
+    "primaryQuestion": "Tell me about a Redis production incident, migration, or scaling change you owned. What happened, what did you change, and how did you prove it worked?",
+    "expectedSignals": [
+      "Describes a concrete Redis system, workload, topology, and business impact rather than a generic story.",
+      "Identifies root cause with evidence such as memory, eviction, latency, command stats, replication lag, hot keys, or application deploys.",
+      "Explains actions taken, trade-offs considered, rollback plan, and communication during the event.",
+      "Quantifies impact using metrics such as p95/p99 latency, hit rate, error rate, database load, cost, recovery time, or incident duration.",
+      "Mentions follow-up prevention such as dashboards, alerts, runbooks, key design changes, TTL policy, load tests, or failure drills.",
+      "Can explain what they personally owned versus what teammates or platform teams handled."
+    ],
+    "redFlags": [
+      "Cannot provide concrete metrics or timeline for a claimed Redis production effort.",
+      "Describes only a configuration change with no validation or rollback plan.",
+      "Blames Redis without showing root-cause evidence.",
+      "Does not distinguish personal contribution from team outcome."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Gives a specific incident or migration with evidence, actions, trade-offs, measured outcome, and prevention work."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Has credible production experience but lacks some measurement or ownership clarity."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Story is plausible but too generic or missing proof of impact."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Cannot substantiate the Redis experience claimed on the CV."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_metric",
+        "question": "What exact metric moved after your change, and over what time window did you compare it?",
+        "purpose": "Verify measurable impact."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "What was your rollback plan if the Redis change made latency or correctness worse?",
+        "purpose": "Check operational ownership."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Redis production ownership",
+        "displayQuestion": "Tell me about a Redis production incident, migration, or scaling change you owned. What happened, what did you change, and how did you prove it worked?",
+        "displayIntent": "Verify hands-on Redis production experience with evidence and measurable impact.",
+        "guidance": [
+          "Ask for topology, metrics, timeline, and the candidate's personal role.",
+          "Look for prevention work after the immediate fix."
+        ],
+        "commonMistakes": [
+          "Giving a generic caching story with no metrics.",
+          "Skipping rollback, communication, and prevention details."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Senior",
+          "type": "cv_claim_verification"
+        }
+      },
+      "vi": {
+        "title": "Ownership Redis trong production",
+        "displayQuestion": "Hãy kể về một incident, migration hoặc scaling change Redis trong production mà bạn đã own. Chuyện gì xảy ra, bạn thay đổi gì, và bạn chứng minh nó hiệu quả như thế nào?",
+        "displayIntent": "Xác thực kinh nghiệm Redis production bằng evidence và impact đo được.",
+        "guidance": [
+          "Hỏi topology, metric, timeline và vai trò cá nhân của ứng viên.",
+          "Tìm prevention work sau khi fix trước mắt."
+        ],
+        "commonMistakes": [
+          "Kể chuyện cache chung chung không có metric.",
+          "Bỏ qua rollback, communication và prevention detail."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Senior",
+          "type": "cv_claim_verification"
+        }
+      },
+      "ja": {
+        "title": "production Redis ownership",
+        "displayQuestion": "あなたが owner として対応した Redis production incident、migration、または scaling change について話してください。何が起き、何を変更し、どう効果を証明しましたか。",
+        "displayIntent": "evidence と measurable impact によって Redis production experience を確認する。",
+        "guidance": [
+          "topology、metrics、timeline、candidate の個人 role を聞く。",
+          "immediate fix 後の prevention work を見る。"
+        ],
+        "commonMistakes": [
+          "metrics のない一般的な caching story に終始する。",
+          "rollback、communication、prevention details を省略する。"
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Senior",
+          "type": "cv_claim_verification"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Redis Docs: Key eviction",
+        "url": "https://redis.io/docs/latest/develop/reference/eviction/",
+        "note": "Used for memory and eviction incident signals."
+      },
+      {
+        "label": "Redis Docs: Redis replication",
+        "url": "https://redis.io/docs/latest/operate/oss_and_stack/management/replication/",
+        "note": "Used for replication and failover incident context."
+      },
+      {
+        "label": "Redis Docs: Redis cluster specification",
+        "url": "https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/",
+        "note": "Used for cluster migration and scaling concepts."
+      }
+    ],
+    "status": "active"
+  }
+]

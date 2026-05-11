@@ -1,0 +1,1307 @@
+[
+  {
+    "code": "BULLMQ_MID_TECH_QUEUE_WORKER_001",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking", "communication"],
+    "techTags": ["bullmq", "redis", "nodejs"],
+    "difficulty": 3,
+    "intent": "Check whether the candidate understands the core BullMQ model: Queue as producer API, Job as persisted work item, Worker as consumer, Redis as the coordination store, and the practical meaning of at-least-once execution.",
+    "primaryQuestion": "How would you explain the lifecycle of a BullMQ job from queue.add() to completion, including what Redis and Worker instances are responsible for?",
+    "expectedSignals": [
+      "Explains that a Queue adds named jobs with data and options into Redis-backed structures.",
+      "Describes Workers as consumers that pick jobs, run an async processor, and move jobs to completed or failed.",
+      "Mentions that workers can be offline when jobs are added and jobs remain waiting until workers process them.",
+      "Connects BullMQ's reliability model to at-least-once delivery in failure scenarios, so processors must tolerate duplicate execution.",
+      "Distinguishes job data, job options, return values, progress updates, and job state transitions."
+    ],
+    "redFlags": [
+      "Treats BullMQ as an in-memory queue tied to a single Node.js process.",
+      "Says a completed event is the safest place to perform the job's primary side effect.",
+      "Cannot explain what happens when no worker is currently running.",
+      "Assumes exactly-once side effects without discussing idempotency."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Gives a precise queue-to-worker lifecycle, names Redis as the durable coordination layer, and explains why processors must be idempotent under retries or stalls."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands Queue, Job, Worker, and basic states, but only lightly covers failure semantics."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can describe adding and processing jobs, but misses persistence, worker-offline behavior, or at-least-once execution."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is mostly generic message-queue language and does not show BullMQ-specific understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "If an API adds an email job while all workers are down, what should happen and what should the user-facing API return?",
+        "purpose": "Force concrete reasoning about producer behavior, persistence, and service boundaries."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "Which side effects should happen inside the worker processor instead of only in a completed event listener?",
+        "purpose": "Check understanding of robust side-effect placement."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "BullMQ job lifecycle",
+        "displayQuestion": "How would you explain the lifecycle of a BullMQ job from queue.add() to completion, including what Redis and Worker instances are responsible for?",
+        "displayIntent": "Check core BullMQ architecture, state transitions, and reliability semantics.",
+        "guidance": [
+          "Ask the candidate to use a concrete example such as email delivery, image processing, or report generation.",
+          "Listen for Redis-backed persistence, async worker processing, failure states, and idempotent processor design."
+        ],
+        "commonMistakes": [
+          "Describing BullMQ as only a local JavaScript task runner.",
+          "Assuming one job can never be processed more than once under crashes or retries.",
+          "Moving critical business writes out of the processor into a best-effort event listener."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Vòng đời job trong BullMQ",
+        "displayQuestion": "Bạn giải thích vòng đời của một BullMQ job từ queue.add() đến khi hoàn tất như thế nào, bao gồm trách nhiệm của Redis và Worker?",
+        "displayIntent": "Kiểm tra kiến trúc cốt lõi của BullMQ, chuyển trạng thái job và ngữ nghĩa tin cậy khi xử lý nền.",
+        "guidance": [
+          "Yêu cầu ứng viên dùng ví dụ cụ thể như gửi email, xử lý ảnh hoặc tạo báo cáo.",
+          "Nghe xem ứng viên có nói rõ Redis lưu và điều phối job, Worker xử lý bất đồng bộ, trạng thái lỗi và thiết kế processor idempotent hay không."
+        ],
+        "commonMistakes": [
+          "Mô tả BullMQ như một task runner cục bộ trong một tiến trình JavaScript.",
+          "Mặc định rằng một job không bao giờ có thể bị xử lý lại khi crash hoặc retry.",
+          "Đẩy ghi nhận nghiệp vụ quan trọng ra khỏi processor và chỉ làm trong event listener best-effort."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "BullMQ ジョブライフサイクル",
+        "displayQuestion": "queue.add() から完了までの BullMQ ジョブのライフサイクルを、Redis と Worker の責務も含めてどう説明しますか。",
+        "displayIntent": "BullMQ の基本構造、状態遷移、信頼性の考え方を確認する。",
+        "guidance": [
+          "メール送信、画像処理、レポート生成など具体例で説明してもらう。",
+          "Redis による永続的な調整、非同期 Worker 処理、失敗状態、idempotent な processor 設計に触れるかを見る。"
+        ],
+        "commonMistakes": [
+          "BullMQ をローカルの JavaScript タスク実行器としてだけ説明する。",
+          "クラッシュや retry 時にも job が二度処理されないと仮定する。",
+          "重要な業務書き込みを processor ではなく best-effort な event listener だけに置く。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "BullMQ Docs: What is BullMQ",
+        "url": "https://docs.bullmq.io/",
+        "note": "Used for BullMQ's Redis-backed queue model, horizontal scaling goals, and delivery semantics."
+      },
+      {
+        "label": "BullMQ Docs: Queues",
+        "url": "https://docs.bullmq.io/guide/queues",
+        "note": "Used for Queue and queue.add lifecycle behavior."
+      },
+      {
+        "label": "BullMQ Docs: Workers",
+        "url": "https://docs.bullmq.io/guide/workers",
+        "note": "Used for Worker processing, progress, completion, and failure behavior."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "BULLMQ_MID_TECH_RETRY_BACKOFF_002",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving", "system_thinking"],
+    "techTags": ["bullmq", "redis", "nodejs", "idempotency"],
+    "difficulty": 3,
+    "intent": "Evaluate whether the candidate can design retry behavior for BullMQ jobs without creating duplicate side effects or retry storms.",
+    "primaryQuestion": "How would you configure retries and backoff for a BullMQ job that calls an unreliable external API, and what must the processor do to stay safe across retry attempts?",
+    "expectedSignals": [
+      "Uses attempts greater than 1 to enable automatic retries.",
+      "Explains fixed versus exponential backoff and when each is appropriate.",
+      "Mentions that processors should throw Error objects for failure handling.",
+      "Separates transient failures from unrecoverable validation or business errors.",
+      "Connects retries to idempotent side effects, deduplication keys, or external idempotency keys."
+    ],
+    "redFlags": [
+      "Retries every failure indefinitely without backoff or a dead-letter strategy.",
+      "Does not distinguish transient errors from permanent input errors.",
+      "Performs non-idempotent writes before the failing external call without a recovery plan.",
+      "Throws strings or arbitrary values and assumes BullMQ will treat them correctly."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Designs bounded attempts, backoff, failure classification, idempotency, observability, and a final failed-job handling path."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Configures attempts and backoff correctly, but covers idempotency or unrecoverable errors at a high level only."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows BullMQ can retry jobs but cannot reason about retry safety or operational limits."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not go beyond saying to catch errors and retry."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_tradeoff",
+        "question": "When would you use exponential backoff instead of a fixed delay for this job?",
+        "purpose": "Check practical trade-off reasoning for external dependency pressure."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "If the external API successfully charged a customer but the worker crashed before marking the job complete, how would your retry avoid double charging?",
+        "purpose": "Test idempotency under the most important failure mode."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Retries and backoff",
+        "displayQuestion": "How would you configure retries and backoff for a BullMQ job that calls an unreliable external API, and what must the processor do to stay safe across retry attempts?",
+        "displayIntent": "Check retry configuration, failure classification, and idempotent processor design.",
+        "guidance": [
+          "Ask for specific attempts and backoff choices, not just the idea of retrying.",
+          "Push the candidate to reason about external side effects that may have succeeded before the job failed."
+        ],
+        "commonMistakes": [
+          "Retrying permanent validation errors.",
+          "Ignoring idempotency keys or duplicate side effects.",
+          "Using retries without metrics, alerting, or a final failed-job path."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Retry và backoff",
+        "displayQuestion": "Bạn sẽ cấu hình retry và backoff cho một BullMQ job gọi external API không ổn định như thế nào, và processor cần làm gì để an toàn qua nhiều lần retry?",
+        "displayIntent": "Kiểm tra cấu hình retry, phân loại lỗi và thiết kế processor idempotent.",
+        "guidance": [
+          "Yêu cầu ứng viên nêu rõ số attempts và kiểu backoff, không chỉ nói chung chung là retry.",
+          "Đẩy ứng viên phân tích side effect bên ngoài có thể đã thành công trước khi job bị fail."
+        ],
+        "commonMistakes": [
+          "Retry cả lỗi validation hoặc lỗi nghiệp vụ vĩnh viễn.",
+          "Bỏ qua idempotency key hoặc duplicate side effect.",
+          "Dùng retry nhưng không có metric, alert hoặc đường xử lý job fail cuối cùng."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "Retry と backoff",
+        "displayQuestion": "不安定な外部 API を呼ぶ BullMQ job に retry と backoff をどう設定し、processor は retry 間で安全性を保つために何をすべきですか。",
+        "displayIntent": "retry 設定、失敗分類、idempotent な processor 設計を確認する。",
+        "guidance": [
+          "retry するという一般論ではなく、attempts と backoff の具体的な選択を聞く。",
+          "job 失敗前に外部 side effect が成功している可能性を考えさせる。"
+        ],
+        "commonMistakes": [
+          "永続的な validation error まで retry する。",
+          "idempotency key や重複 side effect を無視する。",
+          "metric、alert、最終 failed-job 処理なしで retry だけに頼る。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "BullMQ Docs: Retrying failing jobs",
+        "url": "https://docs.bullmq.io/guide/retrying-failing-jobs",
+        "note": "Used for attempts, failed jobs, and fixed/exponential backoff behavior."
+      },
+      {
+        "label": "BullMQ Docs: Idempotent jobs",
+        "url": "https://docs.bullmq.io/patterns/idempotent-jobs",
+        "note": "Used for retry-safe processor design guidance."
+      },
+      {
+        "label": "BullMQ Docs: Stop retrying jobs",
+        "url": "https://docs.bullmq.io/patterns/stop-retrying-jobs",
+        "note": "Used for unrecoverable failure handling concepts."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "BULLMQ_MID_DEBUG_STALLED_003",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "devops"],
+    "levels": ["mid"],
+    "type": "debugging",
+    "competencies": ["problem_solving", "technical_fundamentals", "ownership"],
+    "techTags": ["bullmq", "redis", "nodejs"],
+    "difficulty": 4,
+    "intent": "Assess whether the candidate can debug stalled jobs by understanding locks, event-loop blocking, worker crashes, maxStalledCount, and sandboxed processors.",
+    "primaryQuestion": "A BullMQ job sometimes runs twice and then fails with a stalled-job related reason. How would you investigate and fix it?",
+    "expectedSignals": [
+      "Explains that active jobs are protected by locks that must be renewed while the worker is alive.",
+      "Identifies event-loop blocking, CPU-heavy processors, worker crashes, Redis connectivity issues, and ungraceful shutdowns as likely causes.",
+      "Mentions that a stalled event is emitted and the job may be moved back to waiting or eventually failed after maxStalledCount.",
+      "Considers moving CPU-heavy work to sandboxed processors or separate worker processes.",
+      "Adds instrumentation around worker errors, duration, lock renewal symptoms, attempts, and processor hot spots."
+    ],
+    "redFlags": [
+      "Disables stalled checks or raises maxStalledCount without finding the cause.",
+      "Assumes a stalled job is a normal failed state and ignores duplicate execution risk.",
+      "Only increases concurrency for a CPU-bound processor.",
+      "Ignores graceful shutdown and deploy behavior."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Connects stalled jobs to lock renewal failure, diagnoses CPU/event-loop/crash/deploy causes, and proposes targeted fixes plus observability."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands locks and event-loop pressure, but gives limited detail on deploys, sandboxing, or duplicate side effects."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows stalled jobs can be retried but cannot explain why they happen."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is limited to checking logs or rerunning the job."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "What metrics or logs would you add to distinguish a worker crash from event-loop blocking?",
+        "purpose": "Check practical production debugging approach."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "When would you use sandboxed processors instead of increasing the worker concurrency option?",
+        "purpose": "Verify understanding of IO-bound versus CPU-bound workloads."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Debugging stalled jobs",
+        "displayQuestion": "A BullMQ job sometimes runs twice and then fails with a stalled-job related reason. How would you investigate and fix it?",
+        "displayIntent": "Check debugging skill around locks, event-loop blocking, crashes, and duplicate execution.",
+        "guidance": [
+          "Expect the candidate to explain the lock-renewal mechanism before jumping to fixes.",
+          "Look for concrete investigation steps: worker logs, durations, CPU, Redis connectivity, deploy shutdown, and failed reasons."
+        ],
+        "commonMistakes": [
+          "Only increasing maxStalledCount.",
+          "Treating duplicate execution as harmless.",
+          "Using high concurrency for CPU-heavy code instead of isolating the processor."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Mid-level",
+          "type": "debugging"
+        }
+      },
+      "vi": {
+        "title": "Debug stalled job",
+        "displayQuestion": "Một BullMQ job đôi khi chạy hai lần rồi fail với lý do liên quan đến stalled job. Bạn sẽ điều tra và sửa như thế nào?",
+        "displayIntent": "Kiểm tra kỹ năng debug lock, event-loop blocking, crash và duplicate execution trong BullMQ.",
+        "guidance": [
+          "Kỳ vọng ứng viên giải thích cơ chế gia hạn lock trước khi nhảy vào sửa.",
+          "Tìm các bước điều tra cụ thể: log worker, thời lượng xử lý, CPU, kết nối Redis, graceful shutdown khi deploy và failed reason."
+        ],
+        "commonMistakes": [
+          "Chỉ tăng maxStalledCount.",
+          "Xem duplicate execution là vô hại.",
+          "Tăng concurrency cho code nặng CPU thay vì tách processor."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Mid-level",
+          "type": "debugging"
+        }
+      },
+      "ja": {
+        "title": "stalled job のデバッグ",
+        "displayQuestion": "BullMQ job が時々二回実行され、その後 stalled job 関連の理由で失敗します。どのように調査して修正しますか。",
+        "displayIntent": "lock、event-loop blocking、クラッシュ、重複実行に関するデバッグ力を確認する。",
+        "guidance": [
+          "修正案の前に lock renewal の仕組みを説明できるかを見る。",
+          "worker log、処理時間、CPU、Redis 接続、deploy 時の shutdown、failed reason など具体的な調査手順を求める。"
+        ],
+        "commonMistakes": [
+          "maxStalledCount だけを増やす。",
+          "重複実行を無害だと扱う。",
+          "CPU-heavy な処理に高い concurrency を設定し、processor 分離を考えない。"
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Mid-level",
+          "type": "debugging"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "BullMQ Docs: Stalled jobs",
+        "url": "https://docs.bullmq.io/guide/jobs/stalled",
+        "note": "Used for stalled job behavior, lock renewal, maxStalledCount, and sandboxed processor guidance."
+      },
+      {
+        "label": "BullMQ Docs: Graceful shutdown",
+        "url": "https://docs.bullmq.io/guide/workers/graceful-shutdown",
+        "note": "Used for shutdown behavior and avoiding unnecessary stalled jobs during deploys."
+      },
+      {
+        "label": "BullMQ Docs: Worker concurrency",
+        "url": "https://docs.bullmq.io/guide/workers/concurrency",
+        "note": "Used for IO-bound versus CPU-bound concurrency reasoning."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "BULLMQ_SR_TRADE_CONCURRENCY_SCALE_004",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "devops"],
+    "levels": ["senior"],
+    "type": "trade_off",
+    "competencies": ["trade_off_analysis", "system_thinking", "impact_measurement"],
+    "techTags": ["bullmq", "redis", "nodejs", "event_driven_architecture"],
+    "difficulty": 4,
+    "intent": "Evaluate whether the candidate can choose between local worker concurrency, multiple worker processes, and queue design while considering workload type, throughput, fairness, availability, and Redis pressure.",
+    "primaryQuestion": "You need to scale BullMQ processing for 200,000 jobs per hour. How would you decide between increasing worker concurrency, running more worker processes, and splitting queues?",
+    "expectedSignals": [
+      "Distinguishes local concurrency inside one Worker from multiple workers across processes or machines.",
+      "Explains that high concurrency fits IO-bound work better than CPU-bound work in Node.js.",
+      "Considers horizontal workers for availability and predictable parallelism.",
+      "Discusses queue separation by workload characteristics, SLA, priority, and failure isolation rather than arbitrary job names.",
+      "Mentions measuring throughput, job duration, queue latency, Redis CPU/memory, error rate, and downstream saturation."
+    ],
+    "redFlags": [
+      "Only increases concurrency to a very high number without benchmarking.",
+      "Ignores downstream database or API limits.",
+      "Splits every job type into a different queue without an operational reason.",
+      "Treats BullMQ throughput as independent from Redis capacity."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Builds a scaling plan based on workload profiling, local versus horizontal concurrency, queue isolation, downstream limits, and measurable SLOs."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands concurrency and multiple workers, but gives limited depth on queue partitioning or capacity signals."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Suggests scaling workers but cannot explain when concurrency becomes harmful."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is a generic 'add more servers' response."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_metric",
+        "question": "Which three metrics would tell you whether the bottleneck is BullMQ, Redis, the worker CPU, or a downstream API?",
+        "purpose": "Force measurable operational reasoning."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "Why might one queue with named jobs be better than many queues, and when would you still split them?",
+        "purpose": "Check queue-boundary design judgment."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Scaling BullMQ workers",
+        "displayQuestion": "You need to scale BullMQ processing for 200,000 jobs per hour. How would you decide between increasing worker concurrency, running more worker processes, and splitting queues?",
+        "displayIntent": "Check production scaling trade-offs for BullMQ workers and queues.",
+        "guidance": [
+          "Ask the candidate to classify the workload as IO-bound, CPU-bound, latency-sensitive, or downstream-limited.",
+          "Look for a scaling plan that includes measurement, rollback, and failure isolation."
+        ],
+        "commonMistakes": [
+          "Maxing worker concurrency without profiling.",
+          "Ignoring Redis and downstream service saturation.",
+          "Splitting queues based only on code organization."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Senior",
+          "type": "trade_off"
+        }
+      },
+      "vi": {
+        "title": "Scale worker BullMQ",
+        "displayQuestion": "Bạn cần scale BullMQ để xử lý 200.000 job mỗi giờ. Bạn quyết định giữa tăng worker concurrency, chạy thêm worker process và tách queue như thế nào?",
+        "displayIntent": "Kiểm tra trade-off khi scale BullMQ worker và queue trong production.",
+        "guidance": [
+          "Yêu cầu ứng viên phân loại workload là IO-bound, CPU-bound, nhạy latency hay bị giới hạn bởi downstream.",
+          "Tìm kế hoạch scale có đo lường, rollback và cô lập lỗi."
+        ],
+        "commonMistakes": [
+          "Đẩy concurrency lên rất cao mà không profile.",
+          "Bỏ qua Redis và saturation của downstream service.",
+          "Tách queue chỉ vì tổ chức code, không vì vận hành."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Senior",
+          "type": "trade_off"
+        }
+      },
+      "ja": {
+        "title": "BullMQ Worker のスケール",
+        "displayQuestion": "BullMQ で 1 時間あたり 200,000 jobs を処理する必要があります。Worker concurrency を上げる、Worker process を増やす、queue を分割する判断をどう行いますか。",
+        "displayIntent": "本番環境での BullMQ worker と queue のスケーリング判断を確認する。",
+        "guidance": [
+          "workload が IO-bound、CPU-bound、latency-sensitive、downstream-limited のどれかを分類してもらう。",
+          "測定、rollback、failure isolation を含むスケール計画を聞く。"
+        ],
+        "commonMistakes": [
+          "profiling なしで worker concurrency を最大化する。",
+          "Redis や downstream service の saturation を無視する。",
+          "運用上の理由ではなくコード構成だけで queue を分割する。"
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Senior",
+          "type": "trade_off"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "BullMQ Docs: Worker concurrency",
+        "url": "https://docs.bullmq.io/guide/workers/concurrency",
+        "note": "Used for local concurrency, multiple workers, and IO-bound versus CPU-bound guidance."
+      },
+      {
+        "label": "BullMQ Docs: What is BullMQ",
+        "url": "https://docs.bullmq.io/",
+        "note": "Used for horizontal scaling and Redis-backed execution characteristics."
+      },
+      {
+        "label": "BullMQ Docs: Connections",
+        "url": "https://docs.bullmq.io/guide/connections",
+        "note": "Used for Redis connection and production capacity considerations."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "BULLMQ_MID_SITUATIONAL_RATE_LIMIT_005",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["mid"],
+    "type": "situational",
+    "competencies": ["problem_solving", "technical_fundamentals", "trade_off_analysis"],
+    "techTags": ["bullmq", "redis", "nodejs"],
+    "difficulty": 3,
+    "intent": "Check whether the candidate can apply BullMQ rate limiting for external API protection, understand global limiter behavior, and handle 429 responses with manual rate limiting.",
+    "primaryQuestion": "A BullMQ worker calls a third-party API limited to 100 requests per minute across all workers. How would you enforce that limit and handle 429 responses?",
+    "expectedSignals": [
+      "Uses worker limiter options with max and duration to enforce a global queue rate limit.",
+      "Understands the limiter is global across workers for the same queue, not per process.",
+      "Explains that rate-limited jobs remain waiting rather than being treated as normal failed jobs.",
+      "Uses manual worker.rateLimit(duration) and Worker.RateLimitError() when the API returns a dynamic Retry-After or 429 response.",
+      "Considers monitoring rate-limit TTL, downstream error rate, and backlog growth."
+    ],
+    "redFlags": [
+      "Implements only a local in-memory counter per worker process.",
+      "Retries immediately on every 429, increasing pressure on the provider.",
+      "Assumes increasing worker count preserves the provider's global limit.",
+      "Counts rate limiting as a business failure without separating it from real job errors."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers global limiter configuration, dynamic 429 handling, backlog/TTL visibility, and a clear distinction between rate limiting and job failure."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Configures a global limiter correctly but gives limited detail on manual rate limiting or observability."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Recognizes the need for throttling but proposes process-local or ad hoc controls."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not show BullMQ-specific rate-limit knowledge."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "If you deploy ten worker processes, how many jobs per minute should be processed with a max 100 duration 60000 limiter?",
+        "purpose": "Verify global limiter understanding."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "What would change if each customer had a different provider quota?",
+        "purpose": "Check whether the candidate can separate current BullMQ global limits from per-tenant quota design."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Global rate limiting",
+        "displayQuestion": "A BullMQ worker calls a third-party API limited to 100 requests per minute across all workers. How would you enforce that limit and handle 429 responses?",
+        "displayIntent": "Check BullMQ rate limiting, global worker behavior, and dynamic throttling.",
+        "guidance": [
+          "Ask the candidate to explain what happens when more worker processes are added.",
+          "Listen for manual rateLimit handling when the provider returns a dynamic retry window."
+        ],
+        "commonMistakes": [
+          "Using a process-local counter.",
+          "Treating 429 as a normal retryable error without pausing the queue.",
+          "Assuming BullMQ groupKey-based per-customer limiting is available in current versions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level",
+          "type": "situational"
+        }
+      },
+      "vi": {
+        "title": "Rate limit toàn cục",
+        "displayQuestion": "Một BullMQ worker gọi third-party API bị giới hạn 100 request mỗi phút trên toàn bộ worker. Bạn sẽ enforce giới hạn đó và xử lý 429 như thế nào?",
+        "displayIntent": "Kiểm tra rate limiting trong BullMQ, hành vi global giữa nhiều worker và dynamic throttling.",
+        "guidance": [
+          "Yêu cầu ứng viên giải thích điều gì xảy ra khi thêm nhiều worker process.",
+          "Nghe xem ứng viên có nói đến manual rateLimit khi provider trả về retry window động hay không."
+        ],
+        "commonMistakes": [
+          "Dùng counter cục bộ trong từng process.",
+          "Xem 429 như lỗi retry thông thường mà không tạm dừng nhịp xử lý queue.",
+          "Mặc định groupKey per-customer limiter vẫn có trong phiên bản BullMQ hiện tại."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level",
+          "type": "situational"
+        }
+      },
+      "ja": {
+        "title": "Global rate limiting",
+        "displayQuestion": "BullMQ worker が全 worker 合計で 1 分 100 request に制限された third-party API を呼びます。この制限をどう守り、429 をどう処理しますか。",
+        "displayIntent": "BullMQ の rate limiting、global worker behavior、dynamic throttling を確認する。",
+        "guidance": [
+          "worker process を増やした時に何が起きるか説明してもらう。",
+          "provider が動的な retry window を返す場合の manual rateLimit に触れるかを見る。"
+        ],
+        "commonMistakes": [
+          "process-local な counter を使う。",
+          "429 を通常の retryable error として扱い、queue 側の処理ペースを落とさない。",
+          "現在の BullMQ でも groupKey ベースの per-customer limiter が使えると仮定する。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level",
+          "type": "situational"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "BullMQ Docs: Rate limiting",
+        "url": "https://docs.bullmq.io/guide/rate-limiting",
+        "note": "Used for global limiter behavior, manual rate limiting, RateLimitError, and groupKey removal note."
+      },
+      {
+        "label": "BullMQ Docs: Worker concurrency",
+        "url": "https://docs.bullmq.io/guide/workers/concurrency",
+        "note": "Used for worker scaling context around rate-limited processing."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "BULLMQ_SR_TECH_FLOWS_006",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["senior"],
+    "type": "technical_depth",
+    "competencies": ["system_thinking", "technical_fundamentals", "trade_off_analysis"],
+    "techTags": ["bullmq", "redis", "event_driven_architecture"],
+    "difficulty": 4,
+    "intent": "Evaluate whether the candidate understands BullMQ Flows for parent-child job dependencies, atomic creation, waiting-children state, result aggregation, and failure-handling choices.",
+    "primaryQuestion": "When would you model work as a BullMQ Flow instead of one large job, and how do parent-child dependencies behave?",
+    "expectedSignals": [
+      "Explains that FlowProducer creates parent-child job trees, potentially across queues.",
+      "Mentions that the parent waits until children complete successfully before becoming processable.",
+      "Knows parent jobs can access child return values through child value APIs when processing.",
+      "Explains the waiting-children state and the need to reason about failed, ignored, or removed dependencies.",
+      "Connects flows to splitting non-atomic work into smaller retryable/idempotent steps."
+    ],
+    "redFlags": [
+      "Uses a flow where simple sequential code inside one job would be clearer and safe.",
+      "Cannot explain what happens to the parent when a child fails.",
+      "Assumes all children must use the same queue as the parent.",
+      "Ignores partial progress and cleanup strategy."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains flow creation, dependency states, cross-queue children, child result aggregation, failure handling, and when flows reduce retry complexity."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands parent-child dependencies and basic FlowProducer usage, but misses deeper failure or cleanup options."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows flows exist but cannot reason about dependency states or child failures."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer describes generic workflow orchestration without BullMQ details."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_tradeoff",
+        "question": "What would be worse about doing database update, file upload, and notification send inside one giant job?",
+        "purpose": "Check ability to connect flows with retry boundaries and partial failure."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "How would the parent know whether it is processing because all children succeeded or because a child failure was configured to continue the parent?",
+        "purpose": "Probe current BullMQ failure-handling options in flows."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Parent-child job flows",
+        "displayQuestion": "When would you model work as a BullMQ Flow instead of one large job, and how do parent-child dependencies behave?",
+        "displayIntent": "Check BullMQ FlowProducer, dependency states, and workflow design trade-offs.",
+        "guidance": [
+          "Use a multi-step workflow example and ask where retry boundaries should be.",
+          "Look for explanation of parent waiting behavior, child queues, and child result access."
+        ],
+        "commonMistakes": [
+          "Using flows as decoration instead of solving dependency or retry-boundary problems.",
+          "Ignoring what happens when one child fails.",
+          "Forgetting cleanup of unprocessed children when aborting a workflow."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Senior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Flow parent-child job",
+        "displayQuestion": "Khi nào bạn model công việc bằng BullMQ Flow thay vì một job lớn, và dependency giữa parent-child job hoạt động như thế nào?",
+        "displayIntent": "Kiểm tra FlowProducer, trạng thái dependency và trade-off thiết kế workflow trong BullMQ.",
+        "guidance": [
+          "Dùng ví dụ workflow nhiều bước và hỏi ranh giới retry nên nằm ở đâu.",
+          "Tìm phần giải thích về parent chờ child, child ở queue khác nhau và cách lấy kết quả child."
+        ],
+        "commonMistakes": [
+          "Dùng flow như trang trí thay vì giải quyết dependency hoặc retry boundary.",
+          "Bỏ qua chuyện xảy ra khi một child fail.",
+          "Quên cleanup child chưa xử lý khi cần abort workflow."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Senior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "Parent-child job flow",
+        "displayQuestion": "どのような場合に一つの大きな job ではなく BullMQ Flow としてモデル化しますか。また parent-child dependency はどう動きますか。",
+        "displayIntent": "BullMQ FlowProducer、dependency state、workflow 設計の trade-off を確認する。",
+        "guidance": [
+          "複数ステップの workflow 例を使い、retry boundary をどこに置くべきか聞く。",
+          "parent の待機挙動、child queue、child result access の説明を見る。"
+        ],
+        "commonMistakes": [
+          "dependency や retry boundary の問題を解かず、飾りとして flow を使う。",
+          "child が失敗した時の挙動を無視する。",
+          "workflow を abort する際に未処理 child の cleanup を忘れる。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Senior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "BullMQ Docs: Flows",
+        "url": "https://docs.bullmq.io/guide/flows",
+        "note": "Used for FlowProducer, atomic parent-child creation, waiting-children state, and child values."
+      },
+      {
+        "label": "BullMQ Docs: Idempotent jobs",
+        "url": "https://docs.bullmq.io/patterns/idempotent-jobs",
+        "note": "Used for splitting complex work into simpler retryable jobs."
+      },
+      {
+        "label": "BullMQ Docs: Continue Parent",
+        "url": "https://docs.bullmq.io/guide/flows/continue-parent",
+        "note": "Used for current failure-driven parent continuation behavior."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "BULLMQ_MID_TECH_DELAY_REPEAT_007",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking"],
+    "techTags": ["bullmq", "redis", "nodejs"],
+    "difficulty": 3,
+    "intent": "Check whether the candidate understands delayed jobs, repeatable jobs, modern scheduler guidance, drift/backlog behavior, and version-specific QueueScheduler caveats.",
+    "primaryQuestion": "How would you design scheduled background work in BullMQ, and what are the important differences between delayed jobs, repeatable jobs, and newer job scheduler APIs?",
+    "expectedSignals": [
+      "Explains delayed jobs as jobs that wait at least a configured delay before becoming eligible for processing.",
+      "Explains repeatable jobs as schedule metadata that creates delayed job instances over time.",
+      "Mentions that repeatable APIs are deprecated from BullMQ 5.16.0 in favor of Job Schedulers.",
+      "Understands that QueueScheduler was needed for delayed/retry/rate-limit behavior before BullMQ 2.0, but not in newer versions.",
+      "Considers slow job duration, worker availability, missed accumulation expectations, and idempotency for scheduled work."
+    ],
+    "redFlags": [
+      "Assumes cron-like jobs run exactly at the scheduled second regardless of backlog or worker availability.",
+      "Cannot distinguish one delayed job from a repeatable schedule definition.",
+      "Uses old QueueScheduler guidance without checking BullMQ version.",
+      "Creates scheduled jobs without stable identifiers or cleanup/removal strategy."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Clearly compares delayed, repeatable, and scheduler-based work, includes version caveats, slow-job behavior, and operational cleanup."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands delayed and repeatable jobs but misses deprecation or slow-workload implications."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can add a delay but cannot reason about repeat schedules or version-specific behavior."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is just 'use cron' without BullMQ-specific details."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "If a job repeats every minute but takes five minutes to process and only one worker is running, what backlog behavior would you expect?",
+        "purpose": "Check understanding of schedule frequency versus processing capacity."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "When would you prefer an external scheduler that enqueues BullMQ jobs over storing schedules inside BullMQ?",
+        "purpose": "Probe operational ownership and scheduling trade-offs."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Delayed and scheduled jobs",
+        "displayQuestion": "How would you design scheduled background work in BullMQ, and what are the important differences between delayed jobs, repeatable jobs, and newer job scheduler APIs?",
+        "displayIntent": "Check scheduled job design, version awareness, and backlog reasoning.",
+        "guidance": [
+          "Ask for a concrete scheduled task such as nightly billing or periodic data sync.",
+          "Expect version-aware answers because older QueueScheduler and repeatable-job guidance can be misleading."
+        ],
+        "commonMistakes": [
+          "Expecting exact wall-clock execution under backlog.",
+          "Confusing repeatable job configuration with normal job instances.",
+          "Ignoring removal or migration of old schedules."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Delayed job và scheduled job",
+        "displayQuestion": "Bạn sẽ thiết kế scheduled background work trong BullMQ như thế nào, và khác biệt quan trọng giữa delayed job, repeatable job và Job Scheduler API mới hơn là gì?",
+        "displayIntent": "Kiểm tra thiết kế scheduled job, nhận biết phiên bản BullMQ và phân tích backlog.",
+        "guidance": [
+          "Yêu cầu ví dụ cụ thể như billing hằng đêm hoặc đồng bộ dữ liệu định kỳ.",
+          "Kỳ vọng câu trả lời có ý thức về version vì hướng dẫn QueueScheduler cũ và repeatable job có thể gây hiểu nhầm."
+        ],
+        "commonMistakes": [
+          "Kỳ vọng job chạy đúng tuyệt đối theo wall-clock khi queue đang backlog.",
+          "Nhầm cấu hình repeatable job với job instance thông thường.",
+          "Bỏ qua việc remove hoặc migrate schedule cũ."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "Delayed jobs と scheduled jobs",
+        "displayQuestion": "BullMQ で scheduled background work をどう設計しますか。delayed job、repeatable job、新しい Job Scheduler API の重要な違いは何ですか。",
+        "displayIntent": "scheduled job 設計、version awareness、backlog reasoning を確認する。",
+        "guidance": [
+          "nightly billing や periodic data sync など具体的な scheduled task を聞く。",
+          "古い QueueScheduler や repeatable job の知識が混ざりやすいため、version-aware な回答を期待する。"
+        ],
+        "commonMistakes": [
+          "backlog がある状況でも wall-clock 通りに正確に実行されると期待する。",
+          "repeatable job configuration と通常の job instance を混同する。",
+          "古い schedule の remove や migration を無視する。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "BullMQ Docs: Queues",
+        "url": "https://docs.bullmq.io/guide/queues",
+        "note": "Used for delayed job behavior and queue.add options."
+      },
+      {
+        "label": "BullMQ Docs: Repeatable jobs",
+        "url": "https://docs.bullmq.io/guide/jobs/repeatable",
+        "note": "Used for repeatable job behavior, slow repeatable jobs, and deprecation note in favor of Job Schedulers."
+      },
+      {
+        "label": "BullMQ Docs: QueueScheduler",
+        "url": "https://docs.bullmq.io/guide/queuescheduler",
+        "note": "Used for pre-2.0 scheduler caveats."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "BULLMQ_SR_DEBUG_REDIS_CONNECTIONS_008",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "devops"],
+    "levels": ["senior"],
+    "type": "debugging",
+    "competencies": ["problem_solving", "system_thinking", "ownership"],
+    "techTags": ["bullmq", "redis", "nodejs"],
+    "difficulty": 4,
+    "intent": "Assess whether the candidate can reason about BullMQ Redis connection configuration for producers and workers, including maxRetriesPerRequest, offline queue behavior, blocking connections, and Redis eviction policy.",
+    "primaryQuestion": "Your API hangs when Redis is unavailable while adding BullMQ jobs, but workers should keep retrying Redis connections in the background. How would you configure and debug the connections?",
+    "expectedSignals": [
+      "Separates producer Queue connection needs from Worker connection needs.",
+      "Explains that producers behind HTTP endpoints should fail fast or use bounded retries so requests do not hang indefinitely.",
+      "Mentions enableOfflineQueue false as an option when the API should throw instead of waiting for Redis reconnection.",
+      "Knows Worker connections require maxRetriesPerRequest null when using manually created ioredis clients.",
+      "Understands that some BullMQ classes need blocking connections and Redis should not evict BullMQ keys unexpectedly."
+    ],
+    "redFlags": [
+      "Uses one shared Redis client configuration for all producers and workers without considering behavior differences.",
+      "Lets public HTTP requests wait indefinitely for Redis reconnection.",
+      "Sets aggressive fail-fast behavior on workers that should run continuously.",
+      "Ignores Redis maxmemory eviction policy and connection limits."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Separates producer and consumer connection policies, explains fail-fast API behavior, worker persistence, blocking connections, and Redis noeviction requirements."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands producer versus worker retries but misses blocking connection or Redis eviction details."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows Redis is involved but cannot explain why the API hangs or how worker connection settings differ."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is limited to restarting Redis or increasing timeouts."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "Why might maxRetriesPerRequest be appropriate for an HTTP producer but required to be null for a manually supplied Worker connection?",
+        "purpose": "Verify connection-policy nuance."
+      },
+      {
+        "trigger": "missing_metric",
+        "question": "What Redis and application metrics would you monitor after changing these settings?",
+        "purpose": "Check operational completeness."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Redis connection behavior",
+        "displayQuestion": "Your API hangs when Redis is unavailable while adding BullMQ jobs, but workers should keep retrying Redis connections in the background. How would you configure and debug the connections?",
+        "displayIntent": "Check BullMQ Redis connection policy, fail-fast producers, and persistent workers.",
+        "guidance": [
+          "Ask the candidate to separate API producer behavior from worker behavior.",
+          "Look for specific ioredis options and Redis operational constraints, not only general timeout advice."
+        ],
+        "commonMistakes": [
+          "Using identical Redis retry settings everywhere.",
+          "Allowing user-facing requests to block until Redis returns.",
+          "Using Redis eviction policies that can remove BullMQ keys."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Senior",
+          "type": "debugging"
+        }
+      },
+      "vi": {
+        "title": "Hành vi kết nối Redis",
+        "displayQuestion": "API của bạn bị treo khi Redis unavailable trong lúc add BullMQ job, nhưng worker vẫn cần retry kết nối Redis ở background. Bạn sẽ cấu hình và debug connection như thế nào?",
+        "displayIntent": "Kiểm tra policy kết nối Redis trong BullMQ, producer fail-fast và worker chạy bền bỉ.",
+        "guidance": [
+          "Yêu cầu ứng viên tách hành vi API producer khỏi hành vi worker.",
+          "Tìm option ioredis cụ thể và ràng buộc vận hành Redis, không chỉ lời khuyên timeout chung chung."
+        ],
+        "commonMistakes": [
+          "Dùng cùng retry setting Redis cho mọi nơi.",
+          "Để request hướng người dùng chờ cho đến khi Redis quay lại.",
+          "Dùng Redis eviction policy có thể xóa key của BullMQ."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Senior",
+          "type": "debugging"
+        }
+      },
+      "ja": {
+        "title": "Redis connection behavior",
+        "displayQuestion": "BullMQ job を追加する API が Redis unavailable 時にハングします。一方で worker は background で Redis 接続を retry し続けるべきです。connection をどう設定し、どうデバッグしますか。",
+        "displayIntent": "BullMQ の Redis connection policy、fail-fast producer、persistent worker を確認する。",
+        "guidance": [
+          "API producer と worker の挙動を分けて説明してもらう。",
+          "一般的な timeout ではなく、具体的な ioredis option と Redis 運用制約を見る。"
+        ],
+        "commonMistakes": [
+          "すべての場所で同じ Redis retry setting を使う。",
+          "ユーザー向け request を Redis 復旧まで block させる。",
+          "BullMQ key を消し得る Redis eviction policy を使う。"
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Senior",
+          "type": "debugging"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "BullMQ Docs: Connections",
+        "url": "https://docs.bullmq.io/guide/connections",
+        "note": "Used for Queue versus Worker connection behavior, maxRetriesPerRequest, blocking connections, and Redis noeviction guidance."
+      },
+      {
+        "label": "BullMQ Docs: Failing fast when Redis is down",
+        "url": "https://docs.bullmq.io/patterns/failing-fast-when-redis-is-down",
+        "note": "Used for enableOfflineQueue false and fail-fast producer behavior."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "BULLMQ_MID_TECH_EVENTS_RESULTS_009",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking", "impact_measurement"],
+    "techTags": ["bullmq", "redis", "nodejs"],
+    "difficulty": 3,
+    "intent": "Check whether the candidate understands worker-local events versus QueueEvents, progress updates, return values, and robust result persistence patterns.",
+    "primaryQuestion": "How would you observe BullMQ job progress and completion results, and where would you persist the final business result?",
+    "expectedSignals": [
+      "Uses job.updateProgress inside the processor for numeric or object progress data.",
+      "Distinguishes Worker event listeners from QueueEvents that observe events from all workers for a queue.",
+      "Explains that a processor can return data which becomes the job returnvalue and can be observed on completed events.",
+      "States that critical result persistence should happen inside the processor or through a reliable result queue, not only in an event listener.",
+      "Considers removeOnComplete retention, logs, metrics, and trace correlation with jobId."
+    ],
+    "redFlags": [
+      "Persists the only copy of a business result in a completed event listener.",
+      "Confuses progress updates with durable domain state.",
+      "Does not know how to observe jobs processed by other worker instances.",
+      "Keeps all completed jobs forever without considering storage growth."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains progress, returnvalue, Worker events, QueueEvents, robust result persistence, and retention/observability trade-offs."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands progress and completed events, but misses robust result persistence or retention concerns."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can listen for completed events but treats them as the main transaction boundary."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not show practical BullMQ observability knowledge."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_tradeoff",
+        "question": "Why is storing the result only from a completed event less robust than storing it inside the processor?",
+        "purpose": "Check transactional reasoning around completion and side effects."
+      },
+      {
+        "trigger": "missing_metric",
+        "question": "Which job-level identifiers and metrics would you include in logs for production debugging?",
+        "purpose": "Probe operational observability."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Events, progress, and results",
+        "displayQuestion": "How would you observe BullMQ job progress and completion results, and where would you persist the final business result?",
+        "displayIntent": "Check event APIs, progress updates, return values, and robust result persistence.",
+        "guidance": [
+          "Ask the candidate to distinguish observability from the source of truth.",
+          "Listen for QueueEvents when multiple worker instances process the same queue."
+        ],
+        "commonMistakes": [
+          "Relying on completed events as the only persistence path.",
+          "Keeping unlimited completed job data in Redis.",
+          "Logging without jobId, queue name, attempts, or correlation identifiers."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Event, progress và kết quả job",
+        "displayQuestion": "Bạn sẽ quan sát progress và kết quả hoàn thành của BullMQ job như thế nào, và bạn sẽ persist business result cuối cùng ở đâu?",
+        "displayIntent": "Kiểm tra event API, progress update, return value và cách persist result một cách chắc chắn.",
+        "guidance": [
+          "Yêu cầu ứng viên phân biệt observability với source of truth.",
+          "Nghe xem có nhắc QueueEvents khi nhiều worker instance cùng xử lý một queue hay không."
+        ],
+        "commonMistakes": [
+          "Dựa vào completed event như đường persist duy nhất.",
+          "Giữ vô hạn dữ liệu completed job trong Redis.",
+          "Log thiếu jobId, queue name, attempts hoặc correlation identifier."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "Events, progress, results",
+        "displayQuestion": "BullMQ job の progress と completion result をどう観測し、最終的な business result はどこに永続化しますか。",
+        "displayIntent": "event API、progress update、return value、堅牢な result persistence を確認する。",
+        "guidance": [
+          "observability と source of truth を分けて説明してもらう。",
+          "複数 worker instance が同じ queue を処理する場合に QueueEvents に触れるかを見る。"
+        ],
+        "commonMistakes": [
+          "completed event を唯一の persistence path として扱う。",
+          "completed job data を Redis に無制限に保持する。",
+          "jobId、queue name、attempts、correlation identifier なしで logging する。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "BullMQ Docs: Workers",
+        "url": "https://docs.bullmq.io/guide/workers",
+        "note": "Used for progress updates, worker events, QueueEvents, and return values."
+      },
+      {
+        "label": "BullMQ Docs: Returning job data",
+        "url": "https://docs.bullmq.io/guide/returning-job-data",
+        "note": "Used for returnvalue behavior and robust result persistence recommendations."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "BULLMQ_SR_SITUATIONAL_DEPLOY_SHUTDOWN_010",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "devops"],
+    "levels": ["senior"],
+    "type": "situational",
+    "competencies": ["ownership", "system_thinking", "problem_solving"],
+    "techTags": ["bullmq", "redis", "nodejs", "rollback"],
+    "difficulty": 4,
+    "intent": "Evaluate whether the candidate can design safe deploy and shutdown behavior for BullMQ workers, minimizing stalled jobs while preserving progress and respecting platform termination windows.",
+    "primaryQuestion": "How would you implement graceful shutdown for BullMQ workers during deploys so active jobs are not unnecessarily stalled or duplicated?",
+    "expectedSignals": [
+      "Uses worker.close() to stop accepting new jobs and wait for active jobs to finish or fail.",
+      "Mentions that close does not impose its own timeout, so the application or orchestrator needs a termination budget.",
+      "Explains what happens if shutdown is ungraceful: stalled-job recovery allows other workers to pick up work later.",
+      "Considers pausing readiness, stopping new traffic, draining workers, and handling long-running jobs.",
+      "Keeps processors idempotent because duplicates can still occur after crashes, timeouts, or lost locks."
+    ],
+    "redFlags": [
+      "Kills worker processes immediately during every deploy.",
+      "Calls close but ignores platform SIGTERM deadline and hangs shutdown forever.",
+      "Assumes graceful shutdown removes the need for idempotent processors.",
+      "Does not account for jobs that exceed the deployment termination window."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Describes signal handling, readiness changes, worker.close draining, timeout budgeting, long-job strategy, and residual duplicate-safety requirements."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Uses worker.close and understands stalled recovery, but misses orchestration timeout or long-running job detail."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows there is graceful shutdown but cannot explain active job behavior or termination risks."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is only 'restart the worker' or 'let Kubernetes handle it'."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "What should happen if the platform gives you 30 seconds to terminate but some jobs can take five minutes?",
+        "purpose": "Force practical deployment and long-job handling decisions."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "After a supposedly graceful deploy, you still see duplicate side effects. What does that tell you about your processor design?",
+        "purpose": "Confirm that graceful shutdown is not a substitute for idempotency."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Graceful worker shutdown",
+        "displayQuestion": "How would you implement graceful shutdown for BullMQ workers during deploys so active jobs are not unnecessarily stalled or duplicated?",
+        "displayIntent": "Check deploy-time worker draining, stalled-job recovery, and duplicate-safety design.",
+        "guidance": [
+          "Ask for concrete signal handling and deployment steps.",
+          "Look for acknowledgement that graceful shutdown reduces but does not eliminate duplicate execution risk."
+        ],
+        "commonMistakes": [
+          "Killing workers immediately on SIGTERM.",
+          "Waiting forever in worker.close without respecting orchestrator deadlines.",
+          "Using graceful shutdown as a replacement for idempotent job logic."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Senior",
+          "type": "situational"
+        }
+      },
+      "vi": {
+        "title": "Graceful shutdown cho worker",
+        "displayQuestion": "Bạn sẽ implement graceful shutdown cho BullMQ worker khi deploy như thế nào để active job không bị stalled hoặc duplicate một cách không cần thiết?",
+        "displayIntent": "Kiểm tra cách drain worker khi deploy, cơ chế recover stalled job và thiết kế chống duplicate.",
+        "guidance": [
+          "Yêu cầu các bước signal handling và deployment cụ thể.",
+          "Tìm sự thừa nhận rằng graceful shutdown chỉ giảm rủi ro duplicate execution, không loại bỏ hoàn toàn."
+        ],
+        "commonMistakes": [
+          "Kill worker ngay khi nhận SIGTERM.",
+          "Chờ worker.close mãi mãi mà không tôn trọng deadline của orchestrator.",
+          "Dùng graceful shutdown thay cho logic idempotent trong job."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Senior",
+          "type": "situational"
+        }
+      },
+      "ja": {
+        "title": "Worker graceful shutdown",
+        "displayQuestion": "deploy 時に active job が不要に stalled や duplicate にならないよう、BullMQ worker の graceful shutdown をどう実装しますか。",
+        "displayIntent": "deploy 時の worker draining、stalled-job recovery、duplicate-safety design を確認する。",
+        "guidance": [
+          "具体的な signal handling と deployment step を聞く。",
+          "graceful shutdown は duplicate execution risk を減らすが、完全には消さないという認識を見る。"
+        ],
+        "commonMistakes": [
+          "SIGTERM で worker を即 kill する。",
+          "orchestrator の deadline を無視して worker.close を永遠に待つ。",
+          "idempotent job logic の代わりに graceful shutdown を使う。"
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Senior",
+          "type": "situational"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "BullMQ Docs: Graceful shutdown",
+        "url": "https://docs.bullmq.io/guide/workers/graceful-shutdown",
+        "note": "Used for worker.close behavior and stalled recovery after ungraceful shutdown."
+      },
+      {
+        "label": "BullMQ Docs: Stalled jobs",
+        "url": "https://docs.bullmq.io/guide/jobs/stalled",
+        "note": "Used for lock loss and duplicate execution risk after stalls."
+      },
+      {
+        "label": "BullMQ Docs: Idempotent jobs",
+        "url": "https://docs.bullmq.io/patterns/idempotent-jobs",
+        "note": "Used for duplicate-safe processor design."
+      }
+    ],
+    "status": "active"
+  }
+]

@@ -1,0 +1,2442 @@
+[
+  {
+    "code": "MONGODB_JR_TECH_DOCUMENT_MODEL_001",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "data"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking"],
+    "techTags": ["mongodb", "schema_design"],
+    "difficulty": 2,
+    "intent": "Check whether the candidate understands MongoDB's document model, BSON documents, collections, and why schema design is query-driven.",
+    "primaryQuestion": "How would you explain the difference between a MongoDB document, a collection, and a relational database row/table, and how does that affect schema design?",
+    "expectedSignals": [
+      "Explains documents as JSON-like BSON records grouped in collections.",
+      "Understands that related data can be embedded in a single document when access patterns fit.",
+      "Mentions that MongoDB does not remove the need for schema design; the schema is shaped around reads, writes, and update frequency.",
+      "Can compare flexibility with the risk of inconsistent document shapes."
+    ],
+    "redFlags": [
+      "Says MongoDB has no schema so no modeling is needed.",
+      "Only maps tables to collections without discussing embedded structures.",
+      "Cannot explain why access patterns matter."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Clearly compares document and relational modeling, then connects the answer to real read/write access patterns."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands documents and collections but gives limited detail about schema trade-offs."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows MongoDB stores documents but treats modeling as arbitrary."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is mostly buzzwords and does not show practical modeling understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "For a blog post with comments, when would you embed comments and when would you store them in a separate collection?",
+        "purpose": "Force concrete reasoning about access patterns and growth."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "What can go wrong if document shapes vary too much across the same collection?",
+        "purpose": "Check awareness of validation, query complexity, and operational consistency."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "MongoDB document model basics",
+        "displayQuestion": "How would you explain the difference between a MongoDB document, a collection, and a relational database row/table, and how does that affect schema design?",
+        "displayIntent": "Check practical understanding of MongoDB documents, collections, and query-driven schema design.",
+        "guidance": [
+          "Use one concrete domain example such as posts, orders, or users.",
+          "Connect flexible documents to both productivity and data consistency risks."
+        ],
+        "commonMistakes": [
+          "Saying MongoDB has no schema design work.",
+          "Explaining only terminology without access patterns."
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Nền tảng document model MongoDB",
+        "displayQuestion": "Bạn giải thích sự khác nhau giữa document, collection trong MongoDB và row/table trong relational database như thế nào, và điều đó ảnh hưởng tới schema design ra sao?",
+        "displayIntent": "Kiểm tra hiểu biết thực tế về document, collection và schema design theo access pattern trong MongoDB.",
+        "guidance": [
+          "Dùng một ví dụ cụ thể như bài viết, đơn hàng hoặc người dùng.",
+          "Liên hệ document linh hoạt với cả tốc độ phát triển lẫn rủi ro nhất quán dữ liệu."
+        ],
+        "commonMistakes": [
+          "Nói MongoDB không cần thiết kế schema.",
+          "Chỉ giải thích thuật ngữ mà không nói tới access pattern."
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "MongoDB document model の基礎",
+        "displayQuestion": "MongoDB の document と collection、relational database の row/table の違いをどう説明し、それが schema design にどう影響しますか。",
+        "displayIntent": "MongoDB の document、collection、access pattern に基づく schema design の理解を確認する。",
+        "guidance": [
+          "post、order、user など具体例を使う。",
+          "柔軟な document と data consistency のリスクを結びつける。"
+        ],
+        "commonMistakes": [
+          "MongoDB では schema design が不要だと言う。",
+          "用語だけを説明して access pattern に触れない。"
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "MongoDB Docs: Data Modeling Introduction",
+        "url": "https://www.mongodb.com/docs/manual/data-modeling/",
+        "note": "Used for document modeling and access-pattern-driven design concepts."
+      },
+      {
+        "label": "MongoDB Docs: BSON Types",
+        "url": "https://www.mongodb.com/docs/manual/reference/bson-types/",
+        "note": "Used for MongoDB document storage terminology."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "MONGODB_JR_TECH_CRUD_FILTERS_002",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving"],
+    "techTags": ["mongodb"],
+    "difficulty": 2,
+    "intent": "Evaluate whether the candidate can reason about basic MongoDB CRUD filters, projections, sorting, and update operators.",
+    "primaryQuestion": "How would you query active users by email domain, return only needed fields, sort by creation time, and update one user's lastLoginAt in MongoDB?",
+    "expectedSignals": [
+      "Builds a filter using fields and operators instead of scanning in application code.",
+      "Uses projection to avoid returning unnecessary fields.",
+      "Mentions sort and limit when result ordering or size matters.",
+      "Uses an update operator such as $set instead of replacing the whole document unintentionally."
+    ],
+    "redFlags": [
+      "Fetches all users and filters in memory for a normal database query.",
+      "Cannot distinguish replacement updates from operator-based updates.",
+      "Returns sensitive or unnecessary fields without noticing."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Describes filter, projection, sort, limit, and operator-based update with a realistic example."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Covers query and update basics but misses one detail such as projection or limit."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can describe CRUD at a high level but lacks practical operator usage."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "No clear MongoDB query or update model is demonstrated."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "What fields would you exclude from the response, and why?",
+        "purpose": "Check projection and privacy awareness."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "What is the risk of calling replaceOne when you only meant to update lastLoginAt?",
+        "purpose": "Verify update semantics."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "MongoDB CRUD query shape",
+        "displayQuestion": "How would you query active users by email domain, return only needed fields, sort by creation time, and update one user's lastLoginAt in MongoDB?",
+        "displayIntent": "Check practical CRUD, filtering, projection, sorting, and update operator basics.",
+        "guidance": [
+          "Ask for query shape rather than exact driver syntax.",
+          "Listen for projection and update semantics."
+        ],
+        "commonMistakes": [
+          "Filtering large result sets in application memory.",
+          "Replacing a whole document when only one field should change."
+        ],
+        "labels": {
+          "role": "Backend",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Dạng query CRUD trong MongoDB",
+        "displayQuestion": "Bạn sẽ query user đang active theo email domain, chỉ trả về các field cần thiết, sort theo thời điểm tạo và update lastLoginAt của một user trong MongoDB như thế nào?",
+        "displayIntent": "Kiểm tra nền tảng CRUD, filter, projection, sort và update operator trong MongoDB.",
+        "guidance": [
+          "Tập trung vào shape của query, không bắt buộc đúng cú pháp driver từng ngôn ngữ.",
+          "Nghe xem ứng viên có nói tới projection và ngữ nghĩa update không."
+        ],
+        "commonMistakes": [
+          "Lấy nhiều dữ liệu rồi filter trong memory của application.",
+          "Replace toàn bộ document khi chỉ cần đổi một field."
+        ],
+        "labels": {
+          "role": "Backend",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "MongoDB CRUD query の形",
+        "displayQuestion": "active user を email domain で検索し、必要な field だけ返し、creation time で sort し、1 user の lastLoginAt を更新するにはどうしますか。",
+        "displayIntent": "CRUD、filter、projection、sort、update operator の基礎を確認する。",
+        "guidance": [
+          "driver の完全な構文より query の形を確認する。",
+          "projection と update semantics に注目する。"
+        ],
+        "commonMistakes": [
+          "大量データを application memory で filter する。",
+          "1 field だけ変えるつもりで document 全体を replace する。"
+        ],
+        "labels": {
+          "role": "Backend",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "MongoDB Docs: Query Documents",
+        "url": "https://www.mongodb.com/docs/manual/tutorial/query-documents/",
+        "note": "Used for filters and query operators."
+      },
+      {
+        "label": "MongoDB Docs: Update Documents",
+        "url": "https://www.mongodb.com/docs/manual/tutorial/update-documents/",
+        "note": "Used for update operator expectations."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "MONGODB_JR_DEBUG_CONNECTION_003",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "devops"],
+    "levels": ["junior"],
+    "type": "debugging",
+    "competencies": ["problem_solving", "technical_fundamentals", "ownership"],
+    "techTags": ["mongodb", "nodejs", "logging"],
+    "difficulty": 2,
+    "intent": "Assess basic operational debugging when an application cannot connect to MongoDB.",
+    "primaryQuestion": "A Node.js service suddenly cannot connect to MongoDB after deployment. What would you check before changing application code?",
+    "expectedSignals": [
+      "Checks connection string, credentials, database name, and environment variables.",
+      "Verifies network path, DNS, firewall, allowlist, and TLS settings.",
+      "Looks at driver error messages and database/server logs.",
+      "Considers deployment differences such as secrets, replica set name, or SRV record resolution."
+    ],
+    "redFlags": [
+      "Starts rewriting repository code without reading the actual error.",
+      "Ignores environment or network changes between local and deployed runtime.",
+      "Prints credentials into logs while debugging."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Uses an evidence-based checklist across config, network, credentials, TLS, and logs before code changes."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Covers config and credentials but misses one operational layer such as network or TLS."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Mentions generic debugging but lacks MongoDB connection specifics."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "No clear investigation sequence."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "What exact information from the driver error would change your next step?",
+        "purpose": "Check whether debugging is evidence-driven."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "How would you debug credentials without exposing secrets in logs?",
+        "purpose": "Verify secure troubleshooting practice."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Debug MongoDB connection failure",
+        "displayQuestion": "A Node.js service suddenly cannot connect to MongoDB after deployment. What would you check before changing application code?",
+        "displayIntent": "Evaluate basic MongoDB connection troubleshooting in a deployed service.",
+        "guidance": [
+          "Start from the actual error message.",
+          "Cover config, network, credentials, and deployment differences."
+        ],
+        "commonMistakes": [
+          "Changing code before checking environment configuration.",
+          "Logging secrets while debugging."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Junior",
+          "type": "debugging"
+        }
+      },
+      "vi": {
+        "title": "Debug lỗi kết nối MongoDB",
+        "displayQuestion": "Một service Node.js sau khi deploy đột nhiên không kết nối được MongoDB. Trước khi sửa code application, bạn sẽ kiểm tra những gì?",
+        "displayIntent": "Đánh giá khả năng troubleshoot kết nối MongoDB cơ bản trong môi trường đã deploy.",
+        "guidance": [
+          "Bắt đầu từ error message thật.",
+          "Bao phủ config, network, credentials và khác biệt giữa môi trường."
+        ],
+        "commonMistakes": [
+          "Sửa code trước khi kiểm tra environment configuration.",
+          "Log secret trong lúc debug."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Junior",
+          "type": "debugging"
+        }
+      },
+      "ja": {
+        "title": "MongoDB 接続失敗の debug",
+        "displayQuestion": "deploy 後に Node.js service が MongoDB に接続できなくなりました。application code を変える前に何を確認しますか。",
+        "displayIntent": "deployed service での MongoDB 接続 troubleshooting を評価する。",
+        "guidance": [
+          "実際の error message から始める。",
+          "config、network、credentials、deployment 差分を確認する。"
+        ],
+        "commonMistakes": [
+          "environment configuration を確認せず code を変更する。",
+          "debug 中に secret を log に出す。"
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Junior",
+          "type": "debugging"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "MongoDB Docs: Connection String URI Format",
+        "url": "https://www.mongodb.com/docs/manual/reference/connection-string/",
+        "note": "Used for connection string, authentication, and replica set options."
+      },
+      {
+        "label": "MongoDB Node.js Driver Docs: Connect to MongoDB",
+        "url": "https://www.mongodb.com/docs/drivers/node/current/fundamentals/connection/",
+        "note": "Used for application connection troubleshooting context."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "MONGODB_JR_TECH_INDEX_BASICS_004",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "data"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving"],
+    "techTags": ["mongodb", "indexing"],
+    "difficulty": 2,
+    "intent": "Check whether the candidate understands what indexes do, why they speed reads, and what trade-offs they introduce.",
+    "primaryQuestion": "What is a MongoDB index, how can it help a query, and what costs should you expect when adding indexes?",
+    "expectedSignals": [
+      "Explains that indexes let MongoDB find matching documents without scanning the whole collection.",
+      "Mentions index keys should match common filters, sorts, or uniqueness requirements.",
+      "Understands indexes consume storage and add write maintenance overhead.",
+      "Can distinguish a useful index from adding indexes to every field."
+    ],
+    "redFlags": [
+      "Says indexes always make everything faster.",
+      "Cannot explain collection scan versus index scan at a basic level.",
+      "Adds indexes without considering writes or storage."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains read benefit, write/storage cost, and query-shape alignment with a concrete example."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands basic index purpose but gives limited trade-off detail."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows indexes are for performance but cannot explain how or when."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not demonstrate MongoDB index understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_tradeoff",
+        "question": "Why might too many indexes slow down a write-heavy collection?",
+        "purpose": "Check maintenance overhead understanding."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "What query pattern would justify an index on users.email?",
+        "purpose": "Connect index choice to a real access pattern."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "MongoDB index fundamentals",
+        "displayQuestion": "What is a MongoDB index, how can it help a query, and what costs should you expect when adding indexes?",
+        "displayIntent": "Check basic index reasoning and read/write trade-offs.",
+        "guidance": [
+          "Ask for a simple query example.",
+          "Listen for both query speed and write/storage cost."
+        ],
+        "commonMistakes": [
+          "Treating indexes as free performance.",
+          "Indexing every field without access-pattern evidence."
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Nền tảng index MongoDB",
+        "displayQuestion": "Index trong MongoDB là gì, nó giúp query như thế nào, và khi thêm index bạn cần chấp nhận những chi phí nào?",
+        "displayIntent": "Kiểm tra tư duy index cơ bản và trade-off giữa read/write.",
+        "guidance": [
+          "Yêu cầu một ví dụ query đơn giản.",
+          "Lắng nghe cả lợi ích tốc độ query lẫn chi phí write/storage."
+        ],
+        "commonMistakes": [
+          "Xem index như hiệu năng miễn phí.",
+          "Index mọi field mà không có bằng chứng access pattern."
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "MongoDB index の基礎",
+        "displayQuestion": "MongoDB index とは何で、query をどう助け、index 追加時にどんな cost を考えますか。",
+        "displayIntent": "基本的な index reasoning と read/write trade-off を確認する。",
+        "guidance": [
+          "簡単な query example を使う。",
+          "query speed と write/storage cost の両方を聞く。"
+        ],
+        "commonMistakes": [
+          "index を無料の performance 改善と考える。",
+          "access pattern なしに全 field に index を作る。"
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "MongoDB Docs: Indexes",
+        "url": "https://www.mongodb.com/docs/manual/indexes/",
+        "note": "Used for index purpose and performance trade-offs."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "MONGODB_JR_SITU_SCHEMA_CHOICE_005",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "data"],
+    "levels": ["junior"],
+    "type": "situational",
+    "competencies": ["technical_fundamentals", "trade_off_analysis", "communication"],
+    "techTags": ["mongodb", "schema_design"],
+    "difficulty": 2,
+    "intent": "Evaluate whether the candidate can choose between embedding and referencing for a simple product model.",
+    "primaryQuestion": "You are modeling orders and order items in MongoDB. Would you embed the items inside the order document or reference them from another collection?",
+    "expectedSignals": [
+      "Starts from how orders and items are read and updated.",
+      "Chooses embedding when items are usually retrieved with the order and bounded in size.",
+      "Considers references if items are large, independently updated, or shared across many documents.",
+      "Mentions document growth and maximum document size as constraints."
+    ],
+    "redFlags": [
+      "Always embeds everything because MongoDB is document-based.",
+      "Always normalizes everything without considering read locality.",
+      "Ignores unbounded arrays and document growth."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Makes a contextual recommendation using read locality, update patterns, boundedness, and document growth constraints."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Chooses a reasonable design but misses one important constraint."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Gives a rule of thumb without asking about access patterns."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Cannot justify embedding versus referencing."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "What changes if an order can have tens of thousands of line items?",
+        "purpose": "Check bounded array and document growth reasoning."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "What query becomes easier with embedding, and what update can become harder?",
+        "purpose": "Surface concrete read/write trade-offs."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Embed or reference order items",
+        "displayQuestion": "You are modeling orders and order items in MongoDB. Would you embed the items inside the order document or reference them from another collection?",
+        "displayIntent": "Assess basic schema design trade-offs for embedding versus references.",
+        "guidance": [
+          "Ask the candidate to state assumptions about read and update patterns.",
+          "Look for boundedness and document growth concerns."
+        ],
+        "commonMistakes": [
+          "Treating embedding as always correct.",
+          "Ignoring very large or independently updated child records."
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Junior",
+          "type": "situational"
+        }
+      },
+      "vi": {
+        "title": "Embed hay reference order items",
+        "displayQuestion": "Bạn đang modeling orders và order items trong MongoDB. Bạn sẽ embed items vào order document hay reference từ collection khác?",
+        "displayIntent": "Đánh giá trade-off schema design cơ bản giữa embedding và reference.",
+        "guidance": [
+          "Yêu cầu ứng viên nêu giả định về read và update pattern.",
+          "Tìm tín hiệu về boundedness và document growth."
+        ],
+        "commonMistakes": [
+          "Xem embedding luôn là đúng.",
+          "Bỏ qua child record rất lớn hoặc được update độc lập."
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Junior",
+          "type": "situational"
+        }
+      },
+      "ja": {
+        "title": "order item を embed するか reference するか",
+        "displayQuestion": "MongoDB で orders と order items を model します。items を order document に embed しますか、それとも別 collection から reference しますか。",
+        "displayIntent": "embedding と reference の基本的な schema design trade-off を評価する。",
+        "guidance": [
+          "read/update pattern の仮定を話してもらう。",
+          "boundedness と document growth に注意する。"
+        ],
+        "commonMistakes": [
+          "embedding が常に正しいと考える。",
+          "非常に大きい、または独立更新される child record を無視する。"
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Junior",
+          "type": "situational"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "MongoDB Docs: Embedded Data Models",
+        "url": "https://www.mongodb.com/docs/manual/data-modeling/concepts/embedding-vs-references/#embedded-data-models",
+        "note": "Used for embedding guidance."
+      },
+      {
+        "label": "MongoDB Docs: References",
+        "url": "https://www.mongodb.com/docs/manual/data-modeling/concepts/embedding-vs-references/#references",
+        "note": "Used for reference model trade-offs."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "MONGODB_JR_TECH_AGGREGATION_BASICS_006",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "data"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving"],
+    "techTags": ["mongodb"],
+    "difficulty": 2,
+    "intent": "Check whether the candidate understands the aggregation pipeline as ordered data transformation stages.",
+    "primaryQuestion": "What is the MongoDB aggregation pipeline, and how would you use $match, $group, and $sort to calculate daily order revenue?",
+    "expectedSignals": [
+      "Explains aggregation as a sequence of stages where documents flow through transformations.",
+      "Uses $match early to filter relevant orders.",
+      "Groups by a date bucket and sums order amounts.",
+      "Sorts results and considers date/timezone boundaries at a basic level."
+    ],
+    "redFlags": [
+      "Confuses aggregation with only counting documents.",
+      "Places expensive grouping before obvious filtering without reasoning.",
+      "Cannot describe what $group outputs."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Builds a sensible pipeline and explains stage order, grouping key, sum, and date boundary assumptions."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands pipeline stages but misses timezone or stage-order nuance."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Names stages but cannot connect them into a working pipeline."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "No clear aggregation pipeline understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "Why would you usually put $match before $group?",
+        "purpose": "Check stage ordering and performance intuition."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "How would timezone affect a daily revenue report?",
+        "purpose": "Surface practical reporting correctness."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Aggregation pipeline basics",
+        "displayQuestion": "What is the MongoDB aggregation pipeline, and how would you use $match, $group, and $sort to calculate daily order revenue?",
+        "displayIntent": "Check basic aggregation pipeline understanding.",
+        "guidance": [
+          "Focus on stage order and data shape after each stage.",
+          "Ask for a daily revenue example."
+        ],
+        "commonMistakes": [
+          "Grouping before filtering without reason.",
+          "Ignoring date boundaries in reporting."
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Nền tảng aggregation pipeline",
+        "displayQuestion": "Aggregation pipeline trong MongoDB là gì, và bạn sẽ dùng $match, $group, $sort như thế nào để tính doanh thu order theo ngày?",
+        "displayIntent": "Kiểm tra hiểu biết cơ bản về aggregation pipeline.",
+        "guidance": [
+          "Tập trung vào thứ tự stage và shape dữ liệu sau mỗi stage.",
+          "Yêu cầu ví dụ doanh thu theo ngày."
+        ],
+        "commonMistakes": [
+          "Group trước khi filter mà không có lý do.",
+          "Bỏ qua boundary ngày khi làm reporting."
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "aggregation pipeline の基礎",
+        "displayQuestion": "MongoDB aggregation pipeline とは何で、$match、$group、$sort を使って daily order revenue をどう計算しますか。",
+        "displayIntent": "aggregation pipeline の基本理解を確認する。",
+        "guidance": [
+          "stage order と各 stage 後の data shape に注目する。",
+          "daily revenue example を使う。"
+        ],
+        "commonMistakes": [
+          "理由なく filter 前に group する。",
+          "reporting で日付 boundary を無視する。"
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "MongoDB Docs: Aggregation Pipeline",
+        "url": "https://www.mongodb.com/docs/manual/core/aggregation-pipeline/",
+        "note": "Used for pipeline stage model."
+      },
+      {
+        "label": "MongoDB Docs: Aggregation Stages",
+        "url": "https://www.mongodb.com/docs/manual/reference/operator/aggregation-pipeline/",
+        "note": "Used for $match, $group, and $sort stage expectations."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "MONGODB_MID_TECH_COMPOUND_INDEX_007",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "data"],
+    "levels": ["mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking", "trade_off_analysis"],
+    "techTags": ["mongodb", "indexing"],
+    "difficulty": 3,
+    "intent": "Assess mid-level understanding of compound index ordering, query shape, sort support, and covered queries.",
+    "primaryQuestion": "For a collection of events queried by tenantId, status, createdAt range, and sorted by createdAt desc, how would you design a compound index and verify it is being used?",
+    "expectedSignals": [
+      "Chooses an index order based on equality predicates, range predicate, and sort requirement.",
+      "Explains why tenantId is usually a leading key in multi-tenant queries.",
+      "Uses explain plans to inspect IXSCAN, keys examined, documents examined, and sort behavior.",
+      "Mentions covered queries or projection when relevant."
+    ],
+    "redFlags": [
+      "Creates separate single-field indexes and assumes MongoDB will always combine them optimally.",
+      "Ignores sort direction and range placement.",
+      "Does not know how to verify query plan behavior."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Proposes a defensible compound index, explains key order trade-offs, and validates with explain metrics."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands compound indexes but is light on explain analysis or sort coverage."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows indexes help but cannot reason about compound key order."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "No practical index design or verification approach."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "What changes if status has very low cardinality but tenantId is highly selective?",
+        "purpose": "Check selectivity and key order reasoning."
+      },
+      {
+        "trigger": "missing_metric",
+        "question": "Which explain output fields would convince you the index improved the query?",
+        "purpose": "Verify plan inspection depth."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Compound index for event queries",
+        "displayQuestion": "For a collection of events queried by tenantId, status, createdAt range, and sorted by createdAt desc, how would you design a compound index and verify it is being used?",
+        "displayIntent": "Evaluate compound index design and query-plan verification.",
+        "guidance": [
+          "Ask the candidate to justify index key order.",
+          "Expect explain-plan evidence, not just index creation."
+        ],
+        "commonMistakes": [
+          "Relying only on many single-field indexes.",
+          "Ignoring sort and range interactions."
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Compound index cho event query",
+        "displayQuestion": "Với collection events được query theo tenantId, status, range createdAt và sort createdAt desc, bạn thiết kế compound index thế nào và xác minh nó được dùng ra sao?",
+        "displayIntent": "Đánh giá thiết kế compound index và kiểm chứng query plan.",
+        "guidance": [
+          "Yêu cầu ứng viên giải thích thứ tự field trong index.",
+          "Cần bằng chứng từ explain plan, không chỉ nói tạo index."
+        ],
+        "commonMistakes": [
+          "Chỉ dựa vào nhiều single-field index.",
+          "Bỏ qua tương tác giữa sort và range."
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "event query 向け compound index",
+        "displayQuestion": "tenantId、status、createdAt range で query し createdAt desc で sort する events collection に、どんな compound index を作り、使用をどう確認しますか。",
+        "displayIntent": "compound index design と query plan verification を評価する。",
+        "guidance": [
+          "index key order の理由を説明してもらう。",
+          "index 作成だけでなく explain plan の証拠を期待する。"
+        ],
+        "commonMistakes": [
+          "多数の single-field index だけに頼る。",
+          "sort と range の相互作用を無視する。"
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "MongoDB Docs: Compound Indexes",
+        "url": "https://www.mongodb.com/docs/manual/core/indexes/index-types/index-compound/",
+        "note": "Used for compound index and prefix behavior."
+      },
+      {
+        "label": "MongoDB Docs: Explain Results",
+        "url": "https://www.mongodb.com/docs/manual/reference/explain-results/",
+        "note": "Used for query plan verification signals."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "MONGODB_MID_DEBUG_SLOW_QUERY_008",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "data", "devops"],
+    "levels": ["mid"],
+    "type": "debugging",
+    "competencies": ["problem_solving", "technical_fundamentals", "ownership"],
+    "techTags": ["mongodb", "indexing", "logging"],
+    "difficulty": 3,
+    "intent": "Evaluate systematic diagnosis of a slow MongoDB query in production.",
+    "primaryQuestion": "A MongoDB endpoint changed from 80 ms to 3 seconds after data growth. How would you diagnose whether the issue is index design, query shape, or data distribution?",
+    "expectedSignals": [
+      "Captures the exact query, parameters, projection, sort, and collection size.",
+      "Uses explain execution stats or profiler/slow query logs to compare keys examined, docs examined, and execution time.",
+      "Checks whether the query performs COLLSCAN, blocking sort, or reads too many documents.",
+      "Considers data skew, tenant distribution, and changes in cardinality after growth."
+    ],
+    "redFlags": [
+      "Adds an index blindly without measuring the current plan.",
+      "Benchmarks with a tiny local dataset only.",
+      "Ignores parameter values and data skew."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Runs a measured investigation from query capture to plan analysis, data distribution, fix, and validation."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Good explain-based debugging but limited discussion of data growth or skew."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Mentions indexes but lacks a systematic production diagnosis."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "No concrete evidence-gathering path."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_metric",
+        "question": "Which before-and-after metrics would prove your fix worked?",
+        "purpose": "Check validation discipline."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "Why can the same query shape be fast for one tenant and slow for another?",
+        "purpose": "Assess data skew understanding."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Diagnose slow MongoDB query",
+        "displayQuestion": "A MongoDB endpoint changed from 80 ms to 3 seconds after data growth. How would you diagnose whether the issue is index design, query shape, or data distribution?",
+        "displayIntent": "Evaluate production slow-query debugging.",
+        "guidance": [
+          "Look for evidence from explain, logs, or profiler.",
+          "Ask how the candidate validates the fix after deployment."
+        ],
+        "commonMistakes": [
+          "Creating indexes without reading the query plan.",
+          "Testing only with small local data."
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Mid-level",
+          "type": "debugging"
+        }
+      },
+      "vi": {
+        "title": "Diagnose query MongoDB chậm",
+        "displayQuestion": "Một endpoint MongoDB tăng từ 80 ms lên 3 giây sau khi dữ liệu lớn lên. Bạn diagnose thế nào để biết vấn đề nằm ở index design, query shape hay data distribution?",
+        "displayIntent": "Đánh giá khả năng debug slow query trong production.",
+        "guidance": [
+          "Tìm bằng chứng từ explain, log hoặc profiler.",
+          "Hỏi cách ứng viên validate fix sau khi deploy."
+        ],
+        "commonMistakes": [
+          "Tạo index mà không đọc query plan.",
+          "Chỉ test với dữ liệu local nhỏ."
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Mid-level",
+          "type": "debugging"
+        }
+      },
+      "ja": {
+        "title": "遅い MongoDB query の診断",
+        "displayQuestion": "data growth 後、MongoDB endpoint が 80 ms から 3 秒になりました。index design、query shape、data distribution のどこが原因かどう診断しますか。",
+        "displayIntent": "production slow query debugging を評価する。",
+        "guidance": [
+          "explain、log、profiler から証拠を探す。",
+          "deploy 後に fix をどう検証するか聞く。"
+        ],
+        "commonMistakes": [
+          "query plan を読まずに index を作る。",
+          "小さい local data だけで test する。"
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Mid-level",
+          "type": "debugging"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "MongoDB Docs: Analyze Query Performance",
+        "url": "https://www.mongodb.com/docs/manual/tutorial/analyze-query-plan/",
+        "note": "Used for explain-based slow query diagnosis."
+      },
+      {
+        "label": "MongoDB Docs: Database Profiler",
+        "url": "https://www.mongodb.com/docs/manual/tutorial/manage-the-database-profiler/",
+        "note": "Used for slow query observation techniques."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "MONGODB_MID_TRADE_EMBED_REFERENCE_009",
+    "stages": ["stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack", "data"],
+    "levels": ["mid"],
+    "type": "trade_off",
+    "competencies": ["trade_off_analysis", "system_thinking", "technical_fundamentals"],
+    "techTags": ["mongodb", "schema_design"],
+    "difficulty": 3,
+    "intent": "Assess nuanced schema modeling for one-to-many and many-to-many relationships beyond basic embedding advice.",
+    "primaryQuestion": "For a product catalog with products, categories, variants, inventory, and reviews, what would you embed, what would you reference, and why?",
+    "expectedSignals": [
+      "Separates read-heavy product display data from frequently changing inventory or reviews.",
+      "Considers bounded versus unbounded arrays.",
+      "Mentions denormalization for read performance and the need to keep duplicated data consistent.",
+      "Explains how category and search/filter access patterns affect the model."
+    ],
+    "redFlags": [
+      "Embeds all reviews indefinitely inside the product document.",
+      "Normalizes everything and ignores product page read locality.",
+      "Does not discuss update frequency or consistency of duplicated fields."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Balances embedded snapshots, references, denormalization, growth limits, and update consistency with product-specific access patterns."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Reasonable modeling choices but some edge cases such as reviews or inventory are underdeveloped."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Applies a simple rule without considering query and update behavior."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "No clear model or trade-off explanation."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_tradeoff",
+        "question": "What duplicated data would you accept, and how would you keep it consistent enough?",
+        "purpose": "Check denormalization judgment."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "How would your model change if product reviews are paginated and can grow without bound?",
+        "purpose": "Test unbounded array reasoning."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Catalog schema trade-offs",
+        "displayQuestion": "For a product catalog with products, categories, variants, inventory, and reviews, what would you embed, what would you reference, and why?",
+        "displayIntent": "Assess nuanced MongoDB schema modeling for mixed access patterns.",
+        "guidance": [
+          "Ask for read and update patterns before accepting the design.",
+          "Expect discussion of denormalization and unbounded growth."
+        ],
+        "commonMistakes": [
+          "Embedding unbounded reviews in one product document.",
+          "Ignoring inventory update frequency."
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Mid-level",
+          "type": "trade_off"
+        }
+      },
+      "vi": {
+        "title": "Trade-off schema catalog",
+        "displayQuestion": "Với product catalog gồm products, categories, variants, inventory và reviews, bạn sẽ embed phần nào, reference phần nào, và vì sao?",
+        "displayIntent": "Đánh giá khả năng modeling MongoDB có nhiều access pattern khác nhau.",
+        "guidance": [
+          "Yêu cầu read và update pattern trước khi chấp nhận thiết kế.",
+          "Kỳ vọng thảo luận về denormalization và tăng trưởng không giới hạn."
+        ],
+        "commonMistakes": [
+          "Embed reviews không giới hạn trong một product document.",
+          "Bỏ qua tần suất update inventory."
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Mid-level",
+          "type": "trade_off"
+        }
+      },
+      "ja": {
+        "title": "catalog schema の trade-off",
+        "displayQuestion": "products、categories、variants、inventory、reviews を持つ product catalog で、何を embed し何を reference し、その理由は何ですか。",
+        "displayIntent": "複数 access pattern を持つ MongoDB schema modeling を評価する。",
+        "guidance": [
+          "design を評価する前に read/update pattern を聞く。",
+          "denormalization と unbounded growth の説明を期待する。"
+        ],
+        "commonMistakes": [
+          "unbounded reviews を 1 product document に embed する。",
+          "inventory update frequency を無視する。"
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Mid-level",
+          "type": "trade_off"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "MongoDB Docs: Data Model Design",
+        "url": "https://www.mongodb.com/docs/manual/data-modeling/schema-design-process/",
+        "note": "Used for access pattern and schema design process."
+      },
+      {
+        "label": "MongoDB Docs: Embedding vs References",
+        "url": "https://www.mongodb.com/docs/manual/data-modeling/concepts/embedding-vs-references/",
+        "note": "Used for relationship modeling trade-offs."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "MONGODB_MID_TECH_AGG_LOOKUP_GROUP_010",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "data"],
+    "levels": ["mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving", "system_thinking"],
+    "techTags": ["mongodb"],
+    "difficulty": 3,
+    "intent": "Evaluate aggregation pipeline depth including joins, grouping, unwinding arrays, and performance considerations.",
+    "primaryQuestion": "How would you build an aggregation that joins orders to customers, unwinds line items, groups revenue by customer segment, and keeps the pipeline performant?",
+    "expectedSignals": [
+      "Uses $lookup for collection joins and understands the join field requirements.",
+      "Uses $unwind when aggregating array elements such as line items.",
+      "Groups by customer segment and sums revenue correctly.",
+      "Pushes filtering and projection early and considers indexes on join/filter fields."
+    ],
+    "redFlags": [
+      "Performs N+1 queries from application code for a report that fits aggregation.",
+      "Uses $lookup without considering cardinality or indexes.",
+      "Cannot explain how $unwind changes document cardinality."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Describes a correct pipeline and performance controls around $match, $project, $lookup, $unwind, and $group."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Builds a plausible pipeline but performance reasoning is incomplete."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows aggregation terms but cannot reason through joins and arrays."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "No usable pipeline design."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "What happens to document count after $unwind, and why does that matter?",
+        "purpose": "Check array aggregation semantics."
+      },
+      {
+        "trigger": "missing_metric",
+        "question": "How would you inspect whether $lookup is the expensive stage?",
+        "purpose": "Assess explain and pipeline optimization knowledge."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Aggregation with lookup and group",
+        "displayQuestion": "How would you build an aggregation that joins orders to customers, unwinds line items, groups revenue by customer segment, and keeps the pipeline performant?",
+        "displayIntent": "Evaluate practical aggregation design with joins, arrays, grouping, and performance.",
+        "guidance": [
+          "Ask the candidate to describe stage order.",
+          "Listen for index and cardinality considerations."
+        ],
+        "commonMistakes": [
+          "Using application-side N+1 queries for a report.",
+          "Ignoring how $unwind multiplies rows."
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Aggregation với lookup và group",
+        "displayQuestion": "Bạn sẽ xây aggregation join orders với customers, unwind line items, group revenue theo customer segment và giữ pipeline performant như thế nào?",
+        "displayIntent": "Đánh giá thiết kế aggregation thực tế với join, array, grouping và performance.",
+        "guidance": [
+          "Yêu cầu ứng viên mô tả thứ tự stage.",
+          "Lắng nghe cân nhắc về index và cardinality."
+        ],
+        "commonMistakes": [
+          "Dùng N+1 query ở application cho báo cáo phù hợp với aggregation.",
+          "Bỏ qua việc $unwind làm nhân số document."
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "lookup と group を使う aggregation",
+        "displayQuestion": "orders と customers を join し、line items を unwind し、customer segment ごとに revenue を group し、pipeline を performant に保つにはどうしますか。",
+        "displayIntent": "join、array、grouping、performance を含む aggregation design を評価する。",
+        "guidance": [
+          "stage order を説明してもらう。",
+          "index と cardinality の考慮を確認する。"
+        ],
+        "commonMistakes": [
+          "report に application-side N+1 queries を使う。",
+          "$unwind が document 数を増やすことを無視する。"
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "MongoDB Docs: $lookup",
+        "url": "https://www.mongodb.com/docs/manual/reference/operator/aggregation/lookup/",
+        "note": "Used for aggregation join behavior."
+      },
+      {
+        "label": "MongoDB Docs: $unwind",
+        "url": "https://www.mongodb.com/docs/manual/reference/operator/aggregation/unwind/",
+        "note": "Used for array deconstruction behavior."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "MONGODB_MID_TECH_TRANSACTIONS_011",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "data"],
+    "levels": ["mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking", "trade_off_analysis"],
+    "techTags": ["mongodb", "transaction", "consistency"],
+    "difficulty": 3,
+    "intent": "Assess understanding of single-document atomicity, multi-document transactions, and when transactions are appropriate.",
+    "primaryQuestion": "MongoDB writes are atomic at what level, and when would you use a multi-document transaction instead of modeling data to update one document?",
+    "expectedSignals": [
+      "Knows single-document writes are atomic.",
+      "Uses multi-document transactions for invariants across multiple documents or collections.",
+      "Considers embedding or denormalization to keep common atomic updates within one document when appropriate.",
+      "Mentions retry/error handling and performance/latency overhead for transactions."
+    ],
+    "redFlags": [
+      "Assumes every MongoDB write across collections is automatically atomic.",
+      "Uses transactions for all writes without considering schema design.",
+      "Ignores transaction retries and failure handling."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains atomicity boundaries, transaction use cases, schema alternatives, and operational costs."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands transactions but misses retry or modeling trade-offs."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Has a partial idea of transactions but not MongoDB atomicity boundaries."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Cannot reason about consistency guarantees."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_tradeoff",
+        "question": "What would make you redesign the document model instead of adding a transaction?",
+        "purpose": "Check schema-versus-transaction judgment."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "What retry behavior should application code have around transient transaction errors?",
+        "purpose": "Assess operational transaction handling."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "MongoDB atomicity and transactions",
+        "displayQuestion": "MongoDB writes are atomic at what level, and when would you use a multi-document transaction instead of modeling data to update one document?",
+        "displayIntent": "Check consistency reasoning around single-document atomicity and multi-document transactions.",
+        "guidance": [
+          "Ask for a business invariant example.",
+          "Look for transaction costs and retry handling."
+        ],
+        "commonMistakes": [
+          "Assuming all cross-collection writes are automatically atomic.",
+          "Using transactions as a substitute for all schema design."
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Atomicity và transaction MongoDB",
+        "displayQuestion": "Write trong MongoDB atomic ở cấp nào, và khi nào bạn dùng multi-document transaction thay vì modeling dữ liệu để update trong một document?",
+        "displayIntent": "Kiểm tra tư duy consistency quanh single-document atomicity và multi-document transaction.",
+        "guidance": [
+          "Yêu cầu ví dụ về business invariant.",
+          "Tìm tín hiệu về chi phí transaction và retry handling."
+        ],
+        "commonMistakes": [
+          "Tưởng mọi write qua nhiều collection tự động atomic.",
+          "Dùng transaction thay cho mọi quyết định schema design."
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "MongoDB atomicity と transaction",
+        "displayQuestion": "MongoDB write はどの level で atomic ですか。1 document update に model する代わりに multi-document transaction を使うのはいつですか。",
+        "displayIntent": "single-document atomicity と multi-document transaction の consistency reasoning を確認する。",
+        "guidance": [
+          "business invariant の例を聞く。",
+          "transaction cost と retry handling を確認する。"
+        ],
+        "commonMistakes": [
+          "複数 collection への write が自動的に atomic だと思う。",
+          "schema design の代わりにすべて transaction を使う。"
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "MongoDB Docs: Transactions",
+        "url": "https://www.mongodb.com/docs/manual/core/transactions/",
+        "note": "Used for multi-document transaction semantics."
+      },
+      {
+        "label": "MongoDB Docs: Atomicity and Transactions",
+        "url": "https://www.mongodb.com/docs/manual/core/write-operations-atomicity/",
+        "note": "Used for single-document atomicity guidance."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "MONGODB_MID_DEBUG_WRITE_CONCERN_012",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "data", "devops"],
+    "levels": ["mid"],
+    "type": "debugging",
+    "competencies": ["problem_solving", "technical_fundamentals", "system_thinking"],
+    "techTags": ["mongodb", "consistency"],
+    "difficulty": 3,
+    "intent": "Evaluate debugging of perceived missing writes or stale reads using read/write concern and replication lag concepts.",
+    "primaryQuestion": "Users report that a saved change sometimes disappears for a few seconds after refresh. How would you investigate read preference, read concern, write concern, and replication lag?",
+    "expectedSignals": [
+      "Checks whether writes are acknowledged with an appropriate write concern.",
+      "Verifies if reads may be served from secondaries through read preference.",
+      "Considers replication lag and session/causal consistency for read-your-writes behavior.",
+      "Uses logs/metrics to compare primary writes and secondary read timing."
+    ],
+    "redFlags": [
+      "Assumes MongoDB lost data without checking read path and acknowledgment.",
+      "Ignores whether the app reads from secondaries.",
+      "Cannot distinguish write concern from read concern or read preference."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Connects the symptom to read/write concerns, read preference, replication lag, and concrete observability checks."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands replica lag and write acknowledgment but misses one consistency control."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows replication exists but cannot reason about stale reads."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "No reliable consistency debugging approach."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "What read preference would make stale reads more likely?",
+        "purpose": "Check read routing understanding."
+      },
+      {
+        "trigger": "missing_metric",
+        "question": "What metric or log would show replication lag during the incident?",
+        "purpose": "Verify evidence collection."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Debug stale MongoDB reads",
+        "displayQuestion": "Users report that a saved change sometimes disappears for a few seconds after refresh. How would you investigate read preference, read concern, write concern, and replication lag?",
+        "displayIntent": "Evaluate consistency debugging for stale reads or delayed visibility.",
+        "guidance": [
+          "Separate lost writes from stale reads.",
+          "Expect discussion of read path, write acknowledgment, and lag metrics."
+        ],
+        "commonMistakes": [
+          "Calling it data loss before checking read routing.",
+          "Confusing read concern, write concern, and read preference."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Mid-level",
+          "type": "debugging"
+        }
+      },
+      "vi": {
+        "title": "Debug stale read MongoDB",
+        "displayQuestion": "User báo rằng thay đổi đã lưu đôi khi biến mất vài giây sau khi refresh. Bạn điều tra read preference, read concern, write concern và replication lag như thế nào?",
+        "displayIntent": "Đánh giá debug consistency cho stale read hoặc visibility delay.",
+        "guidance": [
+          "Tách mất write thật khỏi stale read.",
+          "Kỳ vọng thảo luận về read path, write acknowledgment và lag metric."
+        ],
+        "commonMistakes": [
+          "Kết luận data loss trước khi kiểm tra read routing.",
+          "Nhầm read concern, write concern và read preference."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Mid-level",
+          "type": "debugging"
+        }
+      },
+      "ja": {
+        "title": "MongoDB stale read の debug",
+        "displayQuestion": "保存した変更が refresh 後に数秒だけ消えたように見えると user が報告しました。read preference、read concern、write concern、replication lag をどう調査しますか。",
+        "displayIntent": "stale read や delayed visibility の consistency debugging を評価する。",
+        "guidance": [
+          "lost write と stale read を分ける。",
+          "read path、write acknowledgment、lag metrics を確認する。"
+        ],
+        "commonMistakes": [
+          "read routing を確認せず data loss と判断する。",
+          "read concern、write concern、read preference を混同する。"
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Mid-level",
+          "type": "debugging"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "MongoDB Docs: Write Concern",
+        "url": "https://www.mongodb.com/docs/manual/reference/write-concern/",
+        "note": "Used for acknowledged write behavior."
+      },
+      {
+        "label": "MongoDB Docs: Read Preference",
+        "url": "https://www.mongodb.com/docs/manual/core/read-preference/",
+        "note": "Used for primary and secondary read routing."
+      },
+      {
+        "label": "MongoDB Docs: Read Concern",
+        "url": "https://www.mongodb.com/docs/manual/reference/read-concern/",
+        "note": "Used for read isolation and consistency behavior."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "MONGODB_MID_TRADE_TTL_ARCHIVE_013",
+    "stages": ["stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "data", "devops"],
+    "levels": ["mid"],
+    "type": "trade_off",
+    "competencies": ["trade_off_analysis", "system_thinking", "ownership"],
+    "techTags": ["mongodb", "indexing"],
+    "difficulty": 3,
+    "intent": "Assess ability to design retention and archiving behavior using TTL indexes and operational constraints.",
+    "primaryQuestion": "You need to keep session documents for 30 days and audit events for 7 years. Would you use TTL indexes, an archive job, or another design?",
+    "expectedSignals": [
+      "Uses TTL indexes for simple automatic expiration of time-based data such as sessions.",
+      "Recognizes audit data often has legal, reporting, and restore requirements that may need archiving instead of simple deletion.",
+      "Mentions TTL deletion is asynchronous and should not be treated as exact scheduling.",
+      "Considers indexes, storage growth, backup/restore, and query patterns for retained data."
+    ],
+    "redFlags": [
+      "Uses TTL for audit logs without discussing compliance or archive needs.",
+      "Assumes TTL deletes exactly at the expiration second.",
+      "Ignores backup and restore implications."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Separates ephemeral and regulated data, chooses TTL or archive deliberately, and covers operational constraints."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Good TTL understanding but compliance or operational details are thin."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows TTL exists but cannot choose a retention strategy."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "No practical retention design."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_tradeoff",
+        "question": "Why is TTL a good fit for sessions but risky as the only mechanism for audit records?",
+        "purpose": "Check retention policy nuance."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "How would your design support querying last year's audit events?",
+        "purpose": "Tie retention to access patterns."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "TTL versus archive retention",
+        "displayQuestion": "You need to keep session documents for 30 days and audit events for 7 years. Would you use TTL indexes, an archive job, or another design?",
+        "displayIntent": "Evaluate MongoDB retention design and TTL trade-offs.",
+        "guidance": [
+          "Separate ephemeral data from compliance-sensitive data.",
+          "Listen for asynchronous TTL deletion and archive query needs."
+        ],
+        "commonMistakes": [
+          "Using TTL for all retention problems.",
+          "Treating TTL deletion as exact scheduling."
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Mid-level",
+          "type": "trade_off"
+        }
+      },
+      "vi": {
+        "title": "TTL hay archive cho retention",
+        "displayQuestion": "Bạn cần giữ session documents trong 30 ngày và audit events trong 7 năm. Bạn sẽ dùng TTL index, archive job hay thiết kế khác?",
+        "displayIntent": "Đánh giá thiết kế retention và trade-off TTL trong MongoDB.",
+        "guidance": [
+          "Tách dữ liệu ephemeral khỏi dữ liệu nhạy với compliance.",
+          "Lắng nghe việc TTL delete bất đồng bộ và nhu cầu query archive."
+        ],
+        "commonMistakes": [
+          "Dùng TTL cho mọi bài toán retention.",
+          "Xem TTL deletion như lịch chạy chính xác tuyệt đối."
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Mid-level",
+          "type": "trade_off"
+        }
+      },
+      "ja": {
+        "title": "retention における TTL と archive",
+        "displayQuestion": "session documents は 30 日、audit events は 7 年保持する必要があります。TTL index、archive job、または別 design のどれを使いますか。",
+        "displayIntent": "MongoDB retention design と TTL trade-off を評価する。",
+        "guidance": [
+          "ephemeral data と compliance-sensitive data を分ける。",
+          "TTL deletion が非同期で archive query が必要な点を確認する。"
+        ],
+        "commonMistakes": [
+          "すべての retention 問題に TTL を使う。",
+          "TTL deletion を正確な scheduler と考える。"
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Mid-level",
+          "type": "trade_off"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "MongoDB Docs: TTL Indexes",
+        "url": "https://www.mongodb.com/docs/manual/core/index-ttl/",
+        "note": "Used for automatic expiration behavior and TTL constraints."
+      },
+      {
+        "label": "MongoDB Docs: Create TTL Indexes",
+        "url": "https://www.mongodb.com/docs/manual/tutorial/expire-data/",
+        "note": "Used for TTL implementation context."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "MONGODB_MID_CV_PROD_MIGRATION_014",
+    "stages": ["stage_4_cv_deep_dive"],
+    "roleFamilies": ["backend", "fullstack", "data", "devops"],
+    "levels": ["mid"],
+    "type": "cv_claim_verification",
+    "competencies": ["ownership", "problem_solving", "impact_measurement"],
+    "techTags": ["mongodb", "schema_design", "indexing"],
+    "difficulty": 3,
+    "intent": "Verify hands-on MongoDB migration experience from CV claims, including rollout, backfill, indexes, and validation.",
+    "primaryQuestion": "Your CV mentions migrating data or changing a MongoDB schema in production. What changed, how did you backfill safely, and how did you verify correctness and performance?",
+    "expectedSignals": [
+      "Describes the old and new schema or index design clearly.",
+      "Uses a safe rollout plan such as dual reads/writes, idempotent backfill, or feature flags when appropriate.",
+      "Mentions validation queries, sampling, counts, or checksums.",
+      "Measures performance impact before and after the migration."
+    ],
+    "redFlags": [
+      "Only says the team migrated without naming personal work.",
+      "No rollback or resume strategy for the backfill.",
+      "No correctness or performance validation."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Gives a concrete migration story with ownership, rollout safety, idempotency, validation, and measured outcome."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Real migration involvement but impact measurement or rollback is incomplete."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Likely participated but cannot explain the mechanics or evidence."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "CV claim cannot be validated."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "red_flag",
+        "question": "Which part of the migration decision or implementation was personally yours?",
+        "purpose": "Verify individual ownership."
+      },
+      {
+        "trigger": "missing_metric",
+        "question": "What metric proved the new schema or index was better?",
+        "purpose": "Recover impact evidence."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Verify MongoDB migration ownership",
+        "displayQuestion": "Your CV mentions migrating data or changing a MongoDB schema in production. What changed, how did you backfill safely, and how did you verify correctness and performance?",
+        "displayIntent": "Verify practical MongoDB production migration ownership.",
+        "guidance": [
+          "Ask for personal decisions and implementation details.",
+          "Expect rollout, validation, and measurable impact."
+        ],
+        "commonMistakes": [
+          "Using only 'we' language.",
+          "Skipping rollback, idempotency, or validation."
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Mid-level",
+          "type": "cv_claim_verification"
+        }
+      },
+      "vi": {
+        "title": "Xác minh ownership migration MongoDB",
+        "displayQuestion": "CV của bạn có nhắc tới migration dữ liệu hoặc đổi schema MongoDB trong production. Cụ thể thay đổi gì, bạn backfill an toàn thế nào, và verify correctness/performance ra sao?",
+        "displayIntent": "Xác minh ownership migration MongoDB thực tế trong production.",
+        "guidance": [
+          "Hỏi rõ quyết định và phần implement cá nhân.",
+          "Kỳ vọng rollout, validation và impact đo được."
+        ],
+        "commonMistakes": [
+          "Chỉ nói theo kiểu 'team/chúng tôi'.",
+          "Bỏ qua rollback, idempotency hoặc validation."
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Mid-level",
+          "type": "cv_claim_verification"
+        }
+      },
+      "ja": {
+        "title": "MongoDB migration ownership の確認",
+        "displayQuestion": "CV に production での data migration や MongoDB schema change とあります。何を変え、どう安全に backfill し、correctness と performance をどう検証しましたか。",
+        "displayIntent": "実際の MongoDB production migration ownership を確認する。",
+        "guidance": [
+          "個人の判断と実装詳細を聞く。",
+          "rollout、validation、measurable impact を期待する。"
+        ],
+        "commonMistakes": [
+          "「we」だけで話す。",
+          "rollback、idempotency、validation を省略する。"
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Mid-level",
+          "type": "cv_claim_verification"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "MongoDB Docs: Schema Validation",
+        "url": "https://www.mongodb.com/docs/manual/core/schema-validation/",
+        "note": "Used for schema correctness and validation discussion."
+      },
+      {
+        "label": "MongoDB Docs: Index Builds on Populated Collections",
+        "url": "https://www.mongodb.com/docs/manual/core/index-creation/",
+        "note": "Used for production index migration context."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "MONGODB_SR_TRADE_SHARD_KEY_015",
+    "stages": ["stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "data", "devops"],
+    "levels": ["senior"],
+    "type": "trade_off",
+    "competencies": ["trade_off_analysis", "system_thinking", "technical_fundamentals"],
+    "techTags": ["mongodb", "schema_design"],
+    "difficulty": 4,
+    "intent": "Evaluate senior-level judgment for sharding strategy, shard key selection, and operational trade-offs.",
+    "primaryQuestion": "You need to shard a multi-tenant MongoDB workload. How would you choose a shard key, and what failure modes would you watch for after rollout?",
+    "expectedSignals": [
+      "Evaluates query isolation, cardinality, frequency, and monotonic insert patterns.",
+      "Considers tenantId-based keys, compound shard keys, hashed keys, and zone/range needs.",
+      "Watches for jumbo chunks, hot shards, scatter-gather queries, and uneven storage or write distribution.",
+      "Plans rollout validation, metrics, and operational remediation."
+    ],
+    "redFlags": [
+      "Chooses a shard key only because it is unique without considering query routing.",
+      "Ignores monotonically increasing keys and hot shard risk.",
+      "Does not discuss shard key immutability or migration cost."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Balances routing, distribution, write patterns, operational constraints, and post-rollout monitoring."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Good shard key reasoning but misses one failure mode or rollout concern."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows sharding distributes data but cannot choose a key defensibly."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "No reliable sharding strategy."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_tradeoff",
+        "question": "When would tenantId alone be a bad shard key?",
+        "purpose": "Check skew and large-tenant reasoning."
+      },
+      {
+        "trigger": "missing_metric",
+        "question": "What cluster metrics would show that the shard key is creating hot shards?",
+        "purpose": "Verify operational observability."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Choose a MongoDB shard key",
+        "displayQuestion": "You need to shard a multi-tenant MongoDB workload. How would you choose a shard key, and what failure modes would you watch for after rollout?",
+        "displayIntent": "Evaluate senior sharding strategy and operational judgment.",
+        "guidance": [
+          "Ask for query routing and data distribution assumptions.",
+          "Expect post-rollout metrics and remediation options."
+        ],
+        "commonMistakes": [
+          "Choosing only the most unique field.",
+          "Ignoring hot shards and scatter-gather queries."
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Senior",
+          "type": "trade_off"
+        }
+      },
+      "vi": {
+        "title": "Chọn shard key MongoDB",
+        "displayQuestion": "Bạn cần shard một workload MongoDB multi-tenant. Bạn sẽ chọn shard key như thế nào, và sau rollout bạn theo dõi failure mode nào?",
+        "displayIntent": "Đánh giá chiến lược sharding và judgment vận hành ở mức senior.",
+        "guidance": [
+          "Hỏi giả định về query routing và data distribution.",
+          "Kỳ vọng metric sau rollout và phương án xử lý."
+        ],
+        "commonMistakes": [
+          "Chỉ chọn field unique nhất.",
+          "Bỏ qua hot shard và scatter-gather query."
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Senior",
+          "type": "trade_off"
+        }
+      },
+      "ja": {
+        "title": "MongoDB shard key の選択",
+        "displayQuestion": "multi-tenant MongoDB workload を shard する必要があります。shard key をどう選び、rollout 後にどんな failure mode を監視しますか。",
+        "displayIntent": "senior sharding strategy と operational judgment を評価する。",
+        "guidance": [
+          "query routing と data distribution の仮定を聞く。",
+          "post-rollout metrics と remediation を期待する。"
+        ],
+        "commonMistakes": [
+          "最も unique な field だけで選ぶ。",
+          "hot shards と scatter-gather queries を無視する。"
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Senior",
+          "type": "trade_off"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "MongoDB Docs: Choose a Shard Key",
+        "url": "https://www.mongodb.com/docs/manual/core/sharding-choose-a-shard-key/",
+        "note": "Used for shard key cardinality, frequency, and monotonicity considerations."
+      },
+      {
+        "label": "MongoDB Docs: Sharding",
+        "url": "https://www.mongodb.com/docs/manual/sharding/",
+        "note": "Used for sharded cluster concepts and operational failure modes."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "MONGODB_SR_TECH_REPLICA_CONSISTENCY_016",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "data", "devops"],
+    "levels": ["senior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking", "trade_off_analysis"],
+    "techTags": ["mongodb", "consistency"],
+    "difficulty": 4,
+    "intent": "Assess senior understanding of replica sets, elections, write durability, read routing, and application-level consistency expectations.",
+    "primaryQuestion": "How do MongoDB replica sets handle primary elections, write durability, and read-your-writes expectations in an application?",
+    "expectedSignals": [
+      "Explains primary/secondary replication and election behavior at a practical level.",
+      "Connects write concern majority to durability across voting members.",
+      "Explains how read preference and read concern affect stale reads and consistency.",
+      "Mentions retryable writes, failover handling, and application timeouts."
+    ],
+    "redFlags": [
+      "Assumes reads from any secondary are always current.",
+      "Confuses replication with sharding.",
+      "Ignores application behavior during elections or failover."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Connects replica set mechanics to concrete application guarantees, failover handling, and consistency choices."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands replica sets but misses one application-level consistency or failover detail."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows primary and secondary terms but cannot reason about guarantees."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "No reliable replication understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_tradeoff",
+        "question": "What latency and availability trade-off comes with majority write concern?",
+        "purpose": "Check durability trade-off reasoning."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "What should the application expect during a primary election?",
+        "purpose": "Assess failover behavior understanding."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Replica set consistency",
+        "displayQuestion": "How do MongoDB replica sets handle primary elections, write durability, and read-your-writes expectations in an application?",
+        "displayIntent": "Assess senior understanding of replication and application consistency behavior.",
+        "guidance": [
+          "Tie replica set internals to user-visible behavior.",
+          "Expect discussion of write concern, read preference, and failover."
+        ],
+        "commonMistakes": [
+          "Assuming secondary reads are always current.",
+          "Confusing replication with sharding."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Senior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Consistency trong replica set",
+        "displayQuestion": "Replica set MongoDB xử lý primary election, write durability và kỳ vọng read-your-writes trong application như thế nào?",
+        "displayIntent": "Đánh giá hiểu biết senior về replication và consistency nhìn từ application.",
+        "guidance": [
+          "Liên hệ cơ chế replica set với hành vi user nhìn thấy.",
+          "Kỳ vọng thảo luận về write concern, read preference và failover."
+        ],
+        "commonMistakes": [
+          "Tưởng read từ secondary luôn mới nhất.",
+          "Nhầm replication với sharding."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Senior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "replica set consistency",
+        "displayQuestion": "MongoDB replica set は primary election、write durability、application の read-your-writes 期待をどう扱いますか。",
+        "displayIntent": "replication と application consistency behavior の senior 理解を評価する。",
+        "guidance": [
+          "replica set internals と user-visible behavior を結びつける。",
+          "write concern、read preference、failover の説明を期待する。"
+        ],
+        "commonMistakes": [
+          "secondary read が常に最新だと思う。",
+          "replication と sharding を混同する。"
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Senior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "MongoDB Docs: Replica Set Elections",
+        "url": "https://www.mongodb.com/docs/manual/core/replica-set-elections/",
+        "note": "Used for election and failover behavior."
+      },
+      {
+        "label": "MongoDB Docs: Replica Set Data Synchronization",
+        "url": "https://www.mongodb.com/docs/manual/core/replica-set-sync/",
+        "note": "Used for primary-secondary replication behavior."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "MONGODB_SR_DEBUG_HOT_SHARD_017",
+    "stages": ["stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "data", "devops"],
+    "levels": ["senior"],
+    "type": "debugging",
+    "competencies": ["problem_solving", "system_thinking", "ownership"],
+    "techTags": ["mongodb", "indexing", "logging"],
+    "difficulty": 4,
+    "intent": "Evaluate senior operational debugging of hot shards, uneven load, and scatter-gather behavior in a sharded MongoDB cluster.",
+    "primaryQuestion": "After sharding, one shard receives most writes and some queries scatter across all shards. How would you diagnose and fix the issue?",
+    "expectedSignals": [
+      "Checks shard key distribution, chunk distribution, balancer state, and jumbo chunks.",
+      "Compares query filters to shard key prefixes to identify scatter-gather patterns.",
+      "Looks at per-shard CPU, IOPS, locks, queueing, and operation metrics.",
+      "Considers resharding, compound shard key changes, query changes, zone sharding, or data model changes."
+    ],
+    "redFlags": [
+      "Only adds more shards without addressing key distribution or query routing.",
+      "Ignores whether queries include the shard key.",
+      "Cannot explain hot shard symptoms with metrics."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Uses cluster metrics and query routing evidence to identify root cause and proposes realistic remediation options."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Good hot shard diagnosis but remediation trade-offs are incomplete."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows uneven load is bad but cannot diagnose it systematically."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "No practical sharded cluster debugging approach."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_metric",
+        "question": "Which per-shard metrics would you compare first?",
+        "purpose": "Check observability depth."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "What is the cost and risk of resharding compared with changing query patterns?",
+        "purpose": "Assess remediation judgment."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Debug hot shard behavior",
+        "displayQuestion": "After sharding, one shard receives most writes and some queries scatter across all shards. How would you diagnose and fix the issue?",
+        "displayIntent": "Evaluate senior debugging of hot shards and scatter-gather queries.",
+        "guidance": [
+          "Expect evidence from distribution, routing, and per-shard metrics.",
+          "Ask for remediation options and their risks."
+        ],
+        "commonMistakes": [
+          "Adding shards without fixing shard key or query routing.",
+          "Ignoring whether queries include shard key fields."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Senior",
+          "type": "debugging"
+        }
+      },
+      "vi": {
+        "title": "Debug hot shard",
+        "displayQuestion": "Sau khi sharding, một shard nhận phần lớn write và một số query scatter qua tất cả shard. Bạn diagnose và fix vấn đề này như thế nào?",
+        "displayIntent": "Đánh giá debug hot shard và scatter-gather query ở mức senior.",
+        "guidance": [
+          "Kỳ vọng bằng chứng từ distribution, routing và metric từng shard.",
+          "Hỏi các phương án xử lý và rủi ro tương ứng."
+        ],
+        "commonMistakes": [
+          "Thêm shard mà không sửa shard key hoặc query routing.",
+          "Bỏ qua việc query có field shard key hay không."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Senior",
+          "type": "debugging"
+        }
+      },
+      "ja": {
+        "title": "hot shard behavior の debug",
+        "displayQuestion": "sharding 後、1 shard に write が集中し、一部 query が全 shard に scatter しています。どう診断し修正しますか。",
+        "displayIntent": "hot shards と scatter-gather queries の senior debugging を評価する。",
+        "guidance": [
+          "distribution、routing、per-shard metrics の証拠を期待する。",
+          "remediation options と risk を聞く。"
+        ],
+        "commonMistakes": [
+          "shard key や query routing を直さず shard を追加する。",
+          "query が shard key fields を含むか無視する。"
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Senior",
+          "type": "debugging"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "MongoDB Docs: Sharded Cluster Query Routing",
+        "url": "https://www.mongodb.com/docs/manual/core/sharded-cluster-query-router/",
+        "note": "Used for targeted queries versus scatter-gather behavior."
+      },
+      {
+        "label": "MongoDB Docs: Sharded Cluster Balancer",
+        "url": "https://www.mongodb.com/docs/manual/core/sharding-balancer-administration/",
+        "note": "Used for balancing and chunk distribution context."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "MONGODB_SR_TRADE_MULTI_DOC_TXN_018",
+    "stages": ["stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "data"],
+    "levels": ["senior"],
+    "type": "trade_off",
+    "competencies": ["trade_off_analysis", "system_thinking", "technical_fundamentals"],
+    "techTags": ["mongodb", "transaction", "consistency"],
+    "difficulty": 4,
+    "intent": "Evaluate senior design trade-offs between MongoDB multi-document transactions, document modeling, idempotency, and event-driven consistency.",
+    "primaryQuestion": "For a checkout flow that updates inventory, creates an order, records payment state, and publishes events, where would you use MongoDB transactions, and where would you prefer idempotency or eventual consistency?",
+    "expectedSignals": [
+      "Identifies strong invariants that may require a transaction, such as avoiding oversell for a specific stock record.",
+      "Separates external payment calls from database transaction boundaries.",
+      "Uses idempotency keys and outbox/event patterns for reliable event publication.",
+      "Considers latency, lock duration, retries, and failure compensation."
+    ],
+    "redFlags": [
+      "Wraps external payment API calls inside a long database transaction.",
+      "Assumes transactions solve event publication reliability by themselves.",
+      "Ignores idempotency for retries and duplicate requests."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Draws clear consistency boundaries, uses transactions narrowly, and handles external side effects with idempotency/outbox thinking."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Good transaction judgment but event publication or payment failure handling is incomplete."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Uses transactions broadly without understanding side effects and retries."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Cannot reason about checkout consistency."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_tradeoff",
+        "question": "What should not be inside the MongoDB transaction, and why?",
+        "purpose": "Check boundary discipline."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "How would you prevent duplicate order creation if the client retries?",
+        "purpose": "Verify idempotency reasoning."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Checkout transaction boundaries",
+        "displayQuestion": "For a checkout flow that updates inventory, creates an order, records payment state, and publishes events, where would you use MongoDB transactions, and where would you prefer idempotency or eventual consistency?",
+        "displayIntent": "Evaluate senior consistency boundaries in a MongoDB-backed checkout design.",
+        "guidance": [
+          "Ask the candidate to separate database writes from external side effects.",
+          "Expect idempotency and event reliability discussion."
+        ],
+        "commonMistakes": [
+          "Putting external payment calls inside a database transaction.",
+          "Ignoring duplicate requests and retry behavior."
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Senior",
+          "type": "trade_off"
+        }
+      },
+      "vi": {
+        "title": "Boundary transaction cho checkout",
+        "displayQuestion": "Với checkout flow cần update inventory, tạo order, ghi payment state và publish events, phần nào bạn dùng MongoDB transaction, phần nào dùng idempotency hoặc eventual consistency?",
+        "displayIntent": "Đánh giá boundary consistency ở mức senior trong thiết kế checkout dùng MongoDB.",
+        "guidance": [
+          "Yêu cầu ứng viên tách database write khỏi external side effect.",
+          "Kỳ vọng thảo luận về idempotency và độ tin cậy event."
+        ],
+        "commonMistakes": [
+          "Đưa external payment call vào database transaction.",
+          "Bỏ qua duplicate request và retry behavior."
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Senior",
+          "type": "trade_off"
+        }
+      },
+      "ja": {
+        "title": "checkout transaction boundary",
+        "displayQuestion": "inventory update、order creation、payment state 記録、event publish を含む checkout flow で、どこに MongoDB transaction を使い、どこに idempotency や eventual consistency を使いますか。",
+        "displayIntent": "MongoDB-backed checkout design の senior consistency boundary を評価する。",
+        "guidance": [
+          "database writes と external side effects を分ける。",
+          "idempotency と event reliability の説明を期待する。"
+        ],
+        "commonMistakes": [
+          "external payment call を database transaction に入れる。",
+          "duplicate requests と retry behavior を無視する。"
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Senior",
+          "type": "trade_off"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "MongoDB Docs: Transactions Production Considerations",
+        "url": "https://www.mongodb.com/docs/manual/core/transactions-production-consideration/",
+        "note": "Used for transaction operational trade-offs."
+      },
+      {
+        "label": "MongoDB Docs: Retryable Writes",
+        "url": "https://www.mongodb.com/docs/manual/core/retryable-writes/",
+        "note": "Used for retry and idempotency discussion."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "MONGODB_SR_TECH_SCHEMA_EVOLUTION_019",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "data"],
+    "levels": ["senior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking", "ownership"],
+    "techTags": ["mongodb", "schema_design"],
+    "difficulty": 4,
+    "intent": "Assess senior approach to schema evolution, validation, backward compatibility, and mixed-version application deployments.",
+    "primaryQuestion": "How would you evolve a MongoDB document schema safely when old application versions may still read and write documents during a rolling deployment?",
+    "expectedSignals": [
+      "Designs backward-compatible reads and writes for mixed document versions.",
+      "Uses additive changes, default handling, and version fields or feature flags when useful.",
+      "Plans idempotent backfill and validation after readers are compatible.",
+      "Introduces schema validation carefully after data and application compatibility are proven."
+    ],
+    "redFlags": [
+      "Deploys a breaking schema change and backfill at the same time without compatibility plan.",
+      "Assumes all documents have the new fields immediately.",
+      "Adds strict validation before old writers are removed."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains a staged compatibility plan covering readers, writers, backfill, validation, rollback, and monitoring."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Good migration approach but misses validation timing or rollback."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Understands schema changes but not rolling deployment hazards."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "No safe schema evolution plan."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "How would old code behave when it sees a document already written in the new shape?",
+        "purpose": "Check backward compatibility."
+      },
+      {
+        "trigger": "missing_metric",
+        "question": "What validation would prove the backfill covered all affected documents?",
+        "purpose": "Assess data correctness checks."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Safe MongoDB schema evolution",
+        "displayQuestion": "How would you evolve a MongoDB document schema safely when old application versions may still read and write documents during a rolling deployment?",
+        "displayIntent": "Evaluate senior schema evolution and compatibility planning.",
+        "guidance": [
+          "Ask for a staged rollout sequence.",
+          "Expect compatibility, backfill, validation, and rollback discussion."
+        ],
+        "commonMistakes": [
+          "Assuming all data is instantly in the new shape.",
+          "Adding strict validation before old writers are gone."
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Senior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Evolve schema MongoDB an toàn",
+        "displayQuestion": "Bạn evolve schema document MongoDB an toàn như thế nào khi các version application cũ vẫn có thể read/write trong rolling deployment?",
+        "displayIntent": "Đánh giá kế hoạch schema evolution và compatibility ở mức senior.",
+        "guidance": [
+          "Yêu cầu trình tự rollout theo giai đoạn.",
+          "Kỳ vọng thảo luận về compatibility, backfill, validation và rollback."
+        ],
+        "commonMistakes": [
+          "Tưởng toàn bộ dữ liệu lập tức có shape mới.",
+          "Thêm strict validation trước khi writer cũ biến mất."
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Senior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "安全な MongoDB schema evolution",
+        "displayQuestion": "rolling deployment 中に古い application version が document を read/write する可能性がある場合、MongoDB document schema をどう安全に evolve しますか。",
+        "displayIntent": "senior schema evolution と compatibility planning を評価する。",
+        "guidance": [
+          "staged rollout sequence を聞く。",
+          "compatibility、backfill、validation、rollback の説明を期待する。"
+        ],
+        "commonMistakes": [
+          "すべての data が即座に新しい shape になると考える。",
+          "古い writer が残る前に strict validation を追加する。"
+        ],
+        "labels": {
+          "role": "Backend/Data",
+          "level": "Senior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "MongoDB Docs: Schema Validation",
+        "url": "https://www.mongodb.com/docs/manual/core/schema-validation/",
+        "note": "Used for validation timing and schema rules."
+      },
+      {
+        "label": "MongoDB Docs: Data Modeling Patterns",
+        "url": "https://www.mongodb.com/docs/manual/data-modeling/design-patterns/",
+        "note": "Used for schema evolution and modeling pattern context."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "MONGODB_SR_CV_INCIDENT_PERFORMANCE_020",
+    "stages": ["stage_4_cv_deep_dive"],
+    "roleFamilies": ["backend", "data", "devops"],
+    "levels": ["senior"],
+    "type": "cv_claim_verification",
+    "competencies": ["ownership", "problem_solving", "impact_measurement", "communication"],
+    "techTags": ["mongodb", "indexing", "logging"],
+    "difficulty": 4,
+    "intent": "Verify senior production ownership through a concrete MongoDB performance or reliability incident.",
+    "primaryQuestion": "Tell me about a serious MongoDB performance or reliability incident you owned. What was the symptom, root cause, mitigation, permanent fix, and measured outcome?",
+    "expectedSignals": [
+      "Frames the incident with user/business impact and timeline.",
+      "Uses evidence from metrics, logs, query plans, replication/sharding state, or deployment changes.",
+      "Distinguishes immediate mitigation from durable fix.",
+      "Provides measured outcome and prevention such as alerts, tests, runbooks, or capacity planning."
+    ],
+    "redFlags": [
+      "Gives a vague story with no concrete MongoDB signal.",
+      "Only blames infrastructure or another team.",
+      "Cannot explain the permanent fix or post-incident prevention."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Shows senior incident ownership with clear evidence, decision-making, communication, durable prevention, and measurable impact."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Real incident story but metrics, communication, or prevention detail is incomplete."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Participated in an incident but ownership and technical diagnosis are unclear."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Incident claim cannot be verified."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_metric",
+        "question": "What metric moved after the permanent fix, and what was the before/after value?",
+        "purpose": "Recover impact evidence."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "What decision did you personally make during the incident?",
+        "purpose": "Verify individual ownership."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Verify MongoDB incident ownership",
+        "displayQuestion": "Tell me about a serious MongoDB performance or reliability incident you owned. What was the symptom, root cause, mitigation, permanent fix, and measured outcome?",
+        "displayIntent": "Verify senior MongoDB production ownership through an incident story.",
+        "guidance": [
+          "Ask for timeline, evidence, and communication.",
+          "Separate mitigation from permanent prevention."
+        ],
+        "commonMistakes": [
+          "Giving a generic outage story with no MongoDB-specific signal.",
+          "Skipping measured outcome or prevention."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Senior",
+          "type": "cv_claim_verification"
+        }
+      },
+      "vi": {
+        "title": "Xác minh ownership incident MongoDB",
+        "displayQuestion": "Hãy kể về một incident nghiêm trọng về performance hoặc reliability MongoDB mà bạn owned. Symptom, root cause, mitigation, permanent fix và outcome đo được là gì?",
+        "displayIntent": "Xác minh ownership production MongoDB ở mức senior qua câu chuyện incident.",
+        "guidance": [
+          "Hỏi timeline, bằng chứng và communication.",
+          "Tách mitigation trước mắt khỏi prevention lâu dài."
+        ],
+        "commonMistakes": [
+          "Kể outage chung chung không có tín hiệu cụ thể của MongoDB.",
+          "Bỏ qua outcome đo được hoặc prevention."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Senior",
+          "type": "cv_claim_verification"
+        }
+      },
+      "ja": {
+        "title": "MongoDB incident ownership の確認",
+        "displayQuestion": "あなたが owner だった重大な MongoDB performance または reliability incident について話してください。symptom、root cause、mitigation、permanent fix、measured outcome は何でしたか。",
+        "displayIntent": "incident story を通じて senior MongoDB production ownership を確認する。",
+        "guidance": [
+          "timeline、evidence、communication を聞く。",
+          "mitigation と permanent prevention を分ける。"
+        ],
+        "commonMistakes": [
+          "MongoDB-specific signal のない一般的な outage story を話す。",
+          "measured outcome や prevention を省略する。"
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Senior",
+          "type": "cv_claim_verification"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "MongoDB Docs: Monitoring for MongoDB",
+        "url": "https://www.mongodb.com/docs/manual/administration/monitoring/",
+        "note": "Used for operational metrics and incident investigation context."
+      },
+      {
+        "label": "MongoDB Docs: Analyze Query Performance",
+        "url": "https://www.mongodb.com/docs/manual/tutorial/analyze-query-plan/",
+        "note": "Used for query-plan evidence during performance incidents."
+      }
+    ],
+    "status": "active"
+  }
+]

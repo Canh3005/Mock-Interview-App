@@ -1,0 +1,1232 @@
+[
+  {
+    "code": "GRPC_JR_TECH_CONTRACT_001",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "communication"],
+    "techTags": ["grpc"],
+    "difficulty": 2,
+    "intent": "Check whether the candidate can explain gRPC's service contract model, client stubs, server implementations, and why Protocol Buffers are commonly used as the IDL and message format.",
+    "primaryQuestion": "How would you explain the basic gRPC flow from a .proto service definition to a client calling a server method?",
+    "expectedSignals": [
+      "Explains that a .proto file defines services, RPC methods, request messages, and response messages.",
+      "Mentions generated client stubs and server interfaces or base classes.",
+      "Understands that the client calls a remote method through the stub while the server implements the service contract.",
+      "Connects Protocol Buffers to strongly typed, language-neutral message serialization rather than treating gRPC as plain JSON over HTTP."
+    ],
+    "redFlags": [
+      "Cannot distinguish the .proto contract from the runtime server implementation.",
+      "Describes gRPC as only a REST wrapper or only a serialization library.",
+      "Ignores code generation and type-safe request/response contracts."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Clearly walks through .proto definition, generated code, client stub call, server handler, serialized request/response, and status completion."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains service definitions and stubs but misses one runtime detail such as status or metadata."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows gRPC is for service communication but cannot explain the contract-to-code flow."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is mostly buzzwords and does not show practical gRPC basics."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "What files or classes would be generated from a simple Greeter .proto?",
+        "purpose": "Force concrete understanding of code generation and usage."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "What changes on the client if the server is written in a different programming language?",
+        "purpose": "Check language-neutral contract reasoning."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "gRPC contract and stub basics",
+        "displayQuestion": "How would you explain the basic gRPC flow from a .proto service definition to a client calling a server method?",
+        "displayIntent": "Check gRPC service contract, generated stubs, and Protocol Buffers fundamentals.",
+        "guidance": [
+          "Ask for the flow from .proto to generated code to runtime call.",
+          "Listen for a clear distinction between contract, generated client, and server implementation."
+        ],
+        "commonMistakes": [
+          "Describing gRPC as plain REST or only as serialization.",
+          "Skipping generated stubs and server service implementation."
+        ],
+        "labels": {
+          "role": "Backend",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Nền tảng contract và stub trong gRPC",
+        "displayQuestion": "Bạn giải thích luồng gRPC cơ bản từ một service definition trong file .proto đến lúc client gọi method trên server như thế nào?",
+        "displayIntent": "Kiểm tra nền tảng service contract, generated stub và Protocol Buffers trong gRPC.",
+        "guidance": [
+          "Yêu cầu ứng viên đi từ .proto tới generated code rồi tới runtime call.",
+          "Nghe xem ứng viên có tách rõ contract, generated client và server implementation hay không."
+        ],
+        "commonMistakes": [
+          "Mô tả gRPC như REST thông thường hoặc chỉ là cơ chế serialize.",
+          "Bỏ qua generated stub và phần implement service phía server."
+        ],
+        "labels": {
+          "role": "Backend",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "gRPC contract と stub の基礎",
+        "displayQuestion": ".proto の service definition から client が server method を呼ぶまでの基本的な gRPC flow をどう説明しますか。",
+        "displayIntent": "gRPC service contract、generated stubs、Protocol Buffers の基礎を確認する。",
+        "guidance": [
+          ".proto から generated code、runtime call までの流れを説明させる。",
+          "contract、generated client、server implementation の区別に注目する。"
+        ],
+        "commonMistakes": [
+          "gRPC を通常の REST や serialization だけとして説明する。",
+          "generated stub と server service implementation を省略する。"
+        ],
+        "labels": {
+          "role": "Backend",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "gRPC Docs: Introduction to gRPC",
+        "url": "https://grpc.io/docs/what-is-grpc/introduction/",
+        "note": "Used for the service definition, client stub, server implementation, and Protocol Buffers overview."
+      },
+      {
+        "label": "gRPC Docs: Core concepts, architecture and lifecycle",
+        "url": "https://grpc.io/docs/what-is-grpc/core-concepts/",
+        "note": "Used for service definition and RPC lifecycle concepts."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "GRPC_JR_TECH_RPC_TYPES_002",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking"],
+    "techTags": ["grpc"],
+    "difficulty": 2,
+    "intent": "Evaluate whether the candidate understands unary, server streaming, client streaming, and bidirectional streaming RPCs and can choose the right shape for a use case.",
+    "primaryQuestion": "What are the four gRPC RPC types, and when would you choose each one?",
+    "expectedSignals": [
+      "Identifies unary, server streaming, client streaming, and bidirectional streaming RPCs.",
+      "Maps unary to simple request/response interactions.",
+      "Maps server streaming to one request producing many ordered responses.",
+      "Maps client streaming or bidirectional streaming to uploads, live feeds, chat, telemetry, or interactive sessions."
+    ],
+    "redFlags": [
+      "Only knows unary RPC and treats all streaming as the same.",
+      "Cannot describe who sends many messages in each streaming mode.",
+      "Ignores ordering and stream completion semantics."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Accurately explains all four RPC shapes and gives realistic examples with completion and ordering behavior."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Names all four types and gives mostly correct examples but misses lifecycle nuance."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Understands request/response but confuses client, server, and bidirectional streaming."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not show reliable knowledge of gRPC RPC types."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "For a dashboard that receives live order updates, which RPC type would you use and why?",
+        "purpose": "Check whether the candidate can map RPC type to product behavior."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "In client streaming, when does the server normally send its response?",
+        "purpose": "Clarify stream lifecycle understanding."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "gRPC RPC type selection",
+        "displayQuestion": "What are the four gRPC RPC types, and when would you choose each one?",
+        "displayIntent": "Check practical understanding of unary and streaming RPC shapes.",
+        "guidance": [
+          "Ask for concrete use cases, not only definitions.",
+          "Listen for who sends one message versus many messages."
+        ],
+        "commonMistakes": [
+          "Treating all streaming modes as identical.",
+          "Using bidirectional streaming when unary or server streaming is enough."
+        ],
+        "labels": {
+          "role": "Backend",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Chọn loại RPC trong gRPC",
+        "displayQuestion": "Bốn loại RPC trong gRPC là gì, và khi nào bạn chọn từng loại?",
+        "displayIntent": "Kiểm tra hiểu biết thực tế về unary RPC và các dạng streaming RPC.",
+        "guidance": [
+          "Yêu cầu ví dụ use case cụ thể, không chỉ định nghĩa.",
+          "Nghe xem ứng viên phân biệt được bên nào gửi một message và bên nào gửi nhiều message."
+        ],
+        "commonMistakes": [
+          "Xem mọi dạng streaming là giống nhau.",
+          "Dùng bidirectional streaming trong khi unary hoặc server streaming đã đủ."
+        ],
+        "labels": {
+          "role": "Backend",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "gRPC RPC type の選択",
+        "displayQuestion": "gRPC の 4 つの RPC type は何で、それぞれいつ選びますか。",
+        "displayIntent": "unary と streaming RPC の実践的な理解を確認する。",
+        "guidance": [
+          "定義だけでなく具体的な use case を聞く。",
+          "どちら側が 1 message / 複数 message を送るかに注目する。"
+        ],
+        "commonMistakes": [
+          "すべての streaming mode を同じものとして扱う。",
+          "unary や server streaming で十分な場面に bidirectional streaming を使う。"
+        ],
+        "labels": {
+          "role": "Backend",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "gRPC Docs: Core concepts, architecture and lifecycle",
+        "url": "https://grpc.io/docs/what-is-grpc/core-concepts/",
+        "note": "Used for unary, server streaming, client streaming, bidirectional streaming, ordering, and lifecycle behavior."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "GRPC_JR_DEBUG_STATUS_DEADLINE_003",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "devops"],
+    "levels": ["junior"],
+    "type": "debugging",
+    "competencies": ["problem_solving", "technical_fundamentals", "ownership"],
+    "techTags": ["grpc", "logging"],
+    "difficulty": 2,
+    "intent": "Assess basic troubleshooting of gRPC failures using status codes, deadlines, logs, and client/server evidence.",
+    "primaryQuestion": "A gRPC client starts receiving DEADLINE_EXCEEDED and UNAVAILABLE errors after deployment. What would you check first?",
+    "expectedSignals": [
+      "Reads the exact status code, message, method name, deadline, and timing before changing code.",
+      "Separates DEADLINE_EXCEEDED from UNAVAILABLE and explains likely causes for each.",
+      "Checks client deadline configuration, server latency, network path, DNS, load balancer, and deployment health.",
+      "Uses logs, metrics, traces, or request IDs to compare client-side and server-side evidence."
+    ],
+    "redFlags": [
+      "Treats all gRPC failures as the same generic exception.",
+      "Only increases timeout without checking latency or availability evidence.",
+      "Retries non-idempotent calls blindly."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Uses status-specific diagnosis across deadline configuration, server latency, network availability, and deployment health with evidence."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Checks basic logs and timeout values but misses one layer such as load balancer or service health."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Mentions generic debugging but lacks gRPC status-code reasoning."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "No clear investigation sequence or gRPC-specific signals."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "What evidence would tell you the server completed work but the client deadline expired?",
+        "purpose": "Check client/server lifecycle understanding."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "When is retrying an UNAVAILABLE response unsafe?",
+        "purpose": "Check retry and idempotency awareness."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Debug gRPC status failures",
+        "displayQuestion": "A gRPC client starts receiving DEADLINE_EXCEEDED and UNAVAILABLE errors after deployment. What would you check first?",
+        "displayIntent": "Evaluate status-code-based debugging for gRPC failures.",
+        "guidance": [
+          "Expect the candidate to start from concrete error evidence.",
+          "Ask them to separate timeout, server latency, and availability causes."
+        ],
+        "commonMistakes": [
+          "Increasing deadlines without root cause evidence.",
+          "Blindly retrying all failed calls."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Junior",
+          "type": "debugging"
+        }
+      },
+      "vi": {
+        "title": "Debug lỗi status trong gRPC",
+        "displayQuestion": "Một gRPC client bắt đầu nhận lỗi DEADLINE_EXCEEDED và UNAVAILABLE sau khi deploy. Bạn sẽ kiểm tra gì trước?",
+        "displayIntent": "Đánh giá khả năng debug lỗi gRPC dựa trên status code.",
+        "guidance": [
+          "Kỳ vọng ứng viên bắt đầu từ bằng chứng lỗi cụ thể.",
+          "Yêu cầu tách nguyên nhân timeout, server latency và availability."
+        ],
+        "commonMistakes": [
+          "Tăng deadline mà không có bằng chứng root cause.",
+          "Retry mọi failed call một cách mù quáng."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Junior",
+          "type": "debugging"
+        }
+      },
+      "ja": {
+        "title": "gRPC status failure の debug",
+        "displayQuestion": "deploy 後に gRPC client が DEADLINE_EXCEEDED と UNAVAILABLE を受け始めました。最初に何を確認しますか。",
+        "displayIntent": "gRPC failure を status code ベースで debug できるか評価する。",
+        "guidance": [
+          "具体的な error evidence から始めることを期待する。",
+          "timeout、server latency、availability の原因を分けて説明させる。"
+        ],
+        "commonMistakes": [
+          "root cause の証拠なしに deadline だけを伸ばす。",
+          "すべての failed call を盲目的に retry する。"
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Junior",
+          "type": "debugging"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "gRPC Docs: Status Codes",
+        "url": "https://grpc.io/docs/guides/status-codes/",
+        "note": "Used for status code meanings including DEADLINE_EXCEEDED and UNAVAILABLE."
+      },
+      {
+        "label": "gRPC Docs: Deadlines",
+        "url": "https://grpc.io/docs/guides/deadlines/",
+        "note": "Used for deadline behavior, cancellation, and client/server timeout reasoning."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "GRPC_MID_TECH_PROTO_EVOLUTION_004",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking", "ownership"],
+    "techTags": ["grpc"],
+    "difficulty": 3,
+    "intent": "Evaluate whether the candidate can evolve Protocol Buffer contracts safely across independently deployed clients and servers.",
+    "primaryQuestion": "How would you change a gRPC .proto message safely when old clients and servers may still be running?",
+    "expectedSignals": [
+      "Uses additive, backward-compatible changes where possible.",
+      "Does not reuse or renumber field tags and reserves deleted field numbers and names.",
+      "Avoids changing field types or changing repeated fields to scalar fields.",
+      "Plans rollout across generated code, server compatibility, client compatibility, and validation before removing old fields."
+    ],
+    "redFlags": [
+      "Renumbers fields to make the schema look cleaner.",
+      "Deletes a field and immediately reuses its tag for a new meaning.",
+      "Assumes clients and servers are always deployed in lockstep."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains wire compatibility, reserved tags/names, additive rollout, generated code updates, and deprecation/removal sequencing."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands not to reuse field numbers but misses rollout or JSON/name compatibility details."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows .proto files can change but lacks compatibility rules."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "No safe schema evolution plan is demonstrated."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "red_flag",
+        "question": "Why is reusing a deleted protobuf field number dangerous?",
+        "purpose": "Verify wire-format compatibility understanding."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "What rollout sequence would you use if a response field must eventually be replaced?",
+        "purpose": "Check staged contract migration planning."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Safe protobuf schema evolution",
+        "displayQuestion": "How would you change a gRPC .proto message safely when old clients and servers may still be running?",
+        "displayIntent": "Check compatibility discipline for evolving protobuf contracts.",
+        "guidance": [
+          "Ask for concrete compatible and incompatible changes.",
+          "Expect a deployment sequence, not only schema rules."
+        ],
+        "commonMistakes": [
+          "Reusing field numbers or changing existing field meanings.",
+          "Assuming every client upgrades at the same time."
+        ],
+        "labels": {
+          "role": "Backend",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Evolve protobuf schema an toàn",
+        "displayQuestion": "Bạn thay đổi một message .proto của gRPC an toàn như thế nào khi client và server phiên bản cũ vẫn có thể đang chạy?",
+        "displayIntent": "Kiểm tra kỷ luật compatibility khi evolve protobuf contract.",
+        "guidance": [
+          "Yêu cầu ví dụ cụ thể về thay đổi compatible và incompatible.",
+          "Kỳ vọng có trình tự deployment, không chỉ nêu rule schema."
+        ],
+        "commonMistakes": [
+          "Reuse field number hoặc đổi ý nghĩa field cũ.",
+          "Giả định mọi client đều upgrade cùng lúc."
+        ],
+        "labels": {
+          "role": "Backend",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "安全な protobuf schema evolution",
+        "displayQuestion": "古い client と server がまだ動いている可能性があるとき、gRPC の .proto message をどう安全に変更しますか。",
+        "displayIntent": "protobuf contract を evolve する際の compatibility discipline を確認する。",
+        "guidance": [
+          "compatible / incompatible change の具体例を聞く。",
+          "schema rule だけでなく deployment sequence を期待する。"
+        ],
+        "commonMistakes": [
+          "field number を再利用したり既存 field の意味を変えたりする。",
+          "すべての client が同時に upgrade すると仮定する。"
+        ],
+        "labels": {
+          "role": "Backend",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Protocol Buffers Docs: Proto Best Practices",
+        "url": "https://protobuf.dev/best-practices/dos-donts/",
+        "note": "Used for field number reuse, reserved tags, type changes, required fields, and compatibility practices."
+      },
+      {
+        "label": "Protocol Buffers Docs: Language Guide proto3",
+        "url": "https://protobuf.dev/programming-guides/proto3/",
+        "note": "Used for field number rules and reserved field guidance."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "GRPC_MID_TECH_METADATA_AUTH_005",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "security"],
+    "levels": ["mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking", "communication"],
+    "techTags": ["grpc", "oauth2", "jwt"],
+    "difficulty": 3,
+    "intent": "Assess practical use of gRPC metadata for authentication, tracing, correlation, and response trailers without abusing it as a business payload channel.",
+    "primaryQuestion": "How would you use gRPC metadata for authentication and request correlation, and what should not go into metadata?",
+    "expectedSignals": [
+      "Explains metadata as RPC-associated key-value data often transmitted as HTTP/2 headers.",
+      "Uses metadata for auth tokens, tenant or correlation IDs, trace context, or server trailers when appropriate.",
+      "Avoids putting large business payloads, sensitive data without protection, or fields that belong in the protobuf request into metadata.",
+      "Mentions key constraints such as reserved grpc- prefix, ASCII keys, binary keys ending in -bin, and size/header limits."
+    ],
+    "redFlags": [
+      "Puts primary request data into metadata instead of typed protobuf messages.",
+      "Logs credentials or bearer tokens while debugging metadata.",
+      "Uses custom metadata names that collide with reserved gRPC headers."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Balances auth, tracing, and trailers with typed API design, security, key conventions, and operational limits."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands auth metadata but misses binary/size constraints or trailer usage."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows metadata exists but treats it like arbitrary request body data."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "No practical understanding of metadata usage is shown."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "Where would you carry a user ID used by business logic: metadata or the request message, and why?",
+        "purpose": "Check API boundary reasoning."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "How would you debug missing auth metadata without leaking secrets?",
+        "purpose": "Verify secure troubleshooting practice."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "gRPC metadata for auth and tracing",
+        "displayQuestion": "How would you use gRPC metadata for authentication and request correlation, and what should not go into metadata?",
+        "displayIntent": "Check practical metadata usage and boundaries.",
+        "guidance": [
+          "Expect examples such as auth, trace context, correlation IDs, and trailers.",
+          "Probe for security and typed request-body boundaries."
+        ],
+        "commonMistakes": [
+          "Using metadata as an untyped business payload channel.",
+          "Logging tokens or ignoring reserved key conventions."
+        ],
+        "labels": {
+          "role": "Backend/Security",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Metadata gRPC cho auth và tracing",
+        "displayQuestion": "Bạn dùng gRPC metadata cho authentication và request correlation như thế nào, và những gì không nên đưa vào metadata?",
+        "displayIntent": "Kiểm tra cách dùng metadata thực tế và boundary của metadata.",
+        "guidance": [
+          "Kỳ vọng ví dụ như auth, trace context, correlation ID và trailer.",
+          "Đào sâu security và ranh giới giữa metadata với typed request body."
+        ],
+        "commonMistakes": [
+          "Dùng metadata như kênh payload nghiệp vụ không type.",
+          "Log token hoặc bỏ qua convention key reserved."
+        ],
+        "labels": {
+          "role": "Backend/Security",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "auth と tracing のための gRPC metadata",
+        "displayQuestion": "authentication と request correlation に gRPC metadata をどう使い、metadata に入れるべきでないものは何ですか。",
+        "displayIntent": "metadata の実践的な使い方と boundary を確認する。",
+        "guidance": [
+          "auth、trace context、correlation ID、trailer などの例を期待する。",
+          "security と typed request body との境界を掘り下げる。"
+        ],
+        "commonMistakes": [
+          "metadata を untyped な business payload channel として使う。",
+          "token を log したり reserved key convention を無視したりする。"
+        ],
+        "labels": {
+          "role": "Backend/Security",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "gRPC Docs: Metadata",
+        "url": "https://grpc.io/docs/guides/metadata/",
+        "note": "Used for metadata purpose, HTTP/2 header mapping, key conventions, and binary metadata."
+      },
+      {
+        "label": "gRPC Docs: Error handling",
+        "url": "https://grpc.io/docs/guides/error/",
+        "note": "Used for trailing metadata and richer error model context."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "GRPC_MID_DEBUG_STREAM_FLOW_006",
+    "stages": ["stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack", "devops"],
+    "levels": ["mid"],
+    "type": "debugging",
+    "competencies": ["problem_solving", "technical_fundamentals", "system_thinking"],
+    "techTags": ["grpc", "logging"],
+    "difficulty": 3,
+    "intent": "Evaluate debugging skill for streaming RPCs involving flow control, slow consumers, cancellation, memory growth, and read/write coordination.",
+    "primaryQuestion": "A bidirectional streaming gRPC endpoint works in tests but stalls or grows memory under production load. How would you diagnose it?",
+    "expectedSignals": [
+      "Checks whether either side is writing faster than the other side reads.",
+      "Understands that gRPC flow control can block writes and that streaming is sensitive to slow consumers.",
+      "Looks for missing cancellation handling, unbounded buffering, oversized messages, or failure to drain streams.",
+      "Uses per-stream metrics, message counts/sizes, deadlines, backpressure logs, and load-test reproduction."
+    ],
+    "redFlags": [
+      "Assumes streaming writes always mean messages have already been sent over the network.",
+      "Buffers every message in memory without a backpressure strategy.",
+      "Ignores cancellation or client disconnects in long-lived streams."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Systematically diagnoses flow control, slow readers, cancellation, buffering, message size, and reproduction under load."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Covers slow consumers and logs but misses one important layer such as cancellation or memory buffering."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Mentions generic performance debugging but lacks streaming-specific evidence."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "No credible diagnosis path for streaming stalls."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "How would you prove whether the server is blocked on write because the client is not reading fast enough?",
+        "purpose": "Check flow-control evidence gathering."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "What cleanup should happen when the client cancels a long-lived stream?",
+        "purpose": "Verify cancellation and resource management."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Debug gRPC streaming flow control",
+        "displayQuestion": "A bidirectional streaming gRPC endpoint works in tests but stalls or grows memory under production load. How would you diagnose it?",
+        "displayIntent": "Evaluate streaming RPC debugging with flow control and cancellation.",
+        "guidance": [
+          "Ask for evidence around slow consumers, blocked writes, and buffering.",
+          "Expect cancellation and resource cleanup to be included."
+        ],
+        "commonMistakes": [
+          "Treating stream writes as guaranteed network sends.",
+          "Ignoring backpressure and unbounded queues."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Mid-level",
+          "type": "debugging"
+        }
+      },
+      "vi": {
+        "title": "Debug flow control trong gRPC streaming",
+        "displayQuestion": "Một endpoint gRPC bidirectional streaming chạy ổn trong test nhưng bị stall hoặc tăng memory dưới production load. Bạn sẽ chẩn đoán thế nào?",
+        "displayIntent": "Đánh giá khả năng debug streaming RPC với flow control và cancellation.",
+        "guidance": [
+          "Hỏi bằng chứng về slow consumer, blocked write và buffering.",
+          "Kỳ vọng có xử lý cancellation và cleanup resource."
+        ],
+        "commonMistakes": [
+          "Xem stream write như việc message chắc chắn đã được gửi qua network.",
+          "Bỏ qua backpressure và queue không giới hạn."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Mid-level",
+          "type": "debugging"
+        }
+      },
+      "ja": {
+        "title": "gRPC streaming flow control の debug",
+        "displayQuestion": "bidirectional streaming gRPC endpoint が test では動くのに production load で stall したり memory が増えたりします。どう診断しますか。",
+        "displayIntent": "flow control と cancellation を含む streaming RPC debug 力を評価する。",
+        "guidance": [
+          "slow consumer、blocked write、buffering の証拠を聞く。",
+          "cancellation と resource cleanup を含めることを期待する。"
+        ],
+        "commonMistakes": [
+          "stream write を network send 完了と同一視する。",
+          "backpressure と unbounded queue を無視する。"
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Mid-level",
+          "type": "debugging"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "gRPC Docs: Flow Control",
+        "url": "https://grpc.io/docs/guides/flow-control/",
+        "note": "Used for flow control, blocked writes, receiver capacity, and streaming-specific deadlock risks."
+      },
+      {
+        "label": "gRPC Docs: Core concepts, architecture and lifecycle",
+        "url": "https://grpc.io/docs/what-is-grpc/core-concepts/",
+        "note": "Used for streaming lifecycle and cancellation behavior."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "GRPC_MID_TRADE_REST_GRPC_007",
+    "stages": ["stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["mid"],
+    "type": "trade_off",
+    "competencies": ["trade_off_analysis", "system_thinking", "communication"],
+    "techTags": ["grpc", "rest"],
+    "difficulty": 3,
+    "intent": "Assess whether the candidate can choose between gRPC and REST based on product, platform, compatibility, operations, and client constraints.",
+    "primaryQuestion": "When would you choose gRPC over REST for a service API, and when would REST still be the better choice?",
+    "expectedSignals": [
+      "Chooses gRPC for strongly typed internal service contracts, efficient binary messages, streaming, and polyglot generated clients.",
+      "Chooses REST/HTTP JSON for public browser-facing APIs, broad tooling compatibility, caching semantics, or simple resource-oriented APIs when appropriate.",
+      "Considers operational constraints such as proxies, load balancers, observability, gateway needs, and team familiarity.",
+      "Does not frame gRPC as universally faster or REST as obsolete."
+    ],
+    "redFlags": [
+      "Always chooses gRPC because it is newer or binary.",
+      "Ignores browser, gateway, proxy, or public API constraints.",
+      "Cannot describe any real downside of gRPC adoption."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Makes a context-sensitive choice covering contracts, streaming, performance, client ecosystem, operations, and migration cost."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Identifies core benefits and trade-offs but misses one practical adoption constraint."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows high-level differences but makes a technology-preference answer."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "No clear technical trade-off reasoning."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_tradeoff",
+        "question": "How would your answer change for a public API consumed by third-party frontend teams?",
+        "purpose": "Check client ecosystem and compatibility reasoning."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "What infrastructure would you verify before moving an existing internal REST API to gRPC?",
+        "purpose": "Probe operational adoption readiness."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "gRPC versus REST trade-off",
+        "displayQuestion": "When would you choose gRPC over REST for a service API, and when would REST still be the better choice?",
+        "displayIntent": "Evaluate practical API technology selection.",
+        "guidance": [
+          "Ask for context-specific constraints, not a winner-takes-all answer.",
+          "Expect both product/client and infrastructure considerations."
+        ],
+        "commonMistakes": [
+          "Choosing gRPC only because it is newer or binary.",
+          "Ignoring public API and browser compatibility needs."
+        ],
+        "labels": {
+          "role": "Backend",
+          "level": "Mid-level",
+          "type": "trade_off"
+        }
+      },
+      "vi": {
+        "title": "Trade-off gRPC và REST",
+        "displayQuestion": "Khi nào bạn chọn gRPC thay vì REST cho service API, và khi nào REST vẫn là lựa chọn tốt hơn?",
+        "displayIntent": "Đánh giá khả năng chọn công nghệ API theo bối cảnh thực tế.",
+        "guidance": [
+          "Hỏi constraint theo context, không chấp nhận câu trả lời kiểu công nghệ nào luôn thắng.",
+          "Kỳ vọng cân nhắc cả product/client và hạ tầng vận hành."
+        ],
+        "commonMistakes": [
+          "Chọn gRPC chỉ vì mới hơn hoặc dùng binary.",
+          "Bỏ qua nhu cầu public API và browser compatibility."
+        ],
+        "labels": {
+          "role": "Backend",
+          "level": "Mid-level",
+          "type": "trade_off"
+        }
+      },
+      "ja": {
+        "title": "gRPC と REST の trade-off",
+        "displayQuestion": "service API に gRPC を REST より選ぶのはどんな場合で、REST の方がよいのはどんな場合ですか。",
+        "displayIntent": "実践的な API technology selection を評価する。",
+        "guidance": [
+          "常にどちらかが勝つ回答ではなく context-specific constraint を聞く。",
+          "product/client と infrastructure の両方の考慮を期待する。"
+        ],
+        "commonMistakes": [
+          "新しい、または binary だからという理由だけで gRPC を選ぶ。",
+          "public API や browser compatibility を無視する。"
+        ],
+        "labels": {
+          "role": "Backend",
+          "level": "Mid-level",
+          "type": "trade_off"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "gRPC Docs: Introduction to gRPC",
+        "url": "https://grpc.io/docs/what-is-grpc/introduction/",
+        "note": "Used for gRPC contract, multi-language, and Protocol Buffers capabilities."
+      },
+      {
+        "label": "gRPC Blog: gRPC Load Balancing",
+        "url": "https://grpc.io/blog/grpc-load-balancing/",
+        "note": "Used for HTTP/2, multiplexing, binary protocol, and deployment considerations."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "GRPC_SR_TECH_RETRY_IDEMPOTENCY_008",
+    "stages": ["stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack", "devops"],
+    "levels": ["senior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking", "trade_off_analysis"],
+    "techTags": ["grpc", "idempotency"],
+    "difficulty": 4,
+    "intent": "Evaluate senior-level reliability design around gRPC retries, deadlines, idempotency, retryable status codes, service config, and server pushback.",
+    "primaryQuestion": "How would you design retry behavior for gRPC calls without causing duplicate side effects or overload?",
+    "expectedSignals": [
+      "Separates retry-safe idempotent operations from non-idempotent operations that need idempotency keys or different handling.",
+      "Uses realistic deadlines, retry budgets, exponential backoff, jitter, retryable status codes, and max attempts.",
+      "Understands that configured retries are per method and that transparent retries may occur only under limited safe conditions.",
+      "Considers server pushback, retry throttling, observability, and load amplification during incidents."
+    ],
+    "redFlags": [
+      "Retries every error code for every method.",
+      "Ignores duplicate writes, payment/order side effects, or at-least-once behavior.",
+      "Sets aggressive retry policies without deadline budgets or overload protection."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Designs method-specific retry policy with idempotency boundaries, deadline budgets, backoff/jitter, retry throttling, and metrics."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands idempotency and retryable transient failures but misses server pushback or observability."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Uses retries as a generic reliability fix without side-effect discipline."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "No safe retry strategy is demonstrated."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_tradeoff",
+        "question": "Which methods in an order service would you not retry automatically, and what would you use instead?",
+        "purpose": "Check side-effect and idempotency boundaries."
+      },
+      {
+        "trigger": "missing_metric",
+        "question": "What retry metrics would you alert on during a backend outage?",
+        "purpose": "Check operational reliability thinking."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Safe gRPC retry design",
+        "displayQuestion": "How would you design retry behavior for gRPC calls without causing duplicate side effects or overload?",
+        "displayIntent": "Evaluate senior reliability design for retries and idempotency.",
+        "guidance": [
+          "Ask for method-specific retry policy rather than global retry everywhere.",
+          "Expect idempotency, deadlines, backoff, throttling, and metrics."
+        ],
+        "commonMistakes": [
+          "Retrying non-idempotent writes blindly.",
+          "Creating retry storms with no budget or throttling."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Senior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Thiết kế retry gRPC an toàn",
+        "displayQuestion": "Bạn thiết kế retry behavior cho gRPC call như thế nào để không gây duplicate side effect hoặc overload?",
+        "displayIntent": "Đánh giá thiết kế reliability cấp senior cho retry và idempotency.",
+        "guidance": [
+          "Yêu cầu retry policy theo từng method, không retry global mọi nơi.",
+          "Kỳ vọng có idempotency, deadline, backoff, throttling và metrics."
+        ],
+        "commonMistakes": [
+          "Retry non-idempotent write một cách mù quáng.",
+          "Tạo retry storm vì không có budget hoặc throttling."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Senior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "安全な gRPC retry design",
+        "displayQuestion": "duplicate side effect や overload を起こさずに gRPC call の retry behavior をどう設計しますか。",
+        "displayIntent": "retry と idempotency に関する senior reliability design を評価する。",
+        "guidance": [
+          "全体一律ではなく method-specific retry policy を聞く。",
+          "idempotency、deadline、backoff、throttling、metrics を期待する。"
+        ],
+        "commonMistakes": [
+          "non-idempotent write を盲目的に retry する。",
+          "budget や throttling なしで retry storm を作る。"
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Senior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "gRPC Docs: Retry",
+        "url": "https://grpc.io/docs/guides/retry/",
+        "note": "Used for retry policy, transparent retry, backoff, retryable status codes, throttling, and retry observability."
+      },
+      {
+        "label": "gRPC Docs: Status Codes",
+        "url": "https://grpc.io/docs/guides/status-codes/",
+        "note": "Used for retry-sensitive status code semantics such as UNAVAILABLE and DEADLINE_EXCEEDED."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "GRPC_SR_DEBUG_LB_HEALTH_009",
+    "stages": ["stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "devops"],
+    "levels": ["senior"],
+    "type": "debugging",
+    "competencies": ["problem_solving", "system_thinking", "ownership", "impact_measurement"],
+    "techTags": ["grpc", "kubernetes", "prometheus"],
+    "difficulty": 4,
+    "intent": "Assess senior production debugging for gRPC load balancing, health checking, name resolution, connection reuse, and uneven traffic distribution.",
+    "primaryQuestion": "Traffic to a gRPC service is uneven: one backend is overloaded while others are healthy. How would you diagnose and fix it?",
+    "expectedSignals": [
+      "Checks load balancing policy, name resolution results, endpoint discovery, channel reuse, and connection behavior.",
+      "Understands that some policies such as pick_first may keep using one ready subchannel instead of spreading calls.",
+      "Verifies server health service behavior, readiness, graceful shutdown, and whether unhealthy backends are removed from traffic.",
+      "Uses per-backend metrics, client channel metrics, resolver logs, load balancer configuration, and controlled rollout verification."
+    ],
+    "redFlags": [
+      "Only scales up replicas without checking client-side load balancing behavior.",
+      "Assumes HTTP/1.1 load balancing behavior applies directly to long-lived HTTP/2 gRPC connections.",
+      "Ignores health checking or endpoint discovery state."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Connects uneven traffic to resolver, LB policy, HTTP/2 connection behavior, health checking, readiness, and metrics-backed remediation."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Good operational debugging flow but misses one senior concern such as graceful shutdown or channel policy."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Focuses only on server capacity and misses gRPC client/load-balancing behavior."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "No credible production diagnosis path."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "What would you inspect on the client channel or resolver to know which backends it can see?",
+        "purpose": "Probe name resolution and client-side LB evidence."
+      },
+      {
+        "trigger": "missing_metric",
+        "question": "What per-backend metric would prove traffic is balanced after the fix?",
+        "purpose": "Check outcome measurement."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Debug gRPC load balancing",
+        "displayQuestion": "Traffic to a gRPC service is uneven: one backend is overloaded while others are healthy. How would you diagnose and fix it?",
+        "displayIntent": "Evaluate production debugging of gRPC load balancing and health checking.",
+        "guidance": [
+          "Expect client-side and infrastructure-side evidence.",
+          "Ask how the candidate would verify the remediation."
+        ],
+        "commonMistakes": [
+          "Scaling replicas without checking channel or LB policy.",
+          "Ignoring long-lived HTTP/2 connection behavior."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Senior",
+          "type": "debugging"
+        }
+      },
+      "vi": {
+        "title": "Debug load balancing gRPC",
+        "displayQuestion": "Traffic tới một gRPC service bị lệch: một backend quá tải trong khi các backend khác vẫn khỏe. Bạn sẽ chẩn đoán và sửa thế nào?",
+        "displayIntent": "Đánh giá khả năng debug production về gRPC load balancing và health checking.",
+        "guidance": [
+          "Kỳ vọng bằng chứng từ cả client-side và infrastructure-side.",
+          "Hỏi cách ứng viên verify remediation."
+        ],
+        "commonMistakes": [
+          "Scale replica mà không kiểm tra channel hoặc LB policy.",
+          "Bỏ qua hành vi long-lived HTTP/2 connection."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Senior",
+          "type": "debugging"
+        }
+      },
+      "ja": {
+        "title": "gRPC load balancing の debug",
+        "displayQuestion": "gRPC service への traffic が偏り、1 つの backend だけ overload で他は healthy です。どう診断して修正しますか。",
+        "displayIntent": "gRPC load balancing と health checking の production debug を評価する。",
+        "guidance": [
+          "client-side と infrastructure-side の両方の evidence を期待する。",
+          "remediation をどう verify するか聞く。"
+        ],
+        "commonMistakes": [
+          "channel や LB policy を見ずに replica だけ増やす。",
+          "long-lived HTTP/2 connection behavior を無視する。"
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Senior",
+          "type": "debugging"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "gRPC Docs: Custom Load Balancing Policies",
+        "url": "https://grpc.io/docs/guides/custom-load-balancing/",
+        "note": "Used for name resolver, subchannel, policy responsibilities, and pick_first behavior."
+      },
+      {
+        "label": "gRPC Docs: Health Checking",
+        "url": "https://grpc.io/docs/guides/health-checking/",
+        "note": "Used for server health service, client health checking, and SERVING/NOT_SERVING behavior."
+      },
+      {
+        "label": "gRPC Blog: gRPC Load Balancing",
+        "url": "https://grpc.io/blog/grpc-load-balancing/",
+        "note": "Used for gRPC over HTTP/2 deployment and load balancing context."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "GRPC_SR_TRADE_PRODUCTION_API_010",
+    "stages": ["stage_4_cv_deep_dive"],
+    "roleFamilies": ["backend", "fullstack", "devops"],
+    "levels": ["senior"],
+    "type": "trade_off",
+    "competencies": ["system_thinking", "trade_off_analysis", "ownership", "impact_measurement"],
+    "techTags": ["grpc", "opentelemetry", "logging"],
+    "difficulty": 4,
+    "intent": "Verify senior judgment for owning a production gRPC API, including contract governance, deadlines, errors, observability, deployment safety, and operational readiness.",
+    "primaryQuestion": "You are taking ownership of a business-critical gRPC API. What production standards would you require before calling it ready?",
+    "expectedSignals": [
+      "Defines contract standards: stable .proto ownership, compatibility rules, generated client publishing, and version/deprecation policy.",
+      "Requires deadline defaults, cancellation handling, clear status code mapping, and consistent error details where supported.",
+      "Requires observability: per-method latency, status codes, message sizes, retry attempts, stream counts, traces, logs, and correlation metadata.",
+      "Includes operational readiness: health checks, load balancing behavior, graceful shutdown, rollout/rollback plan, capacity tests, and SLO or alert thresholds."
+    ],
+    "redFlags": [
+      "Focuses only on writing service handlers and ignores client contracts or operations.",
+      "No explicit deadline, cancellation, or status-code policy.",
+      "No measurable readiness criteria or production metrics."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Provides a complete production readiness checklist covering contract governance, reliability behavior, observability, rollout safety, and measurable SLOs."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Covers most readiness areas but misses one senior dimension such as contract publishing or rollback."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Gives a partial checklist focused on implementation details only."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Cannot define production ownership standards for gRPC."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_metric",
+        "question": "Which three per-method metrics would page you, and what would each imply?",
+        "purpose": "Recover measurable operational ownership."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "How would you decide whether to use rich error details versus simple status codes for this API?",
+        "purpose": "Probe error model and client compatibility trade-offs."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Production-ready gRPC API ownership",
+        "displayQuestion": "You are taking ownership of a business-critical gRPC API. What production standards would you require before calling it ready?",
+        "displayIntent": "Verify senior ownership of gRPC production readiness.",
+        "guidance": [
+          "Expect contract, reliability, observability, and rollout standards.",
+          "Ask for measurable readiness criteria, not only coding practices."
+        ],
+        "commonMistakes": [
+          "Only discussing handler implementation.",
+          "Skipping deadlines, status codes, metrics, and rollout safety."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Senior",
+          "type": "trade_off"
+        }
+      },
+      "vi": {
+        "title": "Ownership API gRPC production-ready",
+        "displayQuestion": "Bạn nhận ownership một gRPC API critical cho business. Trước khi xem API này production-ready, bạn yêu cầu những standard nào?",
+        "displayIntent": "Xác minh ownership cấp senior về production readiness cho gRPC.",
+        "guidance": [
+          "Kỳ vọng standard về contract, reliability, observability và rollout.",
+          "Hỏi tiêu chí readiness đo được, không chỉ coding practice."
+        ],
+        "commonMistakes": [
+          "Chỉ nói về implement handler.",
+          "Bỏ qua deadline, status code, metrics và rollout safety."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Senior",
+          "type": "trade_off"
+        }
+      },
+      "ja": {
+        "title": "production-ready gRPC API ownership",
+        "displayQuestion": "business-critical な gRPC API の ownership を持つことになりました。production-ready と呼ぶ前にどんな standard を要求しますか。",
+        "displayIntent": "gRPC production readiness に対する senior ownership を確認する。",
+        "guidance": [
+          "contract、reliability、observability、rollout standard を期待する。",
+          "coding practice だけでなく measurable readiness criteria を聞く。"
+        ],
+        "commonMistakes": [
+          "handler implementation だけを話す。",
+          "deadline、status code、metrics、rollout safety を省略する。"
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Senior",
+          "type": "trade_off"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "gRPC Docs: Deadlines",
+        "url": "https://grpc.io/docs/guides/deadlines/",
+        "note": "Used for deadline defaults, propagation, and cancellation behavior."
+      },
+      {
+        "label": "gRPC Docs: Error handling",
+        "url": "https://grpc.io/docs/guides/error/",
+        "note": "Used for standard and richer error models."
+      },
+      {
+        "label": "gRPC Docs: Retry",
+        "url": "https://grpc.io/docs/guides/retry/",
+        "note": "Used for retry metrics and reliability controls."
+      },
+      {
+        "label": "gRPC Docs: Health Checking",
+        "url": "https://grpc.io/docs/guides/health-checking/",
+        "note": "Used for readiness and health-check standards."
+      }
+    ],
+    "status": "active"
+  }
+]

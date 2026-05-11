@@ -1,0 +1,1277 @@
+[
+  {
+    "code": "EXPRESS_JR_TECH_ROUTING_001",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "communication"],
+    "techTags": ["express", "nodejs", "rest"],
+    "difficulty": 2,
+    "intent": "Check whether the candidate can explain Express routing, HTTP methods, path parameters, query strings, and response status shaping in a simple REST endpoint.",
+    "primaryQuestion": "How would you implement GET /users/:id in Express, read the path parameter and query options, and return the right HTTP response?",
+    "expectedSignals": [
+      "Uses an HTTP method route such as app.get or router.get with /users/:id.",
+      "Reads route parameters from req.params and optional filters from req.query.",
+      "Distinguishes not found, validation failure, and successful responses with appropriate status codes.",
+      "Avoids returning raw internal data that should not be exposed."
+    ],
+    "redFlags": [
+      "Confuses req.params, req.query, and req.body.",
+      "Always returns 200 even when the user is missing or the id is invalid.",
+      "Builds routes with manual string parsing instead of Express route parameters."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Walks through route declaration, parameter validation, data lookup, status code selection, and response shape with a concrete handler." },
+      { "scoreBand": "solid", "description": "Covers routing and params but misses one detail such as response sanitization or invalid id handling." },
+      { "scoreBand": "needs_work", "description": "Knows app.get but cannot explain request data sources or response status choices clearly." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer is too generic to validate practical Express routing knowledge." }
+    ],
+    "followUps": [
+      { "trigger": "vague_answer", "question": "Where exactly would userId and includePosts come from in req?", "purpose": "Verify route parameter versus query string understanding." },
+      { "trigger": "missing_context", "question": "What would you return if the id format is invalid versus valid but not found?", "purpose": "Check API contract and HTTP status reasoning." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Express route parameters and responses",
+        "displayQuestion": "How would you implement GET /users/:id in Express, read the path parameter and query options, and return the right HTTP response?",
+        "displayIntent": "Check practical routing, request data access, and response shaping.",
+        "guidance": ["Use a concrete GET /users/:id example.", "Explain params, query, validation, and status codes."],
+        "commonMistakes": ["Mixing up req.params and req.query.", "Returning 200 for every outcome."],
+        "labels": { "role": "Backend", "level": "Junior", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Route parameter và response trong Express",
+        "displayQuestion": "Bạn sẽ implement GET /users/:id trong Express như thế nào để đọc path parameter, query option và trả về HTTP response đúng?",
+        "displayIntent": "Kiểm tra khả năng dùng routing, đọc dữ liệu request và định hình response thực tế.",
+        "guidance": ["Dùng ví dụ cụ thể GET /users/:id.", "Giải thích params, query, validation và status code."],
+        "commonMistakes": ["Nhầm req.params với req.query.", "Luôn trả 200 cho mọi kết quả."],
+        "labels": { "role": "Backend", "level": "Junior", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "Express の route parameter と response",
+        "displayQuestion": "Express で GET /users/:id を実装し、path parameter と query option を読み取り、適切な HTTP response を返すにはどうしますか。",
+        "displayIntent": "routing、request data の取得、response 設計の実務理解を確認する。",
+        "guidance": ["GET /users/:id の具体例を使う。", "params、query、validation、status code を説明する。"],
+        "commonMistakes": ["req.params と req.query を混同する。", "すべての結果で 200 を返す。"],
+        "labels": { "role": "Backend", "level": "Junior", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Express docs: Routing", "url": "https://expressjs.com/en/guide/routing.html", "note": "Used for route methods, route paths, and route parameters." },
+      { "label": "Express 4.x API: Request and Response", "url": "https://expressjs.com/en/4x/api.html", "note": "Used for req.params, req.query, res.status, and res.json behavior." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_JR_TECH_MIDDLEWARE_ORDER_002",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving"],
+    "techTags": ["express", "nodejs", "rest"],
+    "difficulty": 2,
+    "intent": "Evaluate whether the candidate understands Express middleware as an ordered request-response pipeline and knows when to call next or end the response.",
+    "primaryQuestion": "In Express, what happens when a request passes through logging, JSON parsing, authentication, a route handler, and an error handler? Why does order matter?",
+    "expectedSignals": [
+      "Explains that middleware runs in registration order for matching paths.",
+      "States that middleware should either send a response or call next.",
+      "Places body parsing before routes that need req.body and auth before protected routes.",
+      "Understands that error-handling middleware is separate and usually registered after routes."
+    ],
+    "redFlags": [
+      "Believes middleware order is automatically optimized by Express.",
+      "Forgets next and leaves the request hanging.",
+      "Registers error handling or parsers in a position where they cannot affect the intended routes."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Accurately describes the full pipeline, short-circuit cases, next usage, and why registration order changes behavior." },
+      { "scoreBand": "solid", "description": "Understands ordered middleware and next but misses one special case such as error handlers." },
+      { "scoreBand": "needs_work", "description": "Can define middleware but cannot reason through a request flow." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer does not show practical middleware execution understanding." }
+    ],
+    "followUps": [
+      { "trigger": "red_flag", "question": "What happens if auth middleware neither sends a response nor calls next?", "purpose": "Check knowledge of hanging requests." },
+      { "trigger": "missing_context", "question": "Why would req.body be undefined if express.json is registered after the route?", "purpose": "Verify registration order reasoning." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Express middleware execution order",
+        "displayQuestion": "In Express, what happens when a request passes through logging, JSON parsing, authentication, a route handler, and an error handler? Why does order matter?",
+        "displayIntent": "Check middleware pipeline and next() fundamentals.",
+        "guidance": ["Walk through one request from app.use to route handler.", "Mention when middleware stops or passes control."],
+        "commonMistakes": ["Forgetting next().", "Registering middleware after routes that need it."],
+        "labels": { "role": "Backend", "level": "Junior", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Thứ tự chạy middleware Express",
+        "displayQuestion": "Trong Express, điều gì xảy ra khi request đi qua logging, JSON parser, authentication, route handler và error handler? Vì sao thứ tự quan trọng?",
+        "displayIntent": "Kiểm tra nền tảng middleware pipeline và next().",
+        "guidance": ["Đi qua một request từ app.use tới route handler.", "Nêu rõ khi nào middleware dừng hoặc chuyển quyền xử lý."],
+        "commonMistakes": ["Quên gọi next().", "Đăng ký middleware sau route cần dùng nó."],
+        "labels": { "role": "Backend", "level": "Junior", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "Express middleware の実行順序",
+        "displayQuestion": "Express で request が logging、JSON parsing、authentication、route handler、error handler を通るとき何が起きますか。なぜ順序が重要ですか。",
+        "displayIntent": "middleware pipeline と next() の基礎を確認する。",
+        "guidance": ["app.use から route handler まで 1 つの request を追う。", "middleware が停止する場合と次へ渡す場合を説明する。"],
+        "commonMistakes": ["next() を呼び忘れる。", "必要な route の後に middleware を登録する。"],
+        "labels": { "role": "Backend", "level": "Junior", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Express docs: Using middleware", "url": "https://expressjs.com/en/guide/using-middleware.html", "note": "Used for application-level middleware, router-level middleware, and middleware flow." },
+      { "label": "EasyInterview: Express middleware interview guide", "url": "https://easyinterview.me/blogs/the-interview-questions-that-matter/express-middleware-interview-guide", "note": "Used for interview topic coverage; probe wording rewritten." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_JR_TECH_BODY_PARSING_003",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "ownership"],
+    "techTags": ["express", "nodejs", "rest"],
+    "difficulty": 2,
+    "intent": "Check whether the candidate understands built-in body parsers, content types, size limits, and why request body values must be treated as untrusted input.",
+    "primaryQuestion": "When would you use express.json and express.urlencoded, what options would you configure, and why should req.body still be validated?",
+    "expectedSignals": [
+      "Explains that express.json parses JSON payloads and express.urlencoded parses form-style payloads.",
+      "Mentions content type matching and middleware order before routes.",
+      "Configures limits to reduce accidental or malicious large body impact.",
+      "Treats req.body as untrusted and validates types, required fields, and allowed values."
+    ],
+    "redFlags": [
+      "Assumes req.body is always trustworthy because Express parsed it.",
+      "Accepts unlimited payloads for public endpoints.",
+      "Uses the wrong parser for the content type or stacks parsers without understanding the resulting body shape."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Connects parser choice, Content-Type, limit configuration, validation, and endpoint-specific body contracts." },
+      { "scoreBand": "solid", "description": "Explains json and urlencoded usage but misses one security or operational detail." },
+      { "scoreBand": "needs_work", "description": "Knows to call express.json but cannot reason about limits or validation." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer does not demonstrate safe body parsing knowledge." }
+    ],
+    "followUps": [
+      { "trigger": "missing_tradeoff", "question": "What limit would you set for a login endpoint versus a file-upload endpoint?", "purpose": "Check endpoint-specific body size reasoning." },
+      { "trigger": "red_flag", "question": "Can req.body.foo.toString() fail even after express.json parsed the request?", "purpose": "Verify untrusted input awareness." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Body parsing and untrusted input",
+        "displayQuestion": "When would you use express.json and express.urlencoded, what options would you configure, and why should req.body still be validated?",
+        "displayIntent": "Check safe request body parsing and validation judgment.",
+        "guidance": ["Discuss parser type, Content-Type, middleware order, and limits.", "Tie validation to user-controlled input."],
+        "commonMistakes": ["Trusting parsed body data blindly.", "Leaving public JSON limits too large or unspecified."],
+        "labels": { "role": "Backend", "level": "Junior", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Parse body và dữ liệu không đáng tin",
+        "displayQuestion": "Khi nào bạn dùng express.json và express.urlencoded, bạn sẽ cấu hình option nào, và vì sao req.body vẫn phải được validate?",
+        "displayIntent": "Kiểm tra judgment về parse request body an toàn và validation.",
+        "guidance": ["Nói về loại parser, Content-Type, thứ tự middleware và giới hạn payload.", "Liên hệ validation với dữ liệu do user kiểm soát."],
+        "commonMistakes": ["Tin tưởng body đã parse một cách mù quáng.", "Để limit JSON public endpoint quá lớn hoặc không rõ ràng."],
+        "labels": { "role": "Backend", "level": "Junior", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "body parsing と信頼できない入力",
+        "displayQuestion": "express.json と express.urlencoded はいつ使い、どの option を設定し、なぜ req.body をさらに validate する必要がありますか。",
+        "displayIntent": "安全な request body parsing と validation 判断を確認する。",
+        "guidance": ["parser type、Content-Type、middleware order、limit を説明する。", "validation を user-controlled input と結びつける。"],
+        "commonMistakes": ["parse 済み body をそのまま信頼する。", "public endpoint の JSON limit を大きすぎるままにする。"],
+        "labels": { "role": "Backend", "level": "Junior", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Express 4.x API: express.json and express.urlencoded", "url": "https://expressjs.com/en/4x/api.html", "note": "Used for parser behavior, Content-Type matching, limit options, and untrusted req.body warning." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_JR_DEBUG_DOUBLE_SEND_004",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "debugging",
+    "competencies": ["problem_solving", "technical_fundamentals", "ownership"],
+    "techTags": ["express", "nodejs", "debugging"],
+    "difficulty": 2,
+    "intent": "Assess practical debugging of response lifecycle bugs such as sending multiple responses or calling next after a response has already been sent.",
+    "primaryQuestion": "An Express route sometimes throws 'Cannot set headers after they are sent to the client'. How would you debug and fix it?",
+    "expectedSignals": [
+      "Identifies multiple response paths as the likely cause.",
+      "Checks missing return statements after res.status(...).json(...) or res.redirect(...).",
+      "Mentions async branches that may both try to respond.",
+      "Uses res.headersSent carefully in error handlers and avoids continuing work after final response."
+    ],
+    "redFlags": [
+      "Tries to suppress the error without finding the second response.",
+      "Calls next after already sending a normal response.",
+      "Adds arbitrary timeouts or global flags instead of fixing control flow."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Explains response lifecycle, traces all branches, fixes control flow, and handles late async errors safely." },
+      { "scoreBand": "solid", "description": "Understands duplicate send bugs but misses one async or error-handler nuance." },
+      { "scoreBand": "needs_work", "description": "Recognizes headers are already sent but cannot locate or prevent the second response." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer is generic debugging without Express-specific lifecycle reasoning." }
+    ],
+    "followUps": [
+      { "trigger": "vague_answer", "question": "Show a small route where a missing return causes this bug.", "purpose": "Force concrete control-flow reasoning." },
+      { "trigger": "missing_context", "question": "What should an error handler do if res.headersSent is already true?", "purpose": "Check Express error lifecycle detail." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Debugging duplicate Express responses",
+        "displayQuestion": "An Express route sometimes throws 'Cannot set headers after they are sent to the client'. How would you debug and fix it?",
+        "displayIntent": "Check response lifecycle debugging and control-flow discipline.",
+        "guidance": ["Look for multiple response branches.", "Discuss missing returns, next usage, and late async failures."],
+        "commonMistakes": ["Ignoring the second response path.", "Calling next after sending the final response."],
+        "labels": { "role": "Backend", "level": "Junior", "type": "debugging" }
+      },
+      "vi": {
+        "title": "Debug duplicate response trong Express",
+        "displayQuestion": "Một Express route thỉnh thoảng báo 'Cannot set headers after they are sent to the client'. Bạn sẽ debug và sửa thế nào?",
+        "displayIntent": "Kiểm tra khả năng debug vòng đời response và kiểm soát control flow.",
+        "guidance": ["Tìm các nhánh gửi response nhiều lần.", "Nói về missing return, next usage và lỗi async xảy ra muộn."],
+        "commonMistakes": ["Bỏ qua nhánh gửi response thứ hai.", "Gọi next sau khi đã gửi final response."],
+        "labels": { "role": "Backend", "level": "Junior", "type": "debugging" }
+      },
+      "ja": {
+        "title": "Express の重複 response を debug する",
+        "displayQuestion": "Express route が時々 'Cannot set headers after they are sent to the client' を出します。どう debug して修正しますか。",
+        "displayIntent": "response lifecycle と control flow の debug 能力を確認する。",
+        "guidance": ["複数の response branch を探す。", "missing return、next usage、遅い async failure を説明する。"],
+        "commonMistakes": ["2 回目の response path を無視する。", "final response 後に next を呼ぶ。"],
+        "labels": { "role": "Backend", "level": "Junior", "type": "debugging" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Express 4.x API: res.headersSent", "url": "https://expressjs.com/en/4x/api.html", "note": "Used for response lifecycle and headersSent behavior." },
+      { "label": "Express docs: Error handling", "url": "https://expressjs.com/en/guide/error-handling.html", "note": "Used for delegating to default error handler after headers are sent." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_JR_TECH_ROUTER_MODULES_005",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking"],
+    "techTags": ["express", "nodejs", "rest"],
+    "difficulty": 2,
+    "intent": "Evaluate whether the candidate can organize Express routes using express.Router, mount paths, route-level middleware, and shared parameters.",
+    "primaryQuestion": "How would you split user and order APIs into Express routers, mount them under /api, and apply middleware only to protected routes?",
+    "expectedSignals": [
+      "Creates separate express.Router instances for feature route groups.",
+      "Mounts routers with app.use('/api/users', usersRouter) or similar.",
+      "Applies auth middleware at router or route level instead of globally when not needed.",
+      "Understands req.baseUrl, req.originalUrl, and mergeParams when nested routers need parent params."
+    ],
+    "redFlags": [
+      "Keeps all routes in one large file without explaining boundaries.",
+      "Applies authentication globally and breaks public health or login routes.",
+      "Does not understand how mounted paths combine with router paths."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Shows clean router composition, mount paths, protected route middleware, and nested parameter trade-offs." },
+      { "scoreBand": "solid", "description": "Understands router modules and mounting but misses nested params or route-level middleware nuance." },
+      { "scoreBand": "needs_work", "description": "Can create routes but cannot describe maintainable router organization." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer does not validate practical Express app structure knowledge." }
+    ],
+    "followUps": [
+      { "trigger": "missing_context", "question": "If orders are nested under /users/:userId/orders, how would the orders router access userId?", "purpose": "Check nested router parameter reasoning." },
+      { "trigger": "missing_tradeoff", "question": "When would you mount auth middleware on a whole router versus a single route?", "purpose": "Check middleware scope judgment." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Express router modularization",
+        "displayQuestion": "How would you split user and order APIs into Express routers, mount them under /api, and apply middleware only to protected routes?",
+        "displayIntent": "Check route organization with express.Router and scoped middleware.",
+        "guidance": ["Use usersRouter and ordersRouter examples.", "Explain mount paths and where auth middleware belongs."],
+        "commonMistakes": ["Putting every route in app.ts.", "Making all endpoints protected accidentally."],
+        "labels": { "role": "Backend", "level": "Junior", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Tách module router trong Express",
+        "displayQuestion": "Bạn sẽ tách API user và order thành các Express router, mount dưới /api và chỉ áp dụng middleware cho route cần bảo vệ như thế nào?",
+        "displayIntent": "Kiểm tra cách tổ chức route bằng express.Router và middleware theo scope.",
+        "guidance": ["Dùng ví dụ usersRouter và ordersRouter.", "Giải thích mount path và vị trí đặt auth middleware."],
+        "commonMistakes": ["Nhét mọi route vào app.ts.", "Vô tình bắt mọi endpoint đều phải auth."],
+        "labels": { "role": "Backend", "level": "Junior", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "Express router の module 分割",
+        "displayQuestion": "user API と order API を Express router に分け、/api 配下に mount し、保護が必要な route だけ middleware を適用するにはどうしますか。",
+        "displayIntent": "express.Router と scoped middleware による route organization を確認する。",
+        "guidance": ["usersRouter と ordersRouter の例を使う。", "mount path と auth middleware の位置を説明する。"],
+        "commonMistakes": ["すべての route を app.ts に置く。", "すべての endpoint を誤って protected にする。"],
+        "labels": { "role": "Backend", "level": "Junior", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Express 4.x API: express.Router", "url": "https://expressjs.com/en/4x/api.html", "note": "Used for Router creation, mount behavior, and mergeParams option." },
+      { "label": "Simplilearn: Express.js interview questions", "url": "https://www.simplilearn.com/express-js-interview-questions-article", "note": "Used for common interview coverage around route files; wording rewritten." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_MID_TECH_ERROR_HANDLING_006",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving", "ownership"],
+    "techTags": ["express", "nodejs", "rest"],
+    "difficulty": 3,
+    "intent": "Assess whether the candidate can design centralized Express error handling for synchronous errors, rejected promises, expected application errors, and safe response formatting.",
+    "primaryQuestion": "How would you design centralized error handling in an Express API so validation errors, not-found errors, and unexpected failures are handled consistently?",
+    "expectedSignals": [
+      "Uses a final error-handling middleware with the err, req, res, next signature.",
+      "Maps known application errors to stable status codes and response bodies.",
+      "Handles async route failures through try/catch with next(err) or Express 5 promise propagation.",
+      "Logs server-side details while avoiding leaking stack traces or secrets to clients."
+    ],
+    "redFlags": [
+      "Wraps every response in 200 with an error field.",
+      "Leaks err.stack or database details in production responses.",
+      "Assumes Express 4 automatically handles all async promise rejections."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Covers centralized mapping, async propagation, logging, production-safe response bodies, and headers-sent fallback." },
+      { "scoreBand": "solid", "description": "Understands error middleware and status mapping but misses Express 4 versus 5 async differences or logging details." },
+      { "scoreBand": "needs_work", "description": "Mentions try/catch but cannot show how errors reach the centralized handler." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer does not prove reliable production error handling knowledge." }
+    ],
+    "followUps": [
+      { "trigger": "missing_context", "question": "How does your answer change between Express 4 and Express 5 for an async route that throws?", "purpose": "Check version-specific async error handling." },
+      { "trigger": "red_flag", "question": "Which error fields should never be returned to an external client?", "purpose": "Check safe response boundaries." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Centralized Express error handling",
+        "displayQuestion": "How would you design centralized error handling in an Express API so validation errors, not-found errors, and unexpected failures are handled consistently?",
+        "displayIntent": "Check production-grade error propagation and response consistency.",
+        "guidance": ["Describe error middleware placement and signature.", "Explain error classification, logging, and client-safe responses."],
+        "commonMistakes": ["Returning 200 with error payloads.", "Leaking internal stack traces."],
+        "labels": { "role": "Backend", "level": "Mid-level", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Error handling tập trung trong Express",
+        "displayQuestion": "Bạn sẽ thiết kế error handling tập trung trong Express API thế nào để validation error, not-found error và unexpected failure được xử lý nhất quán?",
+        "displayIntent": "Kiểm tra error propagation và response consistency ở mức production.",
+        "guidance": ["Mô tả vị trí và signature của error middleware.", "Giải thích phân loại lỗi, logging và response an toàn cho client."],
+        "commonMistakes": ["Trả 200 kèm error payload.", "Lộ stack trace nội bộ."],
+        "labels": { "role": "Backend", "level": "Mid-level", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "Express の centralized error handling",
+        "displayQuestion": "Express API で validation error、not-found error、unexpected failure を一貫して処理する centralized error handling をどう設計しますか。",
+        "displayIntent": "production レベルの error propagation と response consistency を確認する。",
+        "guidance": ["error middleware の配置と signature を説明する。", "error classification、logging、client-safe response を説明する。"],
+        "commonMistakes": ["error payload を 200 で返す。", "内部 stack trace を漏らす。"],
+        "labels": { "role": "Backend", "level": "Mid-level", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Express docs: Error handling", "url": "https://expressjs.com/en/guide/error-handling.html", "note": "Used for error middleware signature, next(err), and default error handler behavior." },
+      { "label": "Express docs: Moving to Express 5", "url": "https://expressjs.com/en/guide/migrating-5.html", "note": "Used for rejected promise behavior in Express 5." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_MID_TECH_AUTH_MIDDLEWARE_007",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking", "ownership"],
+    "techTags": ["express", "nodejs", "rest"],
+    "difficulty": 3,
+    "intent": "Evaluate whether the candidate can build authentication and authorization middleware with clear request augmentation, error semantics, and route-level authorization.",
+    "primaryQuestion": "How would you implement Express middleware that authenticates a bearer token, attaches the current user, and enforces role-based access on selected routes?",
+    "expectedSignals": [
+      "Separates authentication from authorization checks.",
+      "Validates bearer token format, verifies the token, and handles expired or invalid credentials.",
+      "Attaches a minimal trusted user context to req for downstream handlers.",
+      "Uses 401 for unauthenticated and 403 for authenticated but unauthorized requests."
+    ],
+    "redFlags": [
+      "Stores full sensitive token claims or secrets on req.",
+      "Uses 403 and 401 interchangeably without explaining semantics.",
+      "Checks roles in controllers inconsistently instead of using a reusable policy or middleware."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Explains token parsing, verification, request context, route-scoped authorization, status semantics, and testing strategy." },
+      { "scoreBand": "solid", "description": "Covers auth middleware and roles but misses one detail such as context minimization or error semantics." },
+      { "scoreBand": "needs_work", "description": "Can sketch token verification but mixes authentication and authorization responsibilities." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer lacks enough detail to trust protected endpoint behavior." }
+    ],
+    "followUps": [
+      { "trigger": "missing_context", "question": "What exact fields would you put on req.user and which fields would you avoid?", "purpose": "Check safe request context design." },
+      { "trigger": "missing_tradeoff", "question": "When should authorization live in middleware versus inside the service layer?", "purpose": "Check boundary and policy reasoning." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Authentication and authorization middleware",
+        "displayQuestion": "How would you implement Express middleware that authenticates a bearer token, attaches the current user, and enforces role-based access on selected routes?",
+        "displayIntent": "Check protected route design and auth middleware boundaries.",
+        "guidance": ["Separate authentication from authorization.", "Discuss req.user shape, 401 versus 403, and route scope."],
+        "commonMistakes": ["Mixing 401 and 403.", "Leaking sensitive token data into downstream code."],
+        "labels": { "role": "Backend", "level": "Mid-level", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Middleware authentication và authorization",
+        "displayQuestion": "Bạn sẽ implement middleware Express để xác thực bearer token, gắn current user và enforce role-based access trên một số route như thế nào?",
+        "displayIntent": "Kiểm tra thiết kế protected route và ranh giới auth middleware.",
+        "guidance": ["Tách authentication khỏi authorization.", "Nói về shape của req.user, 401 so với 403 và scope route."],
+        "commonMistakes": ["Nhầm 401 với 403.", "Đưa dữ liệu token nhạy cảm xuống downstream code."],
+        "labels": { "role": "Backend", "level": "Mid-level", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "authentication と authorization middleware",
+        "displayQuestion": "bearer token を認証し、current user を付与し、選択した route で role-based access を強制する Express middleware をどう実装しますか。",
+        "displayIntent": "protected route 設計と auth middleware boundary を確認する。",
+        "guidance": ["authentication と authorization を分ける。", "req.user の形、401 と 403、route scope を説明する。"],
+        "commonMistakes": ["401 と 403 を混同する。", "sensitive token data を downstream code に渡す。"],
+        "labels": { "role": "Backend", "level": "Mid-level", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Express docs: Using middleware", "url": "https://expressjs.com/en/guide/using-middleware.html", "note": "Used for route-level and router-level middleware placement." },
+      { "label": "Express security best practices", "url": "https://expressjs.com/en/advanced/best-practice-security.html", "note": "Used for production security framing around sensitive data and authorization endpoints." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_MID_TRADE_VALIDATION_008",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["mid"],
+    "type": "trade_off",
+    "competencies": ["technical_fundamentals", "trade_off_analysis", "system_thinking"],
+    "techTags": ["express", "nodejs", "rest"],
+    "difficulty": 3,
+    "intent": "Assess whether the candidate can design request validation for Express APIs without mixing transport validation, business rules, and persistence constraints.",
+    "primaryQuestion": "Where would you put validation in an Express API, and how would you distinguish request shape validation from business rule validation?",
+    "expectedSignals": [
+      "Uses middleware or controller-adjacent validation for request shape, types, and required fields.",
+      "Keeps domain/business invariants in service or domain logic where they can be reused.",
+      "Returns consistent 400 or 422 style client errors with field-level details when appropriate.",
+      "Avoids trusting req.body, req.query, or req.params without validation and normalization."
+    ],
+    "redFlags": [
+      "Validates only on the frontend.",
+      "Places every business rule in generic middleware and loses domain context.",
+      "Lets database constraint errors become the main user-facing validation experience."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Separates transport schemas from domain rules, handles normalization, response details, and reuse across HTTP and non-HTTP callers." },
+      { "scoreBand": "solid", "description": "Understands middleware validation but misses one boundary such as service-level invariants." },
+      { "scoreBand": "needs_work", "description": "Knows validation is needed but cannot place it cleanly in the architecture." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer does not show reliable API validation design." }
+    ],
+    "followUps": [
+      { "trigger": "missing_tradeoff", "question": "Which validation rules should remain in the service even if you already validate with middleware?", "purpose": "Check business invariant reasoning." },
+      { "trigger": "missing_context", "question": "How would you return validation errors for multiple invalid fields?", "purpose": "Check response contract detail." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Validation boundaries in Express APIs",
+        "displayQuestion": "Where would you put validation in an Express API, and how would you distinguish request shape validation from business rule validation?",
+        "displayIntent": "Check validation placement and API boundary judgment.",
+        "guidance": ["Separate request schema validation from domain rules.", "Mention error response structure and normalization."],
+        "commonMistakes": ["Relying only on frontend validation.", "Treating database errors as the primary validation layer."],
+        "labels": { "role": "Backend", "level": "Mid-level", "type": "trade_off" }
+      },
+      "vi": {
+        "title": "Ranh giới validation trong Express API",
+        "displayQuestion": "Bạn sẽ đặt validation ở đâu trong Express API, và phân biệt validation shape của request với business rule như thế nào?",
+        "displayIntent": "Kiểm tra judgment về vị trí validation và ranh giới API.",
+        "guidance": ["Tách request schema validation khỏi domain rule.", "Nhắc tới cấu trúc error response và normalization."],
+        "commonMistakes": ["Chỉ dựa vào frontend validation.", "Coi database error là lớp validation chính."],
+        "labels": { "role": "Backend", "level": "Mid-level", "type": "trade_off" }
+      },
+      "ja": {
+        "title": "Express API の validation boundary",
+        "displayQuestion": "Express API で validation をどこに置き、request shape validation と business rule validation をどう区別しますか。",
+        "displayIntent": "validation placement と API boundary の判断を確認する。",
+        "guidance": ["request schema validation と domain rule を分ける。", "error response structure と normalization に触れる。"],
+        "commonMistakes": ["frontend validation だけに頼る。", "database error を主要な validation layer とする。"],
+        "labels": { "role": "Backend", "level": "Mid-level", "type": "trade_off" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Express 4.x API: req.body warning", "url": "https://expressjs.com/en/4x/api.html", "note": "Used for the warning that request body values are user-controlled and untrusted." },
+      { "label": "Express security best practices: Do not trust user input", "url": "https://expressjs.com/en/advanced/best-practice-security.html", "note": "Used for input validation and handling guidance." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_MID_TECH_STATIC_FILES_009",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "trade_off_analysis", "system_thinking"],
+    "techTags": ["express", "nodejs", "rest"],
+    "difficulty": 3,
+    "intent": "Check whether the candidate can safely serve static assets with express.static, caching options, dotfile behavior, fallback behavior, and reverse proxy considerations.",
+    "primaryQuestion": "If an Express app must serve uploaded public assets and a SPA build, how would you configure express.static safely and efficiently?",
+    "expectedSignals": [
+      "Mounts static middleware to an explicit public URL path and filesystem root.",
+      "Configures caching such as maxAge or immutable only for versioned assets.",
+      "Understands fallthrough behavior and custom 404 handling.",
+      "Considers dotfiles, directory traversal boundaries, and reverse proxy caching."
+    ],
+    "redFlags": [
+      "Serves the project root or uploads directory without considering private files.",
+      "Enables long cache headers for non-versioned files that may change.",
+      "Relies on Express alone for high-volume static asset performance."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Covers mount paths, filesystem root safety, cache strategy, dotfiles, fallthrough, and proxy/CDN offload." },
+      { "scoreBand": "solid", "description": "Knows express.static and caching but misses one safety or production detail." },
+      { "scoreBand": "needs_work", "description": "Can serve files but cannot reason about cache or exposure risks." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer lacks enough detail for safe static asset serving." }
+    ],
+    "followUps": [
+      { "trigger": "missing_tradeoff", "question": "Which files can safely use immutable long-term caching and which cannot?", "purpose": "Check cache invalidation reasoning." },
+      { "trigger": "red_flag", "question": "What can go wrong if you serve the repository root as static content?", "purpose": "Check file exposure risk awareness." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Serving static assets safely",
+        "displayQuestion": "If an Express app must serve uploaded public assets and a SPA build, how would you configure express.static safely and efficiently?",
+        "displayIntent": "Check static file serving, caching, and exposure-risk reasoning.",
+        "guidance": ["Discuss mount path, root directory, cache headers, and fallthrough.", "Mention reverse proxy or CDN when relevant."],
+        "commonMistakes": ["Serving too broad a filesystem directory.", "Caching mutable files for too long."],
+        "labels": { "role": "Backend", "level": "Mid-level", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Serve static asset an toàn",
+        "displayQuestion": "Nếu một Express app phải serve public uploaded assets và SPA build, bạn sẽ cấu hình express.static thế nào để vừa an toàn vừa hiệu quả?",
+        "displayIntent": "Kiểm tra hiểu biết về static file serving, caching và rủi ro lộ file.",
+        "guidance": ["Nói về mount path, root directory, cache header và fallthrough.", "Nhắc tới reverse proxy hoặc CDN khi phù hợp."],
+        "commonMistakes": ["Serve một thư mục filesystem quá rộng.", "Cache file có thể thay đổi quá lâu."],
+        "labels": { "role": "Backend", "level": "Mid-level", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "static asset を安全に配信する",
+        "displayQuestion": "Express app が public uploaded assets と SPA build を配信する必要がある場合、express.static を安全かつ効率的にどう設定しますか。",
+        "displayIntent": "static file serving、caching、file exposure risk の理解を確認する。",
+        "guidance": ["mount path、root directory、cache header、fallthrough を説明する。", "必要に応じて reverse proxy や CDN に触れる。"],
+        "commonMistakes": ["広すぎる filesystem directory を配信する。", "変更される file を長期間 cache する。"],
+        "labels": { "role": "Backend", "level": "Mid-level", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Express docs: Serving static files", "url": "https://expressjs.com/en/starter/static-files.html", "note": "Used for express.static setup and static directory mounting." },
+      { "label": "Express 4.x API: express.static", "url": "https://expressjs.com/en/4x/api.html", "note": "Used for cache, dotfiles, fallthrough, and static middleware options." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_MID_TECH_SECURITY_HEADERS_010",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "security"],
+    "levels": ["mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "ownership", "system_thinking"],
+    "techTags": ["express", "nodejs", "security"],
+    "difficulty": 3,
+    "intent": "Assess whether the candidate understands practical Express production security controls including Helmet, TLS assumptions, fingerprint reduction, user input validation, and dependency hygiene.",
+    "primaryQuestion": "What security middleware and production settings would you add to a public Express API before launch, and what risk does each one reduce?",
+    "expectedSignals": [
+      "Uses Helmet or equivalent response security headers and can name examples such as CSP, HSTS, frame protection, or MIME sniffing prevention.",
+      "Disables or reduces obvious fingerprinting such as X-Powered-By.",
+      "Validates and sanitizes user input instead of trusting request data.",
+      "Mentions TLS termination, secure dependencies, and endpoint-specific brute-force/rate-limit protection."
+    ],
+    "redFlags": [
+      "Says installing Helmet makes the app secure by itself.",
+      "Ignores TLS, cookies, dependency vulnerabilities, or input validation.",
+      "Returns verbose production errors that reveal internals."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Connects concrete Express controls to specific risks and distinguishes framework-level hardening from app-specific validation and authorization." },
+      { "scoreBand": "solid", "description": "Lists useful controls but cannot explain one or two risks clearly." },
+      { "scoreBand": "needs_work", "description": "Knows a few package names but lacks production security reasoning." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer is too shallow to validate security readiness." }
+    ],
+    "followUps": [
+      { "trigger": "missing_context", "question": "Which Helmet defaults would you review for a JSON API versus a browser-rendered app?", "purpose": "Check context-aware header configuration." },
+      { "trigger": "missing_tradeoff", "question": "Why is disabling X-Powered-By useful but not sufficient security?", "purpose": "Check defense-in-depth reasoning." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Express production security hardening",
+        "displayQuestion": "What security middleware and production settings would you add to a public Express API before launch, and what risk does each one reduce?",
+        "displayIntent": "Check practical security hardening for Express APIs.",
+        "guidance": ["Name specific controls and risks.", "Separate framework headers from app-specific validation and authorization."],
+        "commonMistakes": ["Treating Helmet as complete security.", "Ignoring input validation and dependency hygiene."],
+        "labels": { "role": "Backend/Security", "level": "Mid-level", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Hardening bảo mật Express production",
+        "displayQuestion": "Trước khi launch một public Express API, bạn sẽ thêm security middleware và production setting nào, và mỗi thứ giảm rủi ro gì?",
+        "displayIntent": "Kiểm tra khả năng hardening bảo mật thực tế cho Express API.",
+        "guidance": ["Nêu control cụ thể và rủi ro tương ứng.", "Tách framework header khỏi validation và authorization của app."],
+        "commonMistakes": ["Coi Helmet là đủ để bảo mật toàn bộ.", "Bỏ qua input validation và dependency hygiene."],
+        "labels": { "role": "Backend/Security", "level": "Mid-level", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "Express production security hardening",
+        "displayQuestion": "public Express API を launch する前にどの security middleware と production setting を追加し、それぞれどの risk を下げますか。",
+        "displayIntent": "Express API の実務的な security hardening を確認する。",
+        "guidance": ["具体的な control と risk を挙げる。", "framework header と app 固有の validation/authorization を分ける。"],
+        "commonMistakes": ["Helmet だけで十分と考える。", "input validation と dependency hygiene を無視する。"],
+        "labels": { "role": "Backend/Security", "level": "Mid-level", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Express security best practices", "url": "https://expressjs.com/en/advanced/best-practice-security.html", "note": "Used for Helmet, X-Powered-By, TLS, user input, cookies, brute-force protection, and dependency security guidance." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_MID_TRADE_COOKIES_SESSIONS_011",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "security"],
+    "levels": ["mid"],
+    "type": "trade_off",
+    "competencies": ["trade_off_analysis", "technical_fundamentals", "system_thinking"],
+    "techTags": ["express", "nodejs", "security"],
+    "difficulty": 3,
+    "intent": "Evaluate whether the candidate can reason about cookie security, session storage choices, proxy/TLS interactions, and what data should never live in client-visible session cookies.",
+    "primaryQuestion": "How would you configure cookies and sessions in an Express app behind HTTPS, and how would you choose between server-side sessions and cookie-backed sessions?",
+    "expectedSignals": [
+      "Sets secure, httpOnly, sameSite, path/domain, and expiry settings according to the use case.",
+      "Understands secure cookies require HTTPS and often correct trust proxy settings behind a proxy.",
+      "Distinguishes server-side session IDs from cookie-backed session payloads.",
+      "Avoids storing secrets or large sensitive data in client-visible cookies."
+    ],
+    "redFlags": [
+      "Stores passwords, access tokens, or large profile data directly in a cookie-backed session.",
+      "Uses the default in-memory session store in production.",
+      "Enables secure cookies behind a proxy without understanding why they may not be set."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Explains cookie flags, trust proxy/TLS, storage model trade-offs, production session store needs, and sensitive data boundaries." },
+      { "scoreBand": "solid", "description": "Covers cookie flags and basic session choice but misses proxy or production store details." },
+      { "scoreBand": "needs_work", "description": "Knows sessions exist but cannot reason about security properties." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer is too generic for secure session design." }
+    ],
+    "followUps": [
+      { "trigger": "missing_tradeoff", "question": "What changes when the session is stored server-side versus serialized into the cookie?", "purpose": "Check session model understanding." },
+      { "trigger": "missing_context", "question": "Why might a secure cookie fail locally or behind a load balancer?", "purpose": "Check TLS and proxy awareness." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Secure cookies and session storage",
+        "displayQuestion": "How would you configure cookies and sessions in an Express app behind HTTPS, and how would you choose between server-side sessions and cookie-backed sessions?",
+        "displayIntent": "Check cookie security and session storage trade-offs.",
+        "guidance": ["Discuss cookie flags and trust proxy.", "Compare server-side session store with cookie-backed storage."],
+        "commonMistakes": ["Using memory session store in production.", "Putting sensitive payloads in client-visible cookies."],
+        "labels": { "role": "Backend/Security", "level": "Mid-level", "type": "trade_off" }
+      },
+      "vi": {
+        "title": "Cookie an toàn và session storage",
+        "displayQuestion": "Bạn sẽ cấu hình cookie và session trong Express app chạy sau HTTPS như thế nào, và chọn server-side session hay cookie-backed session dựa trên tiêu chí gì?",
+        "displayIntent": "Kiểm tra bảo mật cookie và trade-off khi lưu session.",
+        "guidance": ["Nói về cookie flag và trust proxy.", "So sánh server-side session store với cookie-backed storage."],
+        "commonMistakes": ["Dùng memory session store ở production.", "Đưa payload nhạy cảm vào cookie client có thể thấy."],
+        "labels": { "role": "Backend/Security", "level": "Mid-level", "type": "trade_off" }
+      },
+      "ja": {
+        "title": "secure cookie と session storage",
+        "displayQuestion": "HTTPS 配下の Express app で cookie と session をどう設定し、server-side session と cookie-backed session をどう選びますか。",
+        "displayIntent": "cookie security と session storage trade-off を確認する。",
+        "guidance": ["cookie flags と trust proxy を説明する。", "server-side session store と cookie-backed storage を比較する。"],
+        "commonMistakes": ["production で memory session store を使う。", "client-visible cookie に sensitive payload を入れる。"],
+        "labels": { "role": "Backend/Security", "level": "Mid-level", "type": "trade_off" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Express security best practices: cookies", "url": "https://expressjs.com/en/advanced/best-practice-security.html", "note": "Used for secure cookie options, default session cookie name, and session storage cautions." },
+      { "label": "Express docs: Behind proxies", "url": "https://expressjs.com/en/guide/behind-proxies.html", "note": "Used for trust proxy implications behind load balancers." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_MID_TECH_TRUST_PROXY_012",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "devops"],
+    "levels": ["mid"],
+    "type": "technical_depth",
+    "competencies": ["system_thinking", "technical_fundamentals", "impact_measurement"],
+    "techTags": ["express", "nodejs", "security", "logging"],
+    "difficulty": 3,
+    "intent": "Check whether the candidate understands Express trust proxy behavior and how it affects req.ip, req.protocol, secure cookies, logging, and rate limiting.",
+    "primaryQuestion": "Your Express API runs behind Nginx or a cloud load balancer. How would you configure trust proxy, and what breaks if it is wrong?",
+    "expectedSignals": [
+      "Explains that trust proxy controls whether Express trusts X-Forwarded-* headers from upstream proxies.",
+      "Understands impact on req.ip, req.ips, req.protocol, req.hostname, secure cookies, redirects, logs, and rate limits.",
+      "Chooses a constrained trust proxy setting based on known proxy hops or IP ranges instead of blindly trusting all clients.",
+      "Verifies that the last trusted proxy strips or overwrites spoofable forwarded headers."
+    ],
+    "redFlags": [
+      "Sets trust proxy to true everywhere without understanding spoofing risk.",
+      "Builds rate limiting on req.ip while trusting client-controlled X-Forwarded-For.",
+      "Ignores secure cookie behavior behind TLS termination."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Connects trust proxy settings to forwarded headers, spoofing risk, secure cookies, redirects, logs, and rate-limit correctness." },
+      { "scoreBand": "solid", "description": "Understands why trust proxy is needed but misses one downstream behavior." },
+      { "scoreBand": "needs_work", "description": "Knows there is a setting but cannot reason about security or operational impact." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer does not validate proxy deployment knowledge." }
+    ],
+    "followUps": [
+      { "trigger": "missing_context", "question": "How would req.ip be derived differently when trust proxy is disabled versus enabled?", "purpose": "Check concrete behavior." },
+      { "trigger": "red_flag", "question": "Why can trusting X-Forwarded-For from the open internet break rate limiting?", "purpose": "Check spoofing-risk awareness." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Express behind a trusted proxy",
+        "displayQuestion": "Your Express API runs behind Nginx or a cloud load balancer. How would you configure trust proxy, and what breaks if it is wrong?",
+        "displayIntent": "Check proxy-aware Express deployment knowledge.",
+        "guidance": ["Discuss forwarded headers and trusted hops.", "Tie the setting to IP logging, rate limits, protocol, and secure cookies."],
+        "commonMistakes": ["Trusting all forwarded headers blindly.", "Building security controls on spoofable client IPs."],
+        "labels": { "role": "Backend/DevOps", "level": "Mid-level", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Express chạy sau trusted proxy",
+        "displayQuestion": "Express API của bạn chạy sau Nginx hoặc cloud load balancer. Bạn sẽ cấu hình trust proxy thế nào, và cấu hình sai sẽ làm hỏng điều gì?",
+        "displayIntent": "Kiểm tra hiểu biết triển khai Express có proxy.",
+        "guidance": ["Nói về forwarded headers và trusted hops.", "Liên hệ setting với IP logging, rate limit, protocol và secure cookie."],
+        "commonMistakes": ["Tin toàn bộ forwarded header một cách mù quáng.", "Dựng security control trên client IP có thể bị spoof."],
+        "labels": { "role": "Backend/DevOps", "level": "Mid-level", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "trusted proxy 配下の Express",
+        "displayQuestion": "Express API が Nginx または cloud load balancer の後ろで動いています。trust proxy をどう設定し、間違えると何が壊れますか。",
+        "displayIntent": "proxy-aware な Express deployment の理解を確認する。",
+        "guidance": ["forwarded headers と trusted hops を説明する。", "IP logging、rate limit、protocol、secure cookie と結びつける。"],
+        "commonMistakes": ["すべての forwarded header を無条件に信頼する。", "spoof 可能な client IP に security control を置く。"],
+        "labels": { "role": "Backend/DevOps", "level": "Mid-level", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Express docs: Behind proxies", "url": "https://expressjs.com/en/guide/behind-proxies.html", "note": "Used for trust proxy modes and X-Forwarded-* behavior." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_MID_DEBUG_ASYNC_ROUTE_013",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["mid"],
+    "type": "debugging",
+    "competencies": ["problem_solving", "technical_fundamentals", "ownership"],
+    "techTags": ["express", "nodejs", "debugging"],
+    "difficulty": 3,
+    "intent": "Assess debugging ability for async Express route failures, swallowed promise rejections, missing awaits, and inconsistent error responses.",
+    "primaryQuestion": "A production Express endpoint sometimes times out and logs an unhandled promise rejection from inside an async database call. How would you investigate and fix it?",
+    "expectedSignals": [
+      "Checks whether the route awaits promises and forwards failures to the error handler.",
+      "Distinguishes Express 4 async wrapper or try/catch needs from Express 5 rejected promise handling.",
+      "Looks for branches that neither send a response nor call next.",
+      "Adds tests for success, expected failure, and rejected promise paths."
+    ],
+    "redFlags": [
+      "Adds a global unhandledRejection handler as the only fix.",
+      "Catches errors and does nothing, causing the request to hang.",
+      "Mixes callback and promise styles without ensuring exactly one completion path."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Traces promise lifecycle, Express version behavior, response completion paths, centralized error forwarding, and regression tests." },
+      { "scoreBand": "solid", "description": "Understands try/catch and next(err) but misses Express 5 or testing details." },
+      { "scoreBand": "needs_work", "description": "Can identify async error but cannot fix control flow reliably." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer does not show enough Express async debugging skill." }
+    ],
+    "followUps": [
+      { "trigger": "missing_context", "question": "What is the smallest route example where Express 4 fails to catch a rejected promise without help?", "purpose": "Check version-specific detail." },
+      { "trigger": "missing_metric", "question": "What logs or traces would confirm the request is hanging rather than returning a slow 500?", "purpose": "Check production debugging evidence." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Async route rejection debugging",
+        "displayQuestion": "A production Express endpoint sometimes times out and logs an unhandled promise rejection from inside an async database call. How would you investigate and fix it?",
+        "displayIntent": "Check async route error debugging and completion-path reasoning.",
+        "guidance": ["Discuss awaits, try/catch, next(err), and Express version.", "Mention tests for rejected promise paths."],
+        "commonMistakes": ["Only adding a global unhandledRejection handler.", "Catching errors without responding or forwarding."],
+        "labels": { "role": "Backend", "level": "Mid-level", "type": "debugging" }
+      },
+      "vi": {
+        "title": "Debug rejected promise trong async route",
+        "displayQuestion": "Một Express endpoint production thỉnh thoảng timeout và log unhandled promise rejection bên trong async database call. Bạn sẽ điều tra và sửa thế nào?",
+        "displayIntent": "Kiểm tra khả năng debug async route error và completion path.",
+        "guidance": ["Nói về await, try/catch, next(err) và version Express.", "Nhắc tới test cho rejected promise path."],
+        "commonMistakes": ["Chỉ thêm global unhandledRejection handler.", "Catch lỗi nhưng không response hoặc forward."],
+        "labels": { "role": "Backend", "level": "Mid-level", "type": "debugging" }
+      },
+      "ja": {
+        "title": "async route rejection の debug",
+        "displayQuestion": "production の Express endpoint が時々 timeout し、async database call 内の unhandled promise rejection を log します。どう調査して修正しますか。",
+        "displayIntent": "async route error debugging と completion path reasoning を確認する。",
+        "guidance": ["await、try/catch、next(err)、Express version を説明する。", "rejected promise path の test に触れる。"],
+        "commonMistakes": ["global unhandledRejection handler だけを追加する。", "error を catch して response も forward もしない。"],
+        "labels": { "role": "Backend", "level": "Mid-level", "type": "debugging" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Express docs: Error handling", "url": "https://expressjs.com/en/guide/error-handling.html", "note": "Used for async error forwarding patterns." },
+      { "label": "Express docs: Moving to Express 5", "url": "https://expressjs.com/en/guide/migrating-5.html", "note": "Used for rejected promise handling changes in Express 5." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_MID_TRADE_CORS_014",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "security"],
+    "levels": ["mid"],
+    "type": "trade_off",
+    "competencies": ["trade_off_analysis", "technical_fundamentals", "communication"],
+    "techTags": ["express", "nodejs", "security", "rest"],
+    "difficulty": 3,
+    "intent": "Evaluate whether the candidate can configure CORS intentionally for Express APIs, explain preflight behavior, and avoid over-permissive credentials policies.",
+    "primaryQuestion": "How would you configure CORS for an Express API used by a browser frontend, especially when cookies or Authorization headers are involved?",
+    "expectedSignals": [
+      "Explains origins, methods, allowed headers, credentials, and preflight requests.",
+      "Avoids combining wildcard origin with credentialed browser requests.",
+      "Uses an allowlist or environment-specific origin policy rather than fully open production CORS.",
+      "Separates CORS from authentication and server-to-server authorization concerns."
+    ],
+    "redFlags": [
+      "Sets Access-Control-Allow-Origin to * and credentials to true for production.",
+      "Treats CORS as a complete security control for APIs.",
+      "Cannot explain why OPTIONS preflight happens."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Explains browser CORS mechanics, preflight, credentialed requests, allowlists, and how CORS differs from auth." },
+      { "scoreBand": "solid", "description": "Understands origin allowlists and credentials but misses one preflight or header detail." },
+      { "scoreBand": "needs_work", "description": "Knows to install cors middleware but cannot explain browser behavior." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer is too shallow for production CORS configuration." }
+    ],
+    "followUps": [
+      { "trigger": "missing_context", "question": "Why does adding an Authorization header often trigger an OPTIONS request first?", "purpose": "Check preflight understanding." },
+      { "trigger": "red_flag", "question": "Why is wildcard origin dangerous or invalid when credentials are required?", "purpose": "Check credentialed CORS reasoning." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "CORS for Express APIs",
+        "displayQuestion": "How would you configure CORS for an Express API used by a browser frontend, especially when cookies or Authorization headers are involved?",
+        "displayIntent": "Check browser CORS mechanics and safe production policy design.",
+        "guidance": ["Discuss origin allowlists, preflight, headers, methods, and credentials.", "Clarify that CORS is not authentication."],
+        "commonMistakes": ["Using wildcard origins with credentials.", "Confusing CORS with API authorization."],
+        "labels": { "role": "Backend/Security", "level": "Mid-level", "type": "trade_off" }
+      },
+      "vi": {
+        "title": "CORS cho Express API",
+        "displayQuestion": "Bạn sẽ cấu hình CORS cho Express API được browser frontend gọi như thế nào, đặc biệt khi có cookie hoặc Authorization header?",
+        "displayIntent": "Kiểm tra cơ chế CORS của browser và thiết kế policy production an toàn.",
+        "guidance": ["Nói về origin allowlist, preflight, header, method và credentials.", "Làm rõ CORS không phải authentication."],
+        "commonMistakes": ["Dùng wildcard origin với credentials.", "Nhầm CORS với authorization của API."],
+        "labels": { "role": "Backend/Security", "level": "Mid-level", "type": "trade_off" }
+      },
+      "ja": {
+        "title": "Express API の CORS",
+        "displayQuestion": "browser frontend から使われる Express API で、cookie や Authorization header が関係する場合 CORS をどう設定しますか。",
+        "displayIntent": "browser CORS mechanics と安全な production policy design を確認する。",
+        "guidance": ["origin allowlist、preflight、headers、methods、credentials を説明する。", "CORS は authentication ではないと明確にする。"],
+        "commonMistakes": ["credentials と wildcard origin を組み合わせる。", "CORS と API authorization を混同する。"],
+        "labels": { "role": "Backend/Security", "level": "Mid-level", "type": "trade_off" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Express middleware resources: cors", "url": "https://expressjs.com/en/resources/middleware.html", "note": "Used for Express-maintained middleware ecosystem context." },
+      { "label": "Express security best practices", "url": "https://expressjs.com/en/advanced/best-practice-security.html", "note": "Used for production security framing and input trust boundaries." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_MID_TECH_TESTING_015",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "qa"],
+    "levels": ["mid"],
+    "type": "technical_depth",
+    "competencies": ["problem_solving", "ownership", "impact_measurement"],
+    "techTags": ["express", "nodejs", "jest", "rest"],
+    "difficulty": 3,
+    "intent": "Assess whether the candidate can test Express routes by separating app creation from server listening, mocking dependencies, and covering middleware/error paths.",
+    "primaryQuestion": "How would you structure an Express app so routes can be integration-tested without opening a real network port?",
+    "expectedSignals": [
+      "Separates app construction from app.listen so tests can import the app instance.",
+      "Uses HTTP-level tests against the Express app with controlled dependencies or a test database.",
+      "Covers middleware behavior, validation errors, auth failures, success responses, and error middleware.",
+      "Avoids brittle tests that assert implementation details instead of API contracts."
+    ],
+    "redFlags": [
+      "Starts the production server as a side effect of importing app code.",
+      "Only unit-tests controller functions and never tests middleware composition.",
+      "Depends on shared mutable production data during tests."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Explains app/server separation, dependency injection or test doubles, HTTP contract tests, error-path coverage, and deterministic cleanup." },
+      { "scoreBand": "solid", "description": "Understands importing app for tests but misses one dependency or cleanup detail." },
+      { "scoreBand": "needs_work", "description": "Can test individual functions but not Express route composition." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer does not validate practical API test design." }
+    ],
+    "followUps": [
+      { "trigger": "missing_context", "question": "What file would export app, and what file would call app.listen?", "purpose": "Check app/server separation." },
+      { "trigger": "missing_metric", "question": "Which route behaviors would you require before considering the endpoint covered?", "purpose": "Check meaningful coverage criteria." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Testing Express route composition",
+        "displayQuestion": "How would you structure an Express app so routes can be integration-tested without opening a real network port?",
+        "displayIntent": "Check Express testability and route-level coverage thinking.",
+        "guidance": ["Discuss app export versus server listen.", "Mention tests for middleware, success, validation, auth, and error paths."],
+        "commonMistakes": ["Calling app.listen during import.", "Testing only controller internals."],
+        "labels": { "role": "Backend/QA", "level": "Mid-level", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Test composition route Express",
+        "displayQuestion": "Bạn sẽ tổ chức Express app thế nào để có thể integration test route mà không cần mở network port thật?",
+        "displayIntent": "Kiểm tra khả năng thiết kế Express dễ test và tư duy coverage ở route level.",
+        "guidance": ["Nói về export app so với server listen.", "Nhắc tới test middleware, success, validation, auth và error path."],
+        "commonMistakes": ["Gọi app.listen ngay khi import.", "Chỉ test nội bộ controller."],
+        "labels": { "role": "Backend/QA", "level": "Mid-level", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "Express route composition の test",
+        "displayQuestion": "実際の network port を開かずに route を integration test できるよう、Express app をどう構成しますか。",
+        "displayIntent": "Express の testability と route-level coverage の考え方を確認する。",
+        "guidance": ["app export と server listen を分ける。", "middleware、success、validation、auth、error path の test に触れる。"],
+        "commonMistakes": ["import 時に app.listen を呼ぶ。", "controller internal だけを test する。"],
+        "labels": { "role": "Backend/QA", "level": "Mid-level", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Express docs: Routing", "url": "https://expressjs.com/en/guide/routing.html", "note": "Used for route handler composition and route-level behavior." },
+      { "label": "Express 4.x API: app.listen", "url": "https://expressjs.com/en/4x/api.html", "note": "Used for separating application construction from starting the HTTP server." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_SR_TECH_PERFORMANCE_016",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "devops"],
+    "levels": ["senior"],
+    "type": "technical_depth",
+    "competencies": ["system_thinking", "impact_measurement", "trade_off_analysis"],
+    "techTags": ["express", "nodejs", "logging"],
+    "difficulty": 4,
+    "intent": "Evaluate whether the candidate can reason about Express production performance across code, runtime, and infrastructure layers.",
+    "primaryQuestion": "An Express API has poor p95 latency under load. How would you investigate and improve performance without guessing?",
+    "expectedSignals": [
+      "Starts with measurement: p50/p95/p99 latency, throughput, error rate, CPU, memory, event loop delay, database timing, and downstream timing.",
+      "Looks for synchronous work, blocking I/O, excessive JSON parsing/stringifying, inefficient logging, and slow middleware.",
+      "Considers compression, caching, reverse proxy, load balancing, clustering, and NODE_ENV=production.",
+      "Validates changes with load tests and production telemetry rather than micro-optimizing blindly."
+    ],
+    "redFlags": [
+      "Immediately adds more servers without identifying the bottleneck.",
+      "Uses synchronous APIs in request paths and ignores event loop blocking.",
+      "Enables compression or logging changes without measuring CPU and latency trade-offs."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Presents a measurement-led plan across Express middleware, Node runtime, database/downstream dependencies, caching, compression, process model, and verification." },
+      { "scoreBand": "solid", "description": "Covers common Express performance practices but misses one layer such as downstream tracing or validation." },
+      { "scoreBand": "needs_work", "description": "Lists optimizations without a diagnostic method." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer does not show production performance engineering skill." }
+    ],
+    "followUps": [
+      { "trigger": "missing_metric", "question": "Which metric would tell you the event loop is blocked rather than the database being slow?", "purpose": "Check diagnostic precision." },
+      { "trigger": "missing_tradeoff", "question": "When can gzip compression make latency worse?", "purpose": "Check CPU versus bandwidth trade-off reasoning." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Express performance investigation",
+        "displayQuestion": "An Express API has poor p95 latency under load. How would you investigate and improve performance without guessing?",
+        "displayIntent": "Check production performance diagnosis and improvement strategy.",
+        "guidance": ["Start from metrics and traces.", "Cover code, middleware, runtime, database, cache, and infrastructure layers."],
+        "commonMistakes": ["Scaling before identifying the bottleneck.", "Ignoring synchronous request-path work."],
+        "labels": { "role": "Backend/DevOps", "level": "Senior", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Điều tra performance Express",
+        "displayQuestion": "Một Express API có p95 latency kém khi chịu tải. Bạn sẽ điều tra và cải thiện như thế nào mà không đoán mò?",
+        "displayIntent": "Kiểm tra chiến lược chẩn đoán và cải thiện performance production.",
+        "guidance": ["Bắt đầu từ metric và trace.", "Bao phủ code, middleware, runtime, database, cache và infrastructure."],
+        "commonMistakes": ["Scale trước khi biết bottleneck.", "Bỏ qua synchronous work trong request path."],
+        "labels": { "role": "Backend/DevOps", "level": "Senior", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "Express performance investigation",
+        "displayQuestion": "Express API が load 下で p95 latency が悪いです。推測ではなく、どう調査して改善しますか。",
+        "displayIntent": "production performance diagnosis と improvement strategy を確認する。",
+        "guidance": ["metrics と traces から始める。", "code、middleware、runtime、database、cache、infrastructure を扱う。"],
+        "commonMistakes": ["bottleneck 特定前に scale する。", "request path の synchronous work を無視する。"],
+        "labels": { "role": "Backend/DevOps", "level": "Senior", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Express performance best practices", "url": "https://expressjs.com/en/advanced/best-practice-performance.html", "note": "Used for compression, avoiding synchronous functions, logging, NODE_ENV, clustering, caching, load balancers, and reverse proxy guidance." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_SR_SITUATIONAL_GRACEFUL_SHUTDOWN_017",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "devops"],
+    "levels": ["senior"],
+    "type": "situational",
+    "competencies": ["system_thinking", "ownership", "impact_measurement"],
+    "techTags": ["express", "nodejs", "rest"],
+    "difficulty": 4,
+    "intent": "Assess whether the candidate can design health checks and graceful shutdown for Express services in production deployments.",
+    "primaryQuestion": "How would you implement health checks and graceful shutdown for an Express service running in containers or behind a load balancer?",
+    "expectedSignals": [
+      "Separates liveness from readiness and includes dependency health where appropriate.",
+      "On shutdown signal, stops accepting new connections and allows in-flight requests to finish within a deadline.",
+      "Closes database, message queue, and other resource pools cleanly.",
+      "Coordinates with load balancer or orchestrator readiness so traffic drains before process exit."
+    ],
+    "redFlags": [
+      "Kills the process immediately on SIGTERM without draining requests.",
+      "Health endpoint always returns 200 even when critical dependencies are unavailable.",
+      "Keeps accepting new traffic while resources are being closed."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Covers readiness/liveness semantics, signal handling, server.close, inflight deadlines, dependency cleanup, traffic draining, and observability." },
+      { "scoreBand": "solid", "description": "Understands graceful shutdown basics but misses one orchestration or dependency detail." },
+      { "scoreBand": "needs_work", "description": "Can add /health but lacks lifecycle management." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer is not sufficient for production deployment safety." }
+    ],
+    "followUps": [
+      { "trigger": "missing_context", "question": "What should readiness return while the app is draining during shutdown?", "purpose": "Check traffic-draining behavior." },
+      { "trigger": "missing_metric", "question": "What would you monitor to know shutdown is causing dropped requests?", "purpose": "Check operational feedback loop." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Health checks and graceful shutdown",
+        "displayQuestion": "How would you implement health checks and graceful shutdown for an Express service running in containers or behind a load balancer?",
+        "displayIntent": "Check production lifecycle management for Express services.",
+        "guidance": ["Separate liveness, readiness, and dependency health.", "Discuss SIGTERM, server.close, request draining, deadlines, and resource cleanup."],
+        "commonMistakes": ["Exiting immediately on SIGTERM.", "Returning healthy while critical dependencies are down."],
+        "labels": { "role": "Backend/DevOps", "level": "Senior", "type": "situational" }
+      },
+      "vi": {
+        "title": "Health check và graceful shutdown",
+        "displayQuestion": "Bạn sẽ implement health check và graceful shutdown cho Express service chạy trong container hoặc sau load balancer như thế nào?",
+        "displayIntent": "Kiểm tra quản lý lifecycle production cho Express service.",
+        "guidance": ["Tách liveness, readiness và dependency health.", "Nói về SIGTERM, server.close, drain request, deadline và cleanup resource."],
+        "commonMistakes": ["Thoát process ngay khi nhận SIGTERM.", "Trả healthy khi dependency critical đang down."],
+        "labels": { "role": "Backend/DevOps", "level": "Senior", "type": "situational" }
+      },
+      "ja": {
+        "title": "health check と graceful shutdown",
+        "displayQuestion": "container または load balancer 配下の Express service で health checks と graceful shutdown をどう実装しますか。",
+        "displayIntent": "Express service の production lifecycle management を確認する。",
+        "guidance": ["liveness、readiness、dependency health を分ける。", "SIGTERM、server.close、request draining、deadline、resource cleanup を説明する。"],
+        "commonMistakes": ["SIGTERM で即 exit する。", "critical dependency が down でも healthy を返す。"],
+        "labels": { "role": "Backend/DevOps", "level": "Senior", "type": "situational" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Express docs: Health checks and graceful shutdown", "url": "https://expressjs.com/en/advanced/healthcheck-graceful-shutdown.html", "note": "Used for health check and graceful shutdown production patterns." },
+      { "label": "Express performance best practices", "url": "https://expressjs.com/en/advanced/best-practice-performance.html", "note": "Used for reliability and automatic restart context." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_SR_TRADE_ARCHITECTURE_018",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["senior"],
+    "type": "trade_off",
+    "competencies": ["system_thinking", "trade_off_analysis", "collaboration"],
+    "techTags": ["express", "nodejs", "rest"],
+    "difficulty": 4,
+    "intent": "Evaluate whether the candidate can structure a larger Express service with clear boundaries between routing, controllers, services, repositories, policies, and cross-cutting middleware.",
+    "primaryQuestion": "For a growing Express codebase, how would you structure routes, controllers, services, repositories, middleware, and configuration so the app stays maintainable?",
+    "expectedSignals": [
+      "Keeps Express-specific concerns near routing/controllers and domain logic in services or domain modules.",
+      "Uses explicit dependency boundaries for databases, external clients, configuration, and policies.",
+      "Avoids turning middleware into a dumping ground for business logic.",
+      "Designs for testability, consistent errors, observability, and gradual feature ownership."
+    ],
+    "redFlags": [
+      "Puts all business logic in route handlers.",
+      "Introduces heavy abstractions without a concrete maintenance problem.",
+      "Uses global mutable singletons everywhere and makes tests order-dependent."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Balances pragmatic Express simplicity with clear module boundaries, dependency management, testability, observability, and team ownership." },
+      { "scoreBand": "solid", "description": "Has a reasonable layered structure but misses one cross-cutting concern or dependency boundary." },
+      { "scoreBand": "needs_work", "description": "Suggests folders but cannot explain responsibilities and trade-offs." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer does not show maintainable backend architecture thinking." }
+    ],
+    "followUps": [
+      { "trigger": "missing_tradeoff", "question": "When would you keep logic in a route handler instead of extracting a service?", "purpose": "Check pragmatic abstraction judgment." },
+      { "trigger": "missing_context", "question": "How would your structure make auth, validation, and error handling consistent across teams?", "purpose": "Check cross-cutting design." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Maintainable Express architecture",
+        "displayQuestion": "For a growing Express codebase, how would you structure routes, controllers, services, repositories, middleware, and configuration so the app stays maintainable?",
+        "displayIntent": "Check architecture boundaries and maintainability judgment.",
+        "guidance": ["Discuss responsibilities, dependencies, testing, errors, and observability.", "Avoid framework-heavy answers unless justified by the problem."],
+        "commonMistakes": ["Putting business logic in route handlers.", "Adding abstractions without a reason."],
+        "labels": { "role": "Backend", "level": "Senior", "type": "trade_off" }
+      },
+      "vi": {
+        "title": "Kiến trúc Express dễ maintain",
+        "displayQuestion": "Với một Express codebase đang lớn dần, bạn sẽ tổ chức routes, controllers, services, repositories, middleware và configuration thế nào để app dễ maintain?",
+        "displayIntent": "Kiểm tra ranh giới kiến trúc và judgment về maintainability.",
+        "guidance": ["Nói về trách nhiệm, dependency, testing, error và observability.", "Tránh câu trả lời quá nặng framework nếu không có lý do."],
+        "commonMistakes": ["Đưa business logic vào route handler.", "Thêm abstraction mà không có vấn đề thật."],
+        "labels": { "role": "Backend", "level": "Senior", "type": "trade_off" }
+      },
+      "ja": {
+        "title": "maintainable な Express architecture",
+        "displayQuestion": "成長する Express codebase で、routes、controllers、services、repositories、middleware、configuration をどう構成して maintainable に保ちますか。",
+        "displayIntent": "architecture boundary と maintainability judgment を確認する。",
+        "guidance": ["responsibilities、dependencies、testing、errors、observability を説明する。", "問題がないのに heavy framework 的な回答にしない。"],
+        "commonMistakes": ["business logic を route handler に置く。", "理由なく abstraction を増やす。"],
+        "labels": { "role": "Backend", "level": "Senior", "type": "trade_off" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Express docs: Using middleware", "url": "https://expressjs.com/en/guide/using-middleware.html", "note": "Used for middleware boundaries and app/router-level composition." },
+      { "label": "Express docs: Database integration", "url": "https://expressjs.com/en/guide/database-integration.html", "note": "Used for keeping database access as an integration concern rather than inside route definitions." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_SR_TECH_MIGRATION_V5_019",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["senior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving", "ownership"],
+    "techTags": ["express", "nodejs", "rest"],
+    "difficulty": 4,
+    "intent": "Assess whether the candidate can plan an Express 4 to Express 5 migration with attention to route matching, removed APIs, async error behavior, body parsing defaults, and regression testing.",
+    "primaryQuestion": "What would you check when migrating an Express 4 service to Express 5, and how would you reduce the risk of breaking routes or error handling?",
+    "expectedSignals": [
+      "Runs automated tests and reviews route matching syntax changes such as named wildcards and optional segments.",
+      "Removes deprecated response signatures like res.send(body, status) and res.json(obj, status).",
+      "Understands rejected promises from async handlers are forwarded in Express 5.",
+      "Checks express.urlencoded defaults, req.body behavior, static dotfile changes, and app.listen error callback behavior."
+    ],
+    "redFlags": [
+      "Assumes Express 5 is a drop-in upgrade without reading breaking changes.",
+      "Migrates route patterns without regression tests for important URLs.",
+      "Keeps deprecated response signatures and only tests happy paths."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Covers breaking API removals, path syntax, async errors, parser/static defaults, codemods, compatibility tests, canary rollout, and rollback." },
+      { "scoreBand": "solid", "description": "Understands main migration risks but misses one specific change or rollout detail." },
+      { "scoreBand": "needs_work", "description": "Knows there is a new version but cannot identify concrete breaking changes." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer is not sufficient to trust a production migration." }
+    ],
+    "followUps": [
+      { "trigger": "missing_context", "question": "How would a catch-all route written as /* need to change in Express 5?", "purpose": "Check path matching migration detail." },
+      { "trigger": "missing_metric", "question": "What production signals would you watch after a canary upgrade?", "purpose": "Check rollout verification thinking." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Express 4 to Express 5 migration",
+        "displayQuestion": "What would you check when migrating an Express 4 service to Express 5, and how would you reduce the risk of breaking routes or error handling?",
+        "displayIntent": "Check migration planning and version-specific Express knowledge.",
+        "guidance": ["Mention route syntax, removed APIs, async errors, parser/static changes, and tests.", "Discuss rollout and rollback controls."],
+        "commonMistakes": ["Assuming a drop-in upgrade.", "Testing only the happy path."],
+        "labels": { "role": "Backend", "level": "Senior", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Migration Express 4 lên Express 5",
+        "displayQuestion": "Khi migrate một service từ Express 4 lên Express 5, bạn sẽ kiểm tra gì và giảm rủi ro vỡ route hoặc error handling thế nào?",
+        "displayIntent": "Kiểm tra kế hoạch migration và kiến thức Express theo version.",
+        "guidance": ["Nhắc tới route syntax, API bị remove, async error, parser/static change và test.", "Nói về rollout và rollback control."],
+        "commonMistakes": ["Cho rằng upgrade là drop-in.", "Chỉ test happy path."],
+        "labels": { "role": "Backend", "level": "Senior", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "Express 4 から Express 5 への migration",
+        "displayQuestion": "Express 4 service を Express 5 に migrate するとき何を確認し、route や error handling の破壊リスクをどう下げますか。",
+        "displayIntent": "migration planning と version-specific Express knowledge を確認する。",
+        "guidance": ["route syntax、removed APIs、async errors、parser/static changes、tests に触れる。", "rollout と rollback control を説明する。"],
+        "commonMistakes": ["drop-in upgrade と考える。", "happy path だけ test する。"],
+        "labels": { "role": "Backend", "level": "Senior", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Express docs: Moving to Express 5", "url": "https://expressjs.com/en/guide/migrating-5.html", "note": "Used for Express 5 breaking changes, async promise handling, path syntax, parser defaults, and static dotfile changes." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_SR_SITUATIONAL_INCIDENT_020",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "devops"],
+    "levels": ["senior"],
+    "type": "situational",
+    "competencies": ["problem_solving", "ownership", "impact_measurement", "communication"],
+    "techTags": ["express", "nodejs", "logging", "rest"],
+    "difficulty": 4,
+    "intent": "Evaluate senior-level incident response for Express APIs, including triage, rollback, observability, customer impact, and durable fixes.",
+    "primaryQuestion": "A new Express release causes a spike in 500s and login latency. How would you triage, mitigate, and follow up?",
+    "expectedSignals": [
+      "Checks error rate, latency percentiles, affected routes, deploy timing, logs, traces, and dependency health.",
+      "Mitigates with rollback, feature flag disablement, traffic shift, or rate limiting depending on blast radius.",
+      "Looks for common Express-specific causes such as auth middleware order, body parser limits, session store issues, trust proxy changes, or async error handling regressions.",
+      "Communicates impact, owns a post-incident review, adds tests/alerts, and validates the durable fix."
+    ],
+    "redFlags": [
+      "Keeps debugging in production while impact grows and no mitigation is attempted.",
+      "Blames infrastructure without correlating with deploys or route-level telemetry.",
+      "Closes the incident after rollback without a follow-up fix or regression test."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Balances rapid mitigation with evidence-based diagnosis, Express-specific hypotheses, stakeholder communication, and durable prevention." },
+      { "scoreBand": "solid", "description": "Has a reasonable incident flow but misses one dimension such as communication or permanent fix validation." },
+      { "scoreBand": "needs_work", "description": "Can debug technically but does not manage customer impact or follow-up quality." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer does not show senior production ownership." }
+    ],
+    "followUps": [
+      { "trigger": "missing_metric", "question": "Which dashboard panels would you open in the first five minutes?", "purpose": "Check operational triage precision." },
+      { "trigger": "missing_context", "question": "What Express-specific regressions would you check first for login latency?", "purpose": "Check framework-aware incident hypotheses." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Express production incident response",
+        "displayQuestion": "A new Express release causes a spike in 500s and login latency. How would you triage, mitigate, and follow up?",
+        "displayIntent": "Check senior incident response and Express-specific production reasoning.",
+        "guidance": ["Start with impact, telemetry, and deploy correlation.", "Discuss mitigation, root cause, communication, and durable prevention."],
+        "commonMistakes": ["Debugging too long before mitigation.", "Rolling back without a follow-up fix or test."],
+        "labels": { "role": "Backend/DevOps", "level": "Senior", "type": "situational" }
+      },
+      "vi": {
+        "title": "Ứng phó incident Express production",
+        "displayQuestion": "Một release Express mới làm tăng 500s và latency login. Bạn sẽ triage, mitigate và follow up như thế nào?",
+        "displayIntent": "Kiểm tra incident response senior và reasoning production theo Express.",
+        "guidance": ["Bắt đầu từ impact, telemetry và tương quan với deploy.", "Nói về mitigation, root cause, communication và phòng ngừa lâu dài."],
+        "commonMistakes": ["Debug quá lâu trước khi mitigate.", "Rollback xong nhưng không có fix hoặc test follow-up."],
+        "labels": { "role": "Backend/DevOps", "level": "Senior", "type": "situational" }
+      },
+      "ja": {
+        "title": "Express production incident response",
+        "displayQuestion": "新しい Express release により 500s と login latency が急増しました。どう triage、mitigate、follow up しますか。",
+        "displayIntent": "senior incident response と Express-specific production reasoning を確認する。",
+        "guidance": ["impact、telemetry、deploy correlation から始める。", "mitigation、root cause、communication、durable prevention を説明する。"],
+        "commonMistakes": ["mitigation 前に長く debug しすぎる。", "rollback 後に follow-up fix や test を追加しない。"],
+        "labels": { "role": "Backend/DevOps", "level": "Senior", "type": "situational" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Express performance best practices", "url": "https://expressjs.com/en/advanced/best-practice-performance.html", "note": "Used for production reliability, logging, exception handling, restarts, load balancers, and reverse proxy context." },
+      { "label": "Express docs: Error handling", "url": "https://expressjs.com/en/guide/error-handling.html", "note": "Used for error handling regression hypotheses." }
+    ],
+    "status": "active"
+  }
+]

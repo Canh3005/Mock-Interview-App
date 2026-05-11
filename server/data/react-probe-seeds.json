@@ -1,0 +1,1355 @@
+[
+  {
+    "code": "REACT_JR_TECH_STATE_001",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["frontend"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking"],
+    "techTags": ["react", "typescript"],
+    "difficulty": 2,
+    "intent": "Check whether the candidate can explain state ownership, controlled inputs, and predictable user feedback in a basic React form.",
+    "primaryQuestion": "How would you build a React form where the input value, validation message, and submit button state stay predictable?",
+    "expectedSignals": [
+      "Identifies which component owns the form state.",
+      "Explains controlled inputs and change handlers.",
+      "Mentions validation timing such as on change, blur, or submit.",
+      "Connects error display and disabled states to user feedback."
+    ],
+    "redFlags": [
+      "Cannot explain where the input value is stored.",
+      "Relies on direct DOM reads as the main state model.",
+      "Ignores validation timing or user-visible error states."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains controlled state, validation timing, submit behavior, and user feedback with a concrete form example."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Covers controlled inputs and validation but misses one detail such as disabled submit or error clearing."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Gives a plausible form flow but keeps state ownership vague."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too generic to confirm practical React form understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Can you walk through one field from typing to submit?",
+        "purpose": "Force the answer into a concrete component state flow."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Where would the validation error live, and when would you clear it?",
+        "purpose": "Clarify state ownership and user feedback behavior."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Predictable React form state",
+        "displayQuestion": "How would you build a React form where the input value, validation message, and submit button state stay predictable?",
+        "displayIntent": "Check controlled input and validation basics in React.",
+        "guidance": [
+          "Use a concrete form field as the example.",
+          "Explain what state is stored and which component owns it."
+        ],
+        "commonMistakes": [
+          "Only saying to use useState without explaining the flow.",
+          "Skipping validation and error display behavior."
+        ],
+        "labels": {
+          "role": "Frontend",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "State form React dễ dự đoán",
+        "displayQuestion": "Bạn sẽ xây một form React như thế nào để giá trị input, thông báo validation và trạng thái nút submit luôn dễ dự đoán?",
+        "displayIntent": "Kiểm tra nền tảng controlled input và validation trong React.",
+        "guidance": [
+          "Dùng một field cụ thể làm ví dụ.",
+          "Giải thích state nào được lưu và component nào sở hữu state đó."
+        ],
+        "commonMistakes": [
+          "Chỉ nói dùng useState nhưng không giải thích luồng.",
+          "Bỏ qua validation và cách hiển thị lỗi."
+        ],
+        "labels": {
+          "role": "Frontend",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "予測しやすい React フォーム state",
+        "displayQuestion": "入力値、validation message、submit button の状態を予測しやすく保つ React フォームをどのように作りますか。",
+        "displayIntent": "React の controlled input と validation の基礎を確認する。",
+        "guidance": [
+          "具体的なフォーム項目を例にする。",
+          "どの state をどの component が持つか説明する。"
+        ],
+        "commonMistakes": [
+          "useState と言うだけで流れを説明しない。",
+          "validation と error 表示を省略する。"
+        ],
+        "labels": {
+          "role": "Frontend",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "React docs: Sharing State Between Components",
+        "url": "https://react.dev/learn/sharing-state-between-components",
+        "note": "Used for controlled/uncontrolled component and state ownership concepts."
+      },
+      {
+        "label": "H5BP Front-end Developer Interview Questions",
+        "url": "https://github.com/h5bp/Front-end-Developer-Interview-Questions",
+        "note": "Used for front-end interview coverage style; wording rewritten as an internal probe."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REACT_JR_TECH_EVENTS_002",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["frontend"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "communication"],
+    "techTags": ["react", "typescript"],
+    "difficulty": 2,
+    "intent": "Evaluate whether the candidate understands React event handlers, passing callbacks, and preventing accidental invocation during render.",
+    "primaryQuestion": "How do you wire a click handler in React, pass data to it, and avoid calling it during render by mistake?",
+    "expectedSignals": [
+      "Defines event handlers as functions passed to JSX props.",
+      "Explains passing arguments through a wrapper callback.",
+      "Mentions event propagation or preventDefault when relevant.",
+      "Separates render-time code from interaction-time code."
+    ],
+    "redFlags": [
+      "Calls the handler immediately in JSX without recognizing the issue.",
+      "Cannot explain how child components notify parents.",
+      "Ignores default browser behavior for form or link interactions."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Gives a concrete handler example, explains callback passing, and handles interaction semantics correctly."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands handlers but misses propagation or default behavior details."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can describe click handling but confuses render and interaction timing."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not show practical JSX event handling knowledge."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "What is the difference between onClick={handleClick} and onClick={handleClick()}?",
+        "purpose": "Verify render-time versus click-time understanding."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "How would a child button tell a parent which item was clicked?",
+        "purpose": "Check callback contract reasoning."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "React event handler wiring",
+        "displayQuestion": "How do you wire a click handler in React, pass data to it, and avoid calling it during render by mistake?",
+        "displayIntent": "Check React event handling and callback basics.",
+        "guidance": ["Use JSX examples if helpful.", "Explain when the function runs."],
+        "commonMistakes": ["Invoking the handler during render.", "Ignoring parent-child callback contracts."],
+        "labels": { "role": "Frontend", "level": "Junior", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Gắn event handler trong React",
+        "displayQuestion": "Bạn gắn click handler trong React, truyền dữ liệu vào handler và tránh gọi nhầm handler ngay lúc render như thế nào?",
+        "displayIntent": "Kiểm tra nền tảng event handling và callback trong React.",
+        "guidance": ["Có thể dùng ví dụ JSX.", "Giải thích thời điểm function được chạy."],
+        "commonMistakes": ["Gọi handler ngay trong lúc render.", "Bỏ qua contract callback giữa parent và child."],
+        "labels": { "role": "Frontend", "level": "Junior", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "React event handler の接続",
+        "displayQuestion": "React で click handler をつなぎ、data を渡し、render 中に誤って呼ばないようにするにはどうしますか。",
+        "displayIntent": "React の event handling と callback の基礎を確認する。",
+        "guidance": ["必要なら JSX 例を使う。", "関数がいつ実行されるか説明する。"],
+        "commonMistakes": ["render 中に handler を呼んでしまう。", "parent-child callback contract を無視する。"],
+        "labels": { "role": "Frontend", "level": "Junior", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "React docs: Responding to Events",
+        "url": "https://react.dev/learn/responding-to-events",
+        "note": "Used for event handler and propagation concepts."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REACT_JR_DEBUG_HANDLER_003",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["frontend"],
+    "levels": ["junior"],
+    "type": "debugging",
+    "competencies": ["problem_solving", "technical_fundamentals", "ownership"],
+    "techTags": ["react", "typescript"],
+    "difficulty": 2,
+    "intent": "Assess practical debugging of a non-working interaction in a React component.",
+    "primaryQuestion": "A button looks enabled, but clicking it does nothing. How would you inspect the React component, event handler, and browser console to find the cause?",
+    "expectedSignals": [
+      "Checks whether the handler is passed and bound correctly.",
+      "Looks for console errors and failed assumptions.",
+      "Verifies disabled state, overlay, event propagation, or conditional rendering.",
+      "Uses a small reproduction or React DevTools when useful."
+    ],
+    "redFlags": [
+      "Starts rewriting the component before reproducing the failure.",
+      "Only guesses without checking console or props.",
+      "Ignores whether the UI is actually receiving the click."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Uses a systematic UI debugging flow from reproduction to handler verification and fix validation." },
+      { "scoreBand": "solid", "description": "Covers handler and console checks but misses one UI cause such as overlay or disabled state." },
+      { "scoreBand": "needs_work", "description": "Mentions generic debugging but lacks React-specific inspection." },
+      { "scoreBand": "insufficient_evidence", "description": "No clear debugging sequence or evidence gathering." }
+    ],
+    "followUps": [
+      { "trigger": "missing_context", "question": "How would you prove whether the click event reaches the button?", "purpose": "Clarify evidence gathering." },
+      { "trigger": "red_flag", "question": "What would you check before changing the handler code?", "purpose": "Discourage premature fixes." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Debug a broken React click",
+        "displayQuestion": "A button looks enabled, but clicking it does nothing. How would you inspect the React component, event handler, and browser console to find the cause?",
+        "displayIntent": "Evaluate practical debugging of React interactions.",
+        "guidance": ["Start from reproduction and observable evidence.", "Mention component props, handler, and browser signals."],
+        "commonMistakes": ["Guessing a fix before confirming the event path.", "Ignoring console errors or disabled state."],
+        "labels": { "role": "Frontend", "level": "Junior", "type": "debugging" }
+      },
+      "vi": {
+        "title": "Debug click React không chạy",
+        "displayQuestion": "Một button nhìn như đang enabled nhưng bấm không có gì xảy ra. Bạn kiểm tra component React, event handler và browser console như thế nào để tìm nguyên nhân?",
+        "displayIntent": "Đánh giá khả năng debug interaction React thực tế.",
+        "guidance": ["Bắt đầu từ reproduce và bằng chứng quan sát được.", "Nhắc tới props, handler và tín hiệu từ browser."],
+        "commonMistakes": ["Đoán fix trước khi xác nhận đường đi của event.", "Bỏ qua console error hoặc disabled state."],
+        "labels": { "role": "Frontend", "level": "Junior", "type": "debugging" }
+      },
+      "ja": {
+        "title": "React click が動かない問題の debug",
+        "displayQuestion": "button は enabled に見えるのに click しても何も起きません。React component、event handler、browser console をどう確認しますか。",
+        "displayIntent": "React interaction の実践的な debug 力を評価する。",
+        "guidance": ["再現と観測できる証拠から始める。", "props、handler、browser signal に触れる。"],
+        "commonMistakes": ["event path を確認せずに修正を推測する。", "console error や disabled state を無視する。"],
+        "labels": { "role": "Frontend", "level": "Junior", "type": "debugging" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "React docs: Responding to Events", "url": "https://react.dev/learn/responding-to-events", "note": "Used for event handler behavior and propagation." },
+      { "label": "H5BP Front-end Developer Interview Questions", "url": "https://github.com/h5bp/Front-end-Developer-Interview-Questions", "note": "Used for front-end debugging coverage style." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REACT_JR_TECH_LIST_KEYS_004",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["frontend"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving"],
+    "techTags": ["react", "typescript"],
+    "difficulty": 2,
+    "intent": "Check whether the candidate understands list rendering, stable keys, and state preservation in React.",
+    "primaryQuestion": "Why do React lists need stable keys, and what can go wrong if you use an array index for a list that can be filtered or reordered?",
+    "expectedSignals": [
+      "Explains keys as identity for items across renders.",
+      "Connects unstable keys to incorrect preserved state.",
+      "Names safer key sources such as persistent IDs.",
+      "Mentions filtering, sorting, insertion, or deletion as risk cases."
+    ],
+    "redFlags": [
+      "Says keys only silence warnings.",
+      "Always recommends array index keys without context.",
+      "Cannot connect keys to component identity or state."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Clearly explains identity, preserved state, and concrete reorder/filter failure modes." },
+      { "scoreBand": "solid", "description": "Understands stable keys but gives limited examples." },
+      { "scoreBand": "needs_work", "description": "Knows keys are required but cannot explain why." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer is too generic to assess list rendering knowledge." }
+    ],
+    "followUps": [
+      { "trigger": "vague_answer", "question": "Can you describe a bug caused by using index as key?", "purpose": "Test whether the candidate can connect keys to real UI behavior." },
+      { "trigger": "missing_context", "question": "When might an index key be acceptable?", "purpose": "Check nuance and constraints." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Stable keys in React lists",
+        "displayQuestion": "Why do React lists need stable keys, and what can go wrong if you use an array index for a list that can be filtered or reordered?",
+        "displayIntent": "Check understanding of list identity and state preservation.",
+        "guidance": ["Explain keys through an example list.", "Connect the answer to filtering or reordering."],
+        "commonMistakes": ["Treating keys as only a warning fix.", "Ignoring component state preservation."],
+        "labels": { "role": "Frontend", "level": "Junior", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Key ổn định trong React list",
+        "displayQuestion": "Vì sao React list cần key ổn định, và điều gì có thể sai nếu dùng array index cho list có thể filter hoặc reorder?",
+        "displayIntent": "Kiểm tra hiểu biết về identity của list và preserved state.",
+        "guidance": ["Giải thích key qua một list cụ thể.", "Gắn câu trả lời với filter hoặc reorder."],
+        "commonMistakes": ["Xem key chỉ là cách tắt warning.", "Bỏ qua việc React preserve state theo identity."],
+        "labels": { "role": "Frontend", "level": "Junior", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "React list の stable key",
+        "displayQuestion": "React list になぜ stable key が必要で、filter や reorder される list で array index を key にすると何が起きますか。",
+        "displayIntent": "list identity と state preservation の理解を確認する。",
+        "guidance": ["具体的な list 例で説明する。", "filter や reorder と結びつける。"],
+        "commonMistakes": ["key を warning 対応だけと考える。", "state preservation を無視する。"],
+        "labels": { "role": "Frontend", "level": "Junior", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "React docs: Preserving and Resetting State", "url": "https://react.dev/learn/preserving-and-resetting-state", "note": "Used for key and state preservation concepts." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REACT_JR_SIT_RESPONSIVE_005",
+    "stages": ["stage_5_soft_skills"],
+    "roleFamilies": ["frontend"],
+    "levels": ["junior"],
+    "type": "situational",
+    "competencies": ["communication", "collaboration", "ownership"],
+    "techTags": ["react", "accessibility"],
+    "difficulty": 2,
+    "intent": "Assess whether the candidate can clarify missing UI requirements before implementing a React screen.",
+    "primaryQuestion": "A React screen design only shows the desktop layout. What responsive behavior, keyboard access, and empty/loading/error states would you clarify before implementation?",
+    "expectedSignals": [
+      "Asks about breakpoints and content wrapping.",
+      "Clarifies keyboard and focus behavior.",
+      "Identifies empty, loading, and error states.",
+      "Communicates assumptions before coding."
+    ],
+    "redFlags": [
+      "Builds only the visible desktop mock without clarifying states.",
+      "Ignores keyboard or focus behavior.",
+      "Treats missing requirements as purely a design problem."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Clarifies responsive, accessibility, and state requirements with a practical implementation plan." },
+      { "scoreBand": "solid", "description": "Covers most missing UI states but misses one accessibility or responsive detail." },
+      { "scoreBand": "needs_work", "description": "Recognizes ambiguity but does not propose specific questions." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer does not show proactive requirement clarification." }
+    ],
+    "followUps": [
+      { "trigger": "missing_context", "question": "What exact questions would you ask design or product before coding?", "purpose": "Recover concrete collaboration behavior." },
+      { "trigger": "missing_tradeoff", "question": "If product wants it shipped today, what minimum states would you still include?", "purpose": "Test delivery versus quality trade-off." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Clarifying missing React UI states",
+        "displayQuestion": "A React screen design only shows the desktop layout. What responsive behavior, keyboard access, and empty/loading/error states would you clarify before implementation?",
+        "displayIntent": "Assess requirement clarification before building UI.",
+        "guidance": ["Name the missing states explicitly.", "Explain who you would align with and why."],
+        "commonMistakes": ["Only building the visible desktop mock.", "Forgetting keyboard and error states."],
+        "labels": { "role": "Frontend", "level": "Junior", "type": "situational" }
+      },
+      "vi": {
+        "title": "Làm rõ UI state còn thiếu trong React",
+        "displayQuestion": "Design của một màn hình React chỉ có desktop layout. Bạn sẽ làm rõ responsive behavior, keyboard access và empty/loading/error state nào trước khi implement?",
+        "displayIntent": "Đánh giá khả năng làm rõ requirement trước khi build UI.",
+        "guidance": ["Nêu rõ các state còn thiếu.", "Giải thích cần align với ai và vì sao."],
+        "commonMistakes": ["Chỉ build đúng desktop mock đang thấy.", "Quên keyboard và error state."],
+        "labels": { "role": "Frontend", "level": "Junior", "type": "situational" }
+      },
+      "ja": {
+        "title": "不足している React UI state の確認",
+        "displayQuestion": "React screen design が desktop layout だけの場合、responsive behavior、keyboard access、empty/loading/error state の何を実装前に確認しますか。",
+        "displayIntent": "UI 実装前の requirement clarification を評価する。",
+        "guidance": ["不足している state を明確に挙げる。", "誰と何を合わせるか説明する。"],
+        "commonMistakes": ["見えている desktop mock だけを作る。", "keyboard と error state を忘れる。"],
+        "labels": { "role": "Frontend", "level": "Junior", "type": "situational" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "H5BP Front-end Developer Interview Questions", "url": "https://github.com/h5bp/Front-end-Developer-Interview-Questions", "note": "Used for accessibility, testing, and performance topic coverage." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REACT_JR_BEHAV_FEEDBACK_006",
+    "stages": ["stage_5_soft_skills"],
+    "roleFamilies": ["frontend"],
+    "levels": ["junior"],
+    "type": "behavioral",
+    "competencies": ["learning_agility", "collaboration", "communication"],
+    "techTags": ["react", "accessibility"],
+    "difficulty": 2,
+    "intent": "Assess whether the candidate can use design or code review feedback to improve React UI quality.",
+    "primaryQuestion": "Tell me about a time feedback from design, product, or code review changed a React UI you built. What did you change and what did you learn?",
+    "expectedSignals": [
+      "Describes a concrete feedback event.",
+      "Explains the React/UI change made afterward.",
+      "Shows collaboration without blame.",
+      "Mentions a lasting improvement in habit or quality."
+    ],
+    "redFlags": [
+      "Cannot identify a concrete feedback example.",
+      "Frames feedback as purely subjective or annoying.",
+      "Does not explain what changed after the feedback."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Gives a concrete feedback story with action, outcome, and changed engineering habit." },
+      { "scoreBand": "solid", "description": "Has a real example but outcome or lesson is light." },
+      { "scoreBand": "needs_work", "description": "Acknowledges feedback but cannot show behavior change." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer is generic or not tied to personal work." }
+    ],
+    "followUps": [
+      { "trigger": "missing_context", "question": "What was the specific screen and what feedback did you receive?", "purpose": "Ground the story in a real UI." },
+      { "trigger": "missing_metric", "question": "How did you know the revised UI was better?", "purpose": "Check observable outcome." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "React UI feedback story",
+        "displayQuestion": "Tell me about a time feedback from design, product, or code review changed a React UI you built. What did you change and what did you learn?",
+        "displayIntent": "Assess learning agility and collaboration around UI quality.",
+        "guidance": ["Use a real screen or component.", "Include what changed afterward."],
+        "commonMistakes": ["Keeping the story generic.", "Not naming the lesson learned."],
+        "labels": { "role": "Frontend", "level": "Junior", "type": "behavioral" }
+      },
+      "vi": {
+        "title": "Câu chuyện nhận feedback UI React",
+        "displayQuestion": "Hãy kể về một lần feedback từ design, product hoặc code review làm thay đổi UI React bạn đã xây. Bạn đã đổi gì và học được gì?",
+        "displayIntent": "Đánh giá learning agility và collaboration quanh chất lượng UI.",
+        "guidance": ["Dùng một màn hình hoặc component thật.", "Nêu điều đã thay đổi sau đó."],
+        "commonMistakes": ["Kể quá chung chung.", "Không nêu bài học cụ thể."],
+        "labels": { "role": "Frontend", "level": "Junior", "type": "behavioral" }
+      },
+      "ja": {
+        "title": "React UI feedback の経験",
+        "displayQuestion": "design、product、code review の feedback により、あなたが作った React UI が変わった経験を話してください。何を変え、何を学びましたか。",
+        "displayIntent": "UI 品質に関する learning agility と collaboration を評価する。",
+        "guidance": ["実際の screen または component を使う。", "その後に変わったことを含める。"],
+        "commonMistakes": ["話が抽象的すぎる。", "学びを具体的に言わない。"],
+        "labels": { "role": "Frontend", "level": "Junior", "type": "behavioral" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "H5BP Front-end Developer Interview Questions", "url": "https://github.com/h5bp/Front-end-Developer-Interview-Questions", "note": "Used for open-ended front-end interview style." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REACT_MID_TECH_EFFECTS_007",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["frontend"],
+    "levels": ["mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking"],
+    "techTags": ["react", "typescript"],
+    "difficulty": 3,
+    "intent": "Check practical understanding of useEffect as synchronization with external systems rather than general state derivation.",
+    "primaryQuestion": "How do you decide whether logic belongs in render, an event handler, or a useEffect in a React component?",
+    "expectedSignals": [
+      "Treats effects as synchronization with external systems.",
+      "Avoids effects for pure derived state when render can compute it.",
+      "Explains dependency arrays and cleanup.",
+      "Mentions user events as a separate place for interaction-specific logic."
+    ],
+    "redFlags": [
+      "Uses useEffect as the default place for all logic.",
+      "Suppresses dependency linting without explaining why.",
+      "Cannot describe cleanup or resynchronization."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Distinguishes render, event, and effect logic with examples and dependency reasoning." },
+      { "scoreBand": "solid", "description": "Understands effects but misses cleanup or dependency nuance." },
+      { "scoreBand": "needs_work", "description": "Overuses effects or cannot explain resynchronization." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer lacks concrete React lifecycle reasoning." }
+    ],
+    "followUps": [
+      { "trigger": "vague_answer", "question": "Give an example of logic you would remove from useEffect and compute during render instead.", "purpose": "Test practical separation of concerns." },
+      { "trigger": "red_flag", "question": "When is it risky to ignore the exhaustive-deps linter?", "purpose": "Check dependency safety." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Render, event handler, or useEffect",
+        "displayQuestion": "How do you decide whether logic belongs in render, an event handler, or a useEffect in a React component?",
+        "displayIntent": "Check practical useEffect boundaries.",
+        "guidance": ["Compare at least two places for the same logic.", "Mention dependencies and cleanup."],
+        "commonMistakes": ["Putting all logic in useEffect.", "Ignoring dependency changes."],
+        "labels": { "role": "Frontend", "level": "Mid-level", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Render, event handler hay useEffect",
+        "displayQuestion": "Bạn quyết định logic nên nằm trong render, event handler hay useEffect của một component React như thế nào?",
+        "displayIntent": "Kiểm tra ranh giới sử dụng useEffect thực tế.",
+        "guidance": ["So sánh ít nhất hai nơi đặt cùng một logic.", "Nhắc tới dependency và cleanup."],
+        "commonMistakes": ["Đưa mọi logic vào useEffect.", "Bỏ qua dependency thay đổi."],
+        "labels": { "role": "Frontend", "level": "Mid-level", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "render、event handler、useEffect の使い分け",
+        "displayQuestion": "React component の logic を render、event handler、useEffect のどこに置くか、どう判断しますか。",
+        "displayIntent": "useEffect の実践的な境界を確認する。",
+        "guidance": ["同じ logic の置き場所を比較する。", "dependencies と cleanup に触れる。"],
+        "commonMistakes": ["すべての logic を useEffect に入れる。", "dependency change を無視する。"],
+        "labels": { "role": "Frontend", "level": "Mid-level", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "React docs: useEffect", "url": "https://react.dev/reference/react/useEffect", "note": "Used for effect dependency and synchronization concepts." },
+      { "label": "React docs: Lifecycle of Reactive Effects", "url": "https://react.dev/learn/lifecycle-of-reactive-effects", "note": "Used for effect lifecycle and resynchronization concepts." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REACT_MID_DEBUG_EFFECT_LOOP_008",
+    "stages": ["stage_3_domain_knowledge"],
+    "roleFamilies": ["frontend"],
+    "levels": ["mid"],
+    "type": "debugging",
+    "competencies": ["problem_solving", "system_thinking", "ownership"],
+    "techTags": ["react", "typescript"],
+    "difficulty": 3,
+    "intent": "Evaluate debugging of repeated effects, stale closures, and accidental infinite render cycles.",
+    "primaryQuestion": "A React component keeps fetching the same data repeatedly after a release. How would you determine whether the cause is effect dependencies, unstable objects/functions, or state updates inside the effect?",
+    "expectedSignals": [
+      "Reproduces the repeated fetch and measures frequency.",
+      "Inspects dependency values and identity changes.",
+      "Checks whether the effect updates state that changes dependencies.",
+      "Verifies the fix without suppressing dependencies blindly."
+    ],
+    "redFlags": [
+      "Immediately removes the dependency array or disables linting.",
+      "Cannot explain object or function identity in dependencies.",
+      "Does not check what state changes after each fetch."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Systematically narrows dependency identity, state update, and cleanup causes with verification." },
+      { "scoreBand": "solid", "description": "Finds likely dependency causes but misses one verification step." },
+      { "scoreBand": "needs_work", "description": "Recognizes useEffect but relies on trial-and-error fixes." },
+      { "scoreBand": "insufficient_evidence", "description": "No concrete debugging path for repeated effects." }
+    ],
+    "followUps": [
+      { "trigger": "missing_metric", "question": "How would you prove the request count returned to normal?", "purpose": "Check fix validation." },
+      { "trigger": "red_flag", "question": "Why might removing a dependency hide a bug?", "purpose": "Test dependency safety." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Debug repeated React fetches",
+        "displayQuestion": "A React component keeps fetching the same data repeatedly after a release. How would you determine whether the cause is effect dependencies, unstable objects/functions, or state updates inside the effect?",
+        "displayIntent": "Evaluate debugging of effect dependency loops.",
+        "guidance": ["Mention reproduction and request counts.", "Inspect dependency identity and state updates."],
+        "commonMistakes": ["Disabling dependency linting.", "Changing code before observing the loop."],
+        "labels": { "role": "Frontend", "level": "Mid-level", "type": "debugging" }
+      },
+      "vi": {
+        "title": "Debug fetch React bị lặp",
+        "displayQuestion": "Một component React cứ fetch cùng dữ liệu lặp lại sau release. Bạn xác định nguyên nhân là dependency của effect, object/function không ổn định, hay state update bên trong effect như thế nào?",
+        "displayIntent": "Đánh giá khả năng debug loop do effect dependency.",
+        "guidance": ["Nhắc tới reproduce và số request.", "Kiểm tra identity của dependency và state update."],
+        "commonMistakes": ["Tắt dependency linting.", "Sửa code trước khi quan sát loop."],
+        "labels": { "role": "Frontend", "level": "Mid-level", "type": "debugging" }
+      },
+      "ja": {
+        "title": "React fetch が繰り返される問題の debug",
+        "displayQuestion": "release 後、React component が同じ data を何度も fetch します。effect dependencies、unstable object/function、effect 内の state update のどれが原因かどう調べますか。",
+        "displayIntent": "effect dependency loop の debug 力を評価する。",
+        "guidance": ["再現と request count に触れる。", "dependency identity と state update を確認する。"],
+        "commonMistakes": ["dependency linting を無効化する。", "loop を観測する前に code を変える。"],
+        "labels": { "role": "Frontend", "level": "Mid-level", "type": "debugging" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "React docs: useEffect", "url": "https://react.dev/reference/react/useEffect", "note": "Used for dependency and troubleshooting concepts." },
+      { "label": "React docs: Lifecycle of Reactive Effects", "url": "https://react.dev/learn/lifecycle-of-reactive-effects", "note": "Used for resynchronization reasoning." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REACT_MID_TRADE_STATE_009",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["frontend"],
+    "levels": ["mid"],
+    "type": "trade_off",
+    "competencies": ["trade_off_analysis", "system_thinking", "technical_fundamentals"],
+    "techTags": ["react", "redux", "typescript"],
+    "difficulty": 3,
+    "intent": "Evaluate state management trade-off reasoning across local state, context, and Redux.",
+    "primaryQuestion": "When would you keep state local in React, when would you lift it up, and when would you move it into Context or Redux?",
+    "expectedSignals": [
+      "Considers state ownership and number of consumers.",
+      "Discusses update frequency and render impact.",
+      "Separates UI state, server cache, and business workflow state.",
+      "Mentions team conventions and testability."
+    ],
+    "redFlags": [
+      "Always chooses Redux for every shared value.",
+      "Uses Context without considering update frequency.",
+      "Cannot distinguish local UI state from server data cache."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Compares local, lifted, Context, and Redux with realistic constraints and risks." },
+      { "scoreBand": "solid", "description": "Shows good state ownership reasoning but misses performance or testability." },
+      { "scoreBand": "needs_work", "description": "Has tool preference but weak trade-off explanation." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer is slogan-level and not actionable." }
+    ],
+    "followUps": [
+      { "trigger": "missing_tradeoff", "question": "What would make Context a bad fit for this state?", "purpose": "Force trade-off comparison." },
+      { "trigger": "missing_context", "question": "Who needs to read or update this state?", "purpose": "Clarify ownership and scope." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Local state, Context, or Redux",
+        "displayQuestion": "When would you keep state local in React, when would you lift it up, and when would you move it into Context or Redux?",
+        "displayIntent": "Evaluate React state management trade-offs.",
+        "guidance": ["Compare alternatives under constraints.", "Separate UI state from server data."],
+        "commonMistakes": ["Choosing one tool for every state.", "Ignoring update frequency and ownership."],
+        "labels": { "role": "Frontend", "level": "Mid-level", "type": "trade_off" }
+      },
+      "vi": {
+        "title": "Local state, Context hay Redux",
+        "displayQuestion": "Khi nào bạn giữ state local trong React, khi nào lift state lên, và khi nào đưa vào Context hoặc Redux?",
+        "displayIntent": "Đánh giá trade-off state management trong React.",
+        "guidance": ["So sánh lựa chọn theo constraint.", "Tách UI state khỏi server data."],
+        "commonMistakes": ["Dùng một tool cho mọi loại state.", "Bỏ qua update frequency và ownership."],
+        "labels": { "role": "Frontend", "level": "Mid-level", "type": "trade_off" }
+      },
+      "ja": {
+        "title": "local state、Context、Redux の選択",
+        "displayQuestion": "React で state を local に保つ、lift up する、Context や Redux に移す判断はどう行いますか。",
+        "displayIntent": "React state management の trade-off を評価する。",
+        "guidance": ["制約の中で選択肢を比較する。", "UI state と server data を分ける。"],
+        "commonMistakes": ["すべての state に同じ tool を使う。", "update frequency と ownership を無視する。"],
+        "labels": { "role": "Frontend", "level": "Mid-level", "type": "trade_off" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "React docs: Sharing State Between Components", "url": "https://react.dev/learn/sharing-state-between-components", "note": "Used for lifting state and single source of truth concepts." },
+      { "label": "React docs: Passing Data Deeply with Context", "url": "https://react.dev/learn/passing-data-deeply-with-context", "note": "Used for Context use cases and alternatives." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REACT_MID_TECH_MEMO_010",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["frontend"],
+    "levels": ["mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "impact_measurement"],
+    "techTags": ["react", "browser_performance", "typescript"],
+    "difficulty": 3,
+    "intent": "Assess React performance reasoning around measurement, memoization, and stable references.",
+    "primaryQuestion": "How would you decide whether to use useMemo or useCallback to reduce React render cost, and how would you verify it helped?",
+    "expectedSignals": [
+      "Starts with profiling or observed render cost.",
+      "Explains cached calculations versus cached function identity.",
+      "Mentions dependency correctness and stale values.",
+      "Verifies outcome with profiler, timings, or user-visible metrics."
+    ],
+    "redFlags": [
+      "Adds memoization everywhere without measurement.",
+      "Cannot distinguish useMemo from useCallback.",
+      "Ignores dependency correctness or stale closures."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Explains when memoization is useful, names risks, and verifies performance impact." },
+      { "scoreBand": "solid", "description": "Understands memoization but lacks strong measurement detail." },
+      { "scoreBand": "needs_work", "description": "Uses memoization as a default without cost-benefit reasoning." },
+      { "scoreBand": "insufficient_evidence", "description": "No clear React performance model." }
+    ],
+    "followUps": [
+      { "trigger": "missing_metric", "question": "What metric or profiler signal would tell you the change helped?", "purpose": "Check measurement discipline." },
+      { "trigger": "missing_tradeoff", "question": "What cost can unnecessary memoization add?", "purpose": "Test trade-off awareness." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "useMemo and useCallback trade-offs",
+        "displayQuestion": "How would you decide whether to use useMemo or useCallback to reduce React render cost, and how would you verify it helped?",
+        "displayIntent": "Assess React memoization and performance measurement.",
+        "guidance": ["Start with evidence of a render problem.", "Explain dependencies and verification."],
+        "commonMistakes": ["Memoizing everything blindly.", "Skipping performance measurement."],
+        "labels": { "role": "Frontend", "level": "Mid-level", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Trade-off useMemo và useCallback",
+        "displayQuestion": "Bạn quyết định dùng useMemo hoặc useCallback để giảm chi phí render React như thế nào, và xác minh nó có ích ra sao?",
+        "displayIntent": "Đánh giá memoization và đo performance trong React.",
+        "guidance": ["Bắt đầu bằng bằng chứng có vấn đề render.", "Giải thích dependency và cách verify."],
+        "commonMistakes": ["Memoize mọi thứ một cách mù quáng.", "Bỏ qua đo performance."],
+        "labels": { "role": "Frontend", "level": "Mid-level", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "useMemo と useCallback の trade-off",
+        "displayQuestion": "React の render cost を下げるために useMemo または useCallback を使うか、どう判断し、効果をどう確認しますか。",
+        "displayIntent": "React memoization と performance measurement を評価する。",
+        "guidance": ["render 問題の証拠から始める。", "dependencies と verification を説明する。"],
+        "commonMistakes": ["何でも memoize する。", "performance measurement を省略する。"],
+        "labels": { "role": "Frontend", "level": "Mid-level", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "React docs: useMemo", "url": "https://react.dev/reference/react/useMemo", "note": "Used for cached calculation and dependency concepts." },
+      { "label": "React docs: useCallback", "url": "https://react.dev/reference/react/useCallback", "note": "Used for cached function identity concepts." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REACT_MID_DEBUG_STALE_ROUTE_011",
+    "stages": ["stage_3_domain_knowledge"],
+    "roleFamilies": ["frontend"],
+    "levels": ["mid"],
+    "type": "debugging",
+    "competencies": ["problem_solving", "system_thinking", "ownership"],
+    "techTags": ["react", "typescript", "browser_performance"],
+    "difficulty": 3,
+    "intent": "Assess debugging of stale data caused by route changes, request races, or cache key mistakes.",
+    "primaryQuestion": "A React route sometimes shows data from the previous record after navigation. What would you inspect in route params, fetching logic, cache keys, and cleanup behavior?",
+    "expectedSignals": [
+      "Reproduces fast navigation or back/forward scenarios.",
+      "Checks route param changes and query/cache keys.",
+      "Considers request races and stale responses.",
+      "Validates loading and error states during transition."
+    ],
+    "redFlags": [
+      "Only forces a full page reload as the fix.",
+      "Ignores request ordering or cancellation.",
+      "Does not inspect route params or cache identity."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Connects route identity, cache keys, race conditions, and UI transition states." },
+      { "scoreBand": "solid", "description": "Finds likely stale data causes but lacks complete transition-state verification." },
+      { "scoreBand": "needs_work", "description": "Guesses at state bugs without narrowing route or fetch behavior." },
+      { "scoreBand": "insufficient_evidence", "description": "No systematic debugging plan." }
+    ],
+    "followUps": [
+      { "trigger": "missing_context", "question": "What user action would you use to reproduce the stale data?", "purpose": "Check reproduction strategy." },
+      { "trigger": "missing_metric", "question": "How would you verify that stale responses no longer win?", "purpose": "Check fix validation." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Debug stale data after navigation",
+        "displayQuestion": "A React route sometimes shows data from the previous record after navigation. What would you inspect in route params, fetching logic, cache keys, and cleanup behavior?",
+        "displayIntent": "Assess stale data debugging in route-driven React screens.",
+        "guidance": ["Mention route identity and request timing.", "Include loading/error transition states."],
+        "commonMistakes": ["Fixing with full reload only.", "Ignoring cache keys or stale responses."],
+        "labels": { "role": "Frontend", "level": "Mid-level", "type": "debugging" }
+      },
+      "vi": {
+        "title": "Debug stale data sau navigation",
+        "displayQuestion": "Một React route thỉnh thoảng hiển thị data của record trước sau khi navigate. Bạn kiểm tra route params, fetching logic, cache key và cleanup behavior như thế nào?",
+        "displayIntent": "Đánh giá debug stale data trong màn hình React theo route.",
+        "guidance": ["Nhắc tới route identity và timing của request.", "Bao gồm loading/error state khi transition."],
+        "commonMistakes": ["Chỉ fix bằng full reload.", "Bỏ qua cache key hoặc stale response."],
+        "labels": { "role": "Frontend", "level": "Mid-level", "type": "debugging" }
+      },
+      "ja": {
+        "title": "navigation 後の stale data debug",
+        "displayQuestion": "React route が navigation 後に前の record data を表示することがあります。route params、fetching logic、cache keys、cleanup behavior の何を確認しますか。",
+        "displayIntent": "route-driven React screen の stale data debug を評価する。",
+        "guidance": ["route identity と request timing に触れる。", "loading/error transition state を含める。"],
+        "commonMistakes": ["full reload だけで直す。", "cache key や stale response を無視する。"],
+        "labels": { "role": "Frontend", "level": "Mid-level", "type": "debugging" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "React docs: useEffect", "url": "https://react.dev/reference/react/useEffect", "note": "Used for fetching and cleanup concepts." },
+      { "label": "React docs: Lifecycle of Reactive Effects", "url": "https://react.dev/learn/lifecycle-of-reactive-effects", "note": "Used for effect resynchronization on changed values." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REACT_MID_CV_A11Y_012",
+    "stages": ["stage_4_cv_deep_dive"],
+    "roleFamilies": ["frontend"],
+    "levels": ["mid"],
+    "type": "cv_claim_verification",
+    "competencies": ["ownership", "impact_measurement", "technical_fundamentals"],
+    "techTags": ["react", "accessibility", "playwright"],
+    "difficulty": 3,
+    "intent": "Verify whether an accessibility improvement claim is concrete, tested, and tied to user impact.",
+    "primaryQuestion": "Your CV says you improved accessibility in a React app. Which issue did you fix, how did you test it, and what changed for users?",
+    "expectedSignals": [
+      "Names a specific accessibility issue or WCAG-related behavior.",
+      "Explains the React/component change made.",
+      "Mentions manual or automated testing.",
+      "Connects the fix to user impact or reduced defect risk."
+    ],
+    "redFlags": [
+      "Only says accessibility was improved without naming an issue.",
+      "Cannot describe testing with keyboard, screen reader, or automated checks.",
+      "No personal contribution or outcome."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Provides specific issue, implementation, testing evidence, and user impact." },
+      { "scoreBand": "solid", "description": "Concrete issue and fix are present but impact measurement is thin." },
+      { "scoreBand": "needs_work", "description": "Claim sounds plausible but lacks testing or ownership evidence." },
+      { "scoreBand": "insufficient_evidence", "description": "Cannot verify the CV claim from the answer." }
+    ],
+    "followUps": [
+      { "trigger": "missing_metric", "question": "What test or observable signal proved the accessibility issue was fixed?", "purpose": "Verify evidence." },
+      { "trigger": "red_flag", "question": "What part of the fix did you personally implement?", "purpose": "Separate personal contribution from team work." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Verify React accessibility claim",
+        "displayQuestion": "Your CV says you improved accessibility in a React app. Which issue did you fix, how did you test it, and what changed for users?",
+        "displayIntent": "Verify concrete accessibility ownership and testing.",
+        "guidance": ["Name the issue and user impact.", "Include test method and personal contribution."],
+        "commonMistakes": ["Using vague accessibility claims.", "Skipping keyboard or assistive tech validation."],
+        "labels": { "role": "Frontend", "level": "Mid-level", "type": "cv_claim_verification" }
+      },
+      "vi": {
+        "title": "Xác minh claim accessibility React",
+        "displayQuestion": "CV của bạn nói bạn cải thiện accessibility trong một app React. Bạn đã sửa issue nào, test ra sao và điều gì thay đổi với user?",
+        "displayIntent": "Xác minh ownership và testing accessibility cụ thể.",
+        "guidance": ["Nêu issue và tác động tới user.", "Bao gồm cách test và đóng góp cá nhân."],
+        "commonMistakes": ["Nói claim accessibility quá mơ hồ.", "Bỏ qua kiểm tra keyboard hoặc assistive tech."],
+        "labels": { "role": "Frontend", "level": "Mid-level", "type": "cv_claim_verification" }
+      },
+      "ja": {
+        "title": "React accessibility claim の確認",
+        "displayQuestion": "CV に React app の accessibility を改善したとあります。どの issue を直し、どう test し、user に何が変わりましたか。",
+        "displayIntent": "具体的な accessibility ownership と testing を確認する。",
+        "guidance": ["issue と user impact を挙げる。", "test method と personal contribution を含める。"],
+        "commonMistakes": ["accessibility claim が曖昧すぎる。", "keyboard や assistive tech の確認を省略する。"],
+        "labels": { "role": "Frontend", "level": "Mid-level", "type": "cv_claim_verification" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "H5BP Front-end Developer Interview Questions", "url": "https://github.com/h5bp/Front-end-Developer-Interview-Questions", "note": "Used for accessibility and testing coverage topics." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REACT_MID_TECH_COMPONENT_BOUNDARY_013",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["frontend"],
+    "levels": ["mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking", "communication"],
+    "techTags": ["react", "typescript"],
+    "difficulty": 3,
+    "intent": "Assess component boundary design around props, composition, state ownership, and maintainability.",
+    "primaryQuestion": "How would you split a complex React screen into reusable components without hiding important state or business rules in the wrong place?",
+    "expectedSignals": [
+      "Identifies stable component responsibilities.",
+      "Defines clear prop and event contracts.",
+      "Keeps business rules near the right owner.",
+      "Uses composition rather than excessive prop drilling when appropriate."
+    ],
+    "redFlags": [
+      "Splits by visual boxes only without data ownership.",
+      "Creates highly coupled components with implicit global assumptions.",
+      "Moves business rules into presentational components without reason."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Explains boundaries using state ownership, prop contracts, composition, and future change cost." },
+      { "scoreBand": "solid", "description": "Good component split but misses one ownership or contract detail." },
+      { "scoreBand": "needs_work", "description": "Mostly talks about file size or visual layout." },
+      { "scoreBand": "insufficient_evidence", "description": "No concrete component design reasoning." }
+    ],
+    "followUps": [
+      { "trigger": "missing_context", "question": "Which component would own the data and which would only render it?", "purpose": "Clarify ownership." },
+      { "trigger": "missing_tradeoff", "question": "When would you keep a component less reusable on purpose?", "purpose": "Test pragmatic boundary judgment." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "React component boundaries",
+        "displayQuestion": "How would you split a complex React screen into reusable components without hiding important state or business rules in the wrong place?",
+        "displayIntent": "Assess reusable component boundary design.",
+        "guidance": ["Use a concrete screen example.", "Discuss props, events, and state ownership."],
+        "commonMistakes": ["Splitting only by visual layout.", "Over-abstracting before reuse is real."],
+        "labels": { "role": "Frontend", "level": "Mid-level", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Boundary component React",
+        "displayQuestion": "Bạn tách một màn hình React phức tạp thành các component reusable như thế nào mà không giấu state hoặc business rule sai chỗ?",
+        "displayIntent": "Đánh giá thiết kế boundary component có thể tái sử dụng.",
+        "guidance": ["Dùng một màn hình cụ thể.", "Nói về props, event và state ownership."],
+        "commonMistakes": ["Chỉ tách theo layout nhìn thấy.", "Trừu tượng hóa quá sớm khi chưa có reuse thật."],
+        "labels": { "role": "Frontend", "level": "Mid-level", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "React component boundary",
+        "displayQuestion": "複雑な React screen を reusable component に分けるとき、重要な state や business rule を間違った場所に隠さないためにどうしますか。",
+        "displayIntent": "reusable component boundary design を評価する。",
+        "guidance": ["具体的な screen 例を使う。", "props、event、state ownership を説明する。"],
+        "commonMistakes": ["見た目の layout だけで分ける。", "実際の reuse 前に過度に抽象化する。"],
+        "labels": { "role": "Frontend", "level": "Mid-level", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "React docs: Passing Data Deeply with Context", "url": "https://react.dev/learn/passing-data-deeply-with-context", "note": "Used for composition, prop drilling, and context alternatives." },
+      { "label": "React docs: Sharing State Between Components", "url": "https://react.dev/learn/sharing-state-between-components", "note": "Used for state ownership concepts." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REACT_MID_TRADE_FETCHING_014",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["frontend"],
+    "levels": ["mid"],
+    "type": "trade_off",
+    "competencies": ["trade_off_analysis", "system_thinking", "impact_measurement"],
+    "techTags": ["react", "typescript", "browser_performance"],
+    "difficulty": 3,
+    "intent": "Evaluate trade-offs between hand-written fetching in effects and a structured data fetching/cache library.",
+    "primaryQuestion": "For a React dashboard with repeated API data, when would you keep fetching logic in custom hooks and when would you introduce a query/cache library?",
+    "expectedSignals": [
+      "Considers duplicate requests, caching, invalidation, and retries.",
+      "Discusses loading and error state consistency.",
+      "Mentions bundle size, complexity, and team familiarity.",
+      "Defines signals that justify adopting a library."
+    ],
+    "redFlags": [
+      "Chooses a library only because it is popular.",
+      "Ignores cache invalidation and stale data behavior.",
+      "Does not consider complexity added to a small app."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Compares custom hooks and cache libraries using concrete scale, correctness, and team constraints." },
+      { "scoreBand": "solid", "description": "Good trade-off answer but misses one operational or user-state dimension." },
+      { "scoreBand": "needs_work", "description": "Preference-driven answer without adoption criteria." },
+      { "scoreBand": "insufficient_evidence", "description": "No clear trade-off or React data-fetching model." }
+    ],
+    "followUps": [
+      { "trigger": "missing_tradeoff", "question": "What risk do you accept by adding a query/cache library?", "purpose": "Check adoption cost reasoning." },
+      { "trigger": "missing_metric", "question": "What symptom would show your current custom hook approach is no longer enough?", "purpose": "Check evidence-based adoption." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Custom hooks or query cache",
+        "displayQuestion": "For a React dashboard with repeated API data, when would you keep fetching logic in custom hooks and when would you introduce a query/cache library?",
+        "displayIntent": "Evaluate React data fetching trade-offs.",
+        "guidance": ["Compare correctness and complexity.", "Mention cache invalidation and user-visible states."],
+        "commonMistakes": ["Choosing tools by popularity only.", "Ignoring stale data and retry behavior."],
+        "labels": { "role": "Frontend", "level": "Mid-level", "type": "trade_off" }
+      },
+      "vi": {
+        "title": "Custom hook hay query cache",
+        "displayQuestion": "Với một React dashboard có nhiều API data lặp lại, khi nào bạn giữ fetching logic trong custom hook và khi nào dùng query/cache library?",
+        "displayIntent": "Đánh giá trade-off data fetching trong React.",
+        "guidance": ["So sánh correctness và complexity.", "Nhắc tới cache invalidation và state user nhìn thấy."],
+        "commonMistakes": ["Chọn tool chỉ vì phổ biến.", "Bỏ qua stale data và retry behavior."],
+        "labels": { "role": "Frontend", "level": "Mid-level", "type": "trade_off" }
+      },
+      "ja": {
+        "title": "custom hook か query cache か",
+        "displayQuestion": "API data が繰り返し使われる React dashboard で、fetching logic を custom hook に保つか、query/cache library を導入するか、どう判断しますか。",
+        "displayIntent": "React data fetching の trade-off を評価する。",
+        "guidance": ["correctness と complexity を比較する。", "cache invalidation と user-visible states に触れる。"],
+        "commonMistakes": ["人気だけで tool を選ぶ。", "stale data と retry behavior を無視する。"],
+        "labels": { "role": "Frontend", "level": "Mid-level", "type": "trade_off" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "React docs: useEffect", "url": "https://react.dev/reference/react/useEffect", "note": "Used for effect-based fetching and dependency concepts." },
+      { "label": "React docs: Server Components", "url": "https://react.dev/reference/rsc/server-components", "note": "Used for broader data fetching architecture context." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REACT_SR_TRADE_RENDERING_015",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["frontend"],
+    "levels": ["senior"],
+    "type": "trade_off",
+    "competencies": ["trade_off_analysis", "system_thinking", "impact_measurement"],
+    "techTags": ["react", "nextjs", "browser_performance"],
+    "difficulty": 4,
+    "intent": "Assess senior rendering model trade-off reasoning across client rendering, SSR, static rendering, and hydration cost.",
+    "primaryQuestion": "For a React product page or dashboard, how would you choose between client-side rendering, server-side rendering, and static rendering?",
+    "expectedSignals": [
+      "Considers SEO, first load, interactivity, and personalization.",
+      "Discusses caching and data freshness.",
+      "Mentions hydration and bundle cost.",
+      "Accounts for deployment complexity and team capability."
+    ],
+    "redFlags": [
+      "Treats SSR as always faster or always better.",
+      "Ignores hydration and runtime JavaScript cost.",
+      "Does not separate product page needs from authenticated dashboard needs."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Compares rendering models against product constraints, performance, cache behavior, and operational cost." },
+      { "scoreBand": "solid", "description": "Good model comparison but misses hydration or deployment complexity." },
+      { "scoreBand": "needs_work", "description": "Uses simplified SEO/performance rules without nuance." },
+      { "scoreBand": "insufficient_evidence", "description": "Cannot explain rendering model trade-offs." }
+    ],
+    "followUps": [
+      { "trigger": "missing_tradeoff", "question": "What risk would you accept by choosing SSR for this screen?", "purpose": "Force explicit trade-off reasoning." },
+      { "trigger": "missing_metric", "question": "Which performance or business metric would validate the rendering choice?", "purpose": "Check measurement discipline." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Choosing a React rendering model",
+        "displayQuestion": "For a React product page or dashboard, how would you choose between client-side rendering, server-side rendering, and static rendering?",
+        "displayIntent": "Assess senior rendering model trade-offs.",
+        "guidance": ["Compare user, business, and operational constraints.", "Mention hydration and cache behavior."],
+        "commonMistakes": ["Saying SSR is always faster.", "Ignoring authenticated dashboard constraints."],
+        "labels": { "role": "Frontend", "level": "Senior", "type": "trade_off" }
+      },
+      "vi": {
+        "title": "Chọn rendering model cho React",
+        "displayQuestion": "Với một product page hoặc dashboard React, bạn chọn client-side rendering, server-side rendering hay static rendering như thế nào?",
+        "displayIntent": "Đánh giá trade-off rendering model ở mức senior.",
+        "guidance": ["So sánh constraint của user, business và vận hành.", "Nhắc tới hydration và cache behavior."],
+        "commonMistakes": ["Nói SSR luôn nhanh hơn.", "Bỏ qua constraint của authenticated dashboard."],
+        "labels": { "role": "Frontend", "level": "Senior", "type": "trade_off" }
+      },
+      "ja": {
+        "title": "React rendering model の選択",
+        "displayQuestion": "React の product page または dashboard で、client-side rendering、server-side rendering、static rendering をどう選びますか。",
+        "displayIntent": "senior level の rendering model trade-off を評価する。",
+        "guidance": ["user、business、operation の制約を比較する。", "hydration と cache behavior に触れる。"],
+        "commonMistakes": ["SSR は常に速いと言う。", "authenticated dashboard の制約を無視する。"],
+        "labels": { "role": "Frontend", "level": "Senior", "type": "trade_off" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "React docs: Server Components", "url": "https://react.dev/reference/rsc/server-components", "note": "Used for server/client rendering architecture concepts." },
+      { "label": "H5BP Front-end Developer Interview Questions", "url": "https://github.com/h5bp/Front-end-Developer-Interview-Questions", "note": "Used for performance and network topic coverage." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REACT_SR_TECH_DATA_ARCH_016",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["frontend"],
+    "levels": ["senior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking", "impact_measurement"],
+    "techTags": ["react", "typescript", "browser_performance"],
+    "difficulty": 4,
+    "intent": "Assess senior architecture for data fetching, cache consistency, loading states, and error recovery across a large React app.",
+    "primaryQuestion": "How would you design data fetching, caching, loading states, and error recovery for a large React application with many screens?",
+    "expectedSignals": [
+      "Defines ownership for server data versus UI state.",
+      "Explains cache keys, invalidation, retries, and stale data policy.",
+      "Standardizes loading, empty, and error states.",
+      "Mentions observability, tests, and migration strategy."
+    ],
+    "redFlags": [
+      "Only describes one component-level fetch pattern.",
+      "Ignores cache invalidation and race conditions.",
+      "Does not address consistency across teams or screens."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Provides an app-level data architecture with consistency, failure handling, and rollout considerations." },
+      { "scoreBand": "solid", "description": "Good architecture but misses observability or migration detail." },
+      { "scoreBand": "needs_work", "description": "Focuses on local hooks only without system-level consistency." },
+      { "scoreBand": "insufficient_evidence", "description": "No senior-level data architecture reasoning." }
+    ],
+    "followUps": [
+      { "trigger": "missing_metric", "question": "What signals would tell you the data layer is reliable in production?", "purpose": "Check operational thinking." },
+      { "trigger": "missing_tradeoff", "question": "What would you avoid centralizing in this architecture?", "purpose": "Test boundary judgment." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Large React data architecture",
+        "displayQuestion": "How would you design data fetching, caching, loading states, and error recovery for a large React application with many screens?",
+        "displayIntent": "Assess senior React data architecture depth.",
+        "guidance": ["Think across many screens and teams.", "Include failure, cache, and rollout behavior."],
+        "commonMistakes": ["Only describing one component fetch.", "Ignoring cache invalidation and observability."],
+        "labels": { "role": "Frontend", "level": "Senior", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Kiến trúc data cho app React lớn",
+        "displayQuestion": "Bạn thiết kế data fetching, caching, loading state và error recovery cho một ứng dụng React lớn có nhiều màn hình như thế nào?",
+        "displayIntent": "Đánh giá độ sâu kiến trúc data React ở mức senior.",
+        "guidance": ["Nghĩ trên nhiều màn hình và nhiều team.", "Bao gồm failure, cache và rollout behavior."],
+        "commonMistakes": ["Chỉ mô tả fetch trong một component.", "Bỏ qua cache invalidation và observability."],
+        "labels": { "role": "Frontend", "level": "Senior", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "大規模 React data architecture",
+        "displayQuestion": "多くの screen を持つ大規模 React application で、data fetching、caching、loading state、error recovery をどう設計しますか。",
+        "displayIntent": "senior React data architecture の深さを評価する。",
+        "guidance": ["多くの screen と team を前提に考える。", "failure、cache、rollout behavior を含める。"],
+        "commonMistakes": ["単一 component の fetch だけを説明する。", "cache invalidation と observability を無視する。"],
+        "labels": { "role": "Frontend", "level": "Senior", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "React docs: useEffect", "url": "https://react.dev/reference/react/useEffect", "note": "Used for client-side synchronization and fetching context." },
+      { "label": "React docs: Server Components", "url": "https://react.dev/reference/rsc/server-components", "note": "Used for server-side data rendering architecture context." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REACT_SR_DEBUG_E2E_FLAKE_017",
+    "stages": ["stage_3_domain_knowledge"],
+    "roleFamilies": ["frontend"],
+    "levels": ["senior"],
+    "type": "debugging",
+    "competencies": ["problem_solving", "system_thinking", "ownership"],
+    "techTags": ["react", "playwright", "cypress"],
+    "difficulty": 4,
+    "intent": "Evaluate senior debugging across asynchronous React UI behavior, test reliability, and release confidence.",
+    "primaryQuestion": "Tell me about a flaky Playwright or Cypress test for a React screen. How did you separate test flake from a real product or timing bug?",
+    "expectedSignals": [
+      "Describes reproduction across local, CI, and timing conditions.",
+      "Inspects async UI behavior, network waits, and selectors.",
+      "Separates brittle test assumptions from product race conditions.",
+      "Explains fix verification and prevention."
+    ],
+    "redFlags": [
+      "Deletes or skips the test without investigating.",
+      "Blames CI without evidence.",
+      "Cannot describe how the UI reaches a ready state."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Shows evidence-based diagnosis, clear product-versus-test separation, and durable prevention." },
+      { "scoreBand": "solid", "description": "Good debugging story but prevention or release-risk decision is light." },
+      { "scoreBand": "needs_work", "description": "Treats flakiness as test-only without product timing analysis." },
+      { "scoreBand": "insufficient_evidence", "description": "No concrete flaky test example or resolution." }
+    ],
+    "followUps": [
+      { "trigger": "missing_context", "question": "What exact UI readiness signal was the test waiting for?", "purpose": "Check async UI understanding." },
+      { "trigger": "missing_metric", "question": "How did you know the flake rate improved after the fix?", "purpose": "Verify outcome." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Debug flaky React E2E test",
+        "displayQuestion": "Tell me about a flaky Playwright or Cypress test for a React screen. How did you separate test flake from a real product or timing bug?",
+        "displayIntent": "Evaluate senior React test debugging and release confidence.",
+        "guidance": ["Use a real test failure story.", "Explain evidence and prevention."],
+        "commonMistakes": ["Skipping the test without investigation.", "Ignoring async UI readiness."],
+        "labels": { "role": "Frontend", "level": "Senior", "type": "debugging" }
+      },
+      "vi": {
+        "title": "Debug E2E test React bị flaky",
+        "displayQuestion": "Hãy kể về một Playwright hoặc Cypress test flaky cho màn hình React. Bạn tách test flake khỏi bug thật về product hoặc timing như thế nào?",
+        "displayIntent": "Đánh giá debug test React và release confidence ở mức senior.",
+        "guidance": ["Dùng một câu chuyện test failure thật.", "Giải thích bằng chứng và cách ngăn tái diễn."],
+        "commonMistakes": ["Skip test mà không điều tra.", "Bỏ qua trạng thái UI sẵn sàng bất đồng bộ."],
+        "labels": { "role": "Frontend", "level": "Senior", "type": "debugging" }
+      },
+      "ja": {
+        "title": "flaky React E2E test の debug",
+        "displayQuestion": "React screen の flaky Playwright または Cypress test の経験を話してください。test flake と実際の product/timing bug をどう分けましたか。",
+        "displayIntent": "senior React test debugging と release confidence を評価する。",
+        "guidance": ["実際の test failure の話を使う。", "証拠と prevention を説明する。"],
+        "commonMistakes": ["調査せずに test を skip する。", "async UI readiness を無視する。"],
+        "labels": { "role": "Frontend", "level": "Senior", "type": "debugging" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "H5BP Front-end Developer Interview Questions", "url": "https://github.com/h5bp/Front-end-Developer-Interview-Questions", "note": "Used for front-end testing coverage topics." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REACT_SR_CV_MIGRATION_018",
+    "stages": ["stage_4_cv_deep_dive"],
+    "roleFamilies": ["frontend"],
+    "levels": ["senior"],
+    "type": "cv_claim_verification",
+    "competencies": ["ownership", "impact_measurement", "system_thinking"],
+    "techTags": ["react", "typescript", "vite", "github_actions"],
+    "difficulty": 4,
+    "intent": "Verify senior ownership of a frontend architecture migration using decision ownership, rollout evidence, and measured impact.",
+    "primaryQuestion": "You mention leading a React or frontend architecture migration. What decisions were yours, how did you manage rollout risk, and how did you measure success?",
+    "expectedSignals": [
+      "Separates personal decisions from team execution.",
+      "Describes migration strategy, compatibility, and rollback plan.",
+      "Mentions tests, CI, or incremental rollout.",
+      "Provides success metrics or operational outcomes."
+    ],
+    "redFlags": [
+      "Uses 'we migrated' without naming personal decisions.",
+      "No rollback or compatibility plan.",
+      "No measurable outcome or risk reduction."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Verifiable senior migration ownership with strategy, rollout control, and measured results." },
+      { "scoreBand": "solid", "description": "Real migration involvement but ownership or metrics are incomplete." },
+      { "scoreBand": "needs_work", "description": "Likely participated but cannot show senior decision-making." },
+      { "scoreBand": "insufficient_evidence", "description": "Claim cannot be validated from the answer." }
+    ],
+    "followUps": [
+      { "trigger": "red_flag", "question": "Which migration decision would not have happened without you?", "purpose": "Verify personal ownership." },
+      { "trigger": "missing_metric", "question": "What baseline and final outcome proved the migration worked?", "purpose": "Recover impact evidence." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Verify React migration ownership",
+        "displayQuestion": "You mention leading a React or frontend architecture migration. What decisions were yours, how did you manage rollout risk, and how did you measure success?",
+        "displayIntent": "Verify senior frontend migration ownership.",
+        "guidance": ["Separate your decisions from team work.", "Include rollout and measurement evidence."],
+        "commonMistakes": ["Using only 'we' language.", "Skipping rollback and success metrics."],
+        "labels": { "role": "Frontend", "level": "Senior", "type": "cv_claim_verification" }
+      },
+      "vi": {
+        "title": "Xác minh ownership migration React",
+        "displayQuestion": "Bạn nói mình dẫn dắt một migration React hoặc frontend architecture. Quyết định nào là của bạn, bạn quản lý rủi ro rollout ra sao và đo success thế nào?",
+        "displayIntent": "Xác minh ownership migration frontend ở mức senior.",
+        "guidance": ["Tách quyết định của bạn khỏi công việc của team.", "Bao gồm bằng chứng rollout và đo lường."],
+        "commonMistakes": ["Chỉ dùng ngôn ngữ 'chúng tôi'.", "Bỏ qua rollback và success metric."],
+        "labels": { "role": "Frontend", "level": "Senior", "type": "cv_claim_verification" }
+      },
+      "ja": {
+        "title": "React migration ownership の確認",
+        "displayQuestion": "React または frontend architecture migration を lead したとあります。どの判断があなたのもので、rollout risk をどう管理し、success をどう測りましたか。",
+        "displayIntent": "senior frontend migration ownership を確認する。",
+        "guidance": ["自分の判断と team work を分ける。", "rollout と measurement の証拠を含める。"],
+        "commonMistakes": ["「we」だけで話す。", "rollback と success metrics を省略する。"],
+        "labels": { "role": "Frontend", "level": "Senior", "type": "cv_claim_verification" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "H5BP Front-end Developer Interview Questions", "url": "https://github.com/h5bp/Front-end-Developer-Interview-Questions", "note": "Used for senior front-end topic breadth and interview style." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REACT_SR_TRADE_RSC_019",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["frontend"],
+    "levels": ["senior"],
+    "type": "trade_off",
+    "competencies": ["trade_off_analysis", "system_thinking", "technical_fundamentals"],
+    "techTags": ["react", "nextjs", "browser_performance"],
+    "difficulty": 4,
+    "intent": "Evaluate senior judgment around adopting React Server Components versus staying client-rendered for a product surface.",
+    "primaryQuestion": "If a team is considering React Server Components for a dashboard product, what constraints would you evaluate before adopting or rejecting the approach?",
+    "expectedSignals": [
+      "Explains server/client component boundaries.",
+      "Considers interactivity, data access, streaming, and bundle size.",
+      "Mentions framework and deployment maturity.",
+      "Plans migration, testing, and fallback strategy."
+    ],
+    "redFlags": [
+      "Adopts RSC because it is new without product fit.",
+      "Confuses Server Components with the use server directive.",
+      "Ignores client interactivity and team/tooling readiness."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Balances RSC benefits, constraints, migration risk, and product-specific rendering needs." },
+      { "scoreBand": "solid", "description": "Good RSC understanding but misses deployment or migration risk." },
+      { "scoreBand": "needs_work", "description": "Knows buzzwords but cannot draw practical boundaries." },
+      { "scoreBand": "insufficient_evidence", "description": "No reliable understanding of RSC trade-offs." }
+    ],
+    "followUps": [
+      { "trigger": "missing_tradeoff", "question": "What part of the dashboard should remain a Client Component and why?", "purpose": "Check boundary reasoning." },
+      { "trigger": "missing_context", "question": "What team or platform constraint could block adoption?", "purpose": "Check operational judgment." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "React Server Components adoption",
+        "displayQuestion": "If a team is considering React Server Components for a dashboard product, what constraints would you evaluate before adopting or rejecting the approach?",
+        "displayIntent": "Evaluate senior RSC adoption trade-offs.",
+        "guidance": ["Discuss server/client boundaries.", "Include migration and deployment constraints."],
+        "commonMistakes": ["Adopting because it is new.", "Confusing server and client responsibilities."],
+        "labels": { "role": "Frontend", "level": "Senior", "type": "trade_off" }
+      },
+      "vi": {
+        "title": "Adopt React Server Components",
+        "displayQuestion": "Nếu team đang cân nhắc React Server Components cho một dashboard product, bạn đánh giá constraint nào trước khi adopt hoặc reject cách tiếp cận này?",
+        "displayIntent": "Đánh giá trade-off adopt RSC ở mức senior.",
+        "guidance": ["Nói về boundary server/client.", "Bao gồm constraint migration và deployment."],
+        "commonMistakes": ["Adopt vì nó mới.", "Nhầm trách nhiệm giữa server và client."],
+        "labels": { "role": "Frontend", "level": "Senior", "type": "trade_off" }
+      },
+      "ja": {
+        "title": "React Server Components の採用判断",
+        "displayQuestion": "team が dashboard product に React Server Components を検討している場合、採用または却下の前にどの constraints を評価しますか。",
+        "displayIntent": "senior level の RSC adoption trade-off を評価する。",
+        "guidance": ["server/client boundary を説明する。", "migration と deployment constraints を含める。"],
+        "commonMistakes": ["新しいから採用する。", "server と client の責務を混同する。"],
+        "labels": { "role": "Frontend", "level": "Senior", "type": "trade_off" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "React docs: Server Components", "url": "https://react.dev/reference/rsc/server-components", "note": "Used for Server Component capabilities and constraints." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REACT_SR_BEHAV_UX_COST_020",
+    "stages": ["stage_5_soft_skills"],
+    "roleFamilies": ["frontend"],
+    "levels": ["senior"],
+    "type": "behavioral",
+    "competencies": ["communication", "collaboration", "conflict_handling"],
+    "techTags": ["react", "accessibility", "browser_performance"],
+    "difficulty": 4,
+    "intent": "Assess senior collaboration when UX quality, engineering cost, accessibility, and delivery pressure conflict.",
+    "primaryQuestion": "Tell me about a disagreement between UX quality and engineering cost on a React feature. How did you align design, product, and engineering?",
+    "expectedSignals": [
+      "Describes a real disagreement with constraints.",
+      "Balances user impact, accessibility, performance, and delivery cost.",
+      "Explains facilitation and decision process.",
+      "Shows outcome, follow-up, and relationship management."
+    ],
+    "redFlags": [
+      "Frames the disagreement as design versus engineering only.",
+      "Does not mention users or business impact.",
+      "Avoids describing the decision or trade-off."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Shows senior cross-functional alignment with explicit trade-offs, outcome, and follow-up." },
+      { "scoreBand": "solid", "description": "Good collaboration story but outcome or trade-off is not fully measured." },
+      { "scoreBand": "needs_work", "description": "Describes disagreement but not alignment leadership." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer is generic or lacks a concrete situation." }
+    ],
+    "followUps": [
+      { "trigger": "missing_tradeoff", "question": "What UX quality did you intentionally defer, and why was that acceptable?", "purpose": "Check explicit trade-off ownership." },
+      { "trigger": "missing_metric", "question": "How did you know the final decision worked for users or the business?", "purpose": "Recover outcome evidence." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "UX quality versus engineering cost",
+        "displayQuestion": "Tell me about a disagreement between UX quality and engineering cost on a React feature. How did you align design, product, and engineering?",
+        "displayIntent": "Assess senior cross-functional alignment on frontend trade-offs.",
+        "guidance": ["Use a real disagreement.", "Include decision process and outcome."],
+        "commonMistakes": ["Blaming another function.", "Skipping user impact and follow-up."],
+        "labels": { "role": "Frontend", "level": "Senior", "type": "behavioral" }
+      },
+      "vi": {
+        "title": "UX quality và chi phí engineering",
+        "displayQuestion": "Hãy kể về một bất đồng giữa UX quality và engineering cost trong một feature React. Bạn đã align design, product và engineering như thế nào?",
+        "displayIntent": "Đánh giá khả năng align cross-functional ở mức senior cho trade-off frontend.",
+        "guidance": ["Dùng một bất đồng thật.", "Bao gồm process ra quyết định và outcome."],
+        "commonMistakes": ["Đổ lỗi cho function khác.", "Bỏ qua user impact và follow-up."],
+        "labels": { "role": "Frontend", "level": "Senior", "type": "behavioral" }
+      },
+      "ja": {
+        "title": "UX quality と engineering cost",
+        "displayQuestion": "React feature で UX quality と engineering cost が対立した経験を話してください。design、product、engineering をどう align しましたか。",
+        "displayIntent": "frontend trade-off に関する senior cross-functional alignment を評価する。",
+        "guidance": ["実際の disagreement を使う。", "decision process と outcome を含める。"],
+        "commonMistakes": ["他 function を責める。", "user impact と follow-up を省略する。"],
+        "labels": { "role": "Frontend", "level": "Senior", "type": "behavioral" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "H5BP Front-end Developer Interview Questions", "url": "https://github.com/h5bp/Front-end-Developer-Interview-Questions", "note": "Used for open-ended front-end interview style and accessibility/performance coverage." }
+    ],
+    "status": "active"
+  }
+]

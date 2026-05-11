@@ -1,0 +1,2427 @@
+[
+  {
+    "code": "TS_JR_TECH_ANY_UNKNOWN_001",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["frontend", "fullstack", "backend"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "communication"],
+    "techTags": ["typescript"],
+    "difficulty": 2,
+    "intent": "Check whether the candidate understands the practical difference between any and unknown and can explain how to keep type safety when handling uncertain data.",
+    "primaryQuestion": "What is the difference between any and unknown in TypeScript, and when would you choose unknown over any?",
+    "expectedSignals": [
+      "Explains that any disables useful type checking for that value while unknown requires narrowing before use.",
+      "Uses unknown for external or uncertain values such as API responses, catch errors, localStorage, or message payloads.",
+      "Mentions narrowing through typeof, instanceof, property checks, schema parsing, or user-defined type guards.",
+      "Understands that type assertions can bypass safety and should be localized and justified."
+    ],
+    "redFlags": [
+      "Says any and unknown are basically the same.",
+      "Uses as SomeType as the default way to handle external data.",
+      "Cannot explain how to safely read a property from an unknown value."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Clearly contrasts any and unknown, gives realistic boundary examples, and explains narrowing before use."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands unknown requires checks but misses one nuance such as unsafe assertions or catch error handling."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can repeat the rule but cannot apply it to real data flow."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague to confirm practical TypeScript safety."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "If JSON.parse returns an unknown value, what exact checks would you do before using user.email?",
+        "purpose": "Force concrete narrowing and boundary reasoning."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "What risk do you introduce by writing value as User without validation?",
+        "purpose": "Check awareness of assertion bypasses."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "any versus unknown",
+        "displayQuestion": "What is the difference between any and unknown in TypeScript, and when would you choose unknown over any?",
+        "displayIntent": "Check TypeScript safety around uncertain values.",
+        "guidance": [
+          "Use an example involving external or untrusted data.",
+          "Explain the narrowing step before accessing properties."
+        ],
+        "commonMistakes": [
+          "Treating unknown as a more verbose any.",
+          "Using type assertions instead of validation."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "any và unknown",
+        "displayQuestion": "any và unknown khác nhau thế nào trong TypeScript, và khi nào bạn chọn unknown thay vì any?",
+        "displayIntent": "Kiểm tra khả năng giữ type safety khi xử lý giá trị chưa chắc chắn.",
+        "guidance": [
+          "Dùng ví dụ liên quan tới dữ liệu bên ngoài hoặc không đáng tin.",
+          "Giải thích bước narrow trước khi đọc property."
+        ],
+        "commonMistakes": [
+          "Xem unknown chỉ là any dài dòng hơn.",
+          "Dùng type assertion thay cho validation."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "any と unknown",
+        "displayQuestion": "TypeScript の any と unknown は何が違い、どのような場面で any ではなく unknown を選びますか。",
+        "displayIntent": "不確かな値を扱うときの TypeScript の安全性を確認する。",
+        "guidance": [
+          "外部データや信頼できないデータの例を使う。",
+          "property にアクセスする前の narrowing を説明する。"
+        ],
+        "commonMistakes": [
+          "unknown を冗長な any として扱う。",
+          "validation の代わりに type assertion を使う。"
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "TypeScript Handbook: Narrowing",
+        "url": "https://www.typescriptlang.org/docs/handbook/2/narrowing.html",
+        "note": "Used for narrowing and type guard concepts."
+      },
+      {
+        "label": "TypeScript interview question coverage",
+        "url": "https://www.techinterview.org/post/3233460485/typescript-interview-questions/",
+        "note": "Used for interview topic coverage; probe wording is original."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "TS_JR_TECH_TYPE_INTERFACE_002",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["frontend", "fullstack", "backend"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "communication"],
+    "techTags": ["typescript"],
+    "difficulty": 2,
+    "intent": "Evaluate whether the candidate can choose between type aliases and interfaces based on extension, declaration merging, unions, and readability.",
+    "primaryQuestion": "How do type aliases and interfaces differ in TypeScript, and how would you decide which one to use for a domain model?",
+    "expectedSignals": [
+      "Explains that both can describe object shapes for many common cases.",
+      "Mentions interface extension and declaration merging as useful for public object contracts or augmentation.",
+      "Mentions type aliases for unions, intersections, primitives, tuples, mapped or conditional compositions.",
+      "Chooses consistently based on project convention, API surface, and expected evolution."
+    ],
+    "redFlags": [
+      "Claims one is always strictly better for every use case.",
+      "Cannot explain declaration merging or why it can be useful or risky.",
+      "Confuses runtime classes with compile-time object shape declarations."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Gives a nuanced comparison with examples and connects the choice to API evolution and team convention."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows the main differences but misses one dimension such as union aliases or declaration merging risk."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Has memorized preferences but cannot justify them technically."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not show reliable object modeling knowledge."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_tradeoff",
+        "question": "When would declaration merging be helpful, and when could it surprise a team?",
+        "purpose": "Probe interface-specific trade-offs."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "How would you represent a result type like Success | Failure?",
+        "purpose": "Check whether candidate knows where type aliases fit better."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "type aliases and interfaces",
+        "displayQuestion": "How do type aliases and interfaces differ in TypeScript, and how would you decide which one to use for a domain model?",
+        "displayIntent": "Check practical TypeScript modeling choices.",
+        "guidance": [
+          "Compare extension, merging, and union modeling.",
+          "Tie the answer to a team convention or public API."
+        ],
+        "commonMistakes": [
+          "Saying type and interface are identical in every way.",
+          "Ignoring declaration merging."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "type alias và interface",
+        "displayQuestion": "type alias và interface khác nhau thế nào trong TypeScript, và bạn quyết định dùng cái nào cho domain model ra sao?",
+        "displayIntent": "Kiểm tra lựa chọn modeling thực tế trong TypeScript.",
+        "guidance": [
+          "So sánh extension, merging và cách model union.",
+          "Gắn câu trả lời với convention của team hoặc public API."
+        ],
+        "commonMistakes": [
+          "Nói type và interface giống nhau hoàn toàn.",
+          "Bỏ qua declaration merging."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "type alias と interface",
+        "displayQuestion": "TypeScript の type alias と interface は何が違い、domain model ではどちらを使うかをどう判断しますか。",
+        "displayIntent": "TypeScript の実践的な modeling 判断を確認する。",
+        "guidance": [
+          "extension、merging、union modeling を比較する。",
+          "team convention や public API と結びつける。"
+        ],
+        "commonMistakes": [
+          "type と interface が完全に同じだと言う。",
+          "declaration merging を無視する。"
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "TypeScript Handbook: Everyday Types",
+        "url": "https://www.typescriptlang.org/docs/handbook/2/everyday-types.html",
+        "note": "Used for type alias and interface fundamentals."
+      },
+      {
+        "label": "TypeScript Handbook: Declaration Merging",
+        "url": "https://www.typescriptlang.org/docs/handbook/declaration-merging.html",
+        "note": "Used for interface merging behavior."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "TS_JR_TECH_UNION_NARROWING_003",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["frontend", "fullstack", "backend"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving"],
+    "techTags": ["typescript"],
+    "difficulty": 2,
+    "intent": "Check whether the candidate understands union types, control-flow narrowing, and why TypeScript only allows access to fields common to all union members before narrowing.",
+    "primaryQuestion": "If a value has type User | Admin, why can TypeScript block access to adminOnlyField, and how would you narrow the value safely?",
+    "expectedSignals": [
+      "Explains that a union value may be any member of the union at runtime.",
+      "States that only fields common to all members are safe before narrowing.",
+      "Uses checks such as discriminant fields, in operator, typeof, instanceof, or custom type predicates.",
+      "Avoids unsafe casts unless there is an external invariant and it is documented."
+    ],
+    "redFlags": [
+      "Forces access with as Admin without proving the branch.",
+      "Cannot explain why a common property is allowed but a member-specific property is not.",
+      "Thinks TypeScript performs runtime validation automatically."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains union safety and shows a concrete narrowing strategy with correct runtime checks."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands narrowing but misses one safe pattern or overuses assertions."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows union syntax but struggles with property access reasoning."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not demonstrate TypeScript control-flow analysis understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Can you write a small branch that checks whether account is an Admin before reading permissions?",
+        "purpose": "Turn the concept into concrete code reasoning."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "What could go wrong if the API sends a User but your code casts it to Admin?",
+        "purpose": "Check runtime and boundary awareness."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Union narrowing",
+        "displayQuestion": "If a value has type User | Admin, why can TypeScript block access to adminOnlyField, and how would you narrow the value safely?",
+        "displayIntent": "Check union type and narrowing fundamentals.",
+        "guidance": [
+          "Use a concrete User/Admin example.",
+          "Explain why TypeScript needs runtime evidence."
+        ],
+        "commonMistakes": [
+          "Using assertions before proving the variant.",
+          "Assuming TypeScript validates runtime payloads."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Narrow union type",
+        "displayQuestion": "Nếu một giá trị có type User | Admin, vì sao TypeScript có thể chặn việc đọc adminOnlyField, và bạn narrow giá trị đó an toàn thế nào?",
+        "displayIntent": "Kiểm tra nền tảng union type và narrowing.",
+        "guidance": [
+          "Dùng ví dụ User/Admin cụ thể.",
+          "Giải thích vì sao TypeScript cần bằng chứng ở runtime."
+        ],
+        "commonMistakes": [
+          "Dùng assertion trước khi chứng minh variant.",
+          "Giả định TypeScript validate payload runtime."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "union type の narrowing",
+        "displayQuestion": "値の型が User | Admin のとき、なぜ TypeScript は adminOnlyField へのアクセスを止めることがあり、どう安全に narrow しますか。",
+        "displayIntent": "union type と narrowing の基礎を確認する。",
+        "guidance": [
+          "具体的な User/Admin の例を使う。",
+          "TypeScript が runtime の根拠を必要とする理由を説明する。"
+        ],
+        "commonMistakes": [
+          "variant を証明する前に assertion を使う。",
+          "TypeScript が runtime payload を検証すると仮定する。"
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "TypeScript Handbook: Narrowing",
+        "url": "https://www.typescriptlang.org/docs/handbook/2/narrowing.html",
+        "note": "Used for control-flow narrowing and type guard patterns."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "TS_JR_TECH_OPTIONAL_NULL_004",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["frontend", "fullstack", "backend"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving"],
+    "techTags": ["typescript"],
+    "difficulty": 2,
+    "intent": "Assess whether the candidate can reason about optional properties, nullability, strictNullChecks, optional chaining, and defaulting without hiding bugs.",
+    "primaryQuestion": "How do optional properties, undefined, null, optional chaining, and nullish coalescing work together in TypeScript?",
+    "expectedSignals": [
+      "Distinguishes a missing property from a value explicitly set to undefined or null.",
+      "Explains that strictNullChecks forces handling of possibly null or undefined values.",
+      "Uses optional chaining for safe access and nullish coalescing for defaults that should not treat empty string or zero as missing.",
+      "Mentions exactOptionalPropertyTypes when discussing precise optional property semantics."
+    ],
+    "redFlags": [
+      "Uses non-null assertion everywhere to silence errors.",
+      "Confuses || defaults with ?? defaults and breaks valid falsy values.",
+      "Cannot explain how strictNullChecks changes code behavior."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Connects optional properties, nullish values, compiler settings, and concrete safe-access code."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands optional chaining and defaults but misses exact optional semantics or null versus undefined."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can use syntax but cannot explain correctness risks."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not show nullability reasoning."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "What is the difference between count || 10 and count ?? 10 when count can be 0?",
+        "purpose": "Check defaulting correctness."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "When is user!.email acceptable, and what evidence should exist before using it?",
+        "purpose": "Probe non-null assertion discipline."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Optional and nullish values",
+        "displayQuestion": "How do optional properties, undefined, null, optional chaining, and nullish coalescing work together in TypeScript?",
+        "displayIntent": "Check practical nullability handling.",
+        "guidance": [
+          "Use a payload or config object example.",
+          "Mention compiler settings when relevant."
+        ],
+        "commonMistakes": [
+          "Replacing checks with non-null assertions.",
+          "Using || where ?? is required."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Optional và giá trị nullish",
+        "displayQuestion": "Optional property, undefined, null, optional chaining và nullish coalescing phối hợp với nhau thế nào trong TypeScript?",
+        "displayIntent": "Kiểm tra cách xử lý nullability trong thực tế.",
+        "guidance": [
+          "Dùng ví dụ payload hoặc config object.",
+          "Nhắc tới compiler setting khi phù hợp."
+        ],
+        "commonMistakes": [
+          "Thay check bằng non-null assertion.",
+          "Dùng || trong trường hợp cần ??."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "optional と nullish value",
+        "displayQuestion": "TypeScript で optional property、undefined、null、optional chaining、nullish coalescing はどのように関係しますか。",
+        "displayIntent": "実践的な nullability handling を確認する。",
+        "guidance": [
+          "payload や config object の例を使う。",
+          "必要なら compiler setting に触れる。"
+        ],
+        "commonMistakes": [
+          "check を non-null assertion で置き換える。",
+          "?? が必要な場面で || を使う。"
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "TypeScript TSConfig: strict",
+        "url": "https://www.typescriptlang.org/tsconfig/strict.html",
+        "note": "Used for strict type checking context."
+      },
+      {
+        "label": "TypeScript TSConfig: exactOptionalPropertyTypes",
+        "url": "https://www.typescriptlang.org/tsconfig/exactOptionalPropertyTypes.html",
+        "note": "Used for optional property semantics."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "TS_JR_DEBUG_TYPE_ERROR_005",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["frontend", "fullstack", "backend"],
+    "levels": ["junior"],
+    "type": "debugging",
+    "competencies": ["problem_solving", "technical_fundamentals", "ownership"],
+    "techTags": ["typescript"],
+    "difficulty": 2,
+    "intent": "Evaluate whether the candidate can debug TypeScript compiler errors by following the data shape and the assignment site instead of suppressing the error.",
+    "primaryQuestion": "A TypeScript error says Type 'string | undefined' is not assignable to type 'string'. How would you debug and fix it?",
+    "expectedSignals": [
+      "Finds where the value becomes optional or possibly undefined.",
+      "Checks whether the receiving function truly requires a string or should accept missing values.",
+      "Chooses an appropriate fix such as validation, defaulting, early return, type refinement, or API contract change.",
+      "Avoids blindly using as string or non-null assertion as the first fix."
+    ],
+    "redFlags": [
+      "Immediately adds ! or as string without checking the source.",
+      "Changes the target type to any to unblock compilation.",
+      "Cannot explain the runtime case TypeScript is warning about."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Systematically traces the type, explains the real missing-value case, and chooses a fix that matches the domain contract."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Fixes the error safely but does not fully discuss whether the API contract should change."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Recognizes undefined but relies on surface syntax without domain reasoning."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not show compiler-error debugging skill."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "What would you inspect first: the variable declaration, the caller, or the callee contract, and why?",
+        "purpose": "Check debugging order."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "What bug can user.name! hide if the API sometimes omits name?",
+        "purpose": "Expose non-null assertion risk."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Debug string or undefined",
+        "displayQuestion": "A TypeScript error says Type 'string | undefined' is not assignable to type 'string'. How would you debug and fix it?",
+        "displayIntent": "Evaluate practical TypeScript compiler-error debugging.",
+        "guidance": [
+          "Trace the value from source to assignment.",
+          "Choose a fix based on the domain contract."
+        ],
+        "commonMistakes": [
+          "Silencing the compiler with ! or as string.",
+          "Changing useful types to any."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "debugging"
+        }
+      },
+      "vi": {
+        "title": "Debug string hoặc undefined",
+        "displayQuestion": "Một lỗi TypeScript báo Type 'string | undefined' is not assignable to type 'string'. Bạn debug và sửa thế nào?",
+        "displayIntent": "Đánh giá khả năng debug lỗi compiler TypeScript thực tế.",
+        "guidance": [
+          "Lần theo giá trị từ nguồn tới nơi assign.",
+          "Chọn cách fix dựa trên contract của domain."
+        ],
+        "commonMistakes": [
+          "Tắt lỗi compiler bằng ! hoặc as string.",
+          "Đổi type hữu ích thành any."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "debugging"
+        }
+      },
+      "ja": {
+        "title": "string | undefined の debug",
+        "displayQuestion": "TypeScript が Type 'string | undefined' is not assignable to type 'string' と出した場合、どう debug して修正しますか。",
+        "displayIntent": "実践的な TypeScript compiler error の debug 力を評価する。",
+        "guidance": [
+          "source から assignment まで値を追跡する。",
+          "domain contract に基づいて修正を選ぶ。"
+        ],
+        "commonMistakes": [
+          "! や as string で compiler を黙らせる。",
+          "有用な型を any に変える。"
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "debugging"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "TypeScript TSConfig: strict",
+        "url": "https://www.typescriptlang.org/tsconfig/strict.html",
+        "note": "Used for strict nullability and type checking context."
+      },
+      {
+        "label": "TypeScript Handbook: Narrowing",
+        "url": "https://www.typescriptlang.org/docs/handbook/2/narrowing.html",
+        "note": "Used for safe refinement patterns."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "TS_JR_TECH_LITERAL_ENUM_006",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["frontend", "fullstack", "backend"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "trade_off_analysis"],
+    "techTags": ["typescript"],
+    "difficulty": 2,
+    "intent": "Check whether the candidate can model finite states with literal unions or enums and understand the runtime implications of each choice.",
+    "primaryQuestion": "When would you model a finite set of values with a string literal union instead of an enum in TypeScript?",
+    "expectedSignals": [
+      "Explains that string literal unions are type-level and usually emit no runtime object.",
+      "Mentions enums can provide a runtime object but add emitted JavaScript and have interop considerations.",
+      "Uses literal unions for simple API statuses, component variants, or discriminants.",
+      "Considers readability, refactoring, external contract compatibility, and project conventions."
+    ],
+    "redFlags": [
+      "Thinks every finite value set must be an enum.",
+      "Cannot explain that TypeScript types are erased but enums can exist at runtime.",
+      "Ignores external API string values when designing the type."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Compares literal unions and enums through runtime output, API compatibility, and maintainability."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Chooses literal unions appropriately but misses enum runtime implications."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Understands the syntax but not the trade-off."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not show finite-state modeling judgment."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_tradeoff",
+        "question": "What does an enum give you that a literal union does not?",
+        "purpose": "Check balanced trade-off reasoning."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "How would you type a REST API status field that returns 'draft', 'active', or 'archived'?",
+        "purpose": "Probe concrete modeling."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Literal unions versus enums",
+        "displayQuestion": "When would you model a finite set of values with a string literal union instead of an enum in TypeScript?",
+        "displayIntent": "Check finite-value modeling and runtime trade-offs.",
+        "guidance": [
+          "Discuss emitted JavaScript and API compatibility.",
+          "Use a status or variant example."
+        ],
+        "commonMistakes": [
+          "Defaulting to enum for every finite set.",
+          "Ignoring type erasure and runtime output."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Literal union và enum",
+        "displayQuestion": "Khi nào bạn model một tập giá trị hữu hạn bằng string literal union thay vì enum trong TypeScript?",
+        "displayIntent": "Kiểm tra cách model finite value và trade-off runtime.",
+        "guidance": [
+          "Nói về JavaScript được emit và compatibility với API.",
+          "Dùng ví dụ status hoặc variant."
+        ],
+        "commonMistakes": [
+          "Luôn dùng enum cho mọi tập giá trị hữu hạn.",
+          "Bỏ qua type erasure và runtime output."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "literal union と enum",
+        "displayQuestion": "TypeScript で有限個の値を表すとき、どのような場合に enum ではなく string literal union を使いますか。",
+        "displayIntent": "finite value modeling と runtime trade-off を確認する。",
+        "guidance": [
+          "emit される JavaScript と API compatibility を話す。",
+          "status や variant の例を使う。"
+        ],
+        "commonMistakes": [
+          "有限集合に常に enum を使う。",
+          "type erasure と runtime output を無視する。"
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "TypeScript Handbook: Literal Types",
+        "url": "https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types",
+        "note": "Used for literal type modeling."
+      },
+      {
+        "label": "TypeScript Handbook: Enums",
+        "url": "https://www.typescriptlang.org/docs/handbook/enums.html",
+        "note": "Used for enum behavior and trade-offs."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "TS_MID_TECH_GENERICS_CONSTRAINTS_007",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["frontend", "fullstack", "backend"],
+    "levels": ["mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking"],
+    "techTags": ["typescript"],
+    "difficulty": 3,
+    "intent": "Assess whether the candidate can design generic functions that preserve relationships between inputs and outputs without falling back to any.",
+    "primaryQuestion": "How would you design a generic helper that returns one property from an object while ensuring the key and return type stay linked?",
+    "expectedSignals": [
+      "Uses generics with a key constraint such as K extends keyof T.",
+      "Explains that the return type should be T[K] instead of a broad union or any.",
+      "Understands why unconstrained T cannot be indexed safely.",
+      "Can discuss type inference and when explicit type parameters are or are not needed."
+    ],
+    "redFlags": [
+      "Uses any for the object or key and loses type information.",
+      "Cannot explain why key must be constrained to keyof T.",
+      "Returns unknown or T[keyof T] without preserving the selected key relationship."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Designs a precise generic signature, explains constraints and indexed access types, and shows how inference behaves."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Gets the K extends keyof T pattern but misses one nuance such as preserving T[K]."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows generics syntax but cannot model the key/value relationship."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not demonstrate reusable generic API design."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "What should getProperty(user, 'email') return if user.email is string | undefined?",
+        "purpose": "Check preservation of property type."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Why is K extends keyof T safer than key: string?",
+        "purpose": "Probe key constraint reasoning."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Generic key constraints",
+        "displayQuestion": "How would you design a generic helper that returns one property from an object while ensuring the key and return type stay linked?",
+        "displayIntent": "Check generics, keyof, and indexed access reasoning.",
+        "guidance": [
+          "Discuss the function signature, not only the implementation.",
+          "Explain how inference preserves the selected property type."
+        ],
+        "commonMistakes": [
+          "Using any for the object or key.",
+          "Returning a broad union instead of T[K]."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Generic key constraint",
+        "displayQuestion": "Bạn thiết kế một generic helper trả về một property của object thế nào để key và return type vẫn liên kết đúng với nhau?",
+        "displayIntent": "Kiểm tra generics, keyof và indexed access.",
+        "guidance": [
+          "Nói về function signature, không chỉ implementation.",
+          "Giải thích inference giữ type của property được chọn thế nào."
+        ],
+        "commonMistakes": [
+          "Dùng any cho object hoặc key.",
+          "Trả về union quá rộng thay vì T[K]."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "generic key constraint",
+        "displayQuestion": "object から 1 つの property を返す generic helper を、key と return type の関係を保ったままどう設計しますか。",
+        "displayIntent": "generics、keyof、indexed access の理解を確認する。",
+        "guidance": [
+          "implementation だけでなく function signature を話す。",
+          "選択された property type を inference がどう保つか説明する。"
+        ],
+        "commonMistakes": [
+          "object や key に any を使う。",
+          "T[K] ではなく広すぎる union を返す。"
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "TypeScript Handbook: Generics",
+        "url": "https://www.typescriptlang.org/docs/handbook/2/generics.html",
+        "note": "Used for generic constraints and reusable API concepts."
+      },
+      {
+        "label": "TypeScript Handbook: keyof Type Operator",
+        "url": "https://www.typescriptlang.org/docs/handbook/2/keyof-types.html",
+        "note": "Used for keyof and property key constraints."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "TS_MID_TECH_DISCRIMINATED_UNION_008",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["frontend", "fullstack", "backend"],
+    "levels": ["mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking", "problem_solving"],
+    "techTags": ["typescript"],
+    "difficulty": 3,
+    "intent": "Evaluate whether the candidate can model state machines or API result shapes with discriminated unions and exhaustive handling.",
+    "primaryQuestion": "How would you model loading, success, and error states with a discriminated union, and how would you make missing cases visible?",
+    "expectedSignals": [
+      "Uses a shared discriminant field such as status, kind, or state with literal values.",
+      "Keeps variant-specific data on the correct branch, such as data only on success and error only on failure.",
+      "Explains switch-based narrowing and access to branch-specific fields.",
+      "Mentions exhaustive checking with never, strict return types, or lint/compiler support."
+    ],
+    "redFlags": [
+      "Models state as multiple optional fields that can create impossible combinations.",
+      "Does not understand how the discriminant narrows the union.",
+      "Ignores what happens when a new variant is added."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Models variants cleanly, explains narrowing, prevents impossible states, and includes exhaustive handling."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Uses discriminated unions correctly but misses exhaustive checking details."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows union syntax but leaves ambiguous optional fields."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not show robust state modeling."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "What impossible state can happen if you use { loading?: boolean; data?: Data; error?: Error }?",
+        "purpose": "Check state modeling discipline."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "How would the compiler help you after adding a 'from_cache' state?",
+        "purpose": "Probe exhaustive checking."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Discriminated union state",
+        "displayQuestion": "How would you model loading, success, and error states with a discriminated union, and how would you make missing cases visible?",
+        "displayIntent": "Check state modeling and exhaustiveness in TypeScript.",
+        "guidance": [
+          "Use a concrete async request state.",
+          "Explain how new variants are caught during maintenance."
+        ],
+        "commonMistakes": [
+          "Using optional fields that allow impossible states.",
+          "Skipping exhaustive checks."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Discriminated union cho state",
+        "displayQuestion": "Bạn model loading, success và error state bằng discriminated union thế nào, và làm sao để case bị thiếu được lộ ra?",
+        "displayIntent": "Kiểm tra cách model state và exhaustiveness trong TypeScript.",
+        "guidance": [
+          "Dùng một async request state cụ thể.",
+          "Giải thích compiler hỗ trợ khi thêm variant mới."
+        ],
+        "commonMistakes": [
+          "Dùng optional field tạo ra impossible state.",
+          "Bỏ qua exhaustive check."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "discriminated union の state",
+        "displayQuestion": "loading、success、error の状態を discriminated union でどう model し、case 漏れをどう見えるようにしますか。",
+        "displayIntent": "TypeScript の state modeling と exhaustiveness を確認する。",
+        "guidance": [
+          "具体的な async request state を使う。",
+          "新しい variant を追加した時に compiler がどう助けるか説明する。"
+        ],
+        "commonMistakes": [
+          "impossible state を許す optional field を使う。",
+          "exhaustive check を省略する。"
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "TypeScript Handbook: Narrowing",
+        "url": "https://www.typescriptlang.org/docs/handbook/2/narrowing.html",
+        "note": "Used for discriminated union and narrowing behavior."
+      },
+      {
+        "label": "TypeScript Handbook: Unions and Intersections",
+        "url": "https://www.typescriptlang.org/docs/handbook/unions-and-intersections.html",
+        "note": "Used for union exhaustiveness concepts."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "TS_MID_TECH_UTILITY_TYPES_009",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["frontend", "fullstack", "backend"],
+    "levels": ["mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking"],
+    "techTags": ["typescript"],
+    "difficulty": 3,
+    "intent": "Check whether the candidate can use built-in utility types to derive related shapes while preserving intent and avoiding accidental loose contracts.",
+    "primaryQuestion": "How would you use Partial, Pick, Omit, Record, ReturnType, or Awaited to avoid duplicating TypeScript types?",
+    "expectedSignals": [
+      "Explains utility types as transformations of existing types.",
+      "Chooses specific utilities for practical examples such as update DTOs, public view models, lookup maps, inferred function returns, or promise unwrapping.",
+      "Mentions risks such as overusing Partial and making required domain fields accidentally optional.",
+      "Understands that derived types should still express clear API boundaries."
+    ],
+    "redFlags": [
+      "Uses Partial for every input type without thinking about required fields.",
+      "Duplicates similar interfaces manually and lets them drift.",
+      "Cannot explain what a utility type is transforming."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Uses several utilities accurately, explains why each fits, and discusses over-broad derived type risks."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows common utilities but misses boundary and maintenance trade-offs."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Recognizes utility names but cannot apply them to realistic model evolution."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not show type derivation understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_tradeoff",
+        "question": "When is Partial<User> too loose for an update request?",
+        "purpose": "Check boundary modeling judgment."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "How would you type a map from feature flag name to boolean using Record?",
+        "purpose": "Probe concrete utility usage."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Utility type derivation",
+        "displayQuestion": "How would you use Partial, Pick, Omit, Record, ReturnType, or Awaited to avoid duplicating TypeScript types?",
+        "displayIntent": "Check practical use of TypeScript utility types.",
+        "guidance": [
+          "Use concrete DTO, view model, or helper examples.",
+          "Discuss when derived types become too broad."
+        ],
+        "commonMistakes": [
+          "Using Partial as a universal update model.",
+          "Duplicating interfaces that should be derived."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Dẫn xuất type bằng utility type",
+        "displayQuestion": "Bạn dùng Partial, Pick, Omit, Record, ReturnType hoặc Awaited thế nào để tránh lặp type trong TypeScript?",
+        "displayIntent": "Kiểm tra cách dùng utility type trong thực tế.",
+        "guidance": [
+          "Dùng ví dụ DTO, view model hoặc helper cụ thể.",
+          "Nói về lúc derived type trở nên quá rộng."
+        ],
+        "commonMistakes": [
+          "Dùng Partial như update model cho mọi nơi.",
+          "Lặp interface đáng ra nên derive."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "utility type による derivation",
+        "displayQuestion": "Partial、Pick、Omit、Record、ReturnType、Awaited を使って TypeScript の型重複をどう避けますか。",
+        "displayIntent": "TypeScript utility type の実践的な利用を確認する。",
+        "guidance": [
+          "具体的な DTO、view model、helper の例を使う。",
+          "derived type が広すぎる場合を話す。"
+        ],
+        "commonMistakes": [
+          "Partial を万能 update model として使う。",
+          "derive すべき interface を重複させる。"
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "TypeScript Handbook: Utility Types",
+        "url": "https://www.typescriptlang.org/docs/handbook/utility-types.html",
+        "note": "Used for built-in utility type coverage."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "TS_MID_TECH_MAPPED_TYPES_010",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["frontend", "fullstack", "backend"],
+    "levels": ["mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking"],
+    "techTags": ["typescript"],
+    "difficulty": 3,
+    "intent": "Assess whether the candidate understands mapped types, keyof, modifiers, and how to derive systematic object transformations.",
+    "primaryQuestion": "What are mapped types in TypeScript, and how would you use them to transform every property of a type?",
+    "expectedSignals": [
+      "Explains mapped types as iterating over keys of a type using keyof.",
+      "Uses examples such as readonly, optional, nullable, validation error maps, or form state maps.",
+      "Mentions mapping modifiers like readonly, ?, -readonly, or -?.",
+      "Understands when mapped types improve consistency versus when explicit types are clearer."
+    ],
+    "redFlags": [
+      "Cannot connect mapped types to keyof.",
+      "Uses hand-written duplicate types for mechanical transformations.",
+      "Creates overly clever types that obscure a simple domain shape."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains key iteration, modifiers, realistic transformations, and readability trade-offs."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands mapped type basics but misses modifiers or practical limits."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can name mapped types but cannot design one."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer lacks advanced type transformation reasoning."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "How would you create a type where every field of User maps to a validation error string array?",
+        "purpose": "Force a concrete mapped type."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "When would a mapped type be less readable than writing the type explicitly?",
+        "purpose": "Check maintainability judgment."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Mapped type transformations",
+        "displayQuestion": "What are mapped types in TypeScript, and how would you use them to transform every property of a type?",
+        "displayIntent": "Check mapped type and keyof reasoning.",
+        "guidance": [
+          "Use a form, DTO, or validation-map example.",
+          "Mention property modifiers if relevant."
+        ],
+        "commonMistakes": [
+          "Forgetting that mapped types iterate over keys.",
+          "Making type logic too clever for the domain."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Biến đổi bằng mapped type",
+        "displayQuestion": "Mapped type trong TypeScript là gì, và bạn dùng nó thế nào để transform mọi property của một type?",
+        "displayIntent": "Kiểm tra mapped type và keyof.",
+        "guidance": [
+          "Dùng ví dụ form, DTO hoặc validation map.",
+          "Nhắc tới property modifier nếu phù hợp."
+        ],
+        "commonMistakes": [
+          "Quên mapped type duyệt qua key.",
+          "Làm type logic quá phức tạp so với domain."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "mapped type transformation",
+        "displayQuestion": "TypeScript の mapped type とは何で、型の全 property を変換するためにどう使いますか。",
+        "displayIntent": "mapped type と keyof の理解を確認する。",
+        "guidance": [
+          "form、DTO、validation map の例を使う。",
+          "必要なら property modifier に触れる。"
+        ],
+        "commonMistakes": [
+          "mapped type が key を反復することを忘れる。",
+          "domain に対して type logic を複雑にしすぎる。"
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "TypeScript Handbook: Mapped Types",
+        "url": "https://www.typescriptlang.org/docs/handbook/2/mapped-types.html",
+        "note": "Used for mapped types and modifiers."
+      },
+      {
+        "label": "TypeScript Handbook: Creating Types from Types",
+        "url": "https://www.typescriptlang.org/docs/handbook/2/types-from-types.html",
+        "note": "Used for type transformation context."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "TS_MID_TECH_CONDITIONAL_TYPES_011",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["frontend", "fullstack", "backend"],
+    "levels": ["mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking"],
+    "techTags": ["typescript"],
+    "difficulty": 3,
+    "intent": "Evaluate whether the candidate can explain conditional types, infer, and distributive behavior over unions without treating them as magic.",
+    "primaryQuestion": "How do conditional types work in TypeScript, and what does it mean that they can distribute over unions?",
+    "expectedSignals": [
+      "Explains the SomeType extends OtherType ? True : False shape.",
+      "Uses a practical example such as extracting Promise payloads, array elements, or function return types.",
+      "Mentions infer for capturing a type from a matched structure.",
+      "Explains distributive conditional types and how wrapping in tuples can prevent distribution."
+    ],
+    "redFlags": [
+      "Cannot distinguish runtime if statements from type-level conditional types.",
+      "Does not understand why a union input can become a union of transformed outputs.",
+      "Uses complex conditional types without explaining maintainability costs."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains conditionals, infer, distribution, non-distribution, and a maintainable real use case."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands conditional type basics but misses infer or distributivity control."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Recognizes syntax but cannot reason through union behavior."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not show advanced type-system understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "What would ToArray<string | number> produce if ToArray<T> is T extends any ? T[] : never?",
+        "purpose": "Check distributive behavior."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "When would you avoid a clever conditional type and write an explicit type instead?",
+        "purpose": "Probe maintainability judgment."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Conditional type distribution",
+        "displayQuestion": "How do conditional types work in TypeScript, and what does it mean that they can distribute over unions?",
+        "displayIntent": "Check conditional types, infer, and union distribution.",
+        "guidance": [
+          "Walk through a small type transformation.",
+          "Explain distribution with a union input."
+        ],
+        "commonMistakes": [
+          "Treating conditional types as runtime branches.",
+          "Ignoring distributive behavior over unions."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Conditional type và distribution",
+        "displayQuestion": "Conditional type trong TypeScript hoạt động thế nào, và việc chúng có thể distribute over union nghĩa là gì?",
+        "displayIntent": "Kiểm tra conditional type, infer và union distribution.",
+        "guidance": [
+          "Đi qua một type transformation nhỏ.",
+          "Giải thích distribution với union input."
+        ],
+        "commonMistakes": [
+          "Xem conditional type như nhánh runtime.",
+          "Bỏ qua behavior distribute trên union."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "conditional type distribution",
+        "displayQuestion": "TypeScript の conditional type はどう動作し、union に対して distribute するとはどういう意味ですか。",
+        "displayIntent": "conditional type、infer、union distribution を確認する。",
+        "guidance": [
+          "小さな type transformation を順に説明する。",
+          "union input で distribution を説明する。"
+        ],
+        "commonMistakes": [
+          "conditional type を runtime branch として扱う。",
+          "union での distributive behavior を無視する。"
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "TypeScript Handbook: Conditional Types",
+        "url": "https://www.typescriptlang.org/docs/handbook/2/conditional-types.html",
+        "note": "Used for conditional types, infer, and distributivity."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "TS_MID_TECH_RUNTIME_VALIDATION_012",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["frontend", "fullstack", "backend"],
+    "levels": ["mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking", "problem_solving"],
+    "techTags": ["typescript"],
+    "difficulty": 3,
+    "intent": "Assess whether the candidate understands that TypeScript types are erased at runtime and can place validation at trust boundaries.",
+    "primaryQuestion": "Why are TypeScript types not enough when reading data from an API, localStorage, a queue, or user input, and where would you validate?",
+    "expectedSignals": [
+      "Explains that TypeScript checks static code but does not validate external data at runtime.",
+      "Identifies trust boundaries such as HTTP responses, request bodies, localStorage, message queues, and environment variables.",
+      "Uses parsing or schema validation to turn unknown data into validated domain types.",
+      "Discusses error handling, normalization, logging, and backward compatibility for malformed payloads."
+    ],
+    "redFlags": [
+      "Says TypeScript prevents bad API data from reaching runtime.",
+      "Casts external payloads directly to domain types.",
+      "Validates only deep inside business logic instead of at clear boundaries."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Defines trust boundaries, explains type erasure, proposes validation/parsing, and covers failure handling."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands runtime validation but misses compatibility or normalization concerns."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows validation is useful but cannot say where it belongs or why."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer lacks static-versus-runtime type reasoning."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "Where would you validate a user object loaded from localStorage before putting it into application state?",
+        "purpose": "Check boundary placement."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "What happens to TypeScript interfaces after compilation?",
+        "purpose": "Verify type erasure understanding."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Runtime validation boundaries",
+        "displayQuestion": "Why are TypeScript types not enough when reading data from an API, localStorage, a queue, or user input, and where would you validate?",
+        "displayIntent": "Check runtime validation and trust-boundary reasoning.",
+        "guidance": [
+          "Name concrete trust boundaries.",
+          "Explain parsing unknown data into a safe domain type."
+        ],
+        "commonMistakes": [
+          "Trusting TypeScript for runtime payloads.",
+          "Casting unknown data directly to domain types."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Boundary runtime validation",
+        "displayQuestion": "Vì sao TypeScript type không đủ khi đọc data từ API, localStorage, queue hoặc user input, và bạn validate ở đâu?",
+        "displayIntent": "Kiểm tra runtime validation và trust boundary.",
+        "guidance": [
+          "Nêu trust boundary cụ thể.",
+          "Giải thích parse unknown data thành domain type an toàn."
+        ],
+        "commonMistakes": [
+          "Tin TypeScript cho payload runtime.",
+          "Cast unknown data thẳng sang domain type."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "runtime validation boundary",
+        "displayQuestion": "API、localStorage、queue、user input から data を読むとき、なぜ TypeScript の型だけでは不十分で、どこで validate しますか。",
+        "displayIntent": "runtime validation と trust boundary reasoning を確認する。",
+        "guidance": [
+          "具体的な trust boundary を挙げる。",
+          "unknown data を安全な domain type に parse することを説明する。"
+        ],
+        "commonMistakes": [
+          "runtime payload に TypeScript だけを信頼する。",
+          "unknown data を直接 domain type に cast する。"
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "TypeScript Handbook: Narrowing",
+        "url": "https://www.typescriptlang.org/docs/handbook/2/narrowing.html",
+        "note": "Used for runtime checks and narrowing patterns."
+      },
+      {
+        "label": "TypeScript interview question coverage",
+        "url": "https://www.techinterview.org/post/3233460485/typescript-interview-questions/",
+        "note": "Used for interview topic coverage; probe wording is original."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "TS_MID_DEBUG_GENERIC_INFERENCE_013",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["frontend", "fullstack", "backend"],
+    "levels": ["mid"],
+    "type": "debugging",
+    "competencies": ["problem_solving", "technical_fundamentals", "ownership"],
+    "techTags": ["typescript"],
+    "difficulty": 3,
+    "intent": "Evaluate practical debugging of generic inference issues where TypeScript infers a type that is too broad, too narrow, or polluted by literals and unions.",
+    "primaryQuestion": "A generic function infers the wrong type and downstream code becomes too broad or too narrow. How would you debug the signature?",
+    "expectedSignals": [
+      "Inspects the function signature, type parameter positions, constraints, and return type.",
+      "Checks whether inference is coming from the right argument or being widened by arrays, literals, or unions.",
+      "Uses techniques such as overloads, explicit type arguments, const assertions, satisfies, helper parameters, or separating input/output generics when appropriate.",
+      "Avoids fixing inference by replacing the generic with any."
+    ],
+    "redFlags": [
+      "Changes generic parameters to any to make the error disappear.",
+      "Does not inspect how the type parameter is inferred.",
+      "Cannot distinguish inference problems from runtime bugs."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Systematically debugs inference sources and chooses a precise signature or call-site adjustment."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands inference direction but misses one tool such as satisfies or overloads."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Recognizes a generic problem but fixes it with broad casts."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not show generic debugging skill."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "How would you inspect the inferred type at the call site without changing runtime code?",
+        "purpose": "Check practical TypeScript debugging workflow."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "When would you use an overload instead of a conditional return type?",
+        "purpose": "Probe API design trade-off."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Debug generic inference",
+        "displayQuestion": "A generic function infers the wrong type and downstream code becomes too broad or too narrow. How would you debug the signature?",
+        "displayIntent": "Evaluate debugging of TypeScript generic inference.",
+        "guidance": [
+          "Discuss type parameter positions and inference sources.",
+          "Include one fix that preserves type safety."
+        ],
+        "commonMistakes": [
+          "Replacing the generic with any.",
+          "Ignoring where inference comes from."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Mid-level",
+          "type": "debugging"
+        }
+      },
+      "vi": {
+        "title": "Debug generic inference",
+        "displayQuestion": "Một generic function infer sai type khiến code phía sau quá rộng hoặc quá hẹp. Bạn debug signature thế nào?",
+        "displayIntent": "Đánh giá khả năng debug generic inference TypeScript.",
+        "guidance": [
+          "Nói về vị trí type parameter và nguồn inference.",
+          "Đưa một cách fix vẫn giữ type safety."
+        ],
+        "commonMistakes": [
+          "Thay generic bằng any.",
+          "Bỏ qua nguồn inference."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Mid-level",
+          "type": "debugging"
+        }
+      },
+      "ja": {
+        "title": "generic inference の debug",
+        "displayQuestion": "generic function が誤った型を infer し、後続コードが広すぎる、または狭すぎる型になります。signature をどう debug しますか。",
+        "displayIntent": "TypeScript generic inference の debug 力を評価する。",
+        "guidance": [
+          "type parameter の位置と inference source を話す。",
+          "type safety を保つ修正を 1 つ含める。"
+        ],
+        "commonMistakes": [
+          "generic を any に置き換える。",
+          "inference がどこから来るかを無視する。"
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Mid-level",
+          "type": "debugging"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "TypeScript Handbook: Generics",
+        "url": "https://www.typescriptlang.org/docs/handbook/2/generics.html",
+        "note": "Used for generic inference and constraints."
+      },
+      {
+        "label": "TypeScript Handbook: Type Inference",
+        "url": "https://www.typescriptlang.org/docs/handbook/type-inference.html",
+        "note": "Used for inference concepts."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "TS_MID_TRADE_TSCONFIG_STRICT_014",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["frontend", "fullstack", "backend"],
+    "levels": ["mid"],
+    "type": "trade_off",
+    "competencies": ["trade_off_analysis", "system_thinking", "ownership"],
+    "techTags": ["typescript"],
+    "difficulty": 3,
+    "intent": "Assess judgment around TypeScript strictness settings, migration cost, and risk reduction in an existing codebase.",
+    "primaryQuestion": "A team wants to turn on strict TypeScript settings in an existing project. What would you evaluate, and how would you roll it out?",
+    "expectedSignals": [
+      "Explains the value of strict checks for nullability, implicit any, this binding, function types, and related correctness risks.",
+      "Assesses current error volume, ownership, test coverage, CI impact, and release risk.",
+      "Plans incremental rollout by package, directory, tsconfig layering, or selected flags.",
+      "Avoids mass suppression and tracks remaining debt with clear owners."
+    ],
+    "redFlags": [
+      "Turns on strict everywhere without measuring the blast radius.",
+      "Adds broad ts-ignore comments or any types to pass CI.",
+      "Rejects strictness only because it creates many errors, without triage."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Balances safety benefit, migration cost, rollout plan, CI policy, and debt tracking."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Has an incremental plan but misses ownership or test coverage."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Understands strict is useful but lacks rollout strategy."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer lacks TypeScript migration judgment."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_metric",
+        "question": "What baseline would you collect before enabling strict mode?",
+        "purpose": "Check migration measurement."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "Which strict flag might you enable first and why?",
+        "purpose": "Probe sequencing judgment."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Strict TypeScript rollout",
+        "displayQuestion": "A team wants to turn on strict TypeScript settings in an existing project. What would you evaluate, and how would you roll it out?",
+        "displayIntent": "Assess TypeScript strictness migration judgment.",
+        "guidance": [
+          "Discuss risk, error volume, CI, and ownership.",
+          "Prefer an incremental migration plan."
+        ],
+        "commonMistakes": [
+          "Turning on strict without measuring impact.",
+          "Mass-suppressing errors to pass CI."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Mid-level",
+          "type": "trade_off"
+        }
+      },
+      "vi": {
+        "title": "Rollout TypeScript strict",
+        "displayQuestion": "Một team muốn bật strict TypeScript settings trong project hiện có. Bạn đánh giá gì và rollout thế nào?",
+        "displayIntent": "Đánh giá judgment khi migration TypeScript strict.",
+        "guidance": [
+          "Nói về risk, số lỗi, CI và ownership.",
+          "Ưu tiên migration từng bước."
+        ],
+        "commonMistakes": [
+          "Bật strict mà không đo impact.",
+          "Suppress lỗi hàng loạt để pass CI."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Mid-level",
+          "type": "trade_off"
+        }
+      },
+      "ja": {
+        "title": "TypeScript strict rollout",
+        "displayQuestion": "既存 project で strict TypeScript settings を有効にしたい場合、何を評価し、どう rollout しますか。",
+        "displayIntent": "TypeScript strict migration の判断力を評価する。",
+        "guidance": [
+          "risk、error volume、CI、ownership を話す。",
+          "段階的な migration plan を優先する。"
+        ],
+        "commonMistakes": [
+          "impact を測らず strict を有効にする。",
+          "CI を通すために error を大量 suppress する。"
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Mid-level",
+          "type": "trade_off"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "TypeScript TSConfig: strict",
+        "url": "https://www.typescriptlang.org/tsconfig/strict.html",
+        "note": "Used for strict mode behavior and migration topics."
+      },
+      {
+        "label": "TypeScript TSConfig: noUncheckedIndexedAccess",
+        "url": "https://www.typescriptlang.org/tsconfig/noUncheckedIndexedAccess.html",
+        "note": "Used for stricter indexed access checks."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "TS_SR_TECH_API_TYPE_DESIGN_015",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["frontend", "fullstack", "backend"],
+    "levels": ["senior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking", "trade_off_analysis"],
+    "techTags": ["typescript"],
+    "difficulty": 4,
+    "intent": "Evaluate senior ability to design TypeScript API surfaces that are precise, evolvable, and not overly complex.",
+    "primaryQuestion": "How would you design TypeScript types for a public SDK or shared package so consumers get strong inference without a fragile or overly clever API?",
+    "expectedSignals": [
+      "Designs stable exported types and avoids leaking internal implementation details.",
+      "Uses generics, overloads, discriminated unions, or conditional types only where they improve consumer ergonomics.",
+      "Considers semantic versioning, backwards compatibility, declaration output, documentation, and examples.",
+      "Tests type behavior with compile-time assertions or consumer-style examples."
+    ],
+    "redFlags": [
+      "Optimizes for clever type tricks instead of clear consumer experience.",
+      "Breaks public types casually without migration guidance.",
+      "Cannot explain how exported declarations will be consumed outside the package."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Balances inference, readability, exported API stability, type tests, and versioning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Good type design instincts but misses declaration output or type-test validation."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can write advanced types but does not reason about public API maintenance."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer lacks senior-level TypeScript API design judgment."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_metric",
+        "question": "How would you verify that a type change did not break downstream consumers?",
+        "purpose": "Check type testing and compatibility validation."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "When would you choose overloads instead of a generic conditional return type for an SDK method?",
+        "purpose": "Probe consumer ergonomics trade-off."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Public TypeScript API design",
+        "displayQuestion": "How would you design TypeScript types for a public SDK or shared package so consumers get strong inference without a fragile or overly clever API?",
+        "displayIntent": "Evaluate senior TypeScript API design judgment.",
+        "guidance": [
+          "Discuss consumer ergonomics and exported type stability.",
+          "Include type tests or declaration validation."
+        ],
+        "commonMistakes": [
+          "Overusing clever conditional types.",
+          "Ignoring semantic versioning of public types."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Senior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Thiết kế public TypeScript API",
+        "displayQuestion": "Bạn thiết kế TypeScript type cho public SDK hoặc shared package thế nào để consumer có inference tốt mà API không fragile hoặc quá clever?",
+        "displayIntent": "Đánh giá judgment thiết kế TypeScript API ở mức senior.",
+        "guidance": [
+          "Nói về consumer ergonomics và độ ổn định của exported type.",
+          "Bao gồm type test hoặc validation declaration."
+        ],
+        "commonMistakes": [
+          "Lạm dụng conditional type quá clever.",
+          "Bỏ qua semantic versioning của public type."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Senior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "public TypeScript API design",
+        "displayQuestion": "public SDK や shared package の TypeScript 型を、consumer が強い inference を得つつ fragile でも clever すぎもしない API にするにはどう設計しますか。",
+        "displayIntent": "senior level の TypeScript API design 判断を評価する。",
+        "guidance": [
+          "consumer ergonomics と exported type stability を話す。",
+          "type test や declaration validation を含める。"
+        ],
+        "commonMistakes": [
+          "clever な conditional type を過度に使う。",
+          "public type の semantic versioning を無視する。"
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Senior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "TypeScript Handbook: Generics",
+        "url": "https://www.typescriptlang.org/docs/handbook/2/generics.html",
+        "note": "Used for generic API design concepts."
+      },
+      {
+        "label": "TypeScript Declaration Files Introduction",
+        "url": "https://www.typescriptlang.org/docs/handbook/declaration-files/introduction",
+        "note": "Used for public declaration file and package typing concerns."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "TS_SR_TRADE_TYPES_VS_COMPLEXITY_016",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["frontend", "fullstack", "backend"],
+    "levels": ["senior"],
+    "type": "trade_off",
+    "competencies": ["trade_off_analysis", "system_thinking", "communication"],
+    "techTags": ["typescript"],
+    "difficulty": 4,
+    "intent": "Assess senior judgment around when advanced type modeling improves safety and when it harms readability, build performance, or team velocity.",
+    "primaryQuestion": "How do you decide whether a complex TypeScript type is worth it, versus using simpler types plus runtime checks or tests?",
+    "expectedSignals": [
+      "Evaluates risk, frequency of mistakes, API surface size, team familiarity, and maintenance cost.",
+      "Considers compiler performance, editor responsiveness, error readability, and onboarding impact.",
+      "Uses advanced types when they encode meaningful invariants and prevent real bugs.",
+      "Chooses runtime validation or tests for value-level constraints that TypeScript cannot prove."
+    ],
+    "redFlags": [
+      "Assumes more advanced types are always better.",
+      "Rejects advanced types entirely without considering safety benefits.",
+      "Ignores developer experience and error-message readability."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Balances safety, maintainability, runtime validation, DX, and team capability with concrete examples."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Good trade-off reasoning but misses compiler/editor performance or onboarding."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Takes a one-sided position without evaluating context."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer lacks senior-level trade-off analysis."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_tradeoff",
+        "question": "Give an example of an invariant you would encode in types and one you would leave to runtime validation.",
+        "purpose": "Force concrete boundary between type-level and runtime-level checks."
+      },
+      {
+        "trigger": "missing_metric",
+        "question": "What signal would tell you a type abstraction is hurting developer experience?",
+        "purpose": "Check operational and team impact awareness."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Type safety versus complexity",
+        "displayQuestion": "How do you decide whether a complex TypeScript type is worth it, versus using simpler types plus runtime checks or tests?",
+        "displayIntent": "Assess senior trade-off judgment for type-system complexity.",
+        "guidance": [
+          "Discuss invariants, DX, compiler performance, and team maturity.",
+          "Separate compile-time and runtime guarantees."
+        ],
+        "commonMistakes": [
+          "Treating clever types as automatically better.",
+          "Ignoring runtime validation needs."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Senior",
+          "type": "trade_off"
+        }
+      },
+      "vi": {
+        "title": "Type safety và complexity",
+        "displayQuestion": "Bạn quyết định một TypeScript type phức tạp có đáng dùng không, so với type đơn giản hơn cộng runtime check hoặc test, như thế nào?",
+        "displayIntent": "Đánh giá trade-off senior về độ phức tạp của type system.",
+        "guidance": [
+          "Nói về invariant, DX, compiler performance và maturity của team.",
+          "Tách compile-time guarantee và runtime guarantee."
+        ],
+        "commonMistakes": [
+          "Xem type clever là luôn tốt hơn.",
+          "Bỏ qua nhu cầu runtime validation."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Senior",
+          "type": "trade_off"
+        }
+      },
+      "ja": {
+        "title": "type safety と complexity",
+        "displayQuestion": "複雑な TypeScript 型を使う価値があるか、より単純な型と runtime check/test を使うべきかをどう判断しますか。",
+        "displayIntent": "type-system complexity に関する senior trade-off 判断を評価する。",
+        "guidance": [
+          "invariant、DX、compiler performance、team maturity を話す。",
+          "compile-time guarantee と runtime guarantee を分ける。"
+        ],
+        "commonMistakes": [
+          "clever な型を常に良いものとして扱う。",
+          "runtime validation の必要性を無視する。"
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Senior",
+          "type": "trade_off"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "TypeScript Handbook: Creating Types from Types",
+        "url": "https://www.typescriptlang.org/docs/handbook/2/types-from-types.html",
+        "note": "Used for advanced type composition topics."
+      },
+      {
+        "label": "TypeScript Handbook: Conditional Types",
+        "url": "https://www.typescriptlang.org/docs/handbook/2/conditional-types.html",
+        "note": "Used for advanced type-system trade-off context."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "TS_SR_DEBUG_PROJECT_REFS_017",
+    "stages": ["stage_3_domain_knowledge"],
+    "roleFamilies": ["frontend", "fullstack", "backend"],
+    "levels": ["senior"],
+    "type": "debugging",
+    "competencies": ["problem_solving", "system_thinking", "ownership"],
+    "techTags": ["typescript"],
+    "difficulty": 4,
+    "intent": "Evaluate senior debugging of TypeScript build and module resolution problems in a multi-package codebase.",
+    "primaryQuestion": "A monorepo TypeScript build fails only in CI with stale declarations or module resolution errors. How would you diagnose it?",
+    "expectedSignals": [
+      "Checks tsconfig inheritance, paths, moduleResolution, outDir/rootDir, declaration output, and project references.",
+      "Compares local and CI TypeScript versions, package manager lockfile, build cache, and clean build behavior.",
+      "Inspects dependency graph order and whether referenced packages emit declarations before consumers build.",
+      "Uses traceResolution, build verbose output, cache invalidation, and minimal reproduction where useful."
+    ],
+    "redFlags": [
+      "Only reruns CI without collecting evidence.",
+      "Deletes build caches permanently without understanding the invalidation issue.",
+      "Ignores version skew or tsconfig differences between packages."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Uses systematic CI/local comparison, TypeScript resolution tools, project graph reasoning, and durable cache/build fixes."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Good build-debug flow but misses declaration output or dependency order."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Recognizes config issue but lacks monorepo and CI-specific diagnosis."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not show production TypeScript build debugging."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "What would traceResolution tell you that a normal compiler error may not?",
+        "purpose": "Check module resolution debugging."
+      },
+      {
+        "trigger": "missing_metric",
+        "question": "How would you prove the fix is durable and not just a one-off cache cleanup?",
+        "purpose": "Probe prevention and verification."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Debug monorepo TypeScript build",
+        "displayQuestion": "A monorepo TypeScript build fails only in CI with stale declarations or module resolution errors. How would you diagnose it?",
+        "displayIntent": "Evaluate senior TypeScript build debugging.",
+        "guidance": [
+          "Compare local and CI inputs.",
+          "Discuss tsconfig, declarations, project references, and resolution tracing."
+        ],
+        "commonMistakes": [
+          "Treating cache deletion as root cause.",
+          "Ignoring package graph and TypeScript version skew."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Senior",
+          "type": "debugging"
+        }
+      },
+      "vi": {
+        "title": "Debug build TypeScript monorepo",
+        "displayQuestion": "Một build TypeScript trong monorepo chỉ fail ở CI với stale declaration hoặc module resolution error. Bạn chẩn đoán thế nào?",
+        "displayIntent": "Đánh giá debug build TypeScript mức senior.",
+        "guidance": [
+          "So sánh input local và CI.",
+          "Nói về tsconfig, declaration, project reference và resolution tracing."
+        ],
+        "commonMistakes": [
+          "Xem việc xóa cache là root cause.",
+          "Bỏ qua package graph và lệch version TypeScript."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Senior",
+          "type": "debugging"
+        }
+      },
+      "ja": {
+        "title": "monorepo TypeScript build debug",
+        "displayQuestion": "monorepo の TypeScript build が CI だけで stale declaration や module resolution error により失敗します。どう診断しますか。",
+        "displayIntent": "senior TypeScript build debugging を評価する。",
+        "guidance": [
+          "local と CI の input を比較する。",
+          "tsconfig、declaration、project reference、resolution tracing を話す。"
+        ],
+        "commonMistakes": [
+          "cache deletion を root cause として扱う。",
+          "package graph や TypeScript version skew を無視する。"
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Senior",
+          "type": "debugging"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "TypeScript Modules Reference",
+        "url": "https://www.typescriptlang.org/docs/handbook/modules/reference",
+        "note": "Used for module resolution and declaration context."
+      },
+      {
+        "label": "TypeScript Project References",
+        "url": "https://www.typescriptlang.org/docs/handbook/project-references.html",
+        "note": "Used for project reference build behavior."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "TS_SR_TECH_DECLARATION_AUGMENTATION_018",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["frontend", "fullstack", "backend"],
+    "levels": ["senior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking", "ownership"],
+    "techTags": ["typescript"],
+    "difficulty": 4,
+    "intent": "Assess senior understanding of declaration files, module augmentation, global augmentation, and safe typing of third-party libraries.",
+    "primaryQuestion": "How would you type a third-party JavaScript library or safely augment an existing module in TypeScript?",
+    "expectedSignals": [
+      "Distinguishes writing .d.ts declarations, ambient modules, module augmentation, and global augmentation.",
+      "Keeps declarations close to the library's real runtime behavior and examples.",
+      "Avoids broad any declarations that provide false confidence.",
+      "Plans testing through type checks, sample consumer code, and upgrade monitoring."
+    ],
+    "redFlags": [
+      "Declares the whole module as any and considers the work finished.",
+      "Confuses ambient module declarations with module augmentation.",
+      "Adds global types without considering pollution or collisions."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains declaration authoring, augmentation boundaries, runtime fidelity, type tests, and maintenance."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands declaration basics but misses global pollution or upgrade risk."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can patch a type error but not design or maintain reliable declarations."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not show declaration-file competence."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "How do you know your .d.ts file matches the library's runtime behavior?",
+        "purpose": "Check validation discipline."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "What risk comes from declare module 'legacy-lib' { const x: any; export default x; }?",
+        "purpose": "Probe false-safety awareness."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Declaration files and augmentation",
+        "displayQuestion": "How would you type a third-party JavaScript library or safely augment an existing module in TypeScript?",
+        "displayIntent": "Check declaration-file and augmentation expertise.",
+        "guidance": [
+          "Separate ambient declarations from module augmentation.",
+          "Discuss runtime fidelity and type tests."
+        ],
+        "commonMistakes": [
+          "Typing the whole library as any.",
+          "Adding broad globals that collide with other code."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Senior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Declaration file và augmentation",
+        "displayQuestion": "Bạn type một thư viện JavaScript bên thứ ba hoặc augment một module hiện có trong TypeScript một cách an toàn thế nào?",
+        "displayIntent": "Kiểm tra hiểu biết về declaration file và augmentation.",
+        "guidance": [
+          "Tách ambient declaration khỏi module augmentation.",
+          "Nói về độ khớp với runtime và type test."
+        ],
+        "commonMistakes": [
+          "Type cả thư viện là any.",
+          "Thêm global quá rộng gây collision."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Senior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "declaration file と augmentation",
+        "displayQuestion": "third-party JavaScript library を型付けする、または既存 module を TypeScript で安全に augment するにはどうしますか。",
+        "displayIntent": "declaration file と augmentation の専門性を確認する。",
+        "guidance": [
+          "ambient declaration と module augmentation を分ける。",
+          "runtime fidelity と type test を話す。"
+        ],
+        "commonMistakes": [
+          "library 全体を any として型付けする。",
+          "他の code と衝突する広すぎる global を追加する。"
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Senior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "TypeScript Declaration Files Introduction",
+        "url": "https://www.typescriptlang.org/docs/handbook/declaration-files/introduction",
+        "note": "Used for declaration file concepts."
+      },
+      {
+        "label": "TypeScript Modules Reference",
+        "url": "https://www.typescriptlang.org/docs/handbook/modules/reference",
+        "note": "Used for ambient module and augmentation distinctions."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "TS_SR_TRADE_SCHEMA_SOURCE_OF_TRUTH_019",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["frontend", "fullstack", "backend"],
+    "levels": ["senior"],
+    "type": "trade_off",
+    "competencies": ["trade_off_analysis", "system_thinking", "impact_measurement"],
+    "techTags": ["typescript"],
+    "difficulty": 4,
+    "intent": "Evaluate senior architecture judgment around keeping TypeScript types, runtime schemas, API contracts, and generated clients consistent.",
+    "primaryQuestion": "For a product with frontend and backend TypeScript, how would you keep API contracts, runtime validation, and shared types in sync?",
+    "expectedSignals": [
+      "Compares options such as shared packages, OpenAPI/GraphQL generation, schema-first validation, or code-first schema generation.",
+      "Addresses versioning, backwards compatibility, deployment order, and consumer upgrade paths.",
+      "Keeps runtime validation at boundaries instead of relying only on shared compile-time types.",
+      "Uses CI checks, contract tests, generated clients, or schema diffing to prevent drift."
+    ],
+    "redFlags": [
+      "Assumes a shared TypeScript interface alone validates API traffic.",
+      "Ignores independent deployment and version skew between frontend and backend.",
+      "Has no mechanism to detect contract drift."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Balances shared types, generated contracts, runtime validation, versioning, CI checks, and deployment sequencing."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Good sync strategy but misses runtime validation or deployment skew."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Suggests sharing interfaces but lacks end-to-end contract controls."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer lacks architecture-level contract reasoning."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_tradeoff",
+        "question": "What are the trade-offs between shared TypeScript types and OpenAPI-generated clients?",
+        "purpose": "Probe contract strategy comparison."
+      },
+      {
+        "trigger": "missing_metric",
+        "question": "What CI signal would catch a breaking contract change before deployment?",
+        "purpose": "Check drift prevention."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "API contract source of truth",
+        "displayQuestion": "For a product with frontend and backend TypeScript, how would you keep API contracts, runtime validation, and shared types in sync?",
+        "displayIntent": "Evaluate senior contract architecture in TypeScript systems.",
+        "guidance": [
+          "Compare shared packages, generated clients, and schema-first approaches.",
+          "Include versioning, deployment order, and validation."
+        ],
+        "commonMistakes": [
+          "Relying only on shared interfaces.",
+          "Ignoring frontend/backend version skew."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Senior",
+          "type": "trade_off"
+        }
+      },
+      "vi": {
+        "title": "Source of truth cho API contract",
+        "displayQuestion": "Với product có frontend và backend TypeScript, bạn giữ API contract, runtime validation và shared type đồng bộ thế nào?",
+        "displayIntent": "Đánh giá kiến trúc contract trong hệ thống TypeScript mức senior.",
+        "guidance": [
+          "So sánh shared package, generated client và schema-first.",
+          "Bao gồm versioning, thứ tự deploy và validation."
+        ],
+        "commonMistakes": [
+          "Chỉ dựa vào shared interface.",
+          "Bỏ qua lệch version giữa frontend/backend."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Senior",
+          "type": "trade_off"
+        }
+      },
+      "ja": {
+        "title": "API contract source of truth",
+        "displayQuestion": "frontend と backend が TypeScript の product で、API contract、runtime validation、shared types をどう同期しますか。",
+        "displayIntent": "TypeScript system における senior contract architecture を評価する。",
+        "guidance": [
+          "shared package、generated client、schema-first approach を比較する。",
+          "versioning、deployment order、validation を含める。"
+        ],
+        "commonMistakes": [
+          "shared interface だけに依存する。",
+          "frontend/backend version skew を無視する。"
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Senior",
+          "type": "trade_off"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "TypeScript Handbook: Modules",
+        "url": "https://www.typescriptlang.org/docs/handbook/2/modules.html",
+        "note": "Used for shared module and package boundary concepts."
+      },
+      {
+        "label": "TypeScript Declaration Files Introduction",
+        "url": "https://www.typescriptlang.org/docs/handbook/declaration-files/introduction",
+        "note": "Used for declaration and consumer typing concerns."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "TS_SR_CV_MIGRATION_020",
+    "stages": ["stage_4_cv_deep_dive"],
+    "roleFamilies": ["frontend", "fullstack", "backend"],
+    "levels": ["senior"],
+    "type": "cv_claim_verification",
+    "competencies": ["ownership", "impact_measurement", "technical_fundamentals"],
+    "techTags": ["typescript"],
+    "difficulty": 4,
+    "intent": "Verify senior ownership of a JavaScript-to-TypeScript migration or a large TypeScript strictness improvement.",
+    "primaryQuestion": "You mention migrating a codebase to TypeScript or improving TypeScript strictness. What decisions were yours, what changed technically, and how did you measure success?",
+    "expectedSignals": [
+      "Separates personal decisions from team execution.",
+      "Describes migration scope, sequencing, tsconfig choices, typing strategy, and suppression policy.",
+      "Mentions tests, CI gates, type coverage, bug reduction, developer workflow, or build-time impacts.",
+      "Explains rollout risk, compatibility plan, and what was intentionally deferred."
+    ],
+    "redFlags": [
+      "Says 'we migrated to TypeScript' without naming personal decisions.",
+      "Only counts files renamed to .ts without discussing type quality.",
+      "Cannot provide baseline, metric, or observable outcome."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Shows verifiable senior migration ownership with technical choices, rollout control, and measured outcomes."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Real migration involvement but ownership, metrics, or suppression policy is incomplete."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Likely participated but cannot demonstrate senior decision-making."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Claim cannot be validated from the answer."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "red_flag",
+        "question": "Which TypeScript migration decision would not have happened without you?",
+        "purpose": "Verify personal ownership."
+      },
+      {
+        "trigger": "missing_metric",
+        "question": "What baseline and final signal proved the migration improved quality or velocity?",
+        "purpose": "Recover impact evidence."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Verify TypeScript migration ownership",
+        "displayQuestion": "You mention migrating a codebase to TypeScript or improving TypeScript strictness. What decisions were yours, what changed technically, and how did you measure success?",
+        "displayIntent": "Verify senior ownership of TypeScript migration work.",
+        "guidance": [
+          "Separate your decisions from team work.",
+          "Include technical changes, rollout risk, and outcome evidence."
+        ],
+        "commonMistakes": [
+          "Using only 'we migrated' language.",
+          "Counting file renames instead of type-safety improvement."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Senior",
+          "type": "cv_claim_verification"
+        }
+      },
+      "vi": {
+        "title": "Xác minh ownership migration TypeScript",
+        "displayQuestion": "Bạn nói mình migration codebase sang TypeScript hoặc cải thiện TypeScript strictness. Quyết định nào là của bạn, kỹ thuật đã thay đổi gì, và bạn đo success thế nào?",
+        "displayIntent": "Xác minh ownership senior trong công việc migration TypeScript.",
+        "guidance": [
+          "Tách quyết định của bạn khỏi công việc của team.",
+          "Bao gồm thay đổi kỹ thuật, rủi ro rollout và bằng chứng outcome."
+        ],
+        "commonMistakes": [
+          "Chỉ nói 'chúng tôi đã migrate'.",
+          "Đếm file rename thay vì cải thiện type-safety."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Senior",
+          "type": "cv_claim_verification"
+        }
+      },
+      "ja": {
+        "title": "TypeScript migration ownership 確認",
+        "displayQuestion": "codebase を TypeScript に移行した、または TypeScript strictness を改善したとあります。どの判断があなたのもので、技術的に何が変わり、success をどう測りましたか。",
+        "displayIntent": "TypeScript migration work の senior ownership を確認する。",
+        "guidance": [
+          "自分の判断と team work を分ける。",
+          "technical changes、rollout risk、outcome evidence を含める。"
+        ],
+        "commonMistakes": [
+          "「we migrated」だけで話す。",
+          "type-safety improvement ではなく file rename を数える。"
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Senior",
+          "type": "cv_claim_verification"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "TypeScript TSConfig: strict",
+        "url": "https://www.typescriptlang.org/tsconfig/strict.html",
+        "note": "Used for strictness and migration discussion."
+      },
+      {
+        "label": "TypeScript interview question coverage",
+        "url": "https://www.techinterview.org/post/3233460485/typescript-interview-questions/",
+        "note": "Used for interview topic coverage; probe wording is original."
+      }
+    ],
+    "status": "active"
+  }
+]

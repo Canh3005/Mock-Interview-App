@@ -1,0 +1,1286 @@
+[
+  {
+    "code": "AWS_JR_TECH_SHARED_RESP_001",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "devops", "security"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "communication", "system_thinking"],
+    "techTags": ["aws", "cloud", "security"],
+    "difficulty": 2,
+    "intent": "Check whether the candidate understands AWS shared responsibility and can turn it into concrete engineering decisions for a deployed workload.",
+    "primaryQuestion": "For a web application running on EC2 with RDS and S3, what is AWS responsible for and what is your team still responsible for?",
+    "expectedSignals": [
+      "Separates security of the cloud from security in the cloud.",
+      "Names customer-owned tasks such as IAM permissions, network exposure, patching choices, encryption configuration, backups, logging, and application vulnerabilities.",
+      "Explains that responsibility changes by service model, for example EC2 versus managed database or object storage.",
+      "Connects the answer to Well-Architected pillars such as security, reliability, operational excellence, and cost optimization."
+    ],
+    "redFlags": [
+      "Assumes AWS handles all security because the workload is in the cloud.",
+      "Cannot distinguish EC2 operating system responsibilities from managed service responsibilities.",
+      "Ignores monitoring, backup, access control, or incident response ownership."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Gives service-specific responsibilities and explains how the team would verify controls in production." },
+      { "scoreBand": "solid", "description": "Understands shared responsibility but stays mostly at a conceptual level." },
+      { "scoreBand": "needs_work", "description": "Knows AWS manages physical infrastructure but misses most application and configuration responsibilities." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer is vague or treats cloud as fully managed by default." }
+    ],
+    "followUps": [
+      { "trigger": "missing_context", "question": "How would your answer change if the compute layer moved from EC2 to Lambda?", "purpose": "Check service-model awareness." },
+      { "trigger": "vague_answer", "question": "Name three controls your team would configure before going live.", "purpose": "Force concrete operational and security controls." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "AWS shared responsibility in practice",
+        "displayQuestion": "For a web application running on EC2 with RDS and S3, what is AWS responsible for and what is your team still responsible for?",
+        "displayIntent": "Check whether the candidate can apply shared responsibility to real AWS services.",
+        "guidance": ["Ask for service-specific examples.", "Listen for security, reliability, operations, and cost ownership."],
+        "commonMistakes": ["Saying AWS owns all security.", "Giving a definition without deployment controls."],
+        "labels": { "role": "Backend/DevOps/Security", "level": "Junior", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Shared responsibility trên AWS",
+        "displayQuestion": "Với một web application chạy trên EC2, RDS và S3, AWS chịu trách nhiệm phần nào và team của bạn vẫn phải chịu trách nhiệm phần nào?",
+        "displayIntent": "Kiểm tra khả năng áp dụng shared responsibility vào các dịch vụ AWS thực tế.",
+        "guidance": ["Yêu cầu ví dụ cụ thể theo từng dịch vụ.", "Nghe xem ứng viên có nhắc tới bảo mật, độ tin cậy, vận hành và chi phí không."],
+        "commonMistakes": ["Nói AWS chịu toàn bộ bảo mật.", "Chỉ nêu định nghĩa mà không nói control khi triển khai."],
+        "labels": { "role": "Backend/DevOps/Security", "level": "Junior", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "AWSの責任共有モデル",
+        "displayQuestion": "EC2、RDS、S3で動くWebアプリでは、AWSが責任を持つ範囲とチームが責任を持つ範囲は何ですか。",
+        "displayIntent": "責任共有モデルを実際のAWSサービスに適用できるか確認する。",
+        "guidance": ["サービスごとの具体例を求める。", "セキュリティ、信頼性、運用、コストの責任を聞き取る。"],
+        "commonMistakes": ["AWSがすべてのセキュリティを担当すると考える。", "定義だけで実運用の管理策を説明しない。"],
+        "labels": { "role": "Backend/DevOps/Security", "level": "Junior", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "AWS Well-Architected Framework: The pillars", "url": "https://docs.aws.amazon.com/wellarchitected/latest/framework/the-pillars-of-the-framework.html", "note": "Used for pillar framing and architecture review expectations." },
+      { "label": "AWS Well-Architected Tool: Framework overview", "url": "https://docs.aws.amazon.com/wellarchitected/latest/userguide/waf.html", "note": "Used for workload review and trade-off framing." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "AWS_JR_TECH_IAM_LEAST_PRIV_002",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "devops", "security"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving", "system_thinking"],
+    "techTags": ["aws", "iam", "security"],
+    "difficulty": 3,
+    "intent": "Assess practical understanding of IAM identities, roles, temporary credentials, least privilege, and policy scope.",
+    "primaryQuestion": "How would you give an application running on EC2 permission to read only one S3 bucket without using long-lived access keys?",
+    "expectedSignals": [
+      "Uses an IAM role attached through an EC2 instance profile instead of static credentials on disk.",
+      "Scopes the policy to the specific bucket and needed actions such as s3:GetObject and possibly s3:ListBucket.",
+      "Mentions temporary credentials automatically provided to the workload.",
+      "Considers policy conditions, access review, and avoiding broad managed policies in production."
+    ],
+    "redFlags": [
+      "Stores an IAM user's access key and secret key in environment variables or source code as the preferred approach.",
+      "Grants AdministratorAccess or wildcard S3 permissions without justification.",
+      "Cannot explain the difference between users, roles, and policies."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Designs a least-privilege role-based setup and names concrete actions, resources, and verification steps." },
+      { "scoreBand": "solid", "description": "Chooses IAM roles and avoids access keys but misses finer policy scoping details." },
+      { "scoreBand": "needs_work", "description": "Understands permissions are needed but reaches for broad or long-lived credentials." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer does not show usable IAM knowledge." }
+    ],
+    "followUps": [
+      { "trigger": "missing_tradeoff", "question": "When would you use an IAM policy condition in this setup?", "purpose": "Probe deeper policy scoping." },
+      { "trigger": "red_flag", "question": "What risk does an access key in a CI variable or .env file create?", "purpose": "Check credential leakage awareness." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Least-privilege IAM access for a workload",
+        "displayQuestion": "How would you give an application running on EC2 permission to read only one S3 bucket without using long-lived access keys?",
+        "displayIntent": "Check IAM roles, temporary credentials, and least-privilege policy design.",
+        "guidance": ["Ask for specific IAM policy scope.", "Look for role-based workload identity instead of static secrets."],
+        "commonMistakes": ["Using an IAM user access key for an EC2 workload.", "Granting wildcard permissions because it is faster."],
+        "labels": { "role": "Backend/DevOps/Security", "level": "Junior/Mid", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "IAM least privilege cho workload",
+        "displayQuestion": "Bạn cấp quyền cho application chạy trên EC2 đọc duy nhất một S3 bucket như thế nào mà không dùng access key dài hạn?",
+        "displayIntent": "Kiểm tra IAM role, temporary credential và thiết kế policy theo least privilege.",
+        "guidance": ["Hỏi rõ scope của IAM policy.", "Ưu tiên workload identity bằng role thay vì secret tĩnh."],
+        "commonMistakes": ["Dùng access key của IAM user cho workload EC2.", "Cấp wildcard permission vì nhanh hơn."],
+        "labels": { "role": "Backend/DevOps/Security", "level": "Junior/Mid", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "ワークロード向け最小権限IAM",
+        "displayQuestion": "長期アクセスキーを使わずに、EC2上のアプリへ特定のS3バケットだけを読み取る権限をどう付与しますか。",
+        "displayIntent": "IAMロール、一時認証情報、最小権限ポリシー設計を確認する。",
+        "guidance": ["IAMポリシーの具体的な範囲を聞く。", "静的シークレットではなくロールベースのワークロードIDを重視する。"],
+        "commonMistakes": ["EC2ワークロードにIAMユーザーのアクセスキーを使う。", "速さを理由にワイルドカード権限を付ける。"],
+        "labels": { "role": "Backend/DevOps/Security", "level": "Junior/Mid", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "AWS IAM security best practices", "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html", "note": "Used for temporary credentials, least privilege, MFA, and credential hygiene." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "AWS_MID_TECH_VPC_SUBNET_ROUTE_003",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "devops", "security"],
+    "levels": ["mid"],
+    "type": "technical_depth",
+    "competencies": ["system_thinking", "technical_fundamentals", "problem_solving"],
+    "techTags": ["aws", "vpc", "networking"],
+    "difficulty": 3,
+    "intent": "Evaluate whether the candidate can reason about VPC routing, public and private subnets, internet gateways, and NAT gateways.",
+    "primaryQuestion": "Design a VPC with public web entry points and private application instances that need outbound internet access for updates. What routes and gateways are required?",
+    "expectedSignals": [
+      "Places public-facing load balancer or bastion-like entry points in public subnets with routes to an internet gateway.",
+      "Places application instances in private subnets without a direct route to an internet gateway.",
+      "Uses a NAT gateway in a public subnet for private subnet outbound IPv4 internet access.",
+      "Explains route table association per subnet and separates routing from security group rules."
+    ],
+    "redFlags": [
+      "Calls a subnet public only because it has a public CIDR range.",
+      "Routes private instance traffic directly to an internet gateway while claiming inbound traffic is blocked by subnet type alone.",
+      "Confuses NAT gateway with internet gateway or security group."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Draws a correct route model across multiple AZs and explains why each route exists." },
+      { "scoreBand": "solid", "description": "Understands public/private subnet routing but misses HA or route-table association details." },
+      { "scoreBand": "needs_work", "description": "Knows the terms but cannot describe the packet path." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer is mostly service names without routing logic." }
+    ],
+    "followUps": [
+      { "trigger": "missing_context", "question": "What exactly makes a subnet public in AWS?", "purpose": "Verify route-table based understanding." },
+      { "trigger": "missing_tradeoff", "question": "What changes if you want high availability across two Availability Zones?", "purpose": "Check NAT gateway and subnet design trade-offs." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "VPC public and private subnet routing",
+        "displayQuestion": "Design a VPC with public web entry points and private application instances that need outbound internet access for updates. What routes and gateways are required?",
+        "displayIntent": "Check VPC routing, subnet classification, internet gateway, and NAT gateway reasoning.",
+        "guidance": ["Ask the candidate to describe the packet path.", "Separate routing decisions from firewall decisions."],
+        "commonMistakes": ["Thinking subnet name alone controls internet access.", "Using one NAT design without discussing AZ resilience."],
+        "labels": { "role": "Backend/DevOps/Security", "level": "Mid", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Route public/private subnet trong VPC",
+        "displayQuestion": "Hãy thiết kế một VPC có điểm vào public cho web và các application instance private cần outbound internet để update. Cần những route và gateway nào?",
+        "displayIntent": "Kiểm tra tư duy về VPC routing, phân loại subnet, internet gateway và NAT gateway.",
+        "guidance": ["Yêu cầu ứng viên mô tả đường đi của packet.", "Tách rõ quyết định routing và quyết định firewall."],
+        "commonMistakes": ["Nghĩ tên subnet tự quyết định internet access.", "Dùng một NAT design mà không bàn về HA theo AZ."],
+        "labels": { "role": "Backend/DevOps/Security", "level": "Mid", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "VPCのpublic/private subnetルーティング",
+        "displayQuestion": "公開Web入口と、更新のために外向きインターネット接続が必要なprivateアプリケーションインスタンスを持つVPCを設計してください。必要なルートとゲートウェイは何ですか。",
+        "displayIntent": "VPCルーティング、サブネット分類、Internet Gateway、NAT Gatewayの理解を確認する。",
+        "guidance": ["パケットの経路を説明してもらう。", "ルーティングとファイアウォールの判断を分けて聞く。"],
+        "commonMistakes": ["サブネット名だけでインターネット接続が決まると考える。", "AZ冗長性を考えずにNATを1つだけ置く。"],
+        "labels": { "role": "Backend/DevOps/Security", "level": "Mid", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Amazon VPC route tables", "url": "https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Route_Tables.html", "note": "Used for route table and route target concepts." },
+      { "label": "Amazon VPC internet gateway", "url": "https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html", "note": "Used for public subnet and internet gateway routing behavior." },
+      { "label": "Amazon VPC NAT gateways", "url": "https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html", "note": "Used for private subnet outbound connectivity." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "AWS_MID_DEBUG_VPC_ACCESS_004",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "devops", "security"],
+    "levels": ["mid"],
+    "type": "debugging",
+    "competencies": ["problem_solving", "technical_fundamentals", "communication"],
+    "techTags": ["aws", "vpc", "networking"],
+    "difficulty": 3,
+    "intent": "Assess troubleshooting depth for AWS network reachability issues involving security groups, network ACLs, routes, and target health.",
+    "primaryQuestion": "An EC2 instance in a private subnet cannot reach an external package registry, and the ALB health check is failing. How would you debug this?",
+    "expectedSignals": [
+      "Checks route tables, NAT gateway presence, NAT subnet route to internet gateway, and subnet associations.",
+      "Verifies security group egress and inbound rules from the ALB security group to the instance port.",
+      "Checks network ACL stateless rules for inbound and outbound ephemeral ports.",
+      "Uses ALB target health reason codes, instance logs, and connectivity tests instead of guessing."
+    ],
+    "redFlags": [
+      "Immediately opens all ports to 0.0.0.0/0 without isolating the failing path.",
+      "Assumes security groups and NACLs behave the same way.",
+      "Does not separate outbound package access from inbound ALB health check flow."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Builds a step-by-step reachability investigation and explains stateful versus stateless filtering." },
+      { "scoreBand": "solid", "description": "Checks the main AWS network components but misses a detail such as ephemeral ports or ALB reason codes." },
+      { "scoreBand": "needs_work", "description": "Mentions common components but does not order the diagnosis by traffic path." },
+      { "scoreBand": "insufficient_evidence", "description": "Only suggests broad firewall changes or restarts." }
+    ],
+    "followUps": [
+      { "trigger": "vague_answer", "question": "Walk through the return path for an outbound HTTPS request through a NAT gateway.", "purpose": "Force packet-path reasoning." },
+      { "trigger": "red_flag", "question": "Why can a security group rule be narrower than a network ACL rule in many designs?", "purpose": "Check stateful versus stateless filtering awareness." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Debug AWS network reachability",
+        "displayQuestion": "An EC2 instance in a private subnet cannot reach an external package registry, and the ALB health check is failing. How would you debug this?",
+        "displayIntent": "Check practical troubleshooting across routes, NAT, security groups, NACLs, and ALB target health.",
+        "guidance": ["Ask for ordered checks by traffic path.", "Watch for evidence-driven debugging rather than broad rule changes."],
+        "commonMistakes": ["Opening every port to the internet.", "Treating outbound internet access and ALB health checks as the same flow."],
+        "labels": { "role": "Backend/DevOps/Security", "level": "Mid", "type": "debugging" }
+      },
+      "vi": {
+        "title": "Debug reachability mạng AWS",
+        "displayQuestion": "Một EC2 instance trong private subnet không gọi được package registry bên ngoài, đồng thời ALB health check fail. Bạn debug như thế nào?",
+        "displayIntent": "Kiểm tra khả năng debug thực tế qua route, NAT, security group, NACL và ALB target health.",
+        "guidance": ["Yêu cầu thứ tự kiểm tra theo traffic path.", "Quan sát xem ứng viên debug bằng chứng cứ hay chỉ mở rule rộng."],
+        "commonMistakes": ["Mở toàn bộ port ra internet.", "Gộp outbound internet access và ALB health check thành cùng một luồng."],
+        "labels": { "role": "Backend/DevOps/Security", "level": "Mid", "type": "debugging" }
+      },
+      "ja": {
+        "title": "AWSネットワーク到達性のデバッグ",
+        "displayQuestion": "private subnetのEC2が外部パッケージレジストリへ接続できず、ALBのhealth checkも失敗しています。どうデバッグしますか。",
+        "displayIntent": "ルート、NAT、Security Group、NACL、ALB target healthをまたぐ実践的な調査力を確認する。",
+        "guidance": ["通信経路に沿った確認順序を求める。", "広いルール変更ではなく証拠に基づく調査かを見る。"],
+        "commonMistakes": ["すべてのポートをインターネットへ開ける。", "外向き通信とALB health checkを同じフローとして扱う。"],
+        "labels": { "role": "Backend/DevOps/Security", "level": "Mid", "type": "debugging" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Amazon VPC route table concepts", "url": "https://docs.aws.amazon.com/vpc/latest/userguide/RouteTables.html", "note": "Used for route destination and target concepts." },
+      { "label": "Application Load Balancer target health checks", "url": "https://docs.aws.amazon.com/elasticloadbalancing/latest/application/target-group-health-checks.html", "note": "Used for ALB health check behavior and target status." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "AWS_MID_TECH_EC2_ASG_ALB_005",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "devops"],
+    "levels": ["mid"],
+    "type": "technical_depth",
+    "competencies": ["system_thinking", "technical_fundamentals", "impact_measurement"],
+    "techTags": ["aws", "ec2", "autoscaling"],
+    "difficulty": 3,
+    "intent": "Evaluate whether the candidate can design and operate an EC2 Auto Scaling group behind an Application Load Balancer.",
+    "primaryQuestion": "How would you run a stateless API on EC2 so it survives instance failure and scales with traffic?",
+    "expectedSignals": [
+      "Uses an Auto Scaling group across multiple subnets and Availability Zones behind an Application Load Balancer.",
+      "Defines launch template content such as AMI, instance type, security groups, user data, and instance profile.",
+      "Configures health checks, grace period, desired/min/max capacity, and scaling policy based on useful metrics.",
+      "Keeps application state outside the instance and plans rolling or immutable deployments."
+    ],
+    "redFlags": [
+      "Runs a single hand-managed EC2 instance as the production architecture.",
+      "Stores uploads or session state only on the instance local disk.",
+      "Uses CPU scaling blindly without understanding request latency, queue depth, or target tracking."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Explains a full ASG and ALB design including health, scaling signals, statelessness, and deployment behavior." },
+      { "scoreBand": "solid", "description": "Covers ASG and ALB basics but misses metrics or deployment details." },
+      { "scoreBand": "needs_work", "description": "Knows Auto Scaling exists but cannot describe how replacement and health checks work." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer is a list of AWS service names without operational design." }
+    ],
+    "followUps": [
+      { "trigger": "missing_metric", "question": "Which metric would you scale on and why?", "purpose": "Check whether scaling is tied to workload behavior." },
+      { "trigger": "missing_context", "question": "What should happen if an instance passes EC2 status checks but the app returns 500 on /health?", "purpose": "Probe load balancer and application health semantics." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "EC2 Auto Scaling for a stateless API",
+        "displayQuestion": "How would you run a stateless API on EC2 so it survives instance failure and scales with traffic?",
+        "displayIntent": "Check Auto Scaling, ALB, health checks, scaling policy, and stateless service design.",
+        "guidance": ["Ask for capacity bounds and health check behavior.", "Look for state externalization and deployment strategy."],
+        "commonMistakes": ["Treating one EC2 instance as resilient.", "Scaling on a metric that does not represent user demand."],
+        "labels": { "role": "Backend/DevOps", "level": "Mid", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "EC2 Auto Scaling cho stateless API",
+        "displayQuestion": "Bạn chạy một stateless API trên EC2 như thế nào để chịu được instance failure và scale theo traffic?",
+        "displayIntent": "Kiểm tra Auto Scaling, ALB, health check, scaling policy và thiết kế stateless service.",
+        "guidance": ["Hỏi rõ min/max/desired capacity và health check.", "Tìm dấu hiệu ứng viên biết đưa state ra ngoài instance và có chiến lược deploy."],
+        "commonMistakes": ["Xem một EC2 instance là đủ resilient.", "Scale theo metric không phản ánh demand của user."],
+        "labels": { "role": "Backend/DevOps", "level": "Mid", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "stateless API向けEC2 Auto Scaling",
+        "displayQuestion": "EC2上のstateless APIを、インスタンス障害に耐えつつトラフィックに応じてスケールさせるにはどうしますか。",
+        "displayIntent": "Auto Scaling、ALB、health check、scaling policy、stateless設計を確認する。",
+        "guidance": ["容量範囲とhealth checkの動作を聞く。", "状態の外部化とデプロイ戦略に注目する。"],
+        "commonMistakes": ["EC2 1台だけで耐障害性があると考える。", "ユーザー需要を表さないメトリクスでスケールする。"],
+        "labels": { "role": "Backend/DevOps", "level": "Mid", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Amazon EC2 Auto Scaling launch templates", "url": "https://docs.aws.amazon.com/autoscaling/ec2/userguide/launch-templates.html", "note": "Used for launch template and instance configuration concepts." },
+      { "label": "Auto Scaling health checks", "url": "https://docs.aws.amazon.com/autoscaling/ec2/userguide/ec2-auto-scaling-health-checks.html", "note": "Used for replacement behavior and health check sources." },
+      { "label": "Application Load Balancer target groups", "url": "https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-target-groups.html", "note": "Used for target groups and per-target health checks." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "AWS_JR_TECH_S3_SECURE_STORAGE_006",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "devops", "security"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking", "trade_off_analysis"],
+    "techTags": ["aws", "s3", "security"],
+    "difficulty": 3,
+    "intent": "Check whether the candidate can design safe S3 storage with access control, versioning, lifecycle, and recovery behavior.",
+    "primaryQuestion": "How would you store user-uploaded documents in S3 so they are private, recoverable after accidental deletion, and cost-aware over time?",
+    "expectedSignals": [
+      "Keeps the bucket private and uses S3 Block Public Access unless public access is intentionally required.",
+      "Uses IAM or application-mediated access instead of public object ACLs.",
+      "Enables versioning to recover overwritten or deleted objects and understands delete markers.",
+      "Uses lifecycle rules to transition or expire old versions and archival data based on access patterns."
+    ],
+    "redFlags": [
+      "Makes the bucket public for convenience.",
+      "Does not know that versioning stores full object versions and can increase cost.",
+      "Confuses S3 object storage with a POSIX file system or EBS volume."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Balances privacy, recovery, lifecycle cost, and application access patterns with concrete S3 settings." },
+      { "scoreBand": "solid", "description": "Covers private bucket and versioning but misses lifecycle cost or delete marker behavior." },
+      { "scoreBand": "needs_work", "description": "Knows S3 stores files but has weak access control or recovery design." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer relies on public buckets or manual backup only." }
+    ],
+    "followUps": [
+      { "trigger": "missing_tradeoff", "question": "What cost issue can versioning introduce, and how would lifecycle rules control it?", "purpose": "Check recovery versus cost reasoning." },
+      { "trigger": "red_flag", "question": "If a public bucket policy is added accidentally, what setting can still block public access?", "purpose": "Verify Block Public Access awareness." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Private and recoverable S3 object storage",
+        "displayQuestion": "How would you store user-uploaded documents in S3 so they are private, recoverable after accidental deletion, and cost-aware over time?",
+        "displayIntent": "Check S3 privacy, versioning, lifecycle, and access-control design.",
+        "guidance": ["Ask for exact S3 features.", "Look for cost and recovery trade-offs, not only storage."],
+        "commonMistakes": ["Using a public bucket for app convenience.", "Enabling versioning without lifecycle management."],
+        "labels": { "role": "Backend/DevOps/Security", "level": "Junior/Mid", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "S3 private và recoverable",
+        "displayQuestion": "Bạn lưu document người dùng upload lên S3 như thế nào để object private, có thể khôi phục khi xóa nhầm và vẫn tối ưu chi phí theo thời gian?",
+        "displayIntent": "Kiểm tra thiết kế S3 về privacy, versioning, lifecycle và access control.",
+        "guidance": ["Hỏi rõ feature S3 cụ thể.", "Tìm trade-off giữa chi phí và khả năng phục hồi, không chỉ lưu trữ."],
+        "commonMistakes": ["Dùng public bucket cho tiện.", "Bật versioning nhưng không quản lý lifecycle."],
+        "labels": { "role": "Backend/DevOps/Security", "level": "Junior/Mid", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "privateで復旧可能なS3保存",
+        "displayQuestion": "ユーザーがアップロードした文書を、privateで、誤削除から復旧でき、長期的なコストも考慮してS3に保存するにはどうしますか。",
+        "displayIntent": "S3の公開制御、versioning、lifecycle、アクセス制御設計を確認する。",
+        "guidance": ["具体的なS3機能を聞く。", "保存だけでなく復旧とコストのトレードオフを見る。"],
+        "commonMistakes": ["アプリの都合でpublic bucketを使う。", "versioningを有効にしてlifecycleを管理しない。"],
+        "labels": { "role": "Backend/DevOps/Security", "level": "Junior/Mid", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "S3 Block Public Access", "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-control-block-public-access.html", "note": "Used for public access controls." },
+      { "label": "S3 Versioning", "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/Versioning.html", "note": "Used for recovery from accidental delete or overwrite." },
+      { "label": "S3 Lifecycle configuration", "url": "https://docs.aws.amazon.com/AmazonS3/latest/UG/lifecycle-configuration-bucket-no-versioning.html", "note": "Used for transition and expiration rules." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "AWS_MID_TECH_LAMBDA_RETRY_IDEMP_007",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "devops"],
+    "levels": ["mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving", "system_thinking"],
+    "techTags": ["aws", "lambda", "serverless"],
+    "difficulty": 3,
+    "intent": "Assess whether the candidate understands Lambda invocation modes, retry behavior, duplicate events, and idempotency.",
+    "primaryQuestion": "A Lambda function processes payment events asynchronously. How would you handle retries, duplicate delivery, and failed events safely?",
+    "expectedSignals": [
+      "Explains that asynchronous Lambda invocation retries function errors and can deliver the same event more than once.",
+      "Designs idempotency using a stable event or payment id and conditional writes or deduplication records.",
+      "Configures an on-failure destination or dead-letter queue for events that exhaust processing attempts.",
+      "Monitors failures, throttles, event age, and destination delivery failures."
+    ],
+    "redFlags": [
+      "Assumes Lambda executes exactly once.",
+      "Retries payment side effects without an idempotency key.",
+      "Drops failed events without a diagnostic or replay path."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Combines Lambda retry semantics with idempotent business logic, failure capture, and monitoring." },
+      { "scoreBand": "solid", "description": "Understands retries and DLQ but gives limited idempotency implementation detail." },
+      { "scoreBand": "needs_work", "description": "Mentions retrying but does not control duplicate side effects." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer treats Lambda as exactly-once processing." }
+    ],
+    "followUps": [
+      { "trigger": "red_flag", "question": "What happens if the same payment event is delivered twice after the first invocation succeeded?", "purpose": "Expose duplicate side-effect risk." },
+      { "trigger": "missing_metric", "question": "Which CloudWatch metrics or alarms would you add for this path?", "purpose": "Check operational visibility." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Lambda retries and idempotency",
+        "displayQuestion": "A Lambda function processes payment events asynchronously. How would you handle retries, duplicate delivery, and failed events safely?",
+        "displayIntent": "Check Lambda retry behavior, idempotency, DLQ/destinations, and monitoring.",
+        "guidance": ["Push on duplicate delivery.", "Ask how failed events are replayed or inspected."],
+        "commonMistakes": ["Assuming exactly-once execution.", "Retrying external side effects without idempotency."],
+        "labels": { "role": "Backend/DevOps", "level": "Mid", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Lambda retry và idempotency",
+        "displayQuestion": "Một Lambda xử lý payment event theo async invocation. Bạn xử lý retry, duplicate delivery và failed event an toàn như thế nào?",
+        "displayIntent": "Kiểm tra retry behavior của Lambda, idempotency, DLQ/destination và monitoring.",
+        "guidance": ["Đào sâu tình huống event bị giao trùng.", "Hỏi cách inspect hoặc replay failed event."],
+        "commonMistakes": ["Giả định Lambda chạy exactly once.", "Retry side effect bên ngoài mà không có idempotency."],
+        "labels": { "role": "Backend/DevOps", "level": "Mid", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "Lambdaのretryとidempotency",
+        "displayQuestion": "Lambdaがpayment eventを非同期で処理します。retry、重複配信、failed eventを安全に扱うにはどうしますか。",
+        "displayIntent": "Lambdaのretry、idempotency、DLQ/destination、監視を確認する。",
+        "guidance": ["重複配信について深掘りする。", "failed eventの調査や再処理方法を聞く。"],
+        "commonMistakes": ["Lambdaがexactly onceで実行されると仮定する。", "idempotencyなしで外部副作用をretryする。"],
+        "labels": { "role": "Backend/DevOps", "level": "Mid", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Lambda retry behavior", "url": "https://docs.aws.amazon.com/lambda/latest/dg/invocation-retries.html", "note": "Used for invocation-mode retry behavior and duplicate handling." },
+      { "label": "Lambda asynchronous error handling", "url": "https://docs.aws.amazon.com/lambda/latest/dg/invocation-async-error-handling.html", "note": "Used for async retries, throttles, event age, and duplicate events." },
+      { "label": "Lambda async destinations and DLQs", "url": "https://docs.aws.amazon.com/lambda/latest/dg/invocation-async-retain-records.html", "note": "Used for capturing failed invocation records." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "AWS_MID_TRADE_LAMBDA_EC2_ECS_008",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "devops"],
+    "levels": ["mid", "senior"],
+    "type": "trade_off",
+    "competencies": ["trade_off_analysis", "system_thinking", "communication"],
+    "techTags": ["aws", "lambda", "ecs", "ec2"],
+    "difficulty": 4,
+    "intent": "Evaluate compute platform selection across Lambda, ECS, and EC2 based on workload shape and operational constraints.",
+    "primaryQuestion": "For a new image-processing service with bursty traffic and some jobs taking several minutes, how would you choose between Lambda, ECS/Fargate, and EC2?",
+    "expectedSignals": [
+      "Compares operational burden, startup latency, execution duration, concurrency, package size, networking, and cost profile.",
+      "Uses Lambda for event-driven bursty tasks when duration and runtime limits fit.",
+      "Uses ECS/Fargate for containerized long-running workers or larger dependencies with less server management.",
+      "Uses EC2 when deep host control, specialized capacity, or steady high utilization justifies the operational cost."
+    ],
+    "redFlags": [
+      "Always chooses one compute service without workload-specific reasoning.",
+      "Ignores runtime limits, concurrency pressure, cold starts, or queue backpressure.",
+      "Does not account for observability, deployment, and failure recovery."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Frames the choice around measurable workload constraints and proposes a queue-backed, observable processing design." },
+      { "scoreBand": "solid", "description": "Compares the services correctly but lacks concrete sizing or failure handling." },
+      { "scoreBand": "needs_work", "description": "Knows high-level differences but cannot map them to this workload." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer is preference-based rather than technical." }
+    ],
+    "followUps": [
+      { "trigger": "missing_metric", "question": "What measurements would you collect before finalizing the compute choice?", "purpose": "Check capacity and cost reasoning." },
+      { "trigger": "missing_tradeoff", "question": "How would the decision change if jobs regularly run longer than the Lambda limit or need GPU acceleration?", "purpose": "Probe hard constraints and alternatives." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Choosing Lambda, ECS/Fargate, or EC2",
+        "displayQuestion": "For a new image-processing service with bursty traffic and some jobs taking several minutes, how would you choose between Lambda, ECS/Fargate, and EC2?",
+        "displayIntent": "Check compute trade-off reasoning for workload shape, operations, and cost.",
+        "guidance": ["Ask for constraints and metrics before the choice.", "Look for queueing, backpressure, and failure handling."],
+        "commonMistakes": ["Picking the favorite service by habit.", "Ignoring duration, dependency size, or concurrency limits."],
+        "labels": { "role": "Backend/DevOps", "level": "Mid/Senior", "type": "trade_off" }
+      },
+      "vi": {
+        "title": "Chọn Lambda, ECS/Fargate hay EC2",
+        "displayQuestion": "Với một service xử lý ảnh mới, traffic bursty và có job chạy vài phút, bạn chọn Lambda, ECS/Fargate hay EC2 như thế nào?",
+        "displayIntent": "Kiểm tra tư duy trade-off compute theo workload shape, vận hành và chi phí.",
+        "guidance": ["Hỏi constraint và metric trước khi chọn.", "Tìm dấu hiệu có queueing, backpressure và xử lý failure."],
+        "commonMistakes": ["Chọn service quen dùng theo cảm tính.", "Bỏ qua giới hạn thời gian chạy, dependency size hoặc concurrency."],
+        "labels": { "role": "Backend/DevOps", "level": "Mid/Senior", "type": "trade_off" }
+      },
+      "ja": {
+        "title": "Lambda、ECS/Fargate、EC2の選択",
+        "displayQuestion": "バースト性があり、一部のjobが数分かかる画像処理サービスでは、Lambda、ECS/Fargate、EC2をどう選びますか。",
+        "displayIntent": "ワークロード特性、運用、コストに基づくcompute選択のトレードオフを確認する。",
+        "guidance": ["選択前に制約とメトリクスを聞く。", "queueing、backpressure、failure handlingに注目する。"],
+        "commonMistakes": ["慣れたサービスを好みで選ぶ。", "実行時間、依存関係サイズ、concurrency制限を無視する。"],
+        "labels": { "role": "Backend/DevOps", "level": "Mid/Senior", "type": "trade_off" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Lambda retry behavior", "url": "https://docs.aws.amazon.com/lambda/latest/dg/invocation-retries.html", "note": "Used for serverless event-processing constraints." },
+      { "label": "Amazon ECS rolling deployments", "url": "https://docs.aws.amazon.com/AmazonECS/latest/developerguide/deployment-type-ecs.html", "note": "Used for ECS service operation and deployment behavior." },
+      { "label": "EC2 Auto Scaling launch templates", "url": "https://docs.aws.amazon.com/autoscaling/ec2/userguide/launch-templates.html", "note": "Used for EC2 fleet control context." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "AWS_MID_TECH_RDS_HA_REPLICA_009",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "devops", "data"],
+    "levels": ["mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking", "trade_off_analysis"],
+    "techTags": ["aws", "rds", "database"],
+    "difficulty": 3,
+    "intent": "Check understanding of RDS availability, read scaling, failover, backups, and operational limits.",
+    "primaryQuestion": "How do Multi-AZ deployments and read replicas solve different problems in Amazon RDS?",
+    "expectedSignals": [
+      "Explains Multi-AZ as an availability and failover feature for the primary database.",
+      "Explains read replicas as read scaling or reporting offload, not automatic write failover by default.",
+      "Mentions backups, snapshots, recovery objectives, replication lag, and application connection behavior during failover.",
+      "Understands that the Multi-AZ standby is not used for serving normal read traffic in classic deployments."
+    ],
+    "redFlags": [
+      "Says Multi-AZ doubles read throughput by reading from the standby.",
+      "Treats read replicas as a backup replacement.",
+      "Ignores failover testing and application reconnect behavior."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Clearly separates HA, read scaling, backup, failover, and lag with real application implications." },
+      { "scoreBand": "solid", "description": "Knows the main difference but misses operational details such as lag or connection handling." },
+      { "scoreBand": "needs_work", "description": "Confuses replicas, backups, and standby instances." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer is a generic database availability statement." }
+    ],
+    "followUps": [
+      { "trigger": "missing_tradeoff", "question": "What user-visible issue can replication lag create if reads go to replicas?", "purpose": "Check consistency and UX implications." },
+      { "trigger": "missing_metric", "question": "Which RDS signals would you monitor for failover readiness and replica health?", "purpose": "Check operational monitoring depth." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "RDS Multi-AZ versus read replicas",
+        "displayQuestion": "How do Multi-AZ deployments and read replicas solve different problems in Amazon RDS?",
+        "displayIntent": "Check RDS HA, read scaling, backups, failover, and replication-lag reasoning.",
+        "guidance": ["Ask for an example read/write workload.", "Listen for failover and application connection behavior."],
+        "commonMistakes": ["Using Multi-AZ standby for normal reads.", "Treating replicas as a complete backup strategy."],
+        "labels": { "role": "Backend/Data/DevOps", "level": "Mid", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "RDS Multi-AZ và read replica",
+        "displayQuestion": "Multi-AZ deployment và read replica trong Amazon RDS giải quyết những vấn đề khác nhau như thế nào?",
+        "displayIntent": "Kiểm tra HA, read scaling, backup, failover và replication lag trong RDS.",
+        "guidance": ["Yêu cầu ví dụ workload đọc/ghi.", "Nghe xem ứng viên có nói tới failover và reconnect của application không."],
+        "commonMistakes": ["Dùng Multi-AZ standby cho read traffic thông thường.", "Xem replica là chiến lược backup đầy đủ."],
+        "labels": { "role": "Backend/Data/DevOps", "level": "Mid", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "RDS Multi-AZとread replica",
+        "displayQuestion": "Amazon RDSのMulti-AZ deploymentとread replicaは、それぞれどの問題を解決しますか。",
+        "displayIntent": "RDSのHA、read scaling、backup、failover、replication lagを確認する。",
+        "guidance": ["読み書きワークロードの例を求める。", "failover時のアプリ接続動作に触れるかを見る。"],
+        "commonMistakes": ["通常読み取りにMulti-AZ standbyを使うと考える。", "replicaを完全なbackup戦略として扱う。"],
+        "labels": { "role": "Backend/Data/DevOps", "level": "Mid", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "RDS Multi-AZ and read replicas", "url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_MariaDB.Replication.ReadReplicas.MultiAZ.html", "note": "Used for Multi-AZ versus read-replica behavior." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "AWS_MID_TECH_DYNAMODB_MODELING_010",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "data"],
+    "levels": ["mid", "senior"],
+    "type": "technical_depth",
+    "competencies": ["system_thinking", "technical_fundamentals", "trade_off_analysis"],
+    "techTags": ["aws", "dynamodb", "database"],
+    "difficulty": 4,
+    "intent": "Assess query-driven DynamoDB modeling, partition key design, secondary indexes, and hot partition awareness.",
+    "primaryQuestion": "How would you model an orders table in DynamoDB when you need to query by customer, by order id, and by order status dashboard?",
+    "expectedSignals": [
+      "Starts from access patterns instead of normalizing first.",
+      "Chooses partition and sort keys that distribute load and support primary lookups.",
+      "Uses a global secondary index when querying by status or another access pattern not served by the base key.",
+      "Discusses hot partitions, high-cardinality keys, projected attributes, consistency, and write amplification."
+    ],
+    "redFlags": [
+      "Designs DynamoDB like a relational database with joins as the main query plan.",
+      "Uses low-cardinality partition keys such as status without handling hot partitions.",
+      "Adds GSIs without considering write cost or eventual consistency."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Derives keys and GSIs from access patterns and explains load distribution, consistency, and cost trade-offs." },
+      { "scoreBand": "solid", "description": "Understands keys and GSIs but misses hot-key or projection implications." },
+      { "scoreBand": "needs_work", "description": "Can define partition keys but does not reason from queries." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer is relational modeling transplanted into DynamoDB." }
+    ],
+    "followUps": [
+      { "trigger": "missing_tradeoff", "question": "Why can a GSI on orderStatus become a problem on a high-volume system?", "purpose": "Check hot partition and low-cardinality key awareness." },
+      { "trigger": "missing_context", "question": "Which attributes would you project into the dashboard index and why?", "purpose": "Probe index size and query efficiency." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "DynamoDB access-pattern modeling",
+        "displayQuestion": "How would you model an orders table in DynamoDB when you need to query by customer, by order id, and by order status dashboard?",
+        "displayIntent": "Check DynamoDB key design, GSIs, hot partitions, and query-driven modeling.",
+        "guidance": ["Start with access patterns.", "Ask about write cost and eventual consistency of indexes."],
+        "commonMistakes": ["Modeling for joins first.", "Using low-cardinality partition keys without a load strategy."],
+        "labels": { "role": "Backend/Data", "level": "Mid/Senior", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Model DynamoDB theo access pattern",
+        "displayQuestion": "Bạn model bảng orders trong DynamoDB như thế nào khi cần query theo customer, theo order id và dashboard theo order status?",
+        "displayIntent": "Kiểm tra key design, GSI, hot partition và modeling theo query trong DynamoDB.",
+        "guidance": ["Bắt đầu từ access pattern.", "Hỏi về write cost và eventual consistency của index."],
+        "commonMistakes": ["Model theo join trước.", "Dùng partition key ít giá trị mà không có chiến lược phân tải."],
+        "labels": { "role": "Backend/Data", "level": "Mid/Senior", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "DynamoDBのaccess pattern設計",
+        "displayQuestion": "customer別、order id別、order status dashboardで検索する必要がある場合、DynamoDBのorders tableをどう設計しますか。",
+        "displayIntent": "DynamoDBのkey設計、GSI、hot partition、query-driven modelingを確認する。",
+        "guidance": ["access patternから始める。", "indexのwrite costとeventual consistencyを聞く。"],
+        "commonMistakes": ["join前提で設計する。", "負荷分散戦略なしに低カーディナリティkeyを使う。"],
+        "labels": { "role": "Backend/Data", "level": "Mid/Senior", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "DynamoDB secondary index guidelines", "url": "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-indexes-general.html", "note": "Used for GSI and LSI behavior and throughput implications." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "AWS_MID_TECH_SQS_CONSUMER_011",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "devops"],
+    "levels": ["mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving", "system_thinking"],
+    "techTags": ["aws", "sqs", "event_driven_architecture"],
+    "difficulty": 3,
+    "intent": "Check whether the candidate understands SQS visibility timeout, deletion, retries, DLQs, and idempotent consumers.",
+    "primaryQuestion": "How would you build an SQS consumer that processes jobs reliably without losing messages or doing unsafe duplicate work?",
+    "expectedSignals": [
+      "Explains receive, visibility timeout, successful processing, and DeleteMessage.",
+      "Sets visibility timeout based on processing time and extends it for long jobs when needed.",
+      "Uses DLQ with maxReceiveCount for poison messages and diagnostic replay.",
+      "Designs idempotent processing because standard queues can deliver messages more than once."
+    ],
+    "redFlags": [
+      "Deletes the message before the business operation succeeds.",
+      "Assumes visibility timeout is the same as message retention.",
+      "Has no poison-message or duplicate-handling strategy."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Explains SQS lifecycle, timeout sizing, DLQ policy, idempotency, and monitoring as one reliability design." },
+      { "scoreBand": "solid", "description": "Understands visibility timeout and DLQ but misses idempotency or timeout extension." },
+      { "scoreBand": "needs_work", "description": "Knows queues decouple systems but misses core message lifecycle." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer risks message loss or uncontrolled duplicate side effects." }
+    ],
+    "followUps": [
+      { "trigger": "red_flag", "question": "What happens if processing takes longer than the visibility timeout?", "purpose": "Check duplicate processing awareness." },
+      { "trigger": "missing_metric", "question": "Which queue metrics would indicate consumers are falling behind?", "purpose": "Probe observability and capacity planning." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Reliable SQS consumer design",
+        "displayQuestion": "How would you build an SQS consumer that processes jobs reliably without losing messages or doing unsafe duplicate work?",
+        "displayIntent": "Check SQS visibility timeout, deletion, retries, DLQ, and idempotent consumer design.",
+        "guidance": ["Ask when the message is deleted.", "Probe long-running job behavior and poison messages."],
+        "commonMistakes": ["Deleting before successful processing.", "Assuming no duplicate delivery."],
+        "labels": { "role": "Backend/DevOps", "level": "Mid", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Thiết kế SQS consumer đáng tin cậy",
+        "displayQuestion": "Bạn xây SQS consumer xử lý job reliable như thế nào để không mất message và không tạo duplicate side effect nguy hiểm?",
+        "displayIntent": "Kiểm tra visibility timeout, delete message, retry, DLQ và idempotent consumer trong SQS.",
+        "guidance": ["Hỏi khi nào message được delete.", "Đào sâu job chạy lâu và poison message."],
+        "commonMistakes": ["Delete message trước khi xử lý thành công.", "Giả định không có duplicate delivery."],
+        "labels": { "role": "Backend/DevOps", "level": "Mid", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "信頼性のあるSQS consumer設計",
+        "displayQuestion": "messageを失わず、危険な重複処理も避けるSQS consumerをどう作りますか。",
+        "displayIntent": "SQS visibility timeout、削除、retry、DLQ、idempotent consumer設計を確認する。",
+        "guidance": ["messageをいつ削除するか聞く。", "長時間jobとpoison messageを深掘りする。"],
+        "commonMistakes": ["処理成功前にmessageを削除する。", "重複配信がないと仮定する。"],
+        "labels": { "role": "Backend/DevOps", "level": "Mid", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "SQS visibility timeout", "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-visibility-timeout.html", "note": "Used for message lifecycle and timeout behavior." },
+      { "label": "SQS dead-letter queues", "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-dead-letter-queues.html", "note": "Used for poison-message handling." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "AWS_MID_TECH_EVENTBRIDGE_012",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "devops"],
+    "levels": ["mid"],
+    "type": "technical_depth",
+    "competencies": ["system_thinking", "technical_fundamentals", "problem_solving"],
+    "techTags": ["aws", "eventbridge", "event_driven_architecture"],
+    "difficulty": 3,
+    "intent": "Evaluate event-driven integration design with EventBridge rules, targets, retry policies, DLQs, and permissions.",
+    "primaryQuestion": "How would you use EventBridge to route order-created events to multiple downstream services without tightly coupling the order service to each consumer?",
+    "expectedSignals": [
+      "Publishes structured events to an event bus and uses rules or event patterns to select targets.",
+      "Explains target permissions and independent target delivery behavior.",
+      "Configures retry policy and DLQ for undelivered events where appropriate.",
+      "Considers event schema, versioning, idempotent consumers, and observability."
+    ],
+    "redFlags": [
+      "Uses direct synchronous calls to every consumer while claiming the system is decoupled.",
+      "Ignores failed delivery and replay or diagnostic needs.",
+      "Does not consider event contract evolution."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Designs a decoupled event flow with rules, targets, contracts, retries, DLQ, and consumer idempotency." },
+      { "scoreBand": "solid", "description": "Understands event routing but misses delivery failure or schema evolution details." },
+      { "scoreBand": "needs_work", "description": "Knows EventBridge routes events but cannot design reliable consumers." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer is just service-to-service calls with EventBridge named." }
+    ],
+    "followUps": [
+      { "trigger": "missing_tradeoff", "question": "When would you use EventBridge instead of SQS between two services?", "purpose": "Check fan-out and coupling trade-offs." },
+      { "trigger": "missing_context", "question": "What should be included in the event so consumers can process it idempotently?", "purpose": "Probe event contract quality." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "EventBridge decoupled event routing",
+        "displayQuestion": "How would you use EventBridge to route order-created events to multiple downstream services without tightly coupling the order service to each consumer?",
+        "displayIntent": "Check EventBridge rules, targets, retry policy, DLQ, event contracts, and idempotency.",
+        "guidance": ["Ask for event shape and routing pattern.", "Probe what happens when a target cannot receive events."],
+        "commonMistakes": ["Calling all consumers synchronously.", "Ignoring schema versioning and failed delivery."],
+        "labels": { "role": "Backend/DevOps", "level": "Mid", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "EventBridge route event decoupled",
+        "displayQuestion": "Bạn dùng EventBridge như thế nào để route order-created event tới nhiều downstream service mà không couple order service chặt với từng consumer?",
+        "displayIntent": "Kiểm tra rule, target, retry policy, DLQ, event contract và idempotency trong EventBridge.",
+        "guidance": ["Hỏi event shape và routing pattern.", "Đào sâu chuyện gì xảy ra khi target không nhận được event."],
+        "commonMistakes": ["Gọi đồng bộ toàn bộ consumer.", "Bỏ qua schema versioning và failed delivery."],
+        "labels": { "role": "Backend/DevOps", "level": "Mid", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "EventBridgeによる疎結合event routing",
+        "displayQuestion": "order serviceを各consumerに強く結合させずに、order-created eventを複数の下流サービスへルーティングするにはEventBridgeをどう使いますか。",
+        "displayIntent": "EventBridge rules、targets、retry policy、DLQ、event contract、idempotencyを確認する。",
+        "guidance": ["event shapeとrouting patternを聞く。", "targetがeventを受け取れない場合を深掘りする。"],
+        "commonMistakes": ["すべてのconsumerを同期呼び出しする。", "schema versioningとfailed deliveryを無視する。"],
+        "labels": { "role": "Backend/DevOps", "level": "Mid", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "EventBridge targets", "url": "https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-targets.html", "note": "Used for target and permission concepts." },
+      { "label": "EventBridge retry policy", "url": "https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-rule-retry-policy.html", "note": "Used for retry behavior." },
+      { "label": "EventBridge dead-letter queues", "url": "https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-rule-dlq.html", "note": "Used for failed delivery handling." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "AWS_MID_TECH_ECS_DEPLOYMENT_013",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "devops"],
+    "levels": ["mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking", "problem_solving"],
+    "techTags": ["aws", "ecs", "docker"],
+    "difficulty": 3,
+    "intent": "Check understanding of ECS services, task definitions, desired count, rolling deployment controls, and health checks.",
+    "primaryQuestion": "How does an ECS service keep the desired number of tasks running during a rolling deployment, and what settings affect availability?",
+    "expectedSignals": [
+      "Explains task definition revisions and service desired count.",
+      "Understands rolling replacement of old tasks with new tasks.",
+      "Mentions minimumHealthyPercent and maximumPercent effects on how many tasks can stop or start during deployment.",
+      "Connects container health, target group health, capacity, and rollback/monitoring."
+    ],
+    "redFlags": [
+      "Thinks updating a container image automatically changes all running tasks without a new task definition or deployment.",
+      "Sets deployment settings that can drop capacity to zero without recognizing downtime risk.",
+      "Ignores load balancer health checks and task startup time."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Explains ECS rolling deployment mechanics and availability controls with an example desired count." },
+      { "scoreBand": "solid", "description": "Understands service replacement but misses one setting or health check detail." },
+      { "scoreBand": "needs_work", "description": "Knows ECS runs containers but not how services maintain capacity." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer is Docker-only and not ECS-specific." }
+    ],
+    "followUps": [
+      { "trigger": "missing_context", "question": "If desired count is 4 and minimumHealthyPercent is 50, how many old tasks could ECS stop before starting replacements?", "purpose": "Force concrete deployment math." },
+      { "trigger": "missing_tradeoff", "question": "What do you gain and risk by setting maximumPercent higher?", "purpose": "Check capacity versus speed trade-off." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "ECS service rolling deployments",
+        "displayQuestion": "How does an ECS service keep the desired number of tasks running during a rolling deployment, and what settings affect availability?",
+        "displayIntent": "Check ECS service, task definition, desired count, deployment configuration, and health checks.",
+        "guidance": ["Use a small desired-count example.", "Ask how health checks and startup time affect rollout."],
+        "commonMistakes": ["Updating an image tag without a controlled service deployment.", "Choosing deployment percentages that create downtime."],
+        "labels": { "role": "Backend/DevOps", "level": "Mid", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Rolling deployment ECS service",
+        "displayQuestion": "ECS service giữ desired number of tasks trong rolling deployment như thế nào, và setting nào ảnh hưởng tới availability?",
+        "displayIntent": "Kiểm tra ECS service, task definition, desired count, deployment config và health check.",
+        "guidance": ["Dùng ví dụ desired count nhỏ.", "Hỏi health check và startup time ảnh hưởng rollout thế nào."],
+        "commonMistakes": ["Update image tag mà không có deployment kiểm soát.", "Chọn deployment percentage gây downtime."],
+        "labels": { "role": "Backend/DevOps", "level": "Mid", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "ECS serviceのrolling deployment",
+        "displayQuestion": "ECS serviceはrolling deployment中にdesired number of tasksをどう維持し、どの設定が可用性に影響しますか。",
+        "displayIntent": "ECS service、task definition、desired count、deployment configuration、health checkを確認する。",
+        "guidance": ["小さなdesired count例を使う。", "health checkと起動時間がrolloutへ与える影響を聞く。"],
+        "commonMistakes": ["制御されたservice deploymentなしにimage tagだけ更新する。", "downtimeを起こすdeployment percentageを選ぶ。"],
+        "labels": { "role": "Backend/DevOps", "level": "Mid", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Amazon ECS rolling deployments", "url": "https://docs.aws.amazon.com/AmazonECS/latest/developerguide/deployment-type-ecs.html", "note": "Used for desired count, minimumHealthyPercent, and maximumPercent deployment behavior." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "AWS_MID_DEBUG_CLOUDFORMATION_DRIFT_014",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["devops", "backend", "fullstack"],
+    "levels": ["mid", "senior"],
+    "type": "debugging",
+    "competencies": ["problem_solving", "ownership", "system_thinking"],
+    "techTags": ["aws", "cloudformation", "iac"],
+    "difficulty": 4,
+    "intent": "Assess infrastructure-as-code troubleshooting for CloudFormation drift, change sets, and unmanaged console changes.",
+    "primaryQuestion": "A CloudFormation stack update would replace a production resource, and you suspect someone changed the resource manually in the console. How would you proceed?",
+    "expectedSignals": [
+      "Uses change sets to inspect the planned update before execution.",
+      "Runs drift detection or uses drift-aware change sets where supported to compare template, previous deployment, and actual state.",
+      "Identifies whether to import, update the template, revert the manual change, or plan a controlled replacement.",
+      "Coordinates backup, maintenance window, rollback plan, and ownership of manual changes."
+    ],
+    "redFlags": [
+      "Executes the stack update blindly in production.",
+      "Manually edits more resources in the console to make the update pass.",
+      "Ignores data loss or replacement risk."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Uses drift and change-set evidence to choose a controlled path with rollback and data protection." },
+      { "scoreBand": "solid", "description": "Knows to inspect change sets and drift but gives limited remediation detail." },
+      { "scoreBand": "needs_work", "description": "Understands templates but not production replacement risk." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer encourages unmanaged console edits or blind deploys." }
+    ],
+    "followUps": [
+      { "trigger": "missing_context", "question": "What information do you need before deciding whether replacement is acceptable?", "purpose": "Check production-risk analysis." },
+      { "trigger": "red_flag", "question": "Why can manual console changes be dangerous even if they fix the immediate issue?", "purpose": "Probe drift and governance awareness." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "CloudFormation drift and risky updates",
+        "displayQuestion": "A CloudFormation stack update would replace a production resource, and you suspect someone changed the resource manually in the console. How would you proceed?",
+        "displayIntent": "Check CloudFormation change-set review, drift handling, replacement risk, and production discipline.",
+        "guidance": ["Ask for evidence before action.", "Look for backup, rollback, and ownership steps."],
+        "commonMistakes": ["Executing a risky change set blindly.", "Fixing IaC drift with more console changes."],
+        "labels": { "role": "DevOps/Backend", "level": "Mid/Senior", "type": "debugging" }
+      },
+      "vi": {
+        "title": "CloudFormation drift và update rủi ro",
+        "displayQuestion": "Một CloudFormation stack update sẽ replace resource production, và bạn nghi có người đã sửa resource thủ công trên console. Bạn xử lý thế nào?",
+        "displayIntent": "Kiểm tra review change set, xử lý drift, rủi ro replacement và kỷ luật production.",
+        "guidance": ["Yêu cầu bằng chứng trước khi hành động.", "Tìm các bước backup, rollback và ownership."],
+        "commonMistakes": ["Execute change set rủi ro một cách mù quáng.", "Sửa IaC drift bằng thêm console change."],
+        "labels": { "role": "DevOps/Backend", "level": "Mid/Senior", "type": "debugging" }
+      },
+      "ja": {
+        "title": "CloudFormation driftと危険なupdate",
+        "displayQuestion": "CloudFormation stack updateがproduction resourceを置き換えそうで、誰かがconsoleで手動変更した疑いがあります。どう進めますか。",
+        "displayIntent": "change set review、drift対応、replacementリスク、本番運用規律を確認する。",
+        "guidance": ["行動前に証拠を求める。", "backup、rollback、ownershipの手順を見る。"],
+        "commonMistakes": ["危険なchange setをそのまま実行する。", "IaC driftをさらにconsole変更で直す。"],
+        "labels": { "role": "DevOps/Backend", "level": "Mid/Senior", "type": "debugging" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "CloudFormation drift-aware change sets", "url": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/drift-aware-change-sets.html", "note": "Used for drift-aware change-set workflow and drift comparison." },
+      { "label": "CloudFormation drift detection for StackSets", "url": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/stacksets-drift.html", "note": "Used for general drift detection concepts." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "AWS_MID_TECH_OBSERVABILITY_015",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "devops", "security"],
+    "levels": ["mid"],
+    "type": "technical_depth",
+    "competencies": ["impact_measurement", "problem_solving", "system_thinking"],
+    "techTags": ["aws", "cloudwatch", "cloudtrail", "logging"],
+    "difficulty": 3,
+    "intent": "Evaluate AWS observability and audit logging design using CloudWatch Logs, metrics, alarms, and CloudTrail.",
+    "primaryQuestion": "What would you instrument for an AWS-hosted API so the team can detect user-facing incidents and investigate suspicious account activity?",
+    "expectedSignals": [
+      "Uses CloudWatch metrics and alarms for latency, error rate, saturation, throttles, queue depth, and resource health.",
+      "Centralizes application and service logs in CloudWatch Logs with retention and useful fields.",
+      "Uses metric filters or structured logs for application-level signals.",
+      "Uses CloudTrail for AWS account activity, distinguishing management events from data events where needed."
+    ],
+    "redFlags": [
+      "Only logs to local instance files with no retention or aggregation.",
+      "Creates alarms only on CPU while ignoring user-visible errors and latency.",
+      "Confuses CloudTrail audit events with application request logs."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Proposes a layered monitoring and audit design tied to incident detection and investigation workflows." },
+      { "scoreBand": "solid", "description": "Covers metrics and logs but misses audit events or retention/detail choices." },
+      { "scoreBand": "needs_work", "description": "Knows CloudWatch exists but cannot map signals to incidents." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer lacks actionable observability or audit trails." }
+    ],
+    "followUps": [
+      { "trigger": "missing_metric", "question": "Which alarm would page someone versus only create a ticket?", "purpose": "Check alert severity and operational judgment." },
+      { "trigger": "missing_context", "question": "If an IAM policy was changed unexpectedly, where would you look first?", "purpose": "Verify CloudTrail audit understanding." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "AWS observability and audit signals",
+        "displayQuestion": "What would you instrument for an AWS-hosted API so the team can detect user-facing incidents and investigate suspicious account activity?",
+        "displayIntent": "Check CloudWatch metrics/logs, alarms, retention, and CloudTrail audit reasoning.",
+        "guidance": ["Separate app observability from account auditing.", "Ask which signals page humans."],
+        "commonMistakes": ["Only monitoring CPU.", "Using CloudTrail as if it were application access logs."],
+        "labels": { "role": "Backend/DevOps/Security", "level": "Mid", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Observability và audit trên AWS",
+        "displayQuestion": "Bạn instrument gì cho một API chạy trên AWS để team phát hiện incident ảnh hưởng user và điều tra hoạt động account đáng ngờ?",
+        "displayIntent": "Kiểm tra CloudWatch metrics/logs, alarm, retention và tư duy audit bằng CloudTrail.",
+        "guidance": ["Tách observability của app khỏi audit account.", "Hỏi signal nào sẽ page người trực."],
+        "commonMistakes": ["Chỉ monitor CPU.", "Dùng CloudTrail như application access log."],
+        "labels": { "role": "Backend/DevOps/Security", "level": "Mid", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "AWSのobservabilityとaudit signal",
+        "displayQuestion": "AWS上のAPIで、ユーザー影響のあるincident検知と不審なaccount activity調査のために何をinstrumentしますか。",
+        "displayIntent": "CloudWatch metrics/logs、alarms、retention、CloudTrail auditの理解を確認する。",
+        "guidance": ["app observabilityとaccount auditingを分ける。", "どのsignalで人を呼ぶか聞く。"],
+        "commonMistakes": ["CPUだけ監視する。", "CloudTrailをapplication access logのように扱う。"],
+        "labels": { "role": "Backend/DevOps/Security", "level": "Mid", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "CloudWatch Logs concepts", "url": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CloudWatchLogsConcepts.html", "note": "Used for log groups, log streams, metric filters, and retention." },
+      { "label": "CloudTrail event history", "url": "https://docs.aws.amazon.com/awscloudtrail/latest/userguide/view-cloudtrail-events.html", "note": "Used for account activity and management event investigation." },
+      { "label": "CloudTrail event types", "url": "https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-events.html", "note": "Used for management, data, network activity, and insights event distinctions." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "AWS_MID_TECH_SECRETS_KMS_016",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "devops", "security"],
+    "levels": ["mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking", "trade_off_analysis"],
+    "techTags": ["aws", "secrets_manager", "kms"],
+    "difficulty": 3,
+    "intent": "Check practical handling of application configuration, secrets, rotation, IAM access, and encryption with AWS services.",
+    "primaryQuestion": "Where would you store database credentials and non-secret configuration for an AWS application, and how would you control access and rotation?",
+    "expectedSignals": [
+      "Uses Secrets Manager for secrets that need lifecycle management and rotation, especially database credentials.",
+      "Uses Systems Manager Parameter Store for hierarchical configuration and less complex secret/config use cases.",
+      "Uses IAM to grant only the application role access to needed parameters or secrets.",
+      "Mentions encryption with KMS, auditing access, versioning/labels where relevant, and avoiding secrets in source code or images."
+    ],
+    "redFlags": [
+      "Commits credentials to source code or bakes them into container images.",
+      "Treats all configuration as public environment variables.",
+      "Ignores rotation, auditability, and least-privilege read access."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Separates config from secrets, chooses the right AWS store, scopes IAM access, and addresses rotation and encryption." },
+      { "scoreBand": "solid", "description": "Uses managed stores but misses rotation or fine-grained access details." },
+      { "scoreBand": "needs_work", "description": "Avoids source code secrets but uses ad hoc storage without lifecycle management." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer leaves credentials unmanaged or exposed." }
+    ],
+    "followUps": [
+      { "trigger": "missing_tradeoff", "question": "When is Parameter Store enough, and when would you pay for Secrets Manager?", "purpose": "Check service selection trade-off." },
+      { "trigger": "red_flag", "question": "Why is deleting a secret from a later Docker layer not enough if it was copied in an earlier layer?", "purpose": "Probe secret leakage awareness." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Secrets and configuration on AWS",
+        "displayQuestion": "Where would you store database credentials and non-secret configuration for an AWS application, and how would you control access and rotation?",
+        "displayIntent": "Check Secrets Manager, Parameter Store, IAM access, KMS encryption, and rotation reasoning.",
+        "guidance": ["Separate secrets from configuration.", "Ask how the running workload retrieves values safely."],
+        "commonMistakes": ["Putting secrets in source code or images.", "Using one broad IAM permission for every app secret."],
+        "labels": { "role": "Backend/DevOps/Security", "level": "Mid", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Secret và configuration trên AWS",
+        "displayQuestion": "Bạn lưu database credential và non-secret configuration cho application AWS ở đâu, và kiểm soát access/rotation như thế nào?",
+        "displayIntent": "Kiểm tra Secrets Manager, Parameter Store, IAM access, KMS encryption và rotation.",
+        "guidance": ["Tách secret khỏi configuration.", "Hỏi workload lúc chạy retrieve value an toàn như thế nào."],
+        "commonMistakes": ["Đưa secret vào source code hoặc image.", "Dùng một IAM permission quá rộng cho mọi app secret."],
+        "labels": { "role": "Backend/DevOps/Security", "level": "Mid", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "AWS上のsecretsとconfiguration",
+        "displayQuestion": "AWSアプリのdatabase credentialと非secret configurationをどこに保存し、accessとrotationをどう制御しますか。",
+        "displayIntent": "Secrets Manager、Parameter Store、IAM access、KMS encryption、rotationを確認する。",
+        "guidance": ["secretとconfigurationを分ける。", "実行中のworkloadが安全に値を取得する方法を聞く。"],
+        "commonMistakes": ["secretをsource codeやimageに入れる。", "すべてのapp secretへ広いIAM権限を付ける。"],
+        "labels": { "role": "Backend/DevOps/Security", "level": "Mid", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Systems Manager Parameter Store", "url": "https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-parameter-store.html", "note": "Used for hierarchical config and secret storage capabilities." },
+      { "label": "Parameter Store and Secrets Manager integration", "url": "https://docs.aws.amazon.com/systems-manager/latest/userguide/integration-ps-secretsmanager.html", "note": "Used for Secrets Manager reference behavior." },
+      { "label": "AWS KMS key rotation", "url": "https://docs.aws.amazon.com/kms/latest/cryptographic-details/rotate-customer-master-key.html", "note": "Used for KMS rotation behavior." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "AWS_SR_TRADE_MULTI_ACCOUNT_017",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["devops", "security", "backend"],
+    "levels": ["senior"],
+    "type": "trade_off",
+    "competencies": ["system_thinking", "trade_off_analysis", "ownership"],
+    "techTags": ["aws", "iam", "security", "cloud"],
+    "difficulty": 5,
+    "intent": "Assess senior-level judgment around AWS account boundaries, permission guardrails, blast radius, and operational governance.",
+    "primaryQuestion": "When would you split workloads across multiple AWS accounts, and what guardrails would you put in place?",
+    "expectedSignals": [
+      "Uses accounts as isolation boundaries for environments, teams, compliance scopes, and blast-radius reduction.",
+      "Mentions centralized identity/federation, temporary credentials, least privilege, and MFA.",
+      "Discusses guardrails such as service control policies, permission boundaries, logging/audit aggregation, and network boundaries.",
+      "Considers operational overhead, shared services, deployment pipelines, cost allocation, and incident response."
+    ],
+    "redFlags": [
+      "Keeps all production and development workloads in one account for convenience without compensating controls.",
+      "Creates many accounts without identity, logging, or cost governance.",
+      "Confuses account isolation with IAM role separation only."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Balances isolation, governance, operations, and developer velocity with concrete account and guardrail patterns." },
+      { "scoreBand": "solid", "description": "Understands account isolation but misses one governance dimension such as logging or cost allocation." },
+      { "scoreBand": "needs_work", "description": "Knows multiple accounts are common but cannot explain why or how to operate them." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer is either one-account simplicity or uncontrolled account sprawl." }
+    ],
+    "followUps": [
+      { "trigger": "missing_tradeoff", "question": "What operational cost does a multi-account setup introduce?", "purpose": "Check realism and trade-off analysis." },
+      { "trigger": "missing_context", "question": "Where would you centralize CloudTrail and security findings?", "purpose": "Probe governance and audit architecture." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "AWS multi-account boundaries",
+        "displayQuestion": "When would you split workloads across multiple AWS accounts, and what guardrails would you put in place?",
+        "displayIntent": "Check senior judgment on account isolation, IAM, audit, guardrails, and operating cost.",
+        "guidance": ["Ask for account boundaries and ownership model.", "Listen for guardrails plus developer workflow impact."],
+        "commonMistakes": ["Using one account for every environment without controls.", "Creating accounts without centralized identity and audit."],
+        "labels": { "role": "DevOps/Security/Backend", "level": "Senior", "type": "trade_off" }
+      },
+      "vi": {
+        "title": "Ranh giới multi-account AWS",
+        "displayQuestion": "Khi nào bạn tách workload ra nhiều AWS account, và bạn đặt guardrail nào?",
+        "displayIntent": "Kiểm tra judgment senior về account isolation, IAM, audit, guardrail và chi phí vận hành.",
+        "guidance": ["Hỏi boundary giữa các account và ownership model.", "Nghe guardrail cùng tác động tới workflow developer."],
+        "commonMistakes": ["Dùng một account cho mọi environment mà không có control.", "Tạo nhiều account nhưng không centralize identity và audit."],
+        "labels": { "role": "DevOps/Security/Backend", "level": "Senior", "type": "trade_off" }
+      },
+      "ja": {
+        "title": "AWS multi-account境界",
+        "displayQuestion": "どのような場合にworkloadを複数AWS accountへ分け、どのguardrailを置きますか。",
+        "displayIntent": "account isolation、IAM、audit、guardrail、運用コストに関するsenior判断を確認する。",
+        "guidance": ["account境界とownership modelを聞く。", "guardrailとdeveloper workflowへの影響を聞き取る。"],
+        "commonMistakes": ["すべてのenvironmentをcontrolなしで1 accountに置く。", "centralized identityとauditなしでaccountを増やす。"],
+        "labels": { "role": "DevOps/Security/Backend", "level": "Senior", "type": "trade_off" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "AWS IAM best practices", "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html", "note": "Used for federation, temporary credentials, least privilege, and guardrails." },
+      { "label": "CloudTrail concepts", "url": "https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-concepts.html", "note": "Used for audit logging and organization-level governance context." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "AWS_MID_TECH_STEP_FUNCTIONS_018",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "devops"],
+    "levels": ["mid"],
+    "type": "technical_depth",
+    "competencies": ["system_thinking", "technical_fundamentals", "problem_solving"],
+    "techTags": ["aws", "step_functions", "serverless"],
+    "difficulty": 4,
+    "intent": "Check when and how the candidate uses Step Functions for orchestration, retries, catches, timeouts, and stateful workflows.",
+    "primaryQuestion": "When would you introduce Step Functions instead of chaining Lambda functions directly, and how would you handle task failures?",
+    "expectedSignals": [
+      "Uses Step Functions when workflow state, branching, retries, human-visible execution history, or long orchestration matters.",
+      "Avoids tightly chaining Lambdas through direct invokes for complex workflows.",
+      "Uses Retry for transient failures with backoff and Catch for fallback or compensation paths.",
+      "Considers timeouts, idempotency, payload size, cost per state transition, and observability."
+    ],
+    "redFlags": [
+      "Chaining many Lambdas directly with no central workflow visibility.",
+      "Retries all errors forever without backoff or failure path.",
+      "Ignores non-retriable errors and compensation behavior."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Explains orchestration value and designs retry/catch behavior with clear failure semantics." },
+      { "scoreBand": "solid", "description": "Knows Step Functions orchestration and basic Retry/Catch but misses cost or idempotency implications." },
+      { "scoreBand": "needs_work", "description": "Uses Step Functions as a buzzword without workflow error-handling detail." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer cannot distinguish orchestration from simple function invocation." }
+    ],
+    "followUps": [
+      { "trigger": "missing_tradeoff", "question": "What kinds of errors should not be retried automatically?", "purpose": "Check failure classification." },
+      { "trigger": "missing_metric", "question": "How would you detect that a workflow is stuck or frequently entering a fallback path?", "purpose": "Probe workflow observability." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Step Functions orchestration failures",
+        "displayQuestion": "When would you introduce Step Functions instead of chaining Lambda functions directly, and how would you handle task failures?",
+        "displayIntent": "Check orchestration trade-offs, Retry/Catch, timeouts, idempotency, and workflow visibility.",
+        "guidance": ["Ask for a concrete multi-step workflow.", "Push on retryable versus non-retryable errors."],
+        "commonMistakes": ["Directly chaining many Lambdas with poor visibility.", "Retrying every error with no fallback."],
+        "labels": { "role": "Backend/DevOps", "level": "Mid", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Orchestration failure với Step Functions",
+        "displayQuestion": "Khi nào bạn đưa Step Functions vào thay vì chain Lambda trực tiếp, và bạn xử lý task failure như thế nào?",
+        "displayIntent": "Kiểm tra trade-off orchestration, Retry/Catch, timeout, idempotency và workflow visibility.",
+        "guidance": ["Yêu cầu một workflow nhiều bước cụ thể.", "Đào sâu lỗi nào retry được và lỗi nào không."],
+        "commonMistakes": ["Chain nhiều Lambda trực tiếp với visibility kém.", "Retry mọi lỗi mà không có fallback."],
+        "labels": { "role": "Backend/DevOps", "level": "Mid", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "Step Functionsのorchestration failure",
+        "displayQuestion": "Lambdaを直接chainする代わりにStep Functionsを導入するのはいつで、task failureをどう扱いますか。",
+        "displayIntent": "orchestrationのtrade-off、Retry/Catch、timeout、idempotency、workflow visibilityを確認する。",
+        "guidance": ["具体的な複数step workflowを求める。", "retry可能なerrorと不可能なerrorを深掘りする。"],
+        "commonMistakes": ["多くのLambdaを直接chainしてvisibilityが低い。", "fallbackなしですべてのerrorをretryする。"],
+        "labels": { "role": "Backend/DevOps", "level": "Mid", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Step Functions error handling", "url": "https://docs.aws.amazon.com/step-functions/latest/dg/concepts-error-handling.html", "note": "Used for Retry, Catch, timeout, and error-name behavior." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "AWS_SR_SITUATIONAL_INCIDENT_019",
+    "stages": ["stage_2_tech_stack", "stage_5_soft_skills"],
+    "roleFamilies": ["devops", "backend", "fullstack", "security"],
+    "levels": ["senior"],
+    "type": "situational",
+    "competencies": ["ownership", "problem_solving", "communication", "impact_measurement"],
+    "techTags": ["aws", "cloudwatch", "cloudtrail", "incident_response"],
+    "difficulty": 5,
+    "intent": "Evaluate senior incident response behavior for AWS production issues, including triage, mitigation, evidence, and follow-up.",
+    "primaryQuestion": "During a production incident on AWS, error rates spike after a deployment and someone also changed IAM permissions manually. How do you lead the first 30 minutes?",
+    "expectedSignals": [
+      "Stabilizes customer impact first with rollback, traffic shifting, scaling, or feature disablement based on evidence.",
+      "Separates deployment regression investigation from IAM/audit investigation while coordinating both workstreams.",
+      "Uses CloudWatch dashboards/logs/alarms and CloudTrail events to build a timeline.",
+      "Communicates status, owner, impact, mitigation, and next checkpoint clearly."
+    ],
+    "redFlags": [
+      "Starts a broad root-cause debate before mitigation.",
+      "Lets multiple people make console changes without coordination.",
+      "Does not preserve evidence or create an incident timeline."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Leads with mitigation, clear roles, evidence timeline, audit checks, communication cadence, and post-incident corrective actions." },
+      { "scoreBand": "solid", "description": "Handles rollback and basic investigation but misses parallel IAM/audit handling or communication detail." },
+      { "scoreBand": "needs_work", "description": "Focuses on debugging details but lacks incident leadership structure." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer is chaotic, blame-oriented, or lacks user-impact mitigation." }
+    ],
+    "followUps": [
+      { "trigger": "missing_metric", "question": "What exact customer-impact metric tells you the mitigation worked?", "purpose": "Check outcome-based incident management." },
+      { "trigger": "missing_context", "question": "How would you prevent untracked manual IAM changes after the incident?", "purpose": "Probe corrective action and governance." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "AWS production incident leadership",
+        "displayQuestion": "During a production incident on AWS, error rates spike after a deployment and someone also changed IAM permissions manually. How do you lead the first 30 minutes?",
+        "displayIntent": "Check incident leadership, mitigation, AWS evidence gathering, audit trail use, and communication.",
+        "guidance": ["Look for mitigation before root-cause perfection.", "Ask how the timeline is built from CloudWatch and CloudTrail."],
+        "commonMistakes": ["Debugging endlessly before reducing impact.", "Allowing uncontrolled manual console changes during incident response."],
+        "labels": { "role": "DevOps/Backend/Security", "level": "Senior", "type": "situational" }
+      },
+      "vi": {
+        "title": "Dẫn dắt incident production trên AWS",
+        "displayQuestion": "Trong một production incident trên AWS, error rate tăng mạnh sau deploy và cũng có người vừa đổi IAM permission thủ công. Bạn dẫn dắt 30 phút đầu như thế nào?",
+        "displayIntent": "Kiểm tra leadership khi incident, mitigation, thu thập evidence AWS, dùng audit trail và communication.",
+        "guidance": ["Tìm mitigation trước khi đòi root cause hoàn hảo.", "Hỏi cách dựng timeline từ CloudWatch và CloudTrail."],
+        "commonMistakes": ["Debug quá lâu trước khi giảm impact.", "Cho phép console change thủ công không kiểm soát trong incident."],
+        "labels": { "role": "DevOps/Backend/Security", "level": "Senior", "type": "situational" }
+      },
+      "ja": {
+        "title": "AWS production incidentのリード",
+        "displayQuestion": "AWSのproduction incidentで、deployment後にerror rateが急増し、同時に誰かがIAM permissionを手動変更しました。最初の30分をどうリードしますか。",
+        "displayIntent": "incident leadership、mitigation、AWS evidence収集、audit trail、communicationを確認する。",
+        "guidance": ["完全なroot causeより先にmitigationを見る。", "CloudWatchとCloudTrailからtimelineを作る方法を聞く。"],
+        "commonMistakes": ["impactを下げる前に延々とdebugする。", "incident中に無制御なconsole変更を許す。"],
+        "labels": { "role": "DevOps/Backend/Security", "level": "Senior", "type": "situational" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "CloudWatch Logs concepts", "url": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CloudWatchLogsConcepts.html", "note": "Used for centralized logs and operational investigation." },
+      { "label": "CloudTrail event history", "url": "https://docs.aws.amazon.com/awscloudtrail/latest/userguide/view-cloudtrail-events.html", "note": "Used for management event investigation and timeline reconstruction." },
+      { "label": "AWS IAM security best practices", "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html", "note": "Used for post-incident credential and permission hygiene." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "AWS_SR_TRADE_WELL_ARCH_COST_020",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack", "devops", "security", "data"],
+    "levels": ["senior"],
+    "type": "trade_off",
+    "competencies": ["trade_off_analysis", "system_thinking", "impact_measurement", "communication"],
+    "techTags": ["aws", "well_architected", "cost_optimization"],
+    "difficulty": 5,
+    "intent": "Assess architecture review maturity using AWS Well-Architected thinking across reliability, security, performance, cost, and operations.",
+    "primaryQuestion": "You inherit an AWS workload that is reliable but significantly over budget. How would you reduce cost without weakening security or reliability?",
+    "expectedSignals": [
+      "Starts with measurement: cost allocation, usage patterns, idle resources, rightsizing, storage lifecycle, data transfer, and reserved or savings options where appropriate.",
+      "Protects non-negotiables such as security controls, backups, disaster recovery requirements, and SLOs.",
+      "Uses Well-Architected trade-off thinking across cost optimization, reliability, performance efficiency, and operational excellence.",
+      "Plans safe experiments, rollback criteria, and before/after metrics instead of one-time cuts."
+    ],
+    "redFlags": [
+      "Cuts redundancy, backups, or security controls first without risk analysis.",
+      "Optimizes only instance price while ignoring storage, data transfer, managed service configuration, and idle capacity.",
+      "Cannot define success metrics beyond a lower bill."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Builds a measured cost-reduction plan that preserves SLOs and security while tracking before/after impact." },
+      { "scoreBand": "solid", "description": "Identifies common cost levers but misses risk controls or success metrics." },
+      { "scoreBand": "needs_work", "description": "Suggests generic cost cutting without workload-specific evidence." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer would likely harm reliability or security." }
+    ],
+    "followUps": [
+      { "trigger": "missing_metric", "question": "Which three metrics would you put on the cost optimization plan?", "purpose": "Force measurable outcome definition." },
+      { "trigger": "missing_tradeoff", "question": "Which cost-saving action would you refuse unless the business accepted a reliability trade-off?", "purpose": "Check principled trade-off communication." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Well-Architected cost optimization",
+        "displayQuestion": "You inherit an AWS workload that is reliable but significantly over budget. How would you reduce cost without weakening security or reliability?",
+        "displayIntent": "Check Well-Architected cost optimization with security, reliability, operations, and measurement trade-offs.",
+        "guidance": ["Ask for before/after metrics.", "Look for explicit protection of SLOs, backups, and security controls."],
+        "commonMistakes": ["Cutting redundancy before understanding risk.", "Only rightsizing EC2 while ignoring storage and data transfer."],
+        "labels": { "role": "Senior Cloud/Backend/DevOps", "level": "Senior", "type": "trade_off" }
+      },
+      "vi": {
+        "title": "Cost optimization theo Well-Architected",
+        "displayQuestion": "Bạn tiếp quản một AWS workload khá reliable nhưng vượt ngân sách nhiều. Bạn giảm cost như thế nào mà không làm yếu security hoặc reliability?",
+        "displayIntent": "Kiểm tra cost optimization theo Well-Architected cùng trade-off về security, reliability, operations và measurement.",
+        "guidance": ["Hỏi metric trước/sau.", "Tìm cam kết bảo vệ SLO, backup và security control."],
+        "commonMistakes": ["Cắt redundancy trước khi hiểu risk.", "Chỉ rightsize EC2 mà bỏ qua storage và data transfer."],
+        "labels": { "role": "Senior Cloud/Backend/DevOps", "level": "Senior", "type": "trade_off" }
+      },
+      "ja": {
+        "title": "Well-Architectedなcost optimization",
+        "displayQuestion": "信頼性はあるが大きく予算超過しているAWS workloadを引き継ぎました。securityやreliabilityを弱めずにcostをどう下げますか。",
+        "displayIntent": "Well-Architectedに基づくcost optimizationと、security、reliability、operations、measurementのtrade-offを確認する。",
+        "guidance": ["before/after metricsを聞く。", "SLO、backup、security controlを明示的に守るかを見る。"],
+        "commonMistakes": ["riskを理解する前に冗長性を削る。", "EC2のrightsizeだけ見てstorageとdata transferを無視する。"],
+        "labels": { "role": "Senior Cloud/Backend/DevOps", "level": "Senior", "type": "trade_off" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "AWS Well-Architected Framework pillars", "url": "https://docs.aws.amazon.com/wellarchitected/latest/framework/the-pillars-of-the-framework.html", "note": "Used for cost, reliability, security, performance, and operational trade-off framing." },
+      { "label": "AWS Well-Architected Tool overview", "url": "https://docs.aws.amazon.com/wellarchitected/latest/userguide/waf.html", "note": "Used for review and improvement-plan framing." }
+    ],
+    "status": "active"
+  }
+]

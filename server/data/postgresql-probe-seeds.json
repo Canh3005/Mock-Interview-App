@@ -1,0 +1,2357 @@
+[
+  {
+    "code": "PG_JR_TECH_SCHEMA_KEYS_001",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "data"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking", "communication"],
+    "techTags": ["postgresql", "schema_design", "consistency"],
+    "difficulty": 2,
+    "intent": "Check whether the candidate can design a basic relational PostgreSQL schema with correct keys, constraints, and data integrity boundaries.",
+    "primaryQuestion": "How would you design PostgreSQL tables for users, orders, and order_items so that relationships and data integrity are enforced by the database?",
+    "expectedSignals": [
+      "Defines primary keys, foreign keys, and appropriate NOT NULL constraints.",
+      "Explains one-to-many relationships between users and orders, and orders and order_items.",
+      "Uses numeric or integer types carefully for money, quantities, and identifiers.",
+      "Mentions uniqueness rules such as unique email or order number when required by the domain.",
+      "Separates application validation from database constraints and explains why both matter."
+    ],
+    "redFlags": [
+      "Stores nested order item arrays in one text column as the default model for transactional data.",
+      "Relies only on application code for referential integrity.",
+      "Cannot explain why a foreign key protects against orphaned records.",
+      "Uses floating point types for money without discussing rounding risk."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Builds a normalized schema with clear keys, constraints, data types, and domain invariants, and explains which rules belong in PostgreSQL."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Covers primary and foreign keys correctly but misses one practical detail such as money type, uniqueness, or delete behavior."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can name tables and columns but leaves integrity enforcement vague."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is mostly generic and does not show relational modeling knowledge."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "What should happen to order rows if a user is deleted, and how would you express that in PostgreSQL?",
+        "purpose": "Check referential action reasoning and domain ownership."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "Which constraints would you put directly in the database instead of only in service code?",
+        "purpose": "Force concrete database integrity decisions."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Relational schema and constraints",
+        "displayQuestion": "How would you design PostgreSQL tables for users, orders, and order_items so that relationships and data integrity are enforced by the database?",
+        "displayIntent": "Check relational modeling, constraints, and integrity fundamentals.",
+        "guidance": [
+          "Ask the candidate to name concrete tables, columns, keys, and constraints.",
+          "Listen for database-enforced invariants, not only ORM annotations.",
+          "Use a transactional example such as ecommerce or billing."
+        ],
+        "commonMistakes": [
+          "Treating PostgreSQL as a document store for transactional relationships.",
+          "Skipping foreign keys because the application can validate data.",
+          "Using vague id columns without defining ownership and uniqueness."
+        ],
+        "labels": { "role": "Backend/Fullstack/Data", "level": "Junior", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Thiết kế schema quan hệ và constraint",
+        "displayQuestion": "Bạn sẽ thiết kế các bảng PostgreSQL cho users, orders và order_items như thế nào để quan hệ và tính toàn vẹn dữ liệu được database đảm bảo?",
+        "displayIntent": "Kiểm tra nền tảng thiết kế quan hệ, constraint và data integrity.",
+        "guidance": [
+          "Yêu cầu ứng viên nêu rõ bảng, cột, khóa và constraint cụ thể.",
+          "Tập trung vào invariant được database enforce, không chỉ annotation của ORM.",
+          "Dùng ví dụ transactional như ecommerce hoặc billing."
+        ],
+        "commonMistakes": [
+          "Dùng PostgreSQL như document store cho quan hệ transactional.",
+          "Bỏ foreign key vì nghĩ application đã validate đủ.",
+          "Nói chung chung về id mà không làm rõ ownership và uniqueness."
+        ],
+        "labels": { "role": "Backend/Fullstack/Data", "level": "Junior", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "リレーショナルスキーマと制約",
+        "displayQuestion": "users、orders、order_items を PostgreSQL で設計し、関係とデータ整合性をデータベースで保証するにはどうしますか。",
+        "displayIntent": "リレーショナル設計、制約、整合性の基礎を確認する。",
+        "guidance": [
+          "具体的なテーブル、カラム、キー、制約を説明してもらう。",
+          "ORM だけではなく、データベースで保証する不変条件を確認する。",
+          "EC や請求などのトランザクション例を使う。"
+        ],
+        "commonMistakes": [
+          "取引系の関係データをドキュメント的に保存する。",
+          "アプリケーションで検証するから外部キーは不要だと考える。",
+          "所有関係や一意性を曖昧にしたまま id を置く。"
+        ],
+        "labels": { "role": "Backend/Fullstack/Data", "level": "Junior", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "PostgreSQL docs: Data Definition",
+        "url": "https://www.postgresql.org/docs/current/ddl.html",
+        "note": "Used for PostgreSQL table, constraint, and relational modeling concepts."
+      },
+      {
+        "label": "DataDriven Postgres Interview Questions",
+        "url": "https://datadriven.io/tools/postgres-interview-questions",
+        "note": "Used to align probe coverage with common interview PostgreSQL topics."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "PG_JR_TECH_INDEX_BASICS_002",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "data"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "trade_off_analysis", "communication"],
+    "techTags": ["postgresql", "indexing"],
+    "difficulty": 2,
+    "intent": "Evaluate whether the candidate understands what indexes do in PostgreSQL, when a B-tree index helps, and why indexes are not free.",
+    "primaryQuestion": "When would you add a B-tree index in PostgreSQL, and what costs or trade-offs would you consider before adding it?",
+    "expectedSignals": [
+      "Explains that indexes help PostgreSQL find matching rows without scanning the whole table for selective predicates.",
+      "Mentions common B-tree use cases such as equality, range filters, joins, and ordered lookups.",
+      "Recognizes write overhead, storage cost, and maintenance cost.",
+      "Connects index usefulness to query pattern and selectivity.",
+      "Mentions checking plans or usage instead of indexing every column."
+    ],
+    "redFlags": [
+      "Says every column should be indexed.",
+      "Cannot explain why an index can slow inserts or updates.",
+      "Assumes an index is always used once it exists.",
+      "Ignores query predicates and data distribution."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains index mechanics at a practical level, ties the index to a real WHERE/JOIN/ORDER BY pattern, and discusses read/write trade-offs."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands basic index benefits and costs but does not fully connect them to selectivity or query plans."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows indexes make reads faster but cannot explain when or why."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is limited to memorized phrases without PostgreSQL-specific reasoning."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_tradeoff",
+        "question": "Why might adding an index to a high-write table make production performance worse?",
+        "purpose": "Check read/write trade-off awareness."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "Would an index on status help if 95% of rows have status = 'active'? Why or why not?",
+        "purpose": "Probe selectivity and planner reasoning."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "B-tree index basics",
+        "displayQuestion": "When would you add a B-tree index in PostgreSQL, and what costs or trade-offs would you consider before adding it?",
+        "displayIntent": "Check practical indexing fundamentals and read/write trade-offs.",
+        "guidance": [
+          "Use a concrete query pattern with WHERE, JOIN, or ORDER BY.",
+          "Ask why PostgreSQL might still prefer a sequential scan.",
+          "Look for trade-off reasoning, not only index syntax."
+        ],
+        "commonMistakes": [
+          "Indexing every column by default.",
+          "Ignoring update and storage overhead.",
+          "Not considering selectivity or query plans."
+        ],
+        "labels": { "role": "Backend/Fullstack/Data", "level": "Junior", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Nền tảng B-tree index",
+        "displayQuestion": "Khi nào bạn sẽ thêm B-tree index trong PostgreSQL, và bạn cân nhắc cost hoặc trade-off nào trước khi thêm?",
+        "displayIntent": "Kiểm tra nền tảng indexing thực tế và trade-off đọc/ghi.",
+        "guidance": [
+          "Dùng một query cụ thể với WHERE, JOIN hoặc ORDER BY.",
+          "Hỏi vì sao PostgreSQL vẫn có thể chọn sequential scan.",
+          "Tìm reasoning về trade-off, không chỉ cú pháp tạo index."
+        ],
+        "commonMistakes": [
+          "Index mọi cột theo mặc định.",
+          "Bỏ qua overhead khi update và chi phí storage.",
+          "Không xét selectivity hoặc query plan."
+        ],
+        "labels": { "role": "Backend/Fullstack/Data", "level": "Junior", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "B-tree インデックスの基礎",
+        "displayQuestion": "PostgreSQL で B-tree インデックスを追加するのはどんな場合で、追加前にどのコストやトレードオフを考えますか。",
+        "displayIntent": "実践的なインデックス基礎と読み書きのトレードオフを確認する。",
+        "guidance": [
+          "WHERE、JOIN、ORDER BY を含む具体的なクエリで説明してもらう。",
+          "なぜ PostgreSQL が sequential scan を選ぶ場合があるか確認する。",
+          "構文だけではなくトレードオフを聞く。"
+        ],
+        "commonMistakes": [
+          "すべてのカラムにインデックスを作る。",
+          "更新コストとストレージコストを無視する。",
+          "選択度や実行計画を考慮しない。"
+        ],
+        "labels": { "role": "Backend/Fullstack/Data", "level": "Junior", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "PostgreSQL docs: Indexes",
+        "url": "https://www.postgresql.org/docs/current/indexes.html",
+        "note": "Used for index benefits, overhead, and PostgreSQL index type coverage."
+      },
+      {
+        "label": "Feret PostgreSQL Interview Questions",
+        "url": "https://www.feret.app/interview-questions/postgresql",
+        "note": "Used for common interview framing around indexes."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "PG_JR_DEBUG_SLOW_QUERY_003",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "data"],
+    "levels": ["junior"],
+    "type": "debugging",
+    "competencies": ["problem_solving", "technical_fundamentals", "communication"],
+    "techTags": ["postgresql", "indexing"],
+    "difficulty": 2,
+    "intent": "Assess whether the candidate can investigate a slow PostgreSQL query using basic evidence instead of guessing.",
+    "primaryQuestion": "A PostgreSQL endpoint became slow after the table grew from 10,000 to 5 million rows. How would you investigate the query before changing code?",
+    "expectedSignals": [
+      "Starts by identifying the exact SQL, parameters, timing, and row counts.",
+      "Uses EXPLAIN or EXPLAIN ANALYZE carefully to inspect scan type, joins, estimates, and actual rows.",
+      "Checks whether useful indexes exist and whether predicates match those indexes.",
+      "Considers statistics freshness and ANALYZE when estimates look wrong.",
+      "Avoids changing production queries blindly without measuring."
+    ],
+    "redFlags": [
+      "Immediately rewrites the endpoint without looking at the SQL plan.",
+      "Adds random indexes without knowing the query predicates.",
+      "Cannot distinguish estimated rows from actual rows.",
+      "Runs EXPLAIN ANALYZE on dangerous write statements without safeguards."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Gives a measured debugging flow from query capture to plan reading, selectivity, statistics, and a validated fix."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Mentions EXPLAIN and indexes but misses statistics or production safety details."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Suggests plausible fixes but lacks a reproducible investigation process."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is generic performance advice without PostgreSQL plan reasoning."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Which parts of an EXPLAIN ANALYZE output would you inspect first?",
+        "purpose": "Verify practical plan-reading ability."
+      },
+      {
+        "trigger": "missing_metric",
+        "question": "What baseline and success metric would you capture before and after the fix?",
+        "purpose": "Check measurement discipline."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Debugging a slow query",
+        "displayQuestion": "A PostgreSQL endpoint became slow after the table grew from 10,000 to 5 million rows. How would you investigate the query before changing code?",
+        "displayIntent": "Check practical PostgreSQL performance debugging.",
+        "guidance": [
+          "Push for a step-by-step investigation, not a single magic fix.",
+          "Ask how they would capture the SQL and compare plans.",
+          "Confirm production safety when using EXPLAIN ANALYZE."
+        ],
+        "commonMistakes": [
+          "Adding indexes before reading the plan.",
+          "Ignoring parameter values and data distribution.",
+          "Treating EXPLAIN cost as wall-clock time."
+        ],
+        "labels": { "role": "Backend/Fullstack/Data", "level": "Junior", "type": "debugging" }
+      },
+      "vi": {
+        "title": "Debug query PostgreSQL chậm",
+        "displayQuestion": "Một endpoint dùng PostgreSQL bị chậm sau khi bảng tăng từ 10.000 lên 5 triệu rows. Bạn sẽ điều tra query như thế nào trước khi sửa code?",
+        "displayIntent": "Kiểm tra kỹ năng debug performance PostgreSQL thực tế.",
+        "guidance": [
+          "Yêu cầu quy trình điều tra từng bước, không chỉ một cách sửa duy nhất.",
+          "Hỏi cách capture SQL và so sánh execution plan.",
+          "Xác nhận an toàn production khi dùng EXPLAIN ANALYZE."
+        ],
+        "commonMistakes": [
+          "Thêm index trước khi đọc plan.",
+          "Bỏ qua parameter value và phân bố dữ liệu.",
+          "Hiểu nhầm EXPLAIN cost là thời gian thực."
+        ],
+        "labels": { "role": "Backend/Fullstack/Data", "level": "Junior", "type": "debugging" }
+      },
+      "ja": {
+        "title": "遅いクエリのデバッグ",
+        "displayQuestion": "PostgreSQL のテーブルが 1 万行から 500 万行に増えた後、エンドポイントが遅くなりました。コードを変える前にどう調査しますか。",
+        "displayIntent": "PostgreSQL の実践的な性能デバッグを確認する。",
+        "guidance": [
+          "単一の修正ではなく、段階的な調査手順を聞く。",
+          "SQL の取得方法と実行計画の比較方法を確認する。",
+          "EXPLAIN ANALYZE を使う際の本番安全性を確認する。"
+        ],
+        "commonMistakes": [
+          "計画を読む前にインデックスを追加する。",
+          "パラメータ値とデータ分布を無視する。",
+          "EXPLAIN の cost を実時間と誤解する。"
+        ],
+        "labels": { "role": "Backend/Fullstack/Data", "level": "Junior", "type": "debugging" }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "PostgreSQL docs: Using EXPLAIN",
+        "url": "https://www.postgresql.org/docs/current/using-explain.html",
+        "note": "Used for query plan and EXPLAIN ANALYZE concepts."
+      },
+      {
+        "label": "PostgreSQL docs: Indexes",
+        "url": "https://www.postgresql.org/docs/current/indexes.html",
+        "note": "Used for index-selection and index-overhead reasoning."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "PG_JR_TECH_TRANSACTIONS_004",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking", "problem_solving"],
+    "techTags": ["postgresql", "transaction", "consistency"],
+    "difficulty": 2,
+    "intent": "Check whether the candidate understands PostgreSQL transactions, commit and rollback behavior, and how transactions protect multi-step writes.",
+    "primaryQuestion": "Why would you wrap multiple related PostgreSQL writes in a transaction, and what should happen if one step fails?",
+    "expectedSignals": [
+      "Explains atomicity: all related writes commit together or roll back together.",
+      "Uses a concrete example such as money transfer, inventory reservation, or order creation.",
+      "Mentions BEGIN, COMMIT, ROLLBACK, or equivalent ORM transaction APIs.",
+      "Recognizes that external side effects such as emails or payment calls need careful ordering.",
+      "Mentions keeping transactions reasonably short to avoid locks and contention."
+    ],
+    "redFlags": [
+      "Thinks each SQL statement in a workflow automatically shares one transaction.",
+      "Ignores rollback when a later step fails.",
+      "Performs long network calls inside a transaction without recognizing the risk.",
+      "Cannot explain partial write failure."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains atomic workflows, failure handling, external side-effect boundaries, and why transaction duration matters."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Covers commit and rollback with a good example but misses side effects or duration concerns."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows transactions group operations but cannot reason through failure cases."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not show practical transactional thinking."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "In an order creation flow, would you send the confirmation email before or after COMMIT? Why?",
+        "purpose": "Check awareness of database state versus external side effects."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "What bad state could happen if order and order_items are inserted without one transaction?",
+        "purpose": "Force a concrete failure scenario."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Transaction boundaries",
+        "displayQuestion": "Why would you wrap multiple related PostgreSQL writes in a transaction, and what should happen if one step fails?",
+        "displayIntent": "Check transaction and rollback fundamentals.",
+        "guidance": [
+          "Ask for a multi-step write example.",
+          "Listen for atomicity and rollback behavior.",
+          "Probe transaction duration and external side effects."
+        ],
+        "commonMistakes": [
+          "Assuming partial writes are acceptable.",
+          "Keeping a transaction open during slow external calls.",
+          "Not defining what failure means for the workflow."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Ranh giới transaction",
+        "displayQuestion": "Vì sao bạn sẽ bọc nhiều lệnh ghi PostgreSQL liên quan trong một transaction, và nếu một bước lỗi thì chuyện gì nên xảy ra?",
+        "displayIntent": "Kiểm tra nền tảng transaction và rollback.",
+        "guidance": [
+          "Yêu cầu ví dụ ghi nhiều bước.",
+          "Lắng nghe atomicity và hành vi rollback.",
+          "Hỏi thêm về thời lượng transaction và side effect bên ngoài."
+        ],
+        "commonMistakes": [
+          "Chấp nhận partial write mà không phân tích hậu quả.",
+          "Giữ transaction mở trong lúc gọi external service chậm.",
+          "Không định nghĩa failure của workflow."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "トランザクション境界",
+        "displayQuestion": "関連する複数の PostgreSQL 書き込みをトランザクションで囲む理由は何ですか。また途中で失敗したらどうすべきですか。",
+        "displayIntent": "トランザクションとロールバックの基礎を確認する。",
+        "guidance": [
+          "複数ステップの書き込み例を聞く。",
+          "原子性とロールバックの説明を確認する。",
+          "トランザクション時間と外部副作用も掘り下げる。"
+        ],
+        "commonMistakes": [
+          "部分的な書き込みを許容してしまう。",
+          "遅い外部呼び出し中にトランザクションを開いたままにする。",
+          "ワークフロー上の失敗を定義しない。"
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "PostgreSQL docs: Transactions",
+        "url": "https://www.postgresql.org/docs/current/tutorial-transactions.html",
+        "note": "Used for transaction, commit, rollback, and savepoint concepts."
+      },
+      {
+        "label": "PostgreSQL docs: Transaction Isolation",
+        "url": "https://www.postgresql.org/docs/current/transaction-iso.html",
+        "note": "Used for PostgreSQL transaction behavior and isolation context."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "PG_JR_DEBUG_UNIQUE_CONFLICT_005",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "debugging",
+    "competencies": ["problem_solving", "technical_fundamentals", "ownership"],
+    "techTags": ["postgresql", "consistency"],
+    "difficulty": 2,
+    "intent": "Assess practical debugging of duplicate-key and upsert behavior in PostgreSQL.",
+    "primaryQuestion": "An insert fails with a duplicate key error on a PostgreSQL unique constraint. How would you debug it and decide between rejecting, updating, or making the operation idempotent?",
+    "expectedSignals": [
+      "Identifies the exact unique constraint and conflicting key value.",
+      "Distinguishes data-quality bugs from expected duplicate requests.",
+      "Mentions ON CONFLICT DO NOTHING or DO UPDATE when appropriate.",
+      "Considers idempotency keys for retryable APIs or payment-like flows.",
+      "Avoids hiding real consistency issues with a blanket catch-and-ignore."
+    ],
+    "redFlags": [
+      "Drops the unique constraint to make the error disappear.",
+      "Catches all database errors and returns success.",
+      "Uses upsert without understanding which columns should change.",
+      "Cannot explain why the constraint exists."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Separates expected conflict from data corruption, proposes a precise ON CONFLICT or idempotency strategy, and preserves the invariant."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Can debug the constraint and use upsert but misses idempotency or update semantics."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Recognizes duplicate keys but treats the fix as a generic try/catch."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not show understanding of unique constraints or conflict handling."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_tradeoff",
+        "question": "When is ON CONFLICT DO NOTHING dangerous?",
+        "purpose": "Check whether the candidate sees silent data-loss or hidden bug risk."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "For a retryable create-order API, what would you use as the idempotency key?",
+        "purpose": "Connect PostgreSQL uniqueness to API-level correctness."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Duplicate key and upsert debugging",
+        "displayQuestion": "An insert fails with a duplicate key error on a PostgreSQL unique constraint. How would you debug it and decide between rejecting, updating, or making the operation idempotent?",
+        "displayIntent": "Check conflict debugging, upsert semantics, and idempotency thinking.",
+        "guidance": [
+          "Ask which invariant the unique constraint protects.",
+          "Probe whether the duplicate is expected or a bug.",
+          "Look for precise ON CONFLICT behavior, not blanket error swallowing."
+        ],
+        "commonMistakes": [
+          "Removing the constraint instead of fixing the workflow.",
+          "Using upsert without defining update semantics.",
+          "Ignoring retries and duplicate client submissions."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior", "type": "debugging" }
+      },
+      "vi": {
+        "title": "Debug duplicate key và upsert",
+        "displayQuestion": "Một lệnh insert lỗi duplicate key trên unique constraint của PostgreSQL. Bạn sẽ debug và quyết định reject, update hay làm operation idempotent như thế nào?",
+        "displayIntent": "Kiểm tra debug conflict, semantics của upsert và tư duy idempotency.",
+        "guidance": [
+          "Hỏi invariant mà unique constraint đang bảo vệ.",
+          "Đào sâu xem duplicate là tình huống hợp lệ hay bug.",
+          "Tìm cách xử lý ON CONFLICT cụ thể, không nuốt lỗi chung chung."
+        ],
+        "commonMistakes": [
+          "Xóa constraint thay vì sửa workflow.",
+          "Dùng upsert mà không định nghĩa rõ field nào được update.",
+          "Bỏ qua retry và request duplicate từ client."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior", "type": "debugging" }
+      },
+      "ja": {
+        "title": "重複キーと upsert のデバッグ",
+        "displayQuestion": "PostgreSQL の unique constraint で insert が duplicate key エラーになりました。どう調査し、拒否・更新・冪等化のどれを選びますか。",
+        "displayIntent": "競合デバッグ、upsert の意味、冪等性の考え方を確認する。",
+        "guidance": [
+          "unique constraint が守る不変条件を聞く。",
+          "重複が想定内かバグかを掘り下げる。",
+          "汎用的なエラー握りつぶしではなく、明確な ON CONFLICT 動作を確認する。"
+        ],
+        "commonMistakes": [
+          "ワークフローを直さず制約を削除する。",
+          "更新すべきカラムを決めずに upsert する。",
+          "リトライやクライアントの重複送信を無視する。"
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior", "type": "debugging" }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "PostgreSQL docs: INSERT",
+        "url": "https://www.postgresql.org/docs/current/sql-insert.html",
+        "note": "Used for ON CONFLICT behavior and insert conflict handling."
+      },
+      {
+        "label": "PostgreSQL docs: Constraints",
+        "url": "https://www.postgresql.org/docs/current/ddl-constraints.html",
+        "note": "Used for unique constraint and data integrity concepts."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "PG_MID_TECH_MVCC_SNAPSHOTS_006",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "data"],
+    "levels": ["mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking", "communication"],
+    "techTags": ["postgresql", "transaction", "consistency"],
+    "difficulty": 3,
+    "intent": "Evaluate whether the candidate understands PostgreSQL MVCC, snapshots, tuple versions, and the practical impact on concurrent reads and writes.",
+    "primaryQuestion": "Explain PostgreSQL MVCC in practical terms. What does a transaction snapshot see, and why do reads and writes usually avoid blocking each other?",
+    "expectedSignals": [
+      "Explains that PostgreSQL keeps multiple row versions visible to different transaction snapshots.",
+      "Connects snapshots to transaction isolation and visibility rules.",
+      "Mentions that readers do not usually block writers and writers do not usually block readers under MVCC.",
+      "Recognizes that old row versions eventually need cleanup through VACUUM.",
+      "Can describe an update as creating a new tuple version rather than modifying the visible row in place."
+    ],
+    "redFlags": [
+      "Describes MVCC as table-level locking.",
+      "Cannot explain why a long transaction can keep old row versions visible.",
+      "Says reads always see the latest committed data regardless of isolation level.",
+      "Ignores cleanup and bloat implications."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Clearly explains snapshots, tuple versions, visibility, nonblocking behavior, and the link to VACUUM and bloat."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands snapshots and nonblocking reads/writes but misses cleanup or tuple-version details."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows the acronym but cannot reason about a concurrent read/write example."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too abstract to confirm PostgreSQL MVCC understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "If one transaction updates a row but has not committed, what can another SELECT see under Read Committed?",
+        "purpose": "Force visibility-rule reasoning."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Why can a long-running transaction cause table bloat even if it only reads?",
+        "purpose": "Connect snapshots to cleanup delay."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "MVCC snapshots",
+        "displayQuestion": "Explain PostgreSQL MVCC in practical terms. What does a transaction snapshot see, and why do reads and writes usually avoid blocking each other?",
+        "displayIntent": "Check PostgreSQL concurrency internals at a practical level.",
+        "guidance": [
+          "Ask for a concrete two-transaction example.",
+          "Listen for visibility rules and old tuple cleanup.",
+          "Probe whether they can connect MVCC to production symptoms."
+        ],
+        "commonMistakes": [
+          "Equating MVCC with simple locks.",
+          "Ignoring transaction snapshots.",
+          "Forgetting VACUUM and bloat."
+        ],
+        "labels": { "role": "Backend/Fullstack/Data", "level": "Mid-level", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Snapshot trong MVCC",
+        "displayQuestion": "Hãy giải thích MVCC trong PostgreSQL theo cách thực tế. Snapshot của transaction nhìn thấy gì, và vì sao read/write thường không block nhau?",
+        "displayIntent": "Kiểm tra hiểu biết thực tế về concurrency internals của PostgreSQL.",
+        "guidance": [
+          "Yêu cầu ví dụ hai transaction cụ thể.",
+          "Lắng nghe visibility rule và cleanup old tuple.",
+          "Đào sâu khả năng nối MVCC với triệu chứng production."
+        ],
+        "commonMistakes": [
+          "Đánh đồng MVCC với lock đơn giản.",
+          "Bỏ qua transaction snapshot.",
+          "Quên VACUUM và bloat."
+        ],
+        "labels": { "role": "Backend/Fullstack/Data", "level": "Mid-level", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "MVCC スナップショット",
+        "displayQuestion": "PostgreSQL の MVCC を実務的に説明してください。トランザクションのスナップショットは何を見て、なぜ read/write は通常互いにブロックしにくいのですか。",
+        "displayIntent": "PostgreSQL の並行制御内部を実践レベルで確認する。",
+        "guidance": [
+          "2 つのトランザクションの具体例を聞く。",
+          "可視性ルールと古いタプルの cleanup を確認する。",
+          "MVCC と本番症状を結びつけられるか掘り下げる。"
+        ],
+        "commonMistakes": [
+          "MVCC を単純なロックと同一視する。",
+          "トランザクションスナップショットを無視する。",
+          "VACUUM と bloat を忘れる。"
+        ],
+        "labels": { "role": "Backend/Fullstack/Data", "level": "Mid-level", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "PostgreSQL docs: Concurrency Control",
+        "url": "https://www.postgresql.org/docs/current/mvcc.html",
+        "note": "Used for MVCC, snapshots, and concurrency behavior."
+      },
+      {
+        "label": "DataDriven Postgres Interview Questions",
+        "url": "https://datadriven.io/tools/postgres-interview-questions",
+        "note": "Used for interview emphasis on MVCC, long transactions, and VACUUM."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "PG_MID_TECH_ISOLATION_007",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "data"],
+    "levels": ["mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking", "problem_solving"],
+    "techTags": ["postgresql", "transaction", "consistency"],
+    "difficulty": 3,
+    "intent": "Check whether the candidate can reason about PostgreSQL isolation levels, anomalies, and retry requirements.",
+    "primaryQuestion": "How do Read Committed, Repeatable Read, and Serializable differ in PostgreSQL, and when would you choose a stricter isolation level?",
+    "expectedSignals": [
+      "Knows Read Committed is PostgreSQL's default and each statement sees a fresh committed snapshot.",
+      "Explains that Repeatable Read uses a stable transaction snapshot.",
+      "Explains Serializable prevents serialization anomalies but requires retry handling.",
+      "Connects isolation choice to business invariants such as double booking or financial consistency.",
+      "Mentions performance or contention trade-offs when increasing isolation."
+    ],
+    "redFlags": [
+      "Claims Read Uncommitted allows dirty reads in PostgreSQL.",
+      "Cannot describe what changes between two SELECTs in the same transaction.",
+      "Uses Serializable without planning for serialization failures and retries.",
+      "Chooses isolation levels by habit instead of invariants."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Compares levels accurately, gives anomaly examples, and includes retry and business-invariant reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands default and stricter levels but misses one nuance such as PostgreSQL Read Uncommitted mapping or retry behavior."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can name isolation levels but cannot apply them to a concurrent workflow."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too generic and not PostgreSQL-specific."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "In Read Committed, can two SELECT statements inside the same transaction see different committed data?",
+        "purpose": "Check snapshot timing."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "What must the application do when a Serializable transaction fails with a serialization error?",
+        "purpose": "Verify retry discipline."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Transaction isolation choices",
+        "displayQuestion": "How do Read Committed, Repeatable Read, and Serializable differ in PostgreSQL, and when would you choose a stricter isolation level?",
+        "displayIntent": "Check isolation-level reasoning and anomaly prevention.",
+        "guidance": [
+          "Use a concurrent booking or account-balance example.",
+          "Ask what each transaction can see over time.",
+          "Look for retry handling with Serializable."
+        ],
+        "commonMistakes": [
+          "Assuming PostgreSQL allows dirty reads.",
+          "Forgetting that stricter isolation may require retries.",
+          "Choosing isolation without naming the invariant."
+        ],
+        "labels": { "role": "Backend/Fullstack/Data", "level": "Mid-level", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Lựa chọn isolation level",
+        "displayQuestion": "Read Committed, Repeatable Read và Serializable khác nhau thế nào trong PostgreSQL, và khi nào bạn chọn isolation level chặt hơn?",
+        "displayIntent": "Kiểm tra reasoning về isolation level và phòng tránh anomaly.",
+        "guidance": [
+          "Dùng ví dụ booking đồng thời hoặc số dư tài khoản.",
+          "Hỏi mỗi transaction nhìn thấy dữ liệu thay đổi theo thời gian ra sao.",
+          "Tìm retry handling khi dùng Serializable."
+        ],
+        "commonMistakes": [
+          "Nghĩ PostgreSQL cho phép dirty read.",
+          "Quên isolation chặt hơn có thể cần retry.",
+          "Chọn isolation mà không nêu invariant cần bảo vệ."
+        ],
+        "labels": { "role": "Backend/Fullstack/Data", "level": "Mid-level", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "分離レベルの選択",
+        "displayQuestion": "PostgreSQL の Read Committed、Repeatable Read、Serializable はどう違い、どんな時により厳しい分離レベルを選びますか。",
+        "displayIntent": "分離レベルと anomaly 防止の判断力を確認する。",
+        "guidance": [
+          "同時予約や口座残高の例を使う。",
+          "各トランザクションが時間とともに何を見るか聞く。",
+          "Serializable の retry 処理を確認する。"
+        ],
+        "commonMistakes": [
+          "PostgreSQL で dirty read が可能だと思う。",
+          "厳しい分離レベルでは retry が必要になり得ることを忘れる。",
+          "守るべき不変条件を言わずに分離レベルを選ぶ。"
+        ],
+        "labels": { "role": "Backend/Fullstack/Data", "level": "Mid-level", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "PostgreSQL docs: Transaction Isolation",
+        "url": "https://www.postgresql.org/docs/current/transaction-iso.html",
+        "note": "Used for PostgreSQL isolation level behavior, snapshots, and serialization failures."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "PG_MID_TRADE_COMPOSITE_PARTIAL_INDEX_008",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "data"],
+    "levels": ["mid"],
+    "type": "trade_off",
+    "competencies": ["trade_off_analysis", "technical_fundamentals", "system_thinking"],
+    "techTags": ["postgresql", "indexing"],
+    "difficulty": 3,
+    "intent": "Evaluate the candidate's ability to choose between single-column, composite, partial, and covering indexes for real query patterns.",
+    "primaryQuestion": "Given frequent queries on orders by customer_id, status, and created_at, how would you decide between separate indexes, a composite index, and a partial index?",
+    "expectedSignals": [
+      "Starts from actual query predicates, sort order, cardinality, and frequency.",
+      "Explains composite index column order and leftmost-prefix implications.",
+      "Considers partial indexes for common predicates such as status = 'open' when selective and stable.",
+      "Mentions INCLUDE or index-only scans when covering a read-heavy query is useful.",
+      "Weighs write overhead, storage, and maintenance against read latency."
+    ],
+    "redFlags": [
+      "Creates every possible index combination.",
+      "Ignores column order in composite indexes.",
+      "Uses a partial index without ensuring queries include the predicate.",
+      "Cannot discuss write overhead on a hot orders table."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Chooses indexes based on query workload, column selectivity, predicate implication, order requirements, and write cost."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands composite and partial indexes but misses covering indexes or workload validation."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Suggests indexes that might work but cannot justify order or predicate choices."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is index-name guessing without trade-off analysis."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_tradeoff",
+        "question": "What query would benefit from an index on (customer_id, created_at DESC), and what query would not?",
+        "purpose": "Probe composite index order and prefix understanding."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "How do you verify that a partial index is actually being used?",
+        "purpose": "Check plan validation and predicate implication."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Composite and partial indexes",
+        "displayQuestion": "Given frequent queries on orders by customer_id, status, and created_at, how would you decide between separate indexes, a composite index, and a partial index?",
+        "displayIntent": "Check practical index-design trade-offs.",
+        "guidance": [
+          "Provide two or three concrete query shapes.",
+          "Ask why the index column order matters.",
+          "Probe how they would validate the decision with EXPLAIN."
+        ],
+        "commonMistakes": [
+          "Creating many overlapping indexes.",
+          "Ignoring predicate selectivity.",
+          "Using partial indexes that queries cannot match."
+        ],
+        "labels": { "role": "Backend/Fullstack/Data", "level": "Mid-level", "type": "trade_off" }
+      },
+      "vi": {
+        "title": "Composite index và partial index",
+        "displayQuestion": "Với các query orders thường lọc theo customer_id, status và created_at, bạn sẽ quyết định giữa separate index, composite index và partial index như thế nào?",
+        "displayIntent": "Kiểm tra trade-off khi thiết kế index thực tế.",
+        "guidance": [
+          "Đưa hai hoặc ba query shape cụ thể.",
+          "Hỏi vì sao thứ tự cột trong index quan trọng.",
+          "Đào sâu cách validate bằng EXPLAIN."
+        ],
+        "commonMistakes": [
+          "Tạo quá nhiều index chồng chéo.",
+          "Bỏ qua selectivity của predicate.",
+          "Dùng partial index mà query không match được predicate."
+        ],
+        "labels": { "role": "Backend/Fullstack/Data", "level": "Mid-level", "type": "trade_off" }
+      },
+      "ja": {
+        "title": "複合インデックスと部分インデックス",
+        "displayQuestion": "orders を customer_id、status、created_at で頻繁に検索する場合、単独インデックス、複合インデックス、部分インデックスをどう選びますか。",
+        "displayIntent": "実践的なインデックス設計のトレードオフを確認する。",
+        "guidance": [
+          "2、3 種類の具体的なクエリ形状を出す。",
+          "インデックスのカラム順が重要な理由を聞く。",
+          "EXPLAIN でどう検証するか掘り下げる。"
+        ],
+        "commonMistakes": [
+          "重複するインデックスを大量に作る。",
+          "predicate の選択度を無視する。",
+          "クエリが条件に合わない partial index を作る。"
+        ],
+        "labels": { "role": "Backend/Fullstack/Data", "level": "Mid-level", "type": "trade_off" }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "PostgreSQL docs: Multicolumn Indexes",
+        "url": "https://www.postgresql.org/docs/current/indexes-multicolumn.html",
+        "note": "Used for composite index behavior and leftmost column considerations."
+      },
+      {
+        "label": "PostgreSQL docs: Partial Indexes",
+        "url": "https://www.postgresql.org/docs/current/indexes-partial.html",
+        "note": "Used for partial index predicate and workload trade-offs."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "PG_MID_DEBUG_EXPLAIN_ANALYZE_009",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "data"],
+    "levels": ["mid"],
+    "type": "debugging",
+    "competencies": ["problem_solving", "technical_fundamentals", "impact_measurement"],
+    "techTags": ["postgresql", "indexing"],
+    "difficulty": 3,
+    "intent": "Assess plan-reading skill for PostgreSQL performance issues, especially actual versus estimated rows and join choices.",
+    "primaryQuestion": "You run EXPLAIN ANALYZE and see a nested loop over millions of rows with actual rows far above estimates. How would you interpret that and what fixes would you evaluate?",
+    "expectedSignals": [
+      "Distinguishes estimated rows, actual rows, loops, planning time, and execution time.",
+      "Recognizes cardinality misestimation and stale or insufficient statistics as possible causes.",
+      "Evaluates indexes, query predicates, join order, and extended statistics where relevant.",
+      "Considers VACUUM ANALYZE or ANALYZE when statistics are stale.",
+      "Validates improvements with before/after plans and timings."
+    ],
+    "redFlags": [
+      "Treats every nested loop as bad without context.",
+      "Only looks at the top total cost and ignores actual rows and loops.",
+      "Disables planner options as the first fix.",
+      "Does not verify the fix with a new plan."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Reads the plan holistically, explains misestimation, evaluates targeted fixes, and measures the impact."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Can interpret actual versus estimated rows but misses extended statistics or join-strategy nuance."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows EXPLAIN ANALYZE exists but cannot reason from plan symptoms to fixes."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is generic tuning advice without plan-reading details."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "What does the loops value mean in EXPLAIN ANALYZE?",
+        "purpose": "Check practical plan-reading detail."
+      },
+      {
+        "trigger": "missing_metric",
+        "question": "Which before/after metrics would convince you the fix worked?",
+        "purpose": "Confirm measurement and validation."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Reading EXPLAIN ANALYZE",
+        "displayQuestion": "You run EXPLAIN ANALYZE and see a nested loop over millions of rows with actual rows far above estimates. How would you interpret that and what fixes would you evaluate?",
+        "displayIntent": "Check PostgreSQL plan-reading and query-tuning skill.",
+        "guidance": [
+          "Ask the candidate to interpret actual rows, estimates, and loops.",
+          "Look for measured hypotheses, not planner folklore.",
+          "Probe statistics and indexing as separate causes."
+        ],
+        "commonMistakes": [
+          "Calling nested loops always wrong.",
+          "Ignoring row-estimate mismatch.",
+          "Changing planner settings before understanding the data."
+        ],
+        "labels": { "role": "Backend/Fullstack/Data", "level": "Mid-level", "type": "debugging" }
+      },
+      "vi": {
+        "title": "Đọc EXPLAIN ANALYZE",
+        "displayQuestion": "Bạn chạy EXPLAIN ANALYZE và thấy nested loop trên hàng triệu rows, actual rows cao hơn estimate rất nhiều. Bạn diễn giải điều đó ra sao và sẽ đánh giá các hướng sửa nào?",
+        "displayIntent": "Kiểm tra kỹ năng đọc plan và tuning query PostgreSQL.",
+        "guidance": [
+          "Yêu cầu ứng viên giải thích actual rows, estimates và loops.",
+          "Tìm hypothesis có đo lường, không phải mẹo tuning truyền miệng.",
+          "Tách riêng nguyên nhân statistics và indexing."
+        ],
+        "commonMistakes": [
+          "Kết luận nested loop luôn sai.",
+          "Bỏ qua mismatch giữa estimated rows và actual rows.",
+          "Đổi planner setting trước khi hiểu dữ liệu."
+        ],
+        "labels": { "role": "Backend/Fullstack/Data", "level": "Mid-level", "type": "debugging" }
+      },
+      "ja": {
+        "title": "EXPLAIN ANALYZE を読む",
+        "displayQuestion": "EXPLAIN ANALYZE で、数百万行に対する nested loop と、estimate より大幅に多い actual rows が見えました。どう解釈し、どんな修正を検討しますか。",
+        "displayIntent": "PostgreSQL の実行計画読み取りとクエリチューニングを確認する。",
+        "guidance": [
+          "actual rows、estimate、loops を解釈してもらう。",
+          "経験則ではなく測定可能な仮説を確認する。",
+          "統計情報とインデックスの原因を分けて聞く。"
+        ],
+        "commonMistakes": [
+          "nested loop は常に悪いと決めつける。",
+          "推定行数と実行行数のずれを無視する。",
+          "データを理解する前に planner 設定を変える。"
+        ],
+        "labels": { "role": "Backend/Fullstack/Data", "level": "Mid-level", "type": "debugging" }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "PostgreSQL docs: Using EXPLAIN",
+        "url": "https://www.postgresql.org/docs/current/using-explain.html",
+        "note": "Used for EXPLAIN, EXPLAIN ANALYZE, estimates, and plan interpretation."
+      },
+      {
+        "label": "DataDriven Postgres Interview Questions",
+        "url": "https://datadriven.io/tools/postgres-interview-questions",
+        "note": "Used for common interview focus on plan reading and query performance."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "PG_MID_TECH_JSONB_GIN_010",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "data"],
+    "levels": ["mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "trade_off_analysis", "system_thinking"],
+    "techTags": ["postgresql", "schema_design", "indexing"],
+    "difficulty": 3,
+    "intent": "Check whether the candidate can use JSONB appropriately in PostgreSQL and choose indexing strategies for semi-structured data.",
+    "primaryQuestion": "When would you store data in JSONB in PostgreSQL, and how would you index and query it without turning the schema into an unmaintainable blob?",
+    "expectedSignals": [
+      "Uses JSONB for flexible or semi-structured attributes, not core relational invariants.",
+      "Distinguishes json and jsonb at a practical level, especially storage and indexing behavior.",
+      "Mentions GIN indexes and operator choices such as containment or key existence.",
+      "Considers generated columns or expression indexes for frequently queried paths.",
+      "Discusses validation, migration, and query-performance trade-offs."
+    ],
+    "redFlags": [
+      "Stores all application data in one JSONB column by default.",
+      "Cannot explain how to index common JSONB predicates.",
+      "Ignores type validation and schema evolution.",
+      "Assumes JSONB queries perform like normal typed columns automatically."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Balances JSONB flexibility with relational integrity, indexing, validation, and long-term maintainability."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows JSONB and GIN basics but misses generated columns, expression indexes, or validation trade-offs."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can use JSONB syntax but cannot design around query and integrity needs."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer treats JSONB as generic JSON storage with no PostgreSQL-specific detail."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_tradeoff",
+        "question": "Which fields would you keep as normal columns even if the payload also exists in JSONB?",
+        "purpose": "Check relational boundary decisions."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "What kind of GIN index would help a containment query on a JSONB document?",
+        "purpose": "Verify concrete indexing knowledge."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "JSONB design and indexing",
+        "displayQuestion": "When would you store data in JSONB in PostgreSQL, and how would you index and query it without turning the schema into an unmaintainable blob?",
+        "displayIntent": "Check JSONB modeling, indexing, and maintainability.",
+        "guidance": [
+          "Ask for a concrete semi-structured use case.",
+          "Probe which fields remain relational columns.",
+          "Look for GIN, expression index, or generated-column reasoning."
+        ],
+        "commonMistakes": [
+          "Using JSONB to avoid schema design.",
+          "Ignoring validation and migration.",
+          "Assuming every JSONB predicate is fast without an index."
+        ],
+        "labels": { "role": "Backend/Fullstack/Data", "level": "Mid-level", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Thiết kế và index JSONB",
+        "displayQuestion": "Khi nào bạn sẽ lưu dữ liệu trong JSONB của PostgreSQL, và bạn index/query nó thế nào để schema không biến thành một blob khó bảo trì?",
+        "displayIntent": "Kiểm tra modeling, indexing và maintainability khi dùng JSONB.",
+        "guidance": [
+          "Yêu cầu một use case semi-structured cụ thể.",
+          "Hỏi field nào vẫn nên là relational column.",
+          "Tìm reasoning về GIN, expression index hoặc generated column."
+        ],
+        "commonMistakes": [
+          "Dùng JSONB để né thiết kế schema.",
+          "Bỏ qua validation và migration.",
+          "Nghĩ mọi JSONB predicate đều nhanh dù không có index."
+        ],
+        "labels": { "role": "Backend/Fullstack/Data", "level": "Mid-level", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "JSONB 設計とインデックス",
+        "displayQuestion": "PostgreSQL でどんな時に JSONB に保存し、保守不能な blob にしないためにどうインデックス・クエリしますか。",
+        "displayIntent": "JSONB のモデリング、インデックス、保守性を確認する。",
+        "guidance": [
+          "具体的な半構造データのユースケースを聞く。",
+          "どのフィールドをリレーショナルカラムに残すか確認する。",
+          "GIN、expression index、generated column の reasoning を見る。"
+        ],
+        "commonMistakes": [
+          "スキーマ設計を避けるために JSONB を使う。",
+          "検証と migration を無視する。",
+          "インデックスなしでも JSONB 条件はすべて速いと思う。"
+        ],
+        "labels": { "role": "Backend/Fullstack/Data", "level": "Mid-level", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "PostgreSQL docs: JSON Types",
+        "url": "https://www.postgresql.org/docs/current/datatype-json.html",
+        "note": "Used for jsonb storage, operators, and indexing behavior."
+      },
+      {
+        "label": "PostgreSQL docs: GIN Indexes",
+        "url": "https://www.postgresql.org/docs/current/gin.html",
+        "note": "Used for GIN index concepts and composite value search."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "PG_MID_TECH_WINDOW_CTE_011",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "data"],
+    "levels": ["mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving", "communication"],
+    "techTags": ["postgresql"],
+    "difficulty": 3,
+    "intent": "Evaluate whether the candidate can reason about PostgreSQL window functions and CTEs for analytical queries without confusing row cardinality.",
+    "primaryQuestion": "How would you use PostgreSQL window functions and CTEs to return the latest order per customer while also keeping each customer's total order count?",
+    "expectedSignals": [
+      "Uses ROW_NUMBER or DISTINCT ON appropriately for latest row per group.",
+      "Understands that window functions calculate across related rows without collapsing result rows.",
+      "Uses COUNT(*) OVER (PARTITION BY customer_id) or an equivalent aggregate join.",
+      "Explains CTE readability and materialization or inlining considerations in modern PostgreSQL.",
+      "Considers deterministic ordering when timestamps tie."
+    ],
+    "redFlags": [
+      "Uses GROUP BY and then expects non-grouped row columns to remain available.",
+      "Confuses PARTITION BY with table partitioning.",
+      "Does not handle ties or deterministic ordering.",
+      "Assumes every CTE is always an optimization barrier in all PostgreSQL versions."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Builds a correct top-per-group query, preserves row cardinality intentionally, and discusses CTE clarity versus optimization."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Can solve the query with ROW_NUMBER or DISTINCT ON but misses tie handling or CTE performance nuance."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows window-function syntax but cannot reason about result shape."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer cannot produce a plausible PostgreSQL query pattern."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "What is the difference between COUNT(*) GROUP BY customer_id and COUNT(*) OVER (PARTITION BY customer_id)?",
+        "purpose": "Check row-cardinality understanding."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "If two orders have the same created_at, how would you make the latest-order result deterministic?",
+        "purpose": "Probe practical SQL correctness."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Window functions and CTEs",
+        "displayQuestion": "How would you use PostgreSQL window functions and CTEs to return the latest order per customer while also keeping each customer's total order count?",
+        "displayIntent": "Check analytical SQL reasoning in PostgreSQL.",
+        "guidance": [
+          "Ask for SQL or detailed pseudo-SQL.",
+          "Probe row cardinality and deterministic ordering.",
+          "Discuss CTE readability versus optimization implications."
+        ],
+        "commonMistakes": [
+          "Using GROUP BY and losing row-level details.",
+          "Forgetting tie-breakers.",
+          "Confusing window partitions with table partitions."
+        ],
+        "labels": { "role": "Backend/Fullstack/Data", "level": "Mid-level", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Window function và CTE",
+        "displayQuestion": "Bạn sẽ dùng window function và CTE trong PostgreSQL như thế nào để trả về order mới nhất của mỗi customer nhưng vẫn giữ tổng số order của customer đó?",
+        "displayIntent": "Kiểm tra reasoning SQL phân tích trong PostgreSQL.",
+        "guidance": [
+          "Yêu cầu SQL hoặc pseudo-SQL chi tiết.",
+          "Đào sâu row cardinality và ordering deterministic.",
+          "Thảo luận readability của CTE so với ảnh hưởng tối ưu hóa."
+        ],
+        "commonMistakes": [
+          "Dùng GROUP BY rồi mất detail ở cấp row.",
+          "Quên tie-breaker.",
+          "Nhầm window partition với table partition."
+        ],
+        "labels": { "role": "Backend/Fullstack/Data", "level": "Mid-level", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "Window function と CTE",
+        "displayQuestion": "PostgreSQL の window function と CTE を使って、顧客ごとの最新注文を返しつつ、その顧客の注文総数も保持するにはどうしますか。",
+        "displayIntent": "PostgreSQL の分析 SQL reasoning を確認する。",
+        "guidance": [
+          "SQL または詳細な疑似 SQL を求める。",
+          "行数の保持と決定的な並び順を掘り下げる。",
+          "CTE の読みやすさと最適化への影響を話す。"
+        ],
+        "commonMistakes": [
+          "GROUP BY で行レベルの詳細を失う。",
+          "tie-breaker を忘れる。",
+          "window partition と table partition を混同する。"
+        ],
+        "labels": { "role": "Backend/Fullstack/Data", "level": "Mid-level", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "PostgreSQL docs: Window Functions",
+        "url": "https://www.postgresql.org/docs/current/functions-window.html",
+        "note": "Used for window function semantics and OVER clause behavior."
+      },
+      {
+        "label": "PostgreSQL docs: WITH Queries",
+        "url": "https://www.postgresql.org/docs/current/queries-with.html",
+        "note": "Used for CTE behavior and recursive/non-recursive query structure."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "PG_MID_DEBUG_LOCKS_DEADLOCK_012",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "devops"],
+    "levels": ["mid"],
+    "type": "debugging",
+    "competencies": ["problem_solving", "technical_fundamentals", "ownership"],
+    "techTags": ["postgresql", "transaction", "consistency"],
+    "difficulty": 3,
+    "intent": "Assess whether the candidate can debug lock waits and deadlocks in PostgreSQL without making concurrency worse.",
+    "primaryQuestion": "A production request hangs and logs show PostgreSQL lock waits or a deadlock. How would you identify the blocking transaction and prevent the issue from recurring?",
+    "expectedSignals": [
+      "Checks pg_stat_activity, pg_locks, blocked and blocking process IDs, query text, and transaction age.",
+      "Differentiates lock wait, long transaction, and deadlock symptoms.",
+      "Explains consistent lock ordering and shorter transactions as prevention strategies.",
+      "Mentions SELECT FOR UPDATE or row-locking behavior when relevant.",
+      "Considers timeouts, retry handling, and safe termination only after impact analysis."
+    ],
+    "redFlags": [
+      "Kills random database sessions without identifying blockers.",
+      "Retries deadlocked transactions immediately without backoff or root-cause work.",
+      "Cannot explain how inconsistent lock ordering causes deadlocks.",
+      "Ignores long idle-in-transaction sessions."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Combines PostgreSQL lock inspection, safe mitigation, transaction design fixes, and retry strategy."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Can find blockers and shorten transactions but misses lock ordering or retry behavior."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows locks exist but has no concrete production debugging flow."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is generic incident response without PostgreSQL lock knowledge."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Which PostgreSQL views would you inspect to find the blocker?",
+        "purpose": "Check operational debugging knowledge."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "Why can updating rows in a consistent order reduce deadlocks?",
+        "purpose": "Probe root-cause prevention."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Lock waits and deadlocks",
+        "displayQuestion": "A production request hangs and logs show PostgreSQL lock waits or a deadlock. How would you identify the blocking transaction and prevent the issue from recurring?",
+        "displayIntent": "Check PostgreSQL concurrency debugging and prevention.",
+        "guidance": [
+          "Ask for concrete system views and fields.",
+          "Probe mitigation versus permanent prevention.",
+          "Listen for safe production behavior."
+        ],
+        "commonMistakes": [
+          "Killing sessions blindly.",
+          "Ignoring idle-in-transaction connections.",
+          "Fixing symptoms without changing lock ordering or transaction scope."
+        ],
+        "labels": { "role": "Backend/Fullstack/DevOps", "level": "Mid-level", "type": "debugging" }
+      },
+      "vi": {
+        "title": "Lock wait và deadlock",
+        "displayQuestion": "Một request production bị treo và log cho thấy PostgreSQL lock wait hoặc deadlock. Bạn sẽ xác định transaction đang block và ngăn tái diễn như thế nào?",
+        "displayIntent": "Kiểm tra debug concurrency PostgreSQL và phòng ngừa lỗi.",
+        "guidance": [
+          "Hỏi view hệ thống và field cụ thể.",
+          "Đào sâu mitigation tạm thời so với phòng ngừa lâu dài.",
+          "Lắng nghe hành vi an toàn trong production."
+        ],
+        "commonMistakes": [
+          "Kill session mù quáng.",
+          "Bỏ qua connection idle-in-transaction.",
+          "Chỉ chữa triệu chứng mà không sửa lock ordering hoặc transaction scope."
+        ],
+        "labels": { "role": "Backend/Fullstack/DevOps", "level": "Mid-level", "type": "debugging" }
+      },
+      "ja": {
+        "title": "ロック待ちとデッドロック",
+        "displayQuestion": "本番リクエストが止まり、PostgreSQL の lock wait または deadlock がログに出ています。blocking transaction をどう特定し、再発を防ぎますか。",
+        "displayIntent": "PostgreSQL の並行処理デバッグと予防を確認する。",
+        "guidance": [
+          "具体的なシステムビューとフィールドを聞く。",
+          "一時対応と恒久対策を分けて掘り下げる。",
+          "本番で安全な行動を確認する。"
+        ],
+        "commonMistakes": [
+          "根拠なくセッションを kill する。",
+          "idle-in-transaction 接続を無視する。",
+          "lock ordering や transaction scope を直さず症状だけ処理する。"
+        ],
+        "labels": { "role": "Backend/Fullstack/DevOps", "level": "Mid-level", "type": "debugging" }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "PostgreSQL docs: Explicit Locking",
+        "url": "https://www.postgresql.org/docs/current/explicit-locking.html",
+        "note": "Used for table locks, row locks, deadlocks, and lock behavior."
+      },
+      {
+        "label": "PostgreSQL docs: pg_locks",
+        "url": "https://www.postgresql.org/docs/current/view-pg-locks.html",
+        "note": "Used for lock inspection and blocker investigation."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "PG_MID_TRADE_PARTITIONING_013",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "data", "devops"],
+    "levels": ["mid"],
+    "type": "trade_off",
+    "competencies": ["trade_off_analysis", "system_thinking", "technical_fundamentals"],
+    "techTags": ["postgresql", "schema_design", "indexing"],
+    "difficulty": 3,
+    "intent": "Evaluate whether the candidate can decide when PostgreSQL table partitioning is useful and when it adds unnecessary operational complexity.",
+    "primaryQuestion": "When would you partition a large PostgreSQL table, and how would you choose between range, list, and hash partitioning?",
+    "expectedSignals": [
+      "Connects partitioning to query pruning, data lifecycle management, and very large tables.",
+      "Chooses range partitioning for time-series or date-bounded data when queries filter by time.",
+      "Chooses list partitioning for discrete tenant, region, or category groups when appropriate.",
+      "Chooses hash partitioning for spreading data when natural ranges or lists are not suitable.",
+      "Mentions operational costs such as partition maintenance, indexes per partition, and query patterns that do not prune."
+    ],
+    "redFlags": [
+      "Partitions every large table without query-pattern justification.",
+      "Uses partitioning as a replacement for normal indexing.",
+      "Ignores partition key choice and pruning.",
+      "Does not mention maintenance and migration cost."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Chooses a partitioning strategy based on workload, pruning, lifecycle, and operational maintenance trade-offs."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands range/list/hash basics but misses indexes per partition or non-pruning query costs."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows partitioning splits a table but cannot decide when it helps."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is generic scalability talk without PostgreSQL partitioning detail."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_tradeoff",
+        "question": "What happens if most queries do not filter on the partition key?",
+        "purpose": "Check pruning and workload alignment."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "How would monthly range partitions help with retention deletes for event data?",
+        "purpose": "Probe lifecycle and operational reasoning."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Table partitioning trade-offs",
+        "displayQuestion": "When would you partition a large PostgreSQL table, and how would you choose between range, list, and hash partitioning?",
+        "displayIntent": "Check partitioning design and operational trade-offs.",
+        "guidance": [
+          "Use event logs, orders, or multi-tenant data as examples.",
+          "Probe partition pruning and retention.",
+          "Ask about maintenance cost and indexes."
+        ],
+        "commonMistakes": [
+          "Partitioning without a pruning-friendly query pattern.",
+          "Treating partitioning as a universal performance fix.",
+          "Ignoring partition management overhead."
+        ],
+        "labels": { "role": "Backend/Data/DevOps", "level": "Mid-level", "type": "trade_off" }
+      },
+      "vi": {
+        "title": "Trade-off khi partition table",
+        "displayQuestion": "Khi nào bạn sẽ partition một bảng PostgreSQL lớn, và bạn chọn range, list hay hash partitioning như thế nào?",
+        "displayIntent": "Kiểm tra thiết kế partitioning và trade-off vận hành.",
+        "guidance": [
+          "Dùng ví dụ event log, orders hoặc multi-tenant data.",
+          "Đào sâu partition pruning và retention.",
+          "Hỏi về chi phí maintenance và index."
+        ],
+        "commonMistakes": [
+          "Partition khi query pattern không tận dụng pruning.",
+          "Xem partitioning như cách tăng performance cho mọi tình huống.",
+          "Bỏ qua overhead quản lý partition."
+        ],
+        "labels": { "role": "Backend/Data/DevOps", "level": "Mid-level", "type": "trade_off" }
+      },
+      "ja": {
+        "title": "テーブル partitioning のトレードオフ",
+        "displayQuestion": "大きな PostgreSQL テーブルをいつ partition し、range、list、hash partitioning をどう選びますか。",
+        "displayIntent": "partitioning 設計と運用トレードオフを確認する。",
+        "guidance": [
+          "イベントログ、注文、マルチテナントデータを例にする。",
+          "partition pruning と retention を掘り下げる。",
+          "maintenance コストと index について聞く。"
+        ],
+        "commonMistakes": [
+          "pruning しやすいクエリ形状なしに partition する。",
+          "partitioning を万能な性能改善策と考える。",
+          "partition 管理の overhead を無視する。"
+        ],
+        "labels": { "role": "Backend/Data/DevOps", "level": "Mid-level", "type": "trade_off" }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "PostgreSQL docs: Table Partitioning",
+        "url": "https://www.postgresql.org/docs/current/ddl-partitioning.html",
+        "note": "Used for declarative partitioning, pruning, and partitioning methods."
+      },
+      {
+        "label": "DataDriven Postgres Interview Questions",
+        "url": "https://datadriven.io/tools/postgres-interview-questions",
+        "note": "Used for common interview coverage around partitioning."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "PG_MID_DEBUG_VACUUM_BLOAT_014",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "data", "devops"],
+    "levels": ["mid"],
+    "type": "debugging",
+    "competencies": ["problem_solving", "technical_fundamentals", "impact_measurement"],
+    "techTags": ["postgresql", "indexing"],
+    "difficulty": 3,
+    "intent": "Assess whether the candidate can connect PostgreSQL MVCC, VACUUM, autovacuum, statistics, and table bloat to production symptoms.",
+    "primaryQuestion": "A PostgreSQL table with heavy updates keeps getting slower and disk usage grows even after deletes. How would you investigate VACUUM, autovacuum, and bloat?",
+    "expectedSignals": [
+      "Connects MVCC dead tuples to the need for VACUUM cleanup.",
+      "Checks autovacuum activity, table stats, dead tuple counts, and long-running transactions.",
+      "Distinguishes VACUUM, VACUUM FULL, and ANALYZE at a practical level.",
+      "Considers table-specific autovacuum tuning for high-churn tables.",
+      "Measures bloat and query impact before invasive maintenance."
+    ],
+    "redFlags": [
+      "Runs VACUUM FULL in production without discussing locks or downtime.",
+      "Does not know deletes do not immediately shrink table files in the simple case.",
+      "Ignores long transactions or replication slots that can delay cleanup.",
+      "Confuses ANALYZE statistics refresh with reclaiming dead tuples."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Builds a safe investigation across dead tuples, autovacuum, long transactions, stats, bloat, and maintenance trade-offs."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands VACUUM and autovacuum but misses locks, long transactions, or stats nuance."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows VACUUM exists but cannot connect it to MVCC symptoms."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is generic disk cleanup advice without PostgreSQL internals."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_tradeoff",
+        "question": "Why is VACUUM FULL riskier than regular VACUUM on a busy table?",
+        "purpose": "Check lock and operational-impact reasoning."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "What would you check to see whether a long transaction is preventing cleanup?",
+        "purpose": "Probe operational debugging detail."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "VACUUM, autovacuum, and bloat",
+        "displayQuestion": "A PostgreSQL table with heavy updates keeps getting slower and disk usage grows even after deletes. How would you investigate VACUUM, autovacuum, and bloat?",
+        "displayIntent": "Check MVCC maintenance and bloat debugging.",
+        "guidance": [
+          "Ask for concrete PostgreSQL stats or symptoms.",
+          "Probe regular VACUUM versus VACUUM FULL.",
+          "Look for long-transaction and autovacuum tuning awareness."
+        ],
+        "commonMistakes": [
+          "Using VACUUM FULL casually in production.",
+          "Ignoring long-running transactions.",
+          "Confusing ANALYZE with tuple cleanup."
+        ],
+        "labels": { "role": "Backend/Data/DevOps", "level": "Mid-level", "type": "debugging" }
+      },
+      "vi": {
+        "title": "VACUUM, autovacuum và bloat",
+        "displayQuestion": "Một bảng PostgreSQL update nhiều ngày càng chậm và disk usage tăng dù đã delete. Bạn sẽ điều tra VACUUM, autovacuum và bloat như thế nào?",
+        "displayIntent": "Kiểm tra debug maintenance MVCC và bloat.",
+        "guidance": [
+          "Hỏi stat hoặc triệu chứng PostgreSQL cụ thể.",
+          "Đào sâu regular VACUUM so với VACUUM FULL.",
+          "Tìm hiểu biết về long transaction và tuning autovacuum."
+        ],
+        "commonMistakes": [
+          "Dùng VACUUM FULL tùy tiện trong production.",
+          "Bỏ qua long-running transaction.",
+          "Nhầm ANALYZE với cleanup dead tuple."
+        ],
+        "labels": { "role": "Backend/Data/DevOps", "level": "Mid-level", "type": "debugging" }
+      },
+      "ja": {
+        "title": "VACUUM、autovacuum、bloat",
+        "displayQuestion": "更新が多い PostgreSQL テーブルが遅くなり、delete 後もディスク使用量が増え続けます。VACUUM、autovacuum、bloat をどう調査しますか。",
+        "displayIntent": "MVCC maintenance と bloat デバッグを確認する。",
+        "guidance": [
+          "具体的な PostgreSQL stats や症状を聞く。",
+          "通常の VACUUM と VACUUM FULL を掘り下げる。",
+          "長い transaction と autovacuum tuning の理解を見る。"
+        ],
+        "commonMistakes": [
+          "本番で気軽に VACUUM FULL を使う。",
+          "長時間 transaction を無視する。",
+          "ANALYZE と dead tuple cleanup を混同する。"
+        ],
+        "labels": { "role": "Backend/Data/DevOps", "level": "Mid-level", "type": "debugging" }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "PostgreSQL docs: Routine Vacuuming",
+        "url": "https://www.postgresql.org/docs/current/routine-vacuuming.html",
+        "note": "Used for VACUUM, ANALYZE, dead tuples, and maintenance behavior."
+      },
+      {
+        "label": "PostgreSQL docs: Automatic Vacuuming",
+        "url": "https://www.postgresql.org/docs/current/runtime-config-autovacuum.html",
+        "note": "Used for autovacuum configuration and behavior."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "PG_SR_TRADE_REPLICATION_HA_015",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "data", "devops"],
+    "levels": ["senior"],
+    "type": "trade_off",
+    "competencies": ["trade_off_analysis", "system_thinking", "impact_measurement", "communication"],
+    "techTags": ["postgresql", "consistency"],
+    "difficulty": 4,
+    "intent": "Evaluate senior-level reasoning about PostgreSQL replication options, HA, read scaling, lag, and operational risk.",
+    "primaryQuestion": "How would you design PostgreSQL replication for high availability and read scaling, and what trade-offs would you watch around replica lag and failover?",
+    "expectedSignals": [
+      "Distinguishes physical streaming replication from logical replication use cases.",
+      "Explains read replicas, failover, recovery objectives, and promotion risk.",
+      "Mentions replica lag and the effect on read-after-write consistency.",
+      "Considers monitoring WAL, replication slots, replication delay, and connection routing.",
+      "Discusses backup, restore testing, and application behavior during failover."
+    ],
+    "redFlags": [
+      "Assumes replicas are always perfectly current.",
+      "Uses replicas for critical read-after-write paths without consistency strategy.",
+      "Designs failover without testing restore or client reconnect behavior.",
+      "Cannot distinguish logical and physical replication."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Balances HA, read scaling, consistency, lag, failover automation, monitoring, and recovery testing."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands replicas and failover but misses application consistency or operational testing details."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows replication copies data but cannot design around lag and failover."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is high-level HA terminology without PostgreSQL-specific trade-offs."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_metric",
+        "question": "Which lag and recovery metrics would you alert on?",
+        "purpose": "Check operational measurement."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "How would your API handle a user writing to primary and immediately reading from a lagging replica?",
+        "purpose": "Probe read-after-write consistency strategy."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Replication, HA, and lag",
+        "displayQuestion": "How would you design PostgreSQL replication for high availability and read scaling, and what trade-offs would you watch around replica lag and failover?",
+        "displayIntent": "Check senior PostgreSQL HA and consistency trade-off reasoning.",
+        "guidance": [
+          "Ask for architecture, failure modes, and operational metrics.",
+          "Probe read-after-write consistency.",
+          "Look for restore testing, not only replication setup."
+        ],
+        "commonMistakes": [
+          "Treating replicas as strongly consistent by default.",
+          "Ignoring failover testing.",
+          "Missing application behavior during topology changes."
+        ],
+        "labels": { "role": "Backend/Data/DevOps", "level": "Senior", "type": "trade_off" }
+      },
+      "vi": {
+        "title": "Replication, HA và replica lag",
+        "displayQuestion": "Bạn sẽ thiết kế replication PostgreSQL cho high availability và read scaling như thế nào, và cần theo dõi trade-off gì quanh replica lag và failover?",
+        "displayIntent": "Kiểm tra reasoning senior về HA và consistency trong PostgreSQL.",
+        "guidance": [
+          "Hỏi kiến trúc, failure mode và metric vận hành.",
+          "Đào sâu read-after-write consistency.",
+          "Tìm restore testing, không chỉ setup replication."
+        ],
+        "commonMistakes": [
+          "Mặc định xem replica là strongly consistent.",
+          "Bỏ qua failover testing.",
+          "Không xét hành vi application khi topology thay đổi."
+        ],
+        "labels": { "role": "Backend/Data/DevOps", "level": "Senior", "type": "trade_off" }
+      },
+      "ja": {
+        "title": "Replication、HA、replica lag",
+        "displayQuestion": "高可用性と read scaling のために PostgreSQL replication をどう設計し、replica lag と failover のどんなトレードオフを見ますか。",
+        "displayIntent": "Senior レベルの PostgreSQL HA と consistency の判断を確認する。",
+        "guidance": [
+          "アーキテクチャ、障害モード、運用メトリクスを聞く。",
+          "read-after-write consistency を掘り下げる。",
+          "replication 設定だけでなく restore testing も確認する。"
+        ],
+        "commonMistakes": [
+          "replica がデフォルトで強整合だと扱う。",
+          "failover testing を無視する。",
+          "topology 変更時の application 動作を考えない。"
+        ],
+        "labels": { "role": "Backend/Data/DevOps", "level": "Senior", "type": "trade_off" }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "PostgreSQL docs: High Availability, Load Balancing, and Replication",
+        "url": "https://www.postgresql.org/docs/current/high-availability.html",
+        "note": "Used for replication and HA architecture concepts."
+      },
+      {
+        "label": "PostgreSQL docs: Logical Replication",
+        "url": "https://www.postgresql.org/docs/current/logical-replication.html",
+        "note": "Used for logical replication use cases and limitations."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "PG_SR_TECH_LOGICAL_REPLICATION_CDC_016",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "data", "devops"],
+    "levels": ["senior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking", "ownership"],
+    "techTags": ["postgresql", "consistency"],
+    "difficulty": 4,
+    "intent": "Check deep understanding of PostgreSQL logical replication, CDC pipelines, replication slots, WAL retention, and operational failure modes.",
+    "primaryQuestion": "How does PostgreSQL logical replication or CDC use replication slots, and what can go wrong if a consumer falls behind?",
+    "expectedSignals": [
+      "Explains that logical replication streams changes based on publications, subscriptions, decoding, and replication identity.",
+      "Knows replication slots retain WAL needed by consumers until consumed or advanced.",
+      "Identifies disk growth and retained dead tuples or WAL pressure as lag-related risks.",
+      "Mentions monitoring slot lag, confirmed flush LSN, restart LSN, and consumer health.",
+      "Considers initial snapshot, schema changes, deletes without proper replica identity, and backfill strategy."
+    ],
+    "redFlags": [
+      "Creates replication slots without monitoring retention.",
+      "Does not know a lagging slot can cause disk pressure.",
+      "Ignores schema evolution and delete/update identity requirements.",
+      "Treats CDC as exactly-once without downstream idempotency."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains CDC mechanics, slot retention, lag monitoring, schema/delete edge cases, and downstream idempotency."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands slots and lag but misses schema evolution or replica identity details."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows logical replication copies changes but cannot identify operational risks."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is generic streaming terminology without PostgreSQL specifics."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_metric",
+        "question": "Which replication slot columns or LSN metrics would you monitor?",
+        "purpose": "Check concrete operational knowledge."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "How would you handle a CDC consumer that is down for several hours while WAL keeps growing?",
+        "purpose": "Probe incident and recovery strategy."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Logical replication and CDC slots",
+        "displayQuestion": "How does PostgreSQL logical replication or CDC use replication slots, and what can go wrong if a consumer falls behind?",
+        "displayIntent": "Check senior CDC, replication slot, and WAL-retention knowledge.",
+        "guidance": [
+          "Ask for the end-to-end data flow.",
+          "Probe what PostgreSQL retains while a consumer is behind.",
+          "Discuss monitoring, schema changes, and recovery."
+        ],
+        "commonMistakes": [
+          "Creating slots without retention alerts.",
+          "Ignoring replica identity for updates and deletes.",
+          "Assuming downstream delivery is automatically exactly-once."
+        ],
+        "labels": { "role": "Backend/Data/DevOps", "level": "Senior", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Logical replication và CDC slot",
+        "displayQuestion": "Logical replication hoặc CDC trong PostgreSQL dùng replication slot như thế nào, và điều gì có thể sai nếu consumer bị lag?",
+        "displayIntent": "Kiểm tra hiểu biết senior về CDC, replication slot và WAL retention.",
+        "guidance": [
+          "Yêu cầu mô tả luồng dữ liệu end-to-end.",
+          "Đào sâu PostgreSQL phải giữ lại gì khi consumer bị tụt sau.",
+          "Thảo luận monitoring, schema change và recovery."
+        ],
+        "commonMistakes": [
+          "Tạo slot mà không alert retention.",
+          "Bỏ qua replica identity cho update và delete.",
+          "Giả định downstream tự động exactly-once."
+        ],
+        "labels": { "role": "Backend/Data/DevOps", "level": "Senior", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "Logical replication と CDC slot",
+        "displayQuestion": "PostgreSQL の logical replication または CDC は replication slot をどう使い、consumer が遅れた場合に何が問題になりますか。",
+        "displayIntent": "Senior レベルの CDC、replication slot、WAL retention を確認する。",
+        "guidance": [
+          "end-to-end のデータフローを説明してもらう。",
+          "consumer が遅れた時に PostgreSQL が保持するものを掘り下げる。",
+          "monitoring、schema change、recovery を話す。"
+        ],
+        "commonMistakes": [
+          "retention alert なしで slot を作る。",
+          "update/delete の replica identity を無視する。",
+          "downstream delivery が自動的に exactly-once だと思う。"
+        ],
+        "labels": { "role": "Backend/Data/DevOps", "level": "Senior", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "PostgreSQL docs: Logical Replication",
+        "url": "https://www.postgresql.org/docs/current/logical-replication.html",
+        "note": "Used for publication/subscription and logical replication architecture."
+      },
+      {
+        "label": "PostgreSQL docs: pg_replication_slots",
+        "url": "https://www.postgresql.org/docs/current/view-pg-replication-slots.html",
+        "note": "Used for replication slot state and monitoring fields."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "PG_SR_TRADE_CONNECTION_POOLING_017",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "devops"],
+    "levels": ["senior"],
+    "type": "trade_off",
+    "competencies": ["trade_off_analysis", "system_thinking", "impact_measurement"],
+    "techTags": ["postgresql"],
+    "difficulty": 4,
+    "intent": "Evaluate ability to design PostgreSQL connection management for high-throughput applications and understand pooling trade-offs.",
+    "primaryQuestion": "Your service opens too many PostgreSQL connections under load. How would you design connection pooling, and what trade-offs exist between session and transaction pooling?",
+    "expectedSignals": [
+      "Explains why too many PostgreSQL connections increase memory, scheduling, and contention overhead.",
+      "Uses application pool sizing and external poolers such as PgBouncer where appropriate.",
+      "Distinguishes session pooling from transaction pooling and the impact on session state.",
+      "Mentions prepared statements, temporary tables, LISTEN/NOTIFY, advisory locks, and SET LOCAL/session settings as compatibility concerns.",
+      "Defines metrics such as active connections, wait time, pool saturation, query latency, and error rates."
+    ],
+    "redFlags": [
+      "Only raises max_connections without considering database capacity.",
+      "Uses transaction pooling while relying on session state unknowingly.",
+      "Ignores pool exhaustion and queueing behavior.",
+      "Does not coordinate app pool size across replicas and service instances."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Designs end-to-end pooling with capacity math, pool mode trade-offs, session-state compatibility, and monitoring."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands pooling and max_connections but misses transaction-pooling compatibility or fleet-wide sizing."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows pooling exists but cannot explain mode differences or operational metrics."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is limited to increasing connection limits."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_tradeoff",
+        "question": "What application features can break under transaction pooling?",
+        "purpose": "Check session-state compatibility reasoning."
+      },
+      {
+        "trigger": "missing_metric",
+        "question": "How would you size the pool across 20 service instances?",
+        "purpose": "Probe capacity planning."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Connection pooling trade-offs",
+        "displayQuestion": "Your service opens too many PostgreSQL connections under load. How would you design connection pooling, and what trade-offs exist between session and transaction pooling?",
+        "displayIntent": "Check PostgreSQL connection-capacity and pooling design.",
+        "guidance": [
+          "Ask for fleet-wide connection math.",
+          "Probe session versus transaction pooling compatibility.",
+          "Look for queueing and saturation metrics."
+        ],
+        "commonMistakes": [
+          "Only increasing max_connections.",
+          "Ignoring session state in transaction pooling.",
+          "Sizing each application instance independently without a global budget."
+        ],
+        "labels": { "role": "Backend/DevOps", "level": "Senior", "type": "trade_off" }
+      },
+      "vi": {
+        "title": "Trade-off connection pooling",
+        "displayQuestion": "Service của bạn mở quá nhiều connection PostgreSQL khi tải cao. Bạn sẽ thiết kế connection pooling như thế nào, và trade-off giữa session pooling và transaction pooling là gì?",
+        "displayIntent": "Kiểm tra thiết kế capacity connection và pooling PostgreSQL.",
+        "guidance": [
+          "Hỏi cách tính tổng connection trên toàn fleet.",
+          "Đào sâu compatibility giữa session pooling và transaction pooling.",
+          "Tìm metric về queueing và saturation."
+        ],
+        "commonMistakes": [
+          "Chỉ tăng max_connections.",
+          "Bỏ qua session state khi dùng transaction pooling.",
+          "Size từng instance riêng lẻ mà không có global budget."
+        ],
+        "labels": { "role": "Backend/DevOps", "level": "Senior", "type": "trade_off" }
+      },
+      "ja": {
+        "title": "Connection pooling のトレードオフ",
+        "displayQuestion": "高負荷時にサービスが PostgreSQL connection を開きすぎます。connection pooling をどう設計し、session pooling と transaction pooling のトレードオフは何ですか。",
+        "displayIntent": "PostgreSQL connection capacity と pooling 設計を確認する。",
+        "guidance": [
+          "fleet 全体の connection 数計算を聞く。",
+          "session pooling と transaction pooling の互換性を掘り下げる。",
+          "queueing と saturation の metric を確認する。"
+        ],
+        "commonMistakes": [
+          "max_connections だけを増やす。",
+          "transaction pooling で session state を無視する。",
+          "全体予算なしに instance ごとに pool size を決める。"
+        ],
+        "labels": { "role": "Backend/DevOps", "level": "Senior", "type": "trade_off" }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "PostgreSQL docs: Managing Kernel Resources",
+        "url": "https://www.postgresql.org/docs/current/kernel-resources.html",
+        "note": "Used for server resource considerations around many connections."
+      },
+      {
+        "label": "DataDriven Postgres Interview Questions",
+        "url": "https://datadriven.io/tools/postgres-interview-questions",
+        "note": "Used for common interview focus on connection pooling."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "PG_SR_TRADE_MULTI_TENANT_RLS_018",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "security", "data"],
+    "levels": ["senior"],
+    "type": "trade_off",
+    "competencies": ["trade_off_analysis", "system_thinking", "ownership"],
+    "techTags": ["postgresql", "schema_design", "consistency"],
+    "difficulty": 4,
+    "intent": "Assess senior design reasoning around multi-tenant PostgreSQL schemas, tenant isolation, indexing, and Row Level Security.",
+    "primaryQuestion": "How would you design PostgreSQL data isolation for a multi-tenant SaaS product, and when would you use tenant_id columns, separate schemas/databases, or Row Level Security?",
+    "expectedSignals": [
+      "Compares shared-table tenant_id, schema-per-tenant, and database-per-tenant trade-offs.",
+      "Considers data isolation, operational complexity, migrations, backups, and noisy-neighbor risk.",
+      "Uses composite indexes including tenant_id for tenant-scoped queries.",
+      "Explains Row Level Security policies as defense-in-depth, not a substitute for application authorization.",
+      "Mentions testing policies and preventing bypass through privileged roles or unsafe connection settings."
+    ],
+    "redFlags": [
+      "Only filters by tenant_id in application code with no defense-in-depth.",
+      "Adds RLS without understanding roles, policies, or bypass behavior.",
+      "Ignores migration and backup complexity of separate schemas or databases.",
+      "Forgets tenant_id in indexes on shared tables."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Compares tenant models with operational, security, indexing, migration, and RLS-policy implications."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands tenant_id and RLS basics but misses operational isolation or bypass/testing details."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Suggests a tenant_id column but cannot discuss isolation risks or indexing."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is generic SaaS architecture without PostgreSQL design details."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_tradeoff",
+        "question": "What do you gain and lose by moving from shared tables to database-per-tenant?",
+        "purpose": "Probe operational trade-off reasoning."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "How would you test that an RLS policy cannot leak another tenant's rows?",
+        "purpose": "Check security verification."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Multi-tenant isolation and RLS",
+        "displayQuestion": "How would you design PostgreSQL data isolation for a multi-tenant SaaS product, and when would you use tenant_id columns, separate schemas/databases, or Row Level Security?",
+        "displayIntent": "Check senior multi-tenant PostgreSQL and RLS design.",
+        "guidance": [
+          "Ask for a comparison across tenant models.",
+          "Probe indexing and migration implications.",
+          "Discuss RLS as security defense-in-depth."
+        ],
+        "commonMistakes": [
+          "Relying only on application WHERE clauses.",
+          "Ignoring tenant_id in composite indexes.",
+          "Adding RLS without role and policy testing."
+        ],
+        "labels": { "role": "Backend/Security/Data", "level": "Senior", "type": "trade_off" }
+      },
+      "vi": {
+        "title": "Multi-tenant isolation và RLS",
+        "displayQuestion": "Bạn sẽ thiết kế data isolation trong PostgreSQL cho SaaS multi-tenant như thế nào, và khi nào dùng tenant_id column, schema/database riêng hoặc Row Level Security?",
+        "displayIntent": "Kiểm tra thiết kế senior về PostgreSQL multi-tenant và RLS.",
+        "guidance": [
+          "Yêu cầu so sánh các tenant model.",
+          "Đào sâu ảnh hưởng đến index và migration.",
+          "Thảo luận RLS như defense-in-depth về security."
+        ],
+        "commonMistakes": [
+          "Chỉ dựa vào WHERE clause trong application.",
+          "Quên tenant_id trong composite index.",
+          "Thêm RLS mà không test role và policy."
+        ],
+        "labels": { "role": "Backend/Security/Data", "level": "Senior", "type": "trade_off" }
+      },
+      "ja": {
+        "title": "Multi-tenant isolation と RLS",
+        "displayQuestion": "マルチテナント SaaS の PostgreSQL data isolation をどう設計し、tenant_id カラム、別 schema/database、Row Level Security をいつ使いますか。",
+        "displayIntent": "Senior レベルの PostgreSQL multi-tenant と RLS 設計を確認する。",
+        "guidance": [
+          "tenant model の比較を聞く。",
+          "index と migration への影響を掘り下げる。",
+          "RLS を defense-in-depth として議論する。"
+        ],
+        "commonMistakes": [
+          "application の WHERE 句だけに頼る。",
+          "複合インデックスで tenant_id を忘れる。",
+          "role と policy のテストなしに RLS を追加する。"
+        ],
+        "labels": { "role": "Backend/Security/Data", "level": "Senior", "type": "trade_off" }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "PostgreSQL docs: Row Security Policies",
+        "url": "https://www.postgresql.org/docs/current/ddl-rowsecurity.html",
+        "note": "Used for Row Level Security policy behavior and security design."
+      },
+      {
+        "label": "PostgreSQL docs: Indexes",
+        "url": "https://www.postgresql.org/docs/current/indexes.html",
+        "note": "Used for tenant-scoped indexing trade-offs."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "PG_SR_DEBUG_MIGRATION_LOCKS_019",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "devops"],
+    "levels": ["senior"],
+    "type": "debugging",
+    "competencies": ["problem_solving", "ownership", "impact_measurement", "communication"],
+    "techTags": ["postgresql", "schema_design", "rollback"],
+    "difficulty": 4,
+    "intent": "Assess senior operational judgment for PostgreSQL schema migrations on large production tables.",
+    "primaryQuestion": "A migration that adds a column, backfills data, and creates an index on a large PostgreSQL table is causing lock waits. How would you redesign and safely roll it out?",
+    "expectedSignals": [
+      "Separates metadata change, backfill, constraint validation, and index creation into safe phases.",
+      "Uses CREATE INDEX CONCURRENTLY when appropriate and understands its trade-offs.",
+      "Avoids long transactions and large blocking backfills; batches work with progress tracking.",
+      "Considers NOT VALID constraints followed by VALIDATE CONSTRAINT for large tables where applicable.",
+      "Defines rollback, observability, lock timeout, statement timeout, and deployment coordination."
+    ],
+    "redFlags": [
+      "Runs a large backfill and index creation in one transaction during peak traffic.",
+      "Uses regular CREATE INDEX on a hot table without discussing locks.",
+      "Does not know how to monitor blocking or migration progress.",
+      "Has no rollback or retry plan for partial migration failure."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Designs a phased, observable, low-lock migration with concurrent indexing, batched backfill, validation, and rollback."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands concurrent index and batching but misses constraints, timeouts, or rollback details."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Suggests running the migration off-hours but lacks technical safeguards."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not show production PostgreSQL migration experience."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_tradeoff",
+        "question": "What are the trade-offs of CREATE INDEX CONCURRENTLY compared with regular CREATE INDEX?",
+        "purpose": "Check lock and operational-cost knowledge."
+      },
+      {
+        "trigger": "missing_metric",
+        "question": "What would you monitor during the backfill and index build?",
+        "purpose": "Probe rollout observability."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Safe production migrations",
+        "displayQuestion": "A migration that adds a column, backfills data, and creates an index on a large PostgreSQL table is causing lock waits. How would you redesign and safely roll it out?",
+        "displayIntent": "Check senior PostgreSQL migration and lock-risk management.",
+        "guidance": [
+          "Ask for phased rollout details.",
+          "Probe lock timeout, batching, and concurrent index creation.",
+          "Look for rollback and observability."
+        ],
+        "commonMistakes": [
+          "Putting the whole migration in one long transaction.",
+          "Creating indexes non-concurrently on hot tables.",
+          "Running backfills without progress tracking or throttling."
+        ],
+        "labels": { "role": "Backend/DevOps", "level": "Senior", "type": "debugging" }
+      },
+      "vi": {
+        "title": "Migration production an toàn",
+        "displayQuestion": "Một migration thêm column, backfill data và tạo index trên bảng PostgreSQL lớn đang gây lock wait. Bạn sẽ thiết kế lại và rollout an toàn như thế nào?",
+        "displayIntent": "Kiểm tra kinh nghiệm senior về migration PostgreSQL và quản lý rủi ro lock.",
+        "guidance": [
+          "Hỏi chi tiết rollout theo phase.",
+          "Đào sâu lock timeout, batching và concurrent index creation.",
+          "Tìm rollback và observability."
+        ],
+        "commonMistakes": [
+          "Đặt toàn bộ migration trong một transaction dài.",
+          "Tạo index non-concurrently trên bảng hot.",
+          "Backfill không có progress tracking hoặc throttling."
+        ],
+        "labels": { "role": "Backend/DevOps", "level": "Senior", "type": "debugging" }
+      },
+      "ja": {
+        "title": "安全な本番 migration",
+        "displayQuestion": "大きな PostgreSQL テーブルに column 追加、backfill、index 作成を行う migration が lock wait を起こしています。どう再設計し、安全に rollout しますか。",
+        "displayIntent": "Senior レベルの PostgreSQL migration と lock risk 管理を確認する。",
+        "guidance": [
+          "段階的 rollout の詳細を聞く。",
+          "lock timeout、batching、concurrent index creation を掘り下げる。",
+          "rollback と observability を確認する。"
+        ],
+        "commonMistakes": [
+          "migration 全体を長い transaction に入れる。",
+          "hot table に non-concurrent index を作る。",
+          "progress tracking や throttling なしに backfill する。"
+        ],
+        "labels": { "role": "Backend/DevOps", "level": "Senior", "type": "debugging" }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "PostgreSQL docs: CREATE INDEX",
+        "url": "https://www.postgresql.org/docs/current/sql-createindex.html",
+        "note": "Used for concurrent index creation behavior and index build trade-offs."
+      },
+      {
+        "label": "PostgreSQL docs: Explicit Locking",
+        "url": "https://www.postgresql.org/docs/current/explicit-locking.html",
+        "note": "Used for lock modes and migration lock impact."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "PG_SR_TRADE_CONSISTENCY_PATTERNS_020",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["senior"],
+    "type": "trade_off",
+    "competencies": ["trade_off_analysis", "system_thinking", "ownership", "problem_solving"],
+    "techTags": ["postgresql", "transaction", "consistency", "idempotency", "outbox_pattern"],
+    "difficulty": 4,
+    "intent": "Evaluate senior-level ability to combine PostgreSQL constraints, transactions, locks, idempotency, and outbox-style patterns for correctness under concurrency.",
+    "primaryQuestion": "How would you design a PostgreSQL-backed workflow that creates an order, charges payment asynchronously, and publishes an event without losing consistency under retries and failures?",
+    "expectedSignals": [
+      "Uses a transaction for the local state transition and durable outbox/event record.",
+      "Uses idempotency keys and unique constraints to make retries safe.",
+      "Separates external payment side effects from the database transaction and models state transitions explicitly.",
+      "Discusses row locks, optimistic concurrency, or status preconditions to prevent double processing.",
+      "Plans for outbox polling, exactly-once illusion, at-least-once delivery, and idempotent consumers."
+    ],
+    "redFlags": [
+      "Calls payment provider inside a long database transaction without considering failure modes.",
+      "Publishes events before COMMIT with no recovery strategy.",
+      "Relies on best-effort retries without unique constraints or idempotency.",
+      "Assumes distributed exactly-once delivery without designing for duplicates."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Designs a robust transactional workflow with outbox, idempotency, constraints, state transitions, retries, and duplicate-safe event handling."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands transactions and idempotency but misses outbox recovery or consumer duplicate handling."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can describe the happy path but not failure ordering or retry safety."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is distributed-system terminology without PostgreSQL-backed correctness details."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "What happens if the database commit succeeds but event publishing fails?",
+        "purpose": "Test outbox and recovery reasoning."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "Which unique constraints would you add to make client retries and worker retries safe?",
+        "purpose": "Connect idempotency design to PostgreSQL constraints."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Consistency under retries and events",
+        "displayQuestion": "How would you design a PostgreSQL-backed workflow that creates an order, charges payment asynchronously, and publishes an event without losing consistency under retries and failures?",
+        "displayIntent": "Check senior correctness design with PostgreSQL transactions and idempotency.",
+        "guidance": [
+          "Ask for failure ordering, not only the happy path.",
+          "Probe unique constraints and state transitions.",
+          "Look for outbox-style durability and duplicate-safe consumers."
+        ],
+        "commonMistakes": [
+          "Publishing before commit without recovery.",
+          "Relying on retries without idempotency keys.",
+          "Holding database transactions open during external calls."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Senior", "type": "trade_off" }
+      },
+      "vi": {
+        "title": "Consistency khi retry và phát event",
+        "displayQuestion": "Bạn sẽ thiết kế workflow dựa trên PostgreSQL để tạo order, charge payment bất đồng bộ và publish event mà vẫn giữ consistency khi retry và failure như thế nào?",
+        "displayIntent": "Kiểm tra thiết kế correctness senior với transaction PostgreSQL và idempotency.",
+        "guidance": [
+          "Hỏi thứ tự failure, không chỉ happy path.",
+          "Đào sâu unique constraint và state transition.",
+          "Tìm outbox-style durability và consumer xử lý duplicate an toàn."
+        ],
+        "commonMistakes": [
+          "Publish trước commit mà không có recovery.",
+          "Dựa vào retry nhưng không có idempotency key.",
+          "Giữ transaction database mở khi gọi external service."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Senior", "type": "trade_off" }
+      },
+      "ja": {
+        "title": "Retry と event 下の consistency",
+        "displayQuestion": "PostgreSQL を使い、注文作成、非同期決済、event publish を行う workflow を、retry と failure 下でも consistency を失わないようにどう設計しますか。",
+        "displayIntent": "PostgreSQL transaction と idempotency を使った senior の correctness 設計を確認する。",
+        "guidance": [
+          "happy path だけでなく failure ordering を聞く。",
+          "unique constraint と state transition を掘り下げる。",
+          "outbox-style durability と duplicate-safe consumer を確認する。"
+        ],
+        "commonMistakes": [
+          "recovery なしで commit 前に publish する。",
+          "idempotency key なしに retry に頼る。",
+          "外部呼び出し中に database transaction を開いたままにする。"
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Senior", "type": "trade_off" }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "PostgreSQL docs: Transactions",
+        "url": "https://www.postgresql.org/docs/current/tutorial-transactions.html",
+        "note": "Used for transaction atomicity, commit, rollback, and local consistency."
+      },
+      {
+        "label": "PostgreSQL docs: Constraints",
+        "url": "https://www.postgresql.org/docs/current/ddl-constraints.html",
+        "note": "Used for unique constraints and integrity enforcement in idempotent workflows."
+      }
+    ],
+    "status": "active"
+  }
+]
