@@ -25,15 +25,18 @@ In:
 - Feedback nêu missed signals và gợi ý cải thiện theo câu hỏi đã luyện.
 - Scorecard có evidence quotes hoặc bằng chứng từ câu trả lời thay vì nhận xét chung.
 - CV claim verification đánh dấu claim đã verified, chưa verified hoặc có dấu hiệu inflated khi probe thuộc loại CV deep-dive.
-- Practice feedback language có thể khác question display language.
+- Practice feedback language có thể khác question display language, nhưng nếu user không có hành động chọn practice feedback language thì 2 language phải giống nhau.
 - Scoring output có thể tổng hợp theo probe coverage, role-specific feedback và competency.
 - Candidate thấy trạng thái kết quả: đang xử lý, đã có feedback hoặc xử lý thất bại.
+- Với single-question practice, candidate xem feedback ngay trong trang question detail của probe đã luyện.
 
 Out:
 - Không thay đổi cách chọn probe.
 - Không xây UI nhập text/ghi âm câu trả lời trên detail; phần khởi tạo lượt gửi thuộc `021-question-detail-practice-entry`.
 - Không xây analytics dashboard; scoring data chỉ là input cho analytics feature.
 - Không public toàn bộ rubric nội bộ trước khi candidate trả lời.
+- Không hiển thị raw expected signals, red flags, scoring hints hoặc rubric nội bộ như dữ liệu thô cho candidate; chỉ hiển thị diễn giải feedback phục vụ luyện tập.
+- Không xây trang kết quả riêng cho single-question practice trong feature này.
 - Không dùng scoring để tự động quyết định tuyển dụng thật.
 
 Depends on: `018-question-probe-foundation-taxonomy`, `021-question-detail-practice-entry`, `023-probe-aware-ai-selection-orchestration`
@@ -49,7 +52,7 @@ Blocks: `025-question-bank-analytics-quality-loop`, high-quality AI debrief.
 3. Hệ thống đọc câu trả lời/transcript để tìm bằng chứng candidate đã cover hoặc bỏ lỡ từng signal.
 4. Hệ thống ghi nhận red flags nếu câu trả lời có dấu hiệu như quá chung chung, thiếu metric, đổ lỗi hoặc không hiểu failure mode.
 5. Hệ thống tạo kết quả bằng ngôn ngữ phản hồi candidate đã chọn.
-6. Candidate nhận feedback/scorecard chỉ rõ điểm mạnh, điểm thiếu, evidence và bước cải thiện.
+6. Candidate xem feedback/scorecard ngay trong trang detail của probe đã luyện; kết quả chỉ rõ điểm mạnh, điểm thiếu, evidence và bước cải thiện.
 7. Lượt đánh giá chuyển sang trạng thái đã có feedback; dữ liệu kết quả có thể phục vụ analytics sau này.
 
 ### Edge Cases & Business Rules
@@ -63,13 +66,23 @@ Blocks: `025-question-bank-analytics-quality-loop`, high-quality AI debrief.
 - Nếu câu trả lời quá ngắn hoặc không đủ bằng chứng, kết quả phải nói rõ không đủ dữ liệu để đánh giá đầy đủ thay vì bịa score tự tin.
 - Nếu xử lý feedback thất bại, candidate phải thấy trạng thái thất bại và có thể yêu cầu xử lý lại trên cùng câu trả lời nếu lượt gửi còn hợp lệ.
 
+## UI Boundary
+
+- Với single-question practice, feedback hiển thị trong trang question detail của probe đã luyện, nhưng không bị nhét vào cột nhập câu trả lời nếu khu vực đó hẹp. Trang detail cần có vùng kết quả đủ rộng và nổi bật để candidate đọc scorecard, ví dụ một section feedback trong main content sau khi đã gửi câu trả lời.
+- Trang detail phải thể hiện rõ 3 trạng thái của lượt feedback: đang xử lý, đã có feedback, và xử lý thất bại.
+- Khi feedback đã sẵn sàng, candidate thấy scorecard ở mức luyện tập gồm tổng quan ngắn, signal đã có bằng chứng, signal còn thiếu hoặc chưa rõ, evidence quote từ câu trả lời/transcript, red flag đã diễn giải cho user nếu có, và gợi ý cải thiện cụ thể.
+- Candidate không thấy raw rubric nội bộ như expected signals, red flags, scoring hints, prompt scoring hoặc tiêu chí chấm thô; các dữ liệu này chỉ được dùng để tạo feedback user-facing.
+- Nếu feedback thất bại, UI cho candidate retry xử lý feedback trên cùng câu trả lời còn hợp lệ, không bắt gửi lại câu trả lời mới.
+- Với session/mock interview nhiều probe, scorecard theo probe có thể được dùng làm input cho debrief sau này; feature này không chốt trải nghiệm debrief tổng hợp.
+
 ## Acceptance Criteria
 
 - Given candidate trả lời một probe có expected signals về context, personal contribution và outcome, When scoring chạy, Then feedback chỉ rõ signal nào đã có evidence và signal nào còn thiếu.
 - Given candidate gửi câu trả lời từ detail của một probe active, When hệ thống xử lý xong, Then candidate nhận kết quả bám đúng probe đó thay vì feedback chung chung không liên quan câu hỏi.
 - Given transcript không có metric nhưng probe yêu cầu impact measurement, When feedback được tạo, Then candidate được nhắc rằng impact chưa đủ đo được và cần bổ sung baseline/kết quả.
 - Given candidate luyện câu hỏi tiếng Việt nhưng chọn feedback tiếng Anh, When scorecard hiển thị, Then feedback được trả bằng tiếng Anh trong khi vẫn bám đúng probe đã luyện.
-- Given một CV claim được hỏi follow-up nhưng candidate trả lời chung chung, When scoring đánh giá claim, Then claim được đánh dấu chưa verified thay vì verified.
+- Given candidate gửi câu trả lời từ single-question practice trên trang detail, When feedback đã sẵn sàng, Then candidate xem scorecard ngay trong trang detail đó gồm tổng quan, signal coverage, evidence quote và gợi ý cải thiện.
+- Given scoring dùng expected signals, red flags và scoring hints nội bộ, When feedback hiển thị cho candidate, Then candidate chỉ thấy diễn giải user-facing và không thấy raw rubric hoặc scoring hints nội bộ.
 - Given xử lý feedback gặp lỗi tạm thời, When candidate xem kết quả lượt luyện, Then candidate thấy trạng thái lỗi và có thể yêu cầu xử lý lại mà không cần gửi một câu trả lời mới.
 
 ## Risk

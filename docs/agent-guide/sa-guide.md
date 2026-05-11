@@ -126,6 +126,12 @@ Không cần options analysis cho quyết định hiển nhiên đã có precede
 **Chọn: Option X** — vì [lý do cụ thể liên quan đến constraint của project]
 ```
 
+**Không để Dev tự chọn architecture boundary:**
+- Nếu trong HOW.md xuất hiện lựa chọn kiểu `A hoặc B`, `polling hoặc SSE`, `endpoint hoặc refresh`, `queue mới hoặc queue hiện có`, `DB hoặc Redis`, thì SA phải phân tích ngắn gọn điểm mạnh, yếu của từng option sau đó biến nó thành một `Decision` riêng đồng thời nêu lý do lựa chọn.
+- Phần `Con` của option không được để ambiguity chưa giải quyết. Ví dụ sai: "Con: cần status/result endpoint hoặc polling ở FE." Ví dụ đúng: "Con: cần status/result endpoint và FE polling theo interval ngắn."
+- `Contracts`, `Data & State`, `System Boundaries`, `UX Boundary` phải mô tả hướng đã chọn, không mô tả nhiều hướng thay thế ngang hàng.
+- Dev chỉ tự xác định file/function/component cụ thể; Dev không phải tự quyết transport, storage, queue, status delivery, ownership boundary hoặc lifecycle state nếu SA đã xác định đó là decision quan trọng.
+
 ---
 
 ## 5. Stability & Quality Attributes
@@ -235,6 +241,7 @@ Trước khi báo HOW.md done, tự kiểm tra:
 - [ ] HOW.md trace được về WHAT/WHY/SCOPE trong BA.md.
 - [ ] Không có checklist file-by-file hoặc pseudo-code chi tiết thay Dev.
 - [ ] Decision quan trọng có options analysis hoặc ghi rõ follow existing pattern.
+- [ ] Không còn lựa chọn mơ hồ kiểu `A hoặc B` ở architecture boundary/contract/UX; nếu có trade-off thì HOW.md đã chốt một hướng.
 - [ ] System boundaries/source of truth rõ ràng.
 - [ ] Contract public boundary đủ để BE/FE không hiểu lệch.
 - [ ] Data/state lifecycle và consistency/idempotency concern đã nêu nếu có.

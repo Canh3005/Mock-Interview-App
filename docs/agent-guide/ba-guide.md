@@ -124,7 +124,36 @@ BA phải làm rõ **WHY** và **WHAT** trước khi đi vào flow: vấn đề 
 
 ---
 
-## 5. Acceptance Criteria — BẮT BUỘC
+## 5. UI Boundary — BẮT BUỘC KHI FEATURE CÓ UI/UX
+
+Nếu feature có bất kỳ phần nào người dùng nhìn thấy hoặc thao tác qua UI, BA.md phải có mục `## UI Boundary`. Áp dụng cả với:
+- Luồng nhập/sửa dữ liệu.
+- Màn kết quả chỉ đọc như scorecard, feedback, báo cáo, debrief, analytics summary.
+- Trạng thái loading/error/empty/success mà người dùng nhìn thấy.
+
+Mục này mô tả ranh giới trải nghiệm sản phẩm, không mô tả component, file, state store, API hay thư viện.
+
+BA phải làm rõ:
+- User nhìn thấy kết quả ở đâu trong flow: cùng màn hiện tại, modal, detail page, list row, report page, debrief page, v.v.
+- Các trạng thái UI chính: chưa có dữ liệu, đang xử lý, thành công, thất bại, không đủ quyền, dữ liệu rỗng hoặc dữ liệu không đủ để kết luận.
+- Nội dung nào phải hiển thị để user hoàn thành mục tiêu nghiệp vụ.
+- Nội dung nào không được hiển thị vì thuộc rubric nội bộ, dữ liệu nhạy cảm, implementation detail, hoặc scope feature khác.
+- Action tiếp theo mà user có thể làm: retry, sửa lại, gửi lại, quay về danh sách, mở chi tiết, bắt đầu bước tiếp theo.
+
+Ví dụ tốt:
+- "Feedback hiển thị trong trang question detail ngay dưới câu trả lời đã gửi; user thấy trạng thái đang xử lý, feedback sẵn sàng hoặc xử lý thất bại."
+- "Candidate thấy signal coverage đã diễn giải, evidence quote và gợi ý cải thiện; không thấy raw rubric/scoring hints nội bộ."
+
+Ví dụ xấu:
+- "UI hiển thị response từ API."
+- "Dùng component ScoreCard để render data."
+- "Frontend gọi endpoint X rồi set state Y."
+
+Nếu feature không có UI/UX hoặc user-visible output, có thể bỏ mục này.
+
+---
+
+## 6. Acceptance Criteria — BẮT BUỘC
 
 Mỗi story ít nhất **2 acceptance criteria** theo format:
 
@@ -141,7 +170,7 @@ Acceptance criteria phải phản ánh **business outcome**, không phải techn
 
 ---
 
-## 6. Dependency Detection
+## 7. Dependency Detection
 
 Kiểm tra trước khi viết SCOPE:
 
@@ -151,7 +180,7 @@ Kiểm tra trước khi viết SCOPE:
 
 ---
 
-## 7. Risk Flag
+## 8. Risk Flag
 
 Flag **HIGH** nếu có ít nhất 1 trong:
 - Luồng AI với output không deterministic ảnh hưởng trực tiếp đến trải nghiệm candidate
@@ -164,7 +193,7 @@ Khi HIGH: thêm section `## Risk` — mô tả impact từ góc nhìn user nếu
 
 ---
 
-## 8. BA Handoff Quality Gate
+## 9. BA Handoff Quality Gate
 
 Trước khi báo BA.md done, tự kiểm tra:
 
@@ -173,6 +202,7 @@ Trước khi báo BA.md done, tự kiểm tra:
 - [ ] SCOPE có In/Out/Depends on/Blocks rõ ràng.
 - [ ] Business Flow có happy path, edge cases, business rules.
 - [ ] Các bước nhập/sửa dữ liệu có expectation production rõ ràng; không để Dev tự suy ra bằng JSON/raw payload editor.
+- [ ] Nếu feature có UI/UX hoặc user-visible output, có `## UI Boundary` mô tả user thấy gì, thấy ở đâu, các trạng thái chính, nội dung không được expose, và action tiếp theo.
 - [ ] Acceptance Criteria đo được business outcome.
 - [ ] Nếu input là overview/plan dài, đã tách thành các feature slice độc lập thay vì viết một BA.md quá rộng.
 - [ ] Không có file estimate, endpoint, DTO, migration, component, hoặc implementation instruction.
@@ -180,7 +210,7 @@ Trước khi báo BA.md done, tự kiểm tra:
 
 ---
 
-## 9. BA.md Output Format
+## 10. BA.md Output Format
 
 ```
 ## WHAT
@@ -205,6 +235,9 @@ Blocks: [feature/story bị block nếu story này chưa done — hoặc "none"]
 
 ### Edge Cases & Business Rules
 [Boundary conditions, fallback behavior từ góc nhìn user, constraints]
+
+## UI Boundary
+[Chỉ thêm khi feature có UI/UX hoặc user-visible output: user thấy gì, ở đâu, trạng thái chính, không expose gì, action tiếp theo]
 
 ## Acceptance Criteria
 - Given ... When ... Then ...
