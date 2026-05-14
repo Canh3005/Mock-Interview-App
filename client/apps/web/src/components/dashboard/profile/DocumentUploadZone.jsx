@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { uploadDocumentRequest, resetPollingState } from '../../../store/slices/profileSlice';
 import { UploadCloud, FileText, CheckCircle, XCircle, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import FitAssessmentSummary from './FitAssessmentSummary';
 
 export default function DocumentUploadZone() {
   const dispatch = useDispatch();
@@ -11,6 +12,8 @@ export default function DocumentUploadZone() {
   const [dragActive, setDragActive] = useState(false);
   const [uploadType, setUploadType] = useState('CV'); // 'CV' or 'JD'
   const inputRef = useRef(null);
+  const hasFitScore =
+    pollingResult?.fitScore !== null && pollingResult?.fitScore !== undefined;
 
   const handleDrag = (e) => {
     e.preventDefault();
@@ -138,7 +141,7 @@ export default function DocumentUploadZone() {
              </p>
            )}
 
-           {pollingResult.type === 'JD' && pollingResult.fitScore && (
+           {pollingResult.type === 'JD' && hasFitScore && (
              <div className="mt-4 space-y-4">
                <div>
                   <h4 className="text-white font-medium mb-1">Fit Score Requirement</h4>
@@ -151,26 +154,16 @@ export default function DocumentUploadZone() {
                   <p className="text-end text-sm text-cta font-bold mt-1">{pollingResult.fitScore}% Match</p>
                </div>
                
-               {/* Gap Analysis */}
-               {pollingResult.gapAnalysis && (
-                  <div className="bg-slate-900/50 rounded-lg p-3 border border-slate-700">
-                     <h4 className="text-sm font-semibold text-slate-300 mb-2">Missing Skills</h4>
-                     <div className="flex flex-wrap gap-2 mb-3">
-                       {pollingResult.gapAnalysis.missing_skills?.map((skill, i) => (
-                         <span key={i} className="text-xs bg-red-900/30 text-red-400 border border-red-800/50 px-2 py-1 rounded">
-                           {skill}
-                         </span>
-                       ))}
-                     </div>
-                     <h4 className="text-sm font-semibold text-slate-300 mb-2">Suggestions for Improvement</h4>
-                     <ul className="list-disc pl-5 text-sm text-slate-400 space-y-1">
-                       {pollingResult.gapAnalysis.suggestions?.map((sug, i) => (
-                         <li key={i}>{sug}</li>
-                       ))}
-                     </ul>
-                  </div>
-               )}
+               <FitAssessmentSummary summary={pollingResult.fitAssessmentSummary} />
              </div>
+           )}
+
+           {pollingResult.type === 'JD' && !hasFitScore && (
+             <p className="text-slate-300 text-sm">
+               {pollingResult.missingSources?.includes('cv_context')
+                 ? 'Your JD has been processed. Upload a CV to generate the fit breakdown for this role.'
+                 : 'Your JD has been processed, but the fit breakdown could not be generated yet. Please try again later.'}
+             </p>
            )}
         </div>
       )}

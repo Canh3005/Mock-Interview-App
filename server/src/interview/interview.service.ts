@@ -1,9 +1,7 @@
 import { Injectable, Logger, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ConfigService } from '@nestjs/config';
 import { WalletService } from '../wallet/wallet.service';
-import Redis from 'ioredis';
 import {
   InterviewSession,
   CandidateLevel,
@@ -15,6 +13,7 @@ import { SDSession } from '../sd-session/entities/sd-session.entity';
 import { InitSessionDto } from './dto/init-session.dto';
 import { UpdateContextDto } from './dto/update-context.dto';
 import { CvJson, JdJson } from '../documents/documents.ai.service';
+import { DocumentContextService } from '../documents/document-context.service';
 
 const STAGE_NAMES: Record<number, string> = {
   1: 'Culture Fit',
@@ -45,7 +44,6 @@ const LOW_BALANCE_THRESHOLD = 5;
 @Injectable()
 export class InterviewService {
   private readonly logger = new Logger(InterviewService.name);
-  private redisClient: Redis;
 
   constructor(
     @InjectRepository(InterviewSession)
@@ -58,14 +56,9 @@ export class InterviewService {
     private liveCodingSessionProblemRepo: Repository<LiveCodingSessionProblem>,
     @InjectRepository(SDSession)
     private sdSessionRepo: Repository<SDSession>,
-    private configService: ConfigService,
     private walletService: WalletService,
-  ) {
-    this.redisClient = new Redis({
-      host: this.configService.get('REDIS_HOST') || '127.0.0.1',
-      port: this.configService.get('REDIS_PORT') || 6379,
-    });
-  }
+    private documentContextService: DocumentContextService,
+  ) {}
 
   async getAllSessionsForInterview(interviewSessionId: string) {
     const interviewSession = await this.sessionRepo.findOne({
@@ -116,33 +109,25 @@ export class InterviewService {
   }
 
   async preflight(userId: string) {
-    const [rawCv, rawJd] = await Promise.all([
-      this.redisClient.get(`cv_context:${userId}`),
-      this.redisClient.get(`jd_context:${userId}`),
-    ]);
-    console.log(`Preflight check for user ${userId}:`);
-    console.log('Preflight check - CV context:', rawCv ? 'FOUND' : 'MISSING');
-    console.log('Preflight check - JD context:', rawJd ? 'FOUND' : 'MISSING');
-    const missing: string[] = [];
-    if (!rawCv) missing.push('cv_context');
-    if (!rawJd) missing.push('jd_context');
+    const context =
+      await this.documentContextService.getInterviewContext(userId);
+    this.logger.log(
+      `Preflight check userId=${userId} missing=${context.missing.join(',') || 'none'} cvSource=${context.sources.cv} jdSource=${context.sources.jd}`,
+    );
 
-    if (missing.length > 0) {
-      return { ready: false, missing };
+    if (context.missing.length > 0 || !context.cv || !context.jd) {
+      return { ready: false, missing: context.missing };
     }
 
-    const cvJson = JSON.parse(rawCv!) as CvJson;
-    const jdJson = JSON.parse(rawJd!) as JdJson;
-
-    const cvSnippet = this.buildCvSnippet(cvJson);
-    const jdSnippet = this.buildJdSnippet(jdJson);
+    const cvSnippet = this.buildCvSnippet(context.cv);
+    const jdSnippet = this.buildJdSnippet(context.jd);
 
     return {
       ready: true,
       missing: [],
       summary: { cvSnippet, jdSnippet },
-      cv: cvJson,
-      jd: jdJson,
+      cv: context.cv,
+      jd: context.jd,
     };
   }
 
@@ -156,19 +141,19 @@ export class InterviewService {
     newBalance: number | null;
     lowBalance: boolean;
   }> {
-    const [rawCv, rawJd] = await Promise.all([
-      this.redisClient.get(`cv_context:${userId}`),
-      this.redisClient.get(`jd_context:${userId}`),
-    ]);
+    const context =
+      await this.documentContextService.getInterviewContext(userId);
 
-    if (!rawCv || !rawJd) {
+    if (context.missing.length > 0 || !context.cv || !context.jd) {
       throw new BadRequestException(
         'CV and JD context are required to start an interview session.',
       );
     }
 
-    const cvJson = JSON.parse(rawCv) as CvJson;
-    const jdJson = JSON.parse(rawJd) as JdJson;
+    const cvJson = context.cv;
+    const jdJson = context.jd;
+    const rawCv = JSON.stringify(cvJson);
+    const rawJd = JSON.stringify(jdJson);
 
     // BE determines level (FE may suggest but BE validates/overrides if needed)
     const candidateLevel: CandidateLevel =
@@ -223,14 +208,7 @@ export class InterviewService {
     userId: string,
     dto: UpdateContextDto,
   ): Promise<{ updated: boolean }> {
-    const pipeline = this.redisClient.pipeline();
-    if (dto.cv) {
-      pipeline.set(`cv_context:${userId}`, JSON.stringify(dto.cv));
-    }
-    if (dto.jd) {
-      pipeline.set(`jd_context:${userId}`, JSON.stringify(dto.jd));
-    }
-    await pipeline.exec();
+    await this.documentContextService.saveContextOverride(userId, dto);
     return { updated: true };
   }
 
@@ -282,18 +260,26 @@ export class InterviewService {
     cvJson: CvJson,
     jdJson: JdJson,
   ): CandidateLevel {
-    const totalMonths = (cvJson.experiences ?? []).reduce(
-      (sum, exp) => sum + this.parseDurationToMonths(exp.duration),
-      0,
-    );
-    const years = totalMonths / 12;
-
-    // Weight JD minimum_experience_years if available
     const jdMinYears = jdJson.minimum_experience_years ?? 0;
 
-    // Use the higher of the two signals (CV actual vs JD expected)
-    const effectiveYears = Math.max(years, jdMinYears * 0.8);
+    // New schema: totalYearsExperience computed by normalizeCvJson
+    let cvYears = cvJson.totalYearsExperience;
 
+    // Backward compat: old DB records have experiences[].duration
+    if (cvYears == null) {
+      const legacy = (cvJson as any).experiences as
+        | Array<{ duration: string }>
+        | undefined;
+      if (legacy?.length) {
+        cvYears =
+          legacy.reduce(
+            (sum, exp) => sum + this.parseDurationToMonths(exp.duration ?? ''),
+            0,
+          ) / 12;
+      }
+    }
+
+    const effectiveYears = Math.max(cvYears ?? 0, jdMinYears * 0.8);
     if (effectiveYears < 2) return 'junior';
     if (effectiveYears < 5) return 'mid';
     return 'senior';
@@ -301,17 +287,12 @@ export class InterviewService {
 
   private parseDurationToMonths(duration: string): number {
     if (!duration) return 0;
-
-    // "2 years", "2 năm", "1 year 6 months"
     const yearMatch = duration.match(/(\d+)\s*(?:year|yr|năm)/i);
     const monthMatch = duration.match(/(\d+)\s*(?:month|tháng)/i);
-
     let months = 0;
     if (yearMatch) months += parseInt(yearMatch[1]) * 12;
     if (monthMatch) months += parseInt(monthMatch[1]);
     if (months > 0) return months;
-
-    // "Jan 2020 – Dec 2022" or "2020 - 2023" or "2021 - present"
     const rangeMatch = duration.match(
       /(\d{4})\s*[-–]\s*(\d{4}|present|now|hiện\s*tại)/i,
     );
@@ -322,21 +303,22 @@ export class InterviewService {
         : new Date().getFullYear();
       return Math.max(0, (end - start) * 12);
     }
-
     return 0;
   }
 
   private buildCvSnippet(cv: CvJson): string {
-    const firstRole = cv.experiences?.[0];
-    const roleText = firstRole
-      ? `${firstRole.role} tại ${firstRole.company}`
+    const legacy = cv as any;
+    const firstExp = cv.experience?.[0] ?? legacy.experiences?.[0];
+    const roleText = firstExp
+      ? `${String((firstExp as any).title ?? (firstExp as any).role ?? '')} tại ${String((firstExp as any).company ?? '')}`
       : '';
-    const skillsText = [
-      ...(cv.skills?.languages ?? []),
-      ...(cv.skills?.frameworks ?? []),
-    ]
-      .slice(0, 5)
-      .join(', ');
+    const skills: string[] = Array.isArray(cv.skills)
+      ? cv.skills
+      : [
+          ...(legacy.skills?.languages ?? []),
+          ...(legacy.skills?.frameworks ?? []),
+        ];
+    const skillsText = skills.slice(0, 5).join(', ');
     return (
       [roleText, skillsText].filter(Boolean).join(' • ') || 'CV đã được tải lên'
     );

@@ -33,6 +33,12 @@ export class UserProfile {
   @Column({ type: 'jsonb', nullable: true })
   techStack: string[];
 
+  @Column({ type: 'jsonb', nullable: true })
+  education: any[];
+
+  @Column({ type: 'jsonb', nullable: true })
+  languages: any[];
+
   // Radar chart metrics (1-100)
   @Column({ type: 'int', default: 0 })
   systemDesignScore: number;

@@ -17,6 +17,9 @@ export default function StaticProfileForm({ profileData }) {
 
   const [tagInput, setTagInput] = useState('');
 
+  const education = profileData?.education || [];
+  const languages = profileData?.languages || [];
+
   useEffect(() => {
     if (profileData) {
       setFormData({
@@ -143,6 +146,37 @@ export default function StaticProfileForm({ profileData }) {
           </button>
         </div>
       </div>
+
+      {education.length > 0 && (
+        <div className="space-y-1">
+          <label className="text-sm font-medium text-slate-300">Education</label>
+          <div className="space-y-2">
+            {education.map((edu, i) => (
+              <div key={i} className="bg-slate-900/50 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-slate-300">
+                <span className="text-white font-medium">{edu.institution}</span>
+                {edu.degree && <span className="text-slate-400"> — {edu.degree}{edu.field ? `, ${edu.field}` : ''}</span>}
+                {edu.gpa && <span className="ml-2 text-cta text-xs font-semibold">GPA {edu.gpa}</span>}
+                {edu.graduationYear && <span className="ml-2 text-slate-500 text-xs">{edu.graduationYear}</span>}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {languages.length > 0 && (
+        <div className="space-y-1">
+          <label className="text-sm font-medium text-slate-300">Languages</label>
+          <div className="flex flex-wrap gap-2">
+            {languages.map((lang, i) => (
+              <span key={i} className="inline-flex items-center gap-1.5 bg-slate-900/50 border border-slate-700 px-3 py-1.5 rounded-lg text-sm text-slate-300">
+                <span className="text-white font-medium">{lang.language}</span>
+                <span className="text-slate-500">·</span>
+                <span className="text-slate-400">{lang.proficiency}</span>
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="space-y-1">
         <label className="text-sm font-medium text-slate-300">Experience (Raw JSON from CV)</label>

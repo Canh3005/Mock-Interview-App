@@ -15,7 +15,10 @@ export class WalletController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get current user wallet balance' })
   async getMyBalance(@Req() req: JwtAuthRequest): Promise<WalletResponseDto> {
-    const balance: number = await this.walletService.getBalance(req.user.id, req.user.email);
+    const balance: number = await this.walletService.getBalance(
+      req.user.id,
+      req.user.email,
+    );
     return { balance };
   }
 }

@@ -80,7 +80,10 @@ describe('InterviewSetCurationService', () => {
   });
 
   it('publishes a set with valid slot rules', async () => {
-    const interviewSet = createMockInterviewSet({ status: 'draft', revision: 1 });
+    const interviewSet = createMockInterviewSet({
+      status: 'draft',
+      revision: 1,
+    });
     interviewSetRepository.findOne.mockResolvedValue(interviewSet);
 
     const result = await service.publish({
@@ -109,7 +112,10 @@ describe('InterviewSetCurationService', () => {
 
   it('rejects publish when referenced probes are not all active', async () => {
     interviewSetRepository.findOne.mockResolvedValue(
-      createMockInterviewSet({ probeIds: ['probe-1', 'probe-2'], slotRules: [] }),
+      createMockInterviewSet({
+        probeIds: ['probe-1', 'probe-2'],
+        slotRules: [],
+      }),
     );
     probeRepository.find.mockResolvedValue([{ id: 'probe-1' }]);
 
@@ -126,7 +132,10 @@ describe('InterviewSetCurationService', () => {
       service.retire({ id: 'set-1', actorId: 'admin-2', reason: '' }),
     ).rejects.toBeInstanceOf(BadRequestException);
 
-    const interviewSet = createMockInterviewSet({ status: 'active', revision: 2 });
+    const interviewSet = createMockInterviewSet({
+      status: 'active',
+      revision: 2,
+    });
     interviewSetRepository.findOne.mockResolvedValue(interviewSet);
 
     const result = await service.retire({

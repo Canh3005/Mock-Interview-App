@@ -30,6 +30,15 @@ export class UserCv {
   @Column({ type: 'jsonb', nullable: true })
   parsedJson: any;
 
+  @Column({ type: 'varchar', length: 20, default: 'completed' })
+  processingStatus: 'processing' | 'completed' | 'failed';
+
+  @Column({ type: 'text', nullable: true })
+  parseError: string | null;
+
+  @Column({ type: 'varchar', nullable: true })
+  parsedTextHash: string | null;
+
   @CreateDateColumn()
   createdAt: Date;
 

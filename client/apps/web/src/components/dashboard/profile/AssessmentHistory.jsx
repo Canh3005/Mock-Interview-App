@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchAssessmentHistoryRequest, deleteAssessmentRequest } from '../../../store/slices/profileSlice';
 import { History, FileText, Loader2, Trash2 } from 'lucide-react';
+import FitAssessmentSummary from './FitAssessmentSummary';
 
 function ScoreBar({ score }) {
   const color =
@@ -88,35 +89,14 @@ export default function AssessmentHistory() {
 
               <ScoreBar score={item.fitScore} />
 
-              {item.matchReport && (
+              {item.fitAssessmentSummary && (
                 <details className="mt-3 group">
                   <summary className="text-xs text-slate-400 cursor-pointer hover:text-slate-200 select-none list-none flex items-center gap-1">
                     <span className="group-open:hidden">▶ Show details</span>
                     <span className="hidden group-open:inline">▼ Hide details</span>
                   </summary>
-                  <div className="mt-3 space-y-3">
-                    {item.matchReport.missing_skills?.length > 0 && (
-                      <div>
-                        <p className="text-xs font-semibold text-slate-400 mb-1">Missing Skills</p>
-                        <div className="flex flex-wrap gap-1.5">
-                          {item.matchReport.missing_skills.map((skill, i) => (
-                            <span key={i} className="text-xs bg-red-900/30 text-red-400 border border-red-800/50 px-2 py-0.5 rounded">
-                              {skill}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                    {item.matchReport.suggestions?.length > 0 && (
-                      <div>
-                        <p className="text-xs font-semibold text-slate-400 mb-1">Suggestions</p>
-                        <ul className="list-disc pl-4 space-y-1">
-                          {item.matchReport.suggestions.map((s, i) => (
-                            <li key={i} className="text-xs text-slate-400">{s}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
+                  <div className="mt-3">
+                    <FitAssessmentSummary summary={item.fitAssessmentSummary} />
                   </div>
                 </details>
               )}

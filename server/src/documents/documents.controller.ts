@@ -29,7 +29,7 @@ import { diskStorage } from 'multer';
 import { extname } from 'path';
 
 const MAX_DOCUMENT_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-
+// to do: use cloud storage in production and remove local file after processing
 export const documentStorage = {
   storage: diskStorage({
     destination: './uploads',

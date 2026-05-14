@@ -44,22 +44,24 @@ describe('QuestionPracticeAttemptService', () => {
       },
     });
     probeRepository.findOne.mockResolvedValue(probe);
-    attemptRepository.findOne.mockResolvedValueOnce(null).mockResolvedValueOnce({
-      id: 'attempt-1',
-      candidateId: 'candidate-1',
-      probeId: 'probe-submit',
-      clientSubmissionId: 'draft-1',
-      answerInputType: 'text',
-      answerText: 'My answer',
-      displayLocale: 'vi',
-      resolvedQuestionLocale: 'vi',
-      feedbackLocale: 'en',
-      status: 'pending_feedback',
-      submittedAt: new Date('2026-05-10T00:00:00.000Z'),
-      probeSnapshot: {},
-      createdAt: new Date('2026-05-10T00:00:00.000Z'),
-      updatedAt: new Date('2026-05-10T00:00:00.000Z'),
-    });
+    attemptRepository.findOne
+      .mockResolvedValueOnce(null)
+      .mockResolvedValueOnce({
+        id: 'attempt-1',
+        candidateId: 'candidate-1',
+        probeId: 'probe-submit',
+        clientSubmissionId: 'draft-1',
+        answerInputType: 'text',
+        answerText: 'My answer',
+        displayLocale: 'vi',
+        resolvedQuestionLocale: 'vi',
+        feedbackLocale: 'en',
+        status: 'pending_feedback',
+        submittedAt: new Date('2026-05-10T00:00:00.000Z'),
+        probeSnapshot: {},
+        createdAt: new Date('2026-05-10T00:00:00.000Z'),
+        updatedAt: new Date('2026-05-10T00:00:00.000Z'),
+      });
 
     const created = await service.submitPracticeAttempt({
       candidateId: 'candidate-1',

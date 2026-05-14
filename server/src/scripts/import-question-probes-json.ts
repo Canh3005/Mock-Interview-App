@@ -53,7 +53,8 @@ function loadProbes(filePath: string): QuestionProbeJsonSeed[] {
 }
 
 async function importProbes(filePath: string): Promise<void> {
-  const repo: Repository<QuestionProbe> = dataSource.getRepository(QuestionProbe);
+  const repo: Repository<QuestionProbe> =
+    dataSource.getRepository(QuestionProbe);
   const probes = loadProbes(filePath);
   const importSource = `json:${path.basename(filePath)}`;
   let created = 0;

@@ -43,9 +43,7 @@ export async function createQuestionBankE2eContext(): Promise<QuestionBankE2eCon
         ],
         synchronize: true,
         ssl:
-          process.env.DB_SSL === 'true'
-            ? { rejectUnauthorized: false }
-            : false,
+          process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
       }),
       QuestionBankModule,
     ],

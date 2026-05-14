@@ -8,11 +8,11 @@ import { DocumentsService } from '../../documents/documents.service';
 
 interface DocumentJobData {
   userId: string;
+  recordId: string;
   filePath: string;
   originalName: string;
   mimeType: string;
   type: DocumentUploadType;
-  extractedText?: string;
 }
 
 @Processor(DOCUMENT_PARSING_QUEUE)
@@ -31,28 +31,31 @@ export class DocumentWorker extends WorkerHost {
       `Processing job ${job.id} of type ${job.name} (Data Type: ${job.data.type})`,
     );
 
-    const { userId, filePath, originalName, mimeType, extractedText } =
-      job.data;
+    const { userId, recordId, filePath, originalName, mimeType } = job.data;
 
-    switch (job.name as DocumentJobName) {
-      case DocumentJobName.PARSE_CV:
-        return this.documentsService.parseCv(
-          userId,
-          filePath,
-          originalName,
-          mimeType,
-          extractedText,
-        );
-      case DocumentJobName.PARSE_JD:
-        return this.documentsService.parseJd(
-          userId,
-          filePath,
-          originalName,
-          mimeType,
-          extractedText,
-        );
-      default:
-        throw new Error(`Unknown job name: ${job.name}`);
+    try {
+      switch (job.name as DocumentJobName) {
+        case DocumentJobName.PARSE_CV:
+          return await this.documentsService.parseCv(
+            userId,
+            recordId,
+            filePath,
+            originalName,
+            mimeType,
+          );
+        case DocumentJobName.PARSE_JD:
+          return await this.documentsService.parseJd(
+            userId,
+            recordId,
+            filePath,
+            originalName,
+            mimeType,
+          );
+        default:
+          throw new Error(`Unknown job name: ${job.name}`);
+      }
+    } finally {
+      await this.documentsService.cleanupUploadedFile(filePath);
     }
   }
 }

@@ -133,7 +133,8 @@ export class QuestionBankRelatedService {
       return leftDifficultyDistance - rightDifficultyDistance;
     }
     const leftPublishedAt: number = left.candidate.publishedAt?.getTime() ?? 0;
-    const rightPublishedAt: number = right.candidate.publishedAt?.getTime() ?? 0;
+    const rightPublishedAt: number =
+      right.candidate.publishedAt?.getTime() ?? 0;
     if (leftPublishedAt !== rightPublishedAt) {
       return rightPublishedAt - leftPublishedAt;
     }
@@ -151,8 +152,10 @@ export class QuestionBankRelatedService {
   }): number {
     let score = 0;
     if (source.type && candidate.type === source.type) score += 5;
-    score += this._overlapCount(source.competencies, candidate.competencies) * 4;
-    score += this._overlapCount(source.roleFamilies, candidate.roleFamilies) * 3;
+    score +=
+      this._overlapCount(source.competencies, candidate.competencies) * 4;
+    score +=
+      this._overlapCount(source.roleFamilies, candidate.roleFamilies) * 3;
     score += this._overlapCount(source.levels, candidate.levels) * 2;
     score += this._overlapCount(source.techTags, candidate.techTags) * 2;
     const distance: number = this._difficultyDistance({ source, candidate });

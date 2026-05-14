@@ -180,7 +180,9 @@ describe('Question Bank Interview Sets (e2e)', () => {
       .expect(201);
 
     await request(app.getHttpServer())
-      .post(`/admin/question-bank/interview-sets/${createResponse.body.id}/publish`)
+      .post(
+        `/admin/question-bank/interview-sets/${createResponse.body.id}/publish`,
+      )
       .set('Authorization', `Bearer ${adminToken}`)
       .send({})
       .expect(400);
@@ -189,7 +191,9 @@ describe('Question Bank Interview Sets (e2e)', () => {
     await probeRepository.save(inactiveProbe);
 
     await request(app.getHttpServer())
-      .post(`/admin/question-bank/interview-sets/${createResponse.body.id}/publish`)
+      .post(
+        `/admin/question-bank/interview-sets/${createResponse.body.id}/publish`,
+      )
       .set('Authorization', `Bearer ${adminToken}`)
       .send({})
       .expect(201)

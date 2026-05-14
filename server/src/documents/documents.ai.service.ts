@@ -1,25 +1,57 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Type, Schema } from '@google/genai';
-import { GeminiService } from '../ai/gemini.service';
+import { GroqService } from '../ai/groq.service';
 import { DocumentUploadType } from './enums/document-upload-type.enum.js';
+import {
+  FitRubricEvaluation,
+  NormalizedJdRequirement,
+} from './types/fit-assessment.types';
+
+export const DOCUMENT_FIT_ASSESSMENT_MODEL = 'llama-3.3-70b-versatile';
+
+export type Seniority =
+  | 'intern'
+  | 'junior'
+  | 'mid'
+  | 'senior'
+  | 'lead'
+  | 'staff'
+  | 'manager'
+  | 'unknown';
+
+export interface CvExperience {
+  company: string;
+  title: string;
+  startDate?: string;
+  endDate?: string;
+  responsibilities: string[];
+  achievements?: string[];
+  techStack?: string[];
+}
+
+export interface CvEducation {
+  institution: string;
+  degree?: string;
+  field?: string;
+  graduationYear?: number;
+  gpa?: string;
+}
+
+export interface CvLanguage {
+  language: string;
+  proficiency: string;
+}
 
 export interface CvJson {
-  skills: {
-    languages: string[];
-    frameworks: string[];
-    tools: string[];
-  };
-  experiences: Array<{
-    company: string;
-    role: string;
-    duration: string;
-    responsibilities: string[];
-  }>;
-  education: Array<{
-    degree: string;
-    institution: string;
-    year: string;
-  }>;
+  name?: string;
+  currentTitle?: string;
+  totalYearsExperience?: number;
+  skills: string[];
+  experience: CvExperience[];
+  education?: CvEducation[];
+  certifications?: string[];
+  domain?: string[];
+  seniority?: Seniority;
+  languages?: CvLanguage[];
 }
 
 export interface JdJson {
@@ -28,14 +60,8 @@ export interface JdJson {
   nice_to_have_skills?: string[];
   minimum_experience_years?: number;
   key_responsibilities: string[];
-}
-
-export interface FitAssessment {
-  fit_score: number;
-  gap_analysis: {
-    missing_skills: string[];
-    suggestions: string[];
-  };
+  domain?: string;
+  seniority?: Seniority;
 }
 
 export interface DocumentValidationResult {
@@ -48,163 +74,223 @@ export interface DocumentValidationResult {
 export interface IAiProvider {
   extractCvJson(content: string | object): Promise<CvJson>;
   extractJdJson(content: string | object): Promise<JdJson>;
-  assessFitScore(cvJson: CvJson, jdJson: JdJson): Promise<FitAssessment>;
+  assessFitRubric(
+    cvJson: CvJson,
+    jdJson: JdJson,
+    requirements: NormalizedJdRequirement[],
+  ): Promise<FitRubricEvaluation>;
   validateDocumentType(
     content: string | object,
     expectedType: DocumentUploadType,
   ): Promise<DocumentValidationResult>;
 }
 
+const CV_SYSTEM_INSTRUCTION = `You are a CV parsing assistant. Extract structured data from the provided CV/resume text and return ONLY valid JSON matching this exact structure:
+{
+  "name": string | null,
+  "currentTitle": string | null,
+  "totalYearsExperience": number | null,
+  "skills": string[],
+  "experience": [
+    {
+      "company": string,
+      "title": string,
+      "startDate": string | null,
+      "endDate": string | null,
+      "responsibilities": string[],
+      "achievements": string[],
+      "techStack": string[]
+    }
+  ],
+  "education": [
+    {
+      "institution": string,
+      "degree": string | null,
+      "field": string | null,
+      "graduationYear": number | null,
+      "gpa": string | null
+    }
+  ],
+  "languages": [{ "language": string, "proficiency": string }],
+  "certifications": string[],
+  "domain": string[],
+  "seniority": "intern" | "junior" | "mid" | "senior" | "lead" | "staff" | "manager" | "unknown"
+}
+Rules:
+- skills: flat list of ALL technical skills. Use full names: "JavaScript" not "JS", "TypeScript" not "TS", "Node.js" not "Node".
+- experience[].achievements: ONLY specific outcomes with metrics or impact (e.g. "Reduced API latency by 40%"). Skip vague statements.
+- experience[].techStack: only technologies used in that specific role.
+- totalYearsExperience: estimate from dates across all roles or infer from context.
+- seniority: infer from job titles and scope of responsibilities.
+- Return ONLY the JSON object. No explanation text.`;
+
+const JD_SYSTEM_INSTRUCTION = `You are a job description parser. Extract structured data from the provided JD text and return ONLY valid JSON matching this exact structure:
+{
+  "role": string,
+  "required_skills": string[],
+  "nice_to_have_skills": string[],
+  "minimum_experience_years": number | null,
+  "key_responsibilities": string[],
+  "domain": string | null,
+  "seniority": "intern" | "junior" | "mid" | "senior" | "lead" | "staff" | "manager" | "unknown"
+}
+Return ONLY the JSON object. No explanation text.`;
+
+const FIT_RUBRIC_SYSTEM_INSTRUCTION = `You are an expert technical recruiter. Evaluate a candidate CV against a Job Description and return ONLY valid JSON matching this exact structure:
+{
+  "confidence": "high" | "medium" | "low",
+  "requirementSignals": [
+    {
+      "requirementId": string,
+      "requirement": string,
+      "source": "required_skill" | "nice_to_have_skill" | "responsibility" | "experience" | "domain",
+      "status": "met" | "partial" | "missing" | "unclear",
+      "evidenceStrength": "strong" | "weak" | "none",
+      "cvEvidence": string[],
+      "rationale": string
+    }
+  ],
+  "gaps": [
+    {
+      "category": "missing_required_skill" | "weak_evidence" | "level_mismatch" | "transferable_not_direct",
+      "label": string,
+      "severity": "high" | "medium" | "low",
+      "relatedRequirement": string,
+      "explanation": string,
+      "practiceSuggestion": string | null
+    }
+  ],
+  "riskFlags": [
+    {
+      "code": "insufficient_cv_detail" | "seniority_mismatch" | "missing_core_stack" | "domain_gap" | "ambiguous_timeline",
+      "severity": "high" | "medium" | "low",
+      "explanation": string
+    }
+  ],
+  "userSummary": {
+    "headline": string,
+    "strengths": string[],
+    "gapsToImprove": string[],
+    "transferableNotes": string[]
+  }
+}
+Rules:
+- Evaluate every normalized JD requirement exactly once when possible.
+- Quote or summarize only short CV evidence snippets from the provided CV JSON.
+- Do not invent CV evidence. If absent, use an empty cvEvidence array.
+- riskFlags: raise ONLY when the specific condition is clearly met. When in doubt, omit.
+  - insufficient_cv_detail: ONLY when a required field is explicitly asked by JD AND truly absent from CV.
+  - seniority_mismatch: ONLY when candidate seniority is LOWER than JD requirement (under-qualified).
+  - missing_core_stack: ONLY when a required technology is completely absent from skills AND experience.
+  - domain_gap: ONLY when candidate domain is clearly unrelated to JD domain. Software-to-software transitions are NOT domain gaps.
+  - ambiguous_timeline: ONLY when experience dates are contradictory or unreadable.
+- Fit score is computed by backend. Do not return any numeric score.
+- Return ONLY the JSON object. No explanation text.`;
+
+const VALIDATION_SYSTEM_INSTRUCTION = `You are a document classifier for a hiring platform. Classify the uploaded document and return ONLY valid JSON matching this exact structure:
+{
+  "isRelevant": boolean,
+  "detectedType": "CV" | "JD" | "OTHER",
+  "confidence": number (0-100),
+  "reason": string
+}
+Rules:
+- CV: candidate resume/profile with personal career history, skills, experience, education, projects, certifications, contact details, or achievements.
+- JD: hiring document with role overview, responsibilities, required skills, qualifications, benefits, company intro, or candidate requirements.
+- If the text is unrelated, mostly blank, corrupted, or not clearly a CV/JD, use detectedType OTHER and isRelevant false.
+- If detectedType does not match expected type, set isRelevant false.
+- Keep reason short and concrete.
+- Return ONLY the JSON object.`;
+
 @Injectable()
 export class DocumentsAiService implements IAiProvider {
   private readonly logger = new Logger(DocumentsAiService.name);
 
-  constructor(private gemini: GeminiService) {}
+  constructor(private groq: GroqService) {}
 
   async extractCvJson(content: string | object): Promise<CvJson> {
-    this.logger.log('Extracting CV JSON via Gemini...');
+    this.logger.log('Extracting CV JSON via Groq...');
 
-    const cvSchema: Schema = {
-      type: Type.OBJECT,
-      properties: {
-        skills: {
-          type: Type.OBJECT,
-          properties: {
-            languages: { type: Type.ARRAY, items: { type: Type.STRING } },
-            frameworks: { type: Type.ARRAY, items: { type: Type.STRING } },
-            tools: { type: Type.ARRAY, items: { type: Type.STRING } },
-          },
+    const text =
+      typeof content === 'string' ? content : JSON.stringify(content);
+
+    const result = await this.groq.generateJsonContent({
+      model: DOCUMENT_FIT_ASSESSMENT_MODEL,
+      contents: [
+        {
+          role: 'user',
+          parts: [
+            { text: `Extract CV data from the following document:\n\n${text}` },
+          ],
         },
-        experiences: {
-          type: Type.ARRAY,
-          items: {
-            type: Type.OBJECT,
-            properties: {
-              company: { type: Type.STRING },
-              role: { type: Type.STRING },
-              duration: { type: Type.STRING },
-              responsibilities: {
-                type: Type.ARRAY,
-                items: { type: Type.STRING },
-              },
-            },
-          },
-        },
-        education: {
-          type: Type.ARRAY,
-          items: {
-            type: Type.OBJECT,
-            properties: {
-              degree: { type: Type.STRING },
-              institution: { type: Type.STRING },
-              year: { type: Type.STRING },
-            },
-          },
-        },
-      },
-      required: ['skills', 'experiences'],
-    };
-
-    const promptText = `Extract the candidate's professional information from this document and return it EXCLUSIVELY in the requested JSON structure. Ignore any fluff.`;
-
-    const parts =
-      typeof content === 'string'
-        ? [{ text: `${promptText}\n\nText:\n${content}` }]
-        : [content, { text: promptText }];
-
-    const text = await this.gemini.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: parts,
+      ],
       config: {
-        responseMimeType: 'application/json',
-        responseSchema: cvSchema,
-        temperature: 0.1,
+        systemInstruction: CV_SYSTEM_INSTRUCTION,
+        maxOutputTokens: 4096,
       },
     });
 
-    return JSON.parse(text || '{}') as CvJson;
+    return JSON.parse(result || '{}') as CvJson;
   }
 
   async extractJdJson(content: string | object): Promise<JdJson> {
-    this.logger.log('Extracting JD JSON via Gemini...');
+    this.logger.log('Extracting JD JSON via Groq...');
 
-    const jdSchema: Schema = {
-      type: Type.OBJECT,
-      properties: {
-        role: { type: Type.STRING },
-        required_skills: { type: Type.ARRAY, items: { type: Type.STRING } },
-        nice_to_have_skills: { type: Type.ARRAY, items: { type: Type.STRING } },
-        minimum_experience_years: { type: Type.INTEGER },
-        key_responsibilities: {
-          type: Type.ARRAY,
-          items: { type: Type.STRING },
+    const text =
+      typeof content === 'string' ? content : JSON.stringify(content);
+
+    const result = await this.groq.generateJsonContent({
+      model: DOCUMENT_FIT_ASSESSMENT_MODEL,
+      contents: [
+        {
+          role: 'user',
+          parts: [
+            {
+              text: `Extract job description data from the following document:\n\n${text}`,
+            },
+          ],
         },
-      },
-      required: ['role', 'required_skills', 'key_responsibilities'],
-    };
-
-    const promptText = `Extract the core requirements from this Job Description (JD). Output ONLY in the requested JSON structure.`;
-
-    const parts =
-      typeof content === 'string'
-        ? [{ text: `${promptText}\n\nJD:\n${content}` }]
-        : [content, { text: promptText }];
-
-    const text = await this.gemini.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: parts,
+      ],
       config: {
-        responseMimeType: 'application/json',
-        responseSchema: jdSchema,
-        temperature: 0.1,
+        systemInstruction: JD_SYSTEM_INSTRUCTION,
+        maxOutputTokens: 2048,
       },
     });
 
-    return JSON.parse(text || '{}') as JdJson;
+    return JSON.parse(result || '{}') as JdJson;
   }
 
-  async assessFitScore(cvJson: CvJson, jdJson: JdJson): Promise<FitAssessment> {
-    this.logger.log('Assessing Fit Score via Gemini...');
+  async assessFitRubric(
+    cvJson: CvJson,
+    jdJson: JdJson,
+    requirements: NormalizedJdRequirement[],
+  ): Promise<FitRubricEvaluation> {
+    this.logger.log('Assessing fit rubric evidence via Groq...');
 
-    const assessSchema: Schema = {
-      type: Type.OBJECT,
-      properties: {
-        fit_score: {
-          type: Type.INTEGER,
-          description: 'Match percentage from 0 to 100',
-        },
-        gap_analysis: {
-          type: Type.OBJECT,
-          properties: {
-            missing_skills: { type: Type.ARRAY, items: { type: Type.STRING } },
-            suggestions: { type: Type.ARRAY, items: { type: Type.STRING } },
-          },
-        },
-      },
-      required: ['fit_score', 'gap_analysis'],
-    };
-
-    const prompt = `Act as an expert technical recruiter matching a candidate's CV against a Job Description. 
-Compare the provided JSON payloads and return a fit score along with a gap analysis in the specified JSON format.
-
-CV:
+    const userMessage = `CV:
 ${JSON.stringify(cvJson, null, 2)}
 
-Expected Job Description (JD):
+Parsed Job Description (JD):
 ${JSON.stringify(jdJson, null, 2)}
-`;
 
-    const text = await this.gemini.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: prompt,
+Normalized JD requirements to evaluate:
+${JSON.stringify(requirements, null, 2)}`;
+
+    const result = await this.groq.generateJsonContent({
+      model: DOCUMENT_FIT_ASSESSMENT_MODEL,
+      contents: [
+        {
+          role: 'user',
+          parts: [{ text: userMessage }],
+        },
+      ],
       config: {
-        responseMimeType: 'application/json',
-        responseSchema: assessSchema,
-        temperature: 0.2,
+        systemInstruction: FIT_RUBRIC_SYSTEM_INSTRUCTION,
+        maxOutputTokens: 8192,
       },
     });
 
-    return JSON.parse(text || '{}') as FitAssessment;
+    return JSON.parse(result || '{}') as FitRubricEvaluation;
   }
 
   async validateDocumentType(
@@ -215,45 +301,29 @@ ${JSON.stringify(jdJson, null, 2)}
       `Validating uploaded document against expected type ${expectedType}...`,
     );
 
-    const validationSchema: Schema = {
-      type: Type.OBJECT,
-      properties: {
-        isRelevant: { type: Type.BOOLEAN },
-        detectedType: { type: Type.STRING },
-        confidence: { type: Type.INTEGER },
-        reason: { type: Type.STRING },
-      },
-      required: ['isRelevant', 'detectedType', 'confidence', 'reason'],
-    };
+    const text =
+      typeof content === 'string' ? content : JSON.stringify(content);
 
-    const promptText = `Classify the uploaded hiring document.
-Expected type: ${expectedType}.
-
-Rules:
-- Return detectedType as exactly one of: CV, JD, OTHER.
-- A CV is a candidate resume/profile containing personal career history, skills, experience, education, projects, certifications, contact details, or achievements.
-- A JD is a hiring document containing role overview, responsibilities, required skills, qualifications, benefits, company intro, or candidate requirements.
-- If the text is unrelated, too generic, mostly blank, corrupted, or not clearly a CV/JD, use detectedType OTHER and isRelevant false.
-- If detectedType does not match expected type, set isRelevant false.
-- Keep reason short and concrete.`;
-
-    const parts =
-      typeof content === 'string'
-        ? [{ text: `${promptText}\n\nDocument text:\n${content}` }]
-        : [content, { text: promptText }];
-
-    const text = await this.gemini.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: parts,
+    const result = await this.groq.generateJsonContent({
+      model: DOCUMENT_FIT_ASSESSMENT_MODEL,
+      contents: [
+        {
+          role: 'user',
+          parts: [
+            {
+              text: `Expected type: ${expectedType}\n\nDocument text:\n${text}`,
+            },
+          ],
+        },
+      ],
       config: {
-        responseMimeType: 'application/json',
-        responseSchema: validationSchema,
-        temperature: 0,
+        systemInstruction: VALIDATION_SYSTEM_INSTRUCTION,
+        maxOutputTokens: 512,
       },
     });
 
     const parsed = JSON.parse(
-      text || '{}',
+      result || '{}',
     ) as Partial<DocumentValidationResult>;
     const normalizedType =
       parsed.detectedType === DocumentUploadType.CV ||
