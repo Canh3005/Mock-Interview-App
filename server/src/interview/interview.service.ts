@@ -14,6 +14,7 @@ import { InitSessionDto } from './dto/init-session.dto';
 import { UpdateContextDto } from './dto/update-context.dto';
 import { CvJson, JdJson } from '../documents/documents.ai.service';
 import { DocumentContextService } from '../documents/document-context.service';
+import { BehaviorCalibrationService } from '../documents/behavior-calibration.service';
 
 const STAGE_NAMES: Record<number, string> = {
   1: 'Culture Fit',
@@ -58,6 +59,7 @@ export class InterviewService {
     private sdSessionRepo: Repository<SDSession>,
     private walletService: WalletService,
     private documentContextService: DocumentContextService,
+    private calibrationService: BehaviorCalibrationService,
   ) {}
 
   async getAllSessionsForInterview(interviewSessionId: string) {
@@ -122,12 +124,20 @@ export class InterviewService {
     const cvSnippet = this.buildCvSnippet(context.cv);
     const jdSnippet = this.buildJdSnippet(context.jd);
 
+    const calibrationProfile =
+      await this.calibrationService.getLatestForUser(userId);
+    const behaviorCalibration = this.calibrationService.buildSummary(
+      calibrationProfile,
+      context.missing,
+    );
+
     return {
       ready: true,
       missing: [],
       summary: { cvSnippet, jdSnippet },
       cv: context.cv,
       jd: context.jd,
+      behaviorCalibration,
     };
   }
 
@@ -267,6 +277,7 @@ export class InterviewService {
 
     // Backward compat: old DB records have experiences[].duration
     if (cvYears == null) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       const legacy = (cvJson as any).experiences as
         | Array<{ duration: string }>
         | undefined;
@@ -307,15 +318,19 @@ export class InterviewService {
   }
 
   private buildCvSnippet(cv: CvJson): string {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const legacy = cv as any;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     const firstExp = cv.experience?.[0] ?? legacy.experiences?.[0];
     const roleText = firstExp
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       ? `${String((firstExp as any).title ?? (firstExp as any).role ?? '')} tại ${String((firstExp as any).company ?? '')}`
       : '';
     const skills: string[] = Array.isArray(cv.skills)
       ? cv.skills
       : [
           ...(legacy.skills?.languages ?? []),
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           ...(legacy.skills?.frameworks ?? []),
         ];
     const skillsText = skills.slice(0, 5).join(', ');

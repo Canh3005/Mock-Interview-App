@@ -20,6 +20,7 @@ import {
 } from './documents.ai.service';
 import { DocumentContextService } from './document-context.service';
 import { FitAssessmentService } from './fit-assessment.service';
+import { BehaviorCalibrationService } from './behavior-calibration.service';
 import { CV_SIGNALS, JD_SIGNALS } from './constants/document-signals.constants';
 import { UserCv } from '../users/entities/user-cv.entity';
 import { JdAnalysis } from '../users/entities/jd-analysis.entity';
@@ -50,6 +51,7 @@ export class DocumentsService {
     private aiService: DocumentsAiService,
     private contextService: DocumentContextService,
     private fitAssessmentService: FitAssessmentService,
+    private calibrationService: BehaviorCalibrationService,
   ) {}
 
   async queueDocumentForParsing(
@@ -176,7 +178,14 @@ export class DocumentsService {
     filePath: string,
     originalName: string,
     mimeType: string,
-  ): Promise<{ status: string; type: string; recordId: string }> {
+  ): Promise<{
+    status: string;
+    type: string;
+    recordId: string;
+    missingSources: string[];
+    calibrationStatus: 'not_started';
+    behaviorSummary: null;
+  }> {
     let parsedTextHash: string | null = null;
 
     try {
@@ -209,10 +218,36 @@ export class DocumentsService {
       await this.contextService.refreshRedisContext(userId);
       await this.syncCvToUserProfile(userId, cvJson);
 
+      const latestJdForBc =
+        await this.contextService.getLatestCompletedJdRecord(userId);
+      const jdJsonForBc = latestJdForBc?.parsedJson as JdJson | undefined;
+      const fitAssessmentForBc = latestJdForBc?.fitAssessment as
+        | FitAssessmentV2
+        | undefined;
+      void this.calibrationService.run({
+        userId,
+        cvId: cvRecord.id,
+        jdAnalysisId: latestJdForBc?.id ?? null,
+        cvJson,
+        jdJson: jdJsonForBc ?? null,
+        fitAssessment: fitAssessmentForBc ?? null,
+      });
+
+      const hasLatestJd =
+        await this.contextService.getLatestCompletedJdRecord(userId);
+      const missingSources: string[] = hasLatestJd ? [] : ['jd_context'];
+
       this.logger.log(
         `CV parsed successfully userId=${userId} recordId=${recordId} textHash=${parsedTextHash}`,
       );
-      return { status: 'success', type: 'CV', recordId: cvRecord.id };
+      return {
+        status: 'success',
+        type: 'CV',
+        recordId: cvRecord.id,
+        missingSources,
+        calibrationStatus: 'not_started' as const,
+        behaviorSummary: null,
+      };
     } catch (error) {
       await this.markRecordFailed(
         DocumentUploadType.CV,
@@ -239,7 +274,6 @@ export class DocumentsService {
           originalName: record.originalName,
           fitScore: record.fitScore,
           matchReport: record.matchReport as unknown,
-          fitAssessment,
           fitAssessmentSummary:
             this.fitAssessmentService.buildSummary(fitAssessment),
           confidence: record.assessmentConfidence,
@@ -247,6 +281,22 @@ export class DocumentsService {
           createdAt: record.createdAt,
         };
       });
+  }
+
+  async getCalibrationLatest(userId: string) {
+    const profile = await this.calibrationService.getLatestForUser(userId);
+    const missing: string[] = [];
+    if (!profile) return { status: 'not_started', summary: null };
+
+    const cvCtx = await this.contextService.getLatestCvContext(userId);
+    const jdCtx = await this.contextService.getLatestJdContext(userId);
+    if (!cvCtx.json) missing.push('cv_context');
+    if (!jdCtx.json) missing.push('jd_context');
+
+    return {
+      status: profile.status,
+      summary: this.calibrationService.buildSummary(profile, missing),
+    };
   }
 
   async deleteAssessment(userId: string, assessmentId: string) {
@@ -323,6 +373,19 @@ export class DocumentsService {
         DocumentUploadType.JD,
       );
       await this.contextService.refreshRedisContext(userId);
+
+      const cvJsonForBc = latestCv?.parsedJson as CvJson | undefined;
+      const fitAssessmentForBc = jdRecord.fitAssessment as
+        | FitAssessmentV2
+        | undefined;
+      void this.calibrationService.run({
+        userId,
+        cvId: latestCv?.id ?? null,
+        jdAnalysisId: jdRecord.id,
+        cvJson: cvJsonForBc ?? null,
+        jdJson,
+        fitAssessment: fitAssessmentForBc ?? null,
+      });
 
       const fitAssessment = jdRecord.fitAssessment as
         | FitAssessmentV2
@@ -588,10 +651,6 @@ export class DocumentsService {
         ) {
           profile.seniority = cvJson.seniority;
         }
-        console.log(
-          `Auto-syncing CV data to UserProfile for ${userId}:`,
-          profile,
-        );
         await userProfileRepo.save(profile);
         this.logger.log(`Auto-synced CV data to UserProfile for ${userId}`);
       }

@@ -87,7 +87,9 @@ export default function AssessmentHistory() {
                 </div>
               </div>
 
-              <ScoreBar score={item.fitScore} />
+              {item.fitScore !== null && item.fitScore !== undefined && (
+                <ScoreBar score={item.fitScore} />
+              )}
 
               {item.fitAssessmentSummary && (
                 <details className="mt-3 group">

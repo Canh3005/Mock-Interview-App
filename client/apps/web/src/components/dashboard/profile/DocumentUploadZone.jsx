@@ -4,6 +4,7 @@ import { uploadDocumentRequest, resetPollingState } from '../../../store/slices/
 import { UploadCloud, FileText, CheckCircle, XCircle, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import FitAssessmentSummary from './FitAssessmentSummary';
+import BehaviorCalibrationSummary from './BehaviorCalibrationSummary';
 
 export default function DocumentUploadZone() {
   const dispatch = useDispatch();
@@ -163,6 +164,21 @@ export default function DocumentUploadZone() {
                {pollingResult.missingSources?.includes('cv_context')
                  ? 'Your JD has been processed. Upload a CV to generate the fit breakdown for this role.'
                  : 'Your JD has been processed, but the fit breakdown could not be generated yet. Please try again later.'}
+             </p>
+           )}
+
+           {pollingResult.calibrationStatus && pollingResult.calibrationStatus !== 'not_started' && (
+             <BehaviorCalibrationSummary
+               summary={pollingResult.behaviorSummary}
+               status={pollingResult.calibrationStatus}
+               missingSources={pollingResult.missingSources ?? []}
+               levelMismatch={pollingResult.behaviorSummary?.levelMismatch ?? false}
+             />
+           )}
+
+           {pollingResult.type === 'CV' && pollingResult.missingSources?.includes('jd_context') && (
+             <p className="text-slate-400 text-xs mt-1">
+               CV đã xử lý. Upload JD để calibration đầy đủ theo vai trò mục tiêu.
              </p>
            )}
         </div>

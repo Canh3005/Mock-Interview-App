@@ -147,4 +147,18 @@ export class DocumentsController {
   async getStatus(@Param('jobId') jobId: string) {
     return this.documentsService.getJobStatus(jobId);
   }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Get latest behavior calibration summary for current user',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Behavior calibration summary (user-facing only).',
+  })
+  @Get('calibration/latest')
+  async getCalibrationLatest(@Req() req: { user: { id: string } }) {
+    return this.documentsService.getCalibrationLatest(req.user.id);
+  }
 }

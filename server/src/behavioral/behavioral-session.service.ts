@@ -6,9 +6,8 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
-import Redis from 'ioredis';
+import { RedisService } from '../common/redis.service';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import { BEHAVIORAL_SCORING_QUEUE } from '../jobs/jobs.constants';
@@ -98,7 +97,6 @@ function getDifficultySignals(lang: InterviewLanguage): Record<string, string> {
 @Injectable()
 export class BehavioralSessionService {
   private readonly logger = new Logger(BehavioralSessionService.name);
-  private redisClient: Redis;
 
   constructor(
     @InjectRepository(BehavioralSession)
@@ -107,7 +105,7 @@ export class BehavioralSessionService {
     private logRepo: Repository<BehavioralStageLog>,
     @InjectRepository(InterviewSession)
     private interviewSessionRepo: Repository<InterviewSession>,
-    private configService: ConfigService,
+    private redisService: RedisService,
     private promptBuilder: PromptBuilderService,
     private aiFacilitator: AIFacilitatorService,
     private qualityService: MessageQualityService,
@@ -119,11 +117,10 @@ export class BehavioralSessionService {
     private integrityCalculator: IntegrityCalculatorService,
     @InjectQueue(BEHAVIORAL_SCORING_QUEUE) private scoringQueue: Queue,
     private roundOrchestrator: RoundOrchestratorService,
-  ) {
-    this.redisClient = new Redis({
-      host: this.configService.get('REDIS_HOST') || '127.0.0.1',
-      port: this.configService.get('REDIS_PORT') || 6379,
-    });
+  ) {}
+
+  private get redisClient() {
+    return this.redisService.redis;
   }
 
   // ─── Start session ────────────────────────────────────────────────────────

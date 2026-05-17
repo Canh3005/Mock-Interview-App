@@ -6,16 +6,13 @@ describe('FitAssessmentService', () => {
   const service = new FitAssessmentService();
 
   const cvJson: CvJson = {
-    skills: {
-      languages: ['TypeScript'],
-      frameworks: ['React'],
-      tools: ['GraphQL'],
-    },
-    experiences: [
+    skills: ['TypeScript', 'React', 'GraphQL'],
+    experience: [
       {
         company: 'Acme',
-        role: 'Frontend Engineer',
-        duration: '2021 - 2024',
+        title: 'Frontend Engineer',
+        startDate: '2021-01',
+        endDate: '2024-01',
         responsibilities: ['Built React dashboards'],
       },
     ],
@@ -60,7 +57,7 @@ describe('FitAssessmentService', () => {
           source: 'experience',
         }),
         expect.objectContaining({
-          id: 'domain:b2bsaas',
+          id: 'domain:b2b_saas',
           source: 'domain',
         }),
       ]),

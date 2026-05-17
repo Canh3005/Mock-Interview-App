@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
-import Redis from 'ioredis';
 import { Repository } from 'typeorm';
 import type { CvJson, JdJson } from './documents.ai.service';
 import { DocumentUploadType } from './enums/document-upload-type.enum';
 import { DocumentContextOverride } from './entities/document-context-override.entity';
 import { JdAnalysis } from '../users/entities/jd-analysis.entity';
 import { UserCv } from '../users/entities/user-cv.entity';
+import { RedisService } from '../common/redis.service';
 
 const CONTEXT_TTL_SECONDS = 86400 * 7;
 
@@ -29,8 +28,6 @@ export interface InterviewDocumentContext {
 
 @Injectable()
 export class DocumentContextService {
-  private readonly redisClient: Redis;
-
   constructor(
     @InjectRepository(UserCv)
     private readonly cvRepository: Repository<UserCv>,
@@ -38,12 +35,11 @@ export class DocumentContextService {
     private readonly jdRepository: Repository<JdAnalysis>,
     @InjectRepository(DocumentContextOverride)
     private readonly overrideRepository: Repository<DocumentContextOverride>,
-    private readonly configService: ConfigService,
-  ) {
-    this.redisClient = new Redis({
-      host: this.configService.get('REDIS_HOST') || '127.0.0.1',
-      port: this.configService.get('REDIS_PORT') || 6379,
-    });
+    private readonly redisService: RedisService,
+  ) {}
+
+  private get redisClient() {
+    return this.redisService.redis;
   }
 
   async getLatestCvContext(userId: string): Promise<ActiveContext<CvJson>> {

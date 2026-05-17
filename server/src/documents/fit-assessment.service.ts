@@ -72,6 +72,10 @@ export class FitAssessmentService {
     const seniority = this.normalizeSeniority(jdJson.seniority);
     const minYears = Number(jdJson.minimum_experience_years);
 
+    const requiredCompetencies = this.dedupeStrings(
+      jdJson.requiredCompetencies ?? [],
+    );
+
     return {
       role,
       required_skills: requiredSkills,
@@ -82,6 +86,9 @@ export class FitAssessmentService {
       key_responsibilities: keyResponsibilities,
       domain: domain || undefined,
       seniority,
+      requiredCompetencies: requiredCompetencies.length
+        ? requiredCompetencies
+        : undefined,
     };
   }
 
@@ -475,6 +482,10 @@ export class FitAssessmentService {
     return this.clamp(Math.round(total / transferableGaps.length), 0, 100);
   }
 
+  canonicalizeSkill(skill: string): string {
+    return this.canonicalize(this.cleanText(skill));
+  }
+
   private normalizeSkillAlias(skill: string): string {
     const cleaned = this.cleanText(skill);
     return CANONICAL_SKILL_ALIASES[this.canonicalize(cleaned)] || cleaned;
@@ -500,7 +511,8 @@ export class FitAssessmentService {
   private canonicalize(value: string): string {
     return this.cleanText(value)
       .toLowerCase()
-      .replace(/[^a-z0-9+#.]+/g, '');
+      .replace(/[\s-]+/g, '_')
+      .replace(/[^a-z0-9_+#.]+/g, '');
   }
 
   private clamp(value: number, min: number, max: number): number {
