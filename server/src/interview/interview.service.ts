@@ -15,6 +15,7 @@ import { UpdateContextDto } from './dto/update-context.dto';
 import { CvJson, JdJson } from '../documents/documents.ai.service';
 import { DocumentContextService } from '../documents/document-context.service';
 import { BehaviorCalibrationService } from '../documents/behavior-calibration.service';
+import { SessionPlanningService } from '../session-planning/session-planning.service';
 
 const STAGE_NAMES: Record<number, string> = {
   1: 'Culture Fit',
@@ -60,6 +61,7 @@ export class InterviewService {
     private walletService: WalletService,
     private documentContextService: DocumentContextService,
     private calibrationService: BehaviorCalibrationService,
+    private sessionPlanningService: SessionPlanningService,
   ) {}
 
   async getAllSessionsForInterview(interviewSessionId: string) {
@@ -138,6 +140,7 @@ export class InterviewService {
       cv: context.cv,
       jd: context.jd,
       behaviorCalibration,
+      calibrationProfileId: calibrationProfile?.id ?? null,
     };
   }
 
@@ -205,6 +208,16 @@ export class InterviewService {
       `Session ${session.id} created for user ${userId} [${candidateLevel} / ${dto.mode}]`,
     );
 
+    if (dto.rounds.includes('hr_behavioral')) {
+      await this._tryCreateSessionPlan(
+        userId,
+        session,
+        dto.language ?? 'vi',
+        dto.behavioralDepth ?? 'broad',
+        dto.behavioralDurationMinutes ?? 60,
+      );
+    }
+
     return {
       sessionId: session.id,
       candidateLevel,
@@ -212,6 +225,49 @@ export class InterviewService {
       newBalance,
       lowBalance: newBalance !== null && newBalance < LOW_BALANCE_THRESHOLD,
     };
+  }
+
+  private async _tryCreateSessionPlan(
+    userId: string,
+    session: InterviewSession,
+    language: string,
+    depth: 'broad' | 'deep',
+    durationMinutes: number,
+  ): Promise<void> {
+    const calibrationProfile =
+      await this.calibrationService.getLatestForUser(userId);
+    if (!calibrationProfile) {
+      this.logger.warn(
+        `No calibration profile for user ${userId} — skipping session plan`,
+      );
+      return;
+    }
+    if (
+      calibrationProfile.status !== 'ready' &&
+      calibrationProfile.status !== 'partial'
+    ) {
+      this.logger.warn(
+        `Calibration profile not ready for user ${userId} — skipping session plan`,
+      );
+      return;
+    }
+    try {
+      await this.sessionPlanningService.createPlan({
+        dto: {
+          calibrationProfileId: calibrationProfile.id,
+          depth,
+          durationMinutes,
+          language: language as 'vi' | 'en' | 'ja',
+        },
+        userId,
+      });
+      this.logger.log(`SessionPlan created for session ${session.id}`);
+    } catch (error: unknown) {
+      this.logger.error(
+        `Failed to create SessionPlan for session ${session.id}`,
+        error,
+      );
+    }
   }
 
   async updateContext(
@@ -323,8 +379,8 @@ export class InterviewService {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     const firstExp = cv.experience?.[0] ?? legacy.experiences?.[0];
     const roleText = firstExp
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      ? `${String((firstExp as any).title ?? (firstExp as any).role ?? '')} tại ${String((firstExp as any).company ?? '')}`
+      ? // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        `${String((firstExp as any).title ?? (firstExp as any).role ?? '')} tại ${String((firstExp as any).company ?? '')}`
       : '';
     const skills: string[] = Array.isArray(cv.skills)
       ? cv.skills

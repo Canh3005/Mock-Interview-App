@@ -11,7 +11,11 @@ import type {
   EvidenceStrictness,
   SourceCompleteness,
 } from '../types/behavior-calibration.types';
-import type { QuestionProbeCompetency } from '../../question-bank/constants/question-bank-taxonomy.constants';
+import type {
+  QuestionProbeCompetency,
+  QuestionProbeLevel,
+  QuestionProbeRoleFamily,
+} from '../../question-bank/constants/question-bank-taxonomy.constants';
 
 @Entity()
 export class BehaviorCalibrationProfile {
@@ -34,16 +38,16 @@ export class BehaviorCalibrationProfile {
   sourceCompleteness: SourceCompleteness;
 
   @Column({ type: 'varchar', default: '' })
-  roleFamily: string;
+  roleFamily: QuestionProbeRoleFamily;
 
   @Column({ type: 'varchar', default: '' })
   targetRole: string;
 
   @Column({ type: 'varchar', default: '' })
-  targetLevel: string;
+  targetLevel: QuestionProbeLevel;
 
   @Column({ type: 'varchar', default: '' })
-  profileLevel: string;
+  profileLevel: QuestionProbeLevel;
 
   @Column({ type: 'boolean', default: false })
   levelMismatch: boolean;

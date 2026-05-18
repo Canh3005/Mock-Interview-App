@@ -47,13 +47,14 @@ function* saveContextSaga(action) {
 
 function* initSessionSaga() {
   try {
-    const { selectedMode, selectedRounds, selectedLanguage, sdConfig } = yield select(
-      (s) => s.interviewSetup,
-    );
+    const { selectedMode, selectedRounds, selectedLanguage, sdConfig, behavioralConfig } =
+      yield select((s) => s.interviewSetup);
     const data = yield call(interviewApi.initSession, {
       mode: selectedMode,
       rounds: selectedRounds,
       language: selectedLanguage ?? 'vi',
+      behavioralDepth: behavioralConfig.depth,
+      behavioralDurationMinutes: behavioralConfig.durationMinutes,
     });
 
     if (typeof data.newBalance === 'number') {

@@ -3,6 +3,7 @@ import { toggleRound } from '../../../store/slices/interviewSetupSlice'
 import { CheckSquare, Square, Clock, Lock, Users, Terminal, Bot, Network, Target, Swords } from 'lucide-react'
 import DSAConfigPanel from '../dsa/DSAConfigPanel'
 import SDConfigPanel from '../sd/SDConfigPanel'
+import BehavioralConfigPanel from '../behavioral/BehavioralConfigPanel'
 
 const ROUNDS = [
   {
@@ -125,6 +126,7 @@ export default function RoundSelectionStep({ onStart }) {
                   </div>
                 </div>
               </button>
+              {round.key === 'hr_behavioral' && isSelected && <BehavioralConfigPanel />}
               {round.key === 'dsa' && isSelected && <DSAConfigPanel />}
               {round.key === 'system_design' && isSelected && <SDConfigPanel />}
             </div>

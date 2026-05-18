@@ -901,12 +901,10 @@ export class BehaviorCalibrationService {
   }
 
   private _canonicalizeTechStack(skills: string[]): string[] {
-    return (
-      skills
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-        .map((s) => this.fitAssessmentService.canonicalizeSkill(s))
-        .filter((s) => ALL_TECH_TAGS.has(s))
-    );
+    return skills
+
+      .map((s) => this.fitAssessmentService.canonicalizeSkill(s))
+      .filter((s) => ALL_TECH_TAGS.has(s));
   }
 
   private _severityRank(s: RiskSeverity): number {

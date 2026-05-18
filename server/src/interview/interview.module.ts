@@ -10,6 +10,7 @@ import { LiveCodingSessionProblem } from '../live-coding/entities/live-coding-se
 import { SDSession } from '../sd-session/entities/sd-session.entity';
 import { WalletModule } from '../wallet/wallet.module';
 import { DocumentsModule } from '../documents/documents.module';
+import { SessionPlanningModule } from '../session-planning/session-planning.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { DocumentsModule } from '../documents/documents.module';
     ]),
     WalletModule,
     DocumentsModule,
+    SessionPlanningModule,
   ],
   controllers: [InterviewController],
   providers: [InterviewService, RoundOrchestratorService],

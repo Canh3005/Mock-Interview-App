@@ -229,6 +229,39 @@ if (cached) return JSON.parse(cached) as Feature;
 - Cache key phải đủ unique (tránh collision giữa users)
 - Luôn set TTL — không cache vô thời hạn
 
+## JSDoc — Hàm public và hàm private phức tạp
+
+**Public method** (được gọi từ controller hoặc module khác): bắt buộc JSDoc đầy đủ với `@param`, `@returns`, `@throws`.
+
+**Private method** (`_`): thêm JSDoc nếu có ràng buộc ẩn, return contract đặc biệt (ví dụ `null` có ý nghĩa nghiệp vụ), hoặc tham số không tự giải thích được từ tên.
+
+```typescript
+/**
+ * Tạo session plan từ calibration profile và DTO của user.
+ *
+ * @param dto - Thông tin cấu hình phiên phỏng vấn (depth, duration, language...)
+ * @param userId - ID của user thực hiện tạo plan
+ * @returns SessionPlan đã lưu vào database
+ * @throws NotFoundException nếu calibration profile không tồn tại
+ * @throws BadRequestException nếu profile chưa ready hoặc thiếu CV
+ */
+async createPlan({ dto, userId }: { dto: CreateSessionPlanDto; userId: string }): Promise<SessionPlan>
+
+/**
+ * Tính score kỹ thuật cho probe dựa trên overlap tech tag với CV và JD.
+ *
+ * @param probe - Probe cần tính score
+ * @param cvTechStack - Danh sách tech từ CV của ứng viên
+ * @param jdTechStack - Danh sách tech yêu cầu từ JD
+ * @param targetLevel - Level mục tiêu để tính difficulty fit
+ * @param roleFamily - Role family để tính role fit
+ * @returns Score từ 0–1, hoặc null nếu probe có techTags nhưng không overlap — probe đó bị loại khỏi selection
+ */
+private _scoreTechnicalProbe({ probe, cvTechStack, jdTechStack, targetLevel, roleFamily }: TechnicalScoringParams): number | null
+```
+
+**Không viết JSDoc mô tả lại tên hàm.** Chỉ ghi những điều nằm ngoài tên: side effect, precondition, contract của giá trị trả về, hoặc lý do xử lý đặc biệt.
+
 ## Checklist trước khi báo Done
 
 - [ ] File < 500 dòng, function < 50 dòng
@@ -241,4 +274,5 @@ if (cached) return JSON.parse(cached) as Feature;
 - [ ] Error message bằng tiếng Anh
 - [ ] Import không dùng đã xóa
 - [ ] GET list endpoint trả `{ data, total, page, limit }` — không trả raw array
+- [ ] Public method có JSDoc; private method phức tạp có JSDoc nếu tên chưa đủ
 - [ ] `npm run lint` pass

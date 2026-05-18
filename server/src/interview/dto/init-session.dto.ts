@@ -5,4 +5,6 @@ export class InitSessionDto {
   rounds: string[];
   candidateLevel?: 'junior' | 'mid' | 'senior';
   language?: InterviewLanguage;
+  behavioralDepth?: 'broad' | 'deep';
+  behavioralDurationMinutes?: number;
 }

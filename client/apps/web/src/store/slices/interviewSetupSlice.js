@@ -39,6 +39,12 @@ const initialState = {
     enableCurveball: true,
   },
 
+  // behavioral interview config (F030)
+  behavioralConfig: {
+    depth: 'broad',      // 'broad' | 'deep'
+    durationMinutes: 60,
+  },
+
   // session result
   session: null, // { sessionId, candidateLevel, estimatedDuration }
 
@@ -123,6 +129,11 @@ const interviewSetupSlice = createSlice({
       } else {
         state.selectedRounds = [...state.selectedRounds, round];
       }
+    },
+
+    // ─── Behavioral config (F030) ─────────────────────────────────────────
+    setBehavioralConfig(state, action) {
+      state.behavioralConfig = { ...state.behavioralConfig, ...action.payload };
     },
 
     // ─── Save context (edit CV/JD before interview) ────────────────────────
@@ -216,6 +227,7 @@ export const {
   setCombatPermissions,
   proceedFromCombatPermission,
   toggleRound,
+  setBehavioralConfig,
   saveContextRequest,
   saveContextSuccess,
   saveContextFailure,
