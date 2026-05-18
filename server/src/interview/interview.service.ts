@@ -254,6 +254,7 @@ export class InterviewService {
     try {
       await this.sessionPlanningService.createPlan({
         dto: {
+          sessionId: session.id,
           calibrationProfileId: calibrationProfile.id,
           depth,
           durationMinutes,

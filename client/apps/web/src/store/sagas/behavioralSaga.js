@@ -4,91 +4,63 @@ import {
   select,
   take,
   takeLatest,
-  delay,
-  race,
   cancelled,
 } from 'redux-saga/effects';
 import { eventChannel, END } from 'redux-saga';
 import { behavioralApi } from '../../api/behavioral.api';
 import { toast } from 'sonner';
 import {
-  startSessionRequest,
-  startSessionSuccess,
-  startSessionFailure,
-  streamStart,
+  createSessionRequest,
+  createSessionSuccess,
+  createSessionFailure,
+  addCandidateTurn,
+  evaluatingStarted,
+  turnStreamStart,
   streamChunk,
-  streamDone,
+  turnComplete,
   streamError,
-  addUserMessage,
-  nextStageRequest,
-  nextStageSuccess,
-  nextStageFailure,
-  completeSessionRequest,
-  scoringPolled,
-  scoringFailure,
-  SEND_MESSAGE,
+  sessionCompleted,
+  SUBMIT_ANSWER,
 } from '../slices/behavioralSlice';
-import { startDSARound } from '../slices/dsaSessionSlice';
-import { requestRoundTransition } from '../slices/interviewSetupSlice';
 
-// ─── Start session saga ───────────────────────────────────────────────────────
-function* startSessionSaga(action) {
-  try {
-    const data = yield call(behavioralApi.startSession, action.payload);
-    yield put(startSessionSuccess(data));
-  } catch (err) {
-    const msg = err.response?.data?.message || 'Không thể khởi tạo phiên behavioral.';
-    yield put(startSessionFailure(msg));
-    toast.error(msg);
-  }
-}
-
-// ─── SSE streaming saga ───────────────────────────────────────────────────────
-function createSSEChannel(sessionId, payload) {
+// ─── SSE channel factory ──────────────────────────────────────────────────────
+function _createSseChannel(sessionId, content) {
   return eventChannel((emit) => {
-    let fullText = '';
-    let done = false;
+    let reader = null;
 
     behavioralApi
-      .createMessageStream(sessionId, payload)
+      .submitAnswer(sessionId, content)
       .then((response) => {
-        const reader = response.body.getReader();
+        reader = response.body.getReader();
         const decoder = new TextDecoder();
+        let buffer = '';
 
         function pump() {
           reader
             .read()
-            .then(({ done: streamDone, value }) => {
-              if (streamDone) {
-                if (!done) emit(END);
+            .then(({ done, value }) => {
+              if (done) {
+                emit(END);
                 return;
               }
 
-              const text = decoder.decode(value, { stream: true });
-              const lines = text.split('\n');
+              buffer += decoder.decode(value, { stream: true });
+              const lines = buffer.split('\n');
+              buffer = lines.pop() ?? ''; // giữ lại dòng chưa hoàn chỉnh
 
               for (const line of lines) {
                 if (!line.startsWith('data: ')) continue;
                 try {
-                  const json = JSON.parse(line.slice(6));
-                  if (json.token !== undefined) {
-                    fullText += json.token;
-                    emit({ type: 'chunk', token: json.token });
-                  }
-                  if (json.done === true) {
-                    done = true;
-                    emit({ type: 'done', fullText, meta: json.meta });
-                    emit(END);
-                    return;
-                  }
+                  const event = JSON.parse(line.slice(6));
+                  emit(event);
                 } catch {
-                  // ignore malformed line
+                  // bỏ qua line không hợp lệ
                 }
               }
               pump();
             })
             .catch((err) => {
-              emit({ type: 'error', error: err });
+              emit({ type: 'error', message: err?.message ?? 'Stream error' });
               emit(END);
             });
         }
@@ -96,111 +68,85 @@ function createSSEChannel(sessionId, payload) {
         pump();
       })
       .catch((err) => {
-        emit({ type: 'error', error: err });
+        emit({ type: 'error', message: err?.message ?? 'Connection error' });
         emit(END);
       });
 
-    return () => {}; // no cleanup needed
+    return () => {
+      if (reader) reader.cancel().catch(() => {});
+    };
   });
 }
 
-function* sendMessageSaga(action) {
-  const { content, inputType, voiceTranscript } = action.payload;
-  const { sessionId } = yield select((s) => s.behavioral);
+// ─── Create session saga ──────────────────────────────────────────────────────
+function* _createSession(action) {
+  try {
+    const data = yield call(behavioralApi.create, action.payload);
+    yield put(createSessionSuccess(data));
+  } catch (err) {
+    const msg = err.response?.data?.message ?? 'Không thể khởi tạo phiên phỏng vấn.';
+    yield put(createSessionFailure(msg));
+    toast.error(msg);
+  }
+}
 
-  // Optimistic user message
-  yield put(addUserMessage({ content, inputType }));
-  yield put(streamStart());
+// ─── Submit answer saga (SSE streaming) ──────────────────────────────────────
+function* _submitAnswer(action) {
+  const sessionId = yield select((s) => s.behavioral.sessionId);
+  yield put(addCandidateTurn(action.payload));
 
-  const channel = yield call(createSSEChannel, sessionId, {
-    content,
-    inputType,
-    voiceTranscript,
-  });
+  const channel = yield call(_createSseChannel, sessionId, action.payload);
 
   try {
-    let fullText = '';
-    let starStatus = null;
-
     while (true) {
       const event = yield take(channel);
-      if (event.type === 'chunk') {
-        yield put(streamChunk(event.token));
-        fullText += event.token;
-      } else if (event.type === 'done') {
-        starStatus = event.meta?.starStatus ?? null;
-        yield put(streamDone({ fullText: event.fullText ?? fullText, starStatus }));
-        break;
-      } else if (event.type === 'error') {
-        yield put(streamError());
-        toast.error('Lỗi kết nối với AI. Vui lòng thử lại.');
-        break;
+      if (event === END) break;
+
+      switch (event.type) {
+        case 'evaluating':
+          yield put(evaluatingStarted());
+          break;
+
+        case 'turn_start':
+          yield put(turnStreamStart());
+          break;
+
+        case 'chunk':
+          yield put(streamChunk(event.token));
+          break;
+
+        case 'turn_complete':
+          yield put(turnComplete({
+            nextTurn: event.nextTurn,
+            state: event.state,
+            stageProgress: event.stageProgress,
+          }));
+          if (event.state === 'COMPLETED') {
+            const sid = yield select((s) => s.behavioral.sessionId);
+            yield call(behavioralApi.complete, sid);
+            yield put(sessionCompleted());
+          }
+          break;
+
+        case 'error':
+          yield put(streamError(event.message));
+          toast.error(event.message ?? 'Lỗi kết nối. Vui lòng thử lại.');
+          return;
+
+        default:
+          break;
       }
     }
   } finally {
     if (yield cancelled()) {
       channel.close();
-      yield put(streamError());
+      yield put(streamError('Cancelled'));
     }
-  }
-}
-
-// ─── Next stage saga ──────────────────────────────────────────────────────────
-function* nextStageSaga() {
-  try {
-    const { sessionId } = yield select((s) => s.behavioral);
-    const data = yield call(behavioralApi.nextStage, sessionId);
-    yield put(nextStageSuccess(data));
-  } catch (err) {
-    const msg = err.response?.data?.message || 'Không thể chuyển giai đoạn.';
-    yield put(nextStageFailure(msg));
-    toast.error(msg);
-  }
-}
-
-// ─── Complete + polling saga ──────────────────────────────────────────────────
-function* completeSaga() {
-  try {
-    const { sessionId } = yield select((s) => s.behavioral);
-    yield call(behavioralApi.completeSession, sessionId);
-
-    // Poll for score every 3s, max 60s
-    let attempts = 0;
-    while (attempts < 20) {
-      yield delay(3000);
-      attempts++;
-      try {
-        const result = yield call(behavioralApi.getScore, sessionId);
-        if (result.status === 'COMPLETED') {
-          if (result.nextRound === 'dsa') {
-            console.log('Transitioning to DSA round with sessionId:', result.interviewSessionId ?? sessionId);
-            yield put(requestRoundTransition({
-              interviewSessionId: result.interviewSessionId ?? sessionId,
-            }));
-          } else {
-            yield put(scoringPolled(result));
-          }
-          break;
-        }
-      } catch {
-        // ignore polling error, keep trying
-      }
-    }
-
-    if (attempts >= 20) {
-      yield put(scoringFailure('Chấm điểm mất quá nhiều thời gian. Vui lòng tải lại.'));
-    }
-  } catch (err) {
-    const msg = err.response?.data?.message || 'Không thể hoàn thành phiên.';
-    yield put(scoringFailure(msg));
-    toast.error(msg);
   }
 }
 
 // ─── Root watcher ─────────────────────────────────────────────────────────────
 export function* watchBehavioralSaga() {
-  yield takeLatest(startSessionRequest.type, startSessionSaga);
-  yield takeLatest(SEND_MESSAGE, sendMessageSaga);
-  yield takeLatest(nextStageRequest.type, nextStageSaga);
-  yield takeLatest(completeSessionRequest.type, completeSaga);
+  yield takeLatest(createSessionRequest.type, _createSession);
+  yield takeLatest(SUBMIT_ANSWER, _submitAnswer);
 }

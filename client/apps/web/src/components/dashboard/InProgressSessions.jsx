@@ -18,9 +18,8 @@ import {
   BarChart2,
 } from 'lucide-react'
 import { interviewApi } from '../../api/interview.api'
-import { behavioralApi } from '../../api/behavioral.api'
 import { resumeSession } from '../../store/slices/interviewSetupSlice'
-import { resetBehavioral, scoringPolled } from '../../store/slices/behavioralSlice'
+import { resetBehavioral } from '../../store/slices/behavioralSlice'
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -282,13 +281,9 @@ export default function InProgressSessions() {
     navigate(session.mode === 'combat' ? ROUTES.COMBAT_ROOM : ROUTES.BEHAVIORAL_ROOM)
   }
 
-  async function handleViewResult(session) {
+  function handleViewResult(session) {
     dispatch(resetBehavioral())
     dispatch(resumeSession({ sessionId: session.sessionId, candidateLevel: session.candidateLevel, mode: session.mode }))
-    try {
-      const res = await behavioralApi.getScore(session.behavioralSession?.sessionId ?? session.sessionId)
-      dispatch(scoringPolled({ status: res.status, score: res.score }))
-    } catch (_) {}
     navigate(ROUTES.SCORING)
   }
 

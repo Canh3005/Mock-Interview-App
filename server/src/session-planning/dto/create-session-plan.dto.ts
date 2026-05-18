@@ -5,6 +5,7 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
+  IsUUID,
   Max,
   Min,
 } from 'class-validator';
@@ -12,6 +13,15 @@ import type { InterviewDepth, PersonaTone } from '../types/session-plan.types';
 import type { QuestionProbeLanguage } from '../../question-bank/constants/question-bank-taxonomy.constants';
 
 export class CreateSessionPlanDto {
+  @ApiProperty({
+    required: false,
+    description:
+      'Interview session ID để liên kết plan với session (tự động khi tạo qua interview flow)',
+  })
+  @IsOptional()
+  @IsUUID()
+  sessionId?: string;
+
   @ApiProperty({ description: 'ID của calibration profile từ F029' })
   @IsString()
   @IsNotEmpty()

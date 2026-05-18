@@ -83,6 +83,28 @@ export class BehaviorSessionFlowService {
     probeMap: Map<string, QuestionProbe>;
   }): Promise<InterviewTurn[]> {
     const allocation: StageProbeAllocation = plan.stageAllocations[stageIndex];
+
+    if (allocation.selectedProbes.length === 0) {
+      const progress: StageProgress = session.stageProgress![stageIndex];
+      progress.status = 'skipped';
+      this.logger.warn(
+        `Stage ${stageIndex} (${allocation.stage}) has no selected probes, skipping`,
+      );
+      const nextStageIndex: number = stageIndex + 1;
+      if (nextStageIndex >= plan.stageAllocations.length) {
+        session.interviewState = 'COMPLETED';
+        session.status = 'SCORING';
+        return [];
+      }
+      session.currentStageIndex = nextStageIndex;
+      return this.startStage({
+        session,
+        plan,
+        stageIndex: nextStageIndex,
+        probeMap,
+      });
+    }
+
     const stageName: string = this.stageDisplayName(
       allocation.stage,
       plan.language,
@@ -157,6 +179,12 @@ export class BehaviorSessionFlowService {
       ? allocation.fallbackProbes
       : allocation.selectedProbes;
     const plannedProbe = probeList[probeIndex];
+    if (!plannedProbe) {
+      this.logger.warn(
+        `No probe at index ${probeIndex} for stage ${stageIndex} (isFallback=${String(isFallback)})`,
+      );
+      return [];
+    }
     const probe: QuestionProbe | undefined = probeMap.get(
       plannedProbe.questionProbeId,
     );

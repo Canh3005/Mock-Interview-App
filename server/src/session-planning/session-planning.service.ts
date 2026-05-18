@@ -196,7 +196,7 @@ export class SessionPlanningService {
     });
 
     const plan: SessionPlan = this.planRepository.create({
-      sessionId: uuidv4(),
+      sessionId: dto.sessionId ?? uuidv4(),
       userId,
       calibrationProfileId: profile.id,
       roleFamily: profile.roleFamily,

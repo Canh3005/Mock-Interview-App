@@ -63,17 +63,16 @@ function ContextConfirmModal({ cv, jd, onConfirm, onGoUpload }) {
   const [cvExpanded, setCvExpanded] = useState(true)
   const [jdExpanded, setJdExpanded] = useState(true)
 
-  const [skills, setSkills] = useState({
-    languages: (cv?.skills?.languages ?? []).join(', '),
-    frameworks: (cv?.skills?.frameworks ?? []).join(', '),
-    tools: (cv?.skills?.tools ?? []).join(', '),
-  })
+  const [skills, setSkills] = useState(
+    (cv?.skills ?? []).join(', ')
+  )
 
   const [experiences, setExperiences] = useState(
-    (cv?.experiences ?? []).map((e) => ({
-      role: e.role ?? '',
+    (cv?.experience ?? []).map((e) => ({
+      title: e.title ?? '',
       company: e.company ?? '',
-      duration: e.duration ?? '',
+      startDate: e.startDate ?? '',
+      endDate: e.endDate ?? '',
       responsibilities: e.responsibilities ?? [],
     }))
   )
@@ -91,14 +90,8 @@ function ContextConfirmModal({ cv, jd, onConfirm, onGoUpload }) {
 
     const updatedCv = {
       ...cv,
-      skills: {
-        languages: splitTrim(skills.languages),
-        frameworks: splitTrim(skills.frameworks),
-        tools: splitTrim(skills.tools),
-      },
-      experiences: experiences.map((e) => ({
-        ...e,
-      })),
+      skills: splitTrim(skills),
+      experience: experiences.map((e) => ({ ...e })),
     }
 
     const updatedJd = {
@@ -159,36 +152,12 @@ function ContextConfirmModal({ cv, jd, onConfirm, onGoUpload }) {
                   Kỹ năng
                 </p>
                 <div>
-                  <label className={labelCls}>Ngôn ngữ lập trình</label>
+                  <label className={labelCls}>Kỹ năng (phân cách bằng dấu phẩy)</label>
                   <input
                     className={inputCls}
-                    value={skills.languages}
-                    onChange={(e) =>
-                      setSkills((s) => ({ ...s, languages: e.target.value }))
-                    }
-                    placeholder="JavaScript, TypeScript, Python..."
-                  />
-                </div>
-                <div>
-                  <label className={labelCls}>Framework / Thư viện</label>
-                  <input
-                    className={inputCls}
-                    value={skills.frameworks}
-                    onChange={(e) =>
-                      setSkills((s) => ({ ...s, frameworks: e.target.value }))
-                    }
-                    placeholder="React, NestJS, Spring Boot..."
-                  />
-                </div>
-                <div>
-                  <label className={labelCls}>Công cụ / Hạ tầng</label>
-                  <input
-                    className={inputCls}
-                    value={skills.tools}
-                    onChange={(e) =>
-                      setSkills((s) => ({ ...s, tools: e.target.value }))
-                    }
-                    placeholder="Docker, Git, PostgreSQL..."
+                    value={skills}
+                    onChange={(e) => setSkills(e.target.value)}
+                    placeholder="React, TypeScript, Docker, PostgreSQL..."
                   />
                 </div>
               </div>
@@ -202,16 +171,16 @@ function ContextConfirmModal({ cv, jd, onConfirm, onGoUpload }) {
                   {experiences.map((exp, i) => (
                     <div
                       key={i}
-                      className="grid grid-cols-[1fr_1fr_auto] gap-2 items-start"
+                      className="grid grid-cols-[1fr_1fr_auto_auto] gap-2 items-start"
                     >
                       <div>
                         {i === 0 && <label className={labelCls}>Vị trí</label>}
                         <input
                           className={inputCls}
-                          value={exp.role}
+                          value={exp.title}
                           onChange={(e) => {
                             const next = [...experiences]
-                            next[i] = { ...next[i], role: e.target.value }
+                            next[i] = { ...next[i], title: e.target.value }
                             setExperiences(next)
                           }}
                           placeholder="Software Engineer"
@@ -231,16 +200,29 @@ function ContextConfirmModal({ cv, jd, onConfirm, onGoUpload }) {
                         />
                       </div>
                       <div>
-                        {i === 0 && <label className={labelCls}>Thời gian</label>}
+                        {i === 0 && <label className={labelCls}>Từ</label>}
                         <input
                           className={inputCls + ' w-24'}
-                          value={exp.duration}
+                          value={exp.startDate}
                           onChange={(e) => {
                             const next = [...experiences]
-                            next[i] = { ...next[i], duration: e.target.value }
+                            next[i] = { ...next[i], startDate: e.target.value }
                             setExperiences(next)
                           }}
-                          placeholder="2 years"
+                          placeholder="2022-01"
+                        />
+                      </div>
+                      <div>
+                        {i === 0 && <label className={labelCls}>Đến</label>}
+                        <input
+                          className={inputCls + ' w-24'}
+                          value={exp.endDate}
+                          onChange={(e) => {
+                            const next = [...experiences]
+                            next[i] = { ...next[i], endDate: e.target.value }
+                            setExperiences(next)
+                          }}
+                          placeholder="2024-06"
                         />
                       </div>
                     </div>
