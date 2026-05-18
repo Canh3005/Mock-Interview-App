@@ -112,9 +112,11 @@ State probe đang chạy.
 type ProbeCloseReason =
   | 'sufficient_evidence'      // overallBand = 'strong'
   | 'max_follow_ups_reached'
+  | 'turn_limit_reached'       // totalTurnCount >= maxTurnsPerProbe (safety ceiling)
   | 'time_exhausted'
   | 'no_follow_up_available'   // probe không có follow-up cho trigger phù hợp
   | 'no_new_evidence'          // overallBand không cải thiện sau follow-up
+  | 'no_relevant_story'        // vẫn no_signal sau khi đã redirect
   | 'fallback_triggered'
 
 interface ActiveProbeSession {
@@ -125,6 +127,8 @@ interface ActiveProbeSession {
   candidateTurnCount: number
   followUpCount: number
   challengeCount: number
+  redirectCount: number                 // số lần nhắc candidate trả lời đúng câu hỏi
+  totalTurnCount: number                // tổng follow_up + challenge + redirect đã emit; dùng cho safety ceiling
   lastScoringResult: ProbeScoringResult | null
   previousBand: OverallBand | null      // để detect no_new_evidence
   status: 'active' | 'closed'
@@ -244,6 +248,10 @@ for each PlannedProbe in allocation.selectedProbes:
     state = DECIDING_NEXT_ACTION
     nextAction = PolicyEngine.decide(...)
     
+    if nextAction = REDIRECT:
+      emit redirect turn → state = ASKING_REDIRECT
+      continue loop
+    
     if nextAction = FOLLOW_UP:
       emit follow_up turn → state = ASKING_FOLLOW_UP
       continue loop
@@ -265,18 +273,32 @@ for each PlannedProbe in allocation.selectedProbes:
 
 ---
 
-### LLM Call 1 — Question Rendering
+### LLM Call 1 — Question Rendering (Pre-rendered tại session init)
 
-Render `questionProbe.localizedContent[language].displayQuestion` tự nhiên theo persona.
+`SessionPlan.stageAllocations[].selectedProbes` đã cố định từ F030 → render toàn bộ probe questions bằng LLM ngay khi `POST /behavior-sessions` khởi tạo session, lưu vào map trong session context. Probe start không còn LLM call nào — zero latency khi chuyển probe.
 
-**System prompt:**
+```ts
+// Chạy song song tại session init:
+const renderedQuestions: Map<string, string> = new Map()
+await Promise.all(
+  allSelectedProbes.map(async (probe) => {
+    const rendered = await renderProbeQuestion(probe, personaPolicy, language)
+    renderedQuestions.set(probe.questionProbeId, rendered)
+  })
+)
+// Persist vào BehavioralSession (jsonb) để resume sau reload
+```
+
+**Prompt render một probe:**
+
+System:
 ```
 You are {personaPolicy.name}. Tone: {tone}.
 You are interviewing for {targetRole} at {targetLevel} level.
 Do NOT give feedback. Ask exactly one question. Language: {language}.
 ```
 
-**User prompt:**
+User:
 ```
 Rephrase this question naturally for your persona:
 "{displayQuestion}"
@@ -285,6 +307,47 @@ Stage context: {stageName}
 ```
 
 **Output:** string — câu hỏi đã phrase. LLM không được thêm hint, explanation hay coaching.
+
+Fallback probe (nếu có trong `fallbackProbes`) cũng được pre-render cùng lúc.
+
+---
+
+### LLM Call 1b — Follow-up/Challenge Rendering (Lazy pre-render khi probe bắt đầu)
+
+Follow-up và challenge lấy từ `probe.followUps[]` — text cố định, biết trước — nhưng cần persona rendering. Thay vì pre-render toàn bộ tại session init (lãng phí nếu không trigger), render background ngay khi `probe_question` được emit.
+
+```
+emit probe_question → candidate đọc + soạn câu trả lời (~30–120s)
+                   ↕ song song, không block
+                   background: renderFollowUps(probe, personaPolicy, language)
+                   → lưu vào renderedFollowUps map (key: probeId + trigger)
+→ candidate submit answer
+→ scoreForRuntime() → PolicyEngine.decide() → FOLLOW_UP / CHALLENGE
+→ rendered text đã sẵn sàng → stream ngay
+```
+
+```ts
+// Chạy fire-and-forget sau khi emit probe_question:
+renderFollowUpsInBackground(probe, personaPolicy, language).then((rendered) => {
+  session.renderedFollowUps.set(probe.questionProbeId, rendered)
+})
+// rendered: Map<QuestionProbeFollowUpTrigger, string>
+```
+
+**Fallback nếu candidate trả lời trước khi render xong** (hiếm, <5s): on-demand render trong SSE pipeline — stream vẫn mở qua `evaluating` event nên candidate không thấy gián đoạn.
+
+**Prompt render follow-up/challenge:**
+
+System: giống LLM Call 1 (cùng persona, tone, language).
+
+User:
+```
+You are continuing the interview. Rephrase this follow-up naturally for your persona.
+Do NOT give feedback or hints. Ask exactly one question.
+
+Follow-up: "{followUp.text}"
+Context: candidate just answered a question about {stageName}.
+```
 
 ---
 
@@ -338,8 +401,20 @@ Input: `ProbeScoringResult` + `ActiveProbeSession` + `PressureProfile`.
 **Quy trình quyết định theo priority:**
 
 ```
+0. overallBand === 'no_signal'  ← candidate trả lời lạc đề / quá ngắn / không liên quan
+   VÀ redirectCount < MAX_REDIRECTS_PER_PROBE (= 1)
+   → REDIRECT  (nhắc candidate trả lời đúng câu hỏi)
+
+0b. overallBand === 'no_signal'
+    VÀ redirectCount >= MAX_REDIRECTS_PER_PROBE
+    → USE_FALLBACK nếu có fallbackProbe
+    → CLOSE_PROBE (no_relevant_story) nếu không có fallback
+
 1. overallBand === 'strong'
    → CLOSE_PROBE (sufficient_evidence)
+
+1b. totalTurnCount >= maxTurnsPerProbe  ← safety ceiling tuyệt đối
+    → CLOSE_PROBE (turn_limit_reached)
 
 2. Có red flag present
    VÀ challengeCount < pressureProfile.maxChallengesPerProbe
@@ -361,6 +436,18 @@ Input: `ProbeScoringResult` + `ActiveProbeSession` + `PressureProfile`.
 
 6. Fallback: CLOSE_PROBE (no_new_evidence)
 ```
+
+**REDIRECT** là lượt interviewer nhắc candidate trả lời đúng câu hỏi, không thêm gợi ý hay hint. Ví dụ: *"Bạn có thể chia sẻ một tình huống cụ thể liên quan đến câu hỏi không?"* `MAX_REDIRECTS_PER_PROBE = 1` — chỉ nhắc 1 lần; nếu vẫn `no_signal` thì mới fallback hoặc close. REDIRECT được tính vào `totalTurnCount`.
+
+`totalTurnCount` tính tổng số lần emit `redirect` + `follow_up` + `challenge` trong một probe (không tính lượt hỏi probe gốc). Được tăng +1 sau mỗi lần PolicyEngine trả về các action trên, trước khi emit turn. Guard này bảo vệ khỏi scoring LLM hallucinate liên tục `red_flag` hoặc `missing_*` trigger, khiến challenge/follow-up fire không dừng.
+
+**`maxTurnsPerProbe` theo level:**
+
+| Level | Max turns per probe (follow-up + challenge cộng lại) |
+|---|---|
+| Junior | 2 |
+| Mid | 3 |
+| Senior | 4 |
 
 **`pickTrigger` theo priority:**
 
@@ -429,13 +516,7 @@ else:
 
 **Fallback probe:**
 
-```
-Trigger khi activeProbeSession.candidateTurnCount === 1
-VÀ scoring result = 'insufficient_evidence' (câu trả lời quá ngắn/không liên quan)
-
-→ USE_FALLBACK: lấy probe từ StageProbeAllocation.fallbackProbes
-  Nếu không có fallback → CLOSE_PROBE (no_relevant_story) → sang probe tiếp theo
-```
+Trigger được xử lý trong PolicyEngine step 0b: sau khi đã REDIRECT 1 lần mà scoring vẫn trả `no_signal`, PolicyEngine quyết định `USE_FALLBACK` (lấy từ `StageProbeAllocation.fallbackProbes`) hoặc `CLOSE_PROBE (no_relevant_story)` nếu không có fallback. Không trigger thẳng khi `candidateTurnCount === 1` — candidate phải được nhắc trả lời đúng trước.
 
 ---
 
@@ -513,7 +594,35 @@ POST /api/behavior-sessions/:id/complete
   Response: { sessionId, state: 'COMPLETED' }
 ```
 
-**Không dùng WebSocket hay SSE cho MVP.** Request-response đủ cho behavior session.
+**Dùng SSE (Server-Sent Events)** để stream turn response về client. Endpoint `POST /answer` mở SSE stream ngay khi nhận request — candidate thấy phản hồi ngay thay vì chờ toàn bộ pipeline xong.
+
+**SSE event flow cho `POST /answer`:**
+
+```
+Client submit answer
+  → Server mở SSE stream ngay lập tức
+  → emit { type: 'evaluating' }           ← client hiển thị "interviewer đang suy nghĩ"
+  → scoreForRuntime() chạy (2 LLM calls)
+  → PolicyEngine.decide()                 ← deterministic, instant
+  → emit { type: 'turn_start', turnType } ← client biết loại turn sắp đến
+  → stream response text theo chunks      ← từng token/chunk của interviewer turn
+  → emit { type: 'turn_complete', nextTurn: InterviewTurn, state, stageProgress }
+  → server đóng stream
+```
+
+Probe question (pre-rendered) và follow-up/challenge text được stream trực tiếp theo chunks, không cần chờ toàn bộ text.
+
+**SSE event types:**
+```ts
+type SSEEventType =
+  | 'evaluating'      // scoring đang chạy
+  | 'turn_start'      // bắt đầu stream text của turn mới
+  | 'chunk'           // một đoạn text
+  | 'turn_complete'   // turn hoàn chỉnh, kèm state + stageProgress
+  | 'error'           // lỗi không thể recover
+```
+
+`POST /behavior-sessions` (tạo session + pre-render) trả response thường (không SSE) — client chờ 1 lần duy nhất, đổi lại toàn bộ probe loop sau đó không có LLM cold start.
 
 ---
 

@@ -2757,6 +2757,27 @@ function followUps(
       purpose:
         'Verify claims that may be inflated, incomplete, or unsupported.',
     },
+    missing_personal_contribution: {
+      trigger: 'missing_personal_contribution',
+      question:
+        'What specifically did you personally own or decide, separate from the team?',
+      purpose:
+        'Distinguish individual ownership from collective team outcomes.',
+    },
+    missing_consequence: {
+      trigger: 'missing_consequence',
+      question:
+        'What happened as a result — to users, the system, or the team?',
+      purpose:
+        'Surface downstream impact to validate the significance of the action.',
+    },
+    missing_reflection: {
+      trigger: 'missing_reflection',
+      question:
+        'If you faced the same situation today, what would you do differently and why?',
+      purpose:
+        'Assess learning, self-awareness, and growth from the experience.',
+    },
   };
 
   return triggers.map((trigger: QuestionProbeFollowUpTrigger) => bank[trigger]);

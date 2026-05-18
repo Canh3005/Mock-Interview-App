@@ -26,6 +26,7 @@ import { SDEvaluatorModule } from './sd-evaluator/sd-evaluator.module';
 import { WalletModule } from './wallet/wallet.module';
 import { QuestionBankModule } from './question-bank/question-bank.module';
 import { SessionPlanningModule } from './session-planning/session-planning.module';
+import { BehaviorSessionModule } from './behavior-session/behavior-session.module';
 
 @Module({
   imports: [
@@ -83,6 +84,7 @@ import { SessionPlanningModule } from './session-planning/session-planning.modul
     WalletModule,
     QuestionBankModule,
     SessionPlanningModule,
+    BehaviorSessionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

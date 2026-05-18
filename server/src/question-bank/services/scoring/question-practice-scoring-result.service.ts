@@ -96,6 +96,91 @@ export class QuestionPracticeScoringResultService {
     );
   }
 
+  /**
+   * Build ProbeScoringResult từ raw params, không cần QuestionPracticeAttempt.
+   * Dùng cho scoreForRuntime (F032 probe-based flow).
+   *
+   * @param extraction - Kết quả extraction từ LLM
+   * @param signalCatalog - Danh sách signal keys + labels của probe
+   * @param redFlagCatalog - Danh sách red flag keys + labels của probe
+   * @param answerText - Toàn bộ candidate text trong probe (cumulative)
+   * @param language - Ngôn ngữ phỏng vấn để hiển thị fallback summary
+   * @returns ProbeScoringResult đã build và validate
+   */
+  buildResultFromRaw({
+    extraction,
+    signalCatalog,
+    redFlagCatalog,
+    answerText,
+    language,
+  }: {
+    extraction: LlmScoringExtraction;
+    signalCatalog: CatalogItem[];
+    redFlagCatalog: CatalogItem[];
+    answerText: string;
+    language: string;
+  }): ProbeScoringResult {
+    const signals: ProbeSignalResult[] = this._validatedSignals({
+      extraction,
+      signalCatalog,
+      answerText,
+    });
+    const redFlags: ProbeRedFlagResult[] = this._validatedRedFlags({
+      extraction,
+      redFlagCatalog,
+      answerText,
+    });
+    const cvClaimResults: ProbeCvClaimResult[] = this._validatedCvClaims({
+      extraction,
+      answerText,
+    });
+    const overallBand: OverallBand = this._overallBand({ signals, redFlags });
+    return {
+      scoringVersion: QUESTION_PRACTICE_SCORING_VERSION,
+      overallBand,
+      confidence: this._confidence({ extraction, signals }),
+      summary: `Feedback is based on the probe answered in ${language}.`,
+      signalResults: signals,
+      redFlags,
+      cvClaimResults,
+      improvementSuggestions: this.fallbackSuggestions({ signals }),
+    };
+  }
+
+  /**
+   * Build insufficient evidence result từ raw catalogs, không cần attempt.
+   *
+   * @param signalCatalog - Signal catalog của probe
+   * @param redFlagCatalog - Red flag catalog của probe
+   * @param language - Ngôn ngữ phỏng vấn
+   * @returns ProbeScoringResult với overallBand = 'insufficient_evidence'
+   */
+  insufficientEvidenceResultFromRaw({
+    signalCatalog,
+    redFlagCatalog,
+    language,
+  }: {
+    signalCatalog: CatalogItem[];
+    redFlagCatalog: CatalogItem[];
+    language: string;
+  }): ProbeScoringResult {
+    const signals: ProbeSignalResult[] = signalCatalog.map(
+      (item: CatalogItem) => this._missingSignal(item),
+    );
+    return {
+      scoringVersion: QUESTION_PRACTICE_SCORING_VERSION,
+      overallBand: 'insufficient_evidence',
+      confidence: 'low',
+      summary: `There is not enough evidence in the answer to evaluate fully. (${language})`,
+      signalResults: signals,
+      redFlags: redFlagCatalog.map((item: CatalogItem) =>
+        this._absentRedFlag(item),
+      ),
+      cvClaimResults: [],
+      improvementSuggestions: this.fallbackSuggestions({ signals }),
+    };
+  }
+
   fallbackSuggestions({ signals }: { signals: ProbeSignalResult[] }): string[] {
     const missing: ProbeSignalResult[] = signals.filter(
       (signal: ProbeSignalResult) => signal.status !== 'covered',

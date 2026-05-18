@@ -17,6 +17,8 @@ import {
   LlmScoringExtractionSchema,
   ProbeScoringResult,
 } from '../../types/question-practice-scoring.types';
+import type { QuestionProbe } from '../../entities/question-probe.entity';
+import type { QuestionProbeLanguage } from '../../constants/question-bank-taxonomy.constants';
 
 const MIN_EVALUABLE_CHARS = 80;
 const LONG_ANSWER_CHARS = 8000;
@@ -46,6 +48,68 @@ export class QuestionPracticeScoringService {
     this.narrativeModel =
       this.configService.get<string>('QUESTION_PRACTICE_NARRATIVE_MODEL') ??
       this.model;
+  }
+
+  /**
+   * Score câu trả lời trực tiếp từ QuestionProbe mà không cần persist attempt.
+   * Dùng cho F032 probe-based runtime — gọi synchronously, không queue BullMQ.
+   *
+   * @param questionProbe - Probe đang được hỏi
+   * @param answerText - Toàn bộ candidate text tích lũy trong probe (tất cả turns)
+   * @param language - Ngôn ngữ phỏng vấn, dùng cho feedback locale
+   * @param cvClaims - Claims từ CV candidate (optional) để cross-check
+   * @returns ProbeScoringResult với signals, redFlags, overallBand
+   * @throws Error nếu LLM extraction fail sau retry
+   */
+  async scoreForRuntime({
+    questionProbe,
+    answerText,
+    language,
+  }: {
+    questionProbe: QuestionProbe;
+    answerText: string;
+    language: QuestionProbeLanguage;
+  }): Promise<ProbeScoringResult> {
+    const signalCatalog: CatalogItem[] = questionProbe.expectedSignals.map(
+      (label: string, index: number) => ({ key: `signal_${index + 1}`, label }),
+    );
+    const redFlagCatalog: CatalogItem[] = questionProbe.redFlags.map(
+      (label: string, index: number) => ({
+        key: `red_flag_${index + 1}`,
+        label,
+      }),
+    );
+
+    if (!this._isEvaluable(answerText)) {
+      return this.resultService.insufficientEvidenceResultFromRaw({
+        signalCatalog,
+        redFlagCatalog,
+        language,
+      });
+    }
+
+    const context: string = this._contextForExtraction({
+      answerText,
+      signalCatalog,
+    });
+    const extraction: LlmScoringExtraction = await this._extractWithRetryRaw({
+      intent: questionProbe.intent ?? '',
+      type: questionProbe.type ?? '',
+      language,
+      context,
+      signalCatalog,
+      redFlagCatalog,
+      scoringHints: questionProbe.scoringHints,
+    });
+    const baseResult: ProbeScoringResult =
+      this.resultService.buildResultFromRaw({
+        extraction,
+        signalCatalog,
+        redFlagCatalog,
+        answerText,
+        language,
+      });
+    return this._withNarrativeRaw({ result: baseResult, language });
   }
 
   async processAttempt({ attemptId }: { attemptId: string }): Promise<void> {
@@ -229,6 +293,113 @@ ${retryNote}`;
       };
     } catch (error: unknown) {
       this.logger.warn(`Narrative fallback used: ${this._errorMessage(error)}`);
+      return result;
+    }
+  }
+
+  /**
+   * Extraction với retry dùng raw probe params thay vì QuestionPracticeAttempt.
+   * Dùng cho scoreForRuntime.
+   */
+  private async _extractWithRetryRaw({
+    intent,
+    type,
+    language,
+    context,
+    signalCatalog,
+    redFlagCatalog,
+    scoringHints,
+  }: {
+    intent: string;
+    type: string;
+    language: string;
+    context: string;
+    signalCatalog: CatalogItem[];
+    redFlagCatalog: CatalogItem[];
+    scoringHints: { scoreBand: string; description: string }[];
+  }): Promise<LlmScoringExtraction> {
+    let attempts = 0;
+    let lastError = '';
+    while (attempts < 2) {
+      attempts += 1;
+      try {
+        const retryNote: string = lastError
+          ? `Previous output was invalid: ${lastError}. Return valid JSON only.`
+          : '';
+        const prompt: string = `Evaluate a candidate answer against a specific interview probe.
+Return JSON only. Do not invent evidence quotes.
+
+Probe intent: ${intent}
+Probe type: ${type}
+Expected signals: ${JSON.stringify(signalCatalog)}
+Red flags: ${JSON.stringify(redFlagCatalog)}
+Scoring hints: ${JSON.stringify(scoringHints)}
+Feedback language: ${language}
+
+Candidate answer:
+${context}
+
+Schema:
+{
+  "signals": [{"key": "signal_1", "label": "...", "status": "covered|unclear|missing", "evidenceQuotes": ["exact quote from answer"], "feedback": "..."}],
+  "redFlags": [{"key": "red_flag_1", "label": "...", "present": true, "evidenceQuotes": ["exact quote from answer"], "feedback": "..."}],
+  "cvClaims": [{"claim": "...", "verification": "verified|not_verified|inflated_risk", "evidenceQuotes": ["exact quote from answer"], "feedback": "..."}],
+  "confidence": "high|medium|low"
+}
+
+Rules:
+- covered and unclear require exact evidenceQuotes from the answer.
+- missing uses an empty evidenceQuotes array.
+- similarity or topic mention alone is not enough for covered.
+- do not expose raw scoring hints in feedback.
+${retryNote}`;
+        const raw: string = await this.groqService.generateJsonContent({
+          model: this.model,
+          contents: [{ role: 'user', parts: [{ text: prompt }] }],
+          config: { maxOutputTokens: 2500 },
+        });
+        const parsed: unknown = JSON.parse(raw);
+        return LlmScoringExtractionSchema.parse(parsed);
+      } catch (error: unknown) {
+        lastError = this._errorMessage(error);
+      }
+    }
+    throw new Error(lastError || 'Invalid AI output');
+  }
+
+  /**
+   * Narrative generation dùng raw language thay vì attempt.feedbackLocale.
+   * Fallback trả result gốc nếu LLM fail.
+   */
+  private async _withNarrativeRaw({
+    result,
+    language,
+  }: {
+    result: ProbeScoringResult;
+    language: string;
+  }): Promise<ProbeScoringResult> {
+    try {
+      const prompt: string = `Write candidate-facing feedback in locale ${language}.
+Use only this structured result. Do not add new facts or quotes.
+Return JSON only: {"summary":"...","improvementSuggestions":["..."]}.
+Structured result: ${JSON.stringify(result)}`;
+      const raw: string = await this.groqService.generateJsonContent({
+        model: this.narrativeModel,
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
+        config: { maxOutputTokens: 700 },
+      });
+      const parsed: unknown = JSON.parse(raw);
+      const narrative: z.infer<typeof NarrativeSchema> =
+        NarrativeSchema.parse(parsed);
+      return {
+        ...result,
+        summary: narrative.summary,
+        improvementSuggestions: narrative.improvementSuggestions,
+      };
+    } catch (error: unknown) {
+      this.logger.warn(
+        `Narrative fallback used for runtime scoring: ${this._errorMessage(error)}`,
+      );
       return result;
     }
   }

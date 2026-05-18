@@ -57,6 +57,9 @@ export const QUESTION_PROBE_FOLLOW_UP_TRIGGERS = [
   'missing_tradeoff',
   'vague_answer',
   'red_flag',
+  'missing_personal_contribution',
+  'missing_consequence',
+  'missing_reflection',
 ] as const;
 
 export type QuestionProbeStage = (typeof QUESTION_PROBE_STAGES)[number];
