@@ -449,7 +449,7 @@ export class BehaviorCalibrationService {
   ): Promise<void> {
     const data = this._buildProfileData(userId, ctx);
 
-    const profileEntity = this.profileRepo.create({
+    const profileEntity = Object.assign(new BehaviorCalibrationProfile(), {
       userId,
       cvId,
       jdAnalysisId,

@@ -40,6 +40,8 @@ Convention, dev guide, và review checklist: `docs/agent-guide/`
 
 **Audit learning rule:** Trước khi chạy `ba`, `sa`, `be`, `fe`, `review`, `test`, hoặc `fix`, đọc `docs/agent-audits/INDEX.md` nếu tồn tại. Chỉ mở audit record chi tiết khi `applies_to`, role, domain, hoặc symptom khớp request hiện tại; không đọc toàn bộ `docs/agent-audits/` theo mặc định.
 
+**Production rule:** Đây là sản phẩm production, không phải MVP. Cấm đề xuất hoặc áp dụng các giải pháp "đủ dùng cho MVP", "tạm thời", "đơn giản hóa cho MVP", hoặc bất kỳ shortcut nào với lý do MVP. Mọi quyết định kỹ thuật phải hướng đến production-grade: đúng, bền, scale được.
+
 **Commit rule:** Commit SAU KHI review approved. Không commit sớm hơn.
 
 **Feedback loop:** Nếu bạn chưa approve output của bước nào — agent đó sửa theo comment của bạn, không chuyển sang bước tiếp theo.
