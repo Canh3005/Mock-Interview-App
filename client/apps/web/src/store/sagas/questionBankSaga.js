@@ -45,6 +45,7 @@ function _paramsFromState({ state, page }) {
     limit: state.questionBank.limit ?? QUESTION_BANK_PAGE_SIZE,
     locale: filters.locale || 'vi',
     language: filters.language || undefined,
+    stage: filters.stage || undefined,
     roleFamily: filters.roleFamily || undefined,
     level: filters.level || undefined,
     type: filters.type || undefined,

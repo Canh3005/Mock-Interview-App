@@ -10,6 +10,7 @@ export interface PublicProbeListRequest {
   limit?: string;
   locale?: string;
   language?: string;
+  stage?: string;
   roleFamily?: string;
   level?: string;
   type?: string;
@@ -26,6 +27,7 @@ export interface PublicProbeListQuery {
   limit: number;
   locale: QuestionProbeLanguage;
   language?: QuestionProbeLanguage;
+  stage?: string;
   roleFamily?: string;
   level?: string;
   type?: string;

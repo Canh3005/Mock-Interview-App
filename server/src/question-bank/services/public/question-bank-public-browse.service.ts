@@ -7,6 +7,7 @@ import {
   QUESTION_PROBE_LANGUAGES,
   QUESTION_PROBE_LEVELS,
   QUESTION_PROBE_ROLE_FAMILIES,
+  QUESTION_PROBE_STAGES,
   QUESTION_PROBE_TYPES,
   QuestionProbeLanguage,
 } from '../../constants/question-bank-taxonomy.constants';
@@ -96,6 +97,11 @@ export class QuestionBankPublicBrowseService {
       limit,
       locale,
       language,
+      stage: this._optionalTaxonomy({
+        value: request.stage,
+        allowed: QUESTION_PROBE_STAGES,
+        field: 'stage',
+      }),
       roleFamily: this._optionalTaxonomy({
         value: request.roleFamily,
         allowed: QUESTION_PROBE_ROLE_FAMILIES,
@@ -135,6 +141,7 @@ export class QuestionBankPublicBrowseService {
         language: query.language,
       });
     }
+    if (query.stage) qb.andWhere(':stage = ANY(probe.stages)', query);
     if (query.roleFamily) {
       qb.andWhere(':roleFamily = ANY(probe.roleFamilies)', query);
     }

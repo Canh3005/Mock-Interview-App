@@ -4,6 +4,7 @@ export const QUESTION_BANK_PAGE_SIZE = 12;
 
 const initialFilters = {
   search: '',
+  stage: '',
   roleFamily: '',
   level: '',
   type: '',

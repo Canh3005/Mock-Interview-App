@@ -12,6 +12,7 @@ const controlClass =
 const SEARCH_DEBOUNCE_MS = 400;
 
 const taxonomyControls = [
+  ['stage', 'stage', 'stages'],
   ['roleFamily', 'role', 'roleFamilies'],
   ['level', 'level', 'levels'],
   ['type', 'type', 'types'],

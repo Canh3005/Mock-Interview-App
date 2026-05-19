@@ -45,6 +45,7 @@ describe('QuestionBankPublicBrowseService', () => {
     const result = await service.listPublicProbes({
       query: {
         locale: 'ja',
+        stage: 'stage_2_tech_stack',
         roleFamily: 'backend',
         level: 'mid',
         type: 'technical_depth',
@@ -55,6 +56,10 @@ describe('QuestionBankPublicBrowseService', () => {
     expect(queryBuilder.where).toHaveBeenCalledWith('probe.status = :status', {
       status: 'active',
     });
+    expect(queryBuilder.andWhere).toHaveBeenCalledWith(
+      ':stage = ANY(probe.stages)',
+      expect.objectContaining({ stage: 'stage_2_tech_stack' }),
+    );
     expect(queryBuilder.andWhere).toHaveBeenCalledWith(
       ':roleFamily = ANY(probe.roleFamilies)',
       expect.objectContaining({ roleFamily: 'backend' }),
@@ -112,6 +117,16 @@ describe('QuestionBankPublicBrowseService', () => {
     await expect(
       service.listPublicProbes({
         query: { roleFamily: 'mobile' },
+      }),
+    ).rejects.toBeInstanceOf(BadRequestException);
+
+    expect(probeRepository.createQueryBuilder).not.toHaveBeenCalled();
+  });
+
+  it('rejects invalid stage filters before querying', async () => {
+    await expect(
+      service.listPublicProbes({
+        query: { stage: 'screening' },
       }),
     ).rejects.toBeInstanceOf(BadRequestException);
 
