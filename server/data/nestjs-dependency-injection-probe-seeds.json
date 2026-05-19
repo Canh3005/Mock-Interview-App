@@ -1,0 +1,1374 @@
+[
+  {
+    "code": "NESTJS_DI_TECH_CONCEPT_001",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking", "communication"],
+    "techTags": ["nestjs", "nodejs", "typescript"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate understands Dependency Injection as inversion of object creation and can explain why NestJS uses it to manage providers, module boundaries, scopes, and testability.",
+    "primaryQuestion": "What is Dependency Injection, and why does NestJS use it?",
+    "expectedSignals": [
+      "Defines Dependency Injection as receiving dependencies from an external container instead of constructing them inside the class.",
+      "Connects DI to inversion of control: the NestJS container owns provider creation, dependency resolution, and lifecycle management.",
+      "Explains why this improves testability because dependencies can be mocked or overridden by token.",
+      "Mentions maintainability benefits such as loose coupling, module visibility rules, reusable providers, and easier swapping of implementations.",
+      "Uses a concrete example such as UsersController receiving UsersService through the constructor instead of calling new UsersService()."
+    ],
+    "redFlags": [
+      "Describes DI only as importing a class from another file.",
+      "Says DI is just a NestJS decorator feature without explaining object ownership or lifecycle.",
+      "Cannot explain why manually creating service instances makes testing and configuration harder.",
+      "Ignores module registration and assumes every class is injectable automatically."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Clearly explains DI, IoC, provider tokens, lifecycle ownership, module registration, and testability with a NestJS example." },
+      { "scoreBand": "solid", "description": "Explains constructor-provided dependencies and testability but misses lifecycle, module visibility, or token resolution details." },
+      { "scoreBand": "needs_work", "description": "Knows that NestJS injects services but cannot explain why the pattern matters in real code." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer is generic framework language and does not demonstrate understanding of DI mechanics." }
+    ],
+    "followUps": [
+      { "trigger": "vague_answer", "question": "Can you show the difference between a controller using constructor injection and a controller calling new UsersService() directly?", "purpose": "Force a concrete comparison between DI and manual instantiation." },
+      { "trigger": "missing_tradeoff", "question": "What would become harder to test or configure if the service created its own dependencies?", "purpose": "Check whether the candidate understands the practical value of inversion of control." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Dependency Injection purpose in NestJS",
+        "displayQuestion": "What is Dependency Injection, and why does NestJS use it?",
+        "displayIntent": "Evaluate whether the candidate understands DI as container-managed object wiring, not just a decorator convention.",
+        "guidance": [
+          "Define the pattern in terms of who creates and supplies dependencies.",
+          "Connect the explanation to NestJS providers, modules, lifecycle, and testing.",
+          "Use a small controller-service example to make the answer concrete."
+        ],
+        "commonMistakes": [
+          "Treating DI as the same thing as importing a class.",
+          "Skipping why the IoC container makes mocking and replacement easier.",
+          "Ignoring that providers still need to be registered in a module context."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Mục đích của Dependency Injection trong NestJS",
+        "displayQuestion": "Dependency Injection là gì, và vì sao NestJS dùng nó?",
+        "displayIntent": "Đánh giá ứng viên có hiểu DI là cơ chế container quản lý việc tạo và nối dependency, không chỉ là cú pháp decorator.",
+        "guidance": [
+          "Định nghĩa pattern theo hướng ai tạo dependency và ai cung cấp dependency cho class.",
+          "Liên hệ với provider, module, lifecycle và khả năng test trong NestJS.",
+          "Dùng ví dụ nhỏ controller-service để câu trả lời cụ thể."
+        ],
+        "commonMistakes": [
+          "Xem DI chỉ là import class từ file khác.",
+          "Không giải thích vì sao IoC container giúp mock hoặc thay implementation dễ hơn.",
+          "Bỏ qua việc provider vẫn phải được đăng ký trong module context."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "NestJS における Dependency Injection の目的",
+        "displayQuestion": "Dependency Injection とは何で、なぜ NestJS はそれを使うのですか。",
+        "displayIntent": "DI を単なる decorator ではなく、container が object wiring を管理する仕組みとして理解しているかを確認する。",
+        "guidance": [
+          "dependency を誰が作り、誰が class に渡すのかという観点で定義する。",
+          "NestJS の provider、module、lifecycle、testing と関連づける。",
+          "controller と service の小さな例で具体化する。"
+        ],
+        "commonMistakes": [
+          "DI を class import と同じものとして扱う。",
+          "IoC container が mock や implementation 交換を容易にする理由を説明しない。",
+          "provider は module context に登録が必要である点を無視する。"
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "NestJS docs: Providers", "url": "https://docs.nestjs.com/providers", "note": "Used for NestJS provider and dependency injection concepts." },
+      { "label": "NestJS docs: Modules", "url": "https://docs.nestjs.com/modules", "note": "Used for module registration and provider visibility." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NESTJS_DI_TECH_INJECTABLE_002",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "communication"],
+    "techTags": ["nestjs", "typescript"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Verify whether the candidate understands what @Injectable() marks, why metadata matters, and which NestJS classes are normally registered as injectable providers.",
+    "primaryQuestion": "What is the @Injectable() decorator, and which classes require it?",
+    "expectedSignals": [
+      "Explains that @Injectable() marks a class as a provider candidate that can be managed by the NestJS DI container.",
+      "Mentions that services, repositories, adapters, guards, interceptors, pipes, filters, and strategies commonly use @Injectable() when they are provider classes.",
+      "Distinguishes @Injectable() from @Controller() and @Module(), which have their own decorators and runtime roles.",
+      "Understands that registering the class in a module providers array is still needed unless it is provided through another mechanism.",
+      "Mentions that decorators and emitted metadata help Nest infer constructor dependencies, while custom tokens may still need @Inject()."
+    ],
+    "redFlags": [
+      "Says @Injectable() alone globally registers the class everywhere.",
+      "Thinks controllers should normally be decorated with @Injectable() instead of @Controller().",
+      "Cannot distinguish a class being decorated from a provider being visible in a module.",
+      "Assumes TypeScript interfaces can be injected directly without a runtime token."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Explains decorator metadata, provider role, common provider class types, module registration, and the distinction from controllers/modules." },
+      { "scoreBand": "solid", "description": "Understands @Injectable() for services but misses metadata or module registration nuance." },
+      { "scoreBand": "needs_work", "description": "Recognizes the decorator by name but cannot say what it changes in NestJS DI behavior." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer does not demonstrate practical knowledge of NestJS provider classes." }
+    ],
+    "followUps": [
+      { "trigger": "missing_context", "question": "If a service has @Injectable() but is not listed in any module providers array, can another class inject it? Why?", "purpose": "Check module registration and visibility reasoning." },
+      { "trigger": "red_flag", "question": "Why do controllers use @Controller() instead of only @Injectable()?", "purpose": "Verify that the candidate distinguishes NestJS class roles." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "@Injectable provider metadata",
+        "displayQuestion": "What is the @Injectable() decorator, and which classes require it?",
+        "displayIntent": "Check whether the candidate knows how provider classes become managed by NestJS DI.",
+        "guidance": [
+          "Explain the relationship between @Injectable(), provider registration, and constructor metadata.",
+          "Name common injectable class types such as services, guards, pipes, interceptors, filters, and repositories.",
+          "Contrast provider classes with controllers and modules."
+        ],
+        "commonMistakes": [
+          "Thinking @Injectable() automatically exports the class to the whole app.",
+          "Forgetting the providers array or equivalent registration.",
+          "Treating TypeScript interfaces as runtime injection tokens."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Metadata provider với @Injectable",
+        "displayQuestion": "@Injectable() decorator là gì, và những class nào cần nó?",
+        "displayIntent": "Kiểm tra ứng viên có biết cách class provider được NestJS DI quản lý hay không.",
+        "guidance": [
+          "Giải thích quan hệ giữa @Injectable(), đăng ký provider và constructor metadata.",
+          "Kể tên các class thường injectable như service, guard, pipe, interceptor, filter và repository.",
+          "Phân biệt provider class với controller và module."
+        ],
+        "commonMistakes": [
+          "Nghĩ rằng @Injectable() tự export class ra toàn app.",
+          "Quên providers array hoặc cơ chế đăng ký tương đương.",
+          "Xem TypeScript interface như runtime injection token."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "@Injectable による provider metadata",
+        "displayQuestion": "@Injectable() decorator とは何で、どの class に必要ですか。",
+        "displayIntent": "provider class が NestJS DI によって管理される仕組みを理解しているかを確認する。",
+        "guidance": [
+          "@Injectable()、provider registration、constructor metadata の関係を説明する。",
+          "service、guard、pipe、interceptor、filter、repository など一般的な injectable class を挙げる。",
+          "provider class と controller/module の違いを説明する。"
+        ],
+        "commonMistakes": [
+          "@Injectable() が class を自動的に全 app へ export すると考える。",
+          "providers array などの登録を忘れる。",
+          "TypeScript interface を runtime injection token として扱う。"
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "NestJS docs: Providers", "url": "https://docs.nestjs.com/providers", "note": "Used for @Injectable() and provider registration behavior." },
+      { "label": "NestJS docs: Custom providers", "url": "https://docs.nestjs.com/fundamentals/custom-providers", "note": "Used for token and provider registration nuance." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NESTJS_DI_TECH_CONSTRUCTOR_PROPERTY_003",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "trade_off_analysis", "communication"],
+    "techTags": ["nestjs", "typescript"],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Assess whether the candidate can compare constructor injection and property injection in NestJS and choose constructor injection for explicit required dependencies.",
+    "primaryQuestion": "What is the difference between constructor injection and property injection?",
+    "expectedSignals": [
+      "Explains constructor injection as declaring dependencies in the constructor so the class cannot be instantiated correctly without them.",
+      "Explains property injection as assigning dependencies to decorated properties after class construction.",
+      "States that constructor injection is the usual NestJS choice because dependencies are explicit, required, easier to test, and compatible with readonly fields.",
+      "Mentions property injection may be used for optional or framework-driven cases, but it hides dependencies and can leave properties undefined during construction.",
+      "Connects the choice to maintainability: constructor parameters make dependencies visible in tests and code review."
+    ],
+    "redFlags": [
+      "Says property injection is always cleaner because it avoids long constructors.",
+      "Does not recognize that property-injected values are not available inside the constructor body.",
+      "Cannot explain why explicit required dependencies are better expressed in the constructor.",
+      "Confuses property injection with TypeScript class property initialization."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Compares timing, explicitness, required versus optional dependencies, testability, and NestJS convention with a concrete example." },
+      { "scoreBand": "solid", "description": "Prefers constructor injection and explains the main reason but misses timing or optional-dependency nuance." },
+      { "scoreBand": "needs_work", "description": "Can name both styles but cannot choose between them in real NestJS code." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer does not demonstrate practical DI style knowledge." }
+    ],
+    "followUps": [
+      { "trigger": "missing_tradeoff", "question": "When would property injection be risky in a service that uses a dependency during construction?", "purpose": "Check lifecycle and initialization-order understanding." },
+      { "trigger": "vague_answer", "question": "How would your unit test reveal the dependencies of a class that uses constructor injection?", "purpose": "Connect injection style to test ergonomics." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Constructor versus property injection",
+        "displayQuestion": "What is the difference between constructor injection and property injection?",
+        "displayIntent": "Evaluate whether the candidate can choose an injection style based on explicitness, lifecycle timing, and testability.",
+        "guidance": [
+          "Compare when dependencies become available.",
+          "Explain why constructor injection is preferred for required dependencies.",
+          "Mention the trade-off of hiding dependencies with property injection."
+        ],
+        "commonMistakes": [
+          "Using property injection only to shorten constructor signatures.",
+          "Assuming property-injected dependencies are available inside the constructor.",
+          "Not considering how tests discover and supply dependencies."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Constructor injection và property injection",
+        "displayQuestion": "Constructor injection và property injection khác nhau như thế nào?",
+        "displayIntent": "Đánh giá ứng viên có chọn được style injection dựa trên độ rõ ràng, thời điểm lifecycle và khả năng test hay không.",
+        "guidance": [
+          "So sánh thời điểm dependency sẵn sàng để dùng.",
+          "Giải thích vì sao constructor injection phù hợp hơn cho dependency bắt buộc.",
+          "Nêu trade-off của việc giấu dependency bằng property injection."
+        ],
+        "commonMistakes": [
+          "Dùng property injection chỉ để constructor ngắn hơn.",
+          "Tưởng dependency inject vào property có thể dùng ngay trong constructor.",
+          "Không cân nhắc test sẽ phát hiện và cung cấp dependency như thế nào."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "constructor injection と property injection",
+        "displayQuestion": "constructor injection と property injection の違いは何ですか。",
+        "displayIntent": "明示性、lifecycle timing、testability に基づいて injection style を選べるかを確認する。",
+        "guidance": [
+          "dependency が利用可能になるタイミングを比較する。",
+          "必須 dependency には constructor injection が好まれる理由を説明する。",
+          "property injection が dependency を隠しやすい trade-off に触れる。"
+        ],
+        "commonMistakes": [
+          "constructor を短くする目的だけで property injection を使う。",
+          "property-injected dependency が constructor 内で使えると考える。",
+          "test が dependency をどう把握し供給するかを考慮しない。"
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "NestJS docs: Providers", "url": "https://docs.nestjs.com/providers", "note": "Used for constructor-based dependency injection patterns." },
+      { "label": "NestJS docs: Custom providers", "url": "https://docs.nestjs.com/fundamentals/custom-providers", "note": "Used for explicit token injection and provider binding patterns." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NESTJS_DI_TECH_PROVIDER_SCOPES_004",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["mid", "senior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "trade_off_analysis", "system_thinking"],
+    "techTags": ["nestjs", "nodejs", "typescript"],
+    "difficulty": 3,
+    "conversationDepth": "deep",
+    "intent": "Evaluate whether the candidate understands DEFAULT, REQUEST, and TRANSIENT provider scopes and can justify REQUEST scope without overusing it.",
+    "primaryQuestion": "What are Provider scopes in NestJS (DEFAULT, REQUEST, TRANSIENT)? When would you use REQUEST scope?",
+    "expectedSignals": [
+      "Defines DEFAULT scope as singleton-like within the application/module context and reused across requests.",
+      "Defines REQUEST scope as creating a provider instance per incoming request context.",
+      "Defines TRANSIENT scope as creating a new provider instance for each injection consumer.",
+      "Mentions that REQUEST scope has performance and lifecycle implications and can propagate through dependency chains.",
+      "Uses REQUEST scope for request-specific state such as tenant context, current user context, correlation metadata, or per-request transaction context when passing parameters is not clean.",
+      "Warns against storing mutable request data in DEFAULT singleton providers."
+    ],
+    "redFlags": [
+      "Says REQUEST scope should be used for every service that handles HTTP requests.",
+      "Stores current user or tenant state in a singleton provider field.",
+      "Cannot explain the difference between REQUEST and TRANSIENT.",
+      "Ignores the overhead and dependency-chain impact of request-scoped providers."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Accurately defines all three scopes, explains lifecycle/performance trade-offs, and gives a justified request-specific use case." },
+      { "scoreBand": "solid", "description": "Defines the scopes correctly but gives a shallow REQUEST scope use case or misses scope propagation." },
+      { "scoreBand": "needs_work", "description": "Knows singleton and request words but cannot reason about mutable state or provider lifetime." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer does not show practical knowledge of NestJS provider scopes." }
+    ],
+    "followUps": [
+      { "trigger": "missing_tradeoff", "question": "Why can REQUEST scope hurt performance or make a dependency graph harder to reason about?", "purpose": "Check whether the candidate understands scope cost and propagation." },
+      { "trigger": "red_flag", "question": "What bug could happen if you store currentUser on a singleton service field?", "purpose": "Verify awareness of cross-request state leaks." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Provider scopes and REQUEST scope",
+        "displayQuestion": "What are Provider scopes in NestJS (DEFAULT, REQUEST, TRANSIENT)? When would you use REQUEST scope?",
+        "displayIntent": "Check provider lifecycle reasoning and whether the candidate avoids request-state bugs.",
+        "guidance": [
+          "Define each scope by instance lifetime.",
+          "Explain REQUEST scope with a request-specific state example.",
+          "Discuss performance and dependency-chain trade-offs."
+        ],
+        "commonMistakes": [
+          "Using REQUEST scope as a default for HTTP services.",
+          "Keeping per-request mutable state in singleton providers.",
+          "Confusing transient per-consumer instances with per-request instances."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Mid-level/Senior", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Provider scope và REQUEST scope",
+        "displayQuestion": "Provider scopes trong NestJS (DEFAULT, REQUEST, TRANSIENT) là gì? Khi nào bạn dùng REQUEST scope?",
+        "displayIntent": "Kiểm tra tư duy lifecycle của provider và khả năng tránh lỗi request-state.",
+        "guidance": [
+          "Định nghĩa từng scope theo vòng đời instance.",
+          "Giải thích REQUEST scope bằng ví dụ state riêng theo request.",
+          "Nêu trade-off về performance và dependency chain."
+        ],
+        "commonMistakes": [
+          "Dùng REQUEST scope mặc định cho mọi HTTP service.",
+          "Giữ mutable state theo request trong singleton provider.",
+          "Nhầm transient instance theo consumer với request instance theo request."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Mid-level/Senior", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "provider scope と REQUEST scope",
+        "displayQuestion": "NestJS の Provider scope (DEFAULT, REQUEST, TRANSIENT) とは何ですか。いつ REQUEST scope を使いますか。",
+        "displayIntent": "provider lifecycle の理解と request-state bug を避ける判断力を確認する。",
+        "guidance": [
+          "各 scope を instance lifetime で定義する。",
+          "request 固有 state の例で REQUEST scope を説明する。",
+          "performance と dependency chain の trade-off を述べる。"
+        ],
+        "commonMistakes": [
+          "HTTP service には常に REQUEST scope を使うと考える。",
+          "request ごとの mutable state を singleton provider に保持する。",
+          "consumer ごとの transient instance と request ごとの instance を混同する。"
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Mid-level/Senior", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "NestJS docs: Injection scopes", "url": "https://docs.nestjs.com/fundamentals/injection-scopes", "note": "Used for DEFAULT, REQUEST, and TRANSIENT provider lifetimes." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NESTJS_DI_TECH_SINGLETON_TRANSIENT_005",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking"],
+    "techTags": ["nestjs", "nodejs", "typescript"],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Check whether the candidate can distinguish singleton provider reuse from transient provider instantiation and reason about state, memory, and dependency behavior.",
+    "primaryQuestion": "What is the difference between a singleton and a transient provider?",
+    "expectedSignals": [
+      "Explains that a singleton provider has one shared instance reused by consumers within the application/module context.",
+      "Explains that a transient provider creates a separate instance for each injection consumer.",
+      "Mentions singleton is the NestJS default and is appropriate for stateless services, database clients, repositories, and shared adapters.",
+      "Mentions transient can be useful for lightweight stateful helpers, per-consumer builders, contextual loggers, or classes that should not share internal mutable fields.",
+      "Identifies the risk of mutable shared state in singletons and the overhead of creating many transient instances."
+    ],
+    "redFlags": [
+      "Says transient means one instance per HTTP request.",
+      "Assumes singleton providers are unsafe by default because requests are concurrent.",
+      "Uses transient to hide state bugs instead of designing stateless services.",
+      "Cannot explain why database connections or expensive clients usually should not be transient."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Clearly compares instance lifetime, default behavior, state safety, memory/performance implications, and realistic use cases." },
+      { "scoreBand": "solid", "description": "Defines singleton and transient correctly but gives limited examples or misses overhead concerns." },
+      { "scoreBand": "needs_work", "description": "Can repeat definitions but confuses transient with request scope or cannot apply the distinction." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer is too vague to confirm provider lifetime understanding." }
+    ],
+    "followUps": [
+      { "trigger": "missing_tradeoff", "question": "Would you make a database client transient? Why or why not?", "purpose": "Check performance and resource-lifecycle reasoning." },
+      { "trigger": "red_flag", "question": "If a singleton service has a mutable array field, what concurrency or data-leak issue could appear?", "purpose": "Verify awareness of shared mutable state risk." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Singleton versus transient providers",
+        "displayQuestion": "What is the difference between a singleton and a transient provider?",
+        "displayIntent": "Assess whether the candidate understands provider instance lifetime and state-sharing implications.",
+        "guidance": [
+          "State how many instances are created and who shares them.",
+          "Name good candidates for singleton providers.",
+          "Describe a valid transient use case and its cost."
+        ],
+        "commonMistakes": [
+          "Confusing transient scope with request scope.",
+          "Putting request-specific mutable data into singleton fields.",
+          "Making expensive clients transient without a resource reason."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Singleton provider và transient provider",
+        "displayQuestion": "Singleton provider và transient provider khác nhau như thế nào?",
+        "displayIntent": "Đánh giá ứng viên có hiểu vòng đời instance của provider và hệ quả khi chia sẻ state hay không.",
+        "guidance": [
+          "Nêu số lượng instance được tạo và ai dùng chung instance đó.",
+          "Kể các trường hợp phù hợp với singleton provider.",
+          "Mô tả một use case transient hợp lý và chi phí của nó."
+        ],
+        "commonMistakes": [
+          "Nhầm transient scope với request scope.",
+          "Đưa mutable data riêng theo request vào field của singleton.",
+          "Biến expensive client thành transient mà không có lý do về resource."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "singleton provider と transient provider",
+        "displayQuestion": "singleton provider と transient provider の違いは何ですか。",
+        "displayIntent": "provider instance lifetime と state sharing の影響を理解しているかを確認する。",
+        "guidance": [
+          "instance がいくつ作られ、誰が共有するのかを述べる。",
+          "singleton provider に適した例を挙げる。",
+          "transient の妥当な use case と cost を説明する。"
+        ],
+        "commonMistakes": [
+          "transient scope と request scope を混同する。",
+          "request 固有の mutable data を singleton field に入れる。",
+          "高コストな client を理由なく transient にする。"
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "NestJS docs: Injection scopes", "url": "https://docs.nestjs.com/fundamentals/injection-scopes", "note": "Used for singleton/default and transient provider lifetime distinctions." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NESTJS_DI_TECH_CUSTOM_PROVIDERS_006",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["mid", "senior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "trade_off_analysis", "system_thinking"],
+    "techTags": ["nestjs", "typescript"],
+    "difficulty": 3,
+    "conversationDepth": "deep",
+    "intent": "Evaluate whether the candidate can implement custom providers with useClass, useValue, and useFactory and choose the right provider style for swapping implementations, constants, and dynamic configuration.",
+    "primaryQuestion": "How do you create a custom provider using useClass, useValue, and useFactory?",
+    "expectedSignals": [
+      "Explains the common provider object shape with provide as the injection token and one of useClass, useValue, or useFactory as the binding.",
+      "Describes useClass for choosing or swapping an implementation class behind a token, such as different mailer implementations.",
+      "Describes useValue for static values, configuration objects, constants, external client instances, or test mocks.",
+      "Describes useFactory for dynamic creation using injected dependencies, environment config, async setup, or conditional logic.",
+      "Mentions that custom tokens can be strings, symbols, or class references and that consumers use @Inject(token) when TypeScript type inference is not enough.",
+      "Notes that the provider must be registered in the module and exported if another module needs to inject it."
+    ],
+    "redFlags": [
+      "Cannot name the provide token or explain how consumers request the provider.",
+      "Uses useFactory without mentioning its inject array for dependencies.",
+      "Uses useValue for mutable shared objects without considering shared state.",
+      "Assumes a TypeScript interface can be used directly as an injection token at runtime."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Explains all three provider styles, token selection, inject array, module export, and testing/configuration use cases." },
+      { "scoreBand": "solid", "description": "Understands the three styles but misses token/runtime interface nuance or module export detail." },
+      { "scoreBand": "needs_work", "description": "Has used custom providers but cannot explain when each style should be chosen." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer does not demonstrate working knowledge of NestJS custom provider syntax." }
+    ],
+    "followUps": [
+      { "trigger": "vague_answer", "question": "Can you sketch a provider object for CONFIG using useValue and a provider object for Mailer using useClass?", "purpose": "Force concrete provider syntax." },
+      { "trigger": "missing_context", "question": "How does a useFactory provider receive ConfigService or another dependency?", "purpose": "Verify inject-array mechanics." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Custom providers with useClass, useValue, useFactory",
+        "displayQuestion": "How do you create a custom provider using useClass, useValue, and useFactory?",
+        "displayIntent": "Check whether the candidate can bind provider tokens to classes, values, and factories in real NestJS modules.",
+        "guidance": [
+          "Describe the provider object shape: provide plus a binding strategy.",
+          "Explain when to choose useClass, useValue, or useFactory.",
+          "Mention custom tokens, @Inject(), inject arrays, and exports."
+        ],
+        "commonMistakes": [
+          "Forgetting the injection token.",
+          "Using a TypeScript interface as if it exists at runtime.",
+          "Not exporting the custom provider for other modules."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Mid-level/Senior", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Custom provider với useClass, useValue, useFactory",
+        "displayQuestion": "Bạn tạo custom provider bằng useClass, useValue và useFactory như thế nào?",
+        "displayIntent": "Kiểm tra ứng viên có biết bind provider token với class, value và factory trong module NestJS thực tế hay không.",
+        "guidance": [
+          "Mô tả shape của provider object: provide cộng với một chiến lược binding.",
+          "Giải thích khi nào chọn useClass, useValue hoặc useFactory.",
+          "Nhắc tới custom token, @Inject(), inject array và exports."
+        ],
+        "commonMistakes": [
+          "Quên injection token.",
+          "Dùng TypeScript interface như thể nó tồn tại ở runtime.",
+          "Không export custom provider cho module khác."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Mid-level/Senior", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "useClass, useValue, useFactory による custom provider",
+        "displayQuestion": "useClass、useValue、useFactory を使って custom provider をどう作りますか。",
+        "displayIntent": "実際の NestJS module で provider token を class、value、factory に bind できるかを確認する。",
+        "guidance": [
+          "provider object の形、つまり provide と binding strategy を説明する。",
+          "useClass、useValue、useFactory の使い分けを説明する。",
+          "custom token、@Inject()、inject array、exports に触れる。"
+        ],
+        "commonMistakes": [
+          "injection token を忘れる。",
+          "TypeScript interface が runtime に存在すると考える。",
+          "他 module で使う custom provider を export しない。"
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Mid-level/Senior", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "NestJS docs: Custom providers", "url": "https://docs.nestjs.com/fundamentals/custom-providers", "note": "Used for useClass, useValue, useFactory, and injection token behavior." },
+      { "label": "NestJS docs: Modules", "url": "https://docs.nestjs.com/modules", "note": "Used for module exports and provider visibility." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NESTJS_DI_TECH_CIRCULAR_DEPENDENCY_007",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["mid", "senior"],
+    "type": "technical_depth",
+    "competencies": ["problem_solving", "system_thinking", "trade_off_analysis"],
+    "techTags": ["nestjs", "typescript"],
+    "difficulty": 3,
+    "conversationDepth": "deep",
+    "intent": "Assess whether the candidate understands circular dependencies in providers/modules and prioritizes refactoring before using forwardRef as a workaround.",
+    "primaryQuestion": "What is a circular dependency, and how do you resolve it in NestJS?",
+    "expectedSignals": [
+      "Defines a circular dependency as two or more providers or modules depending on each other directly or indirectly.",
+      "Explains why cycles make initialization order and ownership unclear and can produce dependency resolution errors.",
+      "Prioritizes design fixes such as extracting shared logic to a third service/module, inverting the dependency, using events, or splitting responsibilities.",
+      "Mentions forwardRef() as a NestJS mechanism for unavoidable provider or module cycles, but not the first design choice.",
+      "Notes that module-level cycles require forwardRef in imports on both sides when both modules import each other.",
+      "Mentions alternatives such as ModuleRef or lazy lookup only for edge cases where refactoring is not practical."
+    ],
+    "redFlags": [
+      "Uses forwardRef() as the default solution without analyzing ownership.",
+      "Cannot distinguish a TypeScript import cycle from a NestJS DI provider/module cycle.",
+      "Adds both services to every module to make the error disappear.",
+      "Does not understand that circular dependency often signals poor boundaries or mixed responsibilities."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Defines provider and module cycles, explains root causes, proposes refactoring options, and uses forwardRef only as a controlled workaround." },
+      { "scoreBand": "solid", "description": "Explains cycles and forwardRef but misses design-level fixes or module/provider distinction." },
+      { "scoreBand": "needs_work", "description": "Recognizes the error but only knows to paste forwardRef without reasoning." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer does not show practical debugging or design understanding of DI cycles." }
+    ],
+    "followUps": [
+      { "trigger": "missing_tradeoff", "question": "If AuthService and UsersService depend on each other, what shared responsibility might you extract before using forwardRef?", "purpose": "Check whether the candidate can break a real cycle by design." },
+      { "trigger": "red_flag", "question": "What problem remains if you fix every cycle by adding forwardRef everywhere?", "purpose": "Verify awareness that forwardRef can hide poor boundaries." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Circular dependencies in NestJS DI",
+        "displayQuestion": "What is a circular dependency, and how do you resolve it in NestJS?",
+        "displayIntent": "Evaluate whether the candidate can diagnose dependency cycles and fix boundaries instead of only applying forwardRef.",
+        "guidance": [
+          "Define cycles for both providers and modules.",
+          "Prioritize refactoring, extraction, events, or dependency inversion.",
+          "Explain when forwardRef or lazy lookup is acceptable."
+        ],
+        "commonMistakes": [
+          "Treating forwardRef as the default architecture pattern.",
+          "Confusing TypeScript import cycles with DI cycles.",
+          "Registering providers in unrelated modules to silence the error."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Mid-level/Senior", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Circular dependency trong NestJS DI",
+        "displayQuestion": "Circular dependency là gì, và bạn xử lý nó trong NestJS như thế nào?",
+        "displayIntent": "Đánh giá ứng viên có chẩn đoán được dependency cycle và sửa boundary thay vì chỉ thêm forwardRef hay không.",
+        "guidance": [
+          "Định nghĩa cycle cho cả provider và module.",
+          "Ưu tiên refactor, extract shared service, event hoặc dependency inversion.",
+          "Giải thích khi nào forwardRef hoặc lazy lookup là chấp nhận được."
+        ],
+        "commonMistakes": [
+          "Xem forwardRef là pattern kiến trúc mặc định.",
+          "Nhầm TypeScript import cycle với DI cycle.",
+          "Đăng ký provider vào module không liên quan chỉ để hết lỗi."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Mid-level/Senior", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "NestJS DI の circular dependency",
+        "displayQuestion": "circular dependency とは何で、NestJS ではどう解決しますか。",
+        "displayIntent": "dependency cycle を診断し、forwardRef だけでなく境界を修正できるかを確認する。",
+        "guidance": [
+          "provider と module の両方の cycle を定義する。",
+          "refactor、shared service の抽出、event、dependency inversion を優先する。",
+          "forwardRef や lazy lookup が許容される場面を説明する。"
+        ],
+        "commonMistakes": [
+          "forwardRef を標準の architecture pattern として扱う。",
+          "TypeScript import cycle と DI cycle を混同する。",
+          "error を消すために無関係な module へ provider を登録する。"
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Mid-level/Senior", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "NestJS docs: Circular dependency", "url": "https://docs.nestjs.com/fundamentals/circular-dependency", "note": "Used for forwardRef and circular dependency handling." },
+      { "label": "NestJS docs: Modules", "url": "https://docs.nestjs.com/modules", "note": "Used for module import/export boundary reasoning." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NESTJS_DI_TECH_FORWARD_REF_008",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["mid", "senior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving", "trade_off_analysis"],
+    "techTags": ["nestjs", "typescript"],
+    "difficulty": 3,
+    "conversationDepth": "deep",
+    "intent": "Verify whether the candidate knows what forwardRef() does, where it is applied, and why it should be used sparingly.",
+    "primaryQuestion": "What is forwardRef(), and when is it needed?",
+    "expectedSignals": [
+      "Explains forwardRef() as a wrapper that lets Nest resolve a reference lazily when two providers or modules refer to each other.",
+      "Mentions module usage such as imports: [forwardRef(() => UsersModule)] when two modules import each other.",
+      "Mentions provider usage such as @Inject(forwardRef(() => UsersService)) when two providers inject each other.",
+      "States that both sides of a provider or module cycle may need the appropriate forwardRef wiring.",
+      "Frames forwardRef as a workaround for unavoidable cycles after considering refactoring.",
+      "Warns that it can make architecture harder to reason about and should not replace clear ownership boundaries."
+    ],
+    "redFlags": [
+      "Says forwardRef fixes any injection error.",
+      "Uses forwardRef when the real problem is a missing provider, missing export, or wrong module import.",
+      "Cannot state whether the cycle is between modules or providers.",
+      "Does not know where forwardRef appears in code."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Explains lazy reference resolution, provider and module syntax, bidirectional wiring, and the architectural trade-off." },
+      { "scoreBand": "solid", "description": "Knows forwardRef solves cycles but misses either provider syntax, module syntax, or design caution." },
+      { "scoreBand": "needs_work", "description": "Recognizes the name but cannot apply it correctly to a provider or module cycle." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer does not distinguish circular dependencies from other DI errors." }
+    ],
+    "followUps": [
+      { "trigger": "missing_context", "question": "How would you tell whether the fix belongs in module imports or in a constructor @Inject() parameter?", "purpose": "Check provider-versus-module cycle diagnosis." },
+      { "trigger": "red_flag", "question": "If the provider simply is not exported from its module, would forwardRef help?", "purpose": "Verify that the candidate does not overapply forwardRef." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "forwardRef for lazy DI references",
+        "displayQuestion": "What is forwardRef(), and when is it needed?",
+        "displayIntent": "Check whether the candidate can use forwardRef correctly for unavoidable circular provider or module references.",
+        "guidance": [
+          "Explain lazy resolution of circular references.",
+          "Show where forwardRef is used for modules and providers.",
+          "State why missing exports or missing providers are different problems."
+        ],
+        "commonMistakes": [
+          "Using forwardRef for every DI error.",
+          "Not knowing whether the cycle is provider-level or module-level.",
+          "Avoiding a simpler boundary refactor."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Mid-level/Senior", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "forwardRef cho DI reference lazy",
+        "displayQuestion": "forwardRef() là gì, và khi nào cần dùng nó?",
+        "displayIntent": "Kiểm tra ứng viên có dùng forwardRef đúng cho circular reference không tránh được giữa provider hoặc module hay không.",
+        "guidance": [
+          "Giải thích cơ chế lazy resolution cho circular reference.",
+          "Nêu forwardRef được dùng ở đâu với module và provider.",
+          "Chỉ rõ missing export hoặc missing provider là lỗi khác."
+        ],
+        "commonMistakes": [
+          "Dùng forwardRef cho mọi lỗi DI.",
+          "Không biết cycle nằm ở provider-level hay module-level.",
+          "Né refactor boundary đơn giản hơn."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Mid-level/Senior", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "lazy DI reference のための forwardRef",
+        "displayQuestion": "forwardRef() とは何で、いつ必要ですか。",
+        "displayIntent": "避けられない provider/module の circular reference に forwardRef を正しく使えるかを確認する。",
+        "guidance": [
+          "circular reference の lazy resolution を説明する。",
+          "module と provider で forwardRef をどこに使うかを示す。",
+          "missing export や missing provider は別問題であると述べる。"
+        ],
+        "commonMistakes": [
+          "すべての DI error に forwardRef を使う。",
+          "cycle が provider-level か module-level かを把握しない。",
+          "より単純な boundary refactor を避ける。"
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Mid-level/Senior", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "NestJS docs: Circular dependency", "url": "https://docs.nestjs.com/fundamentals/circular-dependency", "note": "Used for forwardRef provider and module examples." },
+      { "label": "NestJS docs: Common errors", "url": "https://docs.nestjs.com/faq/common-errors", "note": "Used for distinguishing circular dependencies from missing provider/export errors." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NESTJS_DI_TECH_INJECT_DECORATOR_009",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "communication"],
+    "techTags": ["nestjs", "typescript"],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Check whether the candidate knows why @Inject() is needed for explicit provider tokens, non-class values, interfaces, and special resolution cases.",
+    "primaryQuestion": "What is the @Inject() decorator used for?",
+    "expectedSignals": [
+      "Explains that @Inject() explicitly tells Nest which provider token to resolve for a constructor parameter or property.",
+      "Mentions @Inject() is needed for custom tokens such as strings, symbols, constants, or abstract tokens that TypeScript cannot infer at runtime.",
+      "Explains that TypeScript interfaces are erased at runtime, so a concrete injection token is required.",
+      "Mentions use cases such as injecting configuration values, external clients, aliases, and custom provider implementations.",
+      "Connects @Inject() with forwardRef() in circular provider cases when lazy token resolution is required."
+    ],
+    "redFlags": [
+      "Says @Inject() is required for every constructor-injected service.",
+      "Assumes interfaces can be injected without a runtime token.",
+      "Cannot explain the difference between a TypeScript type annotation and a NestJS provider token.",
+      "Uses string tokens casually without considering consistency or symbol/constant tokens."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Explains explicit token resolution, runtime type erasure, custom provider tokens, and practical examples." },
+      { "scoreBand": "solid", "description": "Understands @Inject() for custom tokens but misses interface erasure or forwardRef use." },
+      { "scoreBand": "needs_work", "description": "Knows the decorator name but cannot say when Nest cannot infer a dependency automatically." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer is too vague to validate provider-token understanding." }
+    ],
+    "followUps": [
+      { "trigger": "missing_context", "question": "Why can Nest usually inject UsersService without @Inject(), but not inject an interface named CachePort?", "purpose": "Check metadata and interface-erasure understanding." },
+      { "trigger": "vague_answer", "question": "How would you inject a provider registered with provide: 'APP_CONFIG'?", "purpose": "Force concrete use of @Inject() with a non-class token." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "@Inject and explicit provider tokens",
+        "displayQuestion": "What is the @Inject() decorator used for?",
+        "displayIntent": "Assess whether the candidate understands explicit token-based dependency resolution in NestJS.",
+        "guidance": [
+          "Explain why class types can often be inferred but custom tokens cannot.",
+          "Mention string, symbol, constant, and abstract tokens.",
+          "Connect @Inject() to useValue, useFactory, useClass, and interface erasure."
+        ],
+        "commonMistakes": [
+          "Adding @Inject() everywhere without knowing why.",
+          "Trying to inject a TypeScript interface directly.",
+          "Using magic string tokens inconsistently."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "@Inject và provider token tường minh",
+        "displayQuestion": "@Inject() decorator dùng để làm gì?",
+        "displayIntent": "Đánh giá ứng viên có hiểu cơ chế resolve dependency bằng token tường minh trong NestJS hay không.",
+        "guidance": [
+          "Giải thích vì sao class type thường suy luận được nhưng custom token thì không.",
+          "Nhắc tới string, symbol, constant và abstract token.",
+          "Liên hệ @Inject() với useValue, useFactory, useClass và việc interface bị xóa ở runtime."
+        ],
+        "commonMistakes": [
+          "Thêm @Inject() ở mọi nơi mà không biết lý do.",
+          "Cố inject trực tiếp TypeScript interface.",
+          "Dùng magic string token không nhất quán."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "@Inject と明示的な provider token",
+        "displayQuestion": "@Inject() decorator は何に使いますか。",
+        "displayIntent": "NestJS の token-based dependency resolution を理解しているかを確認する。",
+        "guidance": [
+          "class type は推論できることが多いが custom token は推論できない理由を説明する。",
+          "string、symbol、constant、abstract token に触れる。",
+          "@Inject() を useValue、useFactory、useClass、interface erasure と関連づける。"
+        ],
+        "commonMistakes": [
+          "理由なくあらゆる場所に @Inject() を追加する。",
+          "TypeScript interface を直接 inject しようとする。",
+          "magic string token を一貫性なく使う。"
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "NestJS docs: Custom providers", "url": "https://docs.nestjs.com/fundamentals/custom-providers", "note": "Used for explicit provider tokens and @Inject() usage." },
+      { "label": "NestJS docs: Providers", "url": "https://docs.nestjs.com/providers", "note": "Used for constructor injection and token inference behavior." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NESTJS_DI_TECH_MANUAL_NEW_010",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking", "problem_solving"],
+    "techTags": ["nestjs", "nodejs", "typescript"],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Assess whether the candidate understands how NestJS DI differs from manual object construction and the bugs caused by bypassing the container.",
+    "primaryQuestion": "How does NestJS DI differ from manually calling new ServiceName()?",
+    "expectedSignals": [
+      "Explains that NestJS DI uses the IoC container to resolve constructor dependencies, provider tokens, scopes, lifecycle hooks, and module visibility.",
+      "Explains that new ServiceName() bypasses the container and therefore bypasses nested dependency injection.",
+      "Mentions manual construction can create duplicate instances, ignore singleton/request/transient scope, and miss configuration or mocked implementations.",
+      "Connects DI to testing because tests can override providers without changing the class under test.",
+      "Mentions that manual new may be acceptable for plain value objects or local helper classes that are not Nest providers and have no DI needs."
+    ],
+    "redFlags": [
+      "Says manual new is equivalent if the constructor arguments are the same.",
+      "Manually creates services inside controllers or other providers as a normal pattern.",
+      "Does not recognize lifecycle, scope, mocking, or nested dependency implications.",
+      "Cannot explain why a service with its own injected dependencies fails when constructed manually."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Contrasts container-managed construction with manual new across dependency graph, scopes, lifecycle, module boundaries, and tests." },
+      { "scoreBand": "solid", "description": "Explains testability and nested dependency injection but misses scope or lifecycle detail." },
+      { "scoreBand": "needs_work", "description": "Knows DI avoids new but cannot explain practical consequences." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer does not demonstrate understanding of NestJS container behavior." }
+    ],
+    "followUps": [
+      { "trigger": "red_flag", "question": "What happens if UsersService manually constructs EmailService, but EmailService expects ConfigService injected by Nest?", "purpose": "Check nested dependency and container-bypass reasoning." },
+      { "trigger": "missing_tradeoff", "question": "When is it still reasonable to use new for an object in a NestJS application?", "purpose": "Verify nuanced distinction between providers and plain domain/value objects." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "DI container versus manual new",
+        "displayQuestion": "How does NestJS DI differ from manually calling new ServiceName()?",
+        "displayIntent": "Check whether the candidate understands the consequences of bypassing the NestJS IoC container.",
+        "guidance": [
+          "Compare dependency graph resolution and lifecycle behavior.",
+          "Mention provider scopes, module boundaries, and test overrides.",
+          "Distinguish Nest providers from plain domain or value objects."
+        ],
+        "commonMistakes": [
+          "Manually instantiating providers inside controllers.",
+          "Forgetting nested dependencies and provider scopes.",
+          "Treating every class in the app as a Nest provider."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "DI container so với gọi new thủ công",
+        "displayQuestion": "NestJS DI khác gì so với việc gọi thủ công new ServiceName()?",
+        "displayIntent": "Kiểm tra ứng viên có hiểu hệ quả khi bypass NestJS IoC container hay không.",
+        "guidance": [
+          "So sánh cách resolve dependency graph và hành vi lifecycle.",
+          "Nhắc tới provider scope, module boundary và test override.",
+          "Phân biệt Nest provider với domain object hoặc value object thuần."
+        ],
+        "commonMistakes": [
+          "Tự new provider bên trong controller.",
+          "Quên nested dependency và provider scope.",
+          "Xem mọi class trong app đều là Nest provider."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "DI container と手動 new の違い",
+        "displayQuestion": "NestJS DI は手動で new ServiceName() を呼ぶ場合と何が違いますか。",
+        "displayIntent": "NestJS IoC container を bypass する影響を理解しているかを確認する。",
+        "guidance": [
+          "dependency graph resolution と lifecycle behavior を比較する。",
+          "provider scope、module boundary、test override に触れる。",
+          "Nest provider と plain domain/value object を区別する。"
+        ],
+        "commonMistakes": [
+          "controller 内で provider を手動で new する。",
+          "nested dependency と provider scope を忘れる。",
+          "app 内の全 class を Nest provider として扱う。"
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "NestJS docs: Providers", "url": "https://docs.nestjs.com/providers", "note": "Used for container-managed provider construction." },
+      { "label": "NestJS docs: Testing", "url": "https://docs.nestjs.com/fundamentals/testing", "note": "Used for provider overriding and test module behavior." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NESTJS_DI_TECH_OPTIONAL_011",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["mid", "senior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "trade_off_analysis", "communication"],
+    "techTags": ["nestjs", "typescript"],
+    "difficulty": 3,
+    "conversationDepth": "deep",
+    "intent": "Evaluate whether the candidate understands optional dependencies, when they are appropriate, and how @Optional() changes dependency resolution behavior.",
+    "primaryQuestion": "What is an optional dependency, and how do you mark one with @Optional()?",
+    "expectedSignals": [
+      "Defines an optional dependency as one that the class can operate without, often because a feature, adapter, logger, or integration is optional.",
+      "Explains that @Optional() is applied to a constructor parameter or injected property so Nest does not fail if the token is missing.",
+      "Mentions that optional dependencies often pair with @Inject(token), especially for custom tokens or pluggable integrations.",
+      "States that the code must handle undefined or absence explicitly instead of assuming the provider exists.",
+      "Warns against using @Optional() to hide missing module imports, missing exports, or incorrectly registered mandatory dependencies.",
+      "Gives an example such as an optional metrics client, optional cache adapter, optional feature flag service, or optional logger."
+    ],
+    "redFlags": [
+      "Uses @Optional() to silence DI errors for required dependencies.",
+      "Does not handle the dependency being undefined.",
+      "Cannot name a real optional integration use case.",
+      "Confuses optional TypeScript constructor parameter syntax with NestJS optional provider resolution."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Explains @Optional() behavior, syntax, undefined handling, custom tokens, valid use cases, and misuse risks." },
+      { "scoreBand": "solid", "description": "Understands optional dependencies but misses custom-token pairing or misuse risk." },
+      { "scoreBand": "needs_work", "description": "Knows @Optional() exists but treats it as a generic fix for DI errors." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer does not demonstrate safe optional dependency handling." }
+    ],
+    "followUps": [
+      { "trigger": "red_flag", "question": "If PaymentService cannot work without PaymentGateway, should you mark PaymentGateway as @Optional()? Why?", "purpose": "Check whether the candidate distinguishes optional from required dependencies." },
+      { "trigger": "missing_context", "question": "How should the service behave when an optional metrics client is not registered?", "purpose": "Verify explicit absence handling." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Optional dependencies with @Optional",
+        "displayQuestion": "What is an optional dependency, and how do you mark one with @Optional()?",
+        "displayIntent": "Assess whether the candidate can model optional integrations without hiding real DI errors.",
+        "guidance": [
+          "Define what makes a dependency truly optional.",
+          "Explain @Optional() placement and undefined handling.",
+          "Warn against using it for mandatory dependencies."
+        ],
+        "commonMistakes": [
+          "Using @Optional() to silence a missing provider error.",
+          "Forgetting null or undefined handling in the service.",
+          "Confusing TypeScript optional syntax with NestJS DI resolution."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Mid-level/Senior", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Optional dependency với @Optional",
+        "displayQuestion": "Optional dependency là gì, và bạn đánh dấu nó bằng @Optional() như thế nào?",
+        "displayIntent": "Đánh giá ứng viên có mô hình hóa optional integration đúng cách mà không che lỗi DI thật hay không.",
+        "guidance": [
+          "Định nghĩa khi nào dependency thật sự optional.",
+          "Giải thích vị trí đặt @Optional() và cách xử lý undefined.",
+          "Cảnh báo không dùng nó cho dependency bắt buộc."
+        ],
+        "commonMistakes": [
+          "Dùng @Optional() để che lỗi missing provider.",
+          "Quên xử lý null hoặc undefined trong service.",
+          "Nhầm optional syntax của TypeScript với cơ chế DI resolution của NestJS."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Mid-level/Senior", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "@Optional による optional dependency",
+        "displayQuestion": "optional dependency とは何で、@Optional() でどう示しますか。",
+        "displayIntent": "本当の DI error を隠さず、optional integration を正しく扱えるかを確認する。",
+        "guidance": [
+          "dependency が本当に optional である条件を定義する。",
+          "@Optional() の配置と undefined handling を説明する。",
+          "必須 dependency に使うべきでない理由を述べる。"
+        ],
+        "commonMistakes": [
+          "missing provider error を隠すために @Optional() を使う。",
+          "service 側で null/undefined handling を忘れる。",
+          "TypeScript の optional syntax と NestJS DI resolution を混同する。"
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Mid-level/Senior", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "NestJS docs: Providers", "url": "https://docs.nestjs.com/providers", "note": "Used for optional provider dependency behavior." },
+      { "label": "NestJS docs: Custom providers", "url": "https://docs.nestjs.com/fundamentals/custom-providers", "note": "Used for optional custom-token dependencies." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NESTJS_DI_TECH_PLAIN_VALUE_012",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking"],
+    "techTags": ["nestjs", "typescript"],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Check whether the candidate can inject non-class values through custom providers and understands token-based resolution for configuration, constants, and external instances.",
+    "primaryQuestion": "How can you inject a plain value (not a class) as a provider?",
+    "expectedSignals": [
+      "Explains registering a custom provider with a token and useValue, such as { provide: APP_CONFIG, useValue: configObject }.",
+      "Mentions that the consumer injects the value with @Inject(APP_CONFIG) because there is no class type for Nest to infer.",
+      "States that tokens should be stable constants or symbols rather than scattered magic strings.",
+      "Mentions plain values can include config objects, constants, feature flags, external SDK clients, or mocks.",
+      "Notes that useValue provides the same object reference to consumers, so mutable shared values should be treated carefully.",
+      "Mentions exporting the provider if other modules need to inject the plain value."
+    ],
+    "redFlags": [
+      "Tries to inject a plain object by only adding it to a constructor type annotation.",
+      "Uses a TypeScript interface as the provider token.",
+      "Forgets @Inject() for a string or symbol token.",
+      "Does not consider mutability and shared reference behavior of useValue."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Explains token constants, useValue registration, @Inject consumption, module exports, and shared-reference caveats." },
+      { "scoreBand": "solid", "description": "Understands useValue and @Inject but misses token hygiene or mutability/export nuance." },
+      { "scoreBand": "needs_work", "description": "Can vaguely say useValue but cannot describe the module provider and consumer sides." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer does not show practical knowledge of injecting non-class providers." }
+    ],
+    "followUps": [
+      { "trigger": "vague_answer", "question": "What would the providers array and constructor parameter look like for an APP_CONFIG object?", "purpose": "Force concrete provider registration and injection syntax." },
+      { "trigger": "missing_tradeoff", "question": "What risk appears if the injected useValue object is mutable and shared across services?", "purpose": "Check shared-reference and state-safety reasoning." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Injecting plain values as providers",
+        "displayQuestion": "How can you inject a plain value (not a class) as a provider?",
+        "displayIntent": "Check whether the candidate understands useValue and custom tokens for non-class dependencies.",
+        "guidance": [
+          "Describe the provider object with provide and useValue.",
+          "Explain why @Inject(token) is needed on the consumer side.",
+          "Mention token constants and shared mutable value risks."
+        ],
+        "commonMistakes": [
+          "Trying to inject interfaces or plain types without a runtime token.",
+          "Using untracked magic strings as tokens.",
+          "Mutating a shared useValue object without intent."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Inject plain value như provider",
+        "displayQuestion": "Làm sao inject một plain value, không phải class, như một provider?",
+        "displayIntent": "Kiểm tra ứng viên có hiểu useValue và custom token cho dependency không phải class hay không.",
+        "guidance": [
+          "Mô tả provider object với provide và useValue.",
+          "Giải thích vì sao phía consumer cần @Inject(token).",
+          "Nhắc tới token constant và rủi ro mutable value dùng chung."
+        ],
+        "commonMistakes": [
+          "Cố inject interface hoặc plain type mà không có runtime token.",
+          "Dùng magic string token rải rác.",
+          "Mutate object useValue dùng chung mà không chủ đích."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "plain value を provider として inject する",
+        "displayQuestion": "class ではない plain value を provider としてどう inject しますか。",
+        "displayIntent": "非 class dependency に対する useValue と custom token を理解しているかを確認する。",
+        "guidance": [
+          "provide と useValue を持つ provider object を説明する。",
+          "consumer 側で @Inject(token) が必要な理由を説明する。",
+          "token constant と shared mutable value のリスクに触れる。"
+        ],
+        "commonMistakes": [
+          "runtime token なしで interface や plain type を inject しようとする。",
+          "管理されていない magic string token を使う。",
+          "意図なく共有 useValue object を mutate する。"
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "NestJS docs: Custom providers", "url": "https://docs.nestjs.com/fundamentals/custom-providers", "note": "Used for useValue and non-class injection tokens." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NESTJS_DI_TECH_TEST_MOCK_PROVIDER_013",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving", "impact_measurement"],
+    "techTags": ["nestjs", "jest", "typescript"],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Evaluate whether the candidate can mock dependencies in NestJS unit tests using Test.createTestingModule and provider overrides.",
+    "primaryQuestion": "How do you mock a provider in unit tests with Test.createTestingModule()?",
+    "expectedSignals": [
+      "Explains creating a TestingModule with the class under test and a mock provider for its dependency.",
+      "Shows the provider shape { provide: DependencyToken, useValue: mockObject } for replacing a dependency.",
+      "Mentions module.compile() and retrieving the class under test with module.get(ServiceUnderTest).",
+      "Mentions jest.fn() or equivalent mocks to assert calls and control return values.",
+      "Mentions overrideProvider(token).useValue(mock) as an option when importing a real module but replacing one provider.",
+      "Keeps unit tests focused by mocking external dependencies such as repositories, HTTP clients, queues, or other services."
+    ],
+    "redFlags": [
+      "Instantiates the service manually while ignoring its NestJS provider dependencies.",
+      "Imports the full application module for a narrow unit test without controlling dependencies.",
+      "Uses real database, queue, or HTTP clients in a unit test mock scenario.",
+      "Cannot identify the correct provider token to override."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Describes TestingModule setup, useValue mocks, module.get, jest.fn assertions, overrideProvider, and unit-test isolation." },
+      { "scoreBand": "solid", "description": "Can replace dependencies with useValue but misses overrideProvider or retrieval/assertion detail." },
+      { "scoreBand": "needs_work", "description": "Has tested NestJS code but cannot explain provider mocking mechanics." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer does not demonstrate practical NestJS unit testing knowledge." }
+    ],
+    "followUps": [
+      { "trigger": "vague_answer", "question": "If UserService depends on UserRepository, what providers would you pass to Test.createTestingModule()?", "purpose": "Force concrete unit-test module setup." },
+      { "trigger": "missing_context", "question": "When would you use overrideProvider instead of declaring a useValue mock directly?", "purpose": "Check imported-module testing patterns." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Mocking providers in NestJS unit tests",
+        "displayQuestion": "How do you mock a provider in unit tests with Test.createTestingModule()?",
+        "displayIntent": "Check whether the candidate can isolate a NestJS service by replacing dependencies in a TestingModule.",
+        "guidance": [
+          "Describe Test.createTestingModule with the class under test and mock providers.",
+          "Use provide plus useValue and retrieve the service with module.get().",
+          "Mention overrideProvider for imported modules."
+        ],
+        "commonMistakes": [
+          "Using real infrastructure dependencies in unit tests.",
+          "Manually new-ing a provider with an incomplete dependency graph.",
+          "Mocking the wrong token."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Mock provider trong unit test NestJS",
+        "displayQuestion": "Bạn mock một provider trong unit test bằng Test.createTestingModule() như thế nào?",
+        "displayIntent": "Kiểm tra ứng viên có isolate được NestJS service bằng cách thay dependency trong TestingModule hay không.",
+        "guidance": [
+          "Mô tả Test.createTestingModule với class đang test và mock provider.",
+          "Dùng provide cộng useValue và lấy service bằng module.get().",
+          "Nhắc tới overrideProvider khi import module thật."
+        ],
+        "commonMistakes": [
+          "Dùng dependency hạ tầng thật trong unit test.",
+          "Tự new provider với dependency graph thiếu.",
+          "Mock sai token."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "NestJS unit test で provider を mock する",
+        "displayQuestion": "Test.createTestingModule() を使って unit test で provider をどう mock しますか。",
+        "displayIntent": "TestingModule 内で dependency を差し替え、NestJS service を isolate できるかを確認する。",
+        "guidance": [
+          "test 対象 class と mock provider を含む Test.createTestingModule を説明する。",
+          "provide と useValue を使い、module.get() で service を取得する。",
+          "real module を import する場合の overrideProvider に触れる。"
+        ],
+        "commonMistakes": [
+          "unit test で real infrastructure dependency を使う。",
+          "不完全な dependency graph で provider を手動 new する。",
+          "間違った token を mock する。"
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "NestJS docs: Testing", "url": "https://docs.nestjs.com/fundamentals/testing", "note": "Used for Test.createTestingModule and provider override patterns." },
+      { "label": "NestJS docs: Custom providers", "url": "https://docs.nestjs.com/fundamentals/custom-providers", "note": "Used for useValue provider mocks." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NESTJS_DI_TECH_IOC_CONTAINER_014",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking", "communication"],
+    "techTags": ["nestjs", "nodejs", "typescript"],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Check whether the candidate understands the NestJS IoC container as the runtime system that stores modules/providers and resolves dependency graphs.",
+    "primaryQuestion": "What is the NestJS IoC container?",
+    "expectedSignals": [
+      "Defines IoC container as the NestJS runtime component that owns provider registration, dependency resolution, and instance lifecycle.",
+      "Explains that modules contribute providers, controllers, imports, and exports to the container.",
+      "Mentions that the container resolves provider tokens and uses constructor metadata or explicit @Inject() tokens.",
+      "Explains that the container applies provider scopes such as singleton/default, request, and transient.",
+      "Connects IoC to inversion of control: application classes declare dependencies while the container creates and wires them.",
+      "Mentions that DI errors usually come from the container being unable to resolve a token in the current module context."
+    ],
+    "redFlags": [
+      "Defines IoC container as only a place where controllers are stored.",
+      "Cannot connect modules and providers to dependency resolution.",
+      "Thinks the container scans all files automatically regardless of module registration.",
+      "Does not understand token resolution or module context."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Explains the container across module graph, provider tokens, constructor metadata, scopes, lifecycle, and DI error context." },
+      { "scoreBand": "solid", "description": "Understands the container creates and injects providers but misses module graph or scope detail." },
+      { "scoreBand": "needs_work", "description": "Can repeat the IoC term but cannot explain what the container does at runtime." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer does not show NestJS runtime dependency-resolution understanding." }
+    ],
+    "followUps": [
+      { "trigger": "missing_context", "question": "How does the container know which implementation to inject for a constructor parameter?", "purpose": "Check token and metadata reasoning." },
+      { "trigger": "vague_answer", "question": "What role do module imports and exports play in what the container can resolve?", "purpose": "Connect IoC container behavior to NestJS module visibility." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "NestJS IoC container",
+        "displayQuestion": "What is the NestJS IoC container?",
+        "displayIntent": "Assess whether the candidate understands the runtime component that resolves provider dependency graphs.",
+        "guidance": [
+          "Define the container by its responsibilities.",
+          "Connect modules, providers, tokens, scopes, and lifecycle.",
+          "Explain inversion of control in practical NestJS terms."
+        ],
+        "commonMistakes": [
+          "Thinking Nest scans and injects every class automatically.",
+          "Ignoring module context and provider exports.",
+          "Not distinguishing IoC from plain imports."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "NestJS IoC container",
+        "displayQuestion": "NestJS IoC container là gì?",
+        "displayIntent": "Đánh giá ứng viên có hiểu runtime component resolve dependency graph của provider hay không.",
+        "guidance": [
+          "Định nghĩa container qua các trách nhiệm của nó.",
+          "Liên hệ module, provider, token, scope và lifecycle.",
+          "Giải thích inversion of control theo ngữ cảnh NestJS thực tế."
+        ],
+        "commonMistakes": [
+          "Nghĩ Nest tự scan và inject mọi class.",
+          "Bỏ qua module context và provider exports.",
+          "Không phân biệt IoC với import thông thường."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "NestJS IoC container",
+        "displayQuestion": "NestJS IoC container とは何ですか。",
+        "displayIntent": "provider dependency graph を resolve する runtime component を理解しているかを確認する。",
+        "guidance": [
+          "container の責務から定義する。",
+          "module、provider、token、scope、lifecycle と関連づける。",
+          "NestJS の文脈で inversion of control を説明する。"
+        ],
+        "commonMistakes": [
+          "Nest がすべての class を自動 scan して inject すると考える。",
+          "module context と provider exports を無視する。",
+          "IoC と通常の import を区別しない。"
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "NestJS docs: Providers", "url": "https://docs.nestjs.com/providers", "note": "Used for IoC container and provider resolution concepts." },
+      { "label": "NestJS docs: Modules", "url": "https://docs.nestjs.com/modules", "note": "Used for module graph and provider visibility." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NESTJS_DI_TECH_UNREGISTERED_PROVIDER_015",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "debugging",
+    "competencies": ["problem_solving", "technical_fundamentals", "system_thinking"],
+    "techTags": ["nestjs", "typescript"],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Evaluate whether the candidate can debug the common NestJS error caused by injecting a provider that is missing from the module context.",
+    "primaryQuestion": "What happens if you try to inject a provider that is not registered in any Module?",
+    "expectedSignals": [
+      "States that NestJS fails during application bootstrap or testing module compilation with a dependency resolution error.",
+      "Mentions the typical message pattern: Nest cannot resolve dependencies of a class and shows the unresolved constructor parameter index or token.",
+      "Explains likely fixes: add the provider to the owning module providers array, import a module that exports it, or use the correct token.",
+      "Distinguishes missing provider from missing export: a provider can exist in another module but still be invisible unless exported and imported.",
+      "Mentions that @Global() modules can make exports available broadly, but should be used intentionally.",
+      "Notes that manually adding a provider to unrelated modules can create duplicate instances or weaken module boundaries."
+    ],
+    "redFlags": [
+      "Says NestJS silently injects undefined for missing required providers.",
+      "Uses @Optional() or forwardRef() without diagnosing registration, import, or export issues.",
+      "Adds the missing service to AppModule only without considering module ownership.",
+      "Cannot read the error message to identify which constructor parameter failed."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Explains bootstrap/compile failure, reads the error context, identifies provider/import/export/token fixes, and preserves module boundaries." },
+      { "scoreBand": "solid", "description": "Knows to register or import the provider but misses export visibility or token mismatch details." },
+      { "scoreBand": "needs_work", "description": "Recognizes a DI error but applies random fixes like forwardRef or @Optional." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer does not demonstrate practical NestJS DI debugging ability." }
+    ],
+    "followUps": [
+      { "trigger": "missing_context", "question": "If AuthService injects UsersService and the error happens in AuthModule, what should UsersModule expose and what should AuthModule import?", "purpose": "Check module ownership, exports, and imports." },
+      { "trigger": "red_flag", "question": "Why is adding UsersService to both UsersModule and AuthModule not always the right fix?", "purpose": "Verify duplicate-instance and boundary reasoning." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Unregistered provider DI error",
+        "displayQuestion": "What happens if you try to inject a provider that is not registered in any Module?",
+        "displayIntent": "Check whether the candidate can diagnose and fix a common NestJS dependency resolution error.",
+        "guidance": [
+          "Describe the bootstrap or test compile failure.",
+          "Explain how to read the unresolved dependency token or parameter index.",
+          "Name the correct fixes: providers, imports, exports, and token correction."
+        ],
+        "commonMistakes": [
+          "Assuming Nest injects undefined for missing required dependencies.",
+          "Using forwardRef or @Optional before checking registration.",
+          "Registering the same service in unrelated modules and creating duplicate instances."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "debugging" }
+      },
+      "vi": {
+        "title": "Lỗi DI khi provider chưa đăng ký",
+        "displayQuestion": "Điều gì xảy ra nếu bạn inject một provider chưa được đăng ký trong bất kỳ Module nào?",
+        "displayIntent": "Kiểm tra ứng viên có chẩn đoán và sửa được lỗi dependency resolution phổ biến trong NestJS hay không.",
+        "guidance": [
+          "Mô tả lỗi khi bootstrap app hoặc compile testing module.",
+          "Giải thích cách đọc token hoặc index constructor parameter chưa resolve được.",
+          "Nêu fix đúng: providers, imports, exports và sửa token."
+        ],
+        "commonMistakes": [
+          "Tưởng Nest inject undefined cho dependency bắt buộc bị thiếu.",
+          "Dùng forwardRef hoặc @Optional trước khi kiểm tra registration.",
+          "Đăng ký cùng service vào module không liên quan và tạo duplicate instance."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "debugging" }
+      },
+      "ja": {
+        "title": "未登録 provider による DI error",
+        "displayQuestion": "どの Module にも登録されていない provider を inject しようとすると何が起きますか。",
+        "displayIntent": "NestJS の一般的な dependency resolution error を診断し修正できるかを確認する。",
+        "guidance": [
+          "app bootstrap または testing module compile の失敗を説明する。",
+          "resolve できない token または constructor parameter index の読み方を説明する。",
+          "正しい修正として providers、imports、exports、token correction を挙げる。"
+        ],
+        "commonMistakes": [
+          "必須 dependency が欠けると Nest が undefined を inject すると考える。",
+          "registration を確認する前に forwardRef や @Optional を使う。",
+          "無関係な module に同じ service を登録し duplicate instance を作る。"
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "debugging" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "NestJS docs: Common errors", "url": "https://docs.nestjs.com/faq/common-errors", "note": "Used for common cannot-resolve-dependencies diagnostics." },
+      { "label": "NestJS docs: Modules", "url": "https://docs.nestjs.com/modules", "note": "Used for provider exports and imports." },
+      { "label": "NestJS docs: Providers", "url": "https://docs.nestjs.com/providers", "note": "Used for provider registration and injection context." }
+    ],
+    "status": "active"
+  }
+]

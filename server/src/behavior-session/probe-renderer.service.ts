@@ -247,7 +247,6 @@ Context: candidate just answered a question about ${stageName}.`;
   buildOpeningContract({
     targetRole,
     targetLevel,
-    personaPolicy,
     language,
   }: {
     targetRole: string;
@@ -255,10 +254,35 @@ Context: candidate just answered a question about ${stageName}.`;
     personaPolicy: PersonaPolicy;
     language: QuestionProbeLanguage;
   }): string {
+    const profiles: Record<
+      QuestionProbeLanguage,
+      Record<string, { name: string; title: string }>
+    > = {
+      vi: {
+        junior: { name: 'Linh', title: 'Engineering Manager' },
+        mid: { name: 'Hằng', title: 'Senior Engineering Manager' },
+        senior: { name: 'Lan', title: 'Director of Engineering' },
+      },
+      en: {
+        junior: { name: 'Gavin', title: 'Engineering Manager' },
+        mid: { name: 'Gavin', title: 'Senior Engineering Manager' },
+        senior: { name: 'Ashley', title: 'Director of Engineering' },
+      },
+      ja: {
+        junior: { name: '中村ゆき', title: 'エンジニアリングマネージャー' },
+        mid: { name: '中村ゆき', title: 'シニアエンジニアリングマネージャー' },
+        senior: { name: '山本音弥', title: 'エンジニアリングディレクター' },
+      },
+    };
+    const { name, title } = profiles[language]?.[targetLevel] ?? {
+      name: 'Alex',
+      title: 'Engineering Manager',
+    };
+
     const texts: Record<QuestionProbeLanguage, string> = {
-      vi: `Xin chào, tôi là ${personaPolicy.name}. Hôm nay chúng ta sẽ thực hiện một buổi phỏng vấn cho vị trí ${targetRole} ở level ${targetLevel}. Tôi sẽ đặt câu hỏi qua nhiều phần khác nhau và có thể hỏi sâu thêm. Tôi sẽ không nhận xét trong quá trình phỏng vấn. Bạn sẵn sàng bắt đầu chưa?`,
-      en: `Hello, I'm ${personaPolicy.name}. Today we'll be conducting a behavioral interview for the ${targetRole} position at ${targetLevel} level. I'll be asking questions across several areas and may follow up for more detail. I won't be giving feedback during the interview. Ready to begin?`,
-      ja: `こんにちは、${personaPolicy.name}です。本日は${targetRole}の${targetLevel}レベルの行動面接を実施します。いくつかの分野にわたって質問し、詳細を確認するためにフォローアップすることがあります。面接中はフィードバックを行いません。始める準備はできていますか？`,
+      vi: `Xin chào bạn, tôi là ${name}, ${title} ở đây. Hôm nay tôi sẽ phỏng vấn bạn cho vị trí ${targetRole} level ${targetLevel}. Tôi sẽ hỏi qua nhiều chủ đề khác nhau và có thể đi sâu thêm ở một số câu hỏi. Bạn sẵn sàng chưa?`,
+      en: `Hi, I'm ${name}, ${title} here. Today I'll be interviewing you for the ${targetRole} role at ${targetLevel} level. I'll ask across a few different areas and may dig deeper in some spots. I won't be giving feedback during the interview itself. Ready to get started?`,
+      ja: `こんにちは、${title}の${name}です。本日は${targetRole}の${targetLevel}ポジションの面接を担当します。いくつかのテーマにわたって質問し、一部は深掘りすることもあります。面接中はフィードバックはお伝えしません。準備はよろしいですか？`,
     };
     return texts[language];
   }
@@ -272,7 +296,7 @@ Context: candidate just answered a question about ${stageName}.`;
     language: QuestionProbeLanguage;
   }): string {
     const texts: Record<QuestionProbeLanguage, string> = {
-      vi: `Tiếp theo, chúng ta sẽ chuyển sang phần ${stageName}.`,
+      vi: `Bây giờ chúng ta sẽ đến với phần ${stageName}.`,
       en: `Now let's move on to ${stageName}.`,
       ja: `次に、${stageName}のセクションに移ります。`,
     };
