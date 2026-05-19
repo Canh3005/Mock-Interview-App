@@ -1,0 +1,1489 @@
+[
+  {
+    "code": "EXPRESS_ROUTING_HTTP_JR_TECH_ROUTING_DEF_001",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "communication"],
+    "techTags": ["express", "nodejs", "rest"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate can define routing in Express as the mapping between HTTP method, path, and handler, and can show the basic route declaration shape.",
+    "primaryQuestion": "What is routing in Express, and how do you define a route?",
+    "expectedSignals": [
+      "Defines routing as deciding how an application responds to a client request for a specific HTTP method and URL path.",
+      "Shows the basic shape app.METHOD(path, handler), such as app.get('/users', (req, res) => res.json(...)).",
+      "Explains that a route is matched by both path and HTTP method, not by path alone.",
+      "Mentions that handlers receive req and res, and may also receive next when control should be passed onward.",
+      "Understands that handlers should either send a response or pass control so the request does not hang."
+    ],
+    "redFlags": [
+      "Says routing is only creating URLs without mentioning HTTP methods or handlers.",
+      "Cannot write a minimal app.get or router.get example.",
+      "Confuses Express routing with frontend client-side routing.",
+      "Believes a route handler automatically returns a response without using res or returning control."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Gives a precise method plus path plus handler definition, demonstrates a short route, and explains response or next control flow." },
+      { "scoreBand": "solid", "description": "Can define and write a route but misses one nuance such as method matching or hanging requests." },
+      { "scoreBand": "needs_work", "description": "Recognizes app.get but cannot explain what Express matches or what the handler must do." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer does not show basic Express routing knowledge." }
+    ],
+    "followUps": [
+      { "trigger": "vague_answer", "question": "Can you write a tiny GET /health route and explain which part is the method, path, and handler?", "purpose": "Force the answer into a concrete Express route declaration." },
+      { "trigger": "missing_context", "question": "If a request is POST /users but only GET /users is defined, will that GET route run?", "purpose": "Verify that route matching includes the HTTP method." },
+      { "trigger": "red_flag", "question": "What happens if your handler neither sends a response nor calls next()?", "purpose": "Check request-response lifecycle awareness." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Express routing basics",
+        "displayQuestion": "What is routing in Express, and how do you define a route?",
+        "displayIntent": "Check whether the candidate understands a route as an HTTP method, path, and handler mapping.",
+        "guidance": [
+          "Define routing before jumping into code.",
+          "Use a concrete app.get('/health', handler) or router.get('/users', handler) example.",
+          "Explain that Express matches both the HTTP method and the route path.",
+          "Mention that the handler uses req and res, and may call next when another handler should continue."
+        ],
+        "commonMistakes": [
+          "Describing routing as only URL naming.",
+          "Forgetting that POST /users and GET /users are different routes.",
+          "Confusing Express routing with React Router or browser navigation.",
+          "Leaving the request open by not sending a response or calling next."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth", "topic": "routing_basics" }
+      },
+      "vi": {
+        "title": "Nền tảng routing trong Express",
+        "displayQuestion": "Routing trong Express là gì và bạn định nghĩa route như thế nào?",
+        "displayIntent": "Kiểm tra ứng viên có hiểu route là mapping giữa HTTP method, path và handler hay không.",
+        "guidance": [
+          "Định nghĩa routing trước khi đi vào code.",
+          "Dùng ví dụ cụ thể như app.get('/health', handler) hoặc router.get('/users', handler).",
+          "Giải thích Express match cả HTTP method lẫn route path.",
+          "Nhắc rằng handler dùng req và res, và có thể gọi next khi cần chuyển tiếp xử lý."
+        ],
+        "commonMistakes": [
+          "Mô tả routing chỉ là đặt tên URL.",
+          "Quên rằng POST /users và GET /users là hai route khác nhau.",
+          "Nhầm Express routing với React Router hoặc điều hướng trên browser.",
+          "Làm request bị treo vì không gửi response và cũng không gọi next."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth", "topic": "routing_basics" }
+      },
+      "ja": {
+        "title": "Express routing の基礎",
+        "displayQuestion": "Express における routing とは何で、route はどのように定義しますか。",
+        "displayIntent": "route を HTTP method、path、handler の対応として理解しているかを確認する。",
+        "guidance": [
+          "コードを書く前に routing の意味を定義する。",
+          "app.get('/health', handler) や router.get('/users', handler) のような具体例を使う。",
+          "Express は HTTP method と route path の両方でマッチすることを説明する。",
+          "handler は req と res を使い、必要なら next で次の処理に渡すことに触れる。"
+        ],
+        "commonMistakes": [
+          "routing を URL の命名だけとして説明する。",
+          "POST /users と GET /users が別 route であることを忘れる。",
+          "Express routing と React Router やブラウザ遷移を混同する。",
+          "response を送らず next も呼ばず request を止めてしまう。"
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth", "topic": "routing_basics" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Express docs: Routing", "url": "https://expressjs.com/en/guide/routing.html", "note": "Used for route definition, method/path matching, route handlers, and response lifecycle basics." },
+      { "label": "Express 5.x API: app.METHOD", "url": "https://expressjs.com/en/api.html#app.METHOD", "note": "Used for app.METHOD callback formats and route matching behavior." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_ROUTING_HTTP_JR_TECH_METHODS_002",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "communication", "system_thinking"],
+    "techTags": ["express", "nodejs", "rest", "http"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Evaluate whether the candidate can distinguish common Express HTTP method helpers and connect each method to normal REST intent and idempotency expectations.",
+    "primaryQuestion": "What is the difference between app.get(), app.post(), app.put(), app.patch(), and app.delete()?",
+    "expectedSignals": [
+      "Explains that these helpers register handlers for different HTTP verbs on a path.",
+      "Connects GET to reading data and avoiding state changes.",
+      "Connects POST to creating resources or triggering non-idempotent actions.",
+      "Connects PUT to full replacement or idempotent upsert-style updates depending on the API contract.",
+      "Connects PATCH to partial update and DELETE to deletion or deactivation.",
+      "Mentions that Express does not enforce REST semantics; the application design and handler logic must enforce them."
+    ],
+    "redFlags": [
+      "Says these methods are interchangeable because they can all return JSON.",
+      "Uses GET for destructive or state-changing actions without recognizing the risk.",
+      "Cannot explain the practical difference between PUT and PATCH.",
+      "Believes Express automatically creates database records when app.post is used."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Correctly maps each method to common REST semantics, explains idempotency at a practical level, and notes that Express only routes by method." },
+      { "scoreBand": "solid", "description": "Understands the main method purposes but is shallow on PUT versus PATCH or REST semantics enforcement." },
+      { "scoreBand": "needs_work", "description": "Knows method names but treats them mostly as naming conventions." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer is incorrect about HTTP method behavior or Express method routing." }
+    ],
+    "followUps": [
+      { "trigger": "missing_tradeoff", "question": "When would you choose PATCH /users/:id instead of PUT /users/:id?", "purpose": "Check partial versus full update semantics." },
+      { "trigger": "red_flag", "question": "Why is GET /delete-user?id=1 a poor API design?", "purpose": "Probe safe method semantics and accidental side effects." },
+      { "trigger": "missing_context", "question": "Does Express itself stop you from changing data inside app.get()?", "purpose": "Verify separation between framework routing and API contract discipline." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "HTTP method route helpers",
+        "displayQuestion": "What is the difference between app.get(), app.post(), app.put(), app.patch(), and app.delete()?",
+        "displayIntent": "Check whether the candidate can explain route helpers through HTTP method semantics, not just syntax.",
+        "guidance": [
+          "Start by saying each helper registers a route for one HTTP verb.",
+          "Map GET, POST, PUT, PATCH, and DELETE to common REST use cases.",
+          "Explain PUT versus PATCH carefully because this is a common interview gap.",
+          "Clarify that Express routes by method but does not enforce business semantics."
+        ],
+        "commonMistakes": [
+          "Treating all method helpers as interchangeable.",
+          "Using GET for actions that mutate data.",
+          "Saying PUT and PATCH are exactly the same.",
+          "Assuming Express automatically implements CRUD behavior."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth", "topic": "http_methods" }
+      },
+      "vi": {
+        "title": "Các helper HTTP method",
+        "displayQuestion": "Sự khác biệt giữa app.get(), app.post(), app.put(), app.patch(), app.delete() là gì?",
+        "displayIntent": "Kiểm tra ứng viên có giải thích method helper dựa trên ý nghĩa HTTP method, không chỉ cú pháp.",
+        "guidance": [
+          "Bắt đầu bằng việc nói mỗi helper đăng ký route cho một HTTP verb.",
+          "Map GET, POST, PUT, PATCH và DELETE với các use case REST thường gặp.",
+          "Giải thích kỹ PUT và PATCH vì đây là điểm ứng viên hay nhầm.",
+          "Làm rõ Express chỉ route theo method, không tự enforce semantic nghiệp vụ."
+        ],
+        "commonMistakes": [
+          "Xem mọi method helper là tương đương nhau.",
+          "Dùng GET cho hành động làm thay đổi dữ liệu.",
+          "Nói PUT và PATCH giống hệt nhau.",
+          "Tưởng Express tự implement CRUD khi dùng các method này."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth", "topic": "http_methods" }
+      },
+      "ja": {
+        "title": "HTTP method route helper",
+        "displayQuestion": "app.get(), app.post(), app.put(), app.patch(), app.delete() の違いは何ですか。",
+        "displayIntent": "method helper を単なる構文ではなく HTTP method の意味で説明できるかを確認する。",
+        "guidance": [
+          "各 helper は特定の HTTP verb に対する route を登録するものだと説明する。",
+          "GET、POST、PUT、PATCH、DELETE を一般的な REST の用途に対応づける。",
+          "PUT と PATCH の違いは面接でよく曖昧になるため丁寧に説明する。",
+          "Express は method で route するだけで、業務上の semantic は自動では enforce しないと明確にする。"
+        ],
+        "commonMistakes": [
+          "すべての method helper を同じものとして扱う。",
+          "データを変更する処理に GET を使う。",
+          "PUT と PATCH が完全に同じだと言う。",
+          "Express が CRUD 動作を自動実装すると考える。"
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth", "topic": "http_methods" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Express docs: Route methods", "url": "https://expressjs.com/en/guide/routing.html#route-methods", "note": "Used for method-based route helpers and app.all behavior." },
+      { "label": "Express 5.x API: app.METHOD", "url": "https://expressjs.com/en/api.html#app.METHOD", "note": "Used for callback and method-specific route registration details." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_ROUTING_HTTP_JR_TECH_REQ_RES_NEXT_003",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving", "communication"],
+    "techTags": ["express", "nodejs", "middleware"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate understands the three core handler parameters and the request-response control flow in Express.",
+    "primaryQuestion": "What are req, res, and next in an Express route handler?",
+    "expectedSignals": [
+      "Explains req as the request object containing path params, query, body, headers, cookies, method, URL, and other request data.",
+      "Explains res as the response object used to set status, headers, cookies, and send JSON, text, files, redirects, or end the response.",
+      "Explains next as the function that passes control to the next matching middleware or route handler.",
+      "Mentions next(err) for error handling and next('route') for skipping remaining callbacks in the current route when appropriate.",
+      "Understands that once a final response is sent, the handler should not continue into another response path."
+    ],
+    "redFlags": [
+      "Thinks req and res are plain custom objects created by the developer.",
+      "Cannot name common data sources on req such as params, query, body, or headers.",
+      "Calls next after sending a normal response without understanding duplicate response risk.",
+      "Does not know how errors are forwarded to Express error-handling middleware."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Clearly explains req, res, next, normal flow, error flow, and response completion risks with examples." },
+      { "scoreBand": "solid", "description": "Correctly defines the three parameters but misses error flow or double-send nuance." },
+      { "scoreBand": "needs_work", "description": "Knows names but cannot explain how they control the request lifecycle." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer does not demonstrate practical Express handler understanding." }
+    ],
+    "followUps": [
+      { "trigger": "vague_answer", "question": "Where would you read an Authorization header, a route id, and a JSON payload from req?", "purpose": "Verify practical request object usage." },
+      { "trigger": "red_flag", "question": "What can go wrong if you call res.json() and then call next() into another response handler?", "purpose": "Check duplicate response and headers-sent reasoning." },
+      { "trigger": "missing_context", "question": "How do you pass an error from a route handler to centralized error middleware?", "purpose": "Check next(err) and error middleware awareness." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "req, res, and next",
+        "displayQuestion": "What are req, res, and next in an Express route handler?",
+        "displayIntent": "Check understanding of the request object, response object, and middleware control flow.",
+        "guidance": [
+          "Explain req as incoming request data and metadata.",
+          "Explain res as the object used to build and send the response.",
+          "Explain next as the control handoff to the next middleware or error handler.",
+          "Mention that a handler should avoid sending more than one final response."
+        ],
+        "commonMistakes": [
+          "Only saying req is input and res is output without details.",
+          "Forgetting next(err) for centralized errors.",
+          "Calling next after sending a response without a reason.",
+          "Mixing up req.params, req.query, and req.body."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth", "topic": "handler_arguments" }
+      },
+      "vi": {
+        "title": "req, res và next",
+        "displayQuestion": "req, res, next trong route handler là gì?",
+        "displayIntent": "Kiểm tra hiểu biết về request object, response object và control flow của middleware.",
+        "guidance": [
+          "Giải thích req chứa dữ liệu và metadata của request đi vào.",
+          "Giải thích res dùng để dựng và gửi response.",
+          "Giải thích next là cơ chế chuyển quyền xử lý sang middleware hoặc error handler tiếp theo.",
+          "Nhắc rằng một handler không nên gửi final response nhiều lần."
+        ],
+        "commonMistakes": [
+          "Chỉ nói req là input và res là output mà không có chi tiết.",
+          "Quên next(err) cho centralized error handling.",
+          "Gọi next sau khi đã gửi response mà không hiểu lý do.",
+          "Nhầm req.params, req.query và req.body."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth", "topic": "handler_arguments" }
+      },
+      "ja": {
+        "title": "req、res、next",
+        "displayQuestion": "Express の route handler における req、res、next とは何ですか。",
+        "displayIntent": "request object、response object、middleware control flow の理解を確認する。",
+        "guidance": [
+          "req は受信 request のデータと metadata を持つものだと説明する。",
+          "res は response を構築して送信するための object だと説明する。",
+          "next は次の middleware または error handler に処理を渡す仕組みだと説明する。",
+          "1 つの handler で final response を複数回送らないようにする点に触れる。"
+        ],
+        "commonMistakes": [
+          "req は input、res は output とだけ言って詳細がない。",
+          "centralized error handling のための next(err) を忘れる。",
+          "response 送信後に理由なく next を呼ぶ。",
+          "req.params、req.query、req.body を混同する。"
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth", "topic": "handler_arguments" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Express docs: Using middleware", "url": "https://expressjs.com/en/guide/using-middleware.html", "note": "Used for req, res, next, middleware tasks, and hanging request behavior." },
+      { "label": "Express docs: Routing route handlers", "url": "https://expressjs.com/en/guide/routing.html#route-handlers", "note": "Used for multiple handlers and next('route') behavior." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_ROUTING_HTTP_JR_TECH_PARAMS_QUERY_004",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "communication", "problem_solving"],
+    "techTags": ["express", "nodejs", "rest"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Verify whether the candidate can distinguish route parameters from query strings and access them correctly in Express.",
+    "primaryQuestion": "What is the difference between a route parameter like :id and a query string like ?id=1, and how do you access each?",
+    "expectedSignals": [
+      "Explains that route parameters are named path segments defined in the route path, such as /users/:id.",
+      "Explains that route parameters are read from req.params, such as req.params.id.",
+      "Explains that query strings are key-value options after ?, not part of the route path.",
+      "Explains that query values are read from req.query, such as req.query.page or req.query.id.",
+      "Uses route params for resource identity and query strings for filtering, sorting, pagination, search, or optional modifiers.",
+      "Mentions that both params and query values come from the client and need parsing and validation."
+    ],
+    "redFlags": [
+      "Reads /users/:id from req.query.id.",
+      "Thinks query strings change which route path Express matches.",
+      "Uses query strings for required resource identity without a clear reason.",
+      "Assumes req.params.id is already a number or already validated."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Clearly separates path identity from query options, gives correct accessors, and mentions parsing and validation." },
+      { "scoreBand": "solid", "description": "Knows req.params and req.query but misses API design guidance or validation." },
+      { "scoreBand": "needs_work", "description": "Can access one source but confuses when to use each." },
+      { "scoreBand": "insufficient_evidence", "description": "Cannot distinguish route params from query strings in Express." }
+    ],
+    "followUps": [
+      { "trigger": "vague_answer", "question": "For GET /users/42?includePosts=true&page=2, what are req.params and req.query?", "purpose": "Make the distinction concrete." },
+      { "trigger": "missing_context", "question": "Why would /users/:id be clearer than /users?id=42 for fetching one user?", "purpose": "Check resource identity and API design judgment." },
+      { "trigger": "red_flag", "question": "Is req.params.id a number automatically? What should you do before using it in a database query?", "purpose": "Check parsing and validation awareness." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Route params versus query strings",
+        "displayQuestion": "What is the difference between a route parameter like :id and a query string like ?id=1, and how do you access each?",
+        "displayIntent": "Check correct use of req.params and req.query and the API design meaning behind each.",
+        "guidance": [
+          "Use /users/:id and /users?role=admin&page=2 as examples.",
+          "Say route params come from named path segments and are read from req.params.",
+          "Say query strings are not part of the route path and are read from req.query.",
+          "Mention validation and type conversion for both sources."
+        ],
+        "commonMistakes": [
+          "Reading path parameters from req.query.",
+          "Treating query strings as part of Express route matching.",
+          "Using query strings for required resource identity by habit.",
+          "Assuming user-controlled string values are safe to use directly."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth", "topic": "params_query" }
+      },
+      "vi": {
+        "title": "Route parameter và query string",
+        "displayQuestion": "Route parameter (:id) và query string (?id=1) khác nhau như thế nào? Truy cập bằng cách nào?",
+        "displayIntent": "Kiểm tra cách dùng đúng req.params, req.query và ý nghĩa thiết kế API phía sau.",
+        "guidance": [
+          "Dùng ví dụ /users/:id và /users?role=admin&page=2.",
+          "Nói route param đến từ named path segment và đọc bằng req.params.",
+          "Nói query string không thuộc route path và đọc bằng req.query.",
+          "Nhắc validation và chuyển kiểu cho cả hai nguồn dữ liệu."
+        ],
+        "commonMistakes": [
+          "Đọc path parameter từ req.query.",
+          "Tưởng query string tham gia vào route matching của Express.",
+          "Dùng query string cho resource identity bắt buộc theo thói quen.",
+          "Giả định giá trị string từ client là an toàn để dùng trực tiếp."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth", "topic": "params_query" }
+      },
+      "ja": {
+        "title": "route parameter と query string",
+        "displayQuestion": "route parameter (:id) と query string (?id=1) はどう違い、それぞれどのように取得しますか。",
+        "displayIntent": "req.params と req.query の正しい使い分けと API design 上の意味を確認する。",
+        "guidance": [
+          "/users/:id と /users?role=admin&page=2 を例に使う。",
+          "route param は path の named segment から来て req.params で読むと説明する。",
+          "query string は route path の一部ではなく req.query で読むと説明する。",
+          "どちらも validation と type conversion が必要だと述べる。"
+        ],
+        "commonMistakes": [
+          "path parameter を req.query から読む。",
+          "query string が Express の route matching に含まれると考える。",
+          "必須の resource identity を習慣的に query string にする。",
+          "client 由来の string 値をそのまま安全に使えると思う。"
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth", "topic": "params_query" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Express docs: Route parameters", "url": "https://expressjs.com/en/guide/routing.html#route-parameters", "note": "Used for req.params and route parameter behavior." },
+      { "label": "Express docs: Routing route paths", "url": "https://expressjs.com/en/guide/routing.html#route-paths", "note": "Used for the note that query strings are not part of the route path." },
+      { "label": "Express 5.x API: req.query", "url": "https://expressjs.com/en/api.html#req.query", "note": "Used for query string access and parser behavior." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_ROUTING_HTTP_JR_TECH_ROUTER_005",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking", "collaboration"],
+    "techTags": ["express", "nodejs", "rest"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Assess whether the candidate understands express.Router as a modular, mountable routing and middleware unit for organizing routes outside the root app.",
+    "primaryQuestion": "What is express.Router(), and why use it instead of attaching all routes directly to app?",
+    "expectedSignals": [
+      "Defines express.Router() as a modular, mountable router that can contain route handlers and middleware.",
+      "Explains that a router behaves like a mini application for routing and middleware, but is mounted into the main app.",
+      "Shows an example such as const usersRouter = express.Router(); usersRouter.get('/', ...); app.use('/users', usersRouter).",
+      "Connects Router to modular files, feature ownership, testability, and reducing a large app.ts or server.ts file.",
+      "Mentions router-level middleware for feature-specific behavior such as auth, logging, validation, or parameter preloading."
+    ],
+    "redFlags": [
+      "Thinks Router starts a separate HTTP server.",
+      "Cannot explain how a router is mounted with app.use.",
+      "Says Router is only for performance or only for TypeScript.",
+      "Puts every route in one file and sees no maintainability issue as the codebase grows."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Defines Router accurately, demonstrates mounting, and explains modularity, ownership, middleware scoping, and testability benefits." },
+      { "scoreBand": "solid", "description": "Knows Router groups routes but misses middleware scoping or mount behavior details." },
+      { "scoreBand": "needs_work", "description": "Has used Router but cannot distinguish it from app or explain why it matters." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer does not show practical Router knowledge." }
+    ],
+    "followUps": [
+      { "trigger": "vague_answer", "question": "Can you sketch a users.routes.ts file and show how app.ts mounts it?", "purpose": "Force practical Router wiring." },
+      { "trigger": "missing_context", "question": "What kind of middleware would you attach to a usersRouter but not to the whole app?", "purpose": "Check router-level middleware scoping." },
+      { "trigger": "red_flag", "question": "Does express.Router() listen on a port by itself?", "purpose": "Correct confusion between router and server." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "express.Router for modular routes",
+        "displayQuestion": "What is express.Router(), and why use it instead of attaching all routes directly to app?",
+        "displayIntent": "Check whether the candidate can use Router as a modular, mountable routing unit.",
+        "guidance": [
+          "Define Router as a mountable route and middleware container.",
+          "Show app.use('/users', usersRouter) to explain how the prefix is applied.",
+          "Explain why feature route files are easier to maintain than one large app file.",
+          "Mention router-specific middleware and ownership boundaries."
+        ],
+        "commonMistakes": [
+          "Thinking Router creates another server.",
+          "Forgetting that routers are mounted with app.use or another router.use.",
+          "Using Router only as a folder convention without middleware benefits.",
+          "Keeping all routes in app.ts as the project grows."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth", "topic": "express_router" }
+      },
+      "vi": {
+        "title": "express.Router cho route modular",
+        "displayQuestion": "express.Router() là gì và tại sao cần dùng nó thay vì gắn tất cả route vào app?",
+        "displayIntent": "Kiểm tra ứng viên có biết dùng Router như một đơn vị routing có thể mount và tách module hay không.",
+        "guidance": [
+          "Định nghĩa Router là container cho route và middleware có thể mount.",
+          "Dùng app.use('/users', usersRouter) để giải thích prefix được áp dụng như thế nào.",
+          "Giải thích vì sao route theo feature dễ maintain hơn một file app lớn.",
+          "Nhắc middleware riêng của router và boundary ownership."
+        ],
+        "commonMistakes": [
+          "Tưởng Router tạo thêm một server riêng.",
+          "Quên rằng router được mount bằng app.use hoặc router.use.",
+          "Dùng Router chỉ như convention folder mà không hiểu lợi ích middleware.",
+          "Giữ toàn bộ routes trong app.ts khi dự án lớn dần."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth", "topic": "express_router" }
+      },
+      "ja": {
+        "title": "modular routes のための express.Router",
+        "displayQuestion": "express.Router() とは何で、すべての route を app に直接付ける代わりに使う理由は何ですか。",
+        "displayIntent": "Router を mount 可能な modular routing unit として使えるかを確認する。",
+        "guidance": [
+          "Router は route と middleware を入れられる mountable container だと定義する。",
+          "app.use('/users', usersRouter) で prefix がどのように適用されるか説明する。",
+          "feature ごとの route file が巨大な app file より maintain しやすい理由を説明する。",
+          "router-specific middleware と ownership boundary に触れる。"
+        ],
+        "commonMistakes": [
+          "Router が別の server を作ると思う。",
+          "router は app.use または router.use で mount することを忘れる。",
+          "Router を middleware の利点なしに folder convention としてだけ使う。",
+          "project が成長しても全 route を app.ts に置き続ける。"
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth", "topic": "express_router" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Express docs: express.Router", "url": "https://expressjs.com/en/guide/routing.html#express-router", "note": "Used for Router as a modular, mountable route handler and mini-app concept." },
+      { "label": "Express 5.x API: Router", "url": "https://expressjs.com/en/api.html#router", "note": "Used for router middleware behavior and mounting." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_ROUTING_HTTP_JR_TECH_PREFIX_GROUP_006",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking"],
+    "techTags": ["express", "nodejs", "rest"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate can group related routes under a common prefix using app.use and express.Router.",
+    "primaryQuestion": "How do you group routes by prefix, for example /api/v1/users?",
+    "expectedSignals": [
+      "Uses a router for the feature, such as usersRouter.get('/', ...) and usersRouter.get('/:id', ...).",
+      "Mounts the router at a prefix with app.use('/api/v1/users', usersRouter).",
+      "Understands that routes inside the router are relative to the mount path.",
+      "Explains that prefix grouping helps versioning, module ownership, middleware scoping, and avoiding repeated strings.",
+      "Mentions that nested routers can be used for sub-resources when it keeps route ownership clear."
+    ],
+    "redFlags": [
+      "Repeats /api/v1/users manually on every route in multiple files without recognizing drift risk.",
+      "Mounts a router but still defines all internal paths with the full prefix by mistake.",
+      "Cannot explain why usersRouter.get('/:id') becomes /api/v1/users/:id after mounting.",
+      "Mixes API versioning into unrelated controller logic instead of route composition."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Shows correct prefix mounting, relative router paths, and connects grouping to versioning, middleware, ownership, and maintainability." },
+      { "scoreBand": "solid", "description": "Can mount a router with a prefix but misses one design benefit or relative path detail." },
+      { "scoreBand": "needs_work", "description": "Knows app.use exists but struggles to reason about final paths after mounting." },
+      { "scoreBand": "insufficient_evidence", "description": "Cannot group Express routes by prefix correctly." }
+    ],
+    "followUps": [
+      { "trigger": "vague_answer", "question": "If usersRouter defines router.get('/:id'), what full URL does it handle after app.use('/api/v1/users', usersRouter)?", "purpose": "Verify relative route composition." },
+      { "trigger": "missing_context", "question": "Where would you attach auth middleware if all /api/v1/users routes require authentication?", "purpose": "Check prefix-level or router-level middleware placement." },
+      { "trigger": "missing_tradeoff", "question": "When would you create a separate v2 router instead of adding conditionals inside v1 handlers?", "purpose": "Probe API versioning boundary judgment." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Grouping routes by prefix",
+        "displayQuestion": "How do you group routes by prefix, for example /api/v1/users?",
+        "displayIntent": "Check whether the candidate can mount feature routers under a shared API prefix.",
+        "guidance": [
+          "Use a usersRouter with relative paths such as '/' and '/:id'.",
+          "Mount it with app.use('/api/v1/users', usersRouter).",
+          "Explain that the mount path and router path are composed into the final URL.",
+          "Discuss versioning and middleware scoping as reasons to group by prefix."
+        ],
+        "commonMistakes": [
+          "Duplicating the full prefix on every route.",
+          "Defining full paths inside the router after already mounting a prefix.",
+          "Putting versioning decisions deep inside every handler.",
+          "Forgetting that app.use can mount routers as middleware."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth", "topic": "route_prefix" }
+      },
+      "vi": {
+        "title": "Group routes theo prefix",
+        "displayQuestion": "Làm thế nào để group routes theo prefix, ví dụ /api/v1/users?",
+        "displayIntent": "Kiểm tra ứng viên có biết mount feature router dưới một API prefix chung hay không.",
+        "guidance": [
+          "Dùng usersRouter với path tương đối như '/' và '/:id'.",
+          "Mount bằng app.use('/api/v1/users', usersRouter).",
+          "Giải thích mount path và router path được ghép thành URL cuối cùng.",
+          "Nói về versioning và middleware scoping như lý do group theo prefix."
+        ],
+        "commonMistakes": [
+          "Lặp lại toàn bộ prefix ở mọi route.",
+          "Đã mount prefix nhưng bên trong router vẫn khai báo full path.",
+          "Đưa logic versioning vào sâu trong từng handler.",
+          "Quên app.use có thể mount router như middleware."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth", "topic": "route_prefix" }
+      },
+      "ja": {
+        "title": "prefix による route group",
+        "displayQuestion": "/api/v1/users のような prefix で routes を group するにはどうしますか。",
+        "displayIntent": "feature router を共通 API prefix の下に mount できるかを確認する。",
+        "guidance": [
+          "usersRouter の中では '/' や '/:id' のような relative path を使う。",
+          "app.use('/api/v1/users', usersRouter) で mount する。",
+          "mount path と router path が合成されて最終 URL になることを説明する。",
+          "prefix grouping の理由として versioning と middleware scoping を説明する。"
+        ],
+        "commonMistakes": [
+          "すべての route に full prefix を重複して書く。",
+          "prefix で mount 済みなのに router 内でも full path を書く。",
+          "versioning の判断を各 handler の深い場所に入れる。",
+          "app.use で router を middleware として mount できることを忘れる。"
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth", "topic": "route_prefix" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Express docs: express.Router", "url": "https://expressjs.com/en/guide/routing.html#express-router", "note": "Used for mounting routers under a path prefix." },
+      { "label": "Express 5.x API: app.use", "url": "https://expressjs.com/en/api.html#app.use", "note": "Used for mount path behavior and middleware path composition." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_ROUTING_HTTP_JR_TECH_APP_USE_GET_007",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving"],
+    "techTags": ["express", "nodejs", "middleware"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Assess whether the candidate can distinguish app.use middleware mounting from app.get GET route registration.",
+    "primaryQuestion": "How is app.use() different from app.get()?",
+    "expectedSignals": [
+      "Explains app.get(path, handler) registers a route for HTTP GET requests to the path.",
+      "Explains app.use(path?, middleware) mounts middleware or routers for all HTTP methods when the base path matches.",
+      "Mentions that app.use('/api', middleware) also applies to subpaths such as /api/users.",
+      "Mentions that app.use without a path applies to every request reaching that point in the middleware stack.",
+      "Connects app.use to cross-cutting middleware, static files, body parsers, routers, and 404 handlers."
+    ],
+    "redFlags": [
+      "Says app.use and app.get are the same except for naming.",
+      "Thinks app.use only handles GET requests.",
+      "Registers body parser or auth middleware after routes that need it and expects it to run retroactively.",
+      "Does not understand path prefix matching for app.use."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Clearly separates middleware mounting from GET route registration, including all-method behavior, prefix matching, and order implications." },
+      { "scoreBand": "solid", "description": "Understands the main difference but misses prefix matching or ordering detail." },
+      { "scoreBand": "needs_work", "description": "Has used both APIs but cannot predict which requests they handle." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer is incorrect about app.use or app.get behavior." }
+    ],
+    "followUps": [
+      { "trigger": "missing_context", "question": "Which requests will app.use('/api', mw) see: GET /api, POST /api/users, and GET /public?", "purpose": "Check method and prefix matching behavior." },
+      { "trigger": "red_flag", "question": "Why does app.use(express.json()) need to be registered before routes that read req.body?", "purpose": "Probe middleware order reasoning." },
+      { "trigger": "vague_answer", "question": "Give one example where app.use is correct and app.get would be wrong.", "purpose": "Force practical distinction." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "app.use versus app.get",
+        "displayQuestion": "How is app.use() different from app.get()?",
+        "displayIntent": "Check whether the candidate can separate middleware mounting from GET route handling.",
+        "guidance": [
+          "Define app.get as a GET route registration method.",
+          "Define app.use as middleware or router mounting for matching base paths.",
+          "Mention that app.use can affect all HTTP methods and subpaths.",
+          "Tie the difference to body parsers, auth middleware, routers, static files, and 404 handling."
+        ],
+        "commonMistakes": [
+          "Thinking app.use is just a generic version of app.get.",
+          "Forgetting that app.use can run for POST, PUT, DELETE, and other methods.",
+          "Missing prefix matching such as /api matching /api/users.",
+          "Registering middleware too late in the stack."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth", "topic": "app_use" }
+      },
+      "vi": {
+        "title": "app.use khác app.get",
+        "displayQuestion": "app.use() khác app.get() như thế nào?",
+        "displayIntent": "Kiểm tra ứng viên có phân biệt middleware mounting với route GET hay không.",
+        "guidance": [
+          "Định nghĩa app.get là cách đăng ký route cho HTTP GET.",
+          "Định nghĩa app.use là cách mount middleware hoặc router cho base path match.",
+          "Nhắc rằng app.use có thể áp dụng cho mọi HTTP method và subpath.",
+          "Liên hệ với body parser, auth middleware, router, static file và 404 handling."
+        ],
+        "commonMistakes": [
+          "Tưởng app.use chỉ là phiên bản tổng quát của app.get.",
+          "Quên app.use có thể chạy cho POST, PUT, DELETE và các method khác.",
+          "Bỏ sót prefix matching như /api match /api/users.",
+          "Đăng ký middleware quá muộn trong stack."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth", "topic": "app_use" }
+      },
+      "ja": {
+        "title": "app.use と app.get の違い",
+        "displayQuestion": "app.use() と app.get() はどう違いますか。",
+        "displayIntent": "middleware mounting と GET route handling を区別できるかを確認する。",
+        "guidance": [
+          "app.get は HTTP GET route を登録する method だと定義する。",
+          "app.use は matching base path に middleware や router を mount するものだと定義する。",
+          "app.use はすべての HTTP method と subpath に適用され得ることを述べる。",
+          "body parser、auth middleware、router、static files、404 handling と関連づける。"
+        ],
+        "commonMistakes": [
+          "app.use を app.get の汎用版だと思う。",
+          "app.use が POST、PUT、DELETE などにも走ることを忘れる。",
+          "/api が /api/users にも match する prefix matching を見落とす。",
+          "middleware を stack の遅すぎる位置に登録する。"
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth", "topic": "app_use" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Express 5.x API: app.use", "url": "https://expressjs.com/en/api.html#app.use", "note": "Used for middleware mounting, default path, prefix matching, and callback formats." },
+      { "label": "Express 5.x API: app.get", "url": "https://expressjs.com/en/api.html#app.get.method", "note": "Used for GET route registration behavior." },
+      { "label": "Express docs: Using middleware", "url": "https://expressjs.com/en/guide/using-middleware.html", "note": "Used for application-level middleware and order examples." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_ROUTING_HTTP_MID_TECH_WILDCARD_OPTIONAL_008",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["mid", "senior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving", "trade_off_analysis"],
+    "techTags": ["express", "nodejs", "rest"],
+    "difficulty": 3,
+    "conversationDepth": "mid",
+    "intent": "Evaluate whether the candidate understands wildcard and optional route patterns, their use cases, and Express 4 versus Express 5 syntax differences.",
+    "primaryQuestion": "When would you use route wildcards and optional parameters such as * or :id?",
+    "expectedSignals": [
+      "Uses wildcard routes for catch-all behavior, SPA fallback, 404 handling, or path-prefix behavior when a broader match is intentionally needed.",
+      "Uses optional parameters when one handler can legitimately support both a route with and without a segment, while keeping the contract clear.",
+      "Explains that overly broad wildcard routes can shadow more specific routes if registered too early.",
+      "Mentions that query strings are often better than optional path segments for filters and optional modifiers.",
+      "Shows version awareness: Express 4 examples often use * or :id?, while Express 5 uses named wildcards and brace-style optional segments such as /*splat, /{*splat}, or /users{/:id}.",
+      "Mentions that wildcard captures and optional params should still be validated before use."
+    ],
+    "redFlags": [
+      "Uses a wildcard as a substitute for designing clear routes.",
+      "Registers a catch-all route before feature routes and expects later routes to run.",
+      "Does not know that Express 5 changed handling of ?, *, and optional path syntax.",
+      "Uses optional path segments for many unrelated behaviors, making the route contract ambiguous."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Explains valid wildcard and optional segment use cases, order risks, query-string alternatives, validation, and Express 5 syntax changes." },
+      { "scoreBand": "solid", "description": "Understands use cases and route order but is light on Express version differences or API design trade-offs." },
+      { "scoreBand": "needs_work", "description": "Knows wildcard and optional params exist but cannot explain when they are appropriate or risky." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer would likely produce fragile or incorrect route matching." }
+    ],
+    "followUps": [
+      { "trigger": "missing_tradeoff", "question": "When is ?page=1 clearer than making a path segment optional?", "purpose": "Check API contract design judgment." },
+      { "trigger": "red_flag", "question": "What happens if a catch-all route is registered before /api/users?", "purpose": "Verify route order and shadowing awareness." },
+      { "trigger": "missing_context", "question": "How would you write a catch-all in Express 5 without relying on a bare * route?", "purpose": "Check current Express syntax awareness." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Wildcards and optional params",
+        "displayQuestion": "When would you use route wildcards and optional parameters such as * or :id?",
+        "displayIntent": "Check route pattern judgment, catch-all ordering, and Express 5 syntax awareness.",
+        "guidance": [
+          "Separate wildcard catch-all use cases from optional segment use cases.",
+          "Explain why broad matches should be registered late and tested carefully.",
+          "Mention that filters and pagination usually belong in query strings.",
+          "Call out Express 5 named wildcard and brace-style optional syntax instead of assuming Express 4 patterns always work."
+        ],
+        "commonMistakes": [
+          "Using wildcard routes as a shortcut for unclear API design.",
+          "Putting catch-all routes before specific routes.",
+          "Assuming :id? and bare * behave the same across Express versions.",
+          "Making one handler handle too many unrelated URL shapes."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Mid/Senior", "type": "technical_depth", "topic": "route_patterns" }
+      },
+      "vi": {
+        "title": "Wildcard và optional parameter",
+        "displayQuestion": "Route wildcard (*) và optional parameter (:id?) dùng khi nào?",
+        "displayIntent": "Kiểm tra judgment về route pattern, thứ tự catch-all và nhận biết thay đổi syntax ở Express 5.",
+        "guidance": [
+          "Tách use case của wildcard catch-all khỏi optional segment.",
+          "Giải thích vì sao route match rộng nên đặt muộn và cần test kỹ.",
+          "Nhắc rằng filter và pagination thường phù hợp hơn với query string.",
+          "Nêu rõ Express 5 dùng named wildcard và brace-style optional syntax, không nên mặc định pattern Express 4 luôn chạy."
+        ],
+        "commonMistakes": [
+          "Dùng wildcard route để né thiết kế API rõ ràng.",
+          "Đặt catch-all route trước route cụ thể.",
+          "Tưởng :id? và bare * hoạt động giống nhau ở mọi version Express.",
+          "Bắt một handler xử lý quá nhiều dạng URL không liên quan."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Mid/Senior", "type": "technical_depth", "topic": "route_patterns" }
+      },
+      "ja": {
+        "title": "wildcard と optional parameter",
+        "displayQuestion": "route wildcard (*) や optional parameter (:id?) はいつ使いますか。",
+        "displayIntent": "route pattern の判断、catch-all の順序、Express 5 syntax への理解を確認する。",
+        "guidance": [
+          "wildcard catch-all の用途と optional segment の用途を分けて説明する。",
+          "広く match する route は後ろに置き、慎重に test すべき理由を説明する。",
+          "filter や pagination は通常 query string の方が自然だと述べる。",
+          "Express 5 では named wildcard と brace-style optional syntax を使う点に触れ、Express 4 pattern が常に動く前提にしない。"
+        ],
+        "commonMistakes": [
+          "不明確な API design の代わりに wildcard route を使う。",
+          "catch-all route を具体的な route より前に置く。",
+          ":id? や bare * が Express の全 version で同じように動くと思う。",
+          "1 つの handler に関係の薄い URL shape を詰め込みすぎる。"
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Mid/Senior", "type": "technical_depth", "topic": "route_patterns" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Express docs: Route paths", "url": "https://expressjs.com/en/guide/routing.html#route-paths", "note": "Used for route path matching and warnings about ?, +, *, [], and () in Express 5." },
+      { "label": "Express docs: Moving to Express 5", "url": "https://expressjs.com/en/guide/migrating-5.html", "note": "Used for named wildcards, optional parameter omissions, and path syntax changes." },
+      { "label": "Express 5.x API: app.all", "url": "https://expressjs.com/en/api.html#app.all", "note": "Used for Express 5 catch-all examples using named splat patterns." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_ROUTING_HTTP_JR_TECH_ROUTE_ORDER_009",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving"],
+    "techTags": ["express", "nodejs", "middleware"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate understands Express routing and middleware as an ordered stack where earlier matching handlers can affect or terminate later matching handlers.",
+    "primaryQuestion": "Does route declaration order matter in Express? Why?",
+    "expectedSignals": [
+      "States that order matters because Express evaluates middleware and routes in the order they are registered.",
+      "Explains that a matching handler can send a response and terminate the request-response cycle before later routes run.",
+      "Explains that generic routes such as /users/:id or catch-all routes should usually come after more specific routes such as /users/me or /users/search.",
+      "Mentions middleware order: parsers and auth must be registered before routes that need them; error handlers and 404 handlers usually come after routes.",
+      "Can reason through next(), next('route'), and next('router') at a high level when multiple handlers match."
+    ],
+    "redFlags": [
+      "Believes Express automatically chooses the most specific route regardless of registration order.",
+      "Registers catch-all or parameterized routes before static routes without recognizing shadowing risk.",
+      "Expects middleware registered after a route to affect that already-handled route.",
+      "Cannot diagnose why /users/me is being treated as id='me'."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Explains ordered stack execution, response termination, specific-before-generic route design, middleware placement, and next variants." },
+      { "scoreBand": "solid", "description": "Understands order matters but misses one nuance such as middleware placement or next('route')." },
+      { "scoreBand": "needs_work", "description": "Has seen order issues but cannot predict matching behavior reliably." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer suggests unsafe assumptions about Express route matching." }
+    ],
+    "followUps": [
+      { "trigger": "red_flag", "question": "If /users/:id is declared before /users/me, what may happen for GET /users/me?", "purpose": "Check shadowing reasoning." },
+      { "trigger": "missing_context", "question": "Where should a 404 handler be registered relative to normal routes and error middleware?", "purpose": "Verify stack placement." },
+      { "trigger": "vague_answer", "question": "Can you walk through logging middleware, auth middleware, route handler, 404 handler, and error handler in order?", "purpose": "Test end-to-end request flow." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Route declaration order",
+        "displayQuestion": "Does route declaration order matter in Express? Why?",
+        "displayIntent": "Check ordered middleware and route stack reasoning.",
+        "guidance": [
+          "State clearly that Express uses registration order.",
+          "Explain how earlier handlers can send a response or pass control.",
+          "Use /users/me versus /users/:id as a concrete example.",
+          "Include middleware placement for parsers, auth, 404, and errors."
+        ],
+        "commonMistakes": [
+          "Assuming Express always picks the most specific route.",
+          "Putting generic parameterized routes before static routes.",
+          "Adding middleware after routes and expecting it to affect earlier routes.",
+          "Putting a catch-all route too early."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth", "topic": "route_order" }
+      },
+      "vi": {
+        "title": "Thứ tự khai báo route",
+        "displayQuestion": "Thứ tự khai báo route có quan trọng không? Tại sao?",
+        "displayIntent": "Kiểm tra khả năng reasoning về stack route và middleware có thứ tự.",
+        "guidance": [
+          "Nói rõ Express chạy theo thứ tự đăng ký.",
+          "Giải thích handler phía trước có thể gửi response hoặc chuyển tiếp control.",
+          "Dùng ví dụ /users/me và /users/:id.",
+          "Bao gồm vị trí middleware cho parser, auth, 404 và error."
+        ],
+        "commonMistakes": [
+          "Tưởng Express luôn chọn route cụ thể nhất.",
+          "Đặt route parameterized quá rộng trước route static.",
+          "Thêm middleware sau route rồi kỳ vọng nó ảnh hưởng route trước đó.",
+          "Đặt catch-all route quá sớm."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth", "topic": "route_order" }
+      },
+      "ja": {
+        "title": "route 宣言順序",
+        "displayQuestion": "Express で route の宣言順序は重要ですか。なぜですか。",
+        "displayIntent": "順序を持つ middleware と route stack を理解しているか確認する。",
+        "guidance": [
+          "Express は登録順に処理するとはっきり述べる。",
+          "前の handler が response を送るか control を渡すかで後続が変わることを説明する。",
+          "/users/me と /users/:id を具体例にする。",
+          "parser、auth、404、error middleware の配置も含める。"
+        ],
+        "commonMistakes": [
+          "Express が常に最も具体的な route を選ぶと思う。",
+          "広い parameterized route を static route より前に置く。",
+          "route の後に middleware を追加して前の route に効くと思う。",
+          "catch-all route を早すぎる位置に置く。"
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth", "topic": "route_order" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Express docs: Using middleware", "url": "https://expressjs.com/en/guide/using-middleware.html", "note": "Used for registration order, next(), and request hanging behavior." },
+      { "label": "Express 5.x API: router.use", "url": "https://expressjs.com/en/api.html#router.use", "note": "Used for router middleware order and precedence." },
+      { "label": "Express docs: Routing route handlers", "url": "https://expressjs.com/en/guide/routing.html#route-handlers", "note": "Used for multiple route handlers and next('route')." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_ROUTING_HTTP_JR_TECH_NOT_FOUND_010",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving", "ownership"],
+    "techTags": ["express", "nodejs", "rest"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Assess whether the candidate can implement a maintainable 404 fallback after all normal routes and before centralized error handling.",
+    "primaryQuestion": "How do you handle a route that does not exist in Express?",
+    "expectedSignals": [
+      "Adds a catch-all 404 middleware after all known routes have been registered.",
+      "Uses res.status(404).json(...) or res.sendStatus(404) with a consistent API error shape.",
+      "Understands that the 404 handler is for unmatched requests, not exceptions thrown by matched handlers.",
+      "Places centralized error-handling middleware after the 404 handler when using next(err) patterns.",
+      "Mentions that in Express 5 catch-all route patterns should use current syntax such as app.use((req, res) => ...) or a named splat pattern when a route path is needed."
+    ],
+    "redFlags": [
+      "Places the 404 middleware before normal routes.",
+      "Handles 404 as a generic 500 error.",
+      "Throws an exception for every unmatched route instead of returning a clear 404 response.",
+      "Returns HTML for a JSON API without considering the API contract."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Places a clear 404 fallback after routes, distinguishes unmatched requests from errors, and keeps response shape consistent." },
+      { "scoreBand": "solid", "description": "Knows to add a final 404 handler but is slightly vague about error middleware ordering or response shape." },
+      { "scoreBand": "needs_work", "description": "Can return 404 in a specific handler but lacks a global fallback pattern." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer would not reliably handle unmatched routes." }
+    ],
+    "followUps": [
+      { "trigger": "missing_context", "question": "Where exactly would you register the 404 handler relative to app.use('/api', apiRouter) and the error handler?", "purpose": "Check stack placement." },
+      { "trigger": "red_flag", "question": "Why is an unmatched route usually a 404 rather than a 500?", "purpose": "Verify HTTP status reasoning." },
+      { "trigger": "missing_tradeoff", "question": "What should the 404 response look like for a public JSON API?", "purpose": "Probe API error contract consistency." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Handling unmatched routes",
+        "displayQuestion": "How do you handle a route that does not exist in Express?",
+        "displayIntent": "Check correct 404 fallback placement and API error response design.",
+        "guidance": [
+          "Register all normal routes first.",
+          "Add a final 404 middleware or catch-all route after normal routes.",
+          "Return a consistent status and JSON error body for APIs.",
+          "Explain that error-handling middleware is separate from unmatched-route handling."
+        ],
+        "commonMistakes": [
+          "Placing the 404 handler before routes.",
+          "Treating every 404 as a server exception.",
+          "Returning inconsistent error shapes.",
+          "Forgetting Express 5 route pattern differences for catch-all syntax."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth", "topic": "404_handling" }
+      },
+      "vi": {
+        "title": "Xử lý route không tồn tại",
+        "displayQuestion": "Làm thế nào để xử lý route không tồn tại (404)?",
+        "displayIntent": "Kiểm tra vị trí đặt 404 fallback và thiết kế error response cho API.",
+        "guidance": [
+          "Đăng ký toàn bộ route bình thường trước.",
+          "Thêm middleware hoặc catch-all 404 cuối cùng sau normal routes.",
+          "Trả status và JSON error body nhất quán cho API.",
+          "Giải thích error-handling middleware là phần riêng với unmatched-route handling."
+        ],
+        "commonMistakes": [
+          "Đặt 404 handler trước các route.",
+          "Xem mọi 404 là server exception.",
+          "Trả error shape không nhất quán.",
+          "Quên khác biệt syntax catch-all route ở Express 5."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth", "topic": "404_handling" }
+      },
+      "ja": {
+        "title": "存在しない route の処理",
+        "displayQuestion": "Express で存在しない route、つまり 404 はどのように処理しますか。",
+        "displayIntent": "404 fallback の正しい配置と API error response design を確認する。",
+        "guidance": [
+          "通常の route をすべて登録してから行う。",
+          "normal routes の後に final 404 middleware または catch-all route を追加する。",
+          "API では一貫した status と JSON error body を返す。",
+          "error-handling middleware と unmatched-route handling は別だと説明する。"
+        ],
+        "commonMistakes": [
+          "404 handler を route より前に置く。",
+          "すべての 404 を server exception として扱う。",
+          "error shape が一貫しない。",
+          "Express 5 の catch-all syntax の違いを忘れる。"
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth", "topic": "404_handling" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Express docs: Using middleware", "url": "https://expressjs.com/en/guide/using-middleware.html", "note": "Used for middleware stack ordering and request-response completion." },
+      { "label": "Express 5.x API: res.status", "url": "https://expressjs.com/en/api.html#res.status", "note": "Used for setting status codes in responses." },
+      { "label": "Express 5.x API: app.all", "url": "https://expressjs.com/en/api.html#app.all", "note": "Used for catch-all route patterns and global path logic examples." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_ROUTING_HTTP_JR_TECH_APP_ALL_011",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving"],
+    "techTags": ["express", "nodejs", "middleware"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Verify whether the candidate understands app.all as path-specific logic that matches every HTTP method, and can choose it appropriately.",
+    "primaryQuestion": "What is app.all() used for?",
+    "expectedSignals": [
+      "Explains that app.all(path, callbacks) matches all HTTP methods for the given path.",
+      "Uses app.all for path-specific preconditions such as authentication, loading a resource, method-independent logging, or shared checks.",
+      "Understands callbacks do not have to be final endpoints; they can call next() to continue to later matching routes.",
+      "Distinguishes app.all from app.use: app.all is route-style method matching on a path, while app.use mounts middleware by base path and can match subpaths.",
+      "Mentions that app.all can be risky if used too broadly or registered before routes unintentionally."
+    ],
+    "redFlags": [
+      "Says app.all means all paths instead of all HTTP methods for a path.",
+      "Uses app.all everywhere instead of clear method-specific routes.",
+      "Forgets to call next when using app.all as a precondition middleware.",
+      "Cannot distinguish app.all from app.use."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Defines all-method path matching, gives precondition examples, explains next flow, and distinguishes it from app.use." },
+      { "scoreBand": "solid", "description": "Understands all-method matching but is light on app.use distinction or ordering risk." },
+      { "scoreBand": "needs_work", "description": "Has seen app.all but cannot explain when it should be used." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer is factually wrong about app.all." }
+    ],
+    "followUps": [
+      { "trigger": "vague_answer", "question": "Would app.all('/secret', auth) run for DELETE /secret? What about GET /public?", "purpose": "Check all-method and path matching." },
+      { "trigger": "missing_context", "question": "When would app.use('/api', auth) be more appropriate than app.all('/api/{*splat}', auth)?", "purpose": "Probe app.use versus app.all design choice." },
+      { "trigger": "red_flag", "question": "What happens if an app.all precondition never calls next and never sends a response?", "purpose": "Check middleware lifecycle." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "app.all for all methods",
+        "displayQuestion": "What is app.all() used for?",
+        "displayIntent": "Check understanding of all-method route matching and path-specific preconditions.",
+        "guidance": [
+          "Define app.all as matching every HTTP method on the specified path.",
+          "Use authentication or resource loading as examples.",
+          "Explain that callbacks can call next to continue matching later routes.",
+          "Contrast app.all with app.use at a practical level."
+        ],
+        "commonMistakes": [
+          "Thinking app.all means every path.",
+          "Using app.all instead of clear method-specific routes.",
+          "Forgetting next() when app.all is used as middleware.",
+          "Not recognizing order and broad-match risks."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth", "topic": "app_all" }
+      },
+      "vi": {
+        "title": "app.all cho mọi HTTP method",
+        "displayQuestion": "app.all() dùng để làm gì?",
+        "displayIntent": "Kiểm tra hiểu biết về route match mọi method và precondition theo path.",
+        "guidance": [
+          "Định nghĩa app.all là match mọi HTTP method trên path được chỉ định.",
+          "Dùng authentication hoặc load resource làm ví dụ.",
+          "Giải thích callback có thể gọi next để tiếp tục match route phía sau.",
+          "So sánh app.all với app.use ở mức thực tế."
+        ],
+        "commonMistakes": [
+          "Tưởng app.all nghĩa là mọi path.",
+          "Dùng app.all thay cho route theo method rõ ràng.",
+          "Quên next() khi dùng app.all như middleware.",
+          "Không nhận ra rủi ro về thứ tự và match quá rộng."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth", "topic": "app_all" }
+      },
+      "ja": {
+        "title": "すべての method に対する app.all",
+        "displayQuestion": "app.all() は何に使いますか。",
+        "displayIntent": "全 HTTP method に対する route matching と path-specific precondition の理解を確認する。",
+        "guidance": [
+          "app.all は指定 path に対してすべての HTTP method に match すると定義する。",
+          "authentication や resource loading を例に使う。",
+          "callback は next を呼んで後続 route に処理を続けられることを説明する。",
+          "app.all と app.use を実務的に比較する。"
+        ],
+        "commonMistakes": [
+          "app.all がすべての path という意味だと思う。",
+          "明確な method-specific route の代わりに app.all を多用する。",
+          "app.all を middleware として使う時に next() を忘れる。",
+          "順序や広すぎる match のリスクを認識しない。"
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth", "topic": "app_all" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Express docs: Route methods", "url": "https://expressjs.com/en/guide/routing.html#route-methods", "note": "Used for app.all as the special routing method for all HTTP methods." },
+      { "label": "Express 5.x API: app.all", "url": "https://expressjs.com/en/api.html#app.all", "note": "Used for all-method path-specific precondition examples." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_ROUTING_HTTP_JR_TECH_HANDLER_CHAIN_012",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving", "communication"],
+    "techTags": ["express", "nodejs", "middleware"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate can chain multiple handlers on a single route and reason about next, arrays, preconditions, and final response handling.",
+    "primaryQuestion": "How do you chain multiple handlers into one Express route?",
+    "expectedSignals": [
+      "Shows route-level middleware with app.get('/path', mw1, mw2, handler) or router.get('/path', [mw1, mw2], handler).",
+      "Explains that each non-final handler should call next() or pass an error with next(err).",
+      "Mentions that arrays and combinations of arrays and functions are valid callback formats.",
+      "Uses handler chains for validation, authentication, authorization, loading resources, and then the final controller.",
+      "Mentions next('route') as an escape hatch for skipping remaining callbacks in the current route when conditional routing is needed."
+    ],
+    "redFlags": [
+      "Writes multiple handlers but none call next, causing the request to hang.",
+      "Calls next after final res.json without understanding duplicate response risk.",
+      "Puts business logic into many opaque middleware functions without clear responsibility.",
+      "Cannot distinguish route-level handler chaining from app.route or router.route method chaining."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Demonstrates multiple callback forms, explains next and error flow, gives realistic precondition examples, and knows next('route') nuance." },
+      { "scoreBand": "solid", "description": "Can chain handlers and use next but misses arrays, next('route'), or final response nuance." },
+      { "scoreBand": "needs_work", "description": "Understands middleware vaguely but cannot implement a reliable route chain." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer would likely hang requests or send duplicate responses." }
+    ],
+    "followUps": [
+      { "trigger": "vague_answer", "question": "Can you chain validateUserId, requireAuth, and getUserHandler for GET /users/:id?", "purpose": "Make the candidate show a real route chain." },
+      { "trigger": "red_flag", "question": "What happens if validateUserId neither sends a 400 nor calls next()?", "purpose": "Check hanging request awareness." },
+      { "trigger": "missing_context", "question": "When would next('route') be useful instead of next()?", "purpose": "Probe advanced route-chain control." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Chaining route handlers",
+        "displayQuestion": "How do you chain multiple handlers into one Express route?",
+        "displayIntent": "Check route-level middleware composition and next() control flow.",
+        "guidance": [
+          "Show app.get('/users/:id', validate, auth, controller).",
+          "Mention arrays and mixed arrays/functions as valid callback forms.",
+          "Explain next(), next(err), and final response responsibilities.",
+          "Use validation and authentication as practical reasons for chaining."
+        ],
+        "commonMistakes": [
+          "Forgetting next() in a precondition handler.",
+          "Calling next after sending the final response.",
+          "Creating many tiny middleware functions with unclear responsibilities.",
+          "Confusing handler chaining with app.route().get().post() method chaining."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth", "topic": "handler_chain" }
+      },
+      "vi": {
+        "title": "Chain nhiều route handler",
+        "displayQuestion": "Làm thế nào để chain nhiều handler vào một route?",
+        "displayIntent": "Kiểm tra cách compose middleware ở cấp route và control flow qua next().",
+        "guidance": [
+          "Minh họa app.get('/users/:id', validate, auth, controller).",
+          "Nhắc rằng array và kết hợp array/function đều là callback form hợp lệ.",
+          "Giải thích trách nhiệm của next(), next(err) và final response.",
+          "Dùng validation và authentication như lý do thực tế để chain handler."
+        ],
+        "commonMistakes": [
+          "Quên next() trong handler precondition.",
+          "Gọi next sau khi đã gửi final response.",
+          "Tạo quá nhiều middleware nhỏ nhưng trách nhiệm không rõ.",
+          "Nhầm handler chaining với method chaining app.route().get().post()."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth", "topic": "handler_chain" }
+      },
+      "ja": {
+        "title": "route handler の chaining",
+        "displayQuestion": "1 つの Express route に複数の handler を chain するにはどうしますか。",
+        "displayIntent": "route-level middleware composition と next() control flow を確認する。",
+        "guidance": [
+          "app.get('/users/:id', validate, auth, controller) を例に示す。",
+          "array と array/function の組み合わせも有効な callback form だと述べる。",
+          "next()、next(err)、final response の責務を説明する。",
+          "validation と authentication を chaining の実務的な理由として使う。"
+        ],
+        "commonMistakes": [
+          "precondition handler で next() を忘れる。",
+          "final response を送った後に next を呼ぶ。",
+          "責務が不明な小さすぎる middleware を大量に作る。",
+          "handler chaining と app.route().get().post() の method chaining を混同する。"
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth", "topic": "handler_chain" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Express docs: Route handlers", "url": "https://expressjs.com/en/guide/routing.html#route-handlers", "note": "Used for multiple callbacks, arrays, combinations, and next('route')." },
+      { "label": "Express docs: Using middleware", "url": "https://expressjs.com/en/guide/using-middleware.html", "note": "Used for middleware arrays and request-response control flow." },
+      { "label": "Express 5.x API: app.METHOD", "url": "https://expressjs.com/en/api.html#app.METHOD", "note": "Used for accepted callback formats and promise rejection forwarding." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_ROUTING_HTTP_MID_TECH_ROUTER_USE_APP_USE_013",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["mid", "senior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking", "problem_solving"],
+    "techTags": ["express", "nodejs", "middleware"],
+    "difficulty": 3,
+    "conversationDepth": "mid",
+    "intent": "Evaluate whether the candidate can distinguish application-level middleware from router-level middleware and reason about mount paths, scope, and execution order.",
+    "primaryQuestion": "What is the difference between router.use() and app.use() in the context of Express Router?",
+    "expectedSignals": [
+      "Explains app.use mounts middleware or routers at the application level, affecting requests that match the app-level mount path.",
+      "Explains router.use mounts middleware within a specific router, affecting requests that are passed into that router and match the router-level path.",
+      "Understands that when a router is mounted, its internal paths are relative to the mount path.",
+      "Mentions that the mount path is stripped from req.url inside mounted middleware, while req.originalUrl and req.baseUrl can help understand the full request context.",
+      "Uses router.use for feature-scoped middleware such as auth for users routes, and app.use for global middleware such as JSON parsing, request logging, CORS, or mounting the router itself.",
+      "Mentions order still matters both at app level and inside the router."
+    ],
+    "redFlags": [
+      "Says router.use and app.use are identical with no scope difference.",
+      "Registers feature-specific middleware globally without recognizing side effects.",
+      "Cannot predict which paths router.use('/admin', mw) handles after app.use('/api', router).",
+      "Ignores mount path stripping and gets confused by req.url inside nested routers."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Explains app-level versus router-level scope, mount path composition, stripped paths, request URL properties, practical use cases, and ordering." },
+      { "scoreBand": "solid", "description": "Understands scope difference but misses mount path stripping or URL property nuance." },
+      { "scoreBand": "needs_work", "description": "Can use router.use but cannot predict behavior in nested or prefixed routers." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer shows incorrect middleware scoping." }
+    ],
+    "followUps": [
+      { "trigger": "missing_context", "question": "If app.use('/api', router) and router.use('/users', mw), which full path prefix triggers mw?", "purpose": "Check mount path composition." },
+      { "trigger": "vague_answer", "question": "Which middleware belongs at app level: express.json, CORS, requireAdminForUsersRouter, and a global request logger?", "purpose": "Probe placement judgment." },
+      { "trigger": "red_flag", "question": "Why might req.url look different inside a mounted router than the original client URL?", "purpose": "Check mount path stripping awareness." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "router.use versus app.use",
+        "displayQuestion": "What is the difference between router.use() and app.use() in the context of Express Router?",
+        "displayIntent": "Check middleware scope, mount path composition, and router-level ordering.",
+        "guidance": [
+          "Explain app-level mounting versus router-level mounting.",
+          "Describe how app.use('/api', router) composes with router.use('/users', middleware).",
+          "Mention req.baseUrl, req.originalUrl, and mount path stripping if the candidate is mid-level or above.",
+          "Give examples of global middleware and feature-scoped middleware."
+        ],
+        "commonMistakes": [
+          "Treating router.use and app.use as the same scope.",
+          "Making feature-specific middleware global.",
+          "Forgetting that router paths are relative to where the router is mounted.",
+          "Being surprised by req.url inside mounted middleware."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Mid/Senior", "type": "technical_depth", "topic": "router_middleware" }
+      },
+      "vi": {
+        "title": "router.use và app.use",
+        "displayQuestion": "Sự khác biệt giữa router.use() và app.use() trong context của Router?",
+        "displayIntent": "Kiểm tra scope middleware, cách ghép mount path và thứ tự trong router.",
+        "guidance": [
+          "Giải thích app-level mounting và router-level mounting.",
+          "Mô tả app.use('/api', router) ghép với router.use('/users', middleware) như thế nào.",
+          "Nhắc req.baseUrl, req.originalUrl và việc strip mount path nếu ứng viên ở mid trở lên.",
+          "Đưa ví dụ middleware global và middleware theo feature."
+        ],
+        "commonMistakes": [
+          "Xem router.use và app.use là cùng scope.",
+          "Đưa middleware riêng của feature lên global.",
+          "Quên path trong router là tương đối với nơi router được mount.",
+          "Bất ngờ khi req.url bên trong mounted middleware khác URL gốc."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Mid/Senior", "type": "technical_depth", "topic": "router_middleware" }
+      },
+      "ja": {
+        "title": "router.use と app.use",
+        "displayQuestion": "Express Router の context で router.use() と app.use() はどう違いますか。",
+        "displayIntent": "middleware scope、mount path composition、router-level ordering を確認する。",
+        "guidance": [
+          "app-level mounting と router-level mounting を説明する。",
+          "app.use('/api', router) と router.use('/users', middleware) がどう合成されるか説明する。",
+          "mid-level 以上なら req.baseUrl、req.originalUrl、mount path stripping に触れる。",
+          "global middleware と feature-scoped middleware の例を出す。"
+        ],
+        "commonMistakes": [
+          "router.use と app.use を同じ scope として扱う。",
+          "feature-specific middleware を global にしてしまう。",
+          "router 内の path が mount 位置に対する相対 path であることを忘れる。",
+          "mounted middleware 内の req.url が元 URL と違うことに驚く。"
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Mid/Senior", "type": "technical_depth", "topic": "router_middleware" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Express docs: Using middleware", "url": "https://expressjs.com/en/guide/using-middleware.html", "note": "Used for application-level and router-level middleware." },
+      { "label": "Express 5.x API: router.use", "url": "https://expressjs.com/en/api.html#router.use", "note": "Used for router.use behavior, mount path stripping, and ordering." },
+      { "label": "Express 5.x API: req.baseUrl", "url": "https://expressjs.com/en/api.html#req.baseUrl", "note": "Used for mounted router base URL behavior." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_ROUTING_HTTP_MID_TECH_PASS_DATA_014",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["mid", "senior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving", "ownership"],
+    "techTags": ["express", "nodejs", "middleware", "typescript"],
+    "difficulty": 3,
+    "conversationDepth": "mid",
+    "intent": "Assess whether the candidate can pass per-request data safely between middleware and handlers without global mutable state or unclear contracts.",
+    "primaryQuestion": "How do you pass data from one middleware to the next middleware in Express?",
+    "expectedSignals": [
+      "Explains that middleware can attach per-request data to req, such as req.user, req.requestId, or req.validatedBody.",
+      "Mentions res.locals as another per-request place for data intended for downstream response handling or templates.",
+      "Calls next() after attaching data, or next(err) if the data cannot be produced safely.",
+      "Avoids global variables or module-level mutable state for request-specific data.",
+      "In TypeScript, mentions augmenting the Express Request type or using a typed request/context interface instead of relying on any.",
+      "Recognizes that data attached to req or res.locals should have clear ownership, naming, validation, and cleanup expectations."
+    ],
+    "redFlags": [
+      "Uses global variables to store the current user or current request data.",
+      "Mutates req with ambiguous property names that collide with framework or middleware fields.",
+      "Forgets to call next after setting the data.",
+      "Assumes data attached by one router is available to unrelated routers regardless of order and path matching."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Explains req and res.locals, per-request lifetime, next/error flow, TypeScript typing, and avoids global mutable state." },
+      { "scoreBand": "solid", "description": "Knows to attach data to req but misses res.locals, typing, or ownership concerns." },
+      { "scoreBand": "needs_work", "description": "Can hack data into a handler but lacks a safe per-request data model." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer suggests unsafe shared state or unreliable middleware flow." }
+    ],
+    "followUps": [
+      { "trigger": "red_flag", "question": "Why is a module-level currentUser variable unsafe in an Express server?", "purpose": "Check concurrency and per-request isolation." },
+      { "trigger": "missing_context", "question": "Where would you store an authenticated user for downstream handlers, and how would you type it in TypeScript?", "purpose": "Check practical Express plus TypeScript approach." },
+      { "trigger": "vague_answer", "question": "What is the difference between putting data on req.user and res.locals.user?", "purpose": "Probe request context versus response-local usage." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Passing data between middleware",
+        "displayQuestion": "How do you pass data from one middleware to the next middleware in Express?",
+        "displayIntent": "Check safe per-request context sharing through req or res.locals.",
+        "guidance": [
+          "Explain attaching data to req for request context such as req.user.",
+          "Mention res.locals for response-local data used downstream.",
+          "Explain that the middleware must call next or next(err).",
+          "Warn against global mutable state and mention TypeScript request augmentation when relevant."
+        ],
+        "commonMistakes": [
+          "Using global variables for request-specific data.",
+          "Adding unclear fields to req with no typing or ownership.",
+          "Forgetting next after setting data.",
+          "Assuming middleware always ran before a handler without checking order and path."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Mid/Senior", "type": "technical_depth", "topic": "request_context" }
+      },
+      "vi": {
+        "title": "Truyền dữ liệu giữa middleware",
+        "displayQuestion": "Làm thế nào để truyền dữ liệu từ middleware này sang middleware tiếp theo?",
+        "displayIntent": "Kiểm tra cách chia sẻ context theo từng request qua req hoặc res.locals một cách an toàn.",
+        "guidance": [
+          "Giải thích việc gắn dữ liệu vào req cho request context như req.user.",
+          "Nhắc res.locals cho dữ liệu response-local dùng ở downstream.",
+          "Giải thích middleware phải gọi next hoặc next(err).",
+          "Cảnh báo không dùng global mutable state và nhắc augment Request type trong TypeScript khi phù hợp."
+        ],
+        "commonMistakes": [
+          "Dùng global variable cho dữ liệu riêng của từng request.",
+          "Gắn field mơ hồ vào req mà không có typing hoặc ownership.",
+          "Quên next sau khi set dữ liệu.",
+          "Giả định middleware luôn chạy trước handler mà không kiểm tra order và path."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Mid/Senior", "type": "technical_depth", "topic": "request_context" }
+      },
+      "ja": {
+        "title": "middleware 間の data 受け渡し",
+        "displayQuestion": "Express である middleware から次の middleware に data を渡すにはどうしますか。",
+        "displayIntent": "req または res.locals による安全な per-request context sharing を確認する。",
+        "guidance": [
+          "req.user のように request context を req に付与する方法を説明する。",
+          "downstream の response 処理で使う data には res.locals も使えることを述べる。",
+          "middleware は next または next(err) を呼ぶ必要があると説明する。",
+          "global mutable state を避け、必要なら TypeScript の Request augmentation に触れる。"
+        ],
+        "commonMistakes": [
+          "request-specific data に global variable を使う。",
+          "typing や ownership なしに曖昧な field を req に追加する。",
+          "data を設定した後に next を忘れる。",
+          "order と path を確認せず middleware が必ず先に走ったと思い込む。"
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Mid/Senior", "type": "technical_depth", "topic": "request_context" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Express docs: Using middleware", "url": "https://expressjs.com/en/guide/using-middleware.html", "note": "Used for middleware access to req, res, next, and ability to modify request/response objects." },
+      { "label": "Express 5.x API: res.locals", "url": "https://expressjs.com/en/api.html#res.locals", "note": "Used for response-local variables available during the request-response cycle." },
+      { "label": "Express 5.x API: router.param", "url": "https://expressjs.com/en/api.html#router.param", "note": "Used for examples of preloading route parameter data onto req." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_ROUTING_HTTP_MID_TRADE_MVC_ORGANIZATION_015",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["mid", "senior"],
+    "type": "trade_off",
+    "competencies": ["system_thinking", "trade_off_analysis", "collaboration", "ownership"],
+    "techTags": ["express", "nodejs", "rest", "typescript"],
+    "difficulty": 3,
+    "conversationDepth": "deep",
+    "intent": "Evaluate whether the candidate can organize Express routes in a larger project using pragmatic MVC or feature-module boundaries without overloading route handlers.",
+    "primaryQuestion": "How would you organize routes in a large Express project following an MVC-style structure?",
+    "expectedSignals": [
+      "Separates route definitions from controllers, service/business logic, data access, validation, middleware, and app bootstrap.",
+      "Uses feature routers such as users.routes.ts mounted from a central api router or app.ts with prefixes and versions.",
+      "Keeps controllers thin: parse request data, call services, shape responses, and delegate business decisions to services or use cases.",
+      "Keeps database access in repositories/models or data access modules rather than directly in route files.",
+      "Centralizes cross-cutting concerns such as auth, validation, error handling, logging, configuration, and request IDs.",
+      "Chooses abstractions pragmatically: avoids both one giant app file and unnecessary framework-heavy layers for small features.",
+      "Mentions tests for controllers/routes and services, plus consistent error and response contracts."
+    ],
+    "redFlags": [
+      "Puts all business logic, SQL, validation, and response shaping inside route handlers.",
+      "Creates folders named routes/controllers/services but responsibilities remain mixed.",
+      "Adds too many abstractions without a concrete maintainability problem.",
+      "Uses global mutable singletons everywhere and makes tests order-dependent.",
+      "Cannot explain where validation, authorization, and error handling belong."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Presents a pragmatic MVC or feature-module layout with clear responsibilities, dependency boundaries, cross-cutting middleware, testing, and trade-offs." },
+      { "scoreBand": "solid", "description": "Has a reasonable folder structure but misses one major boundary such as validation, data access, or centralized errors." },
+      { "scoreBand": "needs_work", "description": "Lists folders but cannot explain responsibilities or how requests flow through them." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer would lead to a difficult-to-maintain Express codebase." }
+    ],
+    "followUps": [
+      { "trigger": "vague_answer", "question": "Walk me through GET /api/v1/users/:id from router to controller to service to repository and back to the response.", "purpose": "Force a concrete request flow through the proposed structure." },
+      { "trigger": "missing_tradeoff", "question": "When would you keep simple logic in a controller instead of creating another service layer?", "purpose": "Check pragmatic abstraction judgment." },
+      { "trigger": "missing_context", "question": "Where would validation, authorization, and centralized error handling live in your structure?", "purpose": "Check cross-cutting concern placement." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Organizing large Express routes",
+        "displayQuestion": "How would you organize routes in a large Express project following an MVC-style structure?",
+        "displayIntent": "Check maintainable Express architecture, route ownership, and separation of concerns.",
+        "guidance": [
+          "Describe the request flow through router, controller, service, repository/model, and error handler.",
+          "Explain which responsibility belongs in each layer and which should not.",
+          "Use feature routers and versioned API prefixes for route organization.",
+          "Discuss validation, auth, logging, configuration, tests, and consistent errors as cross-cutting concerns."
+        ],
+        "commonMistakes": [
+          "Putting business logic and database calls directly in route handlers.",
+          "Creating MVC folders without real responsibility boundaries.",
+          "Overengineering simple features with unnecessary layers.",
+          "Ignoring centralized validation, authorization, errors, and observability."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Mid/Senior", "type": "trade_off", "topic": "mvc_routes" }
+      },
+      "vi": {
+        "title": "Tổ chức routes Express trong dự án lớn",
+        "displayQuestion": "Làm thế nào để tổ chức routes trong dự án Express lớn theo chuẩn MVC?",
+        "displayIntent": "Kiểm tra kiến trúc Express dễ maintain, ownership của route và separation of concerns.",
+        "guidance": [
+          "Mô tả request flow qua router, controller, service, repository/model và error handler.",
+          "Giải thích trách nhiệm thuộc về từng layer và điều gì không nên đặt ở layer đó.",
+          "Dùng feature router và API prefix có version để tổ chức route.",
+          "Nói về validation, auth, logging, configuration, test và error nhất quán như cross-cutting concerns."
+        ],
+        "commonMistakes": [
+          "Đưa business logic và database call trực tiếp vào route handler.",
+          "Tạo folder MVC nhưng không có boundary trách nhiệm thật.",
+          "Overengineer feature đơn giản với quá nhiều layer không cần thiết.",
+          "Bỏ qua centralized validation, authorization, error và observability."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Mid/Senior", "type": "trade_off", "topic": "mvc_routes" }
+      },
+      "ja": {
+        "title": "大規模 Express routes の構成",
+        "displayQuestion": "大きな Express project で MVC-style に routes を構成するにはどうしますか。",
+        "displayIntent": "maintainable な Express architecture、route ownership、separation of concerns を確認する。",
+        "guidance": [
+          "request flow を router、controller、service、repository/model、error handler の順に説明する。",
+          "各 layer の責務と、そこに置くべきでないものを説明する。",
+          "feature router と versioned API prefix で route を整理する。",
+          "validation、auth、logging、configuration、tests、一貫した errors を cross-cutting concerns として説明する。"
+        ],
+        "commonMistakes": [
+          "business logic と database call を route handler に直接入れる。",
+          "MVC folder は作るが実際の責務 boundary がない。",
+          "単純な feature に不要な layer を足しすぎる。",
+          "centralized validation、authorization、errors、observability を無視する。"
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Mid/Senior", "type": "trade_off", "topic": "mvc_routes" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Express docs: express.Router", "url": "https://expressjs.com/en/guide/routing.html#express-router", "note": "Used for modular routers and mountable route handlers." },
+      { "label": "Express docs: Using middleware", "url": "https://expressjs.com/en/guide/using-middleware.html", "note": "Used for global and router-level middleware organization." },
+      { "label": "Express docs: Database integration", "url": "https://expressjs.com/en/guide/database-integration.html", "note": "Used for treating database access as an integration concern outside route definitions." }
+    ],
+    "status": "active"
+  }
+]

@@ -1,0 +1,1469 @@
+[
+  {
+    "code": "EXPRESS_MIDDLEWARE_JR_TECH_CONCEPT_001",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "communication", "system_thinking"],
+    "techTags": ["express", "nodejs", "rest"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate can define Express middleware as the ordered request-response pipeline and explain what a middleware can do to req, res, and control flow.",
+    "primaryQuestion": "What is middleware in Express, and how does it work?",
+    "expectedSignals": [
+      "Defines middleware as a function that runs during the request-response cycle and has access to req, res, and next.",
+      "Explains that Express applications are built as an ordered stack of middleware and route handlers.",
+      "Mentions middleware can execute code, read or mutate req and res, end the response, or pass control to the next matching middleware.",
+      "Recognizes that route handlers are also part of the middleware system, not a completely separate mechanism.",
+      "Uses a concrete example such as logging, body parsing, authentication, validation, or error handling."
+    ],
+    "redFlags": [
+      "Describes middleware as only a plugin package or only code that runs before routes.",
+      "Cannot explain req, res, and next.",
+      "Thinks Express automatically chooses middleware based on best fit rather than registration order.",
+      "Does not understand that middleware can either continue the chain or finish the request-response cycle."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Gives a precise definition, explains ordered pipeline execution, names the possible actions, and uses a realistic Express example." },
+      { "scoreBand": "solid", "description": "Understands middleware as functions between request and response but misses one detail such as route handlers being middleware or mutation of req/res." },
+      { "scoreBand": "needs_work", "description": "Can name middleware examples but cannot describe the request flow clearly." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer is too vague to prove practical Express middleware understanding." }
+    ],
+    "followUps": [
+      { "trigger": "vague_answer", "question": "Can you walk through a request that passes through a logger, express.json(), auth middleware, and a route handler?", "purpose": "Force the candidate to explain execution flow instead of only defining the term." },
+      { "trigger": "missing_context", "question": "What are two examples of middleware that only prepare data for later handlers?", "purpose": "Check whether the candidate understands pass-through middleware." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Express middleware concept",
+        "displayQuestion": "What is middleware in Express, and how does it work?",
+        "displayIntent": "Check whether the candidate understands middleware as the ordered request-response pipeline in Express.",
+        "guidance": [
+          "Define middleware as a function with access to req, res, and next.",
+          "Explain that Express executes matching middleware in the order it was registered.",
+          "Mention the four core actions: run code, modify req/res, end the response, or call next.",
+          "Use concrete examples such as logging, parsing, authentication, validation, and error handling."
+        ],
+        "commonMistakes": [
+          "Saying middleware is only third-party plugins.",
+          "Forgetting that route handlers are middleware functions too.",
+          "Ignoring the effect of registration order.",
+          "Not distinguishing pass-through middleware from middleware that sends a response."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Khái niệm middleware trong Express",
+        "displayQuestion": "Middleware trong Express là gì và nó hoạt động như thế nào?",
+        "displayIntent": "Kiểm tra ứng viên có hiểu middleware là pipeline xử lý request-response theo thứ tự trong Express hay không.",
+        "guidance": [
+          "Định nghĩa middleware là function có quyền truy cập req, res và next.",
+          "Giải thích Express chạy các middleware khớp request theo đúng thứ tự được đăng ký.",
+          "Nêu bốn việc middleware có thể làm: chạy logic, chỉnh req/res, kết thúc response, hoặc gọi next.",
+          "Dùng ví dụ cụ thể như logging, parse body, authentication, validation và error handling."
+        ],
+        "commonMistakes": [
+          "Nói middleware chỉ là plugin bên thứ ba.",
+          "Quên rằng route handler cũng là middleware function.",
+          "Bỏ qua ảnh hưởng của thứ tự đăng ký.",
+          "Không phân biệt middleware pass-through với middleware gửi response."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "Express middleware の概念",
+        "displayQuestion": "Express の middleware とは何で、どのように動作しますか。",
+        "displayIntent": "Express middleware を順序付きの request-response pipeline として理解しているかを確認する。",
+        "guidance": [
+          "middleware は req、res、next にアクセスできる function だと定義する。",
+          "Express は登録順に matching middleware を実行することを説明する。",
+          "code 実行、req/res 変更、response 終了、next 呼び出しという主な動作を述べる。",
+          "logging、body parsing、authentication、validation、error handling などの例を使う。"
+        ],
+        "commonMistakes": [
+          "middleware を third-party plugin だけだと説明する。",
+          "route handler も middleware function である点を忘れる。",
+          "登録順の影響を無視する。",
+          "pass-through middleware と response を返す middleware を区別しない。"
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Express docs: Using middleware", "url": "https://expressjs.com/en/guide/using-middleware.html", "note": "Used for middleware definition, actions, and middleware categories." },
+      { "label": "Express docs: Writing middleware", "url": "https://expressjs.com/en/guide/writing-middleware.html", "note": "Used for request-response cycle and custom middleware examples." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_MIDDLEWARE_JR_TECH_SIGNATURE_002",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "communication"],
+    "techTags": ["express", "nodejs", "rest"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Verify whether the candidate knows the standard middleware function signature and can distinguish normal middleware from error-handling middleware.",
+    "primaryQuestion": "Which parameters does an Express middleware function receive? What is the standard function signature?",
+    "expectedSignals": [
+      "States the standard normal middleware signature as (req, res, next).",
+      "Explains req represents the incoming request, res represents the outgoing response, and next passes control.",
+      "Mentions that names are conventional but the parameter position matters.",
+      "Distinguishes error-handling middleware with the four-argument signature (err, req, res, next).",
+      "Notes that omitting next is acceptable only when the middleware always ends the response or intentionally does not continue."
+    ],
+    "redFlags": [
+      "Uses the wrong order such as (res, req, next).",
+      "Cannot explain what next represents.",
+      "Thinks error-handling middleware has the same three-argument signature as normal middleware.",
+      "Assumes Express identifies middleware by TypeScript types or parameter names rather than runtime function shape."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Correctly explains (req, res, next), parameter responsibilities, positional meaning, and the special error middleware signature." },
+      { "scoreBand": "solid", "description": "Knows the standard signature but under-explains error middleware or positional behavior." },
+      { "scoreBand": "needs_work", "description": "Has seen req and res but cannot reliably describe next or error middleware." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer is inaccurate enough that the candidate may write broken middleware." }
+    ],
+    "followUps": [
+      { "trigger": "red_flag", "question": "Why does Express require four parameters for an error-handling middleware even if you do not use next?", "purpose": "Check recognition of the error middleware runtime signature." },
+      { "trigger": "vague_answer", "question": "In (req, res, next), what object would you read headers from and what object would you call json() on?", "purpose": "Verify practical parameter usage." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Middleware function signature",
+        "displayQuestion": "Which parameters does an Express middleware function receive? What is the standard function signature?",
+        "displayIntent": "Check whether the candidate knows normal and error-handling middleware signatures.",
+        "guidance": [
+          "State the normal signature as (req, res, next).",
+          "Explain each parameter's role and that order matters.",
+          "Mention the error-handling signature (err, req, res, next).",
+          "Clarify that names are convention, while position and arity are what Express observes."
+        ],
+        "commonMistakes": [
+          "Swapping req and res.",
+          "Treating next as optional in pass-through middleware.",
+          "Using a three-argument function for centralized errors.",
+          "Thinking Express relies on parameter names."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Chữ ký hàm middleware",
+        "displayQuestion": "Middleware function trong Express nhận những tham số nào? Chữ ký hàm chuẩn là gì?",
+        "displayIntent": "Kiểm tra ứng viên có nắm signature của middleware thường và error-handling middleware hay không.",
+        "guidance": [
+          "Nêu signature thường là (req, res, next).",
+          "Giải thích vai trò từng tham số và nhấn mạnh thứ tự tham số quan trọng.",
+          "Nhắc signature xử lý lỗi là (err, req, res, next).",
+          "Làm rõ tên tham số là convention, còn vị trí và số lượng tham số mới là điều Express dựa vào."
+        ],
+        "commonMistakes": [
+          "Đảo req và res.",
+          "Xem next là tùy chọn trong middleware cần pass-through.",
+          "Dùng function ba tham số cho centralized error handler.",
+          "Nghĩ Express dựa vào tên tham số."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "middleware function signature",
+        "displayQuestion": "Express middleware function はどの引数を受け取り、標準的な signature は何ですか。",
+        "displayIntent": "通常 middleware と error-handling middleware の signature を理解しているかを確認する。",
+        "guidance": [
+          "通常の signature は (req, res, next) だと述べる。",
+          "各 parameter の役割と順序の重要性を説明する。",
+          "error-handling middleware は (err, req, res, next) だと述べる。",
+          "parameter 名は convention で、Express は位置と引数数を見ていることを説明する。"
+        ],
+        "commonMistakes": [
+          "req と res を入れ替える。",
+          "pass-through middleware で next を不要だと考える。",
+          "centralized error handler を 3 引数 function で書く。",
+          "Express が parameter 名に依存すると考える。"
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Express docs: Writing middleware", "url": "https://expressjs.com/en/guide/writing-middleware.html", "note": "Used for req, res, next and custom middleware signatures." },
+      { "label": "Express docs: Using middleware", "url": "https://expressjs.com/en/guide/using-middleware.html#error-handling-middleware", "note": "Used for the error-handling middleware signature." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_MIDDLEWARE_JR_TECH_NEXT_003",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving"],
+    "techTags": ["express", "nodejs", "debugging"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Assess whether the candidate understands next() as control transfer and can diagnose hanging requests caused by missing completion paths.",
+    "primaryQuestion": "What is next() used for in Express middleware? What happens if you do not call next()?",
+    "expectedSignals": [
+      "Explains next() calls the next matching middleware or route handler in the current stack.",
+      "States that middleware must either call next(), send/end the response, or intentionally delegate to an error path.",
+      "Explains that if middleware neither calls next() nor ends the response, the request remains open until the client or server times out.",
+      "Mentions that calling next() after sending a final response can cause duplicate response or headers-already-sent bugs.",
+      "Recognizes special forms such as next('route'), next('router'), and next(err) at a high level."
+    ],
+    "redFlags": [
+      "Says next() sends the response to the client.",
+      "Says Express automatically continues when the middleware function returns.",
+      "Calls next() unconditionally after res.json() without explaining why that can be unsafe.",
+      "Cannot explain why a request might hang."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Explains control transfer, completion paths, hanging requests, duplicate-send risks, and special next forms accurately." },
+      { "scoreBand": "solid", "description": "Understands next() and hanging requests but misses special forms or duplicate response hazards." },
+      { "scoreBand": "needs_work", "description": "Knows to call next() but cannot reason about when not to call it." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer shows a broken mental model of Express control flow." }
+    ],
+    "followUps": [
+      { "trigger": "red_flag", "question": "What would happen if an auth middleware finds no token, calls res.status(401).json(...), and then still calls next()?", "purpose": "Check duplicate response and authorization bypass awareness." },
+      { "trigger": "missing_context", "question": "When would next('route') be useful?", "purpose": "Probe knowledge of route stack skipping without requiring deep internals." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "next() and control flow",
+        "displayQuestion": "What is next() used for in Express middleware? What happens if you do not call next()?",
+        "displayIntent": "Check request completion paths and middleware flow control.",
+        "guidance": [
+          "Explain next() as passing control to the next matching middleware.",
+          "State that each path must either continue, end the response, or forward an error.",
+          "Mention hanging requests when no completion path is reached.",
+          "Warn about calling next() after a final response."
+        ],
+        "commonMistakes": [
+          "Thinking next() sends a response.",
+          "Relying on function return to continue the chain.",
+          "Calling next() after res.send() in every case.",
+          "Ignoring timeout symptoms from missing next()."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "next() và luồng điều khiển",
+        "displayQuestion": "next() dùng để làm gì? Điều gì xảy ra nếu không gọi next()?",
+        "displayIntent": "Kiểm tra ứng viên có hiểu completion path của request và flow control trong middleware hay không.",
+        "guidance": [
+          "Giải thích next() dùng để chuyển quyền xử lý cho middleware khớp tiếp theo.",
+          "Nêu rõ mỗi nhánh xử lý phải tiếp tục, kết thúc response, hoặc forward lỗi.",
+          "Nhắc request sẽ bị treo nếu không có completion path.",
+          "Cảnh báo lỗi khi gọi next() sau khi đã gửi response cuối cùng."
+        ],
+        "commonMistakes": [
+          "Nghĩ next() gửi response cho client.",
+          "Tin rằng return khỏi function sẽ tự động chạy middleware tiếp theo.",
+          "Luôn gọi next() sau res.send().",
+          "Bỏ qua triệu chứng timeout do quên next()."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "next() と control flow",
+        "displayQuestion": "Express middleware の next() は何に使い、呼ばないと何が起きますか。",
+        "displayIntent": "request の完了経路と middleware flow control を理解しているかを確認する。",
+        "guidance": [
+          "next() は次の matching middleware に制御を渡すものだと説明する。",
+          "各 branch は継続、response 終了、error forwarding のいずれかを行うべきだと述べる。",
+          "completion path が無いと request が hanging することを説明する。",
+          "final response 後に next() を呼ぶ危険を説明する。"
+        ],
+        "commonMistakes": [
+          "next() が response を送ると考える。",
+          "function return だけで chain が続くと考える。",
+          "常に res.send() の後で next() を呼ぶ。",
+          "next() 忘れによる timeout を見落とす。"
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Express docs: Writing middleware", "url": "https://expressjs.com/en/guide/writing-middleware.html", "note": "Used for next() behavior, hanging requests, and Express 5 promise rejection forwarding." },
+      { "label": "Express docs: Using middleware", "url": "https://expressjs.com/en/guide/using-middleware.html", "note": "Used for next('route') and next('router') behavior." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_MIDDLEWARE_JR_TECH_TYPES_004",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "communication"],
+    "techTags": ["express", "nodejs", "rest"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate can classify Express middleware types and give practical examples for each category.",
+    "primaryQuestion": "What types of middleware are there in Express? Include application-level, router-level, built-in, third-party, and error-handling middleware.",
+    "expectedSignals": [
+      "Names application-level middleware registered on app with app.use() or app.METHOD().",
+      "Names router-level middleware registered on an express.Router instance with router.use() or router.METHOD().",
+      "Names built-in middleware such as express.json(), express.urlencoded(), and express.static().",
+      "Names third-party middleware such as cors, morgan, helmet, cookie-parser, compression, or session middleware.",
+      "Names error-handling middleware and gives the (err, req, res, next) signature.",
+      "Explains that the categories describe where middleware comes from or how it is registered, not mutually exclusive business responsibilities."
+    ],
+    "redFlags": [
+      "Can list package names but cannot explain application-level versus router-level.",
+      "Omits error-handling middleware or gives the wrong signature.",
+      "Claims built-in middleware includes every middleware Express apps commonly use.",
+      "Confuses middleware type with HTTP method type."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Covers all five requested categories, examples, registration API, and the special error-handler signature." },
+      { "scoreBand": "solid", "description": "Lists most categories and examples but under-explains one distinction." },
+      { "scoreBand": "needs_work", "description": "Only knows third-party middleware names without classification." },
+      { "scoreBand": "insufficient_evidence", "description": "Cannot categorize middleware in a way that helps structure an Express app." }
+    ],
+    "followUps": [
+      { "trigger": "vague_answer", "question": "Where would you put express.json(), cors(), morgan(), and a final error handler in a typical app?", "purpose": "Connect categories to practical registration." },
+      { "trigger": "missing_context", "question": "Why is express.Router() useful for feature-specific middleware?", "purpose": "Probe router-level middleware understanding." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Types of Express middleware",
+        "displayQuestion": "What types of middleware are there in Express? Include application-level, router-level, built-in, third-party, and error-handling middleware.",
+        "displayIntent": "Check middleware classification and practical examples.",
+        "guidance": [
+          "Name each category and the registration API where relevant.",
+          "Give at least one concrete example for built-in and third-party middleware.",
+          "Call out the four-argument error middleware signature.",
+          "Explain router-level middleware as scoped to a Router instance."
+        ],
+        "commonMistakes": [
+          "Listing only package names.",
+          "Forgetting error-handling middleware.",
+          "Confusing app-level and router-level scope.",
+          "Treating middleware categories as HTTP methods."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Các loại middleware trong Express",
+        "displayQuestion": "Các loại middleware trong Express là gì? Bao gồm application-level, router-level, built-in, third-party và error-handling.",
+        "displayIntent": "Kiểm tra ứng viên có phân loại được middleware và đưa ví dụ thực tế hay không.",
+        "guidance": [
+          "Nêu từng loại và API đăng ký tương ứng nếu có.",
+          "Đưa ít nhất một ví dụ cụ thể cho built-in và third-party middleware.",
+          "Nhấn mạnh error middleware có bốn tham số.",
+          "Giải thích router-level middleware được scope theo Router instance."
+        ],
+        "commonMistakes": [
+          "Chỉ liệt kê tên package.",
+          "Quên error-handling middleware.",
+          "Nhầm scope app-level và router-level.",
+          "Xem loại middleware như HTTP method."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "Express middleware の種類",
+        "displayQuestion": "Express にはどのような middleware の種類がありますか。application-level、router-level、built-in、third-party、error-handling を含めて説明してください。",
+        "displayIntent": "middleware の分類と実務的な例を理解しているかを確認する。",
+        "guidance": [
+          "各 category と該当する登録 API を述べる。",
+          "built-in と third-party middleware の具体例を少なくとも 1 つずつ挙げる。",
+          "error middleware は 4 引数 signature であることを明確にする。",
+          "router-level middleware は Router instance に scoped されると説明する。"
+        ],
+        "commonMistakes": [
+          "package 名だけを列挙する。",
+          "error-handling middleware を忘れる。",
+          "app-level と router-level の scope を混同する。",
+          "middleware category を HTTP method として扱う。"
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Express docs: Using middleware", "url": "https://expressjs.com/en/guide/using-middleware.html", "note": "Used for official middleware categories and examples." },
+      { "label": "Express docs: 4.x API", "url": "https://expressjs.com/en/4x/api.html", "note": "Used for built-in middleware API references." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_MIDDLEWARE_JR_TECH_APP_USE_005",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving"],
+    "techTags": ["express", "nodejs", "rest"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Assess whether the candidate can register middleware with app.use(), understand optional mount paths, and avoid accidentally applying middleware too broadly.",
+    "primaryQuestion": "How is app.use() used to register middleware in Express?",
+    "expectedSignals": [
+      "Explains app.use(middleware) registers middleware for all HTTP methods on matching requests.",
+      "Explains app.use('/prefix', middleware) mounts middleware only for paths under that prefix.",
+      "Mentions app.use() can receive multiple middleware functions, arrays of middleware, or an express.Router instance.",
+      "Distinguishes app.use() from app.get(), app.post(), or other method-specific route handlers.",
+      "Mentions registration order still controls when the middleware runs."
+    ],
+    "redFlags": [
+      "Thinks app.use() only registers global middleware and cannot be mounted on a path.",
+      "Assumes app.use('/api', mw) only runs for GET requests.",
+      "Mounts authentication globally without considering public endpoints.",
+      "Does not realize a Router can be mounted with app.use()."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Explains global and path-mounted app.use(), multi-middleware registration, Router mounting, method behavior, and order." },
+      { "scoreBand": "solid", "description": "Understands basic app.use() but misses Router mounting or method-agnostic behavior." },
+      { "scoreBand": "needs_work", "description": "Can copy app.use(express.json()) but cannot reason about mount paths or scope." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer would likely lead to incorrectly scoped middleware." }
+    ],
+    "followUps": [
+      { "trigger": "missing_context", "question": "What is the difference between app.use('/admin', auth) and app.get('/admin', auth, handler)?", "purpose": "Check method and mount-path reasoning." },
+      { "trigger": "vague_answer", "question": "How would you mount all user routes under /api/users using a Router?", "purpose": "Verify app.use() with routers." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Registering middleware with app.use",
+        "displayQuestion": "How is app.use() used to register middleware in Express?",
+        "displayIntent": "Check global, path-mounted, and Router-based middleware registration.",
+        "guidance": [
+          "Explain app.use(mw) and app.use('/prefix', mw).",
+          "Mention that app.use() is method-agnostic for matching paths.",
+          "Describe passing multiple middleware functions or a Router.",
+          "Connect app.use() behavior to registration order."
+        ],
+        "commonMistakes": [
+          "Thinking app.use() is only global.",
+          "Forgetting that it applies across HTTP methods.",
+          "Mounting middleware too broadly.",
+          "Not knowing Router instances can be mounted."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Đăng ký middleware bằng app.use",
+        "displayQuestion": "app.use() được dùng để đăng ký middleware như thế nào?",
+        "displayIntent": "Kiểm tra cách đăng ký middleware global, theo path prefix và qua Router.",
+        "guidance": [
+          "Giải thích app.use(mw) và app.use('/prefix', mw).",
+          "Nhắc rằng app.use() không giới hạn theo HTTP method khi path khớp.",
+          "Mô tả cách truyền nhiều middleware function hoặc Router.",
+          "Liên hệ app.use() với thứ tự đăng ký."
+        ],
+        "commonMistakes": [
+          "Nghĩ app.use() chỉ dùng cho global middleware.",
+          "Quên rằng nó áp dụng cho nhiều HTTP method.",
+          "Mount middleware quá rộng.",
+          "Không biết có thể mount Router instance."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "app.use による middleware 登録",
+        "displayQuestion": "Express で app.use() は middleware 登録にどのように使いますか。",
+        "displayIntent": "global、path-mounted、Router-based middleware registration を理解しているかを確認する。",
+        "guidance": [
+          "app.use(mw) と app.use('/prefix', mw) を説明する。",
+          "app.use() は matching path に対して method-agnostic であることを述べる。",
+          "複数 middleware function や Router を渡せることを説明する。",
+          "app.use() の挙動を登録順と結びつける。"
+        ],
+        "commonMistakes": [
+          "app.use() は global 専用だと考える。",
+          "HTTP method をまたいで適用される点を忘れる。",
+          "middleware を広すぎる scope に mount する。",
+          "Router instance を mount できることを知らない。"
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Express docs: Using middleware", "url": "https://expressjs.com/en/guide/using-middleware.html", "note": "Used for app.use(), mount paths, sub-stacks, and Router mounting." },
+      { "label": "Express docs: 4.x API app.use", "url": "https://expressjs.com/en/4x/api.html#app.use", "note": "Used for application-level middleware mounting behavior." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_MIDDLEWARE_JR_TECH_ORDER_006",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving", "system_thinking"],
+    "techTags": ["express", "nodejs", "debugging"],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Evaluate whether the candidate can reason about middleware order and diagnose bugs caused by registering middleware before or after the routes that need it.",
+    "primaryQuestion": "Does the order of registering middleware matter in Express? Why?",
+    "expectedSignals": [
+      "States that order matters because Express executes matching middleware in the order it is registered.",
+      "Explains parsers such as express.json() must run before routes that read req.body.",
+      "Explains auth and authorization middleware must run before protected handlers.",
+      "Explains a route that sends a response can prevent later normal middleware from running for that request.",
+      "Mentions error-handling middleware is usually registered after routes so it can catch forwarded errors.",
+      "Recognizes that broad middleware registered too early can affect public routes unintentionally."
+    ],
+    "redFlags": [
+      "Claims Express reorders middleware automatically.",
+      "Registers error middleware before routes and expects it to catch later route errors.",
+      "Cannot explain why req.body is undefined.",
+      "Ignores the fact that response-ending middleware can stop the rest of the normal chain."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Explains ordered execution with parser, auth, route-ending, static, and error-handler placement examples." },
+      { "scoreBand": "solid", "description": "Understands registration order but misses one placement pattern such as error handlers." },
+      { "scoreBand": "needs_work", "description": "Knows order matters but cannot diagnose a concrete ordering bug." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer does not show reliable Express pipeline reasoning." }
+    ],
+    "followUps": [
+      { "trigger": "missing_context", "question": "Why would req.body be undefined if express.json() is below the route definition?", "purpose": "Check body parser placement reasoning." },
+      { "trigger": "red_flag", "question": "If a route sends res.send('ok'), will a logger registered after that route still run for the same request?", "purpose": "Probe response-ending behavior and order." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Middleware registration order",
+        "displayQuestion": "Does the order of registering middleware matter in Express? Why?",
+        "displayIntent": "Check execution-order reasoning and common ordering bugs.",
+        "guidance": [
+          "State clearly that matching middleware runs in registration order.",
+          "Use examples: body parser before routes, auth before protected routes, error handler after routes.",
+          "Explain that middleware sending a response can stop later normal middleware.",
+          "Mention route scope and broad middleware side effects."
+        ],
+        "commonMistakes": [
+          "Assuming Express sorts middleware by type.",
+          "Registering parsers after the routes that need req.body.",
+          "Putting error handlers too early.",
+          "Forgetting that a completed response changes downstream behavior."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Thứ tự đăng ký middleware",
+        "displayQuestion": "Thứ tự đăng ký middleware có quan trọng không? Tại sao?",
+        "displayIntent": "Kiểm tra khả năng reasoning về thứ tự chạy và các lỗi ordering thường gặp.",
+        "guidance": [
+          "Nói rõ middleware khớp request sẽ chạy theo thứ tự được đăng ký.",
+          "Dùng ví dụ: body parser trước route, auth trước route cần bảo vệ, error handler sau route.",
+          "Giải thích middleware gửi response có thể chặn middleware thường phía sau.",
+          "Nhắc tới scope route và tác dụng phụ khi middleware quá rộng."
+        ],
+        "commonMistakes": [
+          "Cho rằng Express tự sắp xếp middleware theo loại.",
+          "Đăng ký parser sau route cần req.body.",
+          "Đặt error handler quá sớm.",
+          "Quên rằng response đã hoàn tất sẽ ảnh hưởng middleware phía sau."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "middleware 登録順",
+        "displayQuestion": "Express では middleware の登録順は重要ですか。なぜですか。",
+        "displayIntent": "execution order の reasoning と典型的な ordering bug を確認する。",
+        "guidance": [
+          "matching middleware は登録順に実行されると明確に述べる。",
+          "body parser は route の前、auth は protected route の前、error handler は route の後という例を使う。",
+          "response を送る middleware が後続の通常 middleware を止め得ることを説明する。",
+          "route scope と広すぎる middleware の副作用に触れる。"
+        ],
+        "commonMistakes": [
+          "Express が middleware を種類別に自動ソートすると考える。",
+          "req.body を必要とする route の後に parser を登録する。",
+          "error handler を早すぎる位置に置く。",
+          "完了した response が後続挙動に影響する点を忘れる。"
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Express docs: Writing middleware", "url": "https://expressjs.com/en/guide/writing-middleware.html", "note": "Used for middleware loading order and examples." },
+      { "label": "Express docs: Using middleware", "url": "https://expressjs.com/en/guide/using-middleware.html", "note": "Used for route stacks, response-ending handlers, and error middleware placement." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_MIDDLEWARE_JR_TECH_BODY_PARSERS_007",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "ownership", "problem_solving"],
+    "techTags": ["express", "nodejs", "rest", "security"],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Check whether the candidate understands Express built-in body parsing middleware, content types, order, limits, and untrusted input boundaries.",
+    "primaryQuestion": "What are express.json() and express.urlencoded() used for?",
+    "expectedSignals": [
+      "Explains express.json() parses incoming requests with JSON payloads and populates req.body.",
+      "Explains express.urlencoded() parses application/x-www-form-urlencoded payloads such as HTML form submissions and populates req.body.",
+      "Mentions they only parse requests whose Content-Type matches the configured parser.",
+      "Mentions they must be registered before routes that need req.body.",
+      "Mentions useful options such as limit and extended for urlencoded payloads.",
+      "States parsed req.body is still user-controlled and must be validated before use."
+    ],
+    "redFlags": [
+      "Thinks express.json() parses query strings or path parameters.",
+      "Assumes parsed body data is safe and correctly typed.",
+      "Registers parsers after routes and expects req.body to be available.",
+      "Uses urlencoded for all payloads without considering Content-Type."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Explains parser purpose, Content-Type matching, req.body population, order, options, and validation/security boundaries." },
+      { "scoreBand": "solid", "description": "Knows JSON and form parsing but misses limits, Content-Type, or validation nuance." },
+      { "scoreBand": "needs_work", "description": "Can add express.json() but cannot explain when it runs or what risks remain." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer confuses body parsing with unrelated request data sources." }
+    ],
+    "followUps": [
+      { "trigger": "missing_tradeoff", "question": "What body size limit would you set for a login endpoint, and why?", "purpose": "Probe operational and security thinking around parser options." },
+      { "trigger": "red_flag", "question": "Can req.body.name.trim() throw after express.json() has parsed the request? Why?", "purpose": "Check untrusted input and runtime type awareness." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "express.json and express.urlencoded",
+        "displayQuestion": "What are express.json() and express.urlencoded() used for?",
+        "displayIntent": "Check safe body parser usage and request body boundaries.",
+        "guidance": [
+          "Map express.json() to JSON request bodies and express.urlencoded() to form-encoded bodies.",
+          "Mention req.body, Content-Type matching, and middleware order.",
+          "Discuss parser options such as limit and urlencoded extended.",
+          "Emphasize validation because req.body remains untrusted."
+        ],
+        "commonMistakes": [
+          "Using body parsers for query strings.",
+          "Trusting parsed values without validation.",
+          "Registering parsers after routes.",
+          "Ignoring payload size limits."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "express.json và express.urlencoded",
+        "displayQuestion": "express.json() và express.urlencoded() dùng để làm gì?",
+        "displayIntent": "Kiểm tra cách dùng body parser an toàn và ranh giới dữ liệu request body.",
+        "guidance": [
+          "Map express.json() với JSON request body và express.urlencoded() với form-encoded body.",
+          "Nhắc req.body, Content-Type matching và thứ tự middleware.",
+          "Nói về option như limit và extended của urlencoded.",
+          "Nhấn mạnh vẫn phải validate vì req.body là dữ liệu không đáng tin."
+        ],
+        "commonMistakes": [
+          "Dùng body parser để đọc query string.",
+          "Tin dữ liệu đã parse mà không validate.",
+          "Đăng ký parser sau route.",
+          "Bỏ qua giới hạn kích thước payload."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "express.json と express.urlencoded",
+        "displayQuestion": "express.json() と express.urlencoded() は何に使いますか。",
+        "displayIntent": "安全な body parser の使い方と request body の境界を確認する。",
+        "guidance": [
+          "express.json() は JSON request body、express.urlencoded() は form-encoded body に対応すると説明する。",
+          "req.body、Content-Type matching、middleware order に触れる。",
+          "limit や urlencoded の extended などの option を説明する。",
+          "req.body は信頼できないため validation が必要だと強調する。"
+        ],
+        "commonMistakes": [
+          "body parser で query string を読む。",
+          "parse 済みの値を validation せず信頼する。",
+          "route の後に parser を登録する。",
+          "payload size limit を無視する。"
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Express docs: 4.x API express.json", "url": "https://expressjs.com/en/4x/api.html#express.json", "note": "Used for JSON parser behavior, options, and untrusted req.body warning." },
+      { "label": "Express docs: 4.x API express.urlencoded", "url": "https://expressjs.com/en/4x/api.html#express.urlencoded", "note": "Used for URL-encoded parser behavior and options." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_MIDDLEWARE_JR_TECH_CUSTOM_008",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving", "communication"],
+    "techTags": ["express", "nodejs", "rest"],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Evaluate whether the candidate can design and implement custom Express middleware with correct control flow, scoping, error forwarding, and configurability.",
+    "primaryQuestion": "How do you write a custom middleware in Express?",
+    "expectedSignals": [
+      "Writes or describes a function with the signature (req, res, next).",
+      "Performs a focused concern such as logging, assigning request IDs, checking authentication, validating input, or timing requests.",
+      "Calls next() when the request should continue.",
+      "Ends the response intentionally for rejection paths such as invalid auth or bad input.",
+      "For async work, forwards failures with next(err) in Express 4 or relies on Express 5 promise forwarding where appropriate.",
+      "Mentions configurable middleware as a factory that accepts options and returns (req, res, next)."
+    ],
+    "redFlags": [
+      "Forgets next() in success paths.",
+      "Sends a response and then continues to the protected handler.",
+      "Wraps unrelated business logic into global middleware.",
+      "Catches async errors and suppresses them."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Shows correct middleware shape, completion paths, async error forwarding, route scoping, and optional factory configuration." },
+      { "scoreBand": "solid", "description": "Can write a working custom middleware but misses configurability or async error nuance." },
+      { "scoreBand": "needs_work", "description": "Understands the rough shape but likely leaves hanging or duplicate-response paths." },
+      { "scoreBand": "insufficient_evidence", "description": "Cannot describe a safe custom middleware implementation." }
+    ],
+    "followUps": [
+      { "trigger": "vague_answer", "question": "Write a requestId middleware that sets req.requestId and then lets the route continue.", "purpose": "Force a concrete pass-through middleware example." },
+      { "trigger": "missing_tradeoff", "question": "When would you make middleware configurable with a factory instead of hardcoding values inside it?", "purpose": "Check reusable middleware design." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Custom Express middleware",
+        "displayQuestion": "How do you write a custom middleware in Express?",
+        "displayIntent": "Check implementation skill for custom middleware with correct control flow.",
+        "guidance": [
+          "Start from the (req, res, next) function shape.",
+          "Choose one clear responsibility for the middleware.",
+          "Explain success, rejection, and error paths.",
+          "Mention configurable middleware factories for reusable behavior."
+        ],
+        "commonMistakes": [
+          "Forgetting next() on success.",
+          "Sending a response and then continuing.",
+          "Mixing domain business logic into global middleware.",
+          "Swallowing async errors."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Custom middleware trong Express",
+        "displayQuestion": "Làm thế nào để viết một middleware tùy chỉnh trong Express?",
+        "displayIntent": "Kiểm tra khả năng implement custom middleware với control flow đúng.",
+        "guidance": [
+          "Bắt đầu từ function shape (req, res, next).",
+          "Chọn một trách nhiệm rõ ràng cho middleware.",
+          "Giải thích nhánh thành công, nhánh từ chối và nhánh lỗi.",
+          "Nhắc tới middleware factory có options để tái sử dụng."
+        ],
+        "commonMistakes": [
+          "Quên next() ở nhánh thành công.",
+          "Gửi response rồi vẫn cho request đi tiếp.",
+          "Nhét business logic domain vào global middleware.",
+          "Nuốt lỗi async."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "Custom Express middleware",
+        "displayQuestion": "Express で custom middleware はどのように書きますか。",
+        "displayIntent": "正しい control flow を持つ custom middleware の実装力を確認する。",
+        "guidance": [
+          "(req, res, next) の function shape から始める。",
+          "middleware に明確な 1 つの責務を持たせる。",
+          "success、rejection、error path を説明する。",
+          "再利用のための options 付き middleware factory に触れる。"
+        ],
+        "commonMistakes": [
+          "success path で next() を忘れる。",
+          "response を送った後も処理を続ける。",
+          "domain business logic を global middleware に混ぜる。",
+          "async error を握りつぶす。"
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Express docs: Writing middleware", "url": "https://expressjs.com/en/guide/writing-middleware.html", "note": "Used for custom middleware examples and configurable middleware factories." },
+      { "label": "Express docs: Error handling", "url": "https://expressjs.com/en/guide/error-handling.html", "note": "Used for async and next(err) error forwarding behavior." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_MIDDLEWARE_MID_TECH_TERMINATION_009",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving", "system_thinking"],
+    "techTags": ["express", "nodejs", "rest"],
+    "difficulty": 3,
+    "conversationDepth": "mid",
+    "intent": "Check whether the candidate understands which middleware paths terminate the request-response cycle and which are expected to pass control onward.",
+    "primaryQuestion": "Which middleware can end the request-response cycle? Which middleware normally does not?",
+    "expectedSignals": [
+      "States any middleware can end the cycle if it sends or ends a response with res.send(), res.json(), res.end(), res.redirect(), res.sendStatus(), or similar.",
+      "Recognizes route handlers often terminate the cycle by returning the final response.",
+      "Explains auth, validation, rate-limit, static-file, and error middleware may terminate the cycle on rejection or when they produce a response.",
+      "Explains pass-through middleware such as logging, request IDs, body parsing, cookie parsing, CORS header setup, and metrics usually call next() after preparing data or headers.",
+      "Mentions that some middleware has conditional behavior, such as CORS handling preflight or auth ending only when credentials are invalid.",
+      "Warns against sending a response and then calling next() into normal handlers unless deliberately delegating to an error handler after headers logic."
+    ],
+    "redFlags": [
+      "Claims only route handlers can send responses.",
+      "Claims all middleware must call next() no matter what.",
+      "Cannot distinguish successful pass-through from rejection paths.",
+      "Calls next() after every res.json() without understanding duplicate responses."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Explains termination as a control-flow choice, gives terminating and pass-through examples, and handles conditional middleware behavior." },
+      { "scoreBand": "solid", "description": "Understands send-versus-next but misses conditional middleware examples." },
+      { "scoreBand": "needs_work", "description": "Can list examples but cannot reason about completion paths." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer would cause hanging or duplicate-response bugs." }
+    ],
+    "followUps": [
+      { "trigger": "missing_context", "question": "Is auth middleware terminating or non-terminating? Explain both success and failure paths.", "purpose": "Check conditional completion-path reasoning." },
+      { "trigger": "red_flag", "question": "Why is calling next() after res.sendStatus(401) usually a bug?", "purpose": "Check protected-route control flow." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Ending the request-response cycle",
+        "displayQuestion": "Which middleware can end the request-response cycle? Which middleware normally does not?",
+        "displayIntent": "Check whether the candidate understands terminating versus pass-through middleware behavior.",
+        "guidance": [
+          "Define termination as sending, ending, redirecting, or otherwise completing the response.",
+          "Give examples of middleware that commonly terminates: route handlers, auth failures, validation failures, static files, error handlers.",
+          "Give examples of pass-through middleware: logging, parsers, request IDs, CORS header setup, metrics.",
+          "Explain conditional middleware behavior and duplicate-response risk."
+        ],
+        "commonMistakes": [
+          "Saying only routes can end responses.",
+          "Saying every middleware must always call next().",
+          "Ignoring success versus failure paths.",
+          "Continuing into downstream handlers after an error response."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Kết thúc request-response cycle",
+        "displayQuestion": "Middleware nào có thể kết thúc request-response cycle? Middleware nào thì thường không?",
+        "displayIntent": "Kiểm tra ứng viên có hiểu middleware kết thúc response và middleware pass-through hay không.",
+        "guidance": [
+          "Định nghĩa kết thúc cycle là gửi, end, redirect hoặc hoàn tất response.",
+          "Đưa ví dụ thường kết thúc: route handler, auth fail, validation fail, static files, error handler.",
+          "Đưa ví dụ pass-through: logging, parser, request ID, CORS header setup, metrics.",
+          "Giải thích middleware có thể conditional và rủi ro duplicate response."
+        ],
+        "commonMistakes": [
+          "Nói chỉ route mới được kết thúc response.",
+          "Nói mọi middleware luôn phải gọi next().",
+          "Bỏ qua nhánh thành công và nhánh thất bại.",
+          "Đã trả error response nhưng vẫn cho handler phía sau chạy."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "request-response cycle の終了",
+        "displayQuestion": "どの middleware が request-response cycle を終了でき、どの middleware は通常終了しませんか。",
+        "displayIntent": "terminating middleware と pass-through middleware の挙動を理解しているかを確認する。",
+        "guidance": [
+          "termination は response を送る、end する、redirect する、完了させることだと定義する。",
+          "route handler、auth failure、validation failure、static files、error handler などの例を挙げる。",
+          "logging、parser、request ID、CORS header setup、metrics などの pass-through 例を挙げる。",
+          "conditional middleware behavior と duplicate response risk を説明する。"
+        ],
+        "commonMistakes": [
+          "route だけが response を終了できると言う。",
+          "すべての middleware が必ず next() を呼ぶべきだと言う。",
+          "success path と failure path を区別しない。",
+          "error response 後も downstream handler を実行する。"
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Express docs: Using middleware", "url": "https://expressjs.com/en/guide/using-middleware.html", "note": "Used for ending the request-response cycle versus calling next." },
+      { "label": "Express docs: 4.x API Response", "url": "https://expressjs.com/en/4x/api.html#res", "note": "Used for response methods such as send, json, end, redirect, and sendStatus." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_MIDDLEWARE_MID_TRADE_CORS_010",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack", "security"],
+    "levels": ["junior", "mid"],
+    "type": "trade_off",
+    "competencies": ["technical_fundamentals", "trade_off_analysis", "communication"],
+    "techTags": ["express", "nodejs", "security", "rest"],
+    "difficulty": 3,
+    "conversationDepth": "mid",
+    "intent": "Evaluate whether the candidate understands the browser same-origin policy, what cors middleware actually changes, and why CORS is not API authentication.",
+    "primaryQuestion": "What problem does the cors middleware solve in Express?",
+    "expectedSignals": [
+      "Explains CORS as a browser mechanism related to the same-origin policy.",
+      "Explains cors middleware sets response headers such as Access-Control-Allow-Origin so browser JavaScript may read permitted cross-origin responses.",
+      "Mentions preflight OPTIONS requests for non-simple methods, custom headers, or credentialed scenarios.",
+      "Explains common configuration: origin allowlist, methods, allowedHeaders, exposedHeaders, credentials, and maxAge.",
+      "Warns that CORS is enforced by browsers and does not protect APIs from server-to-server, curl, Postman, or malicious direct requests.",
+      "Avoids wildcard origins with credentialed requests and separates CORS policy from authentication and authorization."
+    ],
+    "redFlags": [
+      "Treats CORS as a complete security layer for APIs.",
+      "Sets origin '*' with credentials true in production.",
+      "Cannot explain preflight OPTIONS requests.",
+      "Thinks CORS blocks all non-browser clients."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Explains browser enforcement, response headers, preflight, credentialed requests, allowlists, and the difference from authentication." },
+      { "scoreBand": "solid", "description": "Understands cross-origin browser calls but misses one configuration or security nuance." },
+      { "scoreBand": "needs_work", "description": "Knows to install cors but cannot explain what headers or browser behavior are involved." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer shows dangerous CORS or security misconceptions." }
+    ],
+    "followUps": [
+      { "trigger": "missing_context", "question": "Why does a request with an Authorization header often trigger a preflight OPTIONS request?", "purpose": "Check practical browser CORS behavior." },
+      { "trigger": "red_flag", "question": "Why is CORS not a substitute for authentication?", "purpose": "Separate browser read permissions from API access control." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "CORS middleware purpose",
+        "displayQuestion": "What problem does the cors middleware solve in Express?",
+        "displayIntent": "Check browser CORS mechanics and safe policy design.",
+        "guidance": [
+          "Explain CORS through browser same-origin policy.",
+          "Describe the response headers set by the cors middleware.",
+          "Mention preflight and credentialed request constraints.",
+          "Clarify that CORS is not authentication and not enforced by non-browser clients."
+        ],
+        "commonMistakes": [
+          "Using CORS as the only API security control.",
+          "Combining wildcard origin with credentials.",
+          "Ignoring preflight requests.",
+          "Assuming CORS blocks curl or server-to-server clients."
+        ],
+        "labels": { "role": "Backend/Fullstack/Security", "level": "Junior/Mid-level", "type": "trade_off" }
+      },
+      "vi": {
+        "title": "Mục đích của cors middleware",
+        "displayQuestion": "cors middleware dùng để giải quyết vấn đề gì trong Express?",
+        "displayIntent": "Kiểm tra cơ chế CORS của browser và cách thiết kế policy an toàn.",
+        "guidance": [
+          "Giải thích CORS thông qua same-origin policy của browser.",
+          "Mô tả các response header mà cors middleware set.",
+          "Nhắc tới preflight và ràng buộc khi request có credentials.",
+          "Làm rõ CORS không phải authentication và không được enforce bởi non-browser client."
+        ],
+        "commonMistakes": [
+          "Xem CORS là lớp bảo mật duy nhất của API.",
+          "Kết hợp wildcard origin với credentials.",
+          "Bỏ qua preflight request.",
+          "Nghĩ CORS chặn curl hoặc server-to-server client."
+        ],
+        "labels": { "role": "Backend/Fullstack/Security", "level": "Junior/Mid-level", "type": "trade_off" }
+      },
+      "ja": {
+        "title": "CORS middleware の目的",
+        "displayQuestion": "Express の cors middleware はどの問題を解決しますか。",
+        "displayIntent": "browser CORS mechanics と安全な policy design を確認する。",
+        "guidance": [
+          "browser の same-origin policy を通して CORS を説明する。",
+          "cors middleware が設定する response header を説明する。",
+          "preflight と credentialed request の制約に触れる。",
+          "CORS は authentication ではなく、non-browser client には強制されないと明確にする。"
+        ],
+        "commonMistakes": [
+          "CORS を API の唯一の security control として使う。",
+          "wildcard origin と credentials を組み合わせる。",
+          "preflight request を無視する。",
+          "CORS が curl や server-to-server client をブロックすると考える。"
+        ],
+        "labels": { "role": "Backend/Fullstack/Security", "level": "Junior/Mid-level", "type": "trade_off" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "expressjs/cors README", "url": "https://github.com/expressjs/cors#readme", "note": "Used for CORS middleware purpose, options, and common misconceptions." },
+      { "label": "Express middleware resources", "url": "https://expressjs.com/en/resources/middleware.html", "note": "Used for Express-recognized third-party middleware context." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_MIDDLEWARE_JR_TECH_ROUTE_SCOPE_011",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking", "problem_solving"],
+    "techTags": ["express", "nodejs", "rest"],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Verify whether the candidate can apply middleware only to selected routes, prefixes, routers, or HTTP methods instead of the entire application.",
+    "primaryQuestion": "How do you apply middleware only to certain routes instead of the whole Express app?",
+    "expectedSignals": [
+      "Uses route-level middleware such as app.get('/admin', auth, handler) or router.post('/orders', validate, handler).",
+      "Uses path-mounted middleware such as app.use('/admin', auth) for a prefix.",
+      "Uses express.Router() to group feature routes and attach router.use(auth) only inside that group.",
+      "Mentions arrays or multiple middleware functions can be composed for a route.",
+      "Distinguishes route-specific middleware from global app.use(middleware).",
+      "Considers public endpoints such as login, health checks, and webhooks that may need different middleware."
+    ],
+    "redFlags": [
+      "Registers all middleware globally because it is simpler.",
+      "Cannot protect only POST /orders without affecting GET /orders.",
+      "Applies auth to login or health routes by accident.",
+      "Does not know route handlers can accept middleware before the final handler."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Explains route-level, prefix-mounted, Router-level, method-specific, and array composition patterns with examples." },
+      { "scoreBand": "solid", "description": "Knows route-level middleware but misses router grouping or method specificity." },
+      { "scoreBand": "needs_work", "description": "Understands middleware globally but cannot scope it safely." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer would over-apply middleware and break public or method-specific endpoints." }
+    ],
+    "followUps": [
+      { "trigger": "vague_answer", "question": "How would you protect only /admin routes while leaving /login and /health public?", "purpose": "Force concrete route scoping." },
+      { "trigger": "missing_context", "question": "How would you apply validation only to POST /users but not GET /users?", "purpose": "Check method-specific middleware composition." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Route-scoped middleware",
+        "displayQuestion": "How do you apply middleware only to certain routes instead of the whole Express app?",
+        "displayIntent": "Check route-level, prefix-level, and Router-level middleware scoping.",
+        "guidance": [
+          "Use examples with app.get or router.post receiving middleware before the handler.",
+          "Explain app.use('/prefix', middleware) for path-prefix scoping.",
+          "Explain Router grouping with router.use().",
+          "Mention public routes and method-specific behavior."
+        ],
+        "commonMistakes": [
+          "Making every middleware global.",
+          "Protecting login or health routes by accident.",
+          "Ignoring HTTP method-specific scoping.",
+          "Duplicating middleware instead of grouping routes."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Middleware theo scope route",
+        "displayQuestion": "Làm thế nào để áp dụng middleware chỉ cho một số route nhất định thay vì toàn bộ app?",
+        "displayIntent": "Kiểm tra cách scope middleware ở route-level, prefix-level và Router-level.",
+        "guidance": [
+          "Dùng ví dụ app.get hoặc router.post có middleware trước handler.",
+          "Giải thích app.use('/prefix', middleware) để scope theo path prefix.",
+          "Giải thích gom route bằng Router và router.use().",
+          "Nhắc route public và behavior theo HTTP method."
+        ],
+        "commonMistakes": [
+          "Biến mọi middleware thành global.",
+          "Vô tình bảo vệ login hoặc health route.",
+          "Bỏ qua scoping theo HTTP method.",
+          "Lặp middleware thay vì gom route hợp lý."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "route-scoped middleware",
+        "displayQuestion": "Express app 全体ではなく一部の route だけに middleware を適用するにはどうしますか。",
+        "displayIntent": "route-level、prefix-level、Router-level の middleware scoping を確認する。",
+        "guidance": [
+          "handler の前に middleware を渡す app.get や router.post の例を使う。",
+          "path prefix scope として app.use('/prefix', middleware) を説明する。",
+          "Router grouping と router.use() を説明する。",
+          "public route と HTTP method-specific behavior に触れる。"
+        ],
+        "commonMistakes": [
+          "すべての middleware を global にする。",
+          "login や health route を誤って保護する。",
+          "HTTP method-specific scoping を無視する。",
+          "route grouping せず middleware を重複させる。"
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Express docs: Using middleware", "url": "https://expressjs.com/en/guide/using-middleware.html", "note": "Used for path-mounted middleware, route stacks, next('route'), and Router-level examples." },
+      { "label": "Express docs: Routing", "url": "https://expressjs.com/en/guide/routing.html", "note": "Used for route handlers and method-specific route definitions." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_MIDDLEWARE_JR_TECH_APP_VS_ROUTER_012",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking", "communication"],
+    "techTags": ["express", "nodejs", "rest"],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Assess whether the candidate can compare application-level and router-level middleware and choose router-level middleware for modular route groups.",
+    "primaryQuestion": "What is the difference between application-level middleware and router-level middleware?",
+    "expectedSignals": [
+      "Explains application-level middleware is bound to the app instance using app.use() or app.METHOD().",
+      "Explains router-level middleware is bound to an express.Router instance using router.use() or router.METHOD().",
+      "States they work similarly in control flow, but differ in scope and modular organization.",
+      "Mentions router-level middleware runs only when the router is mounted and the request matches the router path.",
+      "Uses examples such as app-level logging or body parsing versus router-level admin auth or users validation.",
+      "Mentions routers help split feature modules and keep route-specific concerns local."
+    ],
+    "redFlags": [
+      "Claims router-level middleware runs before all app-level middleware.",
+      "Cannot explain where an express.Router is mounted.",
+      "Uses app-level middleware for every feature-specific concern.",
+      "Thinks router-level middleware is a different syntax with different next semantics."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Compares binding target, scope, mount path, execution similarity, and modular design trade-offs with examples." },
+      { "scoreBand": "solid", "description": "Understands app versus router scope but misses mount path or organization benefits." },
+      { "scoreBand": "needs_work", "description": "Can use app.use but has weak router mental model." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer cannot guide modular Express route design." }
+    ],
+    "followUps": [
+      { "trigger": "missing_context", "question": "If router.use(auth) is inside adminRouter and app.use('/admin', adminRouter), which requests does auth affect?", "purpose": "Verify mount-path and router scope reasoning." },
+      { "trigger": "missing_tradeoff", "question": "Why might you keep admin authorization middleware in the admin router instead of app.use(auth) globally?", "purpose": "Check modularity and accidental scope trade-offs." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Application-level versus router-level middleware",
+        "displayQuestion": "What is the difference between application-level middleware and router-level middleware?",
+        "displayIntent": "Check scope and modularity understanding for Express middleware.",
+        "guidance": [
+          "Compare middleware bound to app with middleware bound to express.Router.",
+          "Explain that control flow is similar but scope and organization differ.",
+          "Mention router mounting and route prefix effects.",
+          "Use examples where app-level and router-level placement make sense."
+        ],
+        "commonMistakes": [
+          "Thinking router middleware has different next semantics.",
+          "Ignoring the router mount path.",
+          "Putting every concern at app level.",
+          "Assuming router middleware always runs first."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Application-level và router-level middleware",
+        "displayQuestion": "Sự khác biệt giữa application-level middleware và router-level middleware là gì?",
+        "displayIntent": "Kiểm tra hiểu biết về scope và modularity của middleware trong Express.",
+        "guidance": [
+          "So sánh middleware gắn vào app với middleware gắn vào express.Router.",
+          "Giải thích control flow tương tự nhưng khác scope và cách tổ chức.",
+          "Nhắc tới mount router và ảnh hưởng của route prefix.",
+          "Dùng ví dụ vị trí app-level và router-level hợp lý."
+        ],
+        "commonMistakes": [
+          "Nghĩ router middleware có next semantics khác.",
+          "Bỏ qua mount path của router.",
+          "Đặt mọi concern ở app level.",
+          "Cho rằng router middleware luôn chạy trước."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "application-level と router-level middleware",
+        "displayQuestion": "application-level middleware と router-level middleware の違いは何ですか。",
+        "displayIntent": "Express middleware の scope と modularity の理解を確認する。",
+        "guidance": [
+          "app に bound された middleware と express.Router に bound された middleware を比較する。",
+          "control flow は似ているが scope と organization が違うと説明する。",
+          "router mounting と route prefix の影響に触れる。",
+          "app-level と router-level が適切な例を使う。"
+        ],
+        "commonMistakes": [
+          "router middleware は next semantics が違うと考える。",
+          "router mount path を無視する。",
+          "すべての concern を app level に置く。",
+          "router middleware が常に先に実行されると考える。"
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Express docs: Using middleware", "url": "https://expressjs.com/en/guide/using-middleware.html#router-level-middleware", "note": "Used for application-level and router-level middleware comparison." },
+      { "label": "Express docs: 4.x API express.Router", "url": "https://expressjs.com/en/4x/api.html#express.router", "note": "Used for Router construction and mounting context." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_MIDDLEWARE_JR_TECH_MORGAN_013",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack", "devops"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "impact_measurement", "ownership"],
+    "techTags": ["express", "nodejs", "logging"],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Check whether the candidate knows morgan as HTTP request logging middleware and understands where it fits relative to application logs, privacy, and production observability.",
+    "primaryQuestion": "What is morgan and what is it used for in Express?",
+    "expectedSignals": [
+      "Defines morgan as HTTP request logger middleware for Node.js and Express.",
+      "Explains it logs request/response information such as method, URL, status code, response time, and content length depending on format.",
+      "Mentions common formats such as dev, combined, common, short, or custom tokens.",
+      "Explains it is useful for local debugging, access logs, latency visibility, and operational troubleshooting.",
+      "Mentions production use should route logs to the app logger or a stream and avoid logging sensitive data.",
+      "Distinguishes request access logs from domain/business/audit logs."
+    ],
+    "redFlags": [
+      "Thinks morgan is an error handler or security middleware.",
+      "Logs secrets, Authorization headers, cookies, or full request bodies by default without concern.",
+      "Uses console-only logs in production without any retention or aggregation strategy.",
+      "Confuses morgan with body parsing or CORS."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Explains morgan's HTTP access-log role, formats/tokens, production stream integration, privacy boundaries, and relation to observability." },
+      { "scoreBand": "solid", "description": "Knows morgan logs requests but misses production logging or privacy nuance." },
+      { "scoreBand": "needs_work", "description": "Recognizes the package name but cannot explain what gets logged or why." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer confuses morgan with unrelated middleware." }
+    ],
+    "followUps": [
+      { "trigger": "missing_context", "question": "Where would you send morgan logs in production instead of only printing to the console?", "purpose": "Check operational logging awareness." },
+      { "trigger": "missing_tradeoff", "question": "Why should you be careful about logging headers or request bodies?", "purpose": "Check privacy and secret-leak awareness." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Morgan request logging",
+        "displayQuestion": "What is morgan and what is it used for in Express?",
+        "displayIntent": "Check HTTP access logging knowledge and production logging judgment.",
+        "guidance": [
+          "Define morgan as HTTP request logger middleware.",
+          "Mention common logged fields and formats.",
+          "Explain local debugging and production access-log use cases.",
+          "Discuss log streams, aggregation, and sensitive data boundaries."
+        ],
+        "commonMistakes": [
+          "Treating morgan as an error handler.",
+          "Logging secrets or full bodies casually.",
+          "Relying only on console logs in production.",
+          "Confusing request logs with business audit logs."
+        ],
+        "labels": { "role": "Backend/Fullstack/DevOps", "level": "Junior/Mid-level", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Morgan request logging",
+        "displayQuestion": "morgan là gì và được dùng để làm gì trong Express?",
+        "displayIntent": "Kiểm tra hiểu biết về HTTP access log và judgment khi logging production.",
+        "guidance": [
+          "Định nghĩa morgan là HTTP request logger middleware.",
+          "Nhắc các field và format thường được log.",
+          "Giải thích use case debug local và access log production.",
+          "Nói về log stream, aggregation và ranh giới dữ liệu nhạy cảm."
+        ],
+        "commonMistakes": [
+          "Xem morgan là error handler.",
+          "Log secret hoặc full body một cách tùy tiện.",
+          "Chỉ dựa vào console log ở production.",
+          "Nhầm request log với business audit log."
+        ],
+        "labels": { "role": "Backend/Fullstack/DevOps", "level": "Junior/Mid-level", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "Morgan request logging",
+        "displayQuestion": "morgan とは何で、Express では何に使いますか。",
+        "displayIntent": "HTTP access logging と production logging の判断を確認する。",
+        "guidance": [
+          "morgan は HTTP request logger middleware だと定義する。",
+          "よく log される field と format に触れる。",
+          "local debugging と production access log の use case を説明する。",
+          "log stream、aggregation、sensitive data boundary を説明する。"
+        ],
+        "commonMistakes": [
+          "morgan を error handler として扱う。",
+          "secret や full body を不用意に log する。",
+          "production で console log だけに依存する。",
+          "request log と business audit log を混同する。"
+        ],
+        "labels": { "role": "Backend/Fullstack/DevOps", "level": "Junior/Mid-level", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "expressjs/morgan README", "url": "https://github.com/expressjs/morgan#readme", "note": "Used for morgan purpose, predefined formats, tokens, and stream option." },
+      { "label": "Express performance best practices", "url": "https://expressjs.com/en/advanced/best-practice-performance.html", "note": "Used for production logging and performance context." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_MIDDLEWARE_MID_TECH_HELMET_014",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack", "security"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "ownership", "trade_off_analysis"],
+    "techTags": ["express", "nodejs", "security"],
+    "difficulty": 3,
+    "conversationDepth": "mid",
+    "intent": "Assess whether the candidate understands Helmet as security-header middleware and can explain both its value and its limits.",
+    "primaryQuestion": "What is helmet and why should you use it in Express?",
+    "expectedSignals": [
+      "Defines Helmet as middleware that helps secure Express apps by setting HTTP response headers.",
+      "Names example protections such as Content-Security-Policy, X-Content-Type-Options, Referrer-Policy, cross-origin policies, frame protection, or HSTS depending on configuration.",
+      "Explains it reduces classes of browser-side risk such as clickjacking, MIME sniffing, overly permissive referrers, and some XSS impact when CSP is configured well.",
+      "Mentions Helmet is not a complete security solution and must be paired with authentication, authorization, validation, rate limiting, TLS, safe cookies, and dependency hygiene.",
+      "Recognizes some headers, especially CSP and HSTS, require context-aware configuration to avoid breaking frontend assets or local development.",
+      "Mentions placement early in the middleware stack for normal responses."
+    ],
+    "redFlags": [
+      "Says installing Helmet makes the application secure by itself.",
+      "Cannot name any header or browser risk category Helmet affects.",
+      "Enables strict CSP blindly without considering scripts, styles, CDNs, or API-only behavior.",
+      "Ignores TLS and cookie security while relying only on headers."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Explains security-header purpose, concrete headers and risks, configuration trade-offs, placement, and defense-in-depth limits." },
+      { "scoreBand": "solid", "description": "Knows Helmet sets security headers but misses configuration or defense-in-depth nuance." },
+      { "scoreBand": "needs_work", "description": "Recognizes Helmet by name but cannot explain what risk it reduces." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer shows a misleading or unsafe security model." }
+    ],
+    "followUps": [
+      { "trigger": "missing_context", "question": "Which Helmet setting would you review carefully for an app that loads scripts from a CDN?", "purpose": "Check CSP configuration awareness." },
+      { "trigger": "missing_tradeoff", "question": "Why is Helmet useful but not enough to protect an API?", "purpose": "Check defense-in-depth reasoning." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Helmet security headers",
+        "displayQuestion": "What is helmet and why should you use it in Express?",
+        "displayIntent": "Check security-header knowledge and defense-in-depth reasoning.",
+        "guidance": [
+          "Define Helmet as middleware that sets security-related HTTP response headers.",
+          "Name concrete headers or risk categories it helps address.",
+          "Discuss context-aware configuration, especially CSP and HSTS.",
+          "Explain that Helmet complements but does not replace authentication, validation, TLS, and other controls."
+        ],
+        "commonMistakes": [
+          "Treating Helmet as complete application security.",
+          "Not knowing any header it sets.",
+          "Breaking frontend assets with careless CSP.",
+          "Ignoring app-specific security controls."
+        ],
+        "labels": { "role": "Backend/Fullstack/Security", "level": "Junior/Mid-level", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "Helmet và security headers",
+        "displayQuestion": "helmet là gì và tại sao nên dùng nó trong Express?",
+        "displayIntent": "Kiểm tra hiểu biết về security header và defense-in-depth.",
+        "guidance": [
+          "Định nghĩa Helmet là middleware set các HTTP response header liên quan tới bảo mật.",
+          "Nêu header cụ thể hoặc nhóm rủi ro mà nó giúp giảm.",
+          "Phân tích cấu hình theo context, đặc biệt CSP và HSTS.",
+          "Giải thích Helmet chỉ bổ trợ, không thay thế authentication, validation, TLS và các control khác."
+        ],
+        "commonMistakes": [
+          "Xem Helmet là bảo mật toàn diện cho app.",
+          "Không biết bất kỳ header nào nó set.",
+          "Làm hỏng frontend asset vì CSP cấu hình ẩu.",
+          "Bỏ qua security control đặc thù của ứng dụng."
+        ],
+        "labels": { "role": "Backend/Fullstack/Security", "level": "Junior/Mid-level", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "Helmet と security headers",
+        "displayQuestion": "helmet とは何で、なぜ Express で使うべきですか。",
+        "displayIntent": "security header と defense-in-depth の理解を確認する。",
+        "guidance": [
+          "Helmet は security-related HTTP response header を設定する middleware だと定義する。",
+          "具体的な header または軽減する risk category を挙げる。",
+          "特に CSP と HSTS について context-aware configuration を説明する。",
+          "Helmet は authentication、validation、TLS などを置き換えるものではなく補完するものだと説明する。"
+        ],
+        "commonMistakes": [
+          "Helmet を完全な application security として扱う。",
+          "設定される header を 1 つも知らない。",
+          "雑な CSP で frontend asset を壊す。",
+          "app-specific security control を無視する。"
+        ],
+        "labels": { "role": "Backend/Fullstack/Security", "level": "Junior/Mid-level", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Helmet docs", "url": "https://helmetjs.github.io/", "note": "Used for Helmet purpose, default headers, and configuration considerations." },
+      { "label": "Express security best practices", "url": "https://expressjs.com/en/advanced/best-practice-security.html", "note": "Used for Express production security guidance and Helmet recommendation." }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_MIDDLEWARE_MID_TECH_NEXT_ERR_015",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving", "ownership"],
+    "techTags": ["express", "nodejs", "debugging", "rest"],
+    "difficulty": 3,
+    "conversationDepth": "mid",
+    "intent": "Check whether the candidate understands the difference between normal middleware continuation and error propagation in Express.",
+    "primaryQuestion": "What is the difference between next(err) and next() in Express?",
+    "expectedSignals": [
+      "Explains next() continues to the next normal matching middleware or route handler.",
+      "Explains next(err) tells Express the current request is in an error state and skips remaining non-error middleware.",
+      "States errors are handled by error-handling middleware with the signature (err, req, res, next).",
+      "Mentions next(err) is used for synchronous callbacks, async failures, validation errors represented as errors, and centralized error response mapping.",
+      "Mentions Express 5 automatically calls next(value) for rejected promises or thrown errors from promise-returning middleware/handlers.",
+      "Warns that if headers are already sent, the error handler should delegate or avoid trying to send another response."
+    ],
+    "redFlags": [
+      "Thinks next(err) sends the error response directly by itself.",
+      "Thinks next(err) and next() are interchangeable.",
+      "Uses next(err) for normal control flow instead of expected branch handling.",
+      "Leaks stack traces or raw internal errors to clients from the error handler.",
+      "Calls next(err) after already sending a normal response without considering headersSent."
+    ],
+    "scoringHints": [
+      { "scoreBand": "strong", "description": "Clearly separates normal continuation from error propagation, explains error middleware signature, async version behavior, and headers-sent safety." },
+      { "scoreBand": "solid", "description": "Understands next(err) reaches error handlers but misses Express 5 promises or headers-sent nuance." },
+      { "scoreBand": "needs_work", "description": "Knows next(err) means error but cannot explain what middleware is skipped or how centralized handling works." },
+      { "scoreBand": "insufficient_evidence", "description": "Answer would likely cause unhandled errors, hanging requests, or duplicate responses." }
+    ],
+    "followUps": [
+      { "trigger": "missing_context", "question": "What middleware signature must be registered to receive errors passed with next(err)?", "purpose": "Verify error handler shape." },
+      { "trigger": "red_flag", "question": "What should an error handler do if res.headersSent is already true?", "purpose": "Check duplicate response and default handler delegation awareness." }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "next(err) versus next()",
+        "displayQuestion": "What is the difference between next(err) and next() in Express?",
+        "displayIntent": "Check normal continuation versus error propagation in Express middleware.",
+        "guidance": [
+          "Explain next() as normal continuation.",
+          "Explain next(err) as error propagation that skips normal middleware.",
+          "Mention the (err, req, res, next) error handler signature.",
+          "Discuss async errors, Express 4 versus Express 5, and headers-sent safety."
+        ],
+        "commonMistakes": [
+          "Thinking next(err) sends the response itself.",
+          "Using next(err) and next() interchangeably.",
+          "Forgetting centralized error middleware.",
+          "Trying to send another response after headers are already sent."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      },
+      "vi": {
+        "title": "next(err) so với next()",
+        "displayQuestion": "next(err) và next() khác nhau như thế nào trong Express?",
+        "displayIntent": "Kiểm tra sự khác nhau giữa continuation bình thường và error propagation trong middleware Express.",
+        "guidance": [
+          "Giải thích next() là tiếp tục flow bình thường.",
+          "Giải thích next(err) là propagate lỗi và bỏ qua middleware thường.",
+          "Nhắc signature error handler là (err, req, res, next).",
+          "Nói về async error, khác biệt Express 4 và Express 5, và an toàn khi headers đã gửi."
+        ],
+        "commonMistakes": [
+          "Nghĩ next(err) tự gửi response.",
+          "Dùng next(err) và next() như nhau.",
+          "Quên centralized error middleware.",
+          "Cố gửi response thứ hai sau khi headers đã gửi."
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      },
+      "ja": {
+        "title": "next(err) と next() の違い",
+        "displayQuestion": "Express の next(err) と next() は何が違いますか。",
+        "displayIntent": "Express middleware における通常継続と error propagation の違いを確認する。",
+        "guidance": [
+          "next() は通常の continuation だと説明する。",
+          "next(err) は error propagation で、通常 middleware を skip すると説明する。",
+          "error handler signature は (err, req, res, next) だと述べる。",
+          "async error、Express 4 と Express 5 の違い、headers sent safety を説明する。"
+        ],
+        "commonMistakes": [
+          "next(err) が自分で response を送ると考える。",
+          "next(err) と next() を同じように使う。",
+          "centralized error middleware を忘れる。",
+          "headers 送信後にさらに response を送ろうとする。"
+        ],
+        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+      }
+    },
+    "sourceReferences": [
+      { "label": "Express docs: Error handling", "url": "https://expressjs.com/en/guide/error-handling.html", "note": "Used for next(err), error-handler signature, skipped middleware, and headers-sent behavior." },
+      { "label": "Express docs: Writing middleware", "url": "https://expressjs.com/en/guide/writing-middleware.html", "note": "Used for Express 5 promise rejection forwarding to next." }
+    ],
+    "status": "active"
+  }
+]

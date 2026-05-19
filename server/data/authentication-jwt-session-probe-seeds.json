@@ -1,0 +1,2160 @@
+[
+  {
+    "code": "AUTH_JWT_SESSION_JR_TECH_JWT_STRUCTURE_001",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "security"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "communication"],
+    "techTags": ["jwt", "nodejs", "express", "owasp"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate can define JWT accurately, explain its three-part structure, and avoid the common misconception that signed JWT payloads are secret.",
+    "primaryQuestion": "What is a JWT, and what are the three parts of a JWT?",
+    "expectedSignals": [
+      "Defines JWT as a compact token format for carrying claims between parties, commonly used as a bearer credential in authentication and authorization flows.",
+      "Names the three dot-separated parts: header, payload, and signature.",
+      "Explains that the header usually contains token type and signing algorithm, while the payload contains claims such as sub, iat, exp, iss, aud, roles, or permissions.",
+      "Explains that the signature protects integrity and authenticity by signing the encoded header and payload with a secret or private key.",
+      "States clearly that a normal signed JWT is Base64URL-encoded, not encrypted; anyone with the token can read the header and payload.",
+      "Mentions that the server must validate signature, expiration, issuer, audience, and other expected claims before trusting the token."
+    ],
+    "redFlags": [
+      "Says the JWT payload is encrypted just because it is not plain text.",
+      "Says the client needs JWT_SECRET to decode the token.",
+      "Cannot name header, payload, and signature.",
+      "Trusts decoded payload data without signature verification.",
+      "Treats JWT as a database session ID with no claims or signing semantics."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Defines JWT precisely, explains header/payload/signature, distinguishes encoding from encryption, and connects signature validation to trust."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows the three parts and general purpose but misses one security nuance such as issuer/audience validation or payload readability."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can repeat that JWT is a token but cannot explain what each part does or why verification matters."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer shows unsafe misunderstandings about JWT secrecy, signing, or validation."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "red_flag",
+        "question": "If you paste a JWT into a debugger and can read the payload, does that mean the token is insecure or unsigned?",
+        "purpose": "Check whether the candidate distinguishes readability from trust and integrity."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Which claims would you normally validate besides the signature?",
+        "purpose": "Move from token structure into practical validation requirements."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "JWT structure and meaning",
+        "displayQuestion": "What is a JWT, and what are the three parts of a JWT?",
+        "displayIntent": "Check basic JWT definition, structure, and the difference between encoding, signing, and encryption.",
+        "guidance": [
+          "Start with a clear definition of JWT as a compact claims token.",
+          "Name header, payload, and signature, and explain the role of each part.",
+          "Say explicitly that signed JWT payloads are readable unless encrypted separately.",
+          "Connect token trust to signature and claim validation."
+        ],
+        "commonMistakes": [
+          "Calling Base64URL encoding encryption.",
+          "Assuming decoded payload data is trustworthy before verification.",
+          "Forgetting issuer, audience, and expiration checks.",
+          "Thinking JWT_SECRET is required just to read the payload."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Cấu trúc và ý nghĩa của JWT",
+        "displayQuestion": "JWT là gì? Cấu trúc 3 phần của JWT là gì?",
+        "displayIntent": "Kiểm tra định nghĩa JWT, cấu trúc cơ bản, và sự khác nhau giữa encode, ký số và mã hóa.",
+        "guidance": [
+          "Bắt đầu bằng định nghĩa JWT là token nhỏ gọn dùng để truyền claims.",
+          "Nêu rõ ba phần header, payload và signature, kèm vai trò của từng phần.",
+          "Nói thẳng rằng payload của signed JWT đọc được nếu token không được mã hóa riêng.",
+          "Liên hệ việc tin token với verify signature và validate claims."
+        ],
+        "commonMistakes": [
+          "Gọi Base64URL encoding là mã hóa.",
+          "Tin dữ liệu payload đã decode trước khi verify.",
+          "Quên kiểm tra issuer, audience và expiration.",
+          "Nghĩ JWT_SECRET cần thiết chỉ để đọc payload."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "JWT の構造と意味",
+        "displayQuestion": "JWT とは何ですか。JWT の 3 つの構成要素は何ですか。",
+        "displayIntent": "JWT の定義、基本構造、encoding・署名・暗号化の違いを確認する。",
+        "guidance": [
+          "JWT を claims を運ぶ compact な token として定義する。",
+          "header、payload、signature を挙げ、それぞれの役割を説明する。",
+          "通常の signed JWT の payload は別途暗号化しない限り読めることを明確にする。",
+          "token を信頼するには signature と claims の検証が必要だと説明する。"
+        ],
+        "commonMistakes": [
+          "Base64URL encoding を暗号化と呼ぶ。",
+          "verify 前の decoded payload を信頼する。",
+          "issuer、audience、expiration の検証を忘れる。",
+          "payload を読むだけでも JWT_SECRET が必要だと考える。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "JWT.io: Introduction to JSON Web Tokens",
+        "url": "https://www.jwt.io/introduction",
+        "note": "Used for JWT structure, Base64URL sections, and validation concepts."
+      },
+      {
+        "label": "RFC 7519: JSON Web Token",
+        "url": "https://www.rfc-editor.org/rfc/rfc7519",
+        "note": "Used for JWT standard terminology and registered claims."
+      },
+      {
+        "label": "RFC 8725: JWT Best Current Practices",
+        "url": "https://www.rfc-editor.org/rfc/rfc8725",
+        "note": "Used for security cautions around JWT validation and weak signing keys."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "AUTH_JWT_SESSION_JR_TRADE_SESSION_VS_JWT_002",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack", "security"],
+    "levels": ["junior", "mid"],
+    "type": "trade_off",
+    "competencies": ["technical_fundamentals", "trade_off_analysis", "system_thinking"],
+    "techTags": ["jwt", "express", "nodejs", "owasp", "csrf", "xss"],
+    "difficulty": 3,
+    "conversationDepth": "mid",
+    "intent": "Evaluate whether the candidate can compare session-based and JWT-based authentication across state, scalability, revocation, storage, and browser security trade-offs.",
+    "primaryQuestion": "How are session-based authentication and JWT-based authentication different?",
+    "expectedSignals": [
+      "Explains that session auth usually stores a random session ID in a cookie and keeps session state server-side in memory, Redis, database, or another session store.",
+      "Explains that JWT auth often sends a signed bearer token containing claims, allowing the API to validate the token without loading session state on every request.",
+      "Compares revocation: server-side sessions are easy to invalidate centrally, while stateless JWT access tokens remain usable until expiry unless a denylist, token version, or introspection check is added.",
+      "Compares scaling: sessions need shared session storage across replicas, while JWT validation is naturally easier across replicas if signing keys are shared safely.",
+      "Compares client risk: cookies raise CSRF concerns if automatically sent cross-site, while bearer tokens in JavaScript-readable storage are exposed to XSS token theft.",
+      "Notes that both approaches still require authorization checks after authentication."
+    ],
+    "redFlags": [
+      "Says JWT is always stateless and therefore always better.",
+      "Says sessions cannot scale horizontally.",
+      "Thinks session cookies store the full user profile by default in express-session.",
+      "Ignores logout, revocation, CSRF, or XSS implications.",
+      "Conflates authentication with authorization."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Balances state, storage, revocation, scaling, browser attack surface, and authorization boundaries without presenting either model as universally better."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the basic server-side state versus signed token difference but misses one important operational or security trade-off."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can describe login cookies and tokens but cannot compare their consequences in production."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is mostly preference or buzzwords and does not demonstrate authentication design understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_tradeoff",
+        "question": "Which model makes emergency user lockout easier, and what would you add to the other model to support it?",
+        "purpose": "Probe revocation and operational control."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "How does the answer change for a same-origin browser app versus a mobile app calling an API?",
+        "purpose": "Check context-sensitive authentication design."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Session auth versus JWT auth",
+        "displayQuestion": "How are session-based authentication and JWT-based authentication different?",
+        "displayIntent": "Evaluate whether the candidate can compare stateful sessions and signed bearer tokens in practical systems.",
+        "guidance": [
+          "Compare where authentication state lives.",
+          "Discuss revocation, logout, scaling, and storage.",
+          "Cover browser-specific CSRF and XSS implications.",
+          "Clarify that authentication does not replace authorization."
+        ],
+        "commonMistakes": [
+          "Saying JWT is automatically more secure.",
+          "Claiming sessions cannot scale.",
+          "Ignoring server-side invalidation needs.",
+          "Treating auth success as permission to do everything."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior/Mid-level",
+          "type": "trade_off"
+        }
+      },
+      "vi": {
+        "title": "Session auth so với JWT auth",
+        "displayQuestion": "Session-based authentication và JWT-based authentication khác nhau như thế nào?",
+        "displayIntent": "Đánh giá khả năng so sánh session có state phía server và bearer token đã ký trong hệ thống thực tế.",
+        "guidance": [
+          "So sánh trạng thái authentication được lưu ở đâu.",
+          "Nói về revoke, logout, scaling và storage.",
+          "Bao gồm rủi ro CSRF và XSS trong browser.",
+          "Làm rõ authentication không thay thế authorization."
+        ],
+        "commonMistakes": [
+          "Nói JWT tự động bảo mật hơn.",
+          "Khẳng định session không thể scale.",
+          "Bỏ qua nhu cầu invalidation phía server.",
+          "Xem auth thành công là được phép làm mọi thứ."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior/Mid-level",
+          "type": "trade_off"
+        }
+      },
+      "ja": {
+        "title": "session auth と JWT auth",
+        "displayQuestion": "session-based authentication と JWT-based authentication はどう違いますか。",
+        "displayIntent": "server-side state を持つ session と signed bearer token を実務的に比較できるか確認する。",
+        "guidance": [
+          "authentication state がどこにあるか比較する。",
+          "revocation、logout、scaling、storage を説明する。",
+          "browser での CSRF と XSS の影響を扱う。",
+          "authentication は authorization の代替ではないと明確にする。"
+        ],
+        "commonMistakes": [
+          "JWT が自動的により安全だと言う。",
+          "session は scale できないと断言する。",
+          "server-side invalidation の必要性を無視する。",
+          "auth 成功をすべての操作権限と混同する。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior/Mid-level",
+          "type": "trade_off"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Express session middleware",
+        "url": "https://expressjs.com/en/resources/middleware/session.html",
+        "note": "Used for server-side session storage and session ID cookie behavior."
+      },
+      {
+        "label": "OWASP Session Management Cheat Sheet",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html",
+        "note": "Used for session lifecycle, logout, and browser storage risks."
+      },
+      {
+        "label": "JWT.io: Introduction to JSON Web Tokens",
+        "url": "https://www.jwt.io/introduction",
+        "note": "Used for JWT validation and bearer token structure."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "AUTH_JWT_SESSION_MID_TRADE_CHOOSE_SESSION_OR_JWT_003",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack", "security"],
+    "levels": ["mid", "senior"],
+    "type": "trade_off",
+    "competencies": ["trade_off_analysis", "system_thinking", "technical_fundamentals"],
+    "techTags": ["jwt", "express", "nodejs", "oauth2", "csrf", "xss"],
+    "difficulty": 3,
+    "conversationDepth": "mid",
+    "intent": "Assess whether the candidate can choose session or JWT based on product context, client type, revocation requirements, infrastructure, and security constraints.",
+    "primaryQuestion": "When should you use sessions, and when should you use JWTs?",
+    "expectedSignals": [
+      "Chooses sessions for traditional same-origin web apps when the server controls login, cookies, logout, idle timeout, and centralized invalidation.",
+      "Mentions sessions are a good fit when revocation, account lockout, admin kill-switches, and simple browser ergonomics matter more than stateless token distribution.",
+      "Chooses JWTs for APIs consumed by mobile apps, SPAs, multiple services, or identity provider flows where a signed portable token is useful.",
+      "Mentions JWT access tokens should usually be short-lived and paired with refresh tokens or re-authentication if long sessions are needed.",
+      "Considers infrastructure: shared session store for sessions versus key management and rotation for JWTs.",
+      "Explains that browser JWT usage often still involves cookies or a backend-for-frontend pattern to reduce XSS exposure."
+    ],
+    "redFlags": [
+      "Uses JWT by default because it is modern.",
+      "Uses sessions by default without considering API clients or distributed services.",
+      "Ignores logout and forced revocation requirements.",
+      "Plans long-lived JWT access tokens for convenience.",
+      "Does not adjust the choice for browser, mobile, and machine-to-machine clients."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Chooses based on client type, trust boundary, revocation, operational complexity, security controls, and product needs."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Gives reasonable defaults but misses one key dimension such as key rotation, shared stores, or browser token storage."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Frames the decision as popularity or personal taste instead of a system design trade-off."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would lead to unsafe or hard-to-operate authentication design."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_tradeoff",
+        "question": "If the product needs instant logout from all devices, how would that change your choice?",
+        "purpose": "Check revocation-driven design."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "What would you choose for a same-origin admin dashboard versus a public mobile API?",
+        "purpose": "Force concrete client-context reasoning."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Choosing sessions or JWTs",
+        "displayQuestion": "When should you use sessions, and when should you use JWTs?",
+        "displayIntent": "Assess context-sensitive authentication architecture judgment.",
+        "guidance": [
+          "Start from client type and trust boundary.",
+          "Discuss revocation, logout, idle timeout, and operational complexity.",
+          "Compare shared session stores with JWT key management.",
+          "Mention short-lived access tokens when using JWTs."
+        ],
+        "commonMistakes": [
+          "Choosing JWT because it sounds modern.",
+          "Choosing sessions without considering API and mobile clients.",
+          "Using long-lived access tokens.",
+          "Ignoring emergency revocation requirements."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Mid-level/Senior",
+          "type": "trade_off"
+        }
+      },
+      "vi": {
+        "title": "Chọn session hay JWT",
+        "displayQuestion": "Khi nào nên dùng session, khi nào nên dùng JWT?",
+        "displayIntent": "Đánh giá judgment kiến trúc authentication theo context.",
+        "guidance": [
+          "Bắt đầu từ loại client và trust boundary.",
+          "Nói về revocation, logout, idle timeout và độ phức tạp vận hành.",
+          "So sánh shared session store với quản lý key của JWT.",
+          "Nhắc access token ngắn hạn khi dùng JWT."
+        ],
+        "commonMistakes": [
+          "Chọn JWT vì nghe hiện đại.",
+          "Chọn session mà không xét API và mobile client.",
+          "Dùng access token sống quá lâu.",
+          "Bỏ qua yêu cầu revoke khẩn cấp."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Mid-level/Senior",
+          "type": "trade_off"
+        }
+      },
+      "ja": {
+        "title": "session と JWT の選択",
+        "displayQuestion": "どのような場合に session を使い、どのような場合に JWT を使いますか。",
+        "displayIntent": "context に応じた authentication architecture の判断力を評価する。",
+        "guidance": [
+          "client type と trust boundary から始める。",
+          "revocation、logout、idle timeout、運用上の複雑さを説明する。",
+          "shared session store と JWT key management を比較する。",
+          "JWT を使う場合は short-lived access token に触れる。"
+        ],
+        "commonMistakes": [
+          "現代的に聞こえるから JWT を選ぶ。",
+          "API や mobile client を考えず session を選ぶ。",
+          "長寿命の access token を使う。",
+          "緊急 revocation 要件を無視する。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Mid-level/Senior",
+          "type": "trade_off"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "OWASP Session Management Cheat Sheet",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html",
+        "note": "Used for session lifecycle, timeouts, logout, and storage considerations."
+      },
+      {
+        "label": "RFC 6749: OAuth 2.0 Authorization Framework",
+        "url": "https://www.rfc-editor.org/rfc/rfc6749",
+        "note": "Used for access token and refresh token concepts in distributed authorization flows."
+      },
+      {
+        "label": "RFC 8725: JWT Best Current Practices",
+        "url": "https://www.rfc-editor.org/rfc/rfc8725",
+        "note": "Used for JWT security design and key strength considerations."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "AUTH_JWT_SESSION_MID_TECH_EXPRESS_JWT_FLOW_004",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["mid", "senior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking", "problem_solving"],
+    "techTags": ["jwt", "express", "nodejs", "rest", "owasp"],
+    "difficulty": 3,
+    "conversationDepth": "deep",
+    "intent": "Evaluate whether the candidate can design the full Express JWT authentication flow from login to protected routes, refresh, logout, and error handling.",
+    "primaryQuestion": "How would you implement JWT authentication in Express? Walk through the full flow.",
+    "expectedSignals": [
+      "Starts with user registration or login, validates input, fetches the user, and verifies the password with a slow password hashing algorithm such as bcrypt or Argon2.",
+      "Issues a short-lived access token with minimal claims such as sub, role/scope, iat, exp, iss, and aud, using a strong secret or asymmetric key.",
+      "Optionally issues a longer-lived refresh token stored server-side as a hashed token, token family, jti, or rotation record so it can be revoked.",
+      "Chooses token transport intentionally: Authorization Bearer header, HttpOnly Secure SameSite cookie, or a backend-for-frontend pattern depending on the client.",
+      "Adds authentication middleware that extracts the token, verifies signature and claims, loads or checks the user if needed, attaches a minimal req.user, and calls next.",
+      "Uses protected routes with auth middleware before route handlers and separate authorization middleware for roles, scopes, or resource ownership.",
+      "Implements a refresh endpoint that validates the refresh token, rotates it, issues a new access token, and rejects reuse or revoked tokens.",
+      "Implements logout by clearing client storage and revoking refresh tokens or token families; accepts that existing stateless access tokens live until expiry.",
+      "Handles errors consistently with 401 for missing/invalid/expired credentials and 403 for authenticated users lacking permission.",
+      "Mentions HTTPS, rate limiting login/refresh, safe logging, secret management, CORS/credentials configuration, and tests for middleware failures."
+    ],
+    "redFlags": [
+      "Stores plain-text passwords or compares passwords directly.",
+      "Puts password, credit card, or large profile data into the JWT payload.",
+      "Uses jwt.decode instead of jwt.verify in middleware.",
+      "Creates long-lived access tokens and no revocation path.",
+      "Parses JWT manually in every controller instead of middleware.",
+      "Uses a hardcoded weak secret in source code."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers login, signing, token transport, middleware verification, req.user, authorization, refresh rotation, logout/revocation, errors, and production hardening."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Can implement login and protected routes but misses one production detail such as refresh rotation, revocation, storage, or error semantics."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows jwt.sign and jwt.verify but cannot describe a complete and safe authentication lifecycle."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Flow contains unsafe choices that would expose users or make logout and revocation impossible to reason about."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "Where exactly would you put the auth middleware and what shape would req.user have after it succeeds?",
+        "purpose": "Check Express implementation detail beyond high-level token talk."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "How would your flow change if the token is stored in an HttpOnly cookie instead of sent in an Authorization header?",
+        "purpose": "Probe transport-specific CSRF, CORS, and credentials handling."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Full Express JWT auth flow",
+        "displayQuestion": "How would you implement JWT authentication in Express? Walk through the full flow.",
+        "displayIntent": "Evaluate complete practical implementation from login to protected routes, refresh, logout, and production hardening.",
+        "guidance": [
+          "Walk through login, password verification, token signing, and client transport.",
+          "Explain JWT middleware, req.user, route protection, and authorization separation.",
+          "Include refresh token rotation and logout/revocation strategy.",
+          "Mention HTTPS, rate limiting, secret management, and consistent errors."
+        ],
+        "commonMistakes": [
+          "Using decode instead of verify.",
+          "Putting sensitive payloads in tokens.",
+          "Skipping refresh token revocation.",
+          "Mixing authentication and authorization in every route handler."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level/Senior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Flow JWT auth đầy đủ trong Express",
+        "displayQuestion": "Làm thế nào để implement JWT authentication trong Express? Hãy đi qua flow đầy đủ.",
+        "displayIntent": "Đánh giá khả năng implement thực tế từ login, protected route, refresh, logout đến hardening production.",
+        "guidance": [
+          "Đi qua login, verify password, ký token và cách gửi/lưu token phía client.",
+          "Giải thích JWT middleware, req.user, bảo vệ route và tách authorization.",
+          "Bao gồm refresh token rotation và chiến lược logout/revocation.",
+          "Nhắc HTTPS, rate limiting, quản lý secret và error nhất quán."
+        ],
+        "commonMistakes": [
+          "Dùng decode thay vì verify.",
+          "Đưa dữ liệu nhạy cảm vào token.",
+          "Bỏ qua revoke refresh token.",
+          "Trộn authentication và authorization trong từng route handler."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level/Senior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "Express の JWT auth flow 全体",
+        "displayQuestion": "Express で JWT authentication をどのように実装しますか。全体の flow を説明してください。",
+        "displayIntent": "login、protected route、refresh、logout、production hardening まで実装全体を評価する。",
+        "guidance": [
+          "login、password verification、token signing、client transport を順に説明する。",
+          "JWT middleware、req.user、route protection、authorization の分離を説明する。",
+          "refresh token rotation と logout/revocation strategy を含める。",
+          "HTTPS、rate limiting、secret management、一貫した errors に触れる。"
+        ],
+        "commonMistakes": [
+          "verify ではなく decode を使う。",
+          "sensitive data を token に入れる。",
+          "refresh token revocation を省略する。",
+          "各 route handler に authentication と authorization を混ぜる。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level/Senior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Express docs: Using middleware",
+        "url": "https://expressjs.com/en/guide/using-middleware.html",
+        "note": "Used for middleware ordering and route protection patterns."
+      },
+      {
+        "label": "jsonwebtoken package README",
+        "url": "https://www.npmjs.com/package/jsonwebtoken",
+        "note": "Used for jwt.sign, jwt.verify, jwt.decode, exp, and error behavior."
+      },
+      {
+        "label": "RFC 6749: Refreshing an Access Token",
+        "url": "https://www.rfc-editor.org/rfc/rfc6749#section-6",
+        "note": "Used for refresh token flow and rotation context."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "AUTH_JWT_SESSION_JR_TECH_ACCESS_REFRESH_005",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack", "security"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking"],
+    "techTags": ["jwt", "oauth2", "express", "nodejs"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate understands the different purposes, lifetimes, storage, and revocation characteristics of access tokens and refresh tokens.",
+    "primaryQuestion": "How are access tokens and refresh tokens different in purpose and lifetime?",
+    "expectedSignals": [
+      "Explains that an access token is presented to resource APIs to access protected endpoints.",
+      "Explains that a refresh token is presented only to the authorization server or refresh endpoint to obtain a new access token.",
+      "States that access tokens should be short-lived to reduce the damage of theft.",
+      "States that refresh tokens are usually longer-lived, more sensitive, and must be stored and protected more carefully.",
+      "Mentions refresh token rotation, server-side storage, hashing, token family tracking, or reuse detection as practical controls.",
+      "Mentions that refresh tokens should not be sent to every API request.",
+      "Explains that scopes/permissions on access tokens should be limited to what the resource server needs."
+    ],
+    "redFlags": [
+      "Uses one long-lived JWT as both access and refresh token.",
+      "Sends refresh tokens on every API request.",
+      "Stores refresh tokens without any revocation or rotation path.",
+      "Thinks refresh tokens are safer because they are used less often and therefore do not need protection.",
+      "Cannot explain why access tokens should expire quickly."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Clearly separates API access from token renewal, explains lifetime differences, storage sensitivity, rotation, revocation, and request usage."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands short-lived access and longer-lived refresh tokens but misses one operational control such as rotation or reuse detection."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows the terms but cannot explain why two token types are used."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Design would expose long-lived credentials or provide no meaningful revocation path."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "Which token should your normal GET /me request send, and which endpoint should receive the refresh token?",
+        "purpose": "Check practical request flow separation."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "What is refresh token rotation trying to detect or prevent?",
+        "purpose": "Probe theft and replay handling."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Access token versus refresh token",
+        "displayQuestion": "How are access tokens and refresh tokens different in purpose and lifetime?",
+        "displayIntent": "Check whether the candidate understands token roles, lifetimes, and revocation controls.",
+        "guidance": [
+          "Separate protected-resource access from token renewal.",
+          "Explain why access tokens are short-lived and refresh tokens are more sensitive.",
+          "Mention rotation, hashing, server-side storage, and reuse detection.",
+          "Clarify that refresh tokens should not be sent to normal resource APIs."
+        ],
+        "commonMistakes": [
+          "Using one long-lived token for everything.",
+          "Sending refresh tokens with every request.",
+          "Skipping rotation or revocation.",
+          "Treating refresh tokens as low-risk because they are used less frequently."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Access token so với refresh token",
+        "displayQuestion": "Access token và refresh token khác nhau về mục đích và thời hạn như thế nào?",
+        "displayIntent": "Kiểm tra hiểu biết về vai trò token, thời hạn sống và cơ chế revocation.",
+        "guidance": [
+          "Tách truy cập protected resource khỏi việc xin token mới.",
+          "Giải thích vì sao access token ngắn hạn còn refresh token nhạy cảm hơn.",
+          "Nhắc rotation, hashing, lưu phía server và phát hiện reuse.",
+          "Làm rõ refresh token không nên gửi tới API resource thông thường."
+        ],
+        "commonMistakes": [
+          "Dùng một token sống lâu cho mọi mục đích.",
+          "Gửi refresh token trong mọi request.",
+          "Bỏ qua rotation hoặc revocation.",
+          "Xem refresh token ít rủi ro vì dùng ít hơn."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "access token と refresh token",
+        "displayQuestion": "access token と refresh token は目的と寿命においてどう違いますか。",
+        "displayIntent": "token の役割、寿命、revocation control の理解を確認する。",
+        "guidance": [
+          "protected resource access と token renewal を分けて説明する。",
+          "access token が短命で refresh token がより sensitive である理由を説明する。",
+          "rotation、hashing、server-side storage、reuse detection に触れる。",
+          "refresh token を通常の resource API に送らないことを明確にする。"
+        ],
+        "commonMistakes": [
+          "1 つの長寿命 token をすべてに使う。",
+          "refresh token を毎 request で送る。",
+          "rotation や revocation を省略する。",
+          "使用頻度が低いから refresh token は低リスクだと考える。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "RFC 6749: OAuth 2.0 Authorization Framework",
+        "url": "https://www.rfc-editor.org/rfc/rfc6749",
+        "note": "Used for access token and refresh token definitions and refresh flow."
+      },
+      {
+        "label": "OWASP Session Management Cheat Sheet",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html",
+        "note": "Used for token/session lifecycle and invalidation principles."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "AUTH_JWT_SESSION_MID_TRADE_CLIENT_TOKEN_STORAGE_006",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack", "frontend", "security"],
+    "levels": ["mid", "senior"],
+    "type": "trade_off",
+    "competencies": ["trade_off_analysis", "technical_fundamentals", "system_thinking"],
+    "techTags": ["jwt", "xss", "csrf", "owasp", "javascript"],
+    "difficulty": 4,
+    "conversationDepth": "deep",
+    "intent": "Assess whether the candidate can choose browser token storage with a realistic understanding of localStorage, HttpOnly cookies, XSS, CSRF, CORS, and token lifetimes.",
+    "primaryQuestion": "Where should a JWT be stored on the client: localStorage or an HttpOnly cookie? Why?",
+    "expectedSignals": [
+      "States that localStorage is accessible to JavaScript, so an XSS bug can read and exfiltrate tokens directly.",
+      "Explains that an HttpOnly cookie cannot be read by JavaScript, reducing direct token theft through XSS.",
+      "Explains that cookies are sent automatically by the browser, so CSRF and cross-site request behavior must be controlled with SameSite, CSRF tokens, origin checks, CORS credentials, and Secure.",
+      "Mentions that for browser apps, a common safer pattern is short-lived access tokens in memory plus a refresh token in an HttpOnly Secure SameSite cookie, or a backend-for-frontend that keeps tokens off the browser entirely.",
+      "Mentions localStorage may be simpler for pure bearer-token APIs but persists across browser restarts and is not a strong storage boundary against XSS.",
+      "Explains that whichever storage is chosen, XSS prevention, CSP, dependency hygiene, and token lifetime remain necessary."
+    ],
+    "redFlags": [
+      "Says localStorage is secure because it is same-origin.",
+      "Says HttpOnly cookies solve all XSS problems.",
+      "Ignores CSRF when using cookies.",
+      "Stores long-lived refresh tokens in localStorage for convenience.",
+      "Uses SameSite=None without Secure in production browser flows."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Compares XSS and CSRF trade-offs accurately, recommends cookie/BFF or memory-plus-cookie patterns where appropriate, and includes browser hardening details."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Prefers HttpOnly cookies and explains XSS risk but under-explains CSRF or CORS implications."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows localStorage and cookies exist but cannot reason about browser attack models."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would store long-lived sensitive tokens in a way that is easy to steal or replay."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_tradeoff",
+        "question": "If you move a JWT from localStorage to an HttpOnly cookie, what new CSRF controls do you need?",
+        "purpose": "Check whether the candidate understands the cookie trade-off."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "What would you store in memory, what would you store in a cookie, and what would you never store in the browser?",
+        "purpose": "Probe practical storage boundaries."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "JWT storage in browsers",
+        "displayQuestion": "Where should a JWT be stored on the client: localStorage or an HttpOnly cookie? Why?",
+        "displayIntent": "Evaluate browser token storage judgment across XSS, CSRF, persistence, and transport behavior.",
+        "guidance": [
+          "Compare JavaScript-readable storage with HttpOnly cookies.",
+          "Discuss XSS token theft and CSRF request forgery separately.",
+          "Mention Secure, SameSite, CSRF tokens, origin checks, and CORS credentials.",
+          "Describe practical patterns such as BFF or refresh cookie plus in-memory access token."
+        ],
+        "commonMistakes": [
+          "Calling localStorage safe because of same-origin.",
+          "Ignoring CSRF with cookies.",
+          "Keeping long-lived refresh tokens in localStorage.",
+          "Thinking HttpOnly prevents all XSS impact."
+        ],
+        "labels": {
+          "role": "Backend/Frontend/Fullstack/Security",
+          "level": "Mid-level/Senior",
+          "type": "trade_off"
+        }
+      },
+      "vi": {
+        "title": "Lưu JWT trong browser",
+        "displayQuestion": "JWT nên được lưu ở đâu phía client: localStorage hay HttpOnly cookie? Tại sao?",
+        "displayIntent": "Đánh giá judgment lưu token trong browser qua XSS, CSRF, persistence và hành vi transport.",
+        "guidance": [
+          "So sánh storage JavaScript đọc được với HttpOnly cookie.",
+          "Tách rủi ro XSS token theft khỏi CSRF request forgery.",
+          "Nhắc Secure, SameSite, CSRF token, origin check và CORS credentials.",
+          "Mô tả pattern thực tế như BFF hoặc refresh cookie cộng access token trong memory."
+        ],
+        "commonMistakes": [
+          "Gọi localStorage là an toàn vì same-origin.",
+          "Bỏ qua CSRF khi dùng cookie.",
+          "Giữ refresh token sống lâu trong localStorage.",
+          "Nghĩ HttpOnly ngăn được mọi tác động của XSS."
+        ],
+        "labels": {
+          "role": "Backend/Frontend/Fullstack/Security",
+          "level": "Mid-level/Senior",
+          "type": "trade_off"
+        }
+      },
+      "ja": {
+        "title": "browser での JWT storage",
+        "displayQuestion": "client 側で JWT は localStorage と HttpOnly cookie のどちらに保存すべきですか。なぜですか。",
+        "displayIntent": "XSS、CSRF、persistence、transport behavior を踏まえた browser token storage の判断力を評価する。",
+        "guidance": [
+          "JavaScript-readable storage と HttpOnly cookie を比較する。",
+          "XSS token theft と CSRF request forgery を分けて説明する。",
+          "Secure、SameSite、CSRF token、origin check、CORS credentials に触れる。",
+          "BFF や refresh cookie と in-memory access token の pattern を説明する。"
+        ],
+        "commonMistakes": [
+          "same-origin だから localStorage は安全だと言う。",
+          "cookie 利用時の CSRF を無視する。",
+          "長寿命 refresh token を localStorage に置く。",
+          "HttpOnly が XSS の影響をすべて防ぐと考える。"
+        ],
+        "labels": {
+          "role": "Backend/Frontend/Fullstack/Security",
+          "level": "Mid-level/Senior",
+          "type": "trade_off"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "OWASP Session Management Cheat Sheet",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html",
+        "note": "Used for browser storage and session token handling cautions."
+      },
+      {
+        "label": "MDN: Secure cookie configuration",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/Security/Practical_implementation_guides/Cookies",
+        "note": "Used for Secure, HttpOnly, SameSite, and cookie prefix guidance."
+      },
+      {
+        "label": "OWASP JSON Web Token Cheat Sheet",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/JSON_Web_Token_for_Java_Cheat_Sheet.html",
+        "note": "Used for JWT storage risk framing, with language-independent security principles."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "AUTH_JWT_SESSION_JR_TECH_EXPRESS_JWT_MIDDLEWARE_007",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving"],
+    "techTags": ["jwt", "express", "nodejs", "rest"],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Check whether the candidate can protect Express routes with JWT middleware using correct extraction, verification, request augmentation, and error semantics.",
+    "primaryQuestion": "How do you protect a route with JWT middleware in Express?",
+    "expectedSignals": [
+      "Registers middleware before protected routes, either globally for an authenticated router or route-by-route for specific endpoints.",
+      "Extracts the token from the Authorization: Bearer header or from a configured cookie, with a clear rule for missing or malformed tokens.",
+      "Uses jwt.verify with the correct secret/public key and validates expected claims such as exp, issuer, audience, and algorithm.",
+      "Attaches a minimal trusted identity to req.user, such as userId, roles, scopes, or tokenId, rather than passing the raw decoded payload everywhere.",
+      "Returns 401 for missing, invalid, or expired tokens and calls next only after successful verification.",
+      "Keeps authorization separate by adding role/scope/ownership middleware after authentication where needed.",
+      "Avoids logging full tokens and avoids leaking detailed verification errors to clients."
+    ],
+    "redFlags": [
+      "Uses jwt.decode and treats the result as authenticated.",
+      "Accepts tokens from arbitrary query strings without a strong reason.",
+      "Calls next after sending a 401 response.",
+      "Returns 403 for missing credentials and 401 for permissions backwards without explanation.",
+      "Lets every route handler re-parse tokens manually."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Describes route registration, Bearer/cookie extraction, verification, req.user shaping, 401 handling, next control flow, and authz separation."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Can implement basic verification middleware but misses one detail such as claims, error semantics, or req.user shape."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows there is middleware but cannot safely implement token extraction and control flow."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Middleware would accept unverified tokens or produce inconsistent and unsafe route behavior."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Show the control flow for missing token, invalid signature, expired token, and successful token.",
+        "purpose": "Force precise middleware error handling."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "What data would you put on req.user, and what data would you load later from the database?",
+        "purpose": "Check trust boundaries and request augmentation."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Protecting Express routes with JWT",
+        "displayQuestion": "How do you protect a route with JWT middleware in Express?",
+        "displayIntent": "Check practical JWT middleware implementation and route protection semantics.",
+        "guidance": [
+          "Explain where the middleware is registered.",
+          "Extract the token consistently from Bearer header or cookie.",
+          "Use verify, attach a minimal req.user, and call next only on success.",
+          "Separate authentication from role, scope, or ownership authorization."
+        ],
+        "commonMistakes": [
+          "Trusting jwt.decode.",
+          "Calling next after sending an error.",
+          "Putting auth logic in every controller.",
+          "Leaking full token values in logs."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Bảo vệ route Express bằng JWT",
+        "displayQuestion": "Làm thế nào để bảo vệ một route bằng JWT middleware trong Express?",
+        "displayIntent": "Kiểm tra khả năng implement JWT middleware thực tế và semantics khi bảo vệ route.",
+        "guidance": [
+          "Giải thích middleware được đăng ký ở đâu.",
+          "Lấy token nhất quán từ Bearer header hoặc cookie.",
+          "Dùng verify, gắn req.user tối thiểu và chỉ gọi next khi thành công.",
+          "Tách authentication khỏi authorization theo role, scope hoặc ownership."
+        ],
+        "commonMistakes": [
+          "Tin jwt.decode.",
+          "Gọi next sau khi đã gửi lỗi.",
+          "Đưa auth logic vào mọi controller.",
+          "Log toàn bộ token."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "JWT で Express route を保護する",
+        "displayQuestion": "Express で JWT middleware を使って route をどう保護しますか。",
+        "displayIntent": "JWT middleware の実装と route protection semantics を確認する。",
+        "guidance": [
+          "middleware をどこに登録するか説明する。",
+          "Bearer header または cookie から一貫して token を抽出する。",
+          "verify を使い、最小限の req.user を付け、成功時だけ next を呼ぶ。",
+          "authentication と role/scope/ownership authorization を分離する。"
+        ],
+        "commonMistakes": [
+          "jwt.decode を信頼する。",
+          "error response 後に next を呼ぶ。",
+          "すべての controller に auth logic を置く。",
+          "token 全体を log に出す。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Express docs: Using middleware",
+        "url": "https://expressjs.com/en/guide/using-middleware.html",
+        "note": "Used for middleware composition and route-level middleware behavior."
+      },
+      {
+        "label": "jsonwebtoken package README",
+        "url": "https://www.npmjs.com/package/jsonwebtoken",
+        "note": "Used for jwt.verify and token verification behavior."
+      },
+      {
+        "label": "RFC 6750: Bearer Token Usage",
+        "url": "https://www.rfc-editor.org/rfc/rfc6750",
+        "note": "Used for Authorization Bearer token transport terminology."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "AUTH_JWT_SESSION_JR_TECH_SIGN_VERIFY_DECODE_008",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "communication"],
+    "techTags": ["jwt", "nodejs", "express"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Verify whether the candidate understands the difference between creating, validating, and merely reading JWTs in common Node.js JWT libraries.",
+    "primaryQuestion": "How are jwt.sign(), jwt.verify(), and jwt.decode() different?",
+    "expectedSignals": [
+      "Explains jwt.sign creates a token from a payload and signing key, usually with options such as expiresIn, issuer, audience, subject, algorithm, or key id.",
+      "Explains jwt.verify validates the token signature and relevant registered claims, and returns a decoded payload only if verification succeeds.",
+      "Explains jwt.decode parses the token without validating signature, expiration, issuer, or audience, so it must not be used for authentication decisions.",
+      "Mentions that verify can fail with errors such as invalid signature, malformed token, not-before, or expired token.",
+      "Mentions that the algorithm and key selection must be controlled by server configuration, not blindly trusted from token input.",
+      "Uses decode only for non-security tasks such as debugging or reading a kid/header before selecting a verification key, with care."
+    ],
+    "redFlags": [
+      "Says decode verifies the token.",
+      "Uses decode in auth middleware because it is faster.",
+      "Assumes verify only checks expiration and not signature.",
+      "Lets the token choose any algorithm or key without server-side constraints.",
+      "Signs tokens with client-provided payloads without controlling sensitive claims."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Clearly separates creation, verified validation, and untrusted parsing, including claim checks, errors, and algorithm/key control."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands sign and verify but under-explains decode risk or claim validation."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can name the functions but does not know which one is safe for authentication."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would allow unverified token data to control protected routes."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "red_flag",
+        "question": "If jwt.decode returns a userId and role, why is that not enough to set req.user?",
+        "purpose": "Correct the common unsafe decode misconception."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Which options would you pass to verify in production besides the key?",
+        "purpose": "Check issuer, audience, algorithm, and clock tolerance awareness."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "sign, verify, and decode",
+        "displayQuestion": "How are jwt.sign(), jwt.verify(), and jwt.decode() different?",
+        "displayIntent": "Check whether the candidate knows which JWT operation creates, validates, or merely parses a token.",
+        "guidance": [
+          "Define sign as token creation with claims and a signing key.",
+          "Define verify as signature and claim validation.",
+          "Define decode as untrusted parsing only.",
+          "Mention errors and server-controlled algorithm/key selection."
+        ],
+        "commonMistakes": [
+          "Using decode for authentication.",
+          "Forgetting expiration, issuer, and audience checks.",
+          "Trusting token-selected algorithms blindly.",
+          "Letting clients control sensitive claims at signing time."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "sign, verify và decode",
+        "displayQuestion": "jwt.sign(), jwt.verify(), jwt.decode() khác nhau như thế nào?",
+        "displayIntent": "Kiểm tra ứng viên biết thao tác JWT nào tạo token, thao tác nào validate, và thao tác nào chỉ parse.",
+        "guidance": [
+          "Định nghĩa sign là tạo token với claims và signing key.",
+          "Định nghĩa verify là validate signature và claims.",
+          "Định nghĩa decode chỉ là parse dữ liệu chưa đáng tin.",
+          "Nhắc lỗi verify và việc server phải kiểm soát algorithm/key."
+        ],
+        "commonMistakes": [
+          "Dùng decode để authentication.",
+          "Quên kiểm tra expiration, issuer và audience.",
+          "Tin algorithm do token đưa ra một cách mù quáng.",
+          "Cho client kiểm soát sensitive claims lúc sign."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "sign、verify、decode",
+        "displayQuestion": "jwt.sign(), jwt.verify(), jwt.decode() はどう違いますか。",
+        "displayIntent": "JWT operation のうち、作成・検証・単なる parse の違いを理解しているか確認する。",
+        "guidance": [
+          "sign は claims と signing key で token を作ることだと定義する。",
+          "verify は signature と claims を検証することだと定義する。",
+          "decode は信頼できない parse にすぎないと定義する。",
+          "verify errors と server-controlled algorithm/key selection に触れる。"
+        ],
+        "commonMistakes": [
+          "authentication に decode を使う。",
+          "expiration、issuer、audience checks を忘れる。",
+          "token が示す algorithm を盲目的に信頼する。",
+          "sign 時に client が sensitive claims を制御できるようにする。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "jsonwebtoken package README",
+        "url": "https://www.npmjs.com/package/jsonwebtoken",
+        "note": "Used for sign, verify, decode, claims, options, and error behavior."
+      },
+      {
+        "label": "RFC 8725: JWT Best Current Practices",
+        "url": "https://www.rfc-editor.org/rfc/rfc8725",
+        "note": "Used for algorithm and key-management security cautions."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "AUTH_JWT_SESSION_JR_DEBUG_EXPIRED_TOKEN_009",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack", "frontend"],
+    "levels": ["junior", "mid"],
+    "type": "debugging",
+    "competencies": ["problem_solving", "technical_fundamentals", "communication"],
+    "techTags": ["jwt", "express", "nodejs", "javascript"],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Evaluate whether the candidate can handle expired JWTs correctly on both API and client sides without unsafe retries or silent failures.",
+    "primaryQuestion": "What happens when a JWT is expired? How should the client handle it?",
+    "expectedSignals": [
+      "Explains that jwt.verify should reject an expired token based on the exp claim and the server should not authorize the request.",
+      "States that the API should normally return 401 with a consistent error code such as token_expired or invalid_token, without exposing sensitive internals.",
+      "Explains that the client can call a refresh endpoint if it has a valid refresh token, then retry the original request once with the new access token.",
+      "Explains that if refresh fails, the client should clear local auth state and send the user through login again.",
+      "Mentions avoiding infinite refresh loops, coordinating concurrent refresh requests, and handling clock skew carefully.",
+      "Mentions proactive refresh shortly before expiry as an optional UX improvement, while still relying on server validation."
+    ],
+    "redFlags": [
+      "Allows the client to extend exp locally.",
+      "Treats an expired access token as still valid if the user appears logged in on the frontend.",
+      "Retries refresh forever on every 401.",
+      "Uses jwt.decode on the client as the source of truth for authorization.",
+      "Responds with 500 for normal token expiry."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains server rejection, 401 semantics, refresh once, retry once, logout on refresh failure, concurrency control, and clock-skew nuance."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands expiry and refresh but misses one client-side reliability detail such as infinite loop prevention or concurrent refresh."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows expired tokens fail but cannot design clean client/server handling."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer permits expired tokens or creates brittle retry behavior."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "What should happen if five API calls all get 401 because the same access token expired?",
+        "purpose": "Probe refresh request deduplication and retry behavior."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "Can the frontend safely edit exp or generate a new access token by itself?",
+        "purpose": "Check trust boundary understanding."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Expired JWT handling",
+        "displayQuestion": "What happens when a JWT is expired? How should the client handle it?",
+        "displayIntent": "Check server-side expiry enforcement and robust client refresh behavior.",
+        "guidance": [
+          "Explain server verification failure and 401 response.",
+          "Describe refresh, retry once, and logout on refresh failure.",
+          "Mention infinite loop prevention and concurrent refresh coordination.",
+          "Do not rely on client-side decode as authority."
+        ],
+        "commonMistakes": [
+          "Letting the client extend expiration.",
+          "Returning 500 for token expiry.",
+          "Retrying refresh forever.",
+          "Trusting frontend auth state over server validation."
+        ],
+        "labels": {
+          "role": "Backend/Frontend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "debugging"
+        }
+      },
+      "vi": {
+        "title": "Xử lý JWT hết hạn",
+        "displayQuestion": "Điều gì xảy ra khi JWT bị expired? Client xử lý thế nào?",
+        "displayIntent": "Kiểm tra việc enforce expiry phía server và xử lý refresh ổn định phía client.",
+        "guidance": [
+          "Giải thích verify fail phía server và trả 401.",
+          "Mô tả refresh, retry một lần và logout khi refresh fail.",
+          "Nhắc tránh infinite loop và điều phối concurrent refresh.",
+          "Không xem decode phía client là nguồn quyền lực."
+        ],
+        "commonMistakes": [
+          "Cho client tự kéo dài expiration.",
+          "Trả 500 cho token expiry.",
+          "Retry refresh vô hạn.",
+          "Tin frontend auth state hơn server validation."
+        ],
+        "labels": {
+          "role": "Backend/Frontend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "debugging"
+        }
+      },
+      "ja": {
+        "title": "expired JWT の扱い",
+        "displayQuestion": "JWT が expired になると何が起きますか。client はどう処理すべきですか。",
+        "displayIntent": "server-side expiry enforcement と client refresh behavior を確認する。",
+        "guidance": [
+          "server verification failure と 401 response を説明する。",
+          "refresh、1 回だけ retry、refresh failure 時の logout を説明する。",
+          "infinite loop prevention と concurrent refresh coordination に触れる。",
+          "client-side decode を権威として扱わない。"
+        ],
+        "commonMistakes": [
+          "client に expiration を延長させる。",
+          "token expiry に 500 を返す。",
+          "refresh を無限 retry する。",
+          "frontend auth state を server validation より信頼する。"
+        ],
+        "labels": {
+          "role": "Backend/Frontend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "debugging"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "jsonwebtoken package README",
+        "url": "https://www.npmjs.com/package/jsonwebtoken",
+        "note": "Used for exp, TokenExpiredError, and verify behavior."
+      },
+      {
+        "label": "RFC 7519: exp claim",
+        "url": "https://www.rfc-editor.org/rfc/rfc7519#section-4.1.4",
+        "note": "Used for the expiration time claim semantics."
+      },
+      {
+        "label": "RFC 6749: Invalid Token and Refresh Flow",
+        "url": "https://www.rfc-editor.org/rfc/rfc6749",
+        "note": "Used for invalid access token and refresh-token flow context."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "AUTH_JWT_SESSION_JR_TECH_EXPRESS_SESSION_010",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking"],
+    "techTags": ["express", "nodejs", "owasp", "redis"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate understands what express-session does, where session data is stored, and what production configuration is required.",
+    "primaryQuestion": "What is express-session and what is it used for?",
+    "expectedSignals": [
+      "Defines express-session as Express middleware for creating and managing server-side login sessions or other per-user session state.",
+      "Explains that the browser receives a session ID cookie, while the session data itself is stored server-side by the configured store.",
+      "Mentions req.session as the request object used to read and mutate session data.",
+      "Mentions core options such as secret, name, resave, saveUninitialized, rolling, cookie.maxAge, httpOnly, secure, and sameSite.",
+      "Warns that the default MemoryStore is for development/debugging and should not be used in production because it does not scale and can leak memory.",
+      "Mentions production stores such as Redis, database-backed stores, or managed stores for multi-instance deployments.",
+      "Mentions regenerating session IDs after login or privilege changes to reduce session fixation risk, and destroying sessions on logout."
+    ],
+    "redFlags": [
+      "Thinks express-session stores the entire session data in the browser cookie by default.",
+      "Uses MemoryStore in production.",
+      "Does not set a strong secret or secure cookie flags.",
+      "Stores passwords, tokens, or large sensitive objects directly in req.session.",
+      "Cannot explain how logout destroys server-side session state."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains session ID cookie, server-side store, req.session, safe options, production store, session regeneration, and logout destruction."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands basic session middleware but misses one production detail such as store choice, secure cookie flags, or fixation prevention."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows express-session exists but cannot explain where data lives or how it scales."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would lead to insecure or non-scalable session management."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "What happens to user sessions if you run three Node processes with the default MemoryStore?",
+        "purpose": "Check scaling and store awareness."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "What should logout do to the server-side session and the browser cookie?",
+        "purpose": "Verify lifecycle and invalidation understanding."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "express-session purpose",
+        "displayQuestion": "What is express-session and what is it used for?",
+        "displayIntent": "Check Express server-side session fundamentals and production configuration judgment.",
+        "guidance": [
+          "Explain session ID cookie versus server-side session data.",
+          "Mention req.session and common options.",
+          "Call out MemoryStore as development-only.",
+          "Discuss production stores, secure cookie flags, regeneration, and logout destroy."
+        ],
+        "commonMistakes": [
+          "Thinking all session data is in the cookie.",
+          "Using MemoryStore in production.",
+          "Forgetting secure cookie options.",
+          "Not destroying server state on logout."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Mục đích của express-session",
+        "displayQuestion": "express-session là gì và dùng để làm gì?",
+        "displayIntent": "Kiểm tra nền tảng session phía server trong Express và judgment cấu hình production.",
+        "guidance": [
+          "Giải thích session ID cookie so với session data phía server.",
+          "Nhắc req.session và các option phổ biến.",
+          "Nêu rõ MemoryStore chỉ dùng development.",
+          "Nói về production store, secure cookie flags, regenerate và destroy khi logout."
+        ],
+        "commonMistakes": [
+          "Nghĩ toàn bộ session data nằm trong cookie.",
+          "Dùng MemoryStore ở production.",
+          "Quên option cookie bảo mật.",
+          "Không destroy server state khi logout."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "express-session の目的",
+        "displayQuestion": "express-session とは何で、何に使いますか。",
+        "displayIntent": "Express の server-side session 基礎と production configuration の判断力を確認する。",
+        "guidance": [
+          "session ID cookie と server-side session data の違いを説明する。",
+          "req.session と一般的な options に触れる。",
+          "MemoryStore は development-only だと明確にする。",
+          "production store、secure cookie flags、regeneration、logout destroy を説明する。"
+        ],
+        "commonMistakes": [
+          "session data がすべて cookie に入ると考える。",
+          "production で MemoryStore を使う。",
+          "secure cookie options を忘れる。",
+          "logout 時に server state を destroy しない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Express session middleware",
+        "url": "https://expressjs.com/en/resources/middleware/session.html",
+        "note": "Used for express-session behavior, server-side storage, options, and MemoryStore production warning."
+      },
+      {
+        "label": "OWASP Session Management Cheat Sheet",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html",
+        "note": "Used for session lifecycle, logout, timeout, and invalidation guidance."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "AUTH_JWT_SESSION_JR_TECH_COOKIE_PARSER_011",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "communication"],
+    "techTags": ["express", "nodejs", "owasp"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate understands what cookie-parser does and does not do in an Express application.",
+    "primaryQuestion": "What is cookie-parser used for?",
+    "expectedSignals": [
+      "Defines cookie-parser as middleware that parses the Cookie header and populates req.cookies.",
+      "Explains that when configured with a secret, it can validate signed cookies and expose them in req.signedCookies.",
+      "Explains signed cookies provide tamper detection, not encryption or confidentiality.",
+      "Mentions JSON cookies with j: prefix may be parsed into values, but cookie values are still client-controlled input.",
+      "Distinguishes cookie-parser from body parsers such as express.json and from express-session.",
+      "Mentions that recent express-session versions do not require cookie-parser and using different secrets can cause issues.",
+      "Mentions that setting cookies is done through response headers or res.cookie; cookie-parser mainly reads incoming cookies."
+    ],
+    "redFlags": [
+      "Says cookie-parser encrypts cookies.",
+      "Uses signed cookies as a safe place for secrets.",
+      "Confuses req.cookies with req.body.",
+      "Assumes cookie-parser creates sessions by itself.",
+      "Trusts cookie values without validation."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains Cookie header parsing, req.cookies, signed cookies, tamper detection, JSON cookies, differences from sessions/body parsing, and validation needs."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands req.cookies but misses one nuance such as signed cookies not being encrypted or express-session interaction."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can install cookie-parser but cannot explain its security properties or boundaries."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would misuse cookies for sensitive data or confuse request data sources."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "red_flag",
+        "question": "If a cookie is signed, can the user still read its value in the browser?",
+        "purpose": "Check distinction between signing and encryption."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Why does express-session not normally need cookie-parser anymore?",
+        "purpose": "Probe integration detail and avoid unnecessary middleware assumptions."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "cookie-parser purpose",
+        "displayQuestion": "What is cookie-parser used for?",
+        "displayIntent": "Check understanding of Express cookie parsing, signed cookies, and middleware boundaries.",
+        "guidance": [
+          "Explain req.cookies and req.signedCookies.",
+          "Clarify that signing detects tampering but does not encrypt.",
+          "Distinguish cookies from body parsing and sessions.",
+          "Treat cookie values as untrusted client input."
+        ],
+        "commonMistakes": [
+          "Calling signed cookies encrypted.",
+          "Putting secrets in client-visible cookies.",
+          "Confusing req.cookies with req.body.",
+          "Thinking cookie-parser creates sessions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Mục đích của cookie-parser",
+        "displayQuestion": "cookie-parser dùng để làm gì?",
+        "displayIntent": "Kiểm tra hiểu biết về parse cookie trong Express, signed cookie và ranh giới middleware.",
+        "guidance": [
+          "Giải thích req.cookies và req.signedCookies.",
+          "Làm rõ signing giúp phát hiện sửa đổi nhưng không mã hóa.",
+          "Phân biệt cookie với body parsing và session.",
+          "Xem cookie value là input không đáng tin từ client."
+        ],
+        "commonMistakes": [
+          "Gọi signed cookie là encrypted.",
+          "Đưa secret vào cookie client có thể thấy.",
+          "Nhầm req.cookies với req.body.",
+          "Nghĩ cookie-parser tạo session."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "cookie-parser の目的",
+        "displayQuestion": "cookie-parser は何に使いますか。",
+        "displayIntent": "Express の cookie parsing、signed cookie、middleware boundary の理解を確認する。",
+        "guidance": [
+          "req.cookies と req.signedCookies を説明する。",
+          "signing は tampering 検出であり encryption ではないと明確にする。",
+          "cookie、body parsing、session を区別する。",
+          "cookie values は untrusted client input として扱う。"
+        ],
+        "commonMistakes": [
+          "signed cookie を encrypted と呼ぶ。",
+          "client-visible cookie に secret を入れる。",
+          "req.cookies と req.body を混同する。",
+          "cookie-parser が session を作ると考える。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Express cookie-parser middleware",
+        "url": "https://expressjs.com/en/resources/middleware/cookie-parser",
+        "note": "Used for req.cookies, req.signedCookies, signed cookies, and JSON cookies."
+      },
+      {
+        "label": "Express session middleware",
+        "url": "https://expressjs.com/en/resources/middleware/session.html",
+        "note": "Used for the note that express-session no longer requires cookie-parser and reads/writes cookies directly."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "AUTH_JWT_SESSION_JR_TECH_SENSITIVE_JWT_PAYLOAD_012",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack", "security"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "ownership", "communication"],
+    "techTags": ["jwt", "owasp", "xss", "nodejs"],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Check whether the candidate understands JWT payload visibility, data minimization, stale claims, and why sensitive data must not be stored in tokens.",
+    "primaryQuestion": "Why should you not store sensitive information such as passwords or credit cards in a JWT payload?",
+    "expectedSignals": [
+      "Explains that a normal signed JWT payload is Base64URL-encoded and readable by anyone who has the token.",
+      "Explains that signing protects integrity, not confidentiality; encryption would require a different design such as JWE and still needs careful key management.",
+      "Mentions tokens can appear in browser storage, logs, monitoring tools, referrers, support screenshots, crash reports, or network traces.",
+      "Applies data minimization: include only claims needed by the API, such as subject, roles/scopes, issuer, audience, expiration, and token ID.",
+      "Mentions sensitive or frequently changing data should be fetched from the database or authorization service after authentication.",
+      "Explains stale-claim risk: if roles or account status change, long-lived JWT payloads may remain outdated until expiry or revocation.",
+      "Mentions compliance and incident impact for passwords, credit cards, secrets, PII, and session credentials."
+    ],
+    "redFlags": [
+      "Says JWT payload is safe because the token is signed.",
+      "Stores password hash, credit card, API keys, or refresh token values in access token claims.",
+      "Treats roles in a long-lived token as permanently trustworthy after account changes.",
+      "Ignores log and telemetry leakage.",
+      "Adds large user profile objects to reduce database queries without considering privacy or staleness."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains readability, signing versus encryption, data minimization, leakage surfaces, stale claims, and compliance impact."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows JWT payloads are readable but misses one nuance such as stale authorization data or logging exposure."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Avoids sensitive data by rule of thumb but cannot explain the technical reason."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would put high-impact secrets or regulated data in client-visible tokens."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "Which fields would you include in an access token for a normal user API, and which fields would you load from the database?",
+        "purpose": "Probe practical claim design and data minimization."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "If the JWT is signed with HS256, who can read the payload?",
+        "purpose": "Correct confusion between signing and confidentiality."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Sensitive data in JWT payloads",
+        "displayQuestion": "Why should you not store sensitive information such as passwords or credit cards in a JWT payload?",
+        "displayIntent": "Check JWT payload visibility, data minimization, and stale-claim risk.",
+        "guidance": [
+          "Explain that signed JWT payloads are readable.",
+          "Separate integrity from confidentiality.",
+          "Discuss logs, browser storage, telemetry, and screenshots as leakage surfaces.",
+          "Recommend minimal claims and server-side lookup for sensitive or changing data."
+        ],
+        "commonMistakes": [
+          "Thinking signed means secret.",
+          "Putting password hashes or payment data in tokens.",
+          "Using large profile payloads for convenience.",
+          "Ignoring stale role or account-status claims."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Dữ liệu nhạy cảm trong JWT payload",
+        "displayQuestion": "Tại sao không nên lưu thông tin nhạy cảm như password hoặc credit card trong JWT payload?",
+        "displayIntent": "Kiểm tra hiểu biết về khả năng đọc payload JWT, data minimization và rủi ro stale claim.",
+        "guidance": [
+          "Giải thích payload của signed JWT đọc được.",
+          "Tách integrity khỏi confidentiality.",
+          "Nói về log, browser storage, telemetry và screenshot như bề mặt rò rỉ.",
+          "Khuyến nghị claims tối thiểu và lookup phía server cho dữ liệu nhạy cảm hoặc hay thay đổi."
+        ],
+        "commonMistakes": [
+          "Nghĩ signed nghĩa là bí mật.",
+          "Đưa password hash hoặc payment data vào token.",
+          "Dùng payload profile lớn cho tiện.",
+          "Bỏ qua role hoặc account status bị stale."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "JWT payload の sensitive data",
+        "displayQuestion": "password や credit card のような sensitive information を JWT payload に保存すべきでないのはなぜですか。",
+        "displayIntent": "JWT payload visibility、data minimization、stale claim risk を確認する。",
+        "guidance": [
+          "signed JWT payload は読めることを説明する。",
+          "integrity と confidentiality を分けて説明する。",
+          "logs、browser storage、telemetry、screenshots などの leakage surfaces を扱う。",
+          "最小限の claims と、sensitive または変化する data の server-side lookup を推奨する。"
+        ],
+        "commonMistakes": [
+          "signed なら secret だと考える。",
+          "password hash や payment data を token に入れる。",
+          "便利さのために大きな profile payload を使う。",
+          "role や account status claims の stale risk を無視する。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "JWT.io: Introduction to JSON Web Tokens",
+        "url": "https://www.jwt.io/introduction",
+        "note": "Used for JWT structure and payload readability context."
+      },
+      {
+        "label": "RFC 8725: JWT Best Current Practices",
+        "url": "https://www.rfc-editor.org/rfc/rfc8725",
+        "note": "Used for JWT security best-practice framing."
+      },
+      {
+        "label": "OWASP JSON Web Token Cheat Sheet",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/JSON_Web_Token_for_Java_Cheat_Sheet.html",
+        "note": "Used for JWT storage, confidentiality, and sidejacking risk concepts."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "AUTH_JWT_SESSION_MID_TECH_JWT_SECRET_PRODUCTION_013",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack", "security", "devops"],
+    "levels": ["mid", "senior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "ownership", "system_thinking"],
+    "techTags": ["jwt", "owasp", "nodejs", "docker", "github_actions"],
+    "difficulty": 4,
+    "conversationDepth": "deep",
+    "intent": "Evaluate production secret-management maturity for JWT signing keys, including entropy, storage, rotation, separation, and incident handling.",
+    "primaryQuestion": "How should JWT_SECRET be protected in production?",
+    "expectedSignals": [
+      "Uses a high-entropy secret for HMAC algorithms or a properly protected private key for asymmetric algorithms; never a human-memorable password.",
+      "Stores secrets in a secret manager or protected runtime environment, not in source code, Docker images, frontend bundles, logs, tickets, or shared docs.",
+      "Injects secrets at runtime through deployment infrastructure with least privilege and audited access.",
+      "Uses different secrets or keys per environment and separates access-token signing keys from refresh-token signing keys when both are JWTs.",
+      "Controls allowed algorithms and key IDs server-side; does not let token headers choose arbitrary algorithms or keys.",
+      "Plans rotation with overlapping key versions, kid or key versioning, short token lifetimes, and a tested rollback/compromise runbook.",
+      "Fails fast if required production secrets are missing instead of falling back to a default development secret.",
+      "Avoids exposing JWT_SECRET to the browser; clients verify only with public keys when that architecture requires client-side verification."
+    ],
+    "redFlags": [
+      "Commits JWT_SECRET to Git or keeps it in a sample .env copied to production.",
+      "Uses fallback strings such as super-secret in production.",
+      "Reuses the same secret across dev, staging, production, access tokens, and refresh tokens.",
+      "Cannot describe rotation without invalidating every user unexpectedly.",
+      "Logs secrets or full tokens during debugging.",
+      "Uses weak HS256 secrets vulnerable to offline guessing."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers entropy, secret-manager storage, runtime injection, environment separation, algorithm constraints, rotation, fail-fast behavior, and incident response."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows secrets must not be committed and should be in environment/secret manager but misses rotation, key separation, or algorithm constraints."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Treats JWT_SECRET as a normal config value with weak operational controls."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would expose signing keys or make compromise recovery impractical."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "How would you rotate JWT signing keys without logging out every active user at once?",
+        "purpose": "Probe real production rotation planning."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "What should the app do if JWT_SECRET is missing in production at startup?",
+        "purpose": "Check fail-fast security posture."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Protecting JWT secrets",
+        "displayQuestion": "How should JWT_SECRET be protected in production?",
+        "displayIntent": "Assess production-grade secret management for JWT signing keys.",
+        "guidance": [
+          "Discuss entropy, secret managers, runtime injection, and least privilege.",
+          "Separate environments and token purposes.",
+          "Explain algorithm constraints, key IDs, and rotation windows.",
+          "Mention fail-fast behavior and compromise runbooks."
+        ],
+        "commonMistakes": [
+          "Using default or human-readable secrets.",
+          "Committing secrets to source control.",
+          "Reusing one key everywhere.",
+          "Having no tested rotation plan."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security/DevOps",
+          "level": "Mid-level/Senior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Bảo vệ JWT secret",
+        "displayQuestion": "JWT_SECRET cần được bảo vệ như thế nào trong production?",
+        "displayIntent": "Đánh giá secret management cấp production cho JWT signing key.",
+        "guidance": [
+          "Nói về entropy, secret manager, runtime injection và least privilege.",
+          "Tách môi trường và mục đích token.",
+          "Giải thích algorithm constraint, key id và rotation window.",
+          "Nhắc fail-fast behavior và runbook khi compromise."
+        ],
+        "commonMistakes": [
+          "Dùng secret mặc định hoặc dễ đoán.",
+          "Commit secret vào source control.",
+          "Reuse một key cho mọi nơi.",
+          "Không có kế hoạch rotation đã test."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security/DevOps",
+          "level": "Mid-level/Senior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "JWT secret の保護",
+        "displayQuestion": "production で JWT_SECRET はどのように保護すべきですか。",
+        "displayIntent": "JWT signing key の production-grade secret management を評価する。",
+        "guidance": [
+          "entropy、secret manager、runtime injection、least privilege を説明する。",
+          "environment と token purpose を分離する。",
+          "algorithm constraints、key id、rotation window を説明する。",
+          "fail-fast behavior と compromise runbook に触れる。"
+        ],
+        "commonMistakes": [
+          "default または推測しやすい secret を使う。",
+          "secret を source control に commit する。",
+          "1 つの key をすべてで再利用する。",
+          "tested rotation plan がない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security/DevOps",
+          "level": "Mid-level/Senior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "RFC 8725: JWT Best Current Practices",
+        "url": "https://www.rfc-editor.org/rfc/rfc8725",
+        "note": "Used for weak symmetric key and algorithm confusion risk framing."
+      },
+      {
+        "label": "OWASP Secrets Management Cheat Sheet",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html",
+        "note": "Used for secret lifecycle, access control, auditing, and rotation principles."
+      },
+      {
+        "label": "jsonwebtoken package README",
+        "url": "https://www.npmjs.com/package/jsonwebtoken",
+        "note": "Used for signing key options and token verification behavior."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "AUTH_JWT_SESSION_MID_TECH_PASSPORT_JS_014",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["mid", "senior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking", "communication"],
+    "techTags": ["express", "nodejs", "jwt", "oauth2"],
+    "difficulty": 3,
+    "conversationDepth": "mid",
+    "intent": "Assess whether the candidate understands Passport.js as authentication middleware with strategy-based integration rather than a complete auth product.",
+    "primaryQuestion": "What is Passport.js, and what problem does it solve in Express?",
+    "expectedSignals": [
+      "Defines Passport.js as authentication middleware for Node.js/Express.",
+      "Explains the strategy pattern: LocalStrategy, JwtStrategy, OAuth/OpenID Connect strategies, SAML, GitHub, Google, and other provider-specific strategies.",
+      "Explains that Passport standardizes credential extraction, verification callback flow, failure handling, and attaching authenticated identity to req.user.",
+      "Mentions session support through serializeUser and deserializeUser when using login sessions.",
+      "Mentions stateless JWT usage typically disables sessions for the JWT strategy and validates tokens per request.",
+      "Clarifies that Passport does not store users, hash passwords, issue tokens, design roles, or replace authorization policies by itself.",
+      "Mentions benefits such as less duplicated auth glue, consistent middleware composition, and integration with many identity providers."
+    ],
+    "redFlags": [
+      "Says Passport is an ORM or user database.",
+      "Says Passport automatically makes authentication secure without strategy configuration.",
+      "Cannot explain what a strategy does.",
+      "Mixes session serialization and JWT stateless validation without understanding the difference.",
+      "Assumes req.user exists without a successful authenticate middleware."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains Passport middleware, strategies, req.user, session serialization, JWT stateless usage, and boundaries versus user storage/token issuance/authorization."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands strategy-based authentication but misses one boundary such as authorization or session serialization."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Has used Passport snippets but cannot explain the abstraction it provides."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer misrepresents Passport's responsibility or would produce confused auth architecture."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "What is the difference between using Passport with sessions and using Passport with a JWT strategy?",
+        "purpose": "Check stateful versus stateless Passport integration."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "After passport.authenticate succeeds, where does the authenticated user information normally appear?",
+        "purpose": "Verify practical Express request flow."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Passport.js role in Express",
+        "displayQuestion": "What is Passport.js, and what problem does it solve in Express?",
+        "displayIntent": "Check understanding of Passport as strategy-based authentication middleware and its boundaries.",
+        "guidance": [
+          "Define Passport as authentication middleware.",
+          "Explain strategies and req.user.",
+          "Compare session-based and JWT-based Passport usage.",
+          "Clarify what Passport does not do: user storage, password hashing, token policy, and authorization."
+        ],
+        "commonMistakes": [
+          "Treating Passport as a complete auth system.",
+          "Not understanding strategies.",
+          "Confusing sessions with stateless JWT.",
+          "Assuming authorization is solved automatically."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level/Senior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Vai trò của Passport.js trong Express",
+        "displayQuestion": "Passport.js là gì và nó giải quyết vấn đề gì trong Express?",
+        "displayIntent": "Kiểm tra hiểu biết về Passport như middleware authentication dựa trên strategy và ranh giới trách nhiệm của nó.",
+        "guidance": [
+          "Định nghĩa Passport là authentication middleware.",
+          "Giải thích strategy và req.user.",
+          "So sánh cách dùng Passport với session và với JWT.",
+          "Làm rõ Passport không tự làm user storage, password hashing, token policy và authorization."
+        ],
+        "commonMistakes": [
+          "Xem Passport là hệ thống auth hoàn chỉnh.",
+          "Không hiểu strategy là gì.",
+          "Nhầm session với JWT stateless.",
+          "Tưởng authorization được giải quyết tự động."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level/Senior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "Express における Passport.js の役割",
+        "displayQuestion": "Passport.js とは何で、Express でどの問題を解決しますか。",
+        "displayIntent": "Passport を strategy-based authentication middleware として理解し、その責務の境界を確認する。",
+        "guidance": [
+          "Passport を authentication middleware として定義する。",
+          "strategies と req.user を説明する。",
+          "session-based と JWT-based の Passport 利用を比較する。",
+          "Passport が user storage、password hashing、token policy、authorization を自動で行わないことを明確にする。"
+        ],
+        "commonMistakes": [
+          "Passport を完全な auth system として扱う。",
+          "strategy を理解していない。",
+          "session と stateless JWT を混同する。",
+          "authorization が自動で解決されると考える。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level/Senior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Passport.js Documentation",
+        "url": "https://www.passportjs.org/docs/",
+        "note": "Used for Passport definition as Node.js authentication and authorization middleware."
+      },
+      {
+        "label": "Passport.js: Sessions",
+        "url": "https://www.passportjs.org/concepts/authentication/sessions/",
+        "note": "Used for serializeUser, deserializeUser, passport.session, and req.user session flow."
+      },
+      {
+        "label": "Passport.js Strategies",
+        "url": "https://www.passportjs.org/packages/",
+        "note": "Used for the strategy ecosystem and provider integration framing."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "AUTH_JWT_SESSION_MID_TRADE_JWT_LOGOUT_REVOCATION_015",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack", "security"],
+    "levels": ["mid", "senior"],
+    "type": "trade_off",
+    "competencies": ["trade_off_analysis", "system_thinking", "problem_solving", "ownership"],
+    "techTags": ["jwt", "express", "nodejs", "redis", "owasp"],
+    "difficulty": 4,
+    "conversationDepth": "deep",
+    "intent": "Evaluate whether the candidate can implement logout and revocation in JWT systems despite stateless access tokens, using realistic token lifetime and server-side control strategies.",
+    "primaryQuestion": "How do you implement logout when using JWT, given that JWTs cannot be revoked by default?",
+    "expectedSignals": [
+      "Explains that a purely stateless signed access token remains valid until exp if the resource server accepts it and no revocation check exists.",
+      "Implements client-side logout by deleting in-memory tokens, local storage entries, or clearing auth cookies, but explains this alone does not invalidate already issued access tokens.",
+      "Uses short-lived access tokens so the residual window after logout is small.",
+      "Revokes refresh tokens on logout by deleting or marking a server-side refresh token record, token family, session record, or device session as revoked.",
+      "Uses refresh token rotation and reuse detection so stolen refresh tokens cannot silently mint access tokens after logout.",
+      "For high-risk systems, adds a denylist keyed by jti until access token expiry, a user tokenVersion/sessionVersion claim, or a server-side session introspection check.",
+      "Supports logout all devices by revoking all refresh token families or incrementing a user/session version.",
+      "Clears HttpOnly cookies with the correct path, domain, SameSite, Secure, and expiry/maxAge settings when cookies are used.",
+      "Acknowledges trade-offs: denylists and introspection add state and lookup cost, while short TTLs improve statelessness but may require robust refresh UX."
+    ],
+    "redFlags": [
+      "Says logout is impossible or unnecessary with JWT.",
+      "Only removes the token from the frontend and claims the server token is revoked.",
+      "Uses long-lived access tokens with no denylist, refresh token revocation, or version check.",
+      "Stores refresh tokens client-side without server-side tracking.",
+      "Does not handle logout from all devices or account compromise scenarios.",
+      "Clears the wrong cookie name/path/domain and leaves the real auth cookie in place."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains stateless access-token limits, short TTLs, refresh revocation, rotation/reuse detection, optional access denylist/versioning, cookie clearing, logout-all, and trade-offs."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Handles refresh token revocation and short access tokens but misses one advanced case such as denylist, logout-all, or cookie clearing detail."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows to delete tokens on the client but cannot reason about server-side revocation."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer leaves long-lived credentials usable after logout or account compromise."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_tradeoff",
+        "question": "When would you add an access-token denylist even though it makes JWT auth stateful?",
+        "purpose": "Check risk-based revocation trade-offs."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "How would you implement logout from all devices with refresh token rotation?",
+        "purpose": "Probe device-session and token-family modeling."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "JWT logout and revocation",
+        "displayQuestion": "How do you implement logout when using JWT, given that JWTs cannot be revoked by default?",
+        "displayIntent": "Evaluate practical logout, revocation, and compromise handling in JWT systems.",
+        "guidance": [
+          "Explain why stateless access tokens remain valid until expiry.",
+          "Use short-lived access tokens and server-side refresh token revocation.",
+          "Discuss rotation, reuse detection, denylists, token versions, and logout all devices.",
+          "Include correct cookie clearing when tokens are stored in cookies."
+        ],
+        "commonMistakes": [
+          "Claiming client deletion revokes server trust.",
+          "Using long-lived access tokens with no revocation control.",
+          "Not tracking refresh tokens server-side.",
+          "Ignoring logout-all and compromise scenarios."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Mid-level/Senior",
+          "type": "trade_off"
+        }
+      },
+      "vi": {
+        "title": "Logout và revocation với JWT",
+        "displayQuestion": "Làm thế nào để implement logout khi dùng JWT, trong khi JWT không thể revoke mặc định?",
+        "displayIntent": "Đánh giá cách xử lý logout, revocation và account compromise trong hệ thống JWT thực tế.",
+        "guidance": [
+          "Giải thích vì sao stateless access token vẫn valid tới khi hết hạn.",
+          "Dùng access token ngắn hạn và revoke refresh token phía server.",
+          "Nói về rotation, reuse detection, denylist, token version và logout all devices.",
+          "Bao gồm cách clear cookie đúng khi token nằm trong cookie."
+        ],
+        "commonMistakes": [
+          "Khẳng định xóa token phía client là revoke server trust.",
+          "Dùng access token sống lâu mà không có control revoke.",
+          "Không track refresh token phía server.",
+          "Bỏ qua logout-all và account compromise."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Mid-level/Senior",
+          "type": "trade_off"
+        }
+      },
+      "ja": {
+        "title": "JWT logout と revocation",
+        "displayQuestion": "JWT は default では revoke できない前提で、JWT を使う場合の logout はどう実装しますか。",
+        "displayIntent": "JWT system における practical logout、revocation、compromise handling を評価する。",
+        "guidance": [
+          "stateless access token が expiry まで valid である理由を説明する。",
+          "short-lived access token と server-side refresh token revocation を使う。",
+          "rotation、reuse detection、denylist、token version、logout all devices を説明する。",
+          "cookie に token を置く場合の正しい cookie clearing を含める。"
+        ],
+        "commonMistakes": [
+          "client deletion が server trust を revoke すると主張する。",
+          "revocation control なしで長寿命 access token を使う。",
+          "server-side で refresh token を track しない。",
+          "logout-all や compromise scenario を無視する。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Mid-level/Senior",
+          "type": "trade_off"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "OWASP Session Management Cheat Sheet",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html",
+        "note": "Used for logout, session invalidation, idle timeout, and lifecycle logging concepts."
+      },
+      {
+        "label": "RFC 6749: Refreshing an Access Token",
+        "url": "https://www.rfc-editor.org/rfc/rfc6749#section-6",
+        "note": "Used for refresh token renewal, rotation, and revocation context."
+      },
+      {
+        "label": "jsonwebtoken package README",
+        "url": "https://www.npmjs.com/package/jsonwebtoken",
+        "note": "Used for exp and jti claim behavior in Node.js JWT implementations."
+      }
+    ],
+    "status": "active"
+  }
+]

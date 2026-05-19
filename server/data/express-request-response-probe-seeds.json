@@ -1,0 +1,2119 @@
+[
+  {
+    "code": "EXPRESS_REQ_RES_JR_TECH_PARAMS_QUERY_BODY_001",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "communication", "problem_solving"],
+    "techTags": ["express", "nodejs", "rest"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate can distinguish route parameters, query string parameters, and parsed request body data, and choose the correct place for each kind of API input.",
+    "primaryQuestion": "How are req.params, req.query, and req.body different in Express? When should you use each one?",
+    "expectedSignals": [
+      "Explains that req.params contains named path parameters declared in the route pattern, such as /users/:id.",
+      "Explains that req.query contains query string values after the question mark, usually used for optional filters, pagination, sorting, search, or feature flags.",
+      "Explains that req.body contains parsed request payload data, usually used for create/update commands such as POST, PUT, or PATCH.",
+      "Mentions that req.body is undefined by default unless body-parsing middleware such as express.json() or express.urlencoded() runs before the route.",
+      "Treats req.params, req.query, and req.body as user-controlled input that must be validated, normalized, and converted to the expected types.",
+      "Uses a concrete example such as GET /users/:id?includePosts=true using params and query, versus POST /users using body."
+    ],
+    "redFlags": [
+      "Says req.params, req.query, and req.body are interchangeable.",
+      "Uses req.body for GET filters or req.query for required resource identity without explaining the API design trade-off.",
+      "Assumes values from req.query or req.params already have the correct numeric or boolean type.",
+      "Forgets that body parsers are required before req.body is populated.",
+      "Trusts any of these values without validation."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Clearly separates path identity, URL options, and request payload; gives examples; mentions parser middleware, type conversion, and validation."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Correctly describes the three request sources but misses one nuance such as body parser order or untrusted input."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can define one or two properties but cannot choose consistently in practical REST endpoint design."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer shows confusion about where Express stores request data."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "For GET /products/:category?page=2 and POST /products, which values would you read from params, query, and body?",
+        "purpose": "Force a concrete mapping between URL structure and request properties."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Why might req.query.limit be a string even when the client sends ?limit=10?",
+        "purpose": "Check type conversion and validation awareness."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "req.params vs req.query vs req.body",
+        "displayQuestion": "How are req.params, req.query, and req.body different in Express? When should you use each one?",
+        "displayIntent": "Check whether the candidate can choose the correct request data source for route identity, URL options, and request payloads.",
+        "guidance": [
+          "Use route parameters for required resource identity in the path.",
+          "Use query string values for optional modifiers such as filter, pagination, sort, and search.",
+          "Use body data for submitted payloads in create or update operations.",
+          "Mention parser middleware, type conversion, and validation for all user-controlled input."
+        ],
+        "commonMistakes": [
+          "Treating params, query, and body as interchangeable.",
+          "Forgetting that req.body requires parser middleware.",
+          "Assuming query values are already numbers or booleans.",
+          "Trusting parsed input without validation."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "req.params, req.query và req.body",
+        "displayQuestion": "req.params, req.query, req.body khác nhau như thế nào? Khi nào dùng cái nào?",
+        "displayIntent": "Kiểm tra ứng viên có chọn đúng nguồn dữ liệu request cho định danh route, option trên URL và payload hay không.",
+        "guidance": [
+          "Dùng route parameter cho định danh tài nguyên bắt buộc nằm trong path.",
+          "Dùng query string cho các tùy chọn như filter, pagination, sort và search.",
+          "Dùng body cho dữ liệu client gửi lên khi tạo hoặc cập nhật tài nguyên.",
+          "Nhắc tới body parser, chuyển kiểu dữ liệu và validation vì tất cả đều là input do client kiểm soát."
+        ],
+        "commonMistakes": [
+          "Xem params, query và body là thay thế được cho nhau.",
+          "Quên req.body cần parser middleware.",
+          "Tưởng query value đã là number hoặc boolean.",
+          "Tin dữ liệu đã parse mà không validate."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "req.params、req.query、req.body",
+        "displayQuestion": "Express で req.params、req.query、req.body はどう違い、いつ使い分けますか。",
+        "displayIntent": "route identity、URL options、request payload に対して正しい request data source を選べるか確認する。",
+        "guidance": [
+          "path 内の必須 resource identity には route parameter を使う。",
+          "filter、pagination、sort、search などの任意条件には query string を使う。",
+          "作成や更新で送られる payload には body data を使う。",
+          "body parser、type conversion、user-controlled input の validation に触れる。"
+        ],
+        "commonMistakes": [
+          "params、query、body を同じものとして扱う。",
+          "req.body に parser middleware が必要な点を忘れる。",
+          "query value が最初から number や boolean だと考える。",
+          "parse 済み input を validation せず信頼する。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Express 5.x API: req.params",
+        "url": "https://expressjs.com/en/api.html#req.params",
+        "note": "Used for route parameter behavior and automatic decoding."
+      },
+      {
+        "label": "Express 5.x API: req.query",
+        "url": "https://expressjs.com/en/api.html#req.query",
+        "note": "Used for query parser behavior and untrusted query input guidance."
+      },
+      {
+        "label": "Express 5.x API: req.body",
+        "url": "https://expressjs.com/en/api.html#req.body",
+        "note": "Used for request body parser requirements and untrusted body input guidance."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_REQ_RES_JR_TECH_HEADERS_002",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "communication"],
+    "techTags": ["express", "nodejs", "rest"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Verify whether the candidate understands HTTP request headers, how Express exposes them, and when to prefer req.get() over directly indexing req.headers.",
+    "primaryQuestion": "What is req.headers, and how do you read a specific header in Express?",
+    "expectedSignals": [
+      "Defines req.headers as the incoming HTTP request headers object inherited from Node.js IncomingMessage.",
+      "Uses req.get('Header-Name') or req.header('Header-Name') to read one header with case-insensitive matching.",
+      "Mentions that direct access through req.headers uses lower-case header names in Node.js, such as req.headers['authorization'].",
+      "Explains common use cases such as Authorization, Content-Type, Accept-Language, X-Request-Id, and custom client headers.",
+      "Treats client-supplied headers as untrusted and avoids trusting spoofable headers such as X-Forwarded-For unless proxy trust is configured correctly.",
+      "Handles missing headers explicitly instead of assuming a header is always present."
+    ],
+    "redFlags": [
+      "Thinks req.headers only contains custom headers or only response headers.",
+      "Reads headers with case-sensitive direct property names such as req.headers.Authorization.",
+      "Trusts Authorization or X-Forwarded-* headers without validation or proxy context.",
+      "Crashes when a header is missing.",
+      "Confuses request headers with response headers set by res.set()."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains Node/Express header storage, uses req.get(), handles case-insensitivity and missing values, and recognizes trust/security concerns."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Can read a specific header correctly but misses direct req.headers casing or trust implications."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows headers exist but is inconsistent about request versus response direction or case handling."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not demonstrate practical header access in Express."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "How would you read the Authorization header, and what would you do if it is missing?",
+        "purpose": "Check practical access and error handling."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "Why is req.headers.Authorization usually not the safest direct property access pattern in Node.js?",
+        "purpose": "Check header name normalization knowledge."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Reading request headers",
+        "displayQuestion": "What is req.headers, and how do you read a specific header in Express?",
+        "displayIntent": "Check HTTP request header fundamentals and practical Express access patterns.",
+        "guidance": [
+          "Define request headers as client metadata sent with the request.",
+          "Prefer req.get() or req.header() for a single header.",
+          "Mention Node's lower-case req.headers keys when accessing directly.",
+          "Explain missing-header handling and trust boundaries."
+        ],
+        "commonMistakes": [
+          "Confusing request headers with response headers.",
+          "Using case-sensitive direct access incorrectly.",
+          "Trusting spoofable headers without proxy context.",
+          "Assuming headers are always present."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Đọc request header",
+        "displayQuestion": "req.headers là gì và làm thế nào để đọc một header cụ thể?",
+        "displayIntent": "Kiểm tra nền tảng HTTP request header và cách đọc header thực tế trong Express.",
+        "guidance": [
+          "Định nghĩa request header là metadata client gửi kèm request.",
+          "Ưu tiên req.get() hoặc req.header() khi đọc một header cụ thể.",
+          "Nhắc rằng key trong req.headers của Node thường được normalize về chữ thường.",
+          "Giải thích cách xử lý header bị thiếu và ranh giới tin cậy."
+        ],
+        "commonMistakes": [
+          "Nhầm request header với response header.",
+          "Dùng direct access sai vì phân biệt hoa thường.",
+          "Tin header có thể bị spoof mà không xét proxy context.",
+          "Giả định header luôn tồn tại."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "request header を読む",
+        "displayQuestion": "req.headers とは何で、Express で特定の header をどう読みますか。",
+        "displayIntent": "HTTP request header の基礎と Express での実用的な access pattern を確認する。",
+        "guidance": [
+          "request header は client が request に付ける metadata だと説明する。",
+          "単一 header には req.get() または req.header() を使う。",
+          "Node の req.headers の key は通常 lower-case になる点に触れる。",
+          "missing header の扱いと trust boundary を説明する。"
+        ],
+        "commonMistakes": [
+          "request header と response header を混同する。",
+          "case-sensitive な direct access を誤って使う。",
+          "proxy context なしに spoof 可能な header を信頼する。",
+          "header が常に存在すると仮定する。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Express 5.x API: req.get()",
+        "url": "https://expressjs.com/en/api.html#req.get",
+        "note": "Used for case-insensitive request header lookup and req.header alias."
+      },
+      {
+        "label": "Node.js HTTP API: message.headers",
+        "url": "https://nodejs.org/api/http.html#messageheaders",
+        "note": "Used for the underlying IncomingMessage headers object."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_REQ_RES_JR_TECH_BODY_READING_003",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving", "ownership"],
+    "techTags": ["express", "nodejs", "rest"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate can correctly configure body parsing middleware, understand Content-Type matching, and validate parsed body input.",
+    "primaryQuestion": "How do you read data from the request body in Express?",
+    "expectedSignals": [
+      "Registers body-parsing middleware before routes that need req.body, commonly app.use(express.json()) for JSON payloads.",
+      "Uses express.urlencoded({ extended: true or false }) for application/x-www-form-urlencoded form submissions when needed.",
+      "Reads parsed values from req.body inside route handlers after the parser has run.",
+      "Mentions Content-Type matching: a JSON parser only parses requests whose content type matches the configured type.",
+      "Configures body size limits appropriate to the endpoint to avoid accepting unexpectedly large payloads.",
+      "Validates req.body because parsing does not guarantee correct schema, types, required fields, or safe values.",
+      "Mentions special cases such as raw body verification for webhooks or multipart/form-data requiring different middleware."
+    ],
+    "redFlags": [
+      "Reads req.body without registering any parser and cannot explain why it is undefined.",
+      "Registers express.json() after the routes that need it.",
+      "Uses JSON parsing for multipart file uploads without explaining multer or another multipart parser.",
+      "Trusts parsed body data without validation.",
+      "Leaves public endpoints with overly broad or unlimited body size limits."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers middleware order, parser choice, Content-Type matching, limits, validation, and special body formats."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows express.json() and req.body but misses one production detail such as limits, content type, or validation."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can read body values only in a simple happy path and cannot debug undefined or malformed body cases."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not demonstrate practical request body handling in Express."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "Why would req.body be undefined even though the client sent JSON?",
+        "purpose": "Probe middleware order and Content-Type reasoning."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "When would express.raw() be more appropriate than express.json()?",
+        "purpose": "Check body parser choice for webhook signature verification and binary payloads."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Reading request body data",
+        "displayQuestion": "How do you read data from the request body in Express?",
+        "displayIntent": "Check whether the candidate can configure body parsers and safely consume parsed payloads.",
+        "guidance": [
+          "Register express.json() or express.urlencoded() before routes.",
+          "Choose the parser based on Content-Type and payload format.",
+          "Read values from req.body after middleware runs.",
+          "Discuss size limits, validation, and special cases like webhooks or multipart uploads."
+        ],
+        "commonMistakes": [
+          "Forgetting parser middleware.",
+          "Registering the parser after the route.",
+          "Using the wrong parser for multipart data.",
+          "Trusting req.body without schema validation."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Đọc dữ liệu request body",
+        "displayQuestion": "Làm thế nào để đọc dữ liệu từ request body trong Express?",
+        "displayIntent": "Kiểm tra ứng viên có cấu hình body parser đúng và xử lý payload đã parse một cách an toàn hay không.",
+        "guidance": [
+          "Đăng ký express.json() hoặc express.urlencoded() trước route.",
+          "Chọn parser theo Content-Type và định dạng payload.",
+          "Đọc dữ liệu từ req.body sau khi middleware đã chạy.",
+          "Nói về size limit, validation và các trường hợp đặc biệt như webhook hoặc multipart upload."
+        ],
+        "commonMistakes": [
+          "Quên parser middleware.",
+          "Đăng ký parser sau route.",
+          "Dùng sai parser cho multipart data.",
+          "Tin req.body mà không validate schema."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "request body data を読む",
+        "displayQuestion": "Express で request body の data をどう読みますか。",
+        "displayIntent": "body parser を設定し、parse 済み payload を安全に扱えるか確認する。",
+        "guidance": [
+          "route より前に express.json() または express.urlencoded() を登録する。",
+          "Content-Type と payload format に応じて parser を選ぶ。",
+          "middleware 実行後に req.body から値を読む。",
+          "size limit、validation、webhook や multipart upload などの特殊ケースに触れる。"
+        ],
+        "commonMistakes": [
+          "parser middleware を忘れる。",
+          "route の後に parser を登録する。",
+          "multipart data に誤った parser を使う。",
+          "schema validation なしに req.body を信頼する。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Express 5.x API: express.json()",
+        "url": "https://expressjs.com/en/api.html#express.json",
+        "note": "Used for JSON parser behavior, Content-Type matching, limits, and untrusted input guidance."
+      },
+      {
+        "label": "Express 5.x API: req.body",
+        "url": "https://expressjs.com/en/api.html#req.body",
+        "note": "Used for req.body default behavior and parser middleware examples."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_REQ_RES_JR_TECH_SEND_JSON_END_004",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "communication"],
+    "techTags": ["express", "nodejs", "rest"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Evaluate whether the candidate understands common Express response-ending methods and can choose between automatic Express helpers and low-level response termination.",
+    "primaryQuestion": "How are res.send(), res.json(), and res.end() different in Express?",
+    "expectedSignals": [
+      "Explains that res.send() sends a response body and performs Express conveniences such as setting Content-Type or Content-Length for common body types.",
+      "Explains that res.json() serializes a value with JSON.stringify semantics and sets the JSON content type.",
+      "Explains that res.end() is the lower-level Node response termination method and does not perform the same Express body serialization conveniences.",
+      "Mentions that all three end the response cycle, so route code should not try to send another response afterward.",
+      "Chooses res.json() for API JSON payloads, res.send() for simple strings/HTML/Buffers or generic bodies, and res.end() for cases with no body or after manual streaming/writing.",
+      "Mentions that status and headers should be set before the response is ended."
+    ],
+    "redFlags": [
+      "Thinks res.json() and res.send() always behave identically.",
+      "Uses res.end(object) expecting Express to serialize it to JSON.",
+      "Attempts to call res.json() after res.end() or res.send().",
+      "Does not understand that sending a response ends the request-response cycle.",
+      "Sets headers after the body has already been sent."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Contrasts serialization, content type behavior, response lifecycle, and appropriate use cases for all three methods."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands json versus send but gives shallow or incomplete explanation of end and lifecycle."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows the method names but cannot explain when to choose each one safely."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer risks duplicate responses or incorrect response body handling."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "What would happen if you call res.end({ ok: true }) compared with res.json({ ok: true })?",
+        "purpose": "Check serialization and low-level response understanding."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "Can you set another header after res.send() has already sent the response? Why?",
+        "purpose": "Probe response lifecycle and headers-sent reasoning."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "res.send, res.json, and res.end",
+        "displayQuestion": "How are res.send(), res.json(), and res.end() different in Express?",
+        "displayIntent": "Check response helper selection and response lifecycle fundamentals.",
+        "guidance": [
+          "Explain what each method sends and whether it serializes the body.",
+          "Mention Content-Type behavior and Express conveniences.",
+          "State that each method ends the response lifecycle.",
+          "Describe when status and headers must be set."
+        ],
+        "commonMistakes": [
+          "Calling res.end() with an object and expecting JSON.",
+          "Sending multiple responses from one handler.",
+          "Setting headers after sending the body.",
+          "Using res.send() for JSON APIs without understanding response shape."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "res.send, res.json và res.end",
+        "displayQuestion": "res.send(), res.json(), res.end() khác nhau như thế nào?",
+        "displayIntent": "Kiểm tra khả năng chọn response helper đúng và hiểu vòng đời response.",
+        "guidance": [
+          "Giải thích mỗi method gửi gì và có serialize body hay không.",
+          "Nhắc tới Content-Type và các tiện ích Express tự xử lý.",
+          "Nói rõ mỗi method đều kết thúc response lifecycle.",
+          "Mô tả status và header phải được set trước khi gửi response."
+        ],
+        "commonMistakes": [
+          "Gọi res.end() với object rồi kỳ vọng thành JSON.",
+          "Gửi nhiều response trong một handler.",
+          "Set header sau khi body đã gửi.",
+          "Dùng res.send() cho JSON API mà không hiểu response shape."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "res.send、res.json、res.end",
+        "displayQuestion": "Express の res.send()、res.json()、res.end() はどう違いますか。",
+        "displayIntent": "response helper の選択と response lifecycle の基礎を確認する。",
+        "guidance": [
+          "各 method が何を送信し、body を serialize するか説明する。",
+          "Content-Type behavior と Express の convenience に触れる。",
+          "各 method が response lifecycle を終了することを述べる。",
+          "status と header は送信前に設定する必要があると説明する。"
+        ],
+        "commonMistakes": [
+          "object を res.end() に渡して JSON になると期待する。",
+          "1 つの handler から複数 response を送る。",
+          "body 送信後に header を設定する。",
+          "response shape を理解せず JSON API で res.send() を使う。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Express 5.x API: res.send()",
+        "url": "https://expressjs.com/en/api.html#res.send",
+        "note": "Used for send behavior and automatic response conveniences."
+      },
+      {
+        "label": "Express 5.x API: res.json()",
+        "url": "https://expressjs.com/en/api.html#res.json",
+        "note": "Used for JSON serialization and content type behavior."
+      },
+      {
+        "label": "Node.js HTTP API: response.end()",
+        "url": "https://nodejs.org/api/http.html#responseenddata-encoding-callback",
+        "note": "Used for low-level response termination semantics behind Express."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_REQ_RES_JR_TECH_STATUS_CODE_005",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving", "communication"],
+    "techTags": ["express", "nodejs", "rest"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate can set HTTP response status codes correctly and choose meaningful status codes for common API outcomes.",
+    "primaryQuestion": "How do you set the HTTP status code in an Express response?",
+    "expectedSignals": [
+      "Uses res.status(code) before sending the response body, such as res.status(201).json(createdResource).",
+      "Mentions res.sendStatus(code) as a shortcut that sets the status and sends the standard status message body.",
+      "Understands that status must be set before res.send(), res.json(), res.end(), res.redirect(), or file sending has committed headers.",
+      "Chooses common API statuses correctly, such as 200, 201, 204, 400, 401, 403, 404, 409, 422, and 500 depending on the case.",
+      "Avoids using 200 for errors or 500 for every client-side problem.",
+      "Mentions valid HTTP status range expectations and that invalid codes may throw at the Node layer."
+    ],
+    "redFlags": [
+      "Calls res.json(...).status(404) after the response was already sent.",
+      "Always returns 200 with an error field in the body.",
+      "Uses 500 for validation failures, not-found resources, or authorization failures.",
+      "Does not distinguish res.status() from res.sendStatus().",
+      "Sets statusCode directly in inconsistent places without understanding when headers are sent."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Uses res.status before sending, distinguishes sendStatus, selects appropriate status codes, and understands response commit timing."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows res.status(code) but misses one nuance such as sendStatus or choosing correct error classes."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can set a status in a simple route but lacks HTTP semantics or lifecycle awareness."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would likely produce misleading API responses."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "What status would you use for a successful create, a validation error, and a missing resource?",
+        "purpose": "Check practical status-code selection."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "Why is res.json({ error }).status(404) wrong?",
+        "purpose": "Check response lifecycle ordering."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Setting HTTP status codes",
+        "displayQuestion": "How do you set the HTTP status code in an Express response?",
+        "displayIntent": "Check status-setting syntax, ordering, and API status-code judgment.",
+        "guidance": [
+          "Use res.status(code) before sending the response.",
+          "Mention res.sendStatus(code) and when it is appropriate.",
+          "Give examples for success, validation, auth, not found, conflict, and server errors.",
+          "Explain why status cannot reliably be changed after headers are sent."
+        ],
+        "commonMistakes": [
+          "Calling status after json or send.",
+          "Returning 200 for every error.",
+          "Using 500 for client mistakes.",
+          "Confusing res.status with res.sendStatus."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Set HTTP status code",
+        "displayQuestion": "Làm thế nào để set HTTP status code trong response?",
+        "displayIntent": "Kiểm tra cú pháp set status, thứ tự gọi method và judgment chọn status code cho API.",
+        "guidance": [
+          "Dùng res.status(code) trước khi gửi response.",
+          "Nhắc tới res.sendStatus(code) và khi nào phù hợp.",
+          "Cho ví dụ cho success, validation, auth, not found, conflict và server error.",
+          "Giải thích vì sao không thể đổi status đáng tin cậy sau khi header đã gửi."
+        ],
+        "commonMistakes": [
+          "Gọi status sau json hoặc send.",
+          "Luôn trả 200 cho mọi lỗi.",
+          "Dùng 500 cho lỗi do client gửi sai.",
+          "Nhầm res.status với res.sendStatus."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "HTTP status code を設定する",
+        "displayQuestion": "Express response で HTTP status code をどう設定しますか。",
+        "displayIntent": "status 設定の syntax、順序、API status code の判断を確認する。",
+        "guidance": [
+          "response を送る前に res.status(code) を使う。",
+          "res.sendStatus(code) と適切な利用場面に触れる。",
+          "success、validation、auth、not found、conflict、server error の例を出す。",
+          "headers 送信後は status を確実に変更できない理由を説明する。"
+        ],
+        "commonMistakes": [
+          "json や send の後に status を呼ぶ。",
+          "すべての error で 200 を返す。",
+          "client mistake に 500 を使う。",
+          "res.status と res.sendStatus を混同する。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Express 5.x API: res.status()",
+        "url": "https://expressjs.com/en/api.html#res.status",
+        "note": "Used for chainable status setting before sending a response."
+      },
+      {
+        "label": "Express 5.x API: res.sendStatus()",
+        "url": "https://expressjs.com/en/api.html#res.sendStatus",
+        "note": "Used for shortcut status response behavior."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_REQ_RES_JR_TECH_RESPONSE_CHAINING_006",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "communication"],
+    "techTags": ["express", "nodejs", "rest"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Verify whether the candidate understands Express response method chaining and the difference between configuring a response and ending it.",
+    "primaryQuestion": "Why can you chain res.status(404).json({ ... }) in Express?",
+    "expectedSignals": [
+      "Explains that many Express response methods return the response object itself, allowing method chaining.",
+      "Specifically states that res.status(code) sets response.statusCode and returns res.",
+      "Explains that .json(...) then serializes and sends the response, ending the response cycle.",
+      "Understands the order: configuration methods such as status, set, type, or cookie should run before a send/end method.",
+      "Recognizes that chaining is syntactic convenience, equivalent to calling res.status(404); res.json(...).",
+      "Mentions that after json/send/end is called, the handler should not continue to send another response."
+    ],
+    "redFlags": [
+      "Thinks chaining creates a new response object.",
+      "Believes every res method is safely chainable after the response is sent.",
+      "Cannot explain why status must come before json.",
+      "Calls res.json(...).status(404) and expects the status to change.",
+      "Continues execution and sends a second response after a chained send."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains return value, statusCode mutation, final send behavior, ordering, and equivalence to separate statements."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows res.status returns res but misses lifecycle or ordering nuances."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can use chained syntax but cannot explain the underlying mechanics."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer suggests unsafe response ordering or duplicate sends."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Rewrite res.status(404).json({ error: 'not found' }) as two separate statements.",
+        "purpose": "Check whether the candidate sees chaining as returned-object convenience."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "Why does the order matter between res.status(404).json(...) and res.json(...).status(404)?",
+        "purpose": "Check final response commit timing."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Response method chaining",
+        "displayQuestion": "Why can you chain res.status(404).json({ ... }) in Express?",
+        "displayIntent": "Check whether the candidate understands Express chainable methods and response-ending order.",
+        "guidance": [
+          "State that res.status() returns the same response object.",
+          "Explain that json() sends the response after status has been configured.",
+          "Contrast configuration methods with final send methods.",
+          "Mention that chaining is only syntax convenience, not a different response lifecycle."
+        ],
+        "commonMistakes": [
+          "Thinking chaining creates a new response.",
+          "Putting status after json.",
+          "Sending a second response after a chained call.",
+          "Assuming all response methods can be called after headers are sent."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Chain method trên response",
+        "displayQuestion": "res.status(404).json({...}) — tại sao có thể chain như vậy?",
+        "displayIntent": "Kiểm tra ứng viên có hiểu chainable method trong Express và thứ tự kết thúc response hay không.",
+        "guidance": [
+          "Nói rõ res.status() trả lại chính response object.",
+          "Giải thích json() gửi response sau khi status đã được cấu hình.",
+          "Phân biệt method cấu hình response với method gửi response cuối cùng.",
+          "Nhắc rằng chaining chỉ là tiện ích cú pháp, không tạo vòng đời response khác."
+        ],
+        "commonMistakes": [
+          "Tưởng chaining tạo response mới.",
+          "Đặt status sau json.",
+          "Gửi response lần hai sau một chained call.",
+          "Tưởng mọi response method đều gọi được sau khi header đã gửi."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "response method chaining",
+        "displayQuestion": "Express で res.status(404).json({ ... }) のように chain できるのはなぜですか。",
+        "displayIntent": "Express の chainable method と response を終える順序を理解しているか確認する。",
+        "guidance": [
+          "res.status() は同じ response object を返すと述べる。",
+          "status 設定後に json() が response を送ると説明する。",
+          "response configuration method と final send method を区別する。",
+          "chaining は syntax convenience であり lifecycle が変わるわけではないと説明する。"
+        ],
+        "commonMistakes": [
+          "chaining が新しい response を作ると考える。",
+          "json の後に status を置く。",
+          "chained call の後に二つ目の response を送る。",
+          "headers 送信後もすべての response method を呼べると考える。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Express 5.x API: res.status()",
+        "url": "https://expressjs.com/en/api.html#res.status",
+        "note": "Used for the statement that res.status is chainable."
+      },
+      {
+        "label": "Express 5.x API: res.json()",
+        "url": "https://expressjs.com/en/api.html#res.json",
+        "note": "Used for JSON response final sending behavior."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_REQ_RES_MID_TRADE_REDIRECT_007",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "trade_off",
+    "competencies": ["technical_fundamentals", "trade_off_analysis", "system_thinking"],
+    "techTags": ["express", "nodejs", "rest"],
+    "difficulty": 3,
+    "conversationDepth": "mid",
+    "intent": "Evaluate whether the candidate understands redirect responses, common redirect status codes, and the client/cache/security consequences of choosing permanent versus temporary redirects.",
+    "primaryQuestion": "What is res.redirect() used for? How are 301 and 302 redirects different?",
+    "expectedSignals": [
+      "Explains that res.redirect() sends an HTTP redirect response with a Location header so the client requests another URL.",
+      "Mentions that Express defaults to 302 Found when no status is provided.",
+      "Explains 301 Moved Permanently as a permanent redirect that clients and search engines may cache and use for canonical URL changes.",
+      "Explains 302 Found as a temporary redirect, commonly used when the destination may change, such as login flows or temporary routing.",
+      "Mentions related method-preserving redirects such as 307 and 308 when preserving POST/PUT semantics matters.",
+      "Warns about open redirect vulnerabilities when redirect targets come from user input."
+    ],
+    "redFlags": [
+      "Uses 301 for login redirects or temporary A/B flows without understanding caching consequences.",
+      "Cannot explain that redirects are HTTP responses rather than server-side forwarding.",
+      "Builds redirects from unvalidated user-controlled returnUrl values.",
+      "Assumes all redirect statuses preserve the original HTTP method.",
+      "Does not know that Express defaults to 302."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains Location-based client navigation, default 302, 301 versus 302 cache/intent semantics, 307/308 method preservation, and open redirect risk."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands permanent versus temporary redirects but misses default status, method preservation, or security nuance."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can call res.redirect but cannot choose redirect status based on product and HTTP semantics."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer risks incorrect permanent redirects or open redirect vulnerabilities."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_tradeoff",
+        "question": "Why is 301 usually a bad choice for a temporary login redirect?",
+        "purpose": "Check caching and permanence reasoning."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "How would you prevent an open redirect when using a returnUrl query parameter?",
+        "purpose": "Check redirect security awareness."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Express redirects",
+        "displayQuestion": "What is res.redirect() used for? How are 301 and 302 redirects different?",
+        "displayIntent": "Check redirect semantics, status-code choice, and redirect security.",
+        "guidance": [
+          "Explain that redirects send a Location response for the client to follow.",
+          "Mention Express default 302 behavior.",
+          "Compare 301 permanent redirects with 302 temporary redirects.",
+          "Discuss caching, SEO, method preservation with 307/308, and open redirect risk."
+        ],
+        "commonMistakes": [
+          "Using 301 for temporary flows.",
+          "Treating redirect as server-side routing only.",
+          "Trusting user-provided redirect URLs.",
+          "Ignoring method changes across redirect statuses."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "trade_off"
+        }
+      },
+      "vi": {
+        "title": "Redirect trong Express",
+        "displayQuestion": "res.redirect() dùng để làm gì? Các loại redirect (301, 302) khác nhau như thế nào?",
+        "displayIntent": "Kiểm tra hiểu biết về redirect, cách chọn status code và bảo mật redirect.",
+        "guidance": [
+          "Giải thích redirect gửi response có Location để client đi tới URL khác.",
+          "Nhắc rằng Express mặc định dùng 302 nếu không truyền status.",
+          "So sánh 301 permanent redirect với 302 temporary redirect.",
+          "Nói về caching, SEO, method preservation với 307/308 và rủi ro open redirect."
+        ],
+        "commonMistakes": [
+          "Dùng 301 cho flow tạm thời.",
+          "Xem redirect chỉ là routing nội bộ server.",
+          "Tin URL redirect do user truyền vào.",
+          "Bỏ qua việc HTTP method có thể thay đổi tùy status redirect."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "trade_off"
+        }
+      },
+      "ja": {
+        "title": "Express redirect",
+        "displayQuestion": "res.redirect() は何に使い、301 と 302 redirect はどう違いますか。",
+        "displayIntent": "redirect semantics、status code の選択、redirect security を確認する。",
+        "guidance": [
+          "redirect は client が追従する Location response を返すと説明する。",
+          "Express の default が 302 である点に触れる。",
+          "301 permanent redirect と 302 temporary redirect を比較する。",
+          "caching、SEO、307/308 による method preservation、open redirect risk を説明する。"
+        ],
+        "commonMistakes": [
+          "temporary flow に 301 を使う。",
+          "redirect を server-side routing だけとして扱う。",
+          "user-provided redirect URL を信頼する。",
+          "redirect status による method change を無視する。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "trade_off"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Express 5.x API: res.redirect()",
+        "url": "https://expressjs.com/en/api.html#res.redirect",
+        "note": "Used for Express redirect syntax and default 302 behavior."
+      },
+      {
+        "label": "MDN: 301 Moved Permanently",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/301",
+        "note": "Used for permanent redirect semantics."
+      },
+      {
+        "label": "MDN: 302 Found",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/302",
+        "note": "Used for temporary redirect semantics."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_REQ_RES_MID_TECH_COOKIES_008",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack", "security"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking", "ownership"],
+    "techTags": ["express", "nodejs", "security"],
+    "difficulty": 3,
+    "conversationDepth": "mid",
+    "intent": "Check whether the candidate understands setting and clearing cookies in Express, cookie attributes, and common security requirements.",
+    "primaryQuestion": "What are res.cookie() and res.clearCookie() used for in Express?",
+    "expectedSignals": [
+      "Explains that res.cookie(name, value, options) sets a Set-Cookie response header for the client to store a cookie.",
+      "Explains that res.clearCookie(name, options) instructs the client to remove a cookie by sending an expired Set-Cookie header.",
+      "Mentions important cookie options such as httpOnly, secure, sameSite, maxAge, expires, path, domain, signed, and priority where relevant.",
+      "Understands that clearing a cookie usually requires matching key options such as path and domain used when setting it.",
+      "Distinguishes setting cookies from reading cookies, which requires parsing request Cookie headers, commonly through cookie-parser or similar middleware.",
+      "Avoids storing sensitive secrets directly in client-visible cookies and uses httpOnly/secure/sameSite according to the auth model."
+    ],
+    "redFlags": [
+      "Thinks res.cookie stores data on the server.",
+      "Thinks res.clearCookie can delete any cookie regardless of path or domain.",
+      "Stores passwords, raw access tokens, or sensitive profile data in plain cookies.",
+      "Forgets httpOnly, secure, and sameSite for authentication-related cookies.",
+      "Confuses signed cookies with encrypted cookies."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains Set-Cookie behavior, clear-cookie matching, security flags, signed versus encrypted meaning, and read/write distinction."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands setting and clearing cookies but misses one security or matching-options nuance."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can call the methods but cannot reason about browser cookie behavior or security attributes."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer could create insecure or non-clearable cookies."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "If you set a cookie with path '/admin', what option should you remember when clearing it?",
+        "purpose": "Check path/domain matching behavior."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "What do httpOnly, secure, and sameSite reduce in an auth cookie setup?",
+        "purpose": "Probe cookie security understanding."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Setting and clearing cookies",
+        "displayQuestion": "What are res.cookie() and res.clearCookie() used for in Express?",
+        "displayIntent": "Check cookie write, clear, and security fundamentals in Express responses.",
+        "guidance": [
+          "Explain Set-Cookie response headers and browser storage.",
+          "Describe how clearCookie expires a cookie and why path/domain options matter.",
+          "Mention security attributes for auth-related cookies.",
+          "Separate writing cookies from reading cookies on req."
+        ],
+        "commonMistakes": [
+          "Thinking cookies are stored server-side by res.cookie.",
+          "Forgetting matching options when clearing cookies.",
+          "Confusing signed cookies with encrypted cookies.",
+          "Putting sensitive data directly into client-visible cookies."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Set và clear cookie",
+        "displayQuestion": "res.cookie() và res.clearCookie() dùng để làm gì?",
+        "displayIntent": "Kiểm tra nền tảng ghi cookie, xóa cookie và bảo mật cookie trong Express response.",
+        "guidance": [
+          "Giải thích Set-Cookie response header và việc browser lưu cookie.",
+          "Mô tả clearCookie làm cookie hết hạn và vì sao path/domain option quan trọng.",
+          "Nhắc các attribute bảo mật cho cookie liên quan auth.",
+          "Tách việc ghi cookie với việc đọc cookie trên req."
+        ],
+        "commonMistakes": [
+          "Tưởng res.cookie lưu dữ liệu phía server.",
+          "Quên option tương ứng khi clear cookie.",
+          "Nhầm signed cookie với encrypted cookie.",
+          "Đưa dữ liệu nhạy cảm trực tiếp vào cookie client nhìn thấy được."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "cookie の設定と削除",
+        "displayQuestion": "Express の res.cookie() と res.clearCookie() は何に使いますか。",
+        "displayIntent": "Express response における cookie の書き込み、削除、security の基礎を確認する。",
+        "guidance": [
+          "Set-Cookie response header と browser storage を説明する。",
+          "clearCookie が cookie を expire させること、path/domain option が重要な理由を説明する。",
+          "auth cookie に関わる security attributes に触れる。",
+          "cookie の書き込みと req での読み取りを区別する。"
+        ],
+        "commonMistakes": [
+          "res.cookie が server-side に保存すると考える。",
+          "clear cookie 時に matching options を忘れる。",
+          "signed cookie と encrypted cookie を混同する。",
+          "client-visible cookie に sensitive data を直接入れる。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Express 5.x API: res.cookie()",
+        "url": "https://expressjs.com/en/api.html#res.cookie",
+        "note": "Used for cookie setting options and signed cookie support."
+      },
+      {
+        "label": "Express 5.x API: res.clearCookie()",
+        "url": "https://expressjs.com/en/api.html#res.clearCookie",
+        "note": "Used for clear-cookie behavior and matching option requirements."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_REQ_RES_MID_TECH_IP_METHOD_009",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "devops"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking", "impact_measurement"],
+    "techTags": ["express", "nodejs", "logging", "security"],
+    "difficulty": 3,
+    "conversationDepth": "mid",
+    "intent": "Assess whether the candidate understands request IP and method metadata, including proxy effects and operational use cases.",
+    "primaryQuestion": "What information do req.ip and req.method provide in Express?",
+    "expectedSignals": [
+      "Explains that req.ip contains the remote IP address Express associates with the request.",
+      "Mentions that req.ip changes behind proxies depending on the trust proxy setting and X-Forwarded-For handling.",
+      "Explains that req.method contains the HTTP method string such as GET, POST, PUT, PATCH, DELETE, or OPTIONS.",
+      "Connects req.method to route matching, logging, metrics, authorization rules, CORS preflight, and method-specific behavior.",
+      "Warns that req.ip should be used carefully for rate limiting or auditing when proxy trust is misconfigured.",
+      "Mentions that IP is not a reliable user identity and can represent NAT, proxies, mobile networks, or load balancers."
+    ],
+    "redFlags": [
+      "Treats req.ip as a guaranteed unique user identifier.",
+      "Ignores trust proxy and blindly trusts X-Forwarded-For from the public internet.",
+      "Thinks req.method is the route path or controller name.",
+      "Uses req.method for security decisions without route and authorization context.",
+      "Cannot explain why req.ip may be a load balancer IP in production."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains req.ip, req.method, proxy/trust behavior, operational use cases, and limitations for identity/security."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Defines both properties but misses proxy behavior or security implications."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows the property names but cannot reason about production deployment behavior."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would lead to unreliable logging, rate limiting, or security decisions."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "Why might req.ip be the load balancer address instead of the user's real address?",
+        "purpose": "Check proxy deployment understanding."
+      },
+      {
+        "trigger": "missing_metric",
+        "question": "Where would req.method show up in useful API telemetry?",
+        "purpose": "Probe logging and monitoring use cases."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Request IP and method",
+        "displayQuestion": "What information do req.ip and req.method provide in Express?",
+        "displayIntent": "Check request metadata understanding, especially behind proxies.",
+        "guidance": [
+          "Define req.ip as the remote address Express derives for the request.",
+          "Explain trust proxy and X-Forwarded-For implications.",
+          "Define req.method as the HTTP method string.",
+          "Connect both fields to logging, metrics, routing, authorization, and rate limiting."
+        ],
+        "commonMistakes": [
+          "Treating IP as a stable user identity.",
+          "Ignoring proxy configuration.",
+          "Confusing method with path.",
+          "Building rate limits on spoofable IP data."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/DevOps",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Request IP và method",
+        "displayQuestion": "req.ip và req.method cho biết thông tin gì?",
+        "displayIntent": "Kiểm tra hiểu biết về metadata của request, đặc biệt khi chạy sau proxy.",
+        "guidance": [
+          "Định nghĩa req.ip là remote address mà Express suy ra cho request.",
+          "Giải thích ảnh hưởng của trust proxy và X-Forwarded-For.",
+          "Định nghĩa req.method là chuỗi HTTP method.",
+          "Liên hệ hai trường này với logging, metric, routing, authorization và rate limiting."
+        ],
+        "commonMistakes": [
+          "Xem IP là định danh user ổn định.",
+          "Bỏ qua cấu hình proxy.",
+          "Nhầm method với path.",
+          "Dựng rate limit trên IP data có thể bị spoof."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/DevOps",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "request IP と method",
+        "displayQuestion": "Express の req.ip と req.method はどのような情報を持ちますか。",
+        "displayIntent": "特に proxy 配下での request metadata の理解を確認する。",
+        "guidance": [
+          "req.ip は Express が request に対して導出する remote address だと定義する。",
+          "trust proxy と X-Forwarded-For の影響を説明する。",
+          "req.method は HTTP method string だと定義する。",
+          "logging、metrics、routing、authorization、rate limiting と結びつける。"
+        ],
+        "commonMistakes": [
+          "IP を安定した user identity として扱う。",
+          "proxy configuration を無視する。",
+          "method と path を混同する。",
+          "spoof 可能な IP data で rate limit を構築する。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/DevOps",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Express 5.x API: req.ip",
+        "url": "https://expressjs.com/en/api.html#req.ip",
+        "note": "Used for remote IP behavior and trust proxy impact."
+      },
+      {
+        "label": "Express 5.x API: req.method",
+        "url": "https://expressjs.com/en/api.html#req.method",
+        "note": "Used for HTTP method property behavior."
+      },
+      {
+        "label": "Express docs: Behind proxies",
+        "url": "https://expressjs.com/en/guide/behind-proxies.html",
+        "note": "Used for proxy-aware IP handling context."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_REQ_RES_JR_TECH_RESPONSE_HEADERS_010",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack", "security"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking"],
+    "techTags": ["express", "nodejs", "rest", "security"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Verify whether the candidate knows how to set response headers and understands timing, overwrite behavior, and common header use cases.",
+    "primaryQuestion": "How do you set response headers in Express?",
+    "expectedSignals": [
+      "Uses res.set('Header-Name', 'value') or res.header('Header-Name', 'value') to set a response header.",
+      "Mentions passing an object to res.set() to set multiple headers at once.",
+      "Mentions res.append() when adding values to an existing header is desired, and understands res.set() can overwrite/reset header values.",
+      "Sets headers before sending the response body or ending the response.",
+      "Gives examples such as Cache-Control, Content-Type, ETag, Location, Content-Disposition, security headers, or custom request-id headers.",
+      "Avoids manually setting hop-by-hop or invalid headers without understanding HTTP semantics."
+    ],
+    "redFlags": [
+      "Uses req.headers to set response headers.",
+      "Sets headers after res.send() or res.json() has already committed the response.",
+      "Confuses request header reading with response header writing.",
+      "Overwrites Set-Cookie or multi-value headers unintentionally.",
+      "Adds security headers blindly without understanding their effect."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains res.set/header, multiple headers, append versus overwrite, timing before send, and practical header examples."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Can set headers correctly but misses append/overwrite behavior or response lifecycle timing."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows there is a method but confuses direction or sends headers at the wrong time."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would likely produce missing, overwritten, or late headers."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "How would you set Cache-Control and X-Request-Id in the same response?",
+        "purpose": "Check multi-header syntax."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "What happens if you try to set a header after res.json() has already sent the response?",
+        "purpose": "Check response commit timing."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Setting response headers",
+        "displayQuestion": "How do you set response headers in Express?",
+        "displayIntent": "Check response header writing syntax, timing, and overwrite behavior.",
+        "guidance": [
+          "Use res.set() or res.header() for response headers.",
+          "Mention setting multiple headers with an object.",
+          "Explain append versus set when multi-value headers matter.",
+          "State that headers must be set before the response is sent."
+        ],
+        "commonMistakes": [
+          "Using req.headers to set response headers.",
+          "Setting headers after sending the body.",
+          "Overwriting multi-value headers unintentionally.",
+          "Mixing up response headers and request headers."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Set response header",
+        "displayQuestion": "Làm thế nào để set response headers trong Express?",
+        "displayIntent": "Kiểm tra cú pháp ghi response header, thời điểm set và hành vi overwrite.",
+        "guidance": [
+          "Dùng res.set() hoặc res.header() cho response header.",
+          "Nhắc việc set nhiều header bằng một object.",
+          "Giải thích append khác set khi header có nhiều value.",
+          "Nói rõ header phải set trước khi response được gửi."
+        ],
+        "commonMistakes": [
+          "Dùng req.headers để set response header.",
+          "Set header sau khi đã gửi body.",
+          "Vô tình overwrite header có nhiều value.",
+          "Nhầm response header với request header."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "response header を設定する",
+        "displayQuestion": "Express で response headers をどう設定しますか。",
+        "displayIntent": "response header の書き込み syntax、timing、overwrite behavior を確認する。",
+        "guidance": [
+          "response header には res.set() または res.header() を使う。",
+          "object で複数 header を設定できる点に触れる。",
+          "multi-value header では append と set の違いを説明する。",
+          "response 送信前に header を設定する必要があると述べる。"
+        ],
+        "commonMistakes": [
+          "response header 設定に req.headers を使う。",
+          "body 送信後に header を設定する。",
+          "multi-value header を意図せず overwrite する。",
+          "response header と request header を混同する。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Express 5.x API: res.set()",
+        "url": "https://expressjs.com/en/api.html#res.set",
+        "note": "Used for setting one or multiple response headers."
+      },
+      {
+        "label": "Express 5.x API: res.append()",
+        "url": "https://expressjs.com/en/api.html#res.append",
+        "note": "Used for append versus set behavior."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_REQ_RES_MID_TECH_RES_LOCALS_011",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking", "collaboration"],
+    "techTags": ["express", "nodejs"],
+    "difficulty": 3,
+    "conversationDepth": "mid",
+    "intent": "Assess whether the candidate understands per-request response locals, template rendering use cases, and safe middleware-to-view data passing.",
+    "primaryQuestion": "What is res.locals, and what is it used for?",
+    "expectedSignals": [
+      "Defines res.locals as an object for variables scoped to a single request-response cycle.",
+      "Explains that values on res.locals are accessible to templates rendered with res.render().",
+      "Uses it for request-level data such as authenticated user, permissions, flash messages, request id, locale, CSRF token, or feature flags.",
+      "Distinguishes res.locals from app.locals, which is application-wide and shared across requests.",
+      "Mentions that res.locals should not be used as persistent storage or cross-request state.",
+      "Warns against putting unsanitized user-controlled keys or sensitive data into template locals in a way that can cause XSS or data exposure."
+    ],
+    "redFlags": [
+      "Thinks res.locals persists globally across all users.",
+      "Uses res.locals as a database or cache.",
+      "Cannot distinguish res.locals from app.locals.",
+      "Stores large sensitive objects or secrets in locals without considering rendering exposure.",
+      "Does not know its main connection to server-side templates."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains per-request scope, template accessibility, middleware data passing, app.locals distinction, and security boundaries."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands request-scoped locals for templates but misses app.locals or security nuance."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Has seen res.locals but cannot explain lifecycle or practical use cases."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer confuses request-scoped and application-scoped state."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "How would auth middleware expose the current user to later templates without using a global variable?",
+        "purpose": "Check middleware-to-template data flow."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "Why is res.locals safer for request data than app.locals, but still not a place for secrets you render accidentally?",
+        "purpose": "Check scope and exposure reasoning."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "res.locals request-scoped data",
+        "displayQuestion": "What is res.locals, and what is it used for?",
+        "displayIntent": "Check request-scoped locals and server-side rendering data flow.",
+        "guidance": [
+          "Define res.locals as per-request response-local variables.",
+          "Connect it to res.render() and template variables.",
+          "Give examples like user, locale, request id, CSRF token, or flash messages.",
+          "Distinguish it from app.locals and mention exposure risks."
+        ],
+        "commonMistakes": [
+          "Treating res.locals as global state.",
+          "Confusing it with app.locals.",
+          "Using it as persistent storage.",
+          "Rendering sensitive or unsafe data accidentally."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Dữ liệu request-scoped trong res.locals",
+        "displayQuestion": "res.locals là gì và dùng để làm gì?",
+        "displayIntent": "Kiểm tra hiểu biết về request-scoped locals và luồng truyền dữ liệu tới server-side rendering.",
+        "guidance": [
+          "Định nghĩa res.locals là các biến local của response trong phạm vi một request.",
+          "Liên hệ với res.render() và biến trong template.",
+          "Cho ví dụ như user, locale, request id, CSRF token hoặc flash message.",
+          "Phân biệt với app.locals và nhắc rủi ro lộ dữ liệu khi render."
+        ],
+        "commonMistakes": [
+          "Xem res.locals là global state.",
+          "Nhầm với app.locals.",
+          "Dùng nó như persistent storage.",
+          "Vô tình render dữ liệu nhạy cảm hoặc không an toàn."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "res.locals の request-scoped data",
+        "displayQuestion": "res.locals とは何で、何に使いますか。",
+        "displayIntent": "request-scoped locals と server-side rendering への data flow を確認する。",
+        "guidance": [
+          "res.locals は request ごとの response-local variables だと定義する。",
+          "res.render() と template variables に結びつける。",
+          "user、locale、request id、CSRF token、flash message などの例を出す。",
+          "app.locals と区別し、data exposure risk に触れる。"
+        ],
+        "commonMistakes": [
+          "res.locals を global state として扱う。",
+          "app.locals と混同する。",
+          "persistent storage として使う。",
+          "sensitive または unsafe data を誤って render する。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Express 5.x API: res.locals",
+        "url": "https://expressjs.com/en/api.html#res.locals",
+        "note": "Used for per-request local variables and template rendering access."
+      },
+      {
+        "label": "Express 5.x API: app.locals",
+        "url": "https://expressjs.com/en/api.html#app.locals",
+        "note": "Used for contrasting application-wide template locals."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_REQ_RES_MID_TECH_PATH_URL_ORIGINAL_012",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving", "system_thinking"],
+    "techTags": ["express", "nodejs", "rest"],
+    "difficulty": 3,
+    "conversationDepth": "mid",
+    "intent": "Evaluate whether the candidate understands URL-related request properties in Express and how mounted routers/middleware rewrite req.url.",
+    "primaryQuestion": "How are req.path, req.url, and req.originalUrl different in Express?",
+    "expectedSignals": [
+      "Explains that req.path is the path portion of the current request URL without the query string.",
+      "Explains that req.url is inherited from Node.js and represents the current URL used by the active middleware/router, including the query string.",
+      "Explains that Express can rewrite req.url when middleware or routers are mounted, commonly stripping the mount point.",
+      "Explains that req.originalUrl preserves the original requested URL before internal routing rewrites and is available in middleware and routers.",
+      "Mentions req.baseUrl as the mounted path prefix that helps explain originalUrl as baseUrl plus url in router contexts.",
+      "Uses an example such as app.use('/admin', ...) receiving /admin/new?sort=desc where originalUrl is /admin/new?sort=desc, baseUrl is /admin, path is /new, and url is /new?sort=desc."
+    ],
+    "redFlags": [
+      "Says req.path, req.url, and req.originalUrl are always identical.",
+      "Ignores query string differences.",
+      "Cannot explain why mounted routers may see a shortened req.url.",
+      "Uses req.url for audit logging when originalUrl is needed.",
+      "Uses string splitting instead of URL-aware properties when Express already provides them."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Correctly explains path, current url, originalUrl, query string differences, mounted router rewriting, and baseUrl with a concrete example."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands most differences but misses mounted-router behavior or baseUrl."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Only knows that these properties relate to URLs but cannot choose reliably."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would lead to incorrect logging, redirects, or middleware matching."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "Inside middleware mounted at /api, what might req.url and req.originalUrl look like for /api/users?page=1?",
+        "purpose": "Check mounted middleware URL rewriting."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "Which property would you log if you need the exact URL the client requested?",
+        "purpose": "Check practical property selection."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "req.path, req.url, and req.originalUrl",
+        "displayQuestion": "How are req.path, req.url, and req.originalUrl different in Express?",
+        "displayIntent": "Check URL property understanding, especially in mounted routers and middleware.",
+        "guidance": [
+          "Define req.path as the path portion without query string.",
+          "Define req.url as the current internal URL, including query string.",
+          "Define req.originalUrl as the original client URL preserved before routing rewrites.",
+          "Use a mounted-router example and mention req.baseUrl."
+        ],
+        "commonMistakes": [
+          "Saying all three are the same.",
+          "Forgetting query string differences.",
+          "Ignoring mounted router URL rewriting.",
+          "Logging req.url when originalUrl is required."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "req.path, req.url và req.originalUrl",
+        "displayQuestion": "req.path và req.url và req.originalUrl khác nhau như thế nào?",
+        "displayIntent": "Kiểm tra hiểu biết về các URL property, đặc biệt trong router và middleware được mount.",
+        "guidance": [
+          "Định nghĩa req.path là phần path không gồm query string.",
+          "Định nghĩa req.url là URL nội bộ hiện tại, có thể gồm query string.",
+          "Định nghĩa req.originalUrl là URL client gọi ban đầu, được giữ lại trước các rewrite nội bộ.",
+          "Dùng ví dụ mounted router và nhắc tới req.baseUrl."
+        ],
+        "commonMistakes": [
+          "Nói cả ba luôn giống nhau.",
+          "Quên khác biệt về query string.",
+          "Bỏ qua việc mounted router rewrite URL.",
+          "Log req.url khi cần originalUrl."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "req.path、req.url、req.originalUrl",
+        "displayQuestion": "Express の req.path、req.url、req.originalUrl はどう違いますか。",
+        "displayIntent": "特に mounted routers と middleware における URL property の理解を確認する。",
+        "guidance": [
+          "req.path は query string を含まない path portion だと定義する。",
+          "req.url は query string を含み得る current internal URL だと定義する。",
+          "req.originalUrl は routing rewrite 前の original client URL だと定義する。",
+          "mounted-router example を使い、req.baseUrl に触れる。"
+        ],
+        "commonMistakes": [
+          "3 つが同じだと言う。",
+          "query string difference を忘れる。",
+          "mounted router の URL rewriting を無視する。",
+          "originalUrl が必要な場面で req.url を log する。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Express 5.x API: req.path",
+        "url": "https://expressjs.com/en/api.html#req.path",
+        "note": "Used for path portion behavior and mounted middleware note."
+      },
+      {
+        "label": "Express 5.x API: req.originalUrl",
+        "url": "https://expressjs.com/en/api.html#req.originalUrl",
+        "note": "Used for original URL preservation and baseUrl/url example."
+      },
+      {
+        "label": "Node.js HTTP API: message.url",
+        "url": "https://nodejs.org/api/http.html#messageurl",
+        "note": "Used for the underlying req.url inherited from Node.js."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_REQ_RES_MID_TECH_FILE_DOWNLOAD_013",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack", "security"],
+    "levels": ["mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving", "ownership"],
+    "techTags": ["express", "nodejs", "security"],
+    "difficulty": 3,
+    "conversationDepth": "mid",
+    "intent": "Assess whether the candidate can implement file downloads safely using Express helpers while handling paths, authorization, errors, and partially-sent responses.",
+    "primaryQuestion": "How do you download a file in Express?",
+    "expectedSignals": [
+      "Uses res.download(path[, filename][, options][, callback]) when the desired behavior is attachment-style file download.",
+      "Mentions res.sendFile() as an alternative for sending a file inline or with custom headers when download semantics are not required.",
+      "Validates authorization before sending the file and avoids exposing arbitrary filesystem paths from user input.",
+      "Uses safe path construction, allowlists, storage IDs, or root options instead of concatenating untrusted path segments directly.",
+      "Handles callback errors and knows the response may be partially sent, so error handlers should check res.headersSent.",
+      "Sets or understands headers such as Content-Disposition, Content-Type, Cache-Control, and filename where relevant.",
+      "Considers streaming, large files, CDN/object storage signed URLs, and range requests for production-scale downloads."
+    ],
+    "redFlags": [
+      "Passes req.query.path directly to res.download.",
+      "Performs authorization after starting the download.",
+      "Ignores callback errors or tries to send a JSON error after a partial file response.",
+      "Serves private files from a static public directory.",
+      "Loads large files fully into memory before sending without a reason."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains res.download usage, safe path handling, auth, headers, callback/partial response handling, and production alternatives."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Can use res.download safely for basic cases but misses one production concern such as partial errors or storage strategy."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can send a file but does not reason about traversal, authorization, or error handling."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer risks filesystem exposure or broken partial-download behavior."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "red_flag",
+        "question": "Why is res.download(req.query.path) dangerous?",
+        "purpose": "Check path traversal and authorization risk awareness."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "What should your callback do if an error occurs after headers have already been sent?",
+        "purpose": "Check partial response handling."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "File downloads in Express",
+        "displayQuestion": "How do you download a file in Express?",
+        "displayIntent": "Check safe file download implementation with Express response helpers.",
+        "guidance": [
+          "Use res.download() for attachment-style downloads.",
+          "Discuss res.sendFile() when inline file serving is more appropriate.",
+          "Validate authorization and construct paths safely.",
+          "Handle callback errors and partial response cases.",
+          "Mention headers, large file strategy, and object storage/CDN alternatives."
+        ],
+        "commonMistakes": [
+          "Using user input directly as a filesystem path.",
+          "Skipping authorization before download.",
+          "Sending a second response after a partial file send.",
+          "Loading large files into memory unnecessarily."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Download file trong Express",
+        "displayQuestion": "Làm thế nào để download file trong Express?",
+        "displayIntent": "Kiểm tra cách implement download file an toàn bằng response helper của Express.",
+        "guidance": [
+          "Dùng res.download() cho download dạng attachment.",
+          "Nói về res.sendFile() khi cần serve file inline.",
+          "Validate authorization và build path an toàn.",
+          "Xử lý callback error và trường hợp response đã gửi một phần.",
+          "Nhắc tới header, chiến lược file lớn và lựa chọn object storage/CDN."
+        ],
+        "commonMistakes": [
+          "Dùng trực tiếp user input làm filesystem path.",
+          "Bỏ qua authorization trước khi download.",
+          "Gửi response thứ hai sau khi file đã gửi một phần.",
+          "Load file lớn vào memory không cần thiết."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "Express で file download",
+        "displayQuestion": "Express で file を download させるにはどうしますか。",
+        "displayIntent": "Express response helper を使った安全な file download 実装を確認する。",
+        "guidance": [
+          "attachment-style download には res.download() を使う。",
+          "inline file serving では res.sendFile() が適切な場合もあると説明する。",
+          "authorization を検証し、path を安全に組み立てる。",
+          "callback error と partial response case を扱う。",
+          "headers、大きな file の戦略、object storage/CDN alternatives に触れる。"
+        ],
+        "commonMistakes": [
+          "user input をそのまま filesystem path として使う。",
+          "download 前の authorization を省略する。",
+          "file が部分的に送られた後に二つ目の response を送る。",
+          "大きな file を不要に memory へ読み込む。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Express 5.x API: res.download()",
+        "url": "https://expressjs.com/en/api.html#res.download",
+        "note": "Used for file download syntax, callback behavior, and partial response warning."
+      },
+      {
+        "label": "Express 5.x API: res.sendFile()",
+        "url": "https://expressjs.com/en/api.html#res.sendFile",
+        "note": "Used for direct file sending and safe root option context."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_REQ_RES_MID_TECH_STATIC_FILES_014",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack", "devops", "security"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking", "trade_off_analysis"],
+    "techTags": ["express", "nodejs", "rest", "security"],
+    "difficulty": 3,
+    "conversationDepth": "mid",
+    "intent": "Check whether the candidate can serve static assets with express.static while considering mount paths, filesystem roots, caching, fallthrough, and exposure risks.",
+    "primaryQuestion": "How do you serve static files in Express?",
+    "expectedSignals": [
+      "Uses express.static(root, options) as built-in middleware and mounts it with app.use().",
+      "Explains that the root directory is the filesystem directory Express serves from, and that the directory name itself is not part of the URL unless mounted under a virtual prefix.",
+      "Shows a virtual mount path such as app.use('/static', express.static(path.join(__dirname, 'public'))).",
+      "Prefers absolute paths or path.join with a known application directory to avoid surprises from process working directory changes.",
+      "Configures caching carefully, such as long maxAge and immutable only for versioned assets, and shorter/no cache for mutable files.",
+      "Considers dotfiles, directory exposure, fallthrough behavior, SPA fallbacks, and custom 404 handling.",
+      "Mentions that reverse proxy, CDN, or object storage is often better for high-volume static assets in production."
+    ],
+    "redFlags": [
+      "Serves the whole project root or private upload directory without review.",
+      "Assumes express.static performs authorization for private files.",
+      "Caches mutable non-versioned files for a long time.",
+      "Uses relative paths without understanding the process working directory.",
+      "Relies on Express alone for heavy static traffic where a CDN or reverse proxy should be considered."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers express.static syntax, mount paths, absolute roots, cache strategy, dotfiles/fallthrough, SPA fallback, and production offload."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Can serve a public directory but misses one safety or production concern."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows app.use(express.static(...)) but cannot reason about URL mapping, cache, or exposure risk."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer may expose private files or create stale asset behavior."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_tradeoff",
+        "question": "Which assets would you serve with immutable long-term cache headers, and which would you avoid caching that way?",
+        "purpose": "Check cache invalidation reasoning."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "What can go wrong if you serve your repository root as static content?",
+        "purpose": "Check exposure risk awareness."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Serving static files",
+        "displayQuestion": "How do you serve static files in Express?",
+        "displayIntent": "Check express.static usage with safe paths, caching, and production considerations.",
+        "guidance": [
+          "Use express.static(root, options) mounted with app.use().",
+          "Explain filesystem root versus URL mount path.",
+          "Prefer known absolute paths over fragile relative paths.",
+          "Discuss cache headers, dotfiles, fallthrough, SPA fallback, and CDN/reverse proxy offload."
+        ],
+        "commonMistakes": [
+          "Serving too broad a filesystem directory.",
+          "Treating static middleware as authorization.",
+          "Using long cache headers for mutable files.",
+          "Ignoring production offload for heavy static traffic."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/DevOps/Security",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Serve static file",
+        "displayQuestion": "Làm thế nào để serve static files trong Express?",
+        "displayIntent": "Kiểm tra cách dùng express.static với path an toàn, caching và cân nhắc production.",
+        "guidance": [
+          "Dùng express.static(root, options) và mount bằng app.use().",
+          "Giải thích filesystem root khác URL mount path.",
+          "Ưu tiên absolute path đã biết thay vì relative path dễ phụ thuộc working directory.",
+          "Nói về cache header, dotfile, fallthrough, SPA fallback và offload sang CDN/reverse proxy."
+        ],
+        "commonMistakes": [
+          "Serve một thư mục filesystem quá rộng.",
+          "Xem static middleware như authorization.",
+          "Dùng cache header dài cho file có thể thay đổi.",
+          "Bỏ qua offload production khi static traffic lớn."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/DevOps/Security",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "static files を配信する",
+        "displayQuestion": "Express で static files をどう serve しますか。",
+        "displayIntent": "安全な path、caching、production consideration を含めて express.static usage を確認する。",
+        "guidance": [
+          "app.use() で mount した express.static(root, options) を使う。",
+          "filesystem root と URL mount path の違いを説明する。",
+          "fragile な relative path より既知の absolute path を優先する。",
+          "cache headers、dotfiles、fallthrough、SPA fallback、CDN/reverse proxy offload に触れる。"
+        ],
+        "commonMistakes": [
+          "広すぎる filesystem directory を配信する。",
+          "static middleware を authorization として扱う。",
+          "mutable files に長い cache headers を使う。",
+          "static traffic が多い production で offload を無視する。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/DevOps/Security",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Express docs: Serving static files",
+        "url": "https://expressjs.com/en/starter/static-files.html",
+        "note": "Used for express.static usage, mount paths, and absolute path guidance."
+      },
+      {
+        "label": "Express 5.x API: express.static()",
+        "url": "https://expressjs.com/en/api.html#express.static",
+        "note": "Used for static middleware options such as cache, dotfiles, and fallthrough."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_REQ_RES_MID_TECH_RENDER_015",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking", "communication"],
+    "techTags": ["express", "nodejs"],
+    "difficulty": 3,
+    "conversationDepth": "mid",
+    "intent": "Verify whether the candidate understands server-side template rendering in Express, required configuration, and when rendering HTML differs from returning API JSON.",
+    "primaryQuestion": "What is res.render() used for? What Express configuration is needed to use it?",
+    "expectedSignals": [
+      "Explains that res.render(view, locals[, callback]) renders a server-side template and sends the resulting HTML response unless a callback is used.",
+      "Mentions configuring a view engine with app.set('view engine', 'pug' or 'ejs' or another engine).",
+      "Mentions configuring the views directory with app.set('views', pathToViews) when the default views directory is not sufficient.",
+      "Mentions installing the corresponding template engine package, such as pug, ejs, handlebars, or another Express-compatible engine.",
+      "Explains passing locals to the template through the second argument and/or res.locals for request-scoped values.",
+      "Distinguishes res.render() for HTML pages from res.json() for API responses.",
+      "Mentions callback behavior: with a callback, Express provides the rendered HTML and the handler must send it explicitly."
+    ],
+    "redFlags": [
+      "Uses res.render() expecting JSON output for an API endpoint.",
+      "Forgets to configure view engine or install the template engine package.",
+      "Cannot explain where Express looks for templates.",
+      "Puts unsanitized user input into templates without considering escaping and XSS.",
+      "Provides a callback to res.render() but forgets to send the rendered HTML."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains rendering behavior, view engine setup, views path, package installation, locals/res.locals, callback behavior, and HTML versus JSON distinction."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands res.render and view engine setup but misses callback, locals, or security nuance."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Has used templates but cannot describe the required Express configuration."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer confuses server-side rendering with API serialization or static file serving."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "What happens if you call res.render('index') without setting a view engine or using a filename extension?",
+        "purpose": "Check configuration awareness."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "How would you pass the current user and page title into a rendered template?",
+        "purpose": "Check locals and res.locals usage."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Server-side rendering with res.render",
+        "displayQuestion": "What is res.render() used for? What Express configuration is needed to use it?",
+        "displayIntent": "Check server-side template rendering setup and behavior in Express.",
+        "guidance": [
+          "Define res.render() as rendering a template into HTML.",
+          "Mention app.set('view engine', ...) and app.set('views', ...).",
+          "Mention installing the matching template engine package.",
+          "Explain locals, res.locals, callback behavior, and the difference from JSON API responses."
+        ],
+        "commonMistakes": [
+          "Using res.render for JSON APIs.",
+          "Forgetting view engine setup or package installation.",
+          "Not knowing where templates are loaded from.",
+          "Forgetting to send HTML when using a render callback."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Server-side rendering với res.render",
+        "displayQuestion": "res.render() dùng để làm gì? Express cần cấu hình gì để dùng được nó?",
+        "displayIntent": "Kiểm tra cách cấu hình và hành vi server-side template rendering trong Express.",
+        "guidance": [
+          "Định nghĩa res.render() là render template thành HTML.",
+          "Nhắc app.set('view engine', ...) và app.set('views', ...).",
+          "Nhắc cài package template engine tương ứng.",
+          "Giải thích locals, res.locals, callback behavior và khác biệt với JSON API response."
+        ],
+        "commonMistakes": [
+          "Dùng res.render cho JSON API.",
+          "Quên cấu hình view engine hoặc cài package.",
+          "Không biết template được load từ đâu.",
+          "Quên gửi HTML khi dùng callback của render."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "res.render による server-side rendering",
+        "displayQuestion": "res.render() は何に使い、使うために Express で何を設定する必要がありますか。",
+        "displayIntent": "Express における server-side template rendering の設定と behavior を確認する。",
+        "guidance": [
+          "res.render() は template を HTML に render すると定義する。",
+          "app.set('view engine', ...) と app.set('views', ...) に触れる。",
+          "対応する template engine package の install に触れる。",
+          "locals、res.locals、callback behavior、JSON API response との違いを説明する。"
+        ],
+        "commonMistakes": [
+          "JSON API に res.render を使う。",
+          "view engine setup や package installation を忘れる。",
+          "template がどこから load されるか分からない。",
+          "render callback 使用時に HTML を送信し忘れる。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Express 5.x API: res.render()",
+        "url": "https://expressjs.com/en/api.html#res.render",
+        "note": "Used for render syntax, locals, callback behavior, and automatic response behavior."
+      },
+      {
+        "label": "Express docs: Using template engines",
+        "url": "https://expressjs.com/en/guide/using-template-engines.html",
+        "note": "Used for view engine, views directory, template package, and rendering setup."
+      }
+    ],
+    "status": "active"
+  }
+]

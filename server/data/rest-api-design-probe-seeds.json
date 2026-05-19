@@ -1,0 +1,2085 @@
+[
+  {
+    "code": "REST_API_DESIGN_JR_TECH_DEFINITION_CONSTRAINTS_001",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "communication", "system_thinking"],
+    "techTags": ["rest", "http", "api_design"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate can define REST as an architectural style and explain the major constraints beyond simply saying HTTP JSON API.",
+    "primaryQuestion": "What is REST, and what are the constraints of REST?",
+    "expectedSignals": [
+      "Defines REST as an architectural style for networked systems built around resources, representations, uniform interfaces, and standard protocol semantics.",
+      "Distinguishes REST from a concrete protocol or library; HTTP is the most common implementation context, but REST itself is a style.",
+      "Names the core REST constraints: client-server separation, statelessness, cacheability, uniform interface, layered system, and optional code-on-demand.",
+      "Explains uniform interface through resource identifiers, representations, self-descriptive messages, and hypermedia as the engine of application state at a conceptual level.",
+      "Connects the constraints to practical API properties such as scalability, evolvability, independent client/server development, and intermediary support."
+    ],
+    "redFlags": [
+      "Says REST simply means using GET, POST, PUT, and DELETE with JSON.",
+      "Cannot name or explain statelessness, cacheability, or uniform interface.",
+      "Treats REST as a strict URL naming convention only.",
+      "Claims every HTTP API is automatically RESTful regardless of resource modeling and method semantics."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Defines REST accurately, names the constraints, explains why they exist, and connects them to practical API design."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows REST is resource-oriented over HTTP and can explain several constraints, but misses HATEOAS or layered/cache details."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Describes common HTTP endpoint patterns but does not separate REST principles from implementation habits."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or incorrect to show REST fundamentals."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Can you explain one REST constraint and show how it changes the way an API endpoint is designed?",
+        "purpose": "Move the answer from memorized keywords to applied understanding."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Why does cacheability matter for a public API, and which HTTP features help with it?",
+        "purpose": "Check whether the candidate connects REST constraints to HTTP behavior."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "REST definition and constraints",
+        "displayQuestion": "What is REST, and what are the constraints of REST?",
+        "displayIntent": "Check whether the candidate understands REST as an architectural style, not just HTTP endpoints.",
+        "guidance": [
+          "Start with resources, representations, and uniform interface.",
+          "Name client-server, stateless, cacheable, uniform interface, layered system, and optional code-on-demand.",
+          "Explain why these constraints improve scalability, evolvability, and intermediary support.",
+          "Avoid reducing REST to JSON or CRUD naming only."
+        ],
+        "commonMistakes": [
+          "Calling every HTTP JSON API RESTful.",
+          "Forgetting statelessness or cacheability.",
+          "Explaining only route naming without architectural constraints.",
+          "Ignoring uniform interface semantics."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Định nghĩa REST và các ràng buộc",
+        "displayQuestion": "REST là gì? Các ràng buộc của REST là gì?",
+        "displayIntent": "Kiểm tra ứng viên có hiểu REST là một architectural style, không chỉ là các endpoint HTTP.",
+        "guidance": [
+          "Bắt đầu từ resource, representation và uniform interface.",
+          "Nêu client-server, stateless, cacheable, uniform interface, layered system và code-on-demand tùy chọn.",
+          "Giải thích vì sao các ràng buộc này giúp hệ thống dễ scale, dễ tiến hóa và tận dụng intermediary như cache/proxy.",
+          "Không thu hẹp REST thành JSON hoặc cách đặt tên CRUD."
+        ],
+        "commonMistakes": [
+          "Gọi mọi HTTP JSON API là RESTful.",
+          "Quên statelessness hoặc cacheability.",
+          "Chỉ nói về cách đặt route mà bỏ qua constraint kiến trúc.",
+          "Bỏ qua ý nghĩa của uniform interface."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "REST の定義と制約",
+        "displayQuestion": "REST とは何ですか。REST の constraints には何がありますか。",
+        "displayIntent": "REST を単なる HTTP endpoint ではなく architectural style として理解しているか確認する。",
+        "guidance": [
+          "resource、representation、uniform interface から説明する。",
+          "client-server、stateless、cacheable、uniform interface、layered system、任意の code-on-demand を挙げる。",
+          "これらの制約が scalability、evolvability、intermediary support にどう効くか説明する。",
+          "REST を JSON や CRUD の命名規則だけに縮小しない。"
+        ],
+        "commonMistakes": [
+          "すべての HTTP JSON API を RESTful と呼ぶ。",
+          "statelessness や cacheability を忘れる。",
+          "route naming だけを説明し、architecture constraints を無視する。",
+          "uniform interface の意味を説明しない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Roy Fielding dissertation: REST architectural style",
+        "url": "https://ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm",
+        "note": "Used for the original REST constraints and architectural framing."
+      },
+      {
+        "label": "MDN: HTTP overview",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview",
+        "note": "Used for HTTP resource, message, and intermediary context."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REST_API_DESIGN_JR_TECH_STATELESS_002",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking", "problem_solving"],
+    "techTags": ["rest", "http", "authentication", "session"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Verify whether the candidate understands stateless REST requests, including the difference between application state on the client and resource state on the server.",
+    "primaryQuestion": "What does stateless mean in REST?",
+    "expectedSignals": [
+      "Explains that each request must contain enough information for the server to understand and process it without relying on server-side conversational session state from previous requests.",
+      "Clarifies that the server can still store resource state such as users, orders, and tokens; statelessness is about request context, not having no database.",
+      "Mentions that authentication context is sent with each request, for example through a bearer token, cookie, or signed credential, and then verified server-side.",
+      "Connects statelessness to horizontal scaling, load balancing, retry behavior, and simpler failure recovery.",
+      "Acknowledges trade-offs such as larger requests, repeated authentication checks, and careful token/session invalidation design."
+    ],
+    "redFlags": [
+      "Says stateless means the API cannot use a database.",
+      "Thinks the server must never remember anything about users or resources.",
+      "Relies on hidden in-memory session variables for request correctness without explaining sticky sessions or trade-offs.",
+      "Cannot explain how authentication works if every request is independent."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Separates resource state from session context, explains per-request credentials, and connects statelessness to scaling and reliability."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands independent requests but misses one nuance such as server resource state or authentication trade-offs."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Repeats that REST is stateless without being able to explain what the server may still store."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer confuses statelessness with no persistence or no authentication."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "red_flag",
+        "question": "If REST is stateless, can the server still store a user record in a database? Why?",
+        "purpose": "Correct confusion between resource state and session state."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "What changes operationally when a stateless API is deployed behind multiple load-balanced instances?",
+        "purpose": "Check scaling and deployment implications."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Stateless REST requests",
+        "displayQuestion": "What does stateless mean in REST?",
+        "displayIntent": "Check whether the candidate understands independent requests and does not confuse statelessness with no persistence.",
+        "guidance": [
+          "Explain that each request carries the context needed to process it.",
+          "Separate server-side resource state from conversational session state.",
+          "Mention authentication credentials being sent and validated per request.",
+          "Discuss scaling and load-balancing benefits."
+        ],
+        "commonMistakes": [
+          "Thinking stateless means no database.",
+          "Depending on in-memory server session state without naming the trade-off.",
+          "Forgetting per-request authentication context.",
+          "Ignoring retries and load balancing."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Request stateless trong REST",
+        "displayQuestion": "Stateless trong REST nghĩa là gì?",
+        "displayIntent": "Kiểm tra ứng viên hiểu request độc lập và không nhầm stateless với việc không có persistence.",
+        "guidance": [
+          "Giải thích mỗi request phải mang đủ context để server xử lý.",
+          "Tách resource state trên server khỏi conversational session state.",
+          "Nhắc việc credential xác thực được gửi và verify theo từng request.",
+          "Nói về lợi ích khi scale ngang và load balancing."
+        ],
+        "commonMistakes": [
+          "Nghĩ stateless nghĩa là không được dùng database.",
+          "Phụ thuộc vào in-memory session state mà không nêu trade-off.",
+          "Quên authentication context theo từng request.",
+          "Bỏ qua retry và load balancing."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "REST の stateless request",
+        "displayQuestion": "REST における stateless とは何ですか。",
+        "displayIntent": "独立した request を理解し、stateless を persistence 不可と混同していないか確認する。",
+        "guidance": [
+          "各 request が処理に必要な context を持つことを説明する。",
+          "server-side resource state と conversational session state を分ける。",
+          "authentication credentials を request ごとに送り検証することに触れる。",
+          "horizontal scaling と load balancing の利点を説明する。"
+        ],
+        "commonMistakes": [
+          "stateless は database を使えないという意味だと考える。",
+          "trade-off を説明せず in-memory session state に依存する。",
+          "request ごとの authentication context を忘れる。",
+          "retry や load balancing への影響を無視する。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Roy Fielding dissertation: Stateless constraint",
+        "url": "https://ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm#sec_5_1_3",
+        "note": "Used for stateless request semantics."
+      },
+      {
+        "label": "MDN: HTTP authentication",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication",
+        "note": "Used for per-request authentication context."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REST_API_DESIGN_JR_TECH_USERS_CRUD_URLS_003",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "communication", "problem_solving"],
+    "techTags": ["rest", "http", "api_design", "crud"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Assess whether the candidate can design a resource-oriented CRUD URL set for users and map HTTP methods to resource operations correctly.",
+    "primaryQuestion": "How would you design URLs for a users resource with full CRUD support?",
+    "expectedSignals": [
+      "Uses a collection resource such as GET /users for listing and POST /users for creation.",
+      "Uses an item resource such as GET /users/:id for retrieval, PUT or PATCH /users/:id for update, and DELETE /users/:id for deletion.",
+      "Keeps actions out of URLs for normal CRUD and lets HTTP methods express the operation.",
+      "Uses query parameters for filtering, searching, sorting, field selection, and pagination rather than inventing action paths.",
+      "Handles nested resources carefully, for example GET /users/:id/orders when orders are scoped to a user, while avoiding overly deep URL hierarchies.",
+      "Mentions appropriate status codes such as 201 for creation, 200 for read/update with body, 204 for successful delete with no body, 400 for invalid input, and 404 for missing resources."
+    ],
+    "redFlags": [
+      "Designs CRUD as /getUsers, /createUser, /updateUser, and /deleteUser.",
+      "Uses POST for every operation without explaining why.",
+      "Puts filters and pagination into path segments instead of query parameters.",
+      "Creates deeply nested routes that expose database structure rather than resource relationships."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Maps collection and item URLs to methods, uses query parameters well, handles nested resources carefully, and mentions response status behavior."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Gets the core CRUD routes right but misses pagination/filtering or nested-resource nuance."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows common routes but mixes verbs into paths or cannot explain method responsibilities."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Route design does not show REST resource modeling."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "Where would you put search, sort, page, and limit for the users list endpoint?",
+        "purpose": "Check query parameter design."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "When would /users/:id/orders be better than /orders?userId=:id?",
+        "purpose": "Probe nested resource judgment."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Users CRUD resource URLs",
+        "displayQuestion": "How would you design URLs for a users resource with full CRUD support?",
+        "displayIntent": "Check practical REST URL modeling for collection and item resources.",
+        "guidance": [
+          "Use /users for the collection and /users/:id for one user.",
+          "Map GET, POST, PUT/PATCH, and DELETE to the right resource operations.",
+          "Use query parameters for list options such as search, filters, sorting, and pagination.",
+          "Mention expected status codes and response shapes."
+        ],
+        "commonMistakes": [
+          "Putting verbs into paths like /createUser.",
+          "Using POST for everything.",
+          "Encoding filters as path segments.",
+          "Over-nesting resources."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "URL CRUD cho resource users",
+        "displayQuestion": "Làm thế nào để thiết kế URL cho resource users với CRUD đầy đủ?",
+        "displayIntent": "Kiểm tra khả năng model URL REST thực tế cho collection và item resource.",
+        "guidance": [
+          "Dùng /users cho collection và /users/:id cho một user.",
+          "Map GET, POST, PUT/PATCH và DELETE vào đúng operation trên resource.",
+          "Dùng query parameter cho search, filter, sort và pagination của danh sách.",
+          "Nhắc status code và response shape mong đợi."
+        ],
+        "commonMistakes": [
+          "Đưa động từ vào path như /createUser.",
+          "Dùng POST cho mọi thao tác.",
+          "Đưa filter vào path segment.",
+          "Nested resource quá sâu."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "users resource の CRUD URL",
+        "displayQuestion": "users resource に対して full CRUD を提供する URL をどう設計しますか。",
+        "displayIntent": "collection と item resource の実践的な REST URL modeling を確認する。",
+        "guidance": [
+          "collection には /users、単一 user には /users/:id を使う。",
+          "GET、POST、PUT/PATCH、DELETE を適切な resource operation に対応させる。",
+          "search、filter、sort、pagination などの list option は query parameter に置く。",
+          "期待する status code と response shape に触れる。"
+        ],
+        "commonMistakes": [
+          "/createUser のように path に動詞を入れる。",
+          "すべての操作に POST を使う。",
+          "filter を path segment に入れる。",
+          "resource を深く nested しすぎる。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "MDN: HTTP request methods",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods",
+        "note": "Used for method semantics."
+      },
+      {
+        "label": "Microsoft REST API Guidelines",
+        "url": "https://github.com/microsoft/api-guidelines/blob/vNext/azure/Guidelines.md",
+        "note": "Used for resource URL and collection conventions."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REST_API_DESIGN_JR_TECH_ROUTE_NAMING_004",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "communication", "collaboration"],
+    "techTags": ["rest", "http", "api_design"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Evaluate whether the candidate knows common REST route naming conventions and can explain the reason behind consistency rules.",
+    "primaryQuestion": "What are common REST API route naming rules such as plural nouns, lowercase paths, and avoiding verbs?",
+    "expectedSignals": [
+      "Uses nouns for resources rather than action verbs, for example /users rather than /getUsers.",
+      "Uses plural names for collections and stable item identifiers for single resources, for example /users/:id.",
+      "Keeps paths lowercase, readable, predictable, and consistent, commonly using hyphens when a separator is needed.",
+      "Uses query parameters for optional modifiers such as filters, search, sort, pagination, expansion, and field selection.",
+      "Avoids exposing internal implementation details such as table names, service names, or storage layout.",
+      "Recognizes exceptions for domain actions that are not simple CRUD, and models them deliberately as subresources or command endpoints when needed."
+    ],
+    "redFlags": [
+      "Uses inconsistent singular and plural forms without a rule.",
+      "Uses verbs in every path even for basic resource operations.",
+      "Mixes uppercase, snake_case, camelCase, and hyphenated paths arbitrarily.",
+      "Treats naming conventions as more important than correct method semantics and backward compatibility."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains naming conventions, query usage, implementation hiding, and how to handle non-CRUD actions pragmatically."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows the main conventions but misses exceptions or query-parameter reasoning."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can repeat plural nouns and lowercase but cannot apply the rules to realistic API design."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer produces inconsistent or action-oriented routes without rationale."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_tradeoff",
+        "question": "How would you model an action such as suspending a user without turning the whole API into RPC-style routes?",
+        "purpose": "Check pragmatic handling of non-CRUD operations."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "Give three examples of bad route names and rewrite them in a more RESTful style.",
+        "purpose": "Force applied naming judgment."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "REST route naming rules",
+        "displayQuestion": "What are common REST API route naming rules such as plural nouns, lowercase paths, and avoiding verbs?",
+        "displayIntent": "Check route naming consistency and the reasoning behind resource-oriented URLs.",
+        "guidance": [
+          "Use nouns and plural collection names.",
+          "Keep paths lowercase and consistent.",
+          "Use query parameters for optional list modifiers.",
+          "Explain how to handle non-CRUD domain actions deliberately."
+        ],
+        "commonMistakes": [
+          "Using /getUsers or /deleteUser for CRUD.",
+          "Mixing singular and plural randomly.",
+          "Leaking database or service names into URLs.",
+          "Ignoring backward compatibility when renaming routes."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Quy tắc đặt tên route REST",
+        "displayQuestion": "Quy tắc đặt tên route trong REST API là gì, ví dụ số nhiều, danh từ, lowercase?",
+        "displayIntent": "Kiểm tra tính nhất quán khi đặt route và reasoning phía sau URL hướng resource.",
+        "guidance": [
+          "Dùng danh từ và tên collection dạng số nhiều.",
+          "Giữ path lowercase và nhất quán.",
+          "Dùng query parameter cho modifier tùy chọn của danh sách.",
+          "Giải thích cách xử lý domain action không phải CRUD một cách có chủ đích."
+        ],
+        "commonMistakes": [
+          "Dùng /getUsers hoặc /deleteUser cho CRUD.",
+          "Trộn singular và plural tùy tiện.",
+          "Lộ tên database hoặc service trong URL.",
+          "Đổi route mà không nghĩ tới backward compatibility."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "REST route naming rules",
+        "displayQuestion": "plural nouns、lowercase、verbs を避けるなど、REST API route naming の一般的なルールは何ですか。",
+        "displayIntent": "resource-oriented URL の一貫性とその理由を確認する。",
+        "guidance": [
+          "名詞と plural collection names を使う。",
+          "path は lowercase で一貫させる。",
+          "list の optional modifier には query parameter を使う。",
+          "CRUD ではない domain action の扱いを意図的に説明する。"
+        ],
+        "commonMistakes": [
+          "CRUD に /getUsers や /deleteUser を使う。",
+          "singular と plural をランダムに混ぜる。",
+          "database や service の名前を URL に漏らす。",
+          "route rename 時に backward compatibility を無視する。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Microsoft REST API Guidelines",
+        "url": "https://github.com/microsoft/api-guidelines/blob/vNext/azure/Guidelines.md",
+        "note": "Used for resource naming, URL, and versioning conventions."
+      },
+      {
+        "label": "Google Cloud API Design Guide: Resource names",
+        "url": "https://cloud.google.com/apis/design/resource_names",
+        "note": "Used for resource-oriented naming concepts."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REST_API_DESIGN_JR_TECH_STATUS_CODES_005",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving", "communication"],
+    "techTags": ["rest", "http", "status_codes", "errors"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate can choose appropriate HTTP status codes for common success, client error, auth, and server error scenarios.",
+    "primaryQuestion": "Which HTTP status codes should be used for created successfully, not found, server error, and unauthorized situations?",
+    "expectedSignals": [
+      "Uses 201 Created when a resource is successfully created, ideally with Location header or the created representation when appropriate.",
+      "Uses 404 Not Found when the target resource does not exist or should not be revealed.",
+      "Uses 500 Internal Server Error for unexpected server failures, while recognizing more specific 5xx codes may be appropriate for gateway or dependency failures.",
+      "Distinguishes 401 Unauthorized as unauthenticated or invalid credentials from 403 Forbidden as authenticated but not allowed.",
+      "Mentions common adjacent codes: 200 OK, 204 No Content, 400 Bad Request, 409 Conflict, 422 Unprocessable Content, 429 Too Many Requests.",
+      "Explains that response body should provide a stable error code/message for clients without leaking internals."
+    ],
+    "redFlags": [
+      "Returns 200 for errors and puts success false in the body.",
+      "Confuses 401 and 403.",
+      "Uses 500 for validation failures or user mistakes.",
+      "Leaks stack traces or database errors in client-facing responses."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Chooses correct core status codes, distinguishes adjacent cases, and explains client-facing error contract."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Gets the four requested codes right but misses 401 versus 403 nuance or adjacent codes."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows a few status codes but applies them inconsistently across error types."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Status-code choices would produce misleading API behavior."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "red_flag",
+        "question": "What is the difference between 401 and 403 in an authenticated API?",
+        "purpose": "Check auth status code precision."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "What would you return when a user tries to create an account with an email that already exists?",
+        "purpose": "Probe conflict and validation status-code reasoning."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "HTTP status code choices",
+        "displayQuestion": "Which HTTP status codes should be used for created successfully, not found, server error, and unauthorized situations?",
+        "displayIntent": "Check practical status-code selection for common REST API outcomes.",
+        "guidance": [
+          "Use 201 for successful creation and 404 for missing resources.",
+          "Use 500 for unexpected server failures.",
+          "Separate 401 unauthenticated from 403 forbidden.",
+          "Mention adjacent codes such as 400, 409, 422, 429, and 204."
+        ],
+        "commonMistakes": [
+          "Returning 200 with an error body.",
+          "Using 500 for validation errors.",
+          "Confusing 401 and 403.",
+          "Returning internal exception details to clients."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Lựa chọn HTTP status code",
+        "displayQuestion": "HTTP status code nào dùng cho từng tình huống: tạo thành công, không tìm thấy, lỗi server, unauthorized?",
+        "displayIntent": "Kiểm tra khả năng chọn status code thực tế cho các outcome phổ biến của REST API.",
+        "guidance": [
+          "Dùng 201 cho tạo thành công và 404 cho resource không tồn tại.",
+          "Dùng 500 cho lỗi server không mong đợi.",
+          "Tách 401 chưa xác thực khỏi 403 đã xác thực nhưng không có quyền.",
+          "Nhắc các code gần kề như 400, 409, 422, 429 và 204."
+        ],
+        "commonMistakes": [
+          "Trả 200 kèm error body.",
+          "Dùng 500 cho validation error.",
+          "Nhầm 401 và 403.",
+          "Trả chi tiết exception nội bộ cho client."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "HTTP status code の選択",
+        "displayQuestion": "作成成功、not found、server error、unauthorized ではどの HTTP status code を使いますか。",
+        "displayIntent": "REST API の一般的な outcome に対する status-code selection を確認する。",
+        "guidance": [
+          "作成成功には 201、存在しない resource には 404 を使う。",
+          "予期しない server failure には 500 を使う。",
+          "401 unauthenticated と 403 forbidden を分ける。",
+          "400、409、422、429、204 など関連する code に触れる。"
+        ],
+        "commonMistakes": [
+          "error body 付きで 200 を返す。",
+          "validation error に 500 を使う。",
+          "401 と 403 を混同する。",
+          "internal exception details を client に返す。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "MDN: HTTP response status codes",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status",
+        "note": "Used for status code semantics."
+      },
+      {
+        "label": "RFC 9110: HTTP Semantics",
+        "url": "https://www.rfc-editor.org/rfc/rfc9110.html",
+        "note": "Used for authoritative HTTP status and method semantics."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REST_API_DESIGN_MID_TRADE_POST_PUT_PATCH_006",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid", "senior"],
+    "type": "trade_off",
+    "competencies": ["technical_fundamentals", "trade_off_analysis", "problem_solving"],
+    "techTags": ["rest", "http", "put", "patch", "post"],
+    "difficulty": 3,
+    "conversationDepth": "mid",
+    "intent": "Evaluate whether the candidate can distinguish POST, PUT, and PATCH by semantics, idempotency, resource target, and update behavior.",
+    "primaryQuestion": "What is the difference between POST, PUT, and PATCH, and when would you use each?",
+    "expectedSignals": [
+      "Explains POST as submitting data to a collection or processing endpoint where the server decides the result, commonly used for create when the server assigns the id.",
+      "Explains PUT as replacing or creating the full representation at a known resource URI and being idempotent when used correctly.",
+      "Explains PATCH as applying a partial modification to an existing resource and notes that idempotency depends on the patch document and server semantics.",
+      "Mentions that PUT usually requires the full resource representation or a clearly documented replacement contract.",
+      "Mentions partial update formats such as JSON Merge Patch or JSON Patch when precision matters.",
+      "Gives examples such as POST /users, PUT /users/:id, and PATCH /users/:id."
+    ],
+    "redFlags": [
+      "Says POST, PUT, and PATCH are interchangeable.",
+      "Uses PATCH for full replacement without documenting behavior.",
+      "Says PATCH is always idempotent or never idempotent without nuance.",
+      "Uses PUT for non-idempotent commands such as incrementing a counter without a stable replacement semantics."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains method semantics, idempotency, create/update examples, full versus partial representation, and patch-format trade-offs."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Correctly distinguishes full and partial update but misses POST creation nuance or PATCH idempotency nuance."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows the rough mapping but cannot reason about retries, replacement, or partial modification contracts."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would lead to ambiguous update semantics."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_tradeoff",
+        "question": "If a mobile client sends only displayName to update a user, why might PATCH be safer than PUT?",
+        "purpose": "Check replacement versus partial-update implications."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "What happens if the same PUT request is retried after a network timeout?",
+        "purpose": "Probe idempotency and retry safety."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "POST versus PUT versus PATCH",
+        "displayQuestion": "What is the difference between POST, PUT, and PATCH, and when would you use each?",
+        "displayIntent": "Check update and creation method semantics, including idempotency.",
+        "guidance": [
+          "Explain POST as server-directed processing or creation under a collection.",
+          "Explain PUT as full replacement at a known URI.",
+          "Explain PATCH as partial modification.",
+          "Discuss idempotency and retry behavior."
+        ],
+        "commonMistakes": [
+          "Treating the methods as style preferences.",
+          "Using PUT for partial updates without a clear contract.",
+          "Claiming PATCH is always idempotent.",
+          "Ignoring retry behavior."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level/Senior",
+          "type": "trade_off"
+        }
+      },
+      "vi": {
+        "title": "POST, PUT và PATCH",
+        "displayQuestion": "POST vs PUT vs PATCH khác nhau thế nào và khi nào dùng cái nào?",
+        "displayIntent": "Kiểm tra semantics của method khi tạo/cập nhật resource, bao gồm idempotency.",
+        "guidance": [
+          "Giải thích POST là xử lý do server quyết định hoặc tạo resource trong collection.",
+          "Giải thích PUT là thay thế toàn bộ resource tại URI đã biết.",
+          "Giải thích PATCH là sửa một phần resource.",
+          "Nói về idempotency và retry behavior."
+        ],
+        "commonMistakes": [
+          "Xem các method chỉ là sở thích đặt style.",
+          "Dùng PUT cho partial update mà không có contract rõ.",
+          "Nói PATCH luôn idempotent.",
+          "Bỏ qua hành vi khi retry."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level/Senior",
+          "type": "trade_off"
+        }
+      },
+      "ja": {
+        "title": "POST、PUT、PATCH",
+        "displayQuestion": "POST、PUT、PATCH の違いは何で、どの場合に使いますか。",
+        "displayIntent": "resource creation/update の method semantics と idempotency を確認する。",
+        "guidance": [
+          "POST は collection 配下で server が結果を決める processing または creation として説明する。",
+          "PUT は既知 URI の resource 全体置換として説明する。",
+          "PATCH は resource の部分変更として説明する。",
+          "idempotency と retry behavior を扱う。"
+        ],
+        "commonMistakes": [
+          "method を好みの違いとして扱う。",
+          "明確な contract なしに PUT を partial update に使う。",
+          "PATCH は常に idempotent と言い切る。",
+          "retry behavior を無視する。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level/Senior",
+          "type": "trade_off"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "MDN: HTTP request methods",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods",
+        "note": "Used for POST, PUT, PATCH, safety, and idempotency semantics."
+      },
+      {
+        "label": "RFC 5789: PATCH Method for HTTP",
+        "url": "https://www.rfc-editor.org/rfc/rfc5789.html",
+        "note": "Used for PATCH semantics."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REST_API_DESIGN_MID_TRADE_VERSIONING_007",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["mid", "senior"],
+    "type": "trade_off",
+    "competencies": ["trade_off_analysis", "system_thinking", "communication", "ownership"],
+    "techTags": ["rest", "api_design", "versioning", "compatibility"],
+    "difficulty": 3,
+    "conversationDepth": "mid",
+    "intent": "Assess whether the candidate understands API versioning as a compatibility strategy and can compare versioning approaches with operational trade-offs.",
+    "primaryQuestion": "What is API versioning, and what are common ways to version a REST API?",
+    "expectedSignals": [
+      "Defines API versioning as a strategy for evolving contracts while protecting existing clients from breaking changes.",
+      "Distinguishes breaking changes from non-breaking additive changes and mentions deprecation policy.",
+      "Describes URI path versioning such as /v1/users, header versioning, media type versioning, query parameter versioning, and hostname/subdomain versioning.",
+      "Compares trade-offs: path versions are visible and easy to route, headers/media types are cleaner but less discoverable, query parameters are simple but often less preferred for major versions.",
+      "Mentions contract documentation, changelogs, sunset dates, monitoring client adoption, and compatibility tests.",
+      "Avoids versioning every small change and recommends stable contracts plus additive evolution when possible."
+    ],
+    "redFlags": [
+      "Versions only because the code changed internally.",
+      "Breaks existing clients without deprecation or migration path.",
+      "Cannot distinguish additive fields from breaking response changes.",
+      "Mixes multiple versioning strategies inconsistently across endpoints."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Frames versioning around client contracts, compares strategies, and includes deprecation, observability, documentation, and testing."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows common versioning methods and basic trade-offs but misses lifecycle management or client adoption tracking."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Thinks versioning is only adding /v2 to URLs and cannot explain when it is needed."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would create avoidable client breakages."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_tradeoff",
+        "question": "When would you choose path versioning over Accept-header versioning?",
+        "purpose": "Check strategy comparison."
+      },
+      {
+        "trigger": "missing_metric",
+        "question": "How would you know it is safe to retire v1?",
+        "purpose": "Probe client adoption and deprecation monitoring."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "REST API versioning",
+        "displayQuestion": "What is API versioning, and what are common ways to version a REST API?",
+        "displayIntent": "Check compatibility thinking and versioning strategy trade-offs.",
+        "guidance": [
+          "Define versioning around client-facing contract changes.",
+          "Compare path, header, media type, query parameter, and hostname versioning.",
+          "Mention deprecation, changelog, documentation, sunset, and adoption metrics.",
+          "Separate breaking changes from additive evolution."
+        ],
+        "commonMistakes": [
+          "Versioning every internal implementation change.",
+          "Breaking clients without a migration window.",
+          "Mixing versioning styles randomly.",
+          "Ignoring documentation and monitoring."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level/Senior",
+          "type": "trade_off"
+        }
+      },
+      "vi": {
+        "title": "Versioning REST API",
+        "displayQuestion": "API versioning là gì? Có những cách nào để versioning một REST API?",
+        "displayIntent": "Kiểm tra tư duy compatibility và trade-off khi chọn chiến lược versioning.",
+        "guidance": [
+          "Định nghĩa versioning xoay quanh thay đổi contract mà client nhìn thấy.",
+          "So sánh path, header, media type, query parameter và hostname versioning.",
+          "Nhắc deprecation, changelog, documentation, sunset và metric adoption.",
+          "Tách breaking change khỏi additive evolution."
+        ],
+        "commonMistakes": [
+          "Versioning mọi thay đổi implementation nội bộ.",
+          "Làm vỡ client mà không có migration window.",
+          "Trộn style versioning tùy tiện.",
+          "Bỏ qua documentation và monitoring."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level/Senior",
+          "type": "trade_off"
+        }
+      },
+      "ja": {
+        "title": "REST API versioning",
+        "displayQuestion": "API versioning とは何ですか。REST API を versioning する一般的な方法には何がありますか。",
+        "displayIntent": "compatibility と versioning strategy の trade-off を確認する。",
+        "guidance": [
+          "client-facing contract change を中心に versioning を定義する。",
+          "path、header、media type、query parameter、hostname versioning を比較する。",
+          "deprecation、changelog、documentation、sunset、adoption metrics に触れる。",
+          "breaking change と additive evolution を分ける。"
+        ],
+        "commonMistakes": [
+          "internal implementation change ごとに versioning する。",
+          "migration window なしで client を壊す。",
+          "versioning style をランダムに混ぜる。",
+          "documentation と monitoring を無視する。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level/Senior",
+          "type": "trade_off"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Microsoft REST API Guidelines: Versioning",
+        "url": "https://github.com/microsoft/api-guidelines/blob/vNext/azure/Guidelines.md#api-versioning",
+        "note": "Used for versioning and compatibility guidance."
+      },
+      {
+        "label": "RFC 8594: Sunset HTTP Header",
+        "url": "https://www.rfc-editor.org/rfc/rfc8594.html",
+        "note": "Used for deprecation and sunset communication context."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REST_API_DESIGN_MID_TECH_PAGINATION_008",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid", "senior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking", "problem_solving"],
+    "techTags": ["rest", "pagination", "database", "api_design"],
+    "difficulty": 3,
+    "conversationDepth": "mid",
+    "intent": "Evaluate whether the candidate can design REST pagination with clear parameters, metadata, stable ordering, and performance awareness.",
+    "primaryQuestion": "How would you implement pagination in a REST API?",
+    "expectedSignals": [
+      "Describes offset/page pagination using parameters such as page and limit or offset and limit, including total count when feasible.",
+      "Describes cursor/keyset pagination using cursor and limit for high-volume or frequently changing datasets.",
+      "Explains the need for deterministic sorting, stable tie-breakers, maximum page size, and validation of pagination parameters.",
+      "Includes response metadata such as nextCursor, previousCursor, page, limit, total, hasNext, or links depending on the strategy.",
+      "Mentions performance trade-offs: large offsets can be slow and inconsistent under concurrent writes, while cursors are more complex but scale better.",
+      "Covers client behavior such as preserving filters/sort in links and handling empty pages."
+    ],
+    "redFlags": [
+      "Returns all rows and lets the frontend paginate.",
+      "Uses offset pagination for very large changing tables without discussing consistency or performance.",
+      "Does not enforce maximum limit.",
+      "Returns pagination metadata that does not match the actual filters and sort."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Compares offset and cursor pagination, includes validation, stable sorting, metadata, and database performance trade-offs."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Provides a workable page/limit design but misses cursor or large-dataset consistency concerns."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows limit and offset but cannot explain metadata, sorting, or performance implications."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Pagination design would be unsafe or unusable for real clients."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_tradeoff",
+        "question": "When would you switch from offset pagination to cursor pagination?",
+        "purpose": "Check scale and consistency reasoning."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Why does cursor pagination usually require a stable sort column and a tie-breaker?",
+        "purpose": "Probe correctness under duplicate sort values."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "REST pagination design",
+        "displayQuestion": "How would you implement pagination in a REST API?",
+        "displayIntent": "Check pagination parameters, metadata, correctness, and performance awareness.",
+        "guidance": [
+          "Compare page/limit or offset/limit with cursor/keyset pagination.",
+          "Mention stable ordering, maximum limit, and validation.",
+          "Include response metadata and navigation links or cursors.",
+          "Discuss database performance and concurrent writes."
+        ],
+        "commonMistakes": [
+          "Returning all records to the client.",
+          "Allowing unlimited page size.",
+          "Ignoring sort stability.",
+          "Using large offsets without considering performance."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level/Senior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Thiết kế pagination cho REST",
+        "displayQuestion": "Làm thế nào để implement pagination trong REST API?",
+        "displayIntent": "Kiểm tra parameter, metadata, correctness và awareness về performance của pagination.",
+        "guidance": [
+          "So sánh page/limit hoặc offset/limit với cursor/keyset pagination.",
+          "Nhắc stable ordering, maximum limit và validation.",
+          "Bao gồm metadata response và navigation link hoặc cursor.",
+          "Nói về performance database và concurrent writes."
+        ],
+        "commonMistakes": [
+          "Trả toàn bộ record cho client.",
+          "Cho phép page size không giới hạn.",
+          "Bỏ qua sort stability.",
+          "Dùng offset lớn mà không xét performance."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level/Senior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "REST pagination design",
+        "displayQuestion": "REST API で pagination をどのように実装しますか。",
+        "displayIntent": "pagination parameters、metadata、correctness、performance awareness を確認する。",
+        "guidance": [
+          "page/limit または offset/limit と cursor/keyset pagination を比較する。",
+          "stable ordering、maximum limit、validation に触れる。",
+          "response metadata と navigation links または cursors を含める。",
+          "database performance と concurrent writes を説明する。"
+        ],
+        "commonMistakes": [
+          "すべての record を client に返す。",
+          "page size を無制限にする。",
+          "sort stability を無視する。",
+          "performance を考えず large offset を使う。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level/Senior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "JSON:API: Pagination",
+        "url": "https://jsonapi.org/format/#fetching-pagination",
+        "note": "Used for pagination links and metadata concepts."
+      },
+      {
+        "label": "PostgreSQL docs: LIMIT and OFFSET",
+        "url": "https://www.postgresql.org/docs/current/queries-limit.html",
+        "note": "Used for offset ordering and performance considerations."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REST_API_DESIGN_MID_TECH_RESPONSE_FORMAT_009",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid", "senior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "communication", "system_thinking"],
+    "techTags": ["rest", "http", "api_contract", "errors"],
+    "difficulty": 3,
+    "conversationDepth": "mid",
+    "intent": "Assess whether the candidate can describe a consistent REST response contract for success, errors, metadata, and traceability without over-wrapping HTTP semantics.",
+    "primaryQuestion": "What should a standard response format for a REST API look like?",
+    "expectedSignals": [
+      "Defines a consistent success shape such as data plus optional meta and links for collection responses.",
+      "Defines a consistent error shape with stable machine-readable code, human-readable message, optional field errors, requestId or traceId, and no sensitive internals.",
+      "Uses HTTP status codes as the primary success/error signal instead of always returning 200 with success flags.",
+      "Mentions response consistency across endpoints while allowing exceptions such as 204 No Content, file downloads, streaming, or problem details.",
+      "Includes metadata for pagination, filtering, sorting, and timestamps where useful.",
+      "Mentions content type, versioning considerations, backward compatibility, and documentation in OpenAPI."
+    ],
+    "redFlags": [
+      "Always returns 200 and encodes the real status only in the body.",
+      "Leaks stack traces, SQL errors, or internal service names in errors.",
+      "Changes response shape endpoint by endpoint without documentation.",
+      "Wraps every response mechanically, including 204 or binary streams, without considering HTTP semantics."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Balances consistent envelopes, HTTP semantics, error contracts, metadata, traceability, and documented exceptions."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Gives a reasonable data/error/meta format but misses traceability, exceptions, or status-code semantics."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Suggests a shape but cannot explain how clients use it or how errors stay stable."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Response contract would be inconsistent or misleading for clients."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "How would your error response represent validation errors for multiple fields?",
+        "purpose": "Check field-level error contract."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "When would you intentionally not wrap the response in a data envelope?",
+        "purpose": "Probe HTTP semantics and exception handling."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "REST response format",
+        "displayQuestion": "What should a standard response format for a REST API look like?",
+        "displayIntent": "Check consistent success and error contracts without fighting HTTP semantics.",
+        "guidance": [
+          "Describe success payloads with data, meta, and links where useful.",
+          "Describe errors with code, message, details, field errors, and requestId.",
+          "Use HTTP status codes as the primary signal.",
+          "Mention exceptions such as 204, files, and streams."
+        ],
+        "commonMistakes": [
+          "Returning 200 for every outcome.",
+          "Leaking internal error details.",
+          "Changing shapes without documentation.",
+          "Wrapping responses mechanically."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level/Senior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Format response REST",
+        "displayQuestion": "Response format chuẩn cho một REST API nên trông như thế nào?",
+        "displayIntent": "Kiểm tra contract success/error nhất quán mà vẫn tôn trọng HTTP semantics.",
+        "guidance": [
+          "Mô tả success payload với data, meta và links khi hữu ích.",
+          "Mô tả error với code, message, details, field errors và requestId.",
+          "Dùng HTTP status code làm tín hiệu chính.",
+          "Nhắc các ngoại lệ như 204, file và stream."
+        ],
+        "commonMistakes": [
+          "Trả 200 cho mọi outcome.",
+          "Lộ chi tiết lỗi nội bộ.",
+          "Thay đổi shape mà không document.",
+          "Wrap response một cách máy móc."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level/Senior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "REST response format",
+        "displayQuestion": "REST API の標準的な response format はどのような形にすべきですか。",
+        "displayIntent": "HTTP semantics と矛盾しない一貫した success/error contract を確認する。",
+        "guidance": [
+          "必要に応じて data、meta、links を持つ success payload を説明する。",
+          "code、message、details、field errors、requestId を持つ error を説明する。",
+          "HTTP status code を主要な signal として使う。",
+          "204、file、stream などの例外に触れる。"
+        ],
+        "commonMistakes": [
+          "すべての outcome に 200 を返す。",
+          "internal error details を漏らす。",
+          "document なしで shape を変える。",
+          "機械的に response を wrap する。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level/Senior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "RFC 9457: Problem Details for HTTP APIs",
+        "url": "https://www.rfc-editor.org/rfc/rfc9457.html",
+        "note": "Used for standardized error response concepts."
+      },
+      {
+        "label": "JSON:API format",
+        "url": "https://jsonapi.org/format/",
+        "note": "Used for data, errors, meta, and links response design references."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REST_API_DESIGN_JR_TECH_CORS_010",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving", "system_thinking"],
+    "techTags": ["rest", "http", "cors", "browser_security", "express"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Verify whether the candidate understands CORS as a browser-enforced cross-origin policy and can configure it safely for REST APIs.",
+    "primaryQuestion": "What is CORS, and why does a REST API need to handle it?",
+    "expectedSignals": [
+      "Defines CORS as Cross-Origin Resource Sharing, a browser mechanism that controls whether frontend JavaScript from one origin can read responses from another origin.",
+      "Explains origin as scheme, host, and port, and distinguishes CORS from server-to-server access control.",
+      "Mentions preflight OPTIONS requests for non-simple methods, custom headers, credentials, or content types.",
+      "Describes key headers such as Access-Control-Allow-Origin, Allow-Methods, Allow-Headers, Allow-Credentials, and Vary: Origin.",
+      "Explains safe configuration: allow only trusted origins, be careful with credentials, and avoid wildcard origins with cookies or authorization-sensitive APIs.",
+      "Mentions Express implementation with the cors middleware or explicit middleware, including route-specific policies."
+    ],
+    "redFlags": [
+      "Says CORS is an authentication or authorization mechanism.",
+      "Thinks CORS protects the API from all clients, including curl or backend services.",
+      "Uses wildcard origins and credentials together without understanding the risk.",
+      "Ignores OPTIONS preflight handling."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains browser origin policy, preflight, headers, safe credential handling, and practical Express configuration."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands cross-origin browser requests but misses preflight or credential nuance."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows CORS fixes frontend errors but cannot explain browser enforcement or safe configuration."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer treats CORS as a general security boundary or ignores its risks."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "red_flag",
+        "question": "Can a backend service bypass CORS by calling the API directly? What does that imply?",
+        "purpose": "Check browser-only enforcement understanding."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Why might a browser send an OPTIONS request before the real request?",
+        "purpose": "Probe preflight understanding."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "CORS for REST APIs",
+        "displayQuestion": "What is CORS, and why does a REST API need to handle it?",
+        "displayIntent": "Check browser cross-origin mechanics and safe API configuration.",
+        "guidance": [
+          "Define origin and browser-enforced response access.",
+          "Explain preflight OPTIONS requests.",
+          "Mention CORS headers and credentials.",
+          "Describe safe allow-list configuration in Express."
+        ],
+        "commonMistakes": [
+          "Treating CORS as authentication.",
+          "Thinking CORS blocks all non-browser clients.",
+          "Using wildcard origins with credentials.",
+          "Forgetting OPTIONS preflight."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "CORS cho REST API",
+        "displayQuestion": "CORS là gì và tại sao REST API cần xử lý nó?",
+        "displayIntent": "Kiểm tra cơ chế cross-origin của browser và cách cấu hình API an toàn.",
+        "guidance": [
+          "Định nghĩa origin và việc browser kiểm soát quyền đọc response.",
+          "Giải thích preflight OPTIONS request.",
+          "Nhắc các CORS header và credentials.",
+          "Mô tả cấu hình allow-list an toàn trong Express."
+        ],
+        "commonMistakes": [
+          "Xem CORS là authentication.",
+          "Nghĩ CORS chặn mọi client không phải browser.",
+          "Dùng wildcard origin với credentials.",
+          "Quên OPTIONS preflight."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "REST API の CORS",
+        "displayQuestion": "CORS とは何で、なぜ REST API はそれを扱う必要がありますか。",
+        "displayIntent": "browser の cross-origin mechanics と安全な API configuration を確認する。",
+        "guidance": [
+          "origin と browser-enforced response access を定義する。",
+          "preflight OPTIONS request を説明する。",
+          "CORS headers と credentials に触れる。",
+          "Express での安全な allow-list configuration を説明する。"
+        ],
+        "commonMistakes": [
+          "CORS を authentication として扱う。",
+          "CORS がすべての non-browser clients をブロックすると考える。",
+          "credentials と wildcard origin を一緒に使う。",
+          "OPTIONS preflight を忘れる。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "MDN: Cross-Origin Resource Sharing",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS",
+        "note": "Used for CORS concepts, headers, and preflight."
+      },
+      {
+        "label": "Express cors middleware",
+        "url": "https://expressjs.com/en/resources/middleware/cors.html",
+        "note": "Used for Express CORS configuration patterns."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REST_API_DESIGN_JR_TECH_EXPRESS_VALIDATION_011",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving", "system_thinking"],
+    "techTags": ["express", "rest", "validation", "zod", "joi", "express_validator"],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Check whether the candidate can validate Express request bodies safely using common validation libraries and return consistent client errors.",
+    "primaryQuestion": "How do you validate a request body in Express using tools such as express-validator, Joi, or Zod?",
+    "expectedSignals": [
+      "Treats req.body as untrusted input even after express.json parses it.",
+      "Describes registering express.json before routes that need req.body and handling JSON parse errors.",
+      "Shows a validation middleware pattern that checks required fields, types, formats, lengths, enum values, and unknown fields before controller logic.",
+      "Compares library styles: express-validator uses route-level validation chains, Joi/Zod use schemas and parse/validate results.",
+      "Returns 400 or 422 with a consistent error response containing field-level errors rather than allowing invalid data into business logic.",
+      "Mentions sharing schemas/types where appropriate, sanitization when needed, and avoiding mutation surprises."
+    ],
+    "redFlags": [
+      "Only checks required fields manually inside controllers.",
+      "Trusts req.body because it came from JSON parser.",
+      "Lets validation exceptions crash the process or become 500 responses.",
+      "Uses TypeScript types alone as runtime validation."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains middleware placement, runtime schemas, field-level errors, safe status codes, and trade-offs across express-validator, Joi, and Zod."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Can implement schema validation but misses parser errors, unknown fields, or response consistency."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Understands validation is needed but keeps it ad hoc and controller-heavy."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would allow untrusted or malformed input into core logic."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "red_flag",
+        "question": "Why are TypeScript interfaces not enough to validate req.body at runtime?",
+        "purpose": "Check compile-time versus runtime validation understanding."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "What should your API return if the JSON body is syntactically invalid versus valid JSON with invalid fields?",
+        "purpose": "Probe parser error and validation error distinction."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Express request body validation",
+        "displayQuestion": "How do you validate a request body in Express using tools such as express-validator, Joi, or Zod?",
+        "displayIntent": "Check runtime validation, middleware placement, and client error shaping.",
+        "guidance": [
+          "Treat req.body as untrusted input.",
+          "Place parsers and validation middleware before controllers.",
+          "Compare express-validator chains with Joi/Zod schemas.",
+          "Return consistent field-level errors."
+        ],
+        "commonMistakes": [
+          "Relying only on TypeScript types.",
+          "Doing ad hoc checks inside controllers.",
+          "Converting validation failures into 500 errors.",
+          "Ignoring unknown fields and parser errors."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Validate request body trong Express",
+        "displayQuestion": "Làm thế nào để validate request body trong Express bằng express-validator, Joi hoặc Zod?",
+        "displayIntent": "Kiểm tra runtime validation, vị trí middleware và cách format lỗi cho client.",
+        "guidance": [
+          "Xem req.body là input không đáng tin.",
+          "Đặt parser và validation middleware trước controller.",
+          "So sánh express-validator chains với schema của Joi/Zod.",
+          "Trả lỗi field-level nhất quán."
+        ],
+        "commonMistakes": [
+          "Chỉ dựa vào TypeScript type.",
+          "Check thủ công rải rác trong controller.",
+          "Biến validation failure thành 500 error.",
+          "Bỏ qua unknown fields và parser errors."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "Express request body validation",
+        "displayQuestion": "express-validator、Joi、Zod などを使って Express の request body をどう validate しますか。",
+        "displayIntent": "runtime validation、middleware placement、client error shaping を確認する。",
+        "guidance": [
+          "req.body を信頼できない input として扱う。",
+          "parser と validation middleware を controller の前に置く。",
+          "express-validator chains と Joi/Zod schemas を比較する。",
+          "一貫した field-level errors を返す。"
+        ],
+        "commonMistakes": [
+          "TypeScript type だけに依存する。",
+          "controller 内で ad hoc check を行う。",
+          "validation failure を 500 error にする。",
+          "unknown fields と parser errors を無視する。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Express API: express.json",
+        "url": "https://expressjs.com/en/4x/api.html#express.json",
+        "note": "Used for request body parsing and untrusted body warning."
+      },
+      {
+        "label": "express-validator documentation",
+        "url": "https://express-validator.github.io/docs/",
+        "note": "Used for validation chain and error result concepts."
+      },
+      {
+        "label": "Zod documentation",
+        "url": "https://zod.dev/",
+        "note": "Used for schema parsing and runtime validation framing."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REST_API_DESIGN_JR_TRADE_ROUTES_CONTROLLERS_012",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "trade_off",
+    "competencies": ["system_thinking", "technical_fundamentals", "collaboration", "communication"],
+    "techTags": ["express", "rest", "architecture", "controllers", "routes"],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Evaluate whether the candidate understands route/controller separation in Express and can avoid both controller bloat and unnecessary abstraction.",
+    "primaryQuestion": "Why should routes and controllers be separated into different files?",
+    "expectedSignals": [
+      "Explains that route files should define HTTP method, path, middleware composition, and controller binding.",
+      "Explains that controllers should translate HTTP input/output and delegate business logic to services or use cases.",
+      "Connects separation to readability, testability, reuse of middleware, consistent error handling, and team ownership.",
+      "Mentions that large route files become hard to scan, while large controllers with business logic become hard to test.",
+      "Acknowledges that tiny prototypes may keep things together initially, but growing systems benefit from explicit boundaries.",
+      "Describes a practical folder layout such as routes/users.routes.ts, controllers/users.controller.ts, services/users.service.ts, and validators/users.schema.ts."
+    ],
+    "redFlags": [
+      "Puts all business logic, validation, database calls, and response formatting directly in route handlers.",
+      "Creates layers that only pass arguments through without a clear responsibility.",
+      "Cannot explain what belongs in routes versus controllers versus services.",
+      "Uses separation only as folder aesthetics rather than behavior and testability."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Clearly separates HTTP routing, controller adaptation, service logic, validation, errors, and test boundaries while staying pragmatic."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands separation benefits but misses service boundaries or over-abstracts small examples."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Repeats clean code terms but cannot assign responsibilities to files."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Architecture would become route-handler sprawl or abstraction without value."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "What code belongs in a users route file, and what code belongs in a users controller?",
+        "purpose": "Force concrete responsibility boundaries."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "When would you intentionally keep a route and controller together?",
+        "purpose": "Check pragmatic abstraction judgment."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Routes and controllers separation",
+        "displayQuestion": "Why should routes and controllers be separated into different files?",
+        "displayIntent": "Check maintainable Express structure and responsibility boundaries.",
+        "guidance": [
+          "Assign routes to path/method/middleware wiring.",
+          "Assign controllers to HTTP input/output adaptation.",
+          "Move business logic into services or use cases.",
+          "Explain testability, readability, and team ownership."
+        ],
+        "commonMistakes": [
+          "Putting all logic in route handlers.",
+          "Creating pass-through layers with no responsibility.",
+          "Confusing controllers with services.",
+          "Treating folder separation as the goal."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "trade_off"
+        }
+      },
+      "vi": {
+        "title": "Tách routes và controllers",
+        "displayQuestion": "Tại sao nên tách routes và controllers thành các file riêng?",
+        "displayIntent": "Kiểm tra cấu trúc Express dễ maintain và ranh giới trách nhiệm.",
+        "guidance": [
+          "Đặt routes phụ trách path/method/middleware wiring.",
+          "Đặt controllers phụ trách chuyển đổi HTTP input/output.",
+          "Đưa business logic vào services hoặc use cases.",
+          "Giải thích testability, readability và ownership trong team."
+        ],
+        "commonMistakes": [
+          "Đưa toàn bộ logic vào route handler.",
+          "Tạo layer pass-through không có trách nhiệm thật.",
+          "Nhầm controller với service.",
+          "Xem tách folder là mục tiêu chính."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "trade_off"
+        }
+      },
+      "ja": {
+        "title": "routes と controllers の分離",
+        "displayQuestion": "なぜ routes と controllers を別 file に分けるべきですか。",
+        "displayIntent": "maintainable な Express structure と responsibility boundaries を確認する。",
+        "guidance": [
+          "routes は path/method/middleware wiring を担当する。",
+          "controllers は HTTP input/output adaptation を担当する。",
+          "business logic は services または use cases に移す。",
+          "testability、readability、team ownership を説明する。"
+        ],
+        "commonMistakes": [
+          "すべての logic を route handlers に置く。",
+          "責任のない pass-through layers を作る。",
+          "controllers と services を混同する。",
+          "folder separation 自体を目的にする。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "trade_off"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Express docs: Routing",
+        "url": "https://expressjs.com/en/guide/routing.html",
+        "note": "Used for route and router composition."
+      },
+      {
+        "label": "Express docs: Using middleware",
+        "url": "https://expressjs.com/en/guide/using-middleware.html",
+        "note": "Used for middleware responsibility and routing composition."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REST_API_DESIGN_MID_TECH_RATE_LIMITING_013",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack", "devops", "security"],
+    "levels": ["mid", "senior"],
+    "type": "technical_depth",
+    "competencies": ["system_thinking", "problem_solving", "ownership", "impact_measurement"],
+    "techTags": ["rest", "rate_limiting", "express", "redis", "security"],
+    "difficulty": 3,
+    "conversationDepth": "mid",
+    "intent": "Assess whether the candidate can explain rate limiting and design a practical implementation for REST APIs, including identity, algorithms, distributed state, and client behavior.",
+    "primaryQuestion": "What is rate limiting in a REST API, and how would you implement it?",
+    "expectedSignals": [
+      "Defines rate limiting as controlling how many requests a client, user, token, IP, tenant, or route can make within a time window to protect availability and fairness.",
+      "Mentions algorithms such as fixed window, sliding window, token bucket, or leaky bucket and explains basic trade-offs.",
+      "Describes Express implementation using middleware such as express-rate-limit for simple cases or Redis-backed storage for multi-instance deployments.",
+      "Uses appropriate keys such as authenticated user id, API key, tenant, IP, route, or a combination, with care around proxies and trust proxy settings.",
+      "Returns 429 Too Many Requests and useful headers such as Retry-After and rate limit remaining/reset information.",
+      "Mentions different limits per endpoint, exemptions or higher tiers for trusted clients, observability, alerting, and avoiding process-local counters in distributed systems."
+    ],
+    "redFlags": [
+      "Uses only in-memory counters while running many API instances behind a load balancer.",
+      "Applies one global limit to every endpoint and user without considering fairness.",
+      "Blocks legitimate traffic without returning 429 or client guidance.",
+      "Trusts X-Forwarded-For without understanding proxy configuration."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers identity, algorithms, middleware, Redis/distributed state, 429 behavior, headers, endpoint-specific policies, and metrics."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Can implement basic Express rate limiting but misses distributed state or proxy/keying nuance."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows rate limiting exists but designs a brittle single-process counter."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not provide viable overload or abuse protection."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_tradeoff",
+        "question": "Which endpoints would you rate limit more strictly than others, and why?",
+        "purpose": "Check endpoint-specific risk reasoning."
+      },
+      {
+        "trigger": "missing_metric",
+        "question": "What metrics would tell you the rate limit is protecting the API without hurting normal users?",
+        "purpose": "Probe observability and fairness."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "REST API rate limiting",
+        "displayQuestion": "What is rate limiting in a REST API, and how would you implement it?",
+        "displayIntent": "Check overload protection, abuse prevention, and distributed implementation awareness.",
+        "guidance": [
+          "Define limits by user, token, IP, tenant, or route.",
+          "Compare fixed window, sliding window, token bucket, and leaky bucket.",
+          "Mention Express middleware and Redis-backed stores.",
+          "Return 429 with Retry-After and useful rate limit headers."
+        ],
+        "commonMistakes": [
+          "Using only local counters in a scaled deployment.",
+          "Applying one limit to all traffic.",
+          "Ignoring proxies and client identity.",
+          "Returning inconsistent errors without client guidance."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/DevOps/Security",
+          "level": "Mid-level/Senior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Rate limiting cho REST API",
+        "displayQuestion": "Rate limiting trong REST API là gì và implement như thế nào?",
+        "displayIntent": "Kiểm tra khả năng bảo vệ overload, chống abuse và awareness về distributed implementation.",
+        "guidance": [
+          "Định nghĩa limit theo user, token, IP, tenant hoặc route.",
+          "So sánh fixed window, sliding window, token bucket và leaky bucket.",
+          "Nhắc Express middleware và store dùng Redis.",
+          "Trả 429 kèm Retry-After và rate limit headers hữu ích."
+        ],
+        "commonMistakes": [
+          "Chỉ dùng local counter trong deployment đã scale.",
+          "Áp một limit cho mọi traffic.",
+          "Bỏ qua proxy và identity của client.",
+          "Trả lỗi không nhất quán và không hướng dẫn client."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/DevOps/Security",
+          "level": "Mid-level/Senior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "REST API rate limiting",
+        "displayQuestion": "REST API における rate limiting とは何で、どのように実装しますか。",
+        "displayIntent": "overload protection、abuse prevention、distributed implementation awareness を確認する。",
+        "guidance": [
+          "user、token、IP、tenant、route ごとの limit を定義する。",
+          "fixed window、sliding window、token bucket、leaky bucket を比較する。",
+          "Express middleware と Redis-backed store に触れる。",
+          "429 と Retry-After、rate limit headers を返す。"
+        ],
+        "commonMistakes": [
+          "scaled deployment で local counters だけを使う。",
+          "すべての traffic に一つの limit を適用する。",
+          "proxy と client identity を無視する。",
+          "client guidance なしに一貫しない error を返す。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/DevOps/Security",
+          "level": "Mid-level/Senior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "MDN: 429 Too Many Requests",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429",
+        "note": "Used for rate limit response semantics."
+      },
+      {
+        "label": "express-rate-limit documentation",
+        "url": "https://express-rate-limit.mintlify.app/",
+        "note": "Used for Express middleware implementation concepts."
+      },
+      {
+        "label": "OWASP Denial of Service Cheat Sheet",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/Denial_of_Service_Cheat_Sheet.html",
+        "note": "Used for resource exhaustion and abuse mitigation framing."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REST_API_DESIGN_MID_TECH_IDEMPOTENCY_014",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid", "senior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking", "problem_solving"],
+    "techTags": ["rest", "http", "idempotency", "retries"],
+    "difficulty": 3,
+    "conversationDepth": "mid",
+    "intent": "Verify whether the candidate understands idempotent HTTP methods and why idempotency matters for retries, duplicate requests, and distributed systems.",
+    "primaryQuestion": "What is an idempotent request, and which HTTP methods are idempotent?",
+    "expectedSignals": [
+      "Defines idempotency as making the same request once or multiple times resulting in the same intended server state, even if each response may differ.",
+      "Identifies GET, HEAD, OPTIONS, TRACE, PUT, and DELETE as idempotent by HTTP semantics when implemented correctly.",
+      "Explains that POST is not generally idempotent, while PATCH may or may not be idempotent depending on the patch operation and server contract.",
+      "Distinguishes safe methods such as GET and HEAD from idempotent but state-changing methods such as PUT and DELETE.",
+      "Connects idempotency to retry behavior after timeouts, duplicate submissions, payment/order creation, and idempotency keys for non-idempotent operations.",
+      "Mentions that server implementation can violate method expectations, so API contracts and tests matter."
+    ],
+    "redFlags": [
+      "Says idempotent means the request does not change state.",
+      "Says DELETE is not idempotent because the second call returns 404.",
+      "Says POST is always safe to retry without idempotency keys.",
+      "Confuses response equality with final resource state equality."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Defines idempotency precisely, names method semantics, separates safe from idempotent, and discusses retries and idempotency keys."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows the main idempotent methods but misses response-versus-state nuance or idempotency keys."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can name PUT as idempotent but cannot explain DELETE, PATCH, or retries."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer confuses safety, state change, and duplicate request behavior."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "red_flag",
+        "question": "If DELETE /users/123 returns 204 the first time and 404 the second time, can it still be idempotent?",
+        "purpose": "Check response-versus-state nuance."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "How would you make POST /payments safe to retry after a timeout?",
+        "purpose": "Probe idempotency keys and duplicate prevention."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "HTTP idempotency",
+        "displayQuestion": "What is an idempotent request, and which HTTP methods are idempotent?",
+        "displayIntent": "Check method semantics and retry safety reasoning.",
+        "guidance": [
+          "Define idempotency by final server state, not identical response.",
+          "Name idempotent methods and separate safe methods.",
+          "Discuss POST and PATCH nuance.",
+          "Connect idempotency to retries and idempotency keys."
+        ],
+        "commonMistakes": [
+          "Equating idempotent with read-only.",
+          "Thinking DELETE is not idempotent because the second response can differ.",
+          "Retrying POST blindly.",
+          "Ignoring implementation contracts."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level/Senior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Idempotency trong HTTP",
+        "displayQuestion": "Idempotent request là gì? Method nào là idempotent?",
+        "displayIntent": "Kiểm tra semantics của method và reasoning về retry safety.",
+        "guidance": [
+          "Định nghĩa idempotency theo final server state, không phải response giống hệt.",
+          "Nêu các method idempotent và tách safe methods.",
+          "Nói nuance của POST và PATCH.",
+          "Liên hệ idempotency với retry và idempotency keys."
+        ],
+        "commonMistakes": [
+          "Đồng nhất idempotent với read-only.",
+          "Nghĩ DELETE không idempotent vì response lần hai có thể khác.",
+          "Retry POST một cách mù quáng.",
+          "Bỏ qua contract implementation."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level/Senior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "HTTP idempotency",
+        "displayQuestion": "idempotent request とは何で、どの HTTP method が idempotent ですか。",
+        "displayIntent": "method semantics と retry safety reasoning を確認する。",
+        "guidance": [
+          "idempotency は identical response ではなく final server state で定義する。",
+          "idempotent methods を挙げ、safe methods と分ける。",
+          "POST と PATCH の nuance を説明する。",
+          "idempotency を retries と idempotency keys に結びつける。"
+        ],
+        "commonMistakes": [
+          "idempotent を read-only と同一視する。",
+          "二回目の response が違うため DELETE は idempotent ではないと考える。",
+          "POST を blindly retry する。",
+          "implementation contracts を無視する。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level/Senior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "MDN: HTTP request methods",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods",
+        "note": "Used for safe and idempotent method semantics."
+      },
+      {
+        "label": "RFC 9110: Methods",
+        "url": "https://www.rfc-editor.org/rfc/rfc9110.html#name-methods",
+        "note": "Used for authoritative method semantics."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REST_API_DESIGN_MID_TECH_OPENAPI_EXPRESS_015",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["mid", "senior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "collaboration", "ownership", "communication"],
+    "techTags": ["rest", "express", "openapi", "swagger", "documentation"],
+    "difficulty": 3,
+    "conversationDepth": "mid",
+    "intent": "Assess whether the candidate can integrate Swagger/OpenAPI documentation into an Express API and keep the contract useful and maintainable.",
+    "primaryQuestion": "How do you integrate Swagger or OpenAPI documentation into Express?",
+    "expectedSignals": [
+      "Explains OpenAPI as a machine-readable contract describing paths, methods, parameters, request bodies, responses, schemas, auth, and servers.",
+      "Mentions common Express setup using a generated or handwritten OpenAPI document served through swagger-ui-express at a docs route.",
+      "Describes ways to create the spec: YAML or JSON file, annotations with swagger-jsdoc, schema-driven generation, or contract-first design.",
+      "Includes documenting request/response schemas, validation errors, auth schemes such as bearer JWT or API keys, tags, examples, and status codes.",
+      "Mentions keeping docs in sync with implementation through CI validation, linting, contract tests, generated clients, or deriving docs from shared schemas.",
+      "Mentions protecting or limiting docs exposure in production when necessary and versioning docs alongside API versions."
+    ],
+    "redFlags": [
+      "Treats Swagger as only a pretty UI and not an API contract.",
+      "Documents only happy-path 200 responses.",
+      "Lets docs drift from implementation with no validation.",
+      "Exposes internal-only endpoints or sensitive examples publicly."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers OpenAPI contract concepts, Express UI integration, spec generation options, schema/status/auth docs, CI validation, and production exposure."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Can serve swagger-ui-express and write basic specs but misses drift prevention or auth/error documentation."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows Swagger UI exists but cannot explain OpenAPI structure or maintenance."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Documentation approach would be incomplete or quickly stale."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "What fields would you document for POST /users beyond the path and method?",
+        "purpose": "Check request body, responses, errors, and auth completeness."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "Would you write OpenAPI contract-first or generate it from code? What trade-off are you accepting?",
+        "purpose": "Probe documentation workflow judgment."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Swagger/OpenAPI in Express",
+        "displayQuestion": "How do you integrate Swagger or OpenAPI documentation into Express?",
+        "displayIntent": "Check API contract documentation, Express integration, and maintenance practices.",
+        "guidance": [
+          "Define OpenAPI as a machine-readable API contract.",
+          "Describe serving Swagger UI from an Express route.",
+          "Mention YAML/JSON specs, swagger-jsdoc annotations, or schema-driven generation.",
+          "Include schemas, status codes, auth, examples, validation, and drift prevention."
+        ],
+        "commonMistakes": [
+          "Documenting only the happy path.",
+          "Treating Swagger as only UI.",
+          "Letting docs drift from implementation.",
+          "Publishing sensitive internal docs accidentally."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level/Senior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Swagger/OpenAPI trong Express",
+        "displayQuestion": "Swagger/OpenAPI documentation tích hợp vào Express như thế nào?",
+        "displayIntent": "Kiểm tra API contract documentation, cách tích hợp Express và practices để maintain.",
+        "guidance": [
+          "Định nghĩa OpenAPI là contract API machine-readable.",
+          "Mô tả việc serve Swagger UI từ một Express route.",
+          "Nhắc YAML/JSON spec, swagger-jsdoc annotations hoặc generation từ schema.",
+          "Bao gồm schema, status code, auth, examples, validation và cách tránh docs drift."
+        ],
+        "commonMistakes": [
+          "Chỉ document happy path.",
+          "Xem Swagger chỉ là UI.",
+          "Để docs lệch khỏi implementation.",
+          "Vô tình publish tài liệu endpoint nội bộ nhạy cảm."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level/Senior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "Express の Swagger/OpenAPI",
+        "displayQuestion": "Swagger/OpenAPI documentation を Express にどのように統合しますか。",
+        "displayIntent": "API contract documentation、Express integration、maintenance practices を確認する。",
+        "guidance": [
+          "OpenAPI を machine-readable API contract として定義する。",
+          "Express route から Swagger UI を serve する方法を説明する。",
+          "YAML/JSON specs、swagger-jsdoc annotations、schema-driven generation に触れる。",
+          "schemas、status codes、auth、examples、validation、drift prevention を含める。"
+        ],
+        "commonMistakes": [
+          "happy path だけを document する。",
+          "Swagger を UI だけとして扱う。",
+          "docs と implementation の drift を放置する。",
+          "sensitive internal docs を誤って公開する。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level/Senior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "OpenAPI Specification",
+        "url": "https://spec.openapis.org/oas/latest.html",
+        "note": "Used for OpenAPI contract structure and semantics."
+      },
+      {
+        "label": "Swagger UI Express package",
+        "url": "https://www.npmjs.com/package/swagger-ui-express",
+        "note": "Used for common Express Swagger UI integration."
+      },
+      {
+        "label": "swagger-jsdoc package",
+        "url": "https://www.npmjs.com/package/swagger-jsdoc",
+        "note": "Used for annotation-based OpenAPI generation in Express apps."
+      }
+    ],
+    "status": "active"
+  }
+]

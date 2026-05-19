@@ -1,0 +1,2056 @@
+[
+  {
+    "code": "EXPRESS_ERROR_JR_TECH_HANDLER_SIGNATURE_001",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "communication"],
+    "techTags": ["express", "nodejs", "rest"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate understands the special Express error-handling middleware signature and how it differs from normal middleware.",
+    "primaryQuestion": "How is the signature of Express error-handling middleware different from normal middleware?",
+    "expectedSignals": [
+      "States that normal middleware usually has the signature (req, res, next), while error-handling middleware has (err, req, res, next).",
+      "Explains that the first parameter is the error object or value passed by Express.",
+      "Mentions that Express uses this four-argument function shape to route errors to error handlers.",
+      "Understands that an error handler can inspect err, log it, map it to an HTTP response, or pass it onward with next(err).",
+      "Notes that the handler should still either send a response or delegate, otherwise the request can hang."
+    ],
+    "redFlags": [
+      "Says an error handler has the same signature as normal middleware.",
+      "Places err after req or omits next entirely without understanding Express detection.",
+      "Thinks error handlers run for every request even when no error is present.",
+      "Cannot explain what the err parameter represents."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Clearly contrasts (req, res, next) with (err, req, res, next), explains Express routing to error handlers, and describes response or delegation responsibility."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows the four-argument signature and err-first shape but gives a shallow explanation of how Express selects the handler."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Has seen error middleware but cannot reliably describe the signature or execution conditions."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not show practical Express middleware knowledge."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Can you write the exact function signature for a global Express error handler?",
+        "purpose": "Force concrete recall of the err-first four-argument signature."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "If no error has been passed, will this error handler run for a normal successful request?",
+        "purpose": "Check whether the candidate understands error-path execution."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Express error middleware signature",
+        "displayQuestion": "How is the signature of Express error-handling middleware different from normal middleware?",
+        "displayIntent": "Check whether the candidate knows the err-first four-argument middleware form.",
+        "guidance": [
+          "Compare normal middleware with error-handling middleware directly.",
+          "Mention the exact order: err, req, res, next.",
+          "Explain that Express routes error flows to this handler shape.",
+          "Say what the handler should do after receiving the error."
+        ],
+        "commonMistakes": [
+          "Using (req, res, next) for errors.",
+          "Putting err in the wrong position.",
+          "Assuming error handlers run on successful requests.",
+          "Logging the error but never ending or delegating the request."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Chữ ký error middleware trong Express",
+        "displayQuestion": "Error handling middleware trong Express có chữ ký gì khác với middleware thông thường?",
+        "displayIntent": "Kiểm tra ứng viên có nắm dạng middleware 4 tham số với err đứng đầu hay không.",
+        "guidance": [
+          "So sánh trực tiếp middleware thường với error-handling middleware.",
+          "Nêu đúng thứ tự tham số: err, req, res, next.",
+          "Giải thích Express dùng dạng này để đưa luồng lỗi vào error handler.",
+          "Nói rõ handler cần gửi response hoặc chuyển tiếp lỗi sau khi nhận err."
+        ],
+        "commonMistakes": [
+          "Dùng (req, res, next) cho error handler.",
+          "Đặt err sai vị trí.",
+          "Tưởng error handler chạy cho cả request thành công.",
+          "Chỉ log lỗi nhưng không kết thúc hoặc không delegate request."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "Express error middleware signature",
+        "displayQuestion": "Express の error-handling middleware は通常の middleware と signature がどう違いますか。",
+        "displayIntent": "err が先頭に来る 4 引数 middleware form を理解しているか確認する。",
+        "guidance": [
+          "通常 middleware と error-handling middleware を直接比較する。",
+          "正しい順序 err, req, res, next を述べる。",
+          "Express がこの形の handler に error flow を渡すことを説明する。",
+          "error を受け取った handler が response を返すか委譲する必要があると説明する。"
+        ],
+        "commonMistakes": [
+          "error handler に (req, res, next) を使う。",
+          "err の位置を間違える。",
+          "成功 request でも error handler が実行されると思う。",
+          "error を log するだけで request を終了も委譲もしない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Express docs: Error handling",
+        "url": "https://expressjs.com/en/guide/error-handling.html",
+        "note": "Used for error-handling middleware signature and next(err) behavior."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_ERROR_JR_TECH_FOUR_ARGS_002",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving"],
+    "techTags": ["express", "nodejs"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Verify whether the candidate knows why Express error-handling middleware must preserve four declared parameters even when some parameters are unused.",
+    "primaryQuestion": "Why must Express error-handling middleware have exactly four parameters: err, req, res, next?",
+    "expectedSignals": [
+      "Explains that Express distinguishes error-handling middleware from normal middleware by the declared four-argument function shape.",
+      "States that err must be the first argument and represents the error passed through the request pipeline.",
+      "Mentions that omitting next or another unused argument can make Express treat the function as normal middleware instead of an error handler.",
+      "Understands that unused arguments should still be kept, often with an underscore naming convention if lint rules allow it.",
+      "Mentions that minification, wrappers, or default/rest parameters can be risky if they change the function arity Express observes."
+    ],
+    "redFlags": [
+      "Says four parameters are only a style preference.",
+      "Removes next because it is not currently used and cannot explain the consequence.",
+      "Thinks TypeScript types alone decide whether Express treats a function as an error handler.",
+      "Uses an async wrapper that hides the error-handler arity without testing it."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains Express arity-based detection, keeps all four parameters, and understands practical pitfalls around unused arguments and wrappers."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows that four arguments are required but misses arity or wrapper nuance."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can repeat the signature but cannot explain why Express cares."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is incorrect about how Express identifies error handlers."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "red_flag",
+        "question": "What can happen if you define the handler as (err, req, res) and omit next?",
+        "purpose": "Check arity-based detection knowledge."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "How would you handle lint warnings for an unused next parameter while preserving Express behavior?",
+        "purpose": "Probe practical code quality handling."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Why four error-handler parameters matter",
+        "displayQuestion": "Why must Express error-handling middleware have exactly four parameters: err, req, res, next?",
+        "displayIntent": "Check knowledge of Express error-handler detection and function arity.",
+        "guidance": [
+          "Explain that Express detects error handlers by the four-argument form.",
+          "Keep err first and next last even when next is rarely used.",
+          "Mention that TypeScript types do not replace runtime function shape.",
+          "Discuss unused-parameter linting pragmatically."
+        ],
+        "commonMistakes": [
+          "Removing unused next.",
+          "Treating the signature as cosmetic.",
+          "Depending only on TypeScript types.",
+          "Wrapping the handler in a way that changes its arity."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Vì sao error handler cần đủ 4 tham số",
+        "displayQuestion": "Tại sao error handling middleware phải có đúng 4 tham số (err, req, res, next)?",
+        "displayIntent": "Kiểm tra hiểu biết về cách Express nhận diện error handler qua số tham số khai báo.",
+        "guidance": [
+          "Giải thích Express nhận diện error handler bằng dạng function 4 tham số.",
+          "Giữ err ở đầu và next ở cuối dù next ít khi dùng.",
+          "Nói rõ type TypeScript không thay thế được runtime function shape.",
+          "Nêu cách xử lý lint warning cho tham số không dùng một cách thực tế."
+        ],
+        "commonMistakes": [
+          "Xóa next vì chưa dùng.",
+          "Xem chữ ký chỉ là style.",
+          "Dựa hoàn toàn vào TypeScript type.",
+          "Wrap handler khiến arity bị thay đổi."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "error handler に 4 引数が必要な理由",
+        "displayQuestion": "Express の error-handling middleware はなぜ (err, req, res, next) の 4 引数である必要がありますか。",
+        "displayIntent": "Express が function arity で error handler を識別することを理解しているか確認する。",
+        "guidance": [
+          "Express が 4 引数 form で error handler を検出することを説明する。",
+          "next をほとんど使わなくても err を先頭、next を末尾に保つ。",
+          "TypeScript type だけでは runtime の function shape を置き換えられないと説明する。",
+          "unused parameter の lint 対応を実務的に述べる。"
+        ],
+        "commonMistakes": [
+          "unused の next を削除する。",
+          "signature を見た目の style として扱う。",
+          "TypeScript type だけに頼る。",
+          "handler を wrap して arity を変えてしまう。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Express docs: Error handling",
+        "url": "https://expressjs.com/en/guide/error-handling.html",
+        "note": "Used for the four-argument error-handling middleware contract."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_ERROR_JR_TECH_TRIGGER_NEXT_ERR_003",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving", "communication"],
+    "techTags": ["express", "nodejs", "rest"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate understands how Express enters the error-handling path and the difference between next() and next(err).",
+    "primaryQuestion": "How do you trigger Express error-handling middleware? Should you use next() or next(err)?",
+    "expectedSignals": [
+      "States that next(err) triggers the error-handling path and skips normal non-error middleware and route handlers.",
+      "States that next() without an error continues the normal middleware chain.",
+      "Mentions that throwing a synchronous error inside a route or middleware also triggers Express error handling.",
+      "Mentions that in Express 5 a rejected Promise from a handler is forwarded automatically, while Express 4 needs explicit forwarding.",
+      "Understands that passing any value except the special string 'route' to next is treated as an error."
+    ],
+    "redFlags": [
+      "Uses next() after catching an error and expects the error handler to run.",
+      "Sends an error response in every route instead of delegating consistent errors.",
+      "Calls next(err) after already sending a normal response without guarding control flow.",
+      "Cannot distinguish skipping normal handlers from continuing the normal chain."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Accurately distinguishes next() and next(err), includes throw and rejected Promise behavior, and understands pipeline skipping."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows next(err) is needed but misses one trigger path such as synchronous throw or Express 5 promises."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Recognizes next but cannot reason about normal versus error middleware chains."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would lead to lost errors or incorrect middleware execution."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "What happens to normal middleware registered after the current handler when you call next(err)?",
+        "purpose": "Check error-chain skipping behavior."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "If you catch an error and call next() with no argument, what response path will Express take?",
+        "purpose": "Expose misunderstanding between normal and error flow."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Triggering Express error handlers",
+        "displayQuestion": "How do you trigger Express error-handling middleware? Should you use next() or next(err)?",
+        "displayIntent": "Check whether the candidate knows how Express switches from the normal pipeline to the error pipeline.",
+        "guidance": [
+          "State that next(err) enters the error path.",
+          "Contrast it with next() continuing normal execution.",
+          "Mention synchronous throw and Express 5 Promise rejection behavior.",
+          "Explain what happens to remaining normal handlers."
+        ],
+        "commonMistakes": [
+          "Calling next() after catching an error.",
+          "Forgetting that next(err) skips normal handlers.",
+          "Calling next(err) after sending a success response.",
+          "Treating all async errors the same across Express 4 and 5."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Kích hoạt error handler trong Express",
+        "displayQuestion": "Làm thế nào để trigger error handling middleware? Dùng next() hay next(err)?",
+        "displayIntent": "Kiểm tra ứng viên có biết cách Express chuyển từ pipeline thường sang pipeline lỗi hay không.",
+        "guidance": [
+          "Nói rõ next(err) đưa request vào error path.",
+          "So sánh với next() là tiếp tục luồng bình thường.",
+          "Nhắc tới synchronous throw và behavior Promise rejection trong Express 5.",
+          "Giải thích các handler thường còn lại sẽ bị bỏ qua như thế nào."
+        ],
+        "commonMistakes": [
+          "Catch lỗi rồi gọi next() không truyền lỗi.",
+          "Quên rằng next(err) bỏ qua normal handler.",
+          "Gọi next(err) sau khi đã gửi success response.",
+          "Xem async error giống nhau giữa Express 4 và Express 5."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "Express error handler を起動する",
+        "displayQuestion": "Express の error-handling middleware はどう trigger しますか。next() と next(err) のどちらを使いますか。",
+        "displayIntent": "Express が通常 pipeline から error pipeline に切り替わる条件を理解しているか確認する。",
+        "guidance": [
+          "next(err) が error path に入ることを述べる。",
+          "next() は通常 flow を継続すると対比する。",
+          "synchronous throw と Express 5 の Promise rejection behavior に触れる。",
+          "残りの normal handler がどう扱われるか説明する。"
+        ],
+        "commonMistakes": [
+          "error を catch した後に next() だけを呼ぶ。",
+          "next(err) が normal handler を skip することを忘れる。",
+          "success response 送信後に next(err) を呼ぶ。",
+          "Express 4 と Express 5 の async error を同じものとして扱う。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Express docs: Error handling",
+        "url": "https://expressjs.com/en/guide/error-handling.html",
+        "note": "Used for next(err), thrown errors, and promise rejection behavior."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_ERROR_MID_TECH_SYNC_ASYNC_004",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["mid", "senior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving", "system_thinking"],
+    "techTags": ["express", "nodejs", "javascript"],
+    "difficulty": 3,
+    "conversationDepth": "mid",
+    "intent": "Evaluate whether the candidate understands the different handling paths for synchronous errors, callback-based asynchronous errors, and promise-based errors in Express.",
+    "primaryQuestion": "How are synchronous errors and asynchronous errors handled differently in Express?",
+    "expectedSignals": [
+      "Explains that Express catches synchronous exceptions thrown during route or middleware execution.",
+      "Explains that asynchronous callback errors must be passed to next(err) because the original synchronous call stack has already returned.",
+      "Mentions that promise rejections are automatically forwarded in Express 5, but not in Express 4 without a wrapper or explicit catch.",
+      "Distinguishes errors thrown inside setTimeout, callbacks, event listeners, or background jobs from errors thrown directly in the handler body.",
+      "Uses concrete patterns such as fs callbacks calling next(err), try/catch around awaited work in Express 4, or Promise.resolve(fn).catch(next)."
+    ],
+    "redFlags": [
+      "Assumes Express catches every error anywhere in the process.",
+      "Throws inside a timer or callback and expects Express to catch it automatically.",
+      "Does not distinguish Express 4 from Express 5 promise behavior.",
+      "Uses process-level handlers as a substitute for request-level error handling."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains stack timing, callback errors, promises, Express 4 versus 5 behavior, and gives safe code patterns."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands sync versus async broadly but misses one category such as timers, event emitters, or Express version differences."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows to use next(err) but cannot explain why async errors need explicit forwarding."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would likely drop async errors or crash the process unexpectedly."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "Why does an error thrown inside setTimeout not behave like an error thrown directly inside app.get?",
+        "purpose": "Check call-stack and async-boundary understanding."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "Show how you would pass an fs.readFile error to the Express error handler.",
+        "purpose": "Force a concrete callback-based example."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Synchronous and asynchronous Express errors",
+        "displayQuestion": "How are synchronous errors and asynchronous errors handled differently in Express?",
+        "displayIntent": "Assess request-level error propagation across sync code, callbacks, timers, and promises.",
+        "guidance": [
+          "Start with Express automatically catching synchronous throws in handlers.",
+          "Explain why async callbacks must call next(err).",
+          "Separate Express 4 and Express 5 promise behavior.",
+          "Mention timers, event emitters, and background work as outside normal request flow."
+        ],
+        "commonMistakes": [
+          "Expecting Express to catch all process errors.",
+          "Throwing inside a callback instead of calling next(err).",
+          "Ignoring Express version differences.",
+          "Using global process handlers for normal route errors."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level/Senior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Synchronous và asynchronous error trong Express",
+        "displayQuestion": "Synchronous error và asynchronous error được xử lý khác nhau như thế nào trong Express?",
+        "displayIntent": "Đánh giá cách ứng viên hiểu propagation lỗi trong request qua code sync, callback, timer và promise.",
+        "guidance": [
+          "Bắt đầu từ việc Express tự bắt lỗi throw đồng bộ trong handler.",
+          "Giải thích vì sao async callback phải gọi next(err).",
+          "Tách rõ behavior promise giữa Express 4 và Express 5.",
+          "Nhắc timer, event emitter và background work là ngoài request flow thông thường."
+        ],
+        "commonMistakes": [
+          "Kỳ vọng Express bắt mọi lỗi trong process.",
+          "Throw trong callback thay vì gọi next(err).",
+          "Bỏ qua khác biệt giữa các version Express.",
+          "Dùng global process handler cho lỗi route thông thường."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level/Senior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "Express の sync error と async error",
+        "displayQuestion": "Express では synchronous error と asynchronous error はどのように違って処理されますか。",
+        "displayIntent": "sync code, callbacks, timers, promises における request-level error propagation を評価する。",
+        "guidance": [
+          "handler 内の synchronous throw は Express が自動的に捕捉することから説明する。",
+          "async callback では next(err) が必要な理由を説明する。",
+          "Express 4 と Express 5 の promise behavior を分けて説明する。",
+          "timer, event emitter, background work は通常の request flow 外だと述べる。"
+        ],
+        "commonMistakes": [
+          "Express が process 内のすべての error を catch すると考える。",
+          "callback 内で next(err) ではなく throw する。",
+          "Express version の違いを無視する。",
+          "通常の route error に global process handler を使う。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level/Senior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Express docs: Error handling",
+        "url": "https://expressjs.com/en/guide/error-handling.html",
+        "note": "Used for synchronous errors, asynchronous callback patterns, and Express 5 promise forwarding."
+      },
+      {
+        "label": "Node.js docs: Process events",
+        "url": "https://nodejs.org/api/process.html",
+        "note": "Used for context around uncaught exceptions and unhandled promise rejections."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_ERROR_MID_DEBUG_ASYNC_THROW_V4_005",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["mid", "senior"],
+    "type": "debugging",
+    "competencies": ["problem_solving", "technical_fundamentals", "ownership"],
+    "techTags": ["express", "nodejs", "javascript", "debugging"],
+    "difficulty": 3,
+    "conversationDepth": "mid",
+    "intent": "Assess whether the candidate can diagnose and fix unhandled promise rejections from async route handlers in Express 4.",
+    "primaryQuestion": "If an async route handler throws an error, does Express 4 catch it automatically? How would you handle it?",
+    "expectedSignals": [
+      "States that Express 4 does not automatically catch rejected promises or thrown errors from async route handlers.",
+      "Explains that the error becomes a rejected Promise unless it is caught and passed to next(err).",
+      "Shows a try/catch around await and calls next(err) in the catch block.",
+      "Mentions reusable wrappers such as asyncHandler(fn) returning (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next).",
+      "Mentions package-based approaches such as express-async-errors or express-async-handler, while noting version and project policy considerations."
+    ],
+    "redFlags": [
+      "Claims Express 4 automatically handles async/await errors like Express 5.",
+      "Adds process.on('unhandledRejection') and considers the route fixed.",
+      "Swallows the error in catch and returns a success response.",
+      "Forgets next in the async handler signature and cannot pass the error onward."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Correctly identifies Express 4 promise behavior and gives safe fixes using try/catch, a wrapper, or a deliberate package approach."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows to catch and call next(err) but misses reusable wrapper or package trade-offs."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Has hit the problem but applies inconsistent per-route fixes or global process handlers."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would still produce unhandled promise rejections in Express 4."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Can you write a small asyncHandler wrapper for Express 4?",
+        "purpose": "Verify practical implementation knowledge."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "Why is process.on('unhandledRejection') not a good replacement for calling next(err) in a route?",
+        "purpose": "Separate request-level error handling from process-level safety nets."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Async route errors in Express 4",
+        "displayQuestion": "If an async route handler throws an error, does Express 4 catch it automatically? How would you handle it?",
+        "displayIntent": "Check practical debugging of async/await errors in Express 4.",
+        "guidance": [
+          "State clearly that Express 4 does not auto-forward async handler rejections.",
+          "Show try/catch with next(err).",
+          "Mention a reusable Promise wrapper.",
+          "Discuss packages only as a deliberate project-level choice."
+        ],
+        "commonMistakes": [
+          "Assuming Express 4 behaves like Express 5.",
+          "Using only global unhandledRejection handlers.",
+          "Swallowing the error.",
+          "Forgetting next in the handler."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level/Senior",
+          "type": "debugging"
+        }
+      },
+      "vi": {
+        "title": "Async route error trong Express 4",
+        "displayQuestion": "Nếu một async route handler throw error, Express 4 có tự bắt không? Làm thế nào để xử lý?",
+        "displayIntent": "Kiểm tra khả năng debug lỗi async/await trong Express 4.",
+        "guidance": [
+          "Nói rõ Express 4 không tự forward rejection từ async handler.",
+          "Đưa ví dụ try/catch rồi gọi next(err).",
+          "Nhắc tới wrapper Promise tái sử dụng.",
+          "Chỉ dùng package như một quyết định cấp project, không phải vá tạm không kiểm soát."
+        ],
+        "commonMistakes": [
+          "Tưởng Express 4 giống Express 5.",
+          "Chỉ dùng global unhandledRejection handler.",
+          "Nuốt lỗi trong catch.",
+          "Quên khai báo next trong handler."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level/Senior",
+          "type": "debugging"
+        }
+      },
+      "ja": {
+        "title": "Express 4 の async route error",
+        "displayQuestion": "async route handler が error を throw した場合、Express 4 は自動的に catch しますか。どう処理しますか。",
+        "displayIntent": "Express 4 における async/await error の実務的な debugging 能力を確認する。",
+        "guidance": [
+          "Express 4 は async handler rejection を自動 forward しないと明確に述べる。",
+          "try/catch で next(err) を呼ぶ例を示す。",
+          "再利用可能な Promise wrapper に触れる。",
+          "package は project-level の意図的な選択として説明する。"
+        ],
+        "commonMistakes": [
+          "Express 4 が Express 5 と同じ挙動だと考える。",
+          "global unhandledRejection handler だけを使う。",
+          "catch で error を握りつぶす。",
+          "handler に next を宣言し忘れる。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level/Senior",
+          "type": "debugging"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Express docs: Error handling",
+        "url": "https://expressjs.com/en/guide/error-handling.html",
+        "note": "Used for Express error propagation and Express 5 promise behavior comparison."
+      },
+      {
+        "label": "npm: express-async-errors",
+        "url": "https://www.npmjs.com/package/express-async-errors",
+        "note": "Used for the package-level async error patching approach."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_ERROR_MID_TECH_ASYNC_ERRORS_PACKAGE_006",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["mid", "senior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "trade_off_analysis", "problem_solving"],
+    "techTags": ["express", "nodejs", "javascript"],
+    "difficulty": 3,
+    "conversationDepth": "mid",
+    "intent": "Evaluate whether the candidate understands what express-async-errors solves and the trade-offs of patch-based async error handling in Express 4 applications.",
+    "primaryQuestion": "What problem does the express-async-errors package solve?",
+    "expectedSignals": [
+      "Explains that express-async-errors lets errors thrown from async Express route handlers or middleware reach the normal Express error handler in Express 4-style apps.",
+      "Mentions that it works by patching Express router/layer behavior so returned rejected promises are forwarded.",
+      "States that it reduces repetitive try/catch or async wrapper boilerplate in route handlers.",
+      "Mentions that the app still needs a centralized error handler registered after routes.",
+      "Notes trade-offs: monkey patching, dependency maintenance, version compatibility, and that Express 5 has built-in promise rejection forwarding."
+    ],
+    "redFlags": [
+      "Thinks the package creates error responses automatically without an error handler.",
+      "Uses it together with ad hoc per-route catches inconsistently and produces double next calls.",
+      "Does not know it is mainly an Express 4 async/await pain-point workaround.",
+      "Cannot discuss the risk of patching framework internals."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains the Express 4 async error gap, how the package patches forwarding, why it reduces boilerplate, and when Express 5 makes it unnecessary."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows it forwards async errors but misses patching mechanics or version trade-offs."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Has used the package but cannot explain what problem it solves."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer misrepresents the package as validation, logging, or response formatting."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_tradeoff",
+        "question": "What would you consider before adding a monkey-patching package to a production Express app?",
+        "purpose": "Probe dependency and maintenance judgment."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "After importing express-async-errors, do you still need app.use((err, req, res, next) => ...)? Why?",
+        "purpose": "Check separation between error forwarding and error response formatting."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "express-async-errors purpose",
+        "displayQuestion": "What problem does the express-async-errors package solve?",
+        "displayIntent": "Check whether the candidate understands Express 4 async error forwarding and package trade-offs.",
+        "guidance": [
+          "Connect the package to async/await route errors in Express 4.",
+          "Explain that it forwards rejected promises to Express error middleware.",
+          "Mention the remaining need for a centralized error handler.",
+          "Discuss monkey-patching and Express 5 compatibility considerations."
+        ],
+        "commonMistakes": [
+          "Thinking it formats error responses.",
+          "Forgetting to register an error handler.",
+          "Ignoring framework patching risks.",
+          "Using it without understanding Express version behavior."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level/Senior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Mục đích của express-async-errors",
+        "displayQuestion": "express-async-errors package dùng để giải quyết vấn đề gì?",
+        "displayIntent": "Kiểm tra ứng viên hiểu việc forward lỗi async trong Express 4 và trade-off khi dùng package.",
+        "guidance": [
+          "Liên hệ package với lỗi async/await trong route Express 4.",
+          "Giải thích package forward rejected promise tới Express error middleware.",
+          "Nhắc vẫn cần centralized error handler.",
+          "Nói về monkey patching và cân nhắc khi dùng Express 5."
+        ],
+        "commonMistakes": [
+          "Tưởng package format response lỗi.",
+          "Quên đăng ký error handler.",
+          "Bỏ qua rủi ro patch framework.",
+          "Dùng mà không hiểu behavior theo version Express."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level/Senior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "express-async-errors の目的",
+        "displayQuestion": "express-async-errors package はどの問題を解決しますか。",
+        "displayIntent": "Express 4 の async error forwarding と package の trade-off を理解しているか確認する。",
+        "guidance": [
+          "package を Express 4 の async/await route error と結びつける。",
+          "rejected promise を Express error middleware に forward すると説明する。",
+          "centralized error handler は依然として必要だと述べる。",
+          "monkey patching と Express 5 での扱いを議論する。"
+        ],
+        "commonMistakes": [
+          "error response を format する package だと思う。",
+          "error handler 登録を忘れる。",
+          "framework patching の risk を無視する。",
+          "Express version behavior を理解せず使う。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level/Senior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "npm: express-async-errors",
+        "url": "https://www.npmjs.com/package/express-async-errors",
+        "note": "Used for the package purpose and async/await error handling behavior."
+      },
+      {
+        "label": "Express docs: Error handling",
+        "url": "https://expressjs.com/en/guide/error-handling.html",
+        "note": "Used for Express error middleware and built-in Express 5 promise forwarding comparison."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_ERROR_MID_TECH_CENTRALIZED_HANDLER_007",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["mid", "senior"],
+    "type": "technical_depth",
+    "competencies": ["system_thinking", "technical_fundamentals", "ownership"],
+    "techTags": ["express", "nodejs", "rest", "logging"],
+    "difficulty": 3,
+    "conversationDepth": "mid",
+    "intent": "Assess whether the candidate can design a centralized Express error handler that produces a consistent API error contract without leaking internals.",
+    "primaryQuestion": "How would you create a centralized error handler that returns a consistent response format?",
+    "expectedSignals": [
+      "Registers a single error-handling middleware after routes and 404 handling.",
+      "Normalizes errors into a consistent response envelope such as { error: { code, message, requestId } }.",
+      "Maps known application errors to status codes and safe public messages.",
+      "Logs internal details server-side while hiding stack traces and sensitive data from clients in production.",
+      "Handles res.headersSent by delegating to Express default error handling or the next error handler.",
+      "Includes operational fields such as request ID, error code, validation details when safe, and environment-specific stack output only when appropriate."
+    ],
+    "redFlags": [
+      "Copies err.stack directly into production responses.",
+      "Creates different ad hoc error shapes in every route.",
+      "Does not handle headersSent or duplicate response paths.",
+      "Returns 500 for every known client-side validation or auth error.",
+      "Logs sensitive request bodies, credentials, tokens, or personally identifiable data without filtering."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Designs a consistent error envelope, status mapping, safe logging, headersSent handling, validation details, and environment-aware exposure."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Has a centralized handler and consistent response shape but misses one production detail such as headersSent, request IDs, or sensitive logging."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Understands centralization but response mapping and logging are still inconsistent or unsafe."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would produce inconsistent API contracts or leak internal errors."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "What JSON would your handler return for a validation error versus an unexpected database error?",
+        "purpose": "Check concrete response format and status mapping."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "What should your handler do if res.headersSent is already true?",
+        "purpose": "Verify response lifecycle safety."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Centralized Express error response",
+        "displayQuestion": "How would you create a centralized error handler that returns a consistent response format?",
+        "displayIntent": "Evaluate API error contract design, production safety, and Express lifecycle handling.",
+        "guidance": [
+          "Place the error middleware after routes and 404 handling.",
+          "Normalize every error into one response envelope.",
+          "Map known errors to status codes and safe messages.",
+          "Log internals separately and handle headersSent correctly."
+        ],
+        "commonMistakes": [
+          "Returning err.stack to clients.",
+          "Using a different error shape in every route.",
+          "Ignoring headersSent.",
+          "Treating validation errors and server bugs the same."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level/Senior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Centralized error response trong Express",
+        "displayQuestion": "Làm thế nào để tạo một centralized error handler trả về response format thống nhất?",
+        "displayIntent": "Đánh giá thiết kế API error contract, an toàn production và xử lý lifecycle của Express.",
+        "guidance": [
+          "Đặt error middleware sau routes và 404 handling.",
+          "Chuẩn hóa mọi lỗi về một response envelope.",
+          "Map lỗi đã biết sang status code và message an toàn.",
+          "Log chi tiết nội bộ riêng và xử lý headersSent đúng."
+        ],
+        "commonMistakes": [
+          "Trả err.stack cho client.",
+          "Mỗi route dùng một error shape khác nhau.",
+          "Bỏ qua headersSent.",
+          "Xử lý validation error và bug server giống nhau."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level/Senior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "Express の centralized error response",
+        "displayQuestion": "統一された response format を返す centralized error handler はどう作りますか。",
+        "displayIntent": "API error contract design, production safety, Express lifecycle handling を評価する。",
+        "guidance": [
+          "error middleware は routes と 404 handling の後に置く。",
+          "すべての error を一つの response envelope に normalize する。",
+          "既知の error を status code と安全な message に map する。",
+          "内部詳細は別に log し、headersSent を正しく扱う。"
+        ],
+        "commonMistakes": [
+          "err.stack を client に返す。",
+          "route ごとに異なる error shape を使う。",
+          "headersSent を無視する。",
+          "validation error と server bug を同じように扱う。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level/Senior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Express docs: Error handling",
+        "url": "https://expressjs.com/en/guide/error-handling.html",
+        "note": "Used for registering error handlers and handling res.headersSent."
+      },
+      {
+        "label": "Express performance best practices",
+        "url": "https://expressjs.com/en/advanced/best-practice-performance.html",
+        "note": "Used for production reliability and logging context."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_ERROR_MID_TRADE_OPERATIONAL_PROGRAMMER_008",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack", "devops"],
+    "levels": ["mid", "senior"],
+    "type": "trade_off",
+    "competencies": ["system_thinking", "trade_off_analysis", "ownership", "problem_solving"],
+    "techTags": ["express", "nodejs", "logging"],
+    "difficulty": 3,
+    "conversationDepth": "mid",
+    "intent": "Evaluate whether the candidate can classify errors by recoverability and choose appropriate Express and process-level handling strategies.",
+    "primaryQuestion": "What is the difference between operational errors and programmer errors?",
+    "expectedSignals": [
+      "Defines operational errors as expected runtime failures that a well-written program must handle, such as validation failures, unauthorized access, missing resources, timeouts, rate limits, or downstream service failures.",
+      "Defines programmer errors as bugs in code such as TypeError, invariant violations, wrong assumptions, undefined access, bad state mutation, or incorrect API usage.",
+      "Explains that operational errors can usually be converted into controlled HTTP responses and metrics.",
+      "Explains that programmer errors should be logged with high severity and may require process restart because the application state can be unreliable.",
+      "Mentions using custom error classes or flags such as isOperational to avoid treating all errors as equal.",
+      "Connects classification to alerting, retries, response safety, and whether to continue serving traffic."
+    ],
+    "redFlags": [
+      "Treats every error as a 500 and continues normally.",
+      "Exposes programmer error internals to clients.",
+      "Retries programmer bugs as if they were transient operational failures.",
+      "Crashes the process for every user validation error.",
+      "Cannot give concrete examples of each category."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Gives clear examples, recovery strategy, HTTP response mapping, logging severity, process restart reasoning, and classification mechanism."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands the categories but misses one operational implication such as alerting, retry, or process health."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can define the terms loosely but cannot apply them to Express API behavior."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not show recoverability or production ownership judgment."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "Classify these errors: invalid request body, database timeout, and Cannot read properties of undefined.",
+        "purpose": "Check whether the candidate can apply the distinction."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "Why might a programmer error justify restarting the Node process?",
+        "purpose": "Probe state-corruption and reliability reasoning."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Operational versus programmer errors",
+        "displayQuestion": "What is the difference between operational errors and programmer errors?",
+        "displayIntent": "Assess error classification, recovery decisions, and production handling judgment.",
+        "guidance": [
+          "Define both categories with concrete API examples.",
+          "Explain which errors become controlled client responses.",
+          "Discuss when a bug may require process restart.",
+          "Connect classification to logging, alerting, metrics, and retries."
+        ],
+        "commonMistakes": [
+          "Returning 500 for every error.",
+          "Leaking bug details to clients.",
+          "Retrying programming bugs.",
+          "Crashing for normal user input errors."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/DevOps",
+          "level": "Mid-level/Senior",
+          "type": "trade_off"
+        }
+      },
+      "vi": {
+        "title": "Operational error và programmer error",
+        "displayQuestion": "Sự khác biệt giữa operational error và programmer error là gì?",
+        "displayIntent": "Đánh giá cách phân loại lỗi, quyết định recovery và judgment khi vận hành production.",
+        "guidance": [
+          "Định nghĩa cả hai nhóm bằng ví dụ API cụ thể.",
+          "Giải thích lỗi nào chuyển thành response có kiểm soát cho client.",
+          "Nói khi nào bug có thể cần restart process.",
+          "Liên hệ phân loại lỗi với logging, alerting, metrics và retry."
+        ],
+        "commonMistakes": [
+          "Trả 500 cho mọi lỗi.",
+          "Leak chi tiết bug cho client.",
+          "Retry lỗi do bug code.",
+          "Crash process vì lỗi input bình thường của user."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/DevOps",
+          "level": "Mid-level/Senior",
+          "type": "trade_off"
+        }
+      },
+      "ja": {
+        "title": "operational error と programmer error",
+        "displayQuestion": "operational error と programmer error の違いは何ですか。",
+        "displayIntent": "error classification, recovery decision, production handling judgment を評価する。",
+        "guidance": [
+          "両方の category を具体的な API 例で定義する。",
+          "どの error が controlled client response になるか説明する。",
+          "bug が process restart を必要とする場合を議論する。",
+          "classification を logging, alerting, metrics, retry と結びつける。"
+        ],
+        "commonMistakes": [
+          "すべての error に 500 を返す。",
+          "bug の詳細を client に漏らす。",
+          "programming bug を retry する。",
+          "通常の user input error で process を crash させる。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/DevOps",
+          "level": "Mid-level/Senior",
+          "type": "trade_off"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Node.js docs: Process events",
+        "url": "https://nodejs.org/api/process.html",
+        "note": "Used for process-level safety context around uncaught exceptions and shutdown."
+      },
+      {
+        "label": "Express performance best practices",
+        "url": "https://expressjs.com/en/advanced/best-practice-performance.html",
+        "note": "Used for production error handling and process restart context."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_ERROR_JR_TECH_NOT_FOUND_009",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking"],
+    "techTags": ["express", "nodejs", "rest"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate can handle unmatched routes with a 404 middleware and place it correctly relative to routes and error handlers.",
+    "primaryQuestion": "How do you handle 404 errors for routes that do not exist in Express?",
+    "expectedSignals": [
+      "Explains that a 404 is handled by a catch-all normal middleware registered after all routes.",
+      "Mentions either sending a consistent 404 response directly or creating a NotFoundError and passing it to next(err).",
+      "Places the 404 handler before the centralized error handler if it delegates via next(err).",
+      "Understands that 404 is not thrown automatically as an exception by Express for unmatched routes.",
+      "Keeps API response format consistent with the centralized error contract."
+    ],
+    "redFlags": [
+      "Places the 404 handler before real routes, causing valid routes to be shadowed.",
+      "Assumes the global error handler automatically receives unmatched routes without a 404 middleware.",
+      "Returns 500 for every unknown route.",
+      "Uses a broad wildcard route too early and breaks static files or mounted routers."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains catch-all order, direct 404 versus NotFoundError delegation, centralized formatting, and route shadowing risks."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows to add a final 404 middleware but misses delegation or response consistency detail."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can return 404 in individual routes but lacks a global unmatched-route strategy."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would mishandle unmatched routes or break valid route ordering."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "Where exactly would you place the 404 handler relative to app.use('/api', router) and the error handler?",
+        "purpose": "Check middleware order."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "Would you send the 404 response directly or call next(new NotFoundError())? What trade-off are you making?",
+        "purpose": "Probe consistency versus simplicity."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Handling unmatched Express routes",
+        "displayQuestion": "How do you handle 404 errors for routes that do not exist in Express?",
+        "displayIntent": "Check catch-all 404 middleware placement and response consistency.",
+        "guidance": [
+          "Register the 404 middleware after all real routes.",
+          "Either send the 404 directly or create a NotFoundError.",
+          "Place delegated 404 errors before the centralized error handler.",
+          "Keep the API error shape consistent."
+        ],
+        "commonMistakes": [
+          "Putting the catch-all before routes.",
+          "Expecting Express to throw unmatched routes automatically.",
+          "Returning 500 for unknown URLs.",
+          "Breaking mounted routers with an early wildcard."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Xử lý route không tồn tại trong Express",
+        "displayQuestion": "Làm thế nào để xử lý lỗi 404 (route không tồn tại) trong Express?",
+        "displayIntent": "Kiểm tra cách đặt catch-all 404 middleware và giữ response nhất quán.",
+        "guidance": [
+          "Đăng ký 404 middleware sau toàn bộ route thật.",
+          "Hoặc gửi 404 trực tiếp, hoặc tạo NotFoundError.",
+          "Nếu delegate 404 qua next(err), đặt nó trước centralized error handler.",
+          "Giữ error shape của API nhất quán."
+        ],
+        "commonMistakes": [
+          "Đặt catch-all trước routes.",
+          "Kỳ vọng Express tự throw unmatched route.",
+          "Trả 500 cho URL không tồn tại.",
+          "Làm hỏng mounted router bằng wildcard quá sớm."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "Express の unmatched route handling",
+        "displayQuestion": "Express で存在しない route の 404 error はどう処理しますか。",
+        "displayIntent": "catch-all 404 middleware の配置と response consistency を確認する。",
+        "guidance": [
+          "404 middleware はすべての実 route の後に登録する。",
+          "404 を直接返すか NotFoundError を作る。",
+          "next(err) で委譲する場合は centralized error handler の前に置く。",
+          "API error shape を統一する。"
+        ],
+        "commonMistakes": [
+          "catch-all を routes より前に置く。",
+          "Express が unmatched route を自動 throw すると考える。",
+          "unknown URL に 500 を返す。",
+          "早すぎる wildcard で mounted router を壊す。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Express docs: Using middleware",
+        "url": "https://expressjs.com/en/guide/using-middleware.html",
+        "note": "Used for middleware ordering and catch-all flow."
+      },
+      {
+        "label": "Express docs: Error handling",
+        "url": "https://expressjs.com/en/guide/error-handling.html",
+        "note": "Used for error middleware placement after route handlers."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_ERROR_JR_TECH_MIDDLEWARE_POSITION_010",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior", "mid"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking"],
+    "techTags": ["express", "nodejs", "rest"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Verify whether the candidate understands where to register error-handling middleware in an Express application file.",
+    "primaryQuestion": "Where should error-handling middleware be placed in app.js?",
+    "expectedSignals": [
+      "States that error-handling middleware should be registered after normal middleware and after route handlers.",
+      "Mentions that body parsers, request logging, auth setup, routers, and 404 handling usually come before the global error handler.",
+      "Explains that Express executes middleware in registration order, so an error handler placed too early cannot catch errors from later routes in the intended way.",
+      "Mentions that multiple error handlers can be chained for logging, transformation, and final response, but order still matters.",
+      "Understands that route-specific error handlers can exist, but a final global handler should be near the end."
+    ],
+    "redFlags": [
+      "Places the global error handler before routers.",
+      "Assumes Express searches the whole app for an error handler regardless of registration order.",
+      "Registers 404 handling after the final error response handler and expects it to run.",
+      "Mixes normal middleware and error middleware without understanding their separate signatures."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains app.js ordering from parsers/routes/404 to final error handler and understands chained error middleware."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows the error handler goes last but misses 404 or multi-error-handler nuance."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Has memorized 'put it at the bottom' without reasoning about registration order."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would place handlers in an order that prevents correct error responses."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "What is the typical order of express.json, routers, 404 middleware, and the final error handler?",
+        "purpose": "Check complete app setup ordering."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "Why does registration order matter for error middleware?",
+        "purpose": "Ensure the candidate understands pipeline execution rather than memorizing placement."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Error middleware placement",
+        "displayQuestion": "Where should error-handling middleware be placed in app.js?",
+        "displayIntent": "Check Express registration order and final error-handler placement.",
+        "guidance": [
+          "Place the final error handler after normal middleware and routes.",
+          "Include 404 handling before the final error handler when it delegates.",
+          "Explain that middleware runs in registration order.",
+          "Mention optional chained error handlers for logging and final response."
+        ],
+        "commonMistakes": [
+          "Putting the error handler before routers.",
+          "Forgetting 404 handling order.",
+          "Assuming Express ignores registration order.",
+          "Using the wrong middleware signature."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Vị trí đặt error middleware",
+        "displayQuestion": "Nên đặt error handling middleware ở đâu trong file app.js?",
+        "displayIntent": "Kiểm tra thứ tự đăng ký middleware trong Express và vị trí final error handler.",
+        "guidance": [
+          "Đặt final error handler sau normal middleware và routes.",
+          "Đưa 404 handling vào trước final error handler nếu 404 delegate qua next(err).",
+          "Giải thích middleware chạy theo thứ tự đăng ký.",
+          "Nhắc có thể chain nhiều error handler cho logging và final response."
+        ],
+        "commonMistakes": [
+          "Đặt error handler trước router.",
+          "Quên thứ tự 404 handling.",
+          "Tưởng Express bỏ qua registration order.",
+          "Dùng sai middleware signature."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "error middleware の配置",
+        "displayQuestion": "app.js では error-handling middleware をどこに置くべきですか。",
+        "displayIntent": "Express の registration order と final error handler の配置を確認する。",
+        "guidance": [
+          "final error handler は normal middleware と routes の後に置く。",
+          "404 を next(err) で委譲する場合は final error handler の前に置く。",
+          "middleware は登録順に実行されることを説明する。",
+          "logging と final response のために複数 error handler を chain できると述べる。"
+        ],
+        "commonMistakes": [
+          "error handler を router より前に置く。",
+          "404 handling の順序を忘れる。",
+          "Express が registration order を無視すると考える。",
+          "間違った middleware signature を使う。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Express docs: Error handling",
+        "url": "https://expressjs.com/en/guide/error-handling.html",
+        "note": "Used for placement of error-handling middleware after routes."
+      },
+      {
+        "label": "Express docs: Using middleware",
+        "url": "https://expressjs.com/en/guide/using-middleware.html",
+        "note": "Used for middleware registration order."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_ERROR_MID_TECH_LOGGING_EXPOSURE_011",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack", "devops", "security"],
+    "levels": ["mid", "senior"],
+    "type": "technical_depth",
+    "competencies": ["ownership", "technical_fundamentals", "impact_measurement", "communication"],
+    "techTags": ["express", "nodejs", "logging", "owasp"],
+    "difficulty": 3,
+    "conversationDepth": "mid",
+    "intent": "Assess whether the candidate can log enough information for debugging while returning safe, sanitized error responses to clients.",
+    "primaryQuestion": "How do you log errors in Express without exposing details to the client?",
+    "expectedSignals": [
+      "Uses a structured logger in the centralized error handler or a dedicated logging error middleware.",
+      "Logs server-side fields such as request ID, method, path, status, safe user identifier, error code, stack, cause, and relevant metadata.",
+      "Returns a sanitized client response with a stable error code and generic message for unexpected errors.",
+      "Avoids logging or returning secrets, authorization headers, cookies, tokens, passwords, full PII, or large raw request bodies.",
+      "Uses environment-aware behavior: stack traces may be visible in local development but not in production.",
+      "Mentions correlation IDs, tracing, metrics, and alerting for high-severity or high-rate failures."
+    ],
+    "redFlags": [
+      "Returns err.message and err.stack directly to production clients for all errors.",
+      "Logs complete headers and body without redaction.",
+      "Suppresses logging to avoid exposing details, leaving no debugging trail.",
+      "Logs the same error many times at every layer and creates noisy alerts.",
+      "Does not include request context, making logs hard to correlate."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Balances structured server-side diagnostics, safe client responses, redaction, correlation IDs, environment behavior, and alerting."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Separates logs from client responses but misses one production detail such as redaction, correlation, or alerting."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows not to expose stacks but logging strategy is incomplete or not actionable."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would leak sensitive data or leave the team unable to debug errors."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_metric",
+        "question": "What fields would you include in an error log so an incident can be investigated quickly?",
+        "purpose": "Probe operational observability detail."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "Why is logging the full request body dangerous on public API endpoints?",
+        "purpose": "Check privacy and security awareness."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Logging errors without leaking details",
+        "displayQuestion": "How do you log errors in Express without exposing details to the client?",
+        "displayIntent": "Evaluate production-safe diagnostics, redaction, and client response hygiene.",
+        "guidance": [
+          "Log detailed information server-side with structure and correlation IDs.",
+          "Return sanitized responses with stable error codes.",
+          "Redact secrets, tokens, cookies, passwords, and sensitive body fields.",
+          "Use environment-specific stack exposure and alerting."
+        ],
+        "commonMistakes": [
+          "Returning stack traces in production.",
+          "Logging raw sensitive request data.",
+          "Suppressing logs completely.",
+          "Leaving logs without request context."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/DevOps/Security",
+          "level": "Mid-level/Senior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Log lỗi mà không leak chi tiết",
+        "displayQuestion": "Làm thế nào để log lỗi trong Express mà không expose chi tiết cho client?",
+        "displayIntent": "Đánh giá cách tạo diagnostic an toàn cho production, redaction và hygiene của response client.",
+        "guidance": [
+          "Log chi tiết phía server bằng structured log và correlation ID.",
+          "Trả response đã sanitize với error code ổn định.",
+          "Redact secret, token, cookie, password và field nhạy cảm trong body.",
+          "Dùng stack exposure và alerting theo môi trường."
+        ],
+        "commonMistakes": [
+          "Trả stack trace ở production.",
+          "Log raw request data nhạy cảm.",
+          "Tắt log hoàn toàn.",
+          "Log thiếu request context."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/DevOps/Security",
+          "level": "Mid-level/Senior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "詳細を漏らさず error log を残す",
+        "displayQuestion": "Express で client に詳細を expose せず error を log するにはどうしますか。",
+        "displayIntent": "production-safe diagnostics, redaction, client response hygiene を評価する。",
+        "guidance": [
+          "server-side には structured log と correlation ID で詳細を残す。",
+          "client には stable error code を含む sanitized response を返す。",
+          "secret, token, cookie, password, body の sensitive field を redact する。",
+          "environment ごとの stack exposure と alerting を使う。"
+        ],
+        "commonMistakes": [
+          "production で stack trace を返す。",
+          "sensitive request data を raw log する。",
+          "log を完全に抑止する。",
+          "request context のない log を残す。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/DevOps/Security",
+          "level": "Mid-level/Senior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Express performance best practices",
+        "url": "https://expressjs.com/en/advanced/best-practice-performance.html",
+        "note": "Used for production logging and error handling context."
+      },
+      {
+        "label": "Express docs: Error handling",
+        "url": "https://expressjs.com/en/guide/error-handling.html",
+        "note": "Used for centralized error middleware behavior and response lifecycle."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_ERROR_SR_SITUATIONAL_PROCESS_EVENTS_012",
+    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
+    "roleFamilies": ["backend", "fullstack", "devops"],
+    "levels": ["mid", "senior"],
+    "type": "situational",
+    "competencies": ["ownership", "system_thinking", "problem_solving", "impact_measurement"],
+    "techTags": ["express", "nodejs", "logging", "alerting"],
+    "difficulty": 4,
+    "conversationDepth": "deep",
+    "intent": "Evaluate whether the candidate understands Node.js process-level error events and how they relate to Express request-level error handling.",
+    "primaryQuestion": "What are process.on('uncaughtException') and process.on('unhandledRejection') used for?",
+    "expectedSignals": [
+      "Explains that uncaughtException fires when an exception reaches the event loop without being caught.",
+      "Explains that unhandledRejection fires when a Promise is rejected without a handler within the event loop turn.",
+      "States that these are process-level safety nets for logging, metrics, cleanup, and controlled shutdown, not normal Express request error handling.",
+      "Mentions that after an uncaught exception the process may be in an unsafe state and should usually stop accepting traffic and restart under a process manager or orchestrator.",
+      "Mentions that unhandled rejections should be fixed at the source by catching or forwarding to next(err), not ignored globally.",
+      "Discusses graceful shutdown steps such as stop readiness, server.close, cleanup connections, flush logs, and exit with an appropriate code."
+    ],
+    "redFlags": [
+      "Uses process.on handlers as the main way to send HTTP error responses.",
+      "Continues serving traffic indefinitely after uncaughtException.",
+      "Suppresses unhandled rejections globally without fixing the rejected promise.",
+      "Performs long async recovery inside uncaughtException and assumes the app is healthy.",
+      "Does not alert or restart after fatal process-level failures."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Separates process-level safety nets from request error handling, explains both events, and gives a controlled shutdown and restart strategy."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows the events are for uncaught errors and rejected promises but misses shutdown or request-level separation detail."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Has used the events for logging but treats them as a normal error recovery mechanism."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would hide fatal failures or leave a corrupted process serving traffic."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "What would your service do immediately after receiving an uncaughtException in production?",
+        "purpose": "Check shutdown and traffic-draining judgment."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "Why should unhandledRejection not be treated as a substitute for next(err) in Express routes?",
+        "purpose": "Check request-level versus process-level separation."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Node process-level error events",
+        "displayQuestion": "What are process.on('uncaughtException') and process.on('unhandledRejection') used for?",
+        "displayIntent": "Assess process-level failure handling and its boundary with Express request error handling.",
+        "guidance": [
+          "Define both Node.js process events.",
+          "Emphasize they are safety nets, not normal route error handling.",
+          "Discuss logging, alerting, cleanup, graceful shutdown, and restart.",
+          "Explain why errors should still be handled at their source."
+        ],
+        "commonMistakes": [
+          "Using process events to format HTTP responses.",
+          "Continuing after uncaughtException as if healthy.",
+          "Ignoring rejected promises globally.",
+          "Skipping alerts and restart strategy."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/DevOps",
+          "level": "Mid-level/Senior",
+          "type": "situational"
+        }
+      },
+      "vi": {
+        "title": "Process-level error event trong Node",
+        "displayQuestion": "process.on('uncaughtException') và process.on('unhandledRejection') dùng để làm gì?",
+        "displayIntent": "Đánh giá cách xử lý lỗi cấp process và ranh giới với error handling theo request trong Express.",
+        "guidance": [
+          "Định nghĩa cả hai event của Node.js process.",
+          "Nhấn mạnh đây là safety net, không phải cách xử lý lỗi route thông thường.",
+          "Nói về logging, alerting, cleanup, graceful shutdown và restart.",
+          "Giải thích vì sao lỗi vẫn phải được xử lý tại nguồn phát sinh."
+        ],
+        "commonMistakes": [
+          "Dùng process event để format HTTP response.",
+          "Tiếp tục chạy sau uncaughtException như app vẫn khỏe.",
+          "Ignore rejected promise bằng global handler.",
+          "Bỏ qua alert và chiến lược restart."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/DevOps",
+          "level": "Mid-level/Senior",
+          "type": "situational"
+        }
+      },
+      "ja": {
+        "title": "Node の process-level error events",
+        "displayQuestion": "process.on('uncaughtException') と process.on('unhandledRejection') は何に使いますか。",
+        "displayIntent": "process-level failure handling と Express request error handling の境界を評価する。",
+        "guidance": [
+          "Node.js process の両 event を定義する。",
+          "通常の route error handling ではなく safety net だと強調する。",
+          "logging, alerting, cleanup, graceful shutdown, restart を説明する。",
+          "error は発生元で処理すべき理由を説明する。"
+        ],
+        "commonMistakes": [
+          "process event で HTTP response を format する。",
+          "uncaughtException 後も healthy として継続する。",
+          "global handler で rejected promise を無視する。",
+          "alert と restart strategy を省略する。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/DevOps",
+          "level": "Mid-level/Senior",
+          "type": "situational"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Node.js docs: Process events",
+        "url": "https://nodejs.org/api/process.html",
+        "note": "Used for uncaughtException and unhandledRejection semantics and warnings."
+      },
+      {
+        "label": "Express performance best practices",
+        "url": "https://expressjs.com/en/advanced/best-practice-performance.html",
+        "note": "Used for production process reliability and restart context."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_ERROR_MID_TECH_CUSTOM_ERROR_CLASS_013",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["mid", "senior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking", "communication"],
+    "techTags": ["express", "nodejs", "typescript", "javascript"],
+    "difficulty": 3,
+    "conversationDepth": "mid",
+    "intent": "Check whether the candidate can design custom Error classes that carry HTTP and application metadata safely through Express error handling.",
+    "primaryQuestion": "How do you create a custom Error class in Node.js or Express?",
+    "expectedSignals": [
+      "Extends the built-in Error class and calls super(message).",
+      "Sets useful fields such as name, statusCode or status, code, isOperational, details, and cause when appropriate.",
+      "Uses Object.setPrototypeOf(this, ClassName.prototype) in TypeScript/transpiled environments if needed to preserve instanceof behavior.",
+      "Uses Error.captureStackTrace when available to keep stack traces clean.",
+      "Separates safe public message and internal details so the error handler can avoid leaking implementation data.",
+      "Shows concrete subclasses such as BadRequestError, UnauthorizedError, NotFoundError, or ValidationError."
+    ],
+    "redFlags": [
+      "Throws plain strings or arbitrary objects instead of Error instances.",
+      "Stores secrets or raw database errors directly in public message fields.",
+      "Does not call super(message), losing stack and message behavior.",
+      "Creates many custom classes without a consistent base shape used by the error handler.",
+      "Relies on HTTP status text alone and loses application-specific error codes."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Designs a base AppError with HTTP status, stable code, operational flag, safe public message, optional details/cause, and correct prototype/stack behavior."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Can extend Error and set statusCode but misses prototype, cause, or public/private detail separation."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Has thrown custom errors but lacks a consistent shape for centralized handling."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would make errors hard to classify, log, or map to responses."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "What fields would you put on a base AppError class and which of them are safe to return to clients?",
+        "purpose": "Probe API error contract design."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Why is throwing a string worse than throwing an Error instance?",
+        "purpose": "Check stack, type, and consistency reasoning."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Custom Error classes for Express",
+        "displayQuestion": "How do you create a custom Error class in Node.js or Express?",
+        "displayIntent": "Check whether errors carry enough metadata for centralized handling without leaking internals.",
+        "guidance": [
+          "Extend Error and call super(message).",
+          "Add statusCode, stable code, isOperational, details, and cause deliberately.",
+          "Preserve prototype and stack behavior where needed.",
+          "Separate public response data from internal diagnostic data."
+        ],
+        "commonMistakes": [
+          "Throwing strings.",
+          "Leaking internal messages as public messages.",
+          "Forgetting super(message).",
+          "Creating inconsistent error shapes."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level/Senior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Custom Error class cho Express",
+        "displayQuestion": "Làm thế nào để tạo một custom Error class trong Node.js/Express?",
+        "displayIntent": "Kiểm tra lỗi có đủ metadata cho centralized handling mà không leak chi tiết nội bộ hay không.",
+        "guidance": [
+          "Extend Error và gọi super(message).",
+          "Thêm statusCode, code ổn định, isOperational, details và cause một cách có chủ đích.",
+          "Giữ đúng prototype và stack behavior khi cần.",
+          "Tách dữ liệu public response khỏi dữ liệu diagnostic nội bộ."
+        ],
+        "commonMistakes": [
+          "Throw string.",
+          "Leak internal message thành public message.",
+          "Quên gọi super(message).",
+          "Tạo error shape không nhất quán."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level/Senior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "Express の custom Error class",
+        "displayQuestion": "Node.js/Express では custom Error class をどう作りますか。",
+        "displayIntent": "centralized handling に必要な metadata を持ちつつ内部詳細を漏らさない error 設計を確認する。",
+        "guidance": [
+          "Error を extend し super(message) を呼ぶ。",
+          "statusCode, stable code, isOperational, details, cause を意図的に追加する。",
+          "必要に応じて prototype と stack behavior を保つ。",
+          "public response data と internal diagnostic data を分ける。"
+        ],
+        "commonMistakes": [
+          "string を throw する。",
+          "internal message を public message として漏らす。",
+          "super(message) を忘れる。",
+          "一貫しない error shape を作る。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level/Senior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Node.js docs: Error cause and stack context",
+        "url": "https://nodejs.org/api/errors.html",
+        "note": "Used for Node.js Error behavior, stack traces, and cause context."
+      },
+      {
+        "label": "Express docs: Error handling",
+        "url": "https://expressjs.com/en/guide/error-handling.html",
+        "note": "Used for passing custom Error instances through Express error middleware."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_ERROR_MID_TECH_EXPRESS5_ASYNC_014",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["mid", "senior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving", "trade_off_analysis"],
+    "techTags": ["express", "nodejs", "javascript"],
+    "difficulty": 3,
+    "conversationDepth": "mid",
+    "intent": "Assess whether the candidate understands Express 5 improvements to promise-based async error handling and what still remains the developer's responsibility.",
+    "primaryQuestion": "What did Express 5 improve about async error handling compared with Express 4?",
+    "expectedSignals": [
+      "States that route handlers and middleware returning Promises in Express 5 automatically call next(rejectedValue) when they reject or throw.",
+      "Contrasts this with Express 4, where async/await handler errors require try/catch, a wrapper, or a package.",
+      "Explains that this reduces boilerplate and lost unhandled promise rejections in request handlers.",
+      "Mentions that a centralized error handler is still required to format responses consistently.",
+      "Notes that errors outside the request lifecycle, such as background jobs, timers, streams, and event emitters, still need explicit handling.",
+      "Mentions migration caution: test route matching, middleware behavior, and error response contracts when upgrading."
+    ],
+    "redFlags": [
+      "Claims Express 5 catches every asynchronous error anywhere in the process.",
+      "Removes all error handlers because Express 5 forwards promises automatically.",
+      "Assumes Express 4 already had identical behavior.",
+      "Ignores migration testing for route behavior and error contracts.",
+      "Forgets that async work started but not returned or awaited can still escape request handling."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Clearly explains automatic promise rejection forwarding, Express 4 contrast, remaining boundaries, centralized handler need, and migration verification."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows Express 5 forwards rejected promises but misses lifecycle boundaries or migration risks."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Has heard Express 5 improves async errors but cannot state the exact behavior."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would lead to missing handlers or false confidence in async error coverage."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "In Express 5, do you still need app.use((err, req, res, next) => ...)? Why?",
+        "purpose": "Check separation between forwarding and formatting."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "Will Express 5 catch an error thrown in a background job started from a route after the response is sent?",
+        "purpose": "Probe request-lifecycle boundary knowledge."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Express 5 async error handling",
+        "displayQuestion": "What did Express 5 improve about async error handling compared with Express 4?",
+        "displayIntent": "Verify version-specific understanding of promise rejection forwarding and remaining responsibilities.",
+        "guidance": [
+          "State that Express 5 forwards rejected Promises from returned route handlers and middleware.",
+          "Contrast with Express 4 wrappers or try/catch.",
+          "Explain that centralized response formatting is still needed.",
+          "Mention async work outside request lifecycle and migration testing."
+        ],
+        "commonMistakes": [
+          "Thinking Express 5 catches all process async errors.",
+          "Removing the error handler.",
+          "Assuming Express 4 had the same behavior.",
+          "Ignoring unreturned or background async work."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level/Senior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Async error handling trong Express 5",
+        "displayQuestion": "Express 5 cải thiện gì về async error handling so với Express 4?",
+        "displayIntent": "Xác minh hiểu biết theo version về promise rejection forwarding và trách nhiệm còn lại của developer.",
+        "guidance": [
+          "Nói rõ Express 5 forward rejected Promise từ route handler và middleware được return.",
+          "So sánh với Express 4 cần wrapper hoặc try/catch.",
+          "Giải thích vẫn cần centralized response formatting.",
+          "Nhắc async work ngoài request lifecycle và test khi migration."
+        ],
+        "commonMistakes": [
+          "Tưởng Express 5 bắt mọi async error trong process.",
+          "Xóa error handler.",
+          "Tưởng Express 4 có behavior giống vậy.",
+          "Bỏ qua async work không return hoặc chạy background."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level/Senior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "Express 5 の async error handling",
+        "displayQuestion": "Express 5 は Express 4 と比べて async error handling をどう改善しましたか。",
+        "displayIntent": "promise rejection forwarding と残る developer responsibility の version-specific understanding を確認する。",
+        "guidance": [
+          "Express 5 は return された route handler/middleware の rejected Promise を forward すると述べる。",
+          "Express 4 では wrapper や try/catch が必要だったと比較する。",
+          "centralized response formatting はまだ必要だと説明する。",
+          "request lifecycle 外の async work と migration testing に触れる。"
+        ],
+        "commonMistakes": [
+          "Express 5 が process 内の全 async error を catch すると考える。",
+          "error handler を削除する。",
+          "Express 4 も同じ behavior だったと思う。",
+          "return されない async work や background work を無視する。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level/Senior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Express docs: Error handling",
+        "url": "https://expressjs.com/en/guide/error-handling.html",
+        "note": "Used for Express 5 automatic next(value) behavior on rejected Promises."
+      },
+      {
+        "label": "Express docs: Moving to Express 5",
+        "url": "https://expressjs.com/en/guide/migrating-5.html",
+        "note": "Used for migration context and Express 5 behavior changes."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "EXPRESS_ERROR_MID_DEBUG_RETURN_NEXT_ERR_015",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["mid", "senior"],
+    "type": "debugging",
+    "competencies": ["problem_solving", "technical_fundamentals", "communication"],
+    "techTags": ["express", "nodejs", "debugging"],
+    "difficulty": 3,
+    "conversationDepth": "mid",
+    "intent": "Check whether the candidate understands why return next(err) is often used to stop fall-through control flow after delegating an error.",
+    "primaryQuestion": "When should you use return next(err) instead of just next(err)?",
+    "expectedSignals": [
+      "Explains that next(err) delegates the error but does not automatically stop the current JavaScript function from continuing.",
+      "Uses return next(err) when there is code after the call or when inside a conditional branch to avoid fall-through.",
+      "Connects this to preventing duplicate responses, extra database work, or both success and error paths running.",
+      "Mentions that if next(err) is the final statement in the function, return is not strictly required but is often used for clarity.",
+      "Understands that return next(err) does not mean Express waits for a return value; it is a control-flow guard in the current handler.",
+      "Mentions similar discipline after res.status(...).json(...) or res.redirect(...) when more code follows."
+    ],
+    "redFlags": [
+      "Thinks next(err) automatically exits the current function.",
+      "Calls next(err) and then continues to send a response.",
+      "Believes return next(err) changes the error handler's response value.",
+      "Uses return inconsistently and creates hard-to-follow branches.",
+      "Does not connect the issue to 'Cannot set headers after they are sent' bugs."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains JavaScript fall-through, Express delegation, duplicate-response prevention, and when return is optional versus necessary."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows return avoids continuing execution but misses the nuance that Express does not use the returned value."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Has seen the pattern but cannot explain the control-flow reason."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would likely produce duplicate responses or confusing handler flow."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Can you show a route where missing return before next(err) causes a second response to be sent?",
+        "purpose": "Force concrete control-flow reasoning."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Does Express use the value returned by return next(err)? What is the return for?",
+        "purpose": "Separate JavaScript control flow from Express error forwarding."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "return next(err) and control flow",
+        "displayQuestion": "When should you use return next(err) instead of just next(err)?",
+        "displayIntent": "Check whether the candidate understands fall-through control flow after delegating errors.",
+        "guidance": [
+          "Explain that next(err) does not exit the current function.",
+          "Use return when later code should not run.",
+          "Tie this to duplicate response and headers-sent bugs.",
+          "Clarify that Express does not use the returned value."
+        ],
+        "commonMistakes": [
+          "Assuming next(err) stops execution.",
+          "Sending a response after next(err).",
+          "Thinking return changes Express response behavior.",
+          "Missing the same pattern after res.json or res.redirect."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level/Senior",
+          "type": "debugging"
+        }
+      },
+      "vi": {
+        "title": "return next(err) và control flow",
+        "displayQuestion": "Khi nào nên return next(err) thay vì chỉ next(err)?",
+        "displayIntent": "Kiểm tra ứng viên có hiểu fall-through control flow sau khi delegate lỗi hay không.",
+        "guidance": [
+          "Giải thích next(err) không tự thoát khỏi function hiện tại.",
+          "Dùng return khi phần code phía sau không được chạy tiếp.",
+          "Liên hệ với lỗi duplicate response và headers already sent.",
+          "Nói rõ Express không dùng giá trị return đó."
+        ],
+        "commonMistakes": [
+          "Tưởng next(err) tự dừng execution.",
+          "Gửi response sau khi gọi next(err).",
+          "Tưởng return thay đổi response behavior của Express.",
+          "Bỏ qua pattern tương tự sau res.json hoặc res.redirect."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level/Senior",
+          "type": "debugging"
+        }
+      },
+      "ja": {
+        "title": "return next(err) と control flow",
+        "displayQuestion": "next(err) だけでなく return next(err) を使うべきなのはどんな時ですか。",
+        "displayIntent": "error を委譲した後の fall-through control flow を理解しているか確認する。",
+        "guidance": [
+          "next(err) は現在の function を自動終了しないと説明する。",
+          "後続 code を実行してはいけない場合に return を使う。",
+          "duplicate response や headers already sent の bug と結びつける。",
+          "Express はその returned value を使わないと説明する。"
+        ],
+        "commonMistakes": [
+          "next(err) が execution を止めると思う。",
+          "next(err) 後に response を送る。",
+          "return が Express response behavior を変えると思う。",
+          "res.json や res.redirect 後の同じ pattern を見落とす。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level/Senior",
+          "type": "debugging"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Express docs: Error handling",
+        "url": "https://expressjs.com/en/guide/error-handling.html",
+        "note": "Used for next(err) delegation and response lifecycle behavior."
+      },
+      {
+        "label": "Express 4.x API: Response",
+        "url": "https://expressjs.com/en/4x/api.html",
+        "note": "Used for response methods and headersSent-related lifecycle context."
+      }
+    ],
+    "status": "active"
+  }
+]
