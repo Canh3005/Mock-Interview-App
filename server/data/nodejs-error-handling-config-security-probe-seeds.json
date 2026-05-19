@@ -1,0 +1,2018 @@
+[
+  {
+    "code": "NODE_ERRSEC_JR_TECH_SYNC_ERRORS_001",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving", "communication"],
+    "techTags": ["nodejs", "javascript", "error-handling"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate understands how synchronous exceptions work in Node.js and how to handle them without confusing them with asynchronous failures.",
+    "primaryQuestion": "How do you handle synchronous errors in Node.js?",
+    "expectedSignals": [
+      "Explains that synchronous errors are thrown during the current call stack and can be handled with try/catch around the code that may throw.",
+      "Gives practical examples such as JSON.parse, input parsing, configuration loading, or synchronous filesystem calls throwing exceptions.",
+      "States that the handler should either recover intentionally, return a controlled response, or rethrow/delegate the error rather than silently swallowing it.",
+      "Distinguishes synchronous try/catch from asynchronous error handling: a try/catch around code that schedules a timer, callback, or Promise will not catch errors that happen later unless they are awaited or forwarded.",
+      "Mentions that in HTTP frameworks such as Express, a synchronous throw inside a route or middleware can be passed into centralized error handling.",
+      "Recognizes that unexpected fatal startup errors should usually stop the process instead of leaving the service in an unknown state."
+    ],
+    "redFlags": [
+      "Says all Node.js errors can be handled by one outer try/catch around the server startup code.",
+      "Catches errors and ignores them without logging, returning a response, or stopping unsafe execution.",
+      "Uses try/catch as if it automatically catches future Promise rejections, timer errors, or callback errors.",
+      "Returns raw exception details directly to API clients.",
+      "Cannot give a concrete example of synchronous code that throws."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Clearly explains call-stack based exceptions, try/catch placement, safe recovery or delegation, and the boundary between sync and async errors."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows to use try/catch for synchronous code but gives limited detail about delegation or async boundaries."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Has heard of try/catch but cannot reason about where it must be placed or what it does not catch."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would likely swallow errors, leak internals, or fail to handle real synchronous exceptions."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Can you give an example of Node.js code where JSON.parse throws and show where the try/catch should go?",
+        "purpose": "Force concrete understanding of synchronous exception boundaries."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Would the same try/catch catch an error thrown later inside setTimeout? Why or why not?",
+        "purpose": "Check whether the candidate separates synchronous call stack errors from asynchronous callbacks."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Handling synchronous Node.js errors",
+        "displayQuestion": "How do you handle synchronous errors in Node.js?",
+        "displayIntent": "Check understanding of try/catch, call stack boundaries, and safe error delegation.",
+        "guidance": [
+          "Listen for try/catch around the exact synchronous operation that may throw.",
+          "Ask for a concrete example such as JSON.parse or startup config loading.",
+          "Confirm the candidate knows try/catch does not automatically catch later async failures."
+        ],
+        "commonMistakes": [
+          "Using one outer try/catch for the whole server.",
+          "Swallowing errors silently.",
+          "Confusing synchronous exceptions with Promise rejections.",
+          "Returning stack traces to clients."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Xử lý lỗi đồng bộ trong Node.js",
+        "displayQuestion": "Bạn xử lý synchronous errors trong Node.js như thế nào?",
+        "displayIntent": "Kiểm tra hiểu biết về try/catch, ranh giới call stack và cách chuyển lỗi an toàn.",
+        "guidance": [
+          "Nghe xem ứng viên đặt try/catch quanh đúng đoạn code đồng bộ có thể throw hay không.",
+          "Yêu cầu ví dụ cụ thể như JSON.parse hoặc load config lúc startup.",
+          "Xác nhận ứng viên biết try/catch không tự bắt lỗi async xảy ra sau đó."
+        ],
+        "commonMistakes": [
+          "Dùng một try/catch ngoài cùng cho toàn bộ server.",
+          "Nuốt lỗi mà không log hoặc xử lý.",
+          "Nhầm synchronous exception với Promise rejection.",
+          "Trả stack trace cho client."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "Node.js の同期エラー処理",
+        "displayQuestion": "Node.js では synchronous error をどのように処理しますか。",
+        "displayIntent": "try/catch、call stack の境界、安全な error delegation の理解を確認する。",
+        "guidance": [
+          "throw する可能性がある同期処理の近くに try/catch を置けるか確認する。",
+          "JSON.parse や startup config loading など具体例を求める。",
+          "try/catch が後で発生する async failure を自動的には catch しないことを確認する。"
+        ],
+        "commonMistakes": [
+          "server 全体を 1 つの outer try/catch で扱う。",
+          "error を silently swallow する。",
+          "synchronous exception と Promise rejection を混同する。",
+          "stack trace を client に返す。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Node.js API: Errors",
+        "url": "https://nodejs.org/api/errors.html",
+        "note": "Used for JavaScript exception and Error behavior in Node.js."
+      },
+      {
+        "label": "Express docs: Error handling",
+        "url": "https://expressjs.com/en/guide/error-handling.html",
+        "note": "Used for synchronous errors thrown in Express handlers."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NODE_ERRSEC_JR_TECH_ASYNC_EXPRESS_ERRORS_002",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving", "communication"],
+    "techTags": ["nodejs", "express", "async-await", "error-handling"],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Assess whether the candidate can safely propagate asynchronous route errors in Express instead of losing them or causing unhandled promise rejections.",
+    "primaryQuestion": "How do you handle async errors in Express routes?",
+    "expectedSignals": [
+      "Explains that async route errors should be forwarded to Express error handling rather than handled inconsistently in every route.",
+      "For Express 4, mentions using try/catch around awaited work and calling next(err), or using a reusable asyncHandler wrapper that catches rejected promises.",
+      "For Express 5, mentions that rejected Promises returned from route handlers are automatically forwarded to next, while a centralized error handler is still needed.",
+      "Understands that work started but not awaited or returned can still escape the request lifecycle and needs its own error handling.",
+      "Avoids sending a response and then also calling next(err), which can cause duplicate response or headers-sent bugs.",
+      "Mentions logging the internal error and returning a safe, consistent API response through error middleware."
+    ],
+    "redFlags": [
+      "Claims Express 4 automatically catches all async/await errors.",
+      "Catches async errors and only console.logs them without sending or delegating a response.",
+      "Calls next() without the error after catching a failure.",
+      "Starts background async work in a route and assumes Express will catch any later failure.",
+      "Sends both a success response and an error response for the same request."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains Express 4 try/catch or wrappers, Express 5 promise forwarding, centralized response formatting, and request lifecycle boundaries."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows to use next(err) or an async wrapper but misses one nuance such as Express version differences or unawaited work."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows async errors need handling but cannot describe a reliable Express pattern."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would likely create unhandled promise rejections or inconsistent error responses."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Can you write the shape of an asyncHandler wrapper for Express 4?",
+        "purpose": "Check practical ability to forward rejected promises."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "If an async task is started in a route but not awaited or returned, will Express handle its rejection?",
+        "purpose": "Probe request lifecycle and unhandled rejection boundaries."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Async errors in Express routes",
+        "displayQuestion": "How do you handle async errors in Express routes?",
+        "displayIntent": "Check practical async error forwarding in Express route handlers.",
+        "guidance": [
+          "Listen for next(err), try/catch, or a reusable async wrapper.",
+          "Check whether the candidate knows Express 4 and Express 5 differ.",
+          "Ask what happens to unawaited background work."
+        ],
+        "commonMistakes": [
+          "Assuming Express 4 catches async handler rejections automatically.",
+          "Logging without responding or delegating.",
+          "Calling next() instead of next(err).",
+          "Ignoring unawaited async work."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Lỗi async trong route Express",
+        "displayQuestion": "Bạn xử lý async errors trong Express routes như thế nào?",
+        "displayIntent": "Kiểm tra khả năng forward lỗi async trong Express route handler.",
+        "guidance": [
+          "Nghe các pattern như next(err), try/catch hoặc async wrapper tái sử dụng.",
+          "Kiểm tra ứng viên có biết Express 4 và Express 5 khác nhau hay không.",
+          "Hỏi điều gì xảy ra với async work không await."
+        ],
+        "commonMistakes": [
+          "Tưởng Express 4 tự bắt rejected Promise từ async handler.",
+          "Chỉ log mà không trả response hoặc delegate.",
+          "Gọi next() thay vì next(err).",
+          "Bỏ qua async work không được await."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "Express route の async error",
+        "displayQuestion": "Express route では async error をどのように処理しますか。",
+        "displayIntent": "Express route handler で async error を適切に forward できるか確認する。",
+        "guidance": [
+          "next(err)、try/catch、再利用可能な async wrapper に触れるか確認する。",
+          "Express 4 と Express 5 の違いを知っているか見る。",
+          "await されない background work がどうなるか質問する。"
+        ],
+        "commonMistakes": [
+          "Express 4 が async handler rejection を自動的に catch すると考える。",
+          "log だけして response も delegation もしない。",
+          "next(err) ではなく next() を呼ぶ。",
+          "await されない async work を無視する。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Express docs: Error handling",
+        "url": "https://expressjs.com/en/guide/error-handling.html",
+        "note": "Used for next(err), async route error behavior, and Express 5 Promise forwarding."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NODE_ERRSEC_JR_TECH_EXPRESS_ERROR_MIDDLEWARE_003",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "communication"],
+    "techTags": ["nodejs", "express", "middleware", "error-handling"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate understands the role of Express error-handling middleware as a centralized error response and logging point.",
+    "primaryQuestion": "What is Express error-handling middleware?",
+    "expectedSignals": [
+      "Defines Express error-handling middleware as middleware used on the error path, usually registered after routes and normal middleware.",
+      "States that it has the special signature (err, req, res, next), which distinguishes it from normal middleware.",
+      "Explains that it receives errors from thrown synchronous exceptions, next(err), and in Express 5 returned rejected Promises.",
+      "Describes practical responsibilities: log internal details, map known errors to HTTP status codes, return a safe response shape, and delegate when needed.",
+      "Mentions that order matters because it should be registered after routes it is meant to handle.",
+      "Understands that it should not expose stack traces or sensitive internals in production responses."
+    ],
+    "redFlags": [
+      "Describes normal middleware with (req, res, next) and does not mention the err parameter.",
+      "Thinks error middleware runs on every successful request.",
+      "Registers error middleware before routes and expects it to catch later route errors.",
+      "Uses error middleware only for console logging and leaves the request hanging.",
+      "Returns raw Error objects to users."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains the error-path role, signature, registration order, forwarding sources, response mapping, and safe production behavior."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands that it centralizes Express errors but misses one practical detail such as ordering or safe response shaping."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Has seen error middleware but cannot clearly explain when it runs or what it should do."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer confuses error middleware with normal middleware or would leave requests unresolved."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Where would you register a global Express error handler relative to your routes?",
+        "purpose": "Check middleware ordering knowledge."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "What should the error middleware do if res.headersSent is already true?",
+        "purpose": "Probe response lifecycle awareness at a junior-friendly level."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Express error middleware",
+        "displayQuestion": "What is Express error-handling middleware?",
+        "displayIntent": "Check the candidate's understanding of centralized Express error handling.",
+        "guidance": [
+          "Listen for the err, req, res, next signature.",
+          "Confirm it is registered after routes.",
+          "Look for logging, HTTP mapping, and safe response formatting."
+        ],
+        "commonMistakes": [
+          "Using normal middleware signature.",
+          "Thinking it runs for successful requests.",
+          "Registering it in the wrong order.",
+          "Returning raw errors to clients."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Error middleware trong Express",
+        "displayQuestion": "Express error-handling middleware là gì?",
+        "displayIntent": "Kiểm tra hiểu biết về xử lý lỗi tập trung trong Express.",
+        "guidance": [
+          "Nghe chữ ký err, req, res, next.",
+          "Xác nhận middleware này được đăng ký sau routes.",
+          "Tìm ý về logging, mapping HTTP status và response an toàn."
+        ],
+        "commonMistakes": [
+          "Dùng chữ ký middleware thường.",
+          "Tưởng nó chạy cho request thành công.",
+          "Đăng ký sai thứ tự.",
+          "Trả raw error cho client."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "Express error middleware",
+        "displayQuestion": "Express error-handling middleware とは何ですか。",
+        "displayIntent": "Express の centralized error handling を理解しているか確認する。",
+        "guidance": [
+          "err, req, res, next の signature に触れるか確認する。",
+          "routes の後に登録することを確認する。",
+          "logging、HTTP mapping、安全な response formatting を見る。"
+        ],
+        "commonMistakes": [
+          "通常 middleware の signature を使う。",
+          "成功 request でも実行されると思う。",
+          "登録順を間違える。",
+          "raw error を client に返す。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Express docs: Error handling",
+        "url": "https://expressjs.com/en/guide/error-handling.html",
+        "note": "Used for Express error-handling middleware behavior and signature."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NODE_ERRSEC_JR_TECH_ERR_MW_SIGNATURE_004",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "communication"],
+    "techTags": ["nodejs", "express", "middleware", "error-handling"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Verify whether the candidate understands why Express error middleware uses a four-argument err-first function shape.",
+    "primaryQuestion": "Why does error middleware use (err, req, res, next)?",
+    "expectedSignals": [
+      "States that Express recognizes error-handling middleware by the declared four-argument signature.",
+      "Explains that err is the error object or rejected value being passed through the middleware chain.",
+      "Contrasts it with normal middleware, which usually uses (req, res, next) and handles normal request flow.",
+      "Mentions that req and res are still needed to inspect request context and send an appropriate HTTP response.",
+      "Mentions that next is still needed to delegate to the next error handler or the default handler, especially when headers are already sent.",
+      "Understands that removing an unused parameter can change how Express treats the middleware at runtime."
+    ],
+    "redFlags": [
+      "Says the four parameters are only a naming convention with no runtime meaning.",
+      "Places err after req or omits it completely.",
+      "Removes next because it is not currently used and cannot explain the risk.",
+      "Thinks TypeScript types alone make a function an Express error handler.",
+      "Cannot explain what the err parameter contains."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains Express arity-based detection, err-first flow, the role of req/res/next, and why all parameters should be preserved."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows the signature and general purpose but misses arity or delegation nuance."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can repeat the signature but cannot explain why Express needs it."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would cause Express to treat the function as normal middleware or lose error context."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "red_flag",
+        "question": "What can happen if you define the handler as (err, req, res) and omit next?",
+        "purpose": "Check whether the candidate understands function arity in Express."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "How is (err, req, res, next) different from (req, res, next) in the middleware chain?",
+        "purpose": "Force direct contrast with normal middleware."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Express error handler signature",
+        "displayQuestion": "Why does error middleware use (err, req, res, next)?",
+        "displayIntent": "Check whether the candidate understands the err-first four-parameter contract.",
+        "guidance": [
+          "Listen for Express detecting error handlers by four arguments.",
+          "Ask what err contains.",
+          "Confirm the candidate knows next may still be needed."
+        ],
+        "commonMistakes": [
+          "Treating the signature as cosmetic.",
+          "Putting err in the wrong position.",
+          "Removing next without understanding the consequence.",
+          "Relying only on TypeScript types."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Chữ ký error handler Express",
+        "displayQuestion": "Tại sao error middleware dùng (err, req, res, next)?",
+        "displayIntent": "Kiểm tra ứng viên hiểu contract bốn tham số với err đứng đầu.",
+        "guidance": [
+          "Nghe ý Express nhận diện error handler qua bốn tham số.",
+          "Hỏi err chứa gì.",
+          "Xác nhận ứng viên biết next vẫn có thể cần dùng."
+        ],
+        "commonMistakes": [
+          "Xem chữ ký chỉ là style.",
+          "Đặt err sai vị trí.",
+          "Xóa next mà không hiểu hậu quả.",
+          "Chỉ dựa vào type TypeScript."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "Express error handler signature",
+        "displayQuestion": "error middleware はなぜ (err, req, res, next) を使いますか。",
+        "displayIntent": "err-first の 4-argument contract を理解しているか確認する。",
+        "guidance": [
+          "Express が 4 arguments で error handler を識別することを確認する。",
+          "err に何が入るか質問する。",
+          "next がまだ必要になり得ることを確認する。"
+        ],
+        "commonMistakes": [
+          "signature を見た目だけの style と考える。",
+          "err の位置を間違える。",
+          "意味を理解せず next を削除する。",
+          "TypeScript type だけに頼る。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Express docs: Error handling",
+        "url": "https://expressjs.com/en/guide/error-handling.html",
+        "note": "Used for the four-argument error-handling middleware contract."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NODE_ERRSEC_JR_TECH_UNHANDLED_REJECTION_005",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving"],
+    "techTags": ["nodejs", "javascript", "promises", "error-handling"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate understands unhandled Promise rejections and why they are a reliability problem in Node.js services.",
+    "primaryQuestion": "What is an unhandled promise rejection?",
+    "expectedSignals": [
+      "Defines it as a Promise that rejects without a rejection handler such as catch or an awaited try/catch being attached in time.",
+      "Explains common causes: forgetting await, forgetting return, missing catch, or starting async work without observing the Promise.",
+      "Connects it to real service risk: failed operations may not produce a proper HTTP response, logs may be incomplete, and the process may terminate depending on Node.js behavior and configuration.",
+      "Mentions that async functions return Promises, so throwing inside an async function becomes a rejection.",
+      "Suggests prevention patterns such as always await or return Promises, use catch, use Express async error handling, and test failure paths.",
+      "Understands that process-level unhandledRejection handlers are for logging and controlled shutdown policy, not a substitute for local error handling."
+    ],
+    "redFlags": [
+      "Says a rejected Promise is automatically ignored safely.",
+      "Thinks try/catch catches a Promise rejection even when the Promise is not awaited.",
+      "Relies on process.on('unhandledRejection') as normal application control flow.",
+      "Cannot explain the difference between throw in a normal function and throw in an async function.",
+      "Does not see unhandled rejections as production reliability issues."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Defines unhandled rejection accurately, explains async function behavior, gives common causes, and proposes practical prevention."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands rejected Promises need catch or await but misses process-level or framework nuance."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Has heard the term but cannot identify how unhandled rejections happen in real code."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would leave rejected Promises unobserved or normalize process-level failure handling."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "What happens if you call an async function but forget to await or return its Promise?",
+        "purpose": "Check practical cause of unhandled rejections."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Why is a process-level unhandledRejection listener not enough for normal route error handling?",
+        "purpose": "Separate crash logging policy from request-level control flow."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Unhandled Promise rejections",
+        "displayQuestion": "What is an unhandled promise rejection?",
+        "displayIntent": "Check Promise rejection fundamentals and production risk awareness.",
+        "guidance": [
+          "Listen for missing catch or missing awaited try/catch.",
+          "Ask about async functions returning Promises.",
+          "Check whether the candidate treats process-level handlers as last-resort handling."
+        ],
+        "commonMistakes": [
+          "Forgetting to await a Promise.",
+          "Assuming try/catch works without await.",
+          "Using unhandledRejection as normal flow.",
+          "Ignoring process termination risk."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Unhandled Promise rejection",
+        "displayQuestion": "Unhandled promise rejection là gì?",
+        "displayIntent": "Kiểm tra nền tảng Promise rejection và nhận thức rủi ro production.",
+        "guidance": [
+          "Nghe ý thiếu catch hoặc thiếu awaited try/catch.",
+          "Hỏi về việc async function trả về Promise.",
+          "Kiểm tra ứng viên có xem process-level handler là lớp cuối cùng hay không."
+        ],
+        "commonMistakes": [
+          "Quên await Promise.",
+          "Tưởng try/catch hoạt động dù không await.",
+          "Dùng unhandledRejection như luồng xử lý bình thường.",
+          "Bỏ qua rủi ro process bị terminate."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "Unhandled Promise rejection",
+        "displayQuestion": "unhandled promise rejection とは何ですか。",
+        "displayIntent": "Promise rejection の基礎と production risk の認識を確認する。",
+        "guidance": [
+          "catch がない、または await された try/catch がないことを説明できるか確認する。",
+          "async function が Promise を返すことを質問する。",
+          "process-level handler を最後の防衛線として扱うか確認する。"
+        ],
+        "commonMistakes": [
+          "Promise を await し忘れる。",
+          "await なしでも try/catch が効くと思う。",
+          "unhandledRejection を通常の処理フローに使う。",
+          "process termination risk を無視する。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Node.js API: process unhandledRejection",
+        "url": "https://nodejs.org/api/process.html#event-unhandledrejection",
+        "note": "Used for Node.js unhandled Promise rejection behavior."
+      },
+      {
+        "label": "MDN: Promise catch",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/catch",
+        "note": "Used for Promise rejection handling semantics."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NODE_ERRSEC_JR_SECURITY_STACK_TRACES_006",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "communication", "ownership"],
+    "techTags": ["nodejs", "api", "security", "error-handling"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Assess whether the candidate understands why production APIs should separate internal diagnostic errors from public error responses.",
+    "primaryQuestion": "Why should production APIs not expose stack traces to users?",
+    "expectedSignals": [
+      "Explains that stack traces reveal internal file paths, framework details, function names, package versions, query fragments, or implementation structure.",
+      "Connects leaked internals to security risk because attackers can use the information to target known vulnerabilities or map the system.",
+      "Mentions that stack traces may accidentally include sensitive data such as tokens, database details, environment values, or user input.",
+      "States that production responses should return safe messages and stable error codes while detailed stack traces go to protected logs or observability tools.",
+      "Mentions environment-aware behavior: verbose errors may be acceptable in local development but not in production.",
+      "Understands that hiding stack traces does not mean hiding all errors; clients still need useful status codes and request correlation IDs."
+    ],
+    "redFlags": [
+      "Says stack traces are harmless because users will not understand them.",
+      "Returns err.stack or raw Error objects from API handlers.",
+      "Disables logging entirely to avoid leaking errors.",
+      "Gives every error a vague 500 response with no stable code or request ID.",
+      "Does not distinguish local development diagnostics from production client responses."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains information disclosure risks, sensitive data leakage, environment-specific behavior, internal logging, and safe client response design."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows not to expose stack traces but gives limited detail about what to return instead."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Understands it is bad but cannot explain concrete risks or safe alternatives."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would leak internals or remove useful diagnostics altogether."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "What information would you return to the client, and what would you keep only in logs?",
+        "purpose": "Check separation between public error contract and internal diagnostics."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "How could a file path or package name in a stack trace help an attacker?",
+        "purpose": "Probe concrete security reasoning beyond memorized advice."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Stack traces in production APIs",
+        "displayQuestion": "Why should production APIs not expose stack traces to users?",
+        "displayIntent": "Check information disclosure and safe error response awareness.",
+        "guidance": [
+          "Listen for information disclosure and sensitive data leakage.",
+          "Confirm detailed errors still go to protected logs.",
+          "Ask what a safe client error response should contain."
+        ],
+        "commonMistakes": [
+          "Returning err.stack to clients.",
+          "Removing all logging.",
+          "Thinking stack traces are harmless.",
+          "Giving clients no useful error code or request ID."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Stack trace trong production API",
+        "displayQuestion": "Tại sao production APIs không nên expose stack traces cho users?",
+        "displayIntent": "Kiểm tra nhận thức về information disclosure và response lỗi an toàn.",
+        "guidance": [
+          "Nghe ý lộ thông tin nội bộ và dữ liệu nhạy cảm.",
+          "Xác nhận lỗi chi tiết vẫn được ghi vào log được bảo vệ.",
+          "Hỏi response lỗi an toàn cho client nên gồm gì."
+        ],
+        "commonMistakes": [
+          "Trả err.stack cho client.",
+          "Tắt toàn bộ logging.",
+          "Nghĩ stack trace vô hại.",
+          "Không cung cấp error code hoặc request ID hữu ích."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "production API の stack trace",
+        "displayQuestion": "production API で stack trace を user に見せるべきではないのはなぜですか。",
+        "displayIntent": "information disclosure と安全な error response の理解を確認する。",
+        "guidance": [
+          "内部情報や sensitive data の漏洩に触れるか確認する。",
+          "詳細な error は protected logs に残すことを確認する。",
+          "client 向けの安全な error response に何を含めるか質問する。"
+        ],
+        "commonMistakes": [
+          "err.stack を client に返す。",
+          "logging をすべて無効にする。",
+          "stack trace は無害だと考える。",
+          "error code や request ID を返さない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "OWASP Top 10: Security Logging and Monitoring Failures",
+        "url": "https://owasp.org/Top10/A09_2021-Security_Logging_and_Monitoring_Failures/",
+        "note": "Used for logging and monitoring risk framing."
+      },
+      {
+        "label": "OWASP Error Handling Cheat Sheet",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/Error_Handling_Cheat_Sheet.html",
+        "note": "Used for safe error handling and information disclosure guidance."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NODE_ERRSEC_JR_TECH_PROCESS_ENV_007",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "communication"],
+    "techTags": ["nodejs", "configuration", "environment-variables"],
+    "difficulty": 1,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate understands process.env as Node.js runtime configuration and its practical limitations.",
+    "primaryQuestion": "What is process.env used for?",
+    "expectedSignals": [
+      "Explains that process.env exposes environment variables available to the Node.js process at runtime.",
+      "Gives examples such as PORT, NODE_ENV, database URLs, feature flags, API endpoints, and secret references.",
+      "Mentions that values from process.env are strings or undefined, so the application should parse and validate numbers, booleans, URLs, and required values.",
+      "Understands that process.env is commonly used to keep environment-specific configuration out of source code.",
+      "Mentions that secrets may be injected through environment variables or secret managers, but should still be protected and not logged.",
+      "Recognizes that reading process.env directly everywhere can make configuration inconsistent; many apps centralize validation in a config module."
+    ],
+    "redFlags": [
+      "Thinks process.env is a secure secret vault by itself.",
+      "Assumes values are automatically typed as numbers or booleans.",
+      "Hardcodes fallback production secrets when environment variables are missing.",
+      "Logs all environment variables for debugging.",
+      "Cannot explain why configuration should differ between local, test, staging, and production."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains runtime environment configuration, string parsing, validation, environment separation, and safe secret handling."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands process.env for configuration but misses typing, validation, or secret-handling nuance."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can name environment variables but cannot describe safe usage in a Node.js app."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would lead to insecure or unreliable runtime configuration."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "If process.env.PORT is set to \"3000\", what type is that value and what should the app do before using it?",
+        "purpose": "Check string typing and parsing awareness."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Where would you validate required environment variables in a Node.js service?",
+        "purpose": "Probe startup configuration discipline."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Using process.env",
+        "displayQuestion": "What is process.env used for?",
+        "displayIntent": "Check runtime configuration basics in Node.js.",
+        "guidance": [
+          "Listen for environment-specific runtime configuration.",
+          "Check whether values are parsed and validated.",
+          "Ask how secrets are protected and kept out of logs."
+        ],
+        "commonMistakes": [
+          "Treating process.env as a secret vault.",
+          "Forgetting all values are strings or undefined.",
+          "Logging environment variables.",
+          "Using unsafe hardcoded defaults."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Sử dụng process.env",
+        "displayQuestion": "process.env được dùng để làm gì?",
+        "displayIntent": "Kiểm tra nền tảng runtime configuration trong Node.js.",
+        "guidance": [
+          "Nghe ý cấu hình runtime theo môi trường.",
+          "Kiểm tra việc parse và validate giá trị.",
+          "Hỏi cách bảo vệ secret và tránh ghi vào log."
+        ],
+        "commonMistakes": [
+          "Xem process.env là secret vault.",
+          "Quên mọi giá trị là string hoặc undefined.",
+          "Log environment variables.",
+          "Dùng default hardcoded không an toàn."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "process.env の利用",
+        "displayQuestion": "process.env は何に使いますか。",
+        "displayIntent": "Node.js の runtime configuration の基礎を確認する。",
+        "guidance": [
+          "environment ごとの runtime configuration に触れるか確認する。",
+          "値を parse/validate するか確認する。",
+          "secret の保護と log への出力を避けることを質問する。"
+        ],
+        "commonMistakes": [
+          "process.env を secret vault と考える。",
+          "値がすべて string または undefined であることを忘れる。",
+          "environment variables を log する。",
+          "安全でない hardcoded default を使う。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Node.js API: process.env",
+        "url": "https://nodejs.org/api/process.html#processenv",
+        "note": "Used for process.env runtime behavior."
+      },
+      {
+        "label": "The Twelve-Factor App: Config",
+        "url": "https://12factor.net/config",
+        "note": "Used for environment-based configuration principles."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NODE_ERRSEC_JR_SECURITY_NO_HARDCODED_SECRETS_008",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "ownership", "communication"],
+    "techTags": ["nodejs", "security", "secrets", "configuration"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Assess whether the candidate understands the security and operational risks of hardcoded secrets in Node.js applications.",
+    "primaryQuestion": "Why should secrets and API keys not be hardcoded?",
+    "expectedSignals": [
+      "Explains that hardcoded secrets can be committed to source control, copied into logs, shared in pull requests, or included in built artifacts.",
+      "Mentions that source repositories often have many readers and long history, so removing a committed secret later does not fully undo exposure.",
+      "Connects hardcoded secrets to weak environment separation because local, test, staging, and production may accidentally share credentials.",
+      "Explains that rotation becomes harder because changing the secret requires code changes, rebuilds, redeploys, and cleanup across versions.",
+      "Suggests safer approaches such as environment variables, secret managers, deployment platform secrets, restricted IAM roles, and runtime injection.",
+      "Mentions least privilege and monitoring: secrets should have limited scope, be rotated when exposed, and not be logged."
+    ],
+    "redFlags": [
+      "Says it is acceptable if the repository is private.",
+      "Commits example real credentials for convenience.",
+      "Uses the same key in local, staging, and production.",
+      "Logs secrets to verify they were loaded.",
+      "Thinks deleting a secret from the latest commit fully removes the risk."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains repository exposure, history persistence, environment separation, rotation cost, safer storage, least privilege, and logging discipline."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands hardcoding is insecure but misses rotation, repo history, or environment separation."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Repeats that secrets should not be hardcoded but cannot explain practical consequences."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would normalize secret leakage or unsafe credential handling."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "red_flag",
+        "question": "If an API key was committed to a private repo and then deleted, what should you do next?",
+        "purpose": "Check understanding of credential rotation after exposure."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Where would you store database credentials for staging and production in a deployment pipeline?",
+        "purpose": "Probe practical secret delivery approach."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Avoid hardcoded secrets",
+        "displayQuestion": "Why should secrets and API keys not be hardcoded?",
+        "displayIntent": "Check practical secret management awareness.",
+        "guidance": [
+          "Listen for source control and artifact exposure.",
+          "Ask about rotation after accidental commit.",
+          "Check whether the candidate separates environments and avoids logging secrets."
+        ],
+        "commonMistakes": [
+          "Trusting private repos as secret storage.",
+          "Reusing one secret across environments.",
+          "Logging secrets for debugging.",
+          "Deleting a leaked secret without rotating it."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Tránh hardcode secret",
+        "displayQuestion": "Tại sao không nên hardcode secrets và API keys?",
+        "displayIntent": "Kiểm tra nhận thức thực tế về quản lý secret.",
+        "guidance": [
+          "Nghe ý lộ qua source control và build artifact.",
+          "Hỏi về rotation sau khi lỡ commit.",
+          "Kiểm tra việc tách môi trường và không log secret."
+        ],
+        "commonMistakes": [
+          "Tin private repo là nơi lưu secret an toàn.",
+          "Dùng chung một secret cho nhiều môi trường.",
+          "Log secret để debug.",
+          "Xóa secret đã leak nhưng không rotate."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "hardcoded secrets を避ける",
+        "displayQuestion": "secrets や API keys を hardcode すべきではないのはなぜですか。",
+        "displayIntent": "実務的な secret management の理解を確認する。",
+        "guidance": [
+          "source control や artifact からの漏洩に触れるか確認する。",
+          "誤って commit した後の rotation について質問する。",
+          "environment separation と secret を log しないことを確認する。"
+        ],
+        "commonMistakes": [
+          "private repo を secret storage として信頼する。",
+          "複数 environment で同じ secret を再利用する。",
+          "debug のため secret を log する。",
+          "leak した secret を削除するだけで rotate しない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "OWASP Secrets Management Cheat Sheet",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html",
+        "note": "Used for secret lifecycle, access control, rotation, and storage principles."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NODE_ERRSEC_JR_DEBUG_REQUIRED_ENV_009",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "debugging",
+    "competencies": ["technical_fundamentals", "problem_solving", "ownership"],
+    "techTags": ["nodejs", "configuration", "environment-variables", "debugging"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate knows that missing required configuration should be detected early and fail safely instead of causing hidden runtime errors.",
+    "primaryQuestion": "What should happen if a required environment variable is missing?",
+    "expectedSignals": [
+      "States that the application should fail fast during startup or configuration loading when a required variable is missing.",
+      "Explains that the error should be clear for operators or developers, naming the missing configuration key without printing sensitive values.",
+      "Mentions using a central config validation step or schema to check required variables and parse types before the app starts serving traffic.",
+      "Rejects unsafe fallback defaults for production secrets, database URLs, signing keys, or payment credentials.",
+      "Connects fail-fast behavior to safer deployments: health checks should fail, the release should not accept traffic, and misconfiguration should be visible quickly.",
+      "Mentions that tests or CI can validate required configuration for each environment where practical."
+    ],
+    "redFlags": [
+      "Falls back to a default production secret or localhost database silently.",
+      "Lets the app start and fail later on the first request that needs the value.",
+      "Logs the full secret value while reporting the missing or invalid configuration.",
+      "Catches the startup config error and continues running.",
+      "Treats all missing environment variables as harmless warnings."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains fail-fast startup validation, clear safe diagnostics, type parsing, no insecure defaults, health check implications, and CI/test support."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows the app should not continue but misses validation centralization or safe diagnostics."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Mentions checking env vars but accepts late runtime failure or unsafe defaults."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would allow misconfigured production services to run unsafely."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "red_flag",
+        "question": "Why is using a default JWT secret when JWT_SECRET is missing dangerous?",
+        "purpose": "Check whether the candidate understands insecure fallback risk."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Would you validate environment variables inside each route or once at startup? Why?",
+        "purpose": "Probe configuration design and fail-fast reasoning."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Missing required environment variables",
+        "displayQuestion": "What should happen if a required environment variable is missing?",
+        "displayIntent": "Check fail-fast configuration validation behavior.",
+        "guidance": [
+          "Listen for startup validation and process failure.",
+          "Check that errors are useful but do not leak secret values.",
+          "Ask about unsafe production defaults."
+        ],
+        "commonMistakes": [
+          "Silently using fallback secrets.",
+          "Starting the app and failing later.",
+          "Logging secret values.",
+          "Treating required config as optional."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "debugging"
+        }
+      },
+      "vi": {
+        "title": "Thiếu biến môi trường bắt buộc",
+        "displayQuestion": "Nếu thiếu một required environment variable thì nên xảy ra điều gì?",
+        "displayIntent": "Kiểm tra hành vi validate config fail-fast.",
+        "guidance": [
+          "Nghe ý validate lúc startup và dừng process.",
+          "Kiểm tra lỗi có hữu ích nhưng không leak secret value.",
+          "Hỏi về default production không an toàn."
+        ],
+        "commonMistakes": [
+          "Âm thầm dùng fallback secret.",
+          "Cho app start rồi lỗi sau.",
+          "Log giá trị secret.",
+          "Xem required config là optional."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "debugging"
+        }
+      },
+      "ja": {
+        "title": "必須 environment variable の欠落",
+        "displayQuestion": "required environment variable が missing の場合、何が起きるべきですか。",
+        "displayIntent": "fail-fast な configuration validation を理解しているか確認する。",
+        "guidance": [
+          "startup validation と process failure に触れるか確認する。",
+          "error が有用だが secret value を漏らさないことを確認する。",
+          "安全でない production default について質問する。"
+        ],
+        "commonMistakes": [
+          "fallback secret を silently use する。",
+          "app を起動して後で失敗させる。",
+          "secret value を log する。",
+          "required config を optional として扱う。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "debugging"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "The Twelve-Factor App: Config",
+        "url": "https://12factor.net/config",
+        "note": "Used for environment-based configuration principles."
+      },
+      {
+        "label": "Node.js API: process.env",
+        "url": "https://nodejs.org/api/process.html#processenv",
+        "note": "Used for Node.js environment variable behavior."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NODE_ERRSEC_JR_SECURITY_UNTRUSTED_INPUT_010",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving", "ownership"],
+    "techTags": ["nodejs", "security", "validation", "api"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Assess whether the candidate understands that all client-controlled input can be malicious, malformed, or inconsistent with business rules.",
+    "primaryQuestion": "Why should user input never be trusted?",
+    "expectedSignals": [
+      "Explains that clients can be modified, requests can be crafted manually, and frontend validation can be bypassed.",
+      "Mentions risks such as SQL or NoSQL injection, command injection, XSS, path traversal, mass assignment, authentication bypass, and resource exhaustion.",
+      "States that backend services must validate and authorize input even if the frontend already validates it.",
+      "Distinguishes validation from sanitization and escaping: validate shape and allowed values, sanitize or normalize where appropriate, and escape output in the right context.",
+      "Mentions using parameterized queries, allowlists, schemas, size limits, and safe parsers rather than string concatenation.",
+      "Recognizes that user identity, role, ownership, and permissions must be checked server-side and cannot be trusted from client-provided fields."
+    ],
+    "redFlags": [
+      "Trusts input because it comes from the app's own frontend.",
+      "Relies only on HTML form validation or TypeScript client types.",
+      "Concatenates user input into SQL, shell commands, file paths, or HTML.",
+      "Accepts client-sent role, price, userId, or ownership fields as authoritative.",
+      "Only checks that fields exist but ignores type, range, length, and allowed values."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains bypassable clients, concrete attack classes, backend validation and authorization, allowlists, safe APIs, and context-specific escaping."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands input can be malicious and should be validated but misses some security mechanisms or authorization concerns."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Gives generic advice but cannot name realistic risks or backend controls."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would trust client-controlled data or rely only on frontend validation."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "red_flag",
+        "question": "If the frontend disables the role field, can a user still send role=admin to the API? What should the backend do?",
+        "purpose": "Check whether the candidate understands client-side controls are bypassable."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "What is the difference between validating a string and escaping it for HTML output?",
+        "purpose": "Probe validation versus output encoding distinction."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Never trust user input",
+        "displayQuestion": "Why should user input never be trusted?",
+        "displayIntent": "Check basic secure backend input handling.",
+        "guidance": [
+          "Listen for bypassable clients and crafted requests.",
+          "Ask for concrete attack examples.",
+          "Check server-side validation, authorization, and safe API usage."
+        ],
+        "commonMistakes": [
+          "Trusting the frontend.",
+          "Relying only on client-side types or form validation.",
+          "Concatenating input into SQL or commands.",
+          "Trusting client-sent roles or ownership."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Không tin user input",
+        "displayQuestion": "Tại sao không bao giờ nên trust user input?",
+        "displayIntent": "Kiểm tra nền tảng xử lý input an toàn ở backend.",
+        "guidance": [
+          "Nghe ý client có thể bị bypass và request có thể tự craft.",
+          "Yêu cầu ví dụ tấn công cụ thể.",
+          "Kiểm tra validation, authorization và safe API ở server-side."
+        ],
+        "commonMistakes": [
+          "Tin frontend.",
+          "Chỉ dựa vào type hoặc form validation phía client.",
+          "Nối chuỗi input vào SQL hoặc command.",
+          "Tin role hoặc ownership client gửi lên."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "user input を信頼しない",
+        "displayQuestion": "user input を決して信頼すべきではないのはなぜですか。",
+        "displayIntent": "backend における安全な input handling の基礎を確認する。",
+        "guidance": [
+          "client は bypass 可能で crafted request を送れることに触れるか確認する。",
+          "具体的な attack example を求める。",
+          "server-side validation、authorization、安全な API 利用を確認する。"
+        ],
+        "commonMistakes": [
+          "frontend を信頼する。",
+          "client-side type や form validation だけに頼る。",
+          "input を SQL や command に文字列連結する。",
+          "client が送った role や ownership を信頼する。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "OWASP Input Validation Cheat Sheet",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html",
+        "note": "Used for server-side validation and allowlist principles."
+      },
+      {
+        "label": "OWASP Top 10: Injection",
+        "url": "https://owasp.org/Top10/A03_2021-Injection/",
+        "note": "Used for injection risk framing."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NODE_ERRSEC_JR_TECH_REQUEST_VALIDATION_011",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving", "communication"],
+    "techTags": ["nodejs", "api", "validation", "express"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate can describe basic request validation for Node.js APIs in a practical and implementation-ready way.",
+    "primaryQuestion": "What is basic request validation?",
+    "expectedSignals": [
+      "Defines request validation as checking incoming body, query, params, headers, and sometimes files before business logic uses them.",
+      "Mentions checking required fields, types, formats, length, ranges, enum values, allowed keys, and nested object shapes.",
+      "Explains that invalid requests should receive a clear 400-level response with safe validation details rather than causing internal errors.",
+      "Mentions using validation libraries or schemas such as Zod, Joi, Yup, express-validator, JSON Schema, or framework-provided pipes where appropriate.",
+      "Understands that validation should happen on the server even when the frontend already validates.",
+      "Distinguishes validation from authorization and business rules: validation checks shape and allowed values, while authorization checks permission and ownership."
+    ],
+    "redFlags": [
+      "Only checks that req.body exists.",
+      "Trusts frontend validation and skips backend validation.",
+      "Lets invalid input reach database queries or business logic and relies on crashes.",
+      "Returns raw validator internals or stack traces to clients.",
+      "Confuses validation with authentication or authorization."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers request locations, required fields, types, ranges, allowed values, safe 400 responses, schema tools, server-side validation, and boundaries with authorization."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands checking input shape and returning 400 but misses schema tools or validation versus authorization boundaries."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Gives a shallow answer such as checking if fields exist without types, ranges, or safe errors."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would allow malformed or unsafe input into core logic."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "For a createUser endpoint, what would you validate for email, password, and age?",
+        "purpose": "Force concrete field-level validation reasoning."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "If validation passes, does that mean the user is allowed to perform the action?",
+        "purpose": "Check distinction between validation and authorization."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Basic request validation",
+        "displayQuestion": "What is basic request validation?",
+        "displayIntent": "Check practical API validation fundamentals.",
+        "guidance": [
+          "Listen for body, query, params, headers, and files.",
+          "Ask about types, required fields, formats, ranges, and allowed values.",
+          "Confirm invalid input gets a safe 400-level response."
+        ],
+        "commonMistakes": [
+          "Only checking req.body exists.",
+          "Trusting frontend validation.",
+          "Letting invalid input reach database code.",
+          "Confusing validation with authorization."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Request validation cơ bản",
+        "displayQuestion": "Basic request validation là gì?",
+        "displayIntent": "Kiểm tra nền tảng validation API thực tế.",
+        "guidance": [
+          "Nghe các phần body, query, params, headers và files.",
+          "Hỏi về type, required fields, format, range và allowed values.",
+          "Xác nhận input sai được trả response 400 an toàn."
+        ],
+        "commonMistakes": [
+          "Chỉ kiểm tra req.body tồn tại.",
+          "Tin validation phía frontend.",
+          "Để input sai đi vào database code.",
+          "Nhầm validation với authorization."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "基本的な request validation",
+        "displayQuestion": "basic request validation とは何ですか。",
+        "displayIntent": "実務的な API validation の基礎を確認する。",
+        "guidance": [
+          "body、query、params、headers、files に触れるか確認する。",
+          "type、required fields、format、range、allowed values を質問する。",
+          "invalid input に安全な 400 系 response を返すことを確認する。"
+        ],
+        "commonMistakes": [
+          "req.body の存在だけを確認する。",
+          "frontend validation を信頼する。",
+          "invalid input を database code まで通す。",
+          "validation と authorization を混同する。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "OWASP Input Validation Cheat Sheet",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html",
+        "note": "Used for input validation practices and allowlist framing."
+      },
+      {
+        "label": "Express docs: API request object",
+        "url": "https://expressjs.com/en/4x/api.html#req",
+        "note": "Used for common Express request input locations."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NODE_ERRSEC_JR_SECURITY_PASSWORD_HASHING_012",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "ownership", "communication"],
+    "techTags": ["nodejs", "security", "passwords", "authentication"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Assess whether the candidate understands basic password storage safety and can distinguish hashing from encryption or plain storage.",
+    "primaryQuestion": "Why should passwords be hashed instead of stored directly?",
+    "expectedSignals": [
+      "Explains that plain-text password storage exposes every user's password immediately if the database, logs, or backups are breached.",
+      "Defines password hashing as a one-way transformation used to verify a password without storing the original password.",
+      "Mentions that password hashes should use a slow, salted, password-specific algorithm such as Argon2id, bcrypt, or scrypt rather than fast general hashes like SHA-256 alone.",
+      "Explains that a unique salt prevents identical passwords from having identical hashes and makes precomputed attacks harder.",
+      "Mentions password verification by hashing the submitted password with the stored parameters and comparing the result safely.",
+      "Recognizes that passwords should not be logged, emailed, returned by APIs, or stored reversibly unless there is a very specific non-password credential use case."
+    ],
+    "redFlags": [
+      "Stores passwords in plain text for easier login or password recovery.",
+      "Uses reversible encryption and keeps the decryption key next to the database as the main password strategy.",
+      "Uses MD5, SHA-1, or plain SHA-256 without salt and work factor.",
+      "Uses one global salt for every user.",
+      "Logs submitted passwords during debugging."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains breach impact, one-way verification, slow salted password hashing, appropriate algorithms, salts, safe comparison, and no password logging."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows passwords should be hashed and salted but misses algorithm selection or verification details."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows plain text is bad but confuses hashing, encryption, and fast checksums."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would store recoverable or weakly protected passwords."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "red_flag",
+        "question": "Why is plain SHA-256 not a good password hashing strategy by itself?",
+        "purpose": "Check slow hashing and salt/work-factor understanding."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "If a user forgets their password, should the system be able to show it to them? What should happen instead?",
+        "purpose": "Probe one-way storage and reset flow reasoning."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Password hashing",
+        "displayQuestion": "Why should passwords be hashed instead of stored directly?",
+        "displayIntent": "Check safe password storage fundamentals.",
+        "guidance": [
+          "Listen for breach impact of plain-text storage.",
+          "Check one-way, salted, slow password hashing.",
+          "Ask about bcrypt, scrypt, or Argon2id rather than fast hashes."
+        ],
+        "commonMistakes": [
+          "Storing plain-text passwords.",
+          "Using reversible encryption as the main approach.",
+          "Using fast unsalted hashes.",
+          "Logging submitted passwords."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Hash mật khẩu",
+        "displayQuestion": "Tại sao password nên được hash thay vì lưu trực tiếp?",
+        "displayIntent": "Kiểm tra nền tảng lưu password an toàn.",
+        "guidance": [
+          "Nghe ý rủi ro khi database plain-text bị leak.",
+          "Kiểm tra one-way, salted, slow password hashing.",
+          "Hỏi về bcrypt, scrypt hoặc Argon2id thay vì fast hash."
+        ],
+        "commonMistakes": [
+          "Lưu password plain text.",
+          "Dùng reversible encryption làm cách chính.",
+          "Dùng fast hash không salt.",
+          "Log password user nhập."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "password hashing",
+        "displayQuestion": "password は直接保存せず hash すべきなのはなぜですか。",
+        "displayIntent": "安全な password storage の基礎を確認する。",
+        "guidance": [
+          "plain-text storage が breach 時に与える影響に触れるか確認する。",
+          "one-way、salted、slow password hashing を確認する。",
+          "fast hash ではなく bcrypt、scrypt、Argon2id に触れるか質問する。"
+        ],
+        "commonMistakes": [
+          "plain-text password を保存する。",
+          "reversible encryption を主な方法にする。",
+          "fast unsalted hash を使う。",
+          "入力された password を log する。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "OWASP Password Storage Cheat Sheet",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html",
+        "note": "Used for password hashing algorithms, salts, and work factors."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NODE_ERRSEC_JR_TECH_AUTHN_AUTHZ_013",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "communication"],
+    "techTags": ["nodejs", "security", "authentication", "authorization"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate can clearly distinguish authentication from authorization and apply both in backend request handling.",
+    "primaryQuestion": "What is the difference between authentication and authorization?",
+    "expectedSignals": [
+      "Defines authentication as verifying who the user or client is, such as login with password, session cookie, JWT, API key, or OAuth token.",
+      "Defines authorization as deciding what that authenticated identity is allowed to do or access.",
+      "Gives a practical example: a logged-in user is authenticated, but may not be authorized to delete another user's resource or access an admin endpoint.",
+      "Mentions that authorization checks should happen server-side for protected operations and should not rely on hidden frontend buttons.",
+      "Recognizes that authentication alone is not enough; every sensitive route should still enforce permissions, roles, ownership, or policy checks.",
+      "May mention common HTTP semantics: 401 for unauthenticated or invalid credentials and 403 for authenticated but not allowed."
+    ],
+    "redFlags": [
+      "Uses authentication and authorization as interchangeable terms.",
+      "Says logging in means the user can access everything.",
+      "Relies on frontend route hiding as the only authorization control.",
+      "Trusts client-sent role or userId without server-side verification.",
+      "Cannot give a concrete example that separates identity from permission."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Clearly separates identity verification from permission checks, gives examples, mentions server-side enforcement, and understands 401 versus 403."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the basic difference but misses frontend bypass, ownership checks, or HTTP status nuance."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Has a rough idea but mixes login state with permission to perform actions."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would allow authenticated users to bypass authorization controls."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "A user is logged in and tries to edit another user's profile. Which part is authentication and which part is authorization?",
+        "purpose": "Force a concrete identity versus permission example."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Why is hiding an admin button in the UI not enough authorization?",
+        "purpose": "Check server-side enforcement awareness."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Authentication versus authorization",
+        "displayQuestion": "What is the difference between authentication and authorization?",
+        "displayIntent": "Check identity versus permission fundamentals.",
+        "guidance": [
+          "Listen for who you are versus what you can do.",
+          "Ask for a route-level example.",
+          "Confirm authorization is enforced on the server."
+        ],
+        "commonMistakes": [
+          "Using the terms interchangeably.",
+          "Assuming login grants all access.",
+          "Relying on hidden UI controls.",
+          "Trusting client-sent roles."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Authentication và authorization",
+        "displayQuestion": "Authentication và authorization khác nhau như thế nào?",
+        "displayIntent": "Kiểm tra nền tảng về identity và permission.",
+        "guidance": [
+          "Nghe ý bạn là ai so với bạn được làm gì.",
+          "Yêu cầu ví dụ ở mức route.",
+          "Xác nhận authorization được enforce ở server."
+        ],
+        "commonMistakes": [
+          "Dùng hai thuật ngữ thay thế nhau.",
+          "Tưởng login là có mọi quyền.",
+          "Dựa vào UI bị ẩn.",
+          "Tin role client gửi lên."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "authentication と authorization",
+        "displayQuestion": "authentication と authorization の違いは何ですか。",
+        "displayIntent": "identity と permission の基礎を確認する。",
+        "guidance": [
+          "who you are と what you can do の違いに触れるか確認する。",
+          "route-level の例を求める。",
+          "authorization が server で enforce されることを確認する。"
+        ],
+        "commonMistakes": [
+          "2 つの用語を同じ意味で使う。",
+          "login すれば全アクセスが許可されると思う。",
+          "hidden UI control に頼る。",
+          "client が送った role を信頼する。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "OWASP Authentication Cheat Sheet",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html",
+        "note": "Used for authentication terminology and controls."
+      },
+      {
+        "label": "OWASP Authorization Cheat Sheet",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html",
+        "note": "Used for authorization policy and server-side enforcement guidance."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NODE_ERRSEC_JR_SECURITY_DEPENDENCY_UPDATES_014",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "ownership", "problem_solving"],
+    "techTags": ["nodejs", "npm", "security", "dependencies"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Assess whether the candidate understands why dependency maintenance matters in Node.js projects and how to update safely.",
+    "primaryQuestion": "Why should dependencies be kept updated?",
+    "expectedSignals": [
+      "Explains that dependencies can contain known security vulnerabilities, bugs, performance issues, or compatibility problems that are fixed in later versions.",
+      "Mentions that Node.js applications often rely on many transitive dependencies, so vulnerability exposure is not limited to packages directly imported in code.",
+      "Recognizes that updates should be managed deliberately using lockfiles, changelogs, tests, code review, and staged rollout rather than blindly upgrading production.",
+      "Mentions tooling such as npm audit, npm outdated, Dependabot, Renovate, Snyk, or CI checks to detect vulnerable and outdated packages.",
+      "Understands semantic versioning and the difference between patch, minor, and major updates at a basic level.",
+      "Mentions removing unused dependencies because every dependency increases maintenance and attack surface."
+    ],
+    "redFlags": [
+      "Says dependencies should never be updated once the app works.",
+      "Blindly updates every package to latest in production without tests or review.",
+      "Ignores transitive dependency vulnerabilities.",
+      "Commits changes to package.json without updating or respecting the lockfile.",
+      "Treats security audit output as noise without triage."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains vulnerabilities, bugs, transitive dependencies, safe update workflow, audit tooling, semver, lockfiles, tests, and unused dependency cleanup."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands updates matter for security and bugs but misses safe rollout, transitive dependencies, or lockfile handling."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows updates are good but cannot describe how to do them responsibly in a Node.js project."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would leave known vulnerable packages untriaged or introduce risky untested upgrades."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "What is the role of package-lock.json or another lockfile when updating dependencies?",
+        "purpose": "Check reproducible install and dependency resolution awareness."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "If npm audit reports a high severity vulnerability in a transitive dependency, what steps would you take before deploying a fix?",
+        "purpose": "Probe vulnerability triage and safe release process."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Keeping dependencies updated",
+        "displayQuestion": "Why should dependencies be kept updated?",
+        "displayIntent": "Check dependency maintenance and supply chain security basics.",
+        "guidance": [
+          "Listen for known vulnerability and bug fixes.",
+          "Ask about transitive dependencies and lockfiles.",
+          "Check safe update workflow with tests and review."
+        ],
+        "commonMistakes": [
+          "Never updating working packages.",
+          "Blindly upgrading to latest in production.",
+          "Ignoring transitive dependencies.",
+          "Not respecting lockfiles."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Cập nhật dependencies",
+        "displayQuestion": "Tại sao nên giữ dependencies được cập nhật?",
+        "displayIntent": "Kiểm tra nền tảng dependency maintenance và supply chain security.",
+        "guidance": [
+          "Nghe ý fix vulnerability và bug đã biết.",
+          "Hỏi về transitive dependencies và lockfile.",
+          "Kiểm tra workflow update an toàn với test và review."
+        ],
+        "commonMistakes": [
+          "Không bao giờ update package đã chạy được.",
+          "Blindly upgrade latest trong production.",
+          "Bỏ qua transitive dependencies.",
+          "Không tôn trọng lockfile."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "dependencies の更新",
+        "displayQuestion": "dependencies を最新に保つべきなのはなぜですか。",
+        "displayIntent": "dependency maintenance と supply chain security の基礎を確認する。",
+        "guidance": [
+          "known vulnerability や bug fix に触れるか確認する。",
+          "transitive dependencies と lockfile について質問する。",
+          "tests と review を含む安全な update workflow を確認する。"
+        ],
+        "commonMistakes": [
+          "動いている package を一切更新しない。",
+          "production で blindly latest に上げる。",
+          "transitive dependencies を無視する。",
+          "lockfile を尊重しない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "npm docs: npm audit",
+        "url": "https://docs.npmjs.com/cli/commands/npm-audit",
+        "note": "Used for npm vulnerability audit workflow."
+      },
+      {
+        "label": "OWASP Top 10: Vulnerable and Outdated Components",
+        "url": "https://owasp.org/Top10/A06_2021-Vulnerable_and_Outdated_Components/",
+        "note": "Used for dependency risk framing."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NODE_ERRSEC_JR_TECH_API_ERROR_RESPONSE_015",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "communication", "problem_solving"],
+    "techTags": ["nodejs", "api", "error-handling", "rest"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate can describe a consistent and safe API error response contract for Node.js services.",
+    "primaryQuestion": "What should a consistent API error response include?",
+    "expectedSignals": [
+      "Mentions an appropriate HTTP status code that matches the failure category, such as 400 validation error, 401 unauthenticated, 403 forbidden, 404 not found, or 500 internal error.",
+      "Includes a stable machine-readable error code that clients can use without parsing natural language messages.",
+      "Includes a safe human-readable message that explains the problem without exposing stack traces, SQL, secrets, or internal implementation details.",
+      "For validation errors, includes structured field-level details such as field, issue, and expected constraint when safe and useful.",
+      "Includes a request ID, correlation ID, or trace ID so support and logs can connect the client-visible error to internal diagnostics.",
+      "Mentions consistent JSON shape, content type, and naming across endpoints so frontend and API clients can handle errors uniformly.",
+      "Understands that internal logs should contain richer diagnostic data than public responses."
+    ],
+    "redFlags": [
+      "Returns different ad hoc shapes from each endpoint.",
+      "Returns raw Error objects, stack traces, SQL errors, or ORM internals to clients.",
+      "Always returns HTTP 200 with an error message in the body.",
+      "Only returns a vague message with no status, code, or request ID.",
+      "For validation errors, returns unreadable validator internals instead of useful field-level feedback."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers status codes, stable error codes, safe messages, validation details, request correlation, consistent JSON shape, and separation from internal logs."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Describes a useful error shape but misses one element such as request ID, validation details, or stable codes."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows errors need a message but lacks a consistent contract clients can depend on."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would leak internals or make client-side error handling unreliable."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Can you sketch a JSON response for a validation error where email is missing?",
+        "purpose": "Force a concrete response contract."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Why is a stable error code useful even when the message is already clear?",
+        "purpose": "Check client contract and localization awareness."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Consistent API error responses",
+        "displayQuestion": "What should a consistent API error response include?",
+        "displayIntent": "Check safe and client-friendly API error contract design.",
+        "guidance": [
+          "Listen for HTTP status, stable code, safe message, and request ID.",
+          "Ask about structured validation errors.",
+          "Confirm internal diagnostics stay in logs."
+        ],
+        "commonMistakes": [
+          "Returning raw Error objects.",
+          "Using different shapes per endpoint.",
+          "Always returning HTTP 200.",
+          "Leaving out stable codes or request IDs."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "API error response nhất quán",
+        "displayQuestion": "Một API error response nhất quán nên gồm những gì?",
+        "displayIntent": "Kiểm tra thiết kế error contract an toàn và dễ dùng cho client.",
+        "guidance": [
+          "Nghe HTTP status, stable code, safe message va request ID.",
+          "Hỏi về validation error có cấu trúc.",
+          "Xác nhận diagnostic nội bộ nằm trong log."
+        ],
+        "commonMistakes": [
+          "Trả raw Error object.",
+          "Mỗi endpoint trả một shape khác nhau.",
+          "Luôn trả HTTP 200.",
+          "Thiếu stable code hoặc request ID."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "一貫した API error response",
+        "displayQuestion": "一貫した API error response には何を含めるべきですか。",
+        "displayIntent": "安全で client-friendly な API error contract design を確認する。",
+        "guidance": [
+          "HTTP status、stable code、安全な message、request ID に触れるか確認する。",
+          "structured validation error について質問する。",
+          "internal diagnostics は logs に残すことを確認する。"
+        ],
+        "commonMistakes": [
+          "raw Error object を返す。",
+          "endpoint ごとに異なる shape を返す。",
+          "常に HTTP 200 を返す。",
+          "stable code や request ID がない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "RFC 7807: Problem Details for HTTP APIs",
+        "url": "https://www.rfc-editor.org/rfc/rfc7807",
+        "note": "Used for standardized HTTP API error response concepts."
+      },
+      {
+        "label": "OWASP Error Handling Cheat Sheet",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/Error_Handling_Cheat_Sheet.html",
+        "note": "Used for safe public error response guidance."
+      }
+    ],
+    "status": "active"
+  }
+]

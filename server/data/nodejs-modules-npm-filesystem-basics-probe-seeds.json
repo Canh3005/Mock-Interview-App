@@ -1,0 +1,1978 @@
+[
+  {
+    "code": "NODEJS_MODULES_NPM_FS_JR_TECH_MODULE_001",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "communication"],
+    "techTags": ["nodejs", "javascript", "modules"],
+    "difficulty": 1,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate can define a Node.js module as a reusable code boundary with imports and exports, not just a file on disk.",
+    "primaryQuestion": "What is a module in Node.js?",
+    "expectedSignals": [
+      "Defines a module as a unit of JavaScript code that can expose values such as functions, classes, constants, or objects for other files to use.",
+      "Mentions that Node.js has built-in modules such as fs and path, third-party modules installed from npm, and local modules created in the project.",
+      "Explains that modules help organize code, avoid putting everything in one file, and create clearer boundaries between responsibilities.",
+      "Connects modules to importing and exporting through CommonJS require/module.exports or ES module import/export.",
+      "Understands that a module has its own scope, so top-level variables are not automatically global."
+    ],
+    "redFlags": [
+      "Says a module is only an npm package.",
+      "Thinks variables in one file are automatically available in every other file.",
+      "Cannot explain import or export at a basic level.",
+      "Confuses Node.js modules with database modules or framework modules without linking back to JavaScript code reuse."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Clearly explains module scope, reuse, built-in versus third-party versus local modules, and how exports/imports connect files."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Gives a correct reusable-code definition but misses module scope or the different module sources."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can say modules organize code but cannot explain how one module exposes code to another."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer shows no practical understanding of Node.js module boundaries."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Can you name one built-in module, one npm module, and one local module you might create in an API project?",
+        "purpose": "Force the candidate to distinguish module sources concretely."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "If you declare a variable at the top of a module file, is it automatically global in Node.js?",
+        "purpose": "Check module scope understanding."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Node.js module basics",
+        "displayQuestion": "What is a module in Node.js?",
+        "displayIntent": "Check whether the candidate understands modules as scoped, reusable code units.",
+        "guidance": [
+          "Define a module as a code unit with explicit imports and exports.",
+          "Mention built-in, npm, and local modules.",
+          "Explain module scope and code organization benefits."
+        ],
+        "commonMistakes": [
+          "Saying modules are only npm packages.",
+          "Assuming top-level variables are global.",
+          "Not explaining exports and imports."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Nền tảng module trong Node.js",
+        "displayQuestion": "Module trong Node.js là gì?",
+        "displayIntent": "Kiểm tra ứng viên có hiểu module là đơn vị code có scope riêng và có thể tái sử dụng hay không.",
+        "guidance": [
+          "Định nghĩa module là đơn vị code có import và export rõ ràng.",
+          "Nhắc tới module built-in, module npm và module local.",
+          "Giải thích scope riêng của module và lợi ích tổ chức code."
+        ],
+        "commonMistakes": [
+          "Nói module chỉ là npm package.",
+          "Tưởng biến top-level tự động là global.",
+          "Không giải thích được export và import."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "Node.js module の基礎",
+        "displayQuestion": "Node.js における module とは何ですか。",
+        "displayIntent": "module を scope を持つ再利用可能な code unit として理解しているか確認する。",
+        "guidance": [
+          "module を明示的な import/export を持つ code unit として定義する。",
+          "built-in module、npm module、local module に触れる。",
+          "module scope と code organization の利点を説明する。"
+        ],
+        "commonMistakes": [
+          "module は npm package だけだと言う。",
+          "top-level 変数が自動的に global になると思う。",
+          "export と import を説明できない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Node.js API: Modules - CommonJS",
+        "url": "https://nodejs.org/api/modules.html",
+        "note": "Used for CommonJS module scope, require, and module.exports behavior."
+      },
+      {
+        "label": "Node.js API: ECMAScript modules",
+        "url": "https://nodejs.org/api/esm.html",
+        "note": "Used for ES module support in Node.js."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NODEJS_MODULES_NPM_FS_JR_TECH_CJS_VS_ESM_002",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "communication"],
+    "techTags": ["nodejs", "javascript", "commonjs", "esm"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate can compare CommonJS and ES Modules in Node.js at a practical junior level.",
+    "primaryQuestion": "What is the difference between CommonJS and ES Modules?",
+    "expectedSignals": [
+      "Identifies CommonJS as the older Node.js module system using require and module.exports.",
+      "Identifies ES Modules as the standardized JavaScript module system using import and export.",
+      "Mentions that Node.js decides module mode using file extensions such as .cjs and .mjs or the package.json type field.",
+      "Explains that CommonJS loading is commonly synchronous, while ES Modules are statically analyzable and support features such as top-level await.",
+      "Mentions practical interop issues, such as ESM-only packages not always being require-able from CommonJS and default or named import differences."
+    ],
+    "redFlags": [
+      "Says CommonJS and ES Modules are exactly the same except for syntax.",
+      "Ignores package.json type, .cjs, and .mjs when explaining how Node chooses module mode.",
+      "Claims require can import every ES module without constraints.",
+      "Cannot name the import/export keywords for ES Modules or require/module.exports for CommonJS."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Contrasts syntax, runtime mode selection, loading semantics, and interop risks in clear practical terms."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows the two systems and basic syntax but misses module mode detection or interop detail."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Recognizes the names but treats them as interchangeable snippets."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would lead to broken imports in a real Node.js project."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "What does the package.json type field change for .js files?",
+        "purpose": "Verify Node-specific module mode knowledge."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "What might happen if a CommonJS app tries to require an ESM-only npm package?",
+        "purpose": "Check whether the candidate understands real interoperability failures."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "CommonJS versus ES Modules",
+        "displayQuestion": "What is the difference between CommonJS and ES Modules?",
+        "displayIntent": "Check practical understanding of the two Node.js module systems.",
+        "guidance": [
+          "Name the syntax used by each system.",
+          "Explain how Node decides module mode.",
+          "Mention at least one practical interop issue."
+        ],
+        "commonMistakes": [
+          "Reducing the difference to syntax only.",
+          "Ignoring package.json type.",
+          "Assuming every import direction works automatically."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "CommonJS và ES Modules",
+        "displayQuestion": "CommonJS và ES Modules khác nhau như thế nào?",
+        "displayIntent": "Kiểm tra hiểu biết thực tế về hai hệ module trong Node.js.",
+        "guidance": [
+          "Nêu cú pháp của từng hệ module.",
+          "Giải thích Node chọn module mode như thế nào.",
+          "Nhắc ít nhất một vấn đề interop thực tế."
+        ],
+        "commonMistakes": [
+          "Chỉ xem khác biệt là cú pháp.",
+          "Bỏ qua package.json type.",
+          "Tưởng mọi chiều import đều tự hoạt động."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "CommonJS と ES Modules",
+        "displayQuestion": "CommonJS と ES Modules はどう違いますか。",
+        "displayIntent": "Node.js の 2 つの module system を実務的に理解しているか確認する。",
+        "guidance": [
+          "それぞれの syntax を挙げる。",
+          "Node が module mode をどう決めるか説明する。",
+          "実際の interop 問題を少なくとも 1 つ述べる。"
+        ],
+        "commonMistakes": [
+          "違いは syntax だけだと考える。",
+          "package.json type を無視する。",
+          "どの方向の import も自動的に動くと思う。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Node.js API: Modules - CommonJS",
+        "url": "https://nodejs.org/api/modules.html",
+        "note": "Used for CommonJS behavior and require semantics."
+      },
+      {
+        "label": "Node.js API: ECMAScript modules",
+        "url": "https://nodejs.org/api/esm.html",
+        "note": "Used for ES module syntax, loading, and interoperability context."
+      },
+      {
+        "label": "Node.js API: Packages",
+        "url": "https://nodejs.org/api/packages.html",
+        "note": "Used for package.json type and package boundary behavior."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NODEJS_MODULES_NPM_FS_JR_TECH_REQUIRE_IMPORT_EXPORT_003",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "communication"],
+    "techTags": ["nodejs", "javascript", "modules"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Verify that the candidate understands the concrete APIs used to consume and expose code in CommonJS and ES Modules.",
+    "primaryQuestion": "What is the difference between require/module.exports and import/export?",
+    "expectedSignals": [
+      "Explains that require loads a module in CommonJS and returns the value assigned to module.exports.",
+      "Explains that module.exports is the value a CommonJS module exposes, while exports is only a shortcut when used carefully.",
+      "Explains that import/export are ES Module declarations for named exports, default exports, and importing bindings from another module.",
+      "Mentions that import declarations are normally static and placed at the top level, while dynamic import() exists for runtime loading.",
+      "Understands that projects should avoid mixing styles casually because transpilation and CommonJS/ESM interop can change the imported shape."
+    ],
+    "redFlags": [
+      "Thinks module.exports and exports are always identical even after reassignment.",
+      "Cannot show a simple example of exporting and importing a function.",
+      "Says import works anywhere exactly like require without mentioning dynamic import.",
+      "Mixes default and named imports without understanding the exported shape."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains require return values, module.exports, exports shortcut caveat, ES named/default exports, and dynamic import at a practical level."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Can use both styles correctly but misses one nuance such as exports reassignment or dynamic import."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Has copied syntax before but cannot explain what value is being exported or imported."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would likely produce incorrect import shapes in real code."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Can you write a tiny example that exports an add function and imports it in another file using either module system?",
+        "purpose": "Force concrete syntax and exported-shape reasoning."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "What is the problem with assigning exports = myFunction in CommonJS?",
+        "purpose": "Check understanding of the exports shortcut."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "require/module.exports and import/export",
+        "displayQuestion": "What is the difference between require/module.exports and import/export?",
+        "displayIntent": "Check concrete module import and export mechanics.",
+        "guidance": [
+          "Explain CommonJS require and module.exports.",
+          "Explain ES Module named and default exports.",
+          "Mention exported shape and interop pitfalls."
+        ],
+        "commonMistakes": [
+          "Reassigning exports incorrectly.",
+          "Confusing default and named exports.",
+          "Using import as if it were exactly the same as require."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "require/module.exports và import/export",
+        "displayQuestion": "require/module.exports khác import/export như thế nào?",
+        "displayIntent": "Kiểm tra cơ chế import và export module ở mức thực tế.",
+        "guidance": [
+          "Giải thích require và module.exports trong CommonJS.",
+          "Giải thích named export và default export trong ES Module.",
+          "Nhắc tới exported shape và lỗi interop thường gặp."
+        ],
+        "commonMistakes": [
+          "Gán lại exports sai cách.",
+          "Nhầm default export với named export.",
+          "Dùng import như thể giống hệt require."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "require/module.exports と import/export",
+        "displayQuestion": "require/module.exports と import/export はどう違いますか。",
+        "displayIntent": "module の import/export mechanics を具体的に理解しているか確認する。",
+        "guidance": [
+          "CommonJS の require と module.exports を説明する。",
+          "ES Module の named export と default export を説明する。",
+          "exported shape と interop の落とし穴に触れる。"
+        ],
+        "commonMistakes": [
+          "exports を誤って再代入する。",
+          "default export と named export を混同する。",
+          "import を require と完全に同じものとして使う。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Node.js API: Modules - CommonJS",
+        "url": "https://nodejs.org/api/modules.html",
+        "note": "Used for require, module.exports, and exports shortcut behavior."
+      },
+      {
+        "label": "Node.js API: ECMAScript modules",
+        "url": "https://nodejs.org/api/esm.html",
+        "note": "Used for import/export and ES module semantics."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NODEJS_MODULES_NPM_FS_JR_TECH_PACKAGE_JSON_004",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "communication"],
+    "techTags": ["nodejs", "npm", "package-json"],
+    "difficulty": 1,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate understands package.json as the project manifest used by npm and Node.js tooling.",
+    "primaryQuestion": "What is package.json used for?",
+    "expectedSignals": [
+      "Describes package.json as the project manifest for a Node.js package or application.",
+      "Mentions dependency declarations such as dependencies and devDependencies.",
+      "Mentions scripts such as start, test, build, and dev that standardize common commands.",
+      "Mentions package metadata such as name, version, license, main, type, engines, or exports depending on the project.",
+      "Explains that npm and other tooling read package.json to install packages, run scripts, and understand package entry points."
+    ],
+    "redFlags": [
+      "Says package.json stores installed package source code.",
+      "Does not know dependencies are declared there.",
+      "Thinks package.json is only needed when publishing to npm.",
+      "Suggests storing secrets or environment-specific credentials in package.json."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains manifest purpose, dependencies, scripts, metadata, entry points, and tooling integration."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows package.json contains dependencies and scripts but misses package metadata or Node entry point fields."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Has seen package.json but cannot explain how npm and Node tooling use it."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer misunderstands the file's role or suggests unsafe usage."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Which fields in package.json would you expect to check first when onboarding to a Node.js service?",
+        "purpose": "Probe practical familiarity with project manifests."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "What can the package.json type field change in a Node.js project?",
+        "purpose": "Connect package metadata to module behavior."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "package.json purpose",
+        "displayQuestion": "What is package.json used for?",
+        "displayIntent": "Check whether the candidate understands package.json as a Node.js project manifest.",
+        "guidance": [
+          "Mention dependencies and scripts.",
+          "Mention metadata and entry point fields.",
+          "Explain how npm and tooling use the file."
+        ],
+        "commonMistakes": [
+          "Thinking it stores dependency source code.",
+          "Thinking it is only for published libraries.",
+          "Putting secrets in package.json."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Mục đích của package.json",
+        "displayQuestion": "package.json dùng để làm gì?",
+        "displayIntent": "Kiểm tra ứng viên có hiểu package.json là manifest của project Node.js hay không.",
+        "guidance": [
+          "Nhắc tới dependencies và scripts.",
+          "Nhắc tới metadata và entry point.",
+          "Giải thích npm và tooling dùng file này như thế nào."
+        ],
+        "commonMistakes": [
+          "Tưởng file này chứa source code của dependency.",
+          "Tưởng chỉ library publish lên npm mới cần file này.",
+          "Đưa secret vào package.json."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "package.json の目的",
+        "displayQuestion": "package.json は何に使われますか。",
+        "displayIntent": "package.json を Node.js project manifest として理解しているか確認する。",
+        "guidance": [
+          "dependencies と scripts に触れる。",
+          "metadata と entry point fields に触れる。",
+          "npm と tooling がこの file をどう使うか説明する。"
+        ],
+        "commonMistakes": [
+          "dependency source code を保存する file だと思う。",
+          "公開 library だけに必要だと思う。",
+          "package.json に secret を入れる。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "npm Docs: package.json",
+        "url": "https://docs.npmjs.com/cli/v10/configuring-npm/package-json/",
+        "note": "Used for package manifest fields, dependencies, scripts, and metadata."
+      },
+      {
+        "label": "Node.js API: Packages",
+        "url": "https://nodejs.org/api/packages.html",
+        "note": "Used for Node.js package entry points and package type behavior."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NODEJS_MODULES_NPM_FS_JR_TECH_DEPENDENCIES_005",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking"],
+    "techTags": ["nodejs", "npm", "dependencies"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate can distinguish runtime dependencies from development-only dependencies and understand deployment impact.",
+    "primaryQuestion": "What is the difference between dependencies and devDependencies?",
+    "expectedSignals": [
+      "Explains that dependencies are packages needed by the application or library at runtime.",
+      "Explains that devDependencies are packages needed for development, testing, linting, formatting, building, or local tooling.",
+      "Gives practical examples such as express in dependencies and jest, eslint, typescript, or nodemon in devDependencies depending on the project.",
+      "Mentions npm install --save-dev or npm install -D for adding development dependencies.",
+      "Understands production installs may omit devDependencies, so putting runtime packages in devDependencies can break production, while putting dev tools in dependencies can bloat deploys."
+    ],
+    "redFlags": [
+      "Says devDependencies are lower-quality or optional versions of the same packages.",
+      "Puts runtime server libraries in devDependencies without recognizing production risk.",
+      "Says the distinction never matters because npm always installs everything everywhere.",
+      "Cannot give any example of a development-only dependency."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Clearly distinguishes runtime and development dependency categories, gives examples, and explains production install consequences."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands the basic distinction but misses deployment or install-mode implications."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can define the words but cannot apply them to real packages."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would likely create broken or bloated production deployments."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "Where would you put TypeScript in a project that compiles to JavaScript before deployment?",
+        "purpose": "Probe build-time versus runtime dependency reasoning."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "What can happen if express is placed only in devDependencies and the production install omits dev dependencies?",
+        "purpose": "Check production failure awareness."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "dependencies versus devDependencies",
+        "displayQuestion": "What is the difference between dependencies and devDependencies?",
+        "displayIntent": "Check runtime versus development dependency understanding.",
+        "guidance": [
+          "Define runtime dependencies.",
+          "Define development-only dependencies.",
+          "Explain production install impact."
+        ],
+        "commonMistakes": [
+          "Putting runtime packages in devDependencies.",
+          "Assuming the distinction never matters.",
+          "Not knowing development-only examples."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "dependencies và devDependencies",
+        "displayQuestion": "dependencies và devDependencies khác nhau như thế nào?",
+        "displayIntent": "Kiểm tra hiểu biết về dependency runtime và dependency chỉ dùng khi phát triển.",
+        "guidance": [
+          "Định nghĩa dependency cần ở runtime.",
+          "Định nghĩa dependency chỉ dùng cho development.",
+          "Giải thích ảnh hưởng khi install production."
+        ],
+        "commonMistakes": [
+          "Đặt package runtime vào devDependencies.",
+          "Tưởng phân biệt này không bao giờ quan trọng.",
+          "Không nêu được ví dụ dependency chỉ dùng khi dev."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "dependencies と devDependencies",
+        "displayQuestion": "dependencies と devDependencies はどう違いますか。",
+        "displayIntent": "runtime dependency と development-only dependency の理解を確認する。",
+        "guidance": [
+          "runtime dependency を定義する。",
+          "development-only dependency を定義する。",
+          "production install への影響を説明する。"
+        ],
+        "commonMistakes": [
+          "runtime package を devDependencies に置く。",
+          "この区別は重要ではないと思う。",
+          "development-only dependency の例を挙げられない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "npm Docs: package.json",
+        "url": "https://docs.npmjs.com/cli/v10/configuring-npm/package-json/",
+        "note": "Used for dependencies and devDependencies manifest fields."
+      },
+      {
+        "label": "npm Docs: npm install",
+        "url": "https://docs.npmjs.com/cli/v10/commands/npm-install/",
+        "note": "Used for install behavior and save-dev usage."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NODEJS_MODULES_NPM_FS_JR_TECH_PACKAGE_LOCK_006",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "ownership"],
+    "techTags": ["nodejs", "npm", "package-lock"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Verify that the candidate understands package-lock.json as a reproducibility and dependency-tree control mechanism.",
+    "primaryQuestion": "What is package-lock.json, and why should it be committed?",
+    "expectedSignals": [
+      "Explains that package-lock.json records the exact resolved dependency tree, including transitive dependencies.",
+      "Mentions that it captures resolved versions, package sources, and integrity information used by npm.",
+      "Explains that committing it helps teammates, CI, and production builds install the same dependency versions.",
+      "Connects the lockfile to reliable npm ci installs and easier review of dependency changes.",
+      "Understands that package-lock.json is different from node_modules: the lockfile is committed, while installed package files usually are not."
+    ],
+    "redFlags": [
+      "Says package-lock.json is useless because package.json already lists dependencies.",
+      "Says it should never be committed for applications.",
+      "Confuses package-lock.json with node_modules.",
+      "Deletes lockfile changes casually to make dependency conflicts disappear."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains exact dependency tree, transitive versions, integrity, reproducible installs, npm ci, and why it belongs in source control."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows it locks versions and should be committed but misses transitive dependencies or integrity detail."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Has seen lockfiles but cannot explain what problem they solve."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would undermine reproducible builds or dependency review."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "What should happen in CI if package.json and package-lock.json disagree?",
+        "purpose": "Connect lockfile understanding to npm ci behavior."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "Why is committing node_modules not the same as committing package-lock.json?",
+        "purpose": "Separate installed artifacts from reproducible dependency metadata."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "package-lock.json purpose",
+        "displayQuestion": "What is package-lock.json, and why should it be committed?",
+        "displayIntent": "Check lockfile and reproducible install understanding.",
+        "guidance": [
+          "Explain exact resolved dependency tree.",
+          "Mention transitive dependencies and integrity.",
+          "Connect committing the file to CI and teammate consistency."
+        ],
+        "commonMistakes": [
+          "Thinking package.json alone is enough for exact installs.",
+          "Confusing the lockfile with node_modules.",
+          "Deleting lockfile changes without understanding them."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Mục đích của package-lock.json",
+        "displayQuestion": "package-lock.json là gì, và vì sao nên commit nó?",
+        "displayIntent": "Kiểm tra hiểu biết về lockfile và install có thể tái lập.",
+        "guidance": [
+          "Giải thích cây dependency đã resolve chính xác.",
+          "Nhắc tới transitive dependency và integrity.",
+          "Liên hệ việc commit file với CI và sự nhất quán giữa các máy."
+        ],
+        "commonMistakes": [
+          "Tưởng package.json đủ để install chính xác tuyệt đối.",
+          "Nhầm lockfile với node_modules.",
+          "Xóa thay đổi lockfile mà không hiểu."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "package-lock.json の目的",
+        "displayQuestion": "package-lock.json とは何で、なぜ commit すべきですか。",
+        "displayIntent": "lockfile と reproducible install の理解を確認する。",
+        "guidance": [
+          "正確に解決された dependency tree を説明する。",
+          "transitive dependency と integrity に触れる。",
+          "commit する理由を CI や team consistency と結びつける。"
+        ],
+        "commonMistakes": [
+          "package.json だけで完全に同じ install になると思う。",
+          "lockfile と node_modules を混同する。",
+          "lockfile の変更を理解せず削除する。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "npm Docs: package-lock.json",
+        "url": "https://docs.npmjs.com/cli/v10/configuring-npm/package-lock-json/",
+        "note": "Used for package-lock purpose, dependency tree metadata, and reproducibility."
+      },
+      {
+        "label": "npm Docs: npm ci",
+        "url": "https://docs.npmjs.com/cli/v10/commands/npm-ci/",
+        "note": "Used for lockfile-based clean installs."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NODEJS_MODULES_NPM_FS_JR_TECH_NPM_INSTALL_CI_007",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "impact_measurement"],
+    "techTags": ["nodejs", "npm", "ci"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate can choose between npm install and npm ci for local development versus repeatable CI builds.",
+    "primaryQuestion": "What is the difference between npm install and npm ci?",
+    "expectedSignals": [
+      "Explains that npm install installs dependencies and may update package-lock.json when dependency resolution changes.",
+      "Explains that npm install is commonly used locally and when adding or changing packages.",
+      "Explains that npm ci performs a clean install based on package-lock.json and removes existing node_modules before installing.",
+      "Mentions that npm ci fails when package.json and package-lock.json are out of sync instead of silently rewriting the lockfile.",
+      "Identifies npm ci as the preferred command for CI or reproducible build environments."
+    ],
+    "redFlags": [
+      "Says npm ci is just a faster alias for npm install.",
+      "Uses npm install in CI without recognizing possible lockfile drift.",
+      "Thinks npm ci can run without a lockfile.",
+      "Does not know that npm ci removes existing node_modules."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Contrasts local install and clean CI install, including lockfile requirements, mismatch failure, node_modules removal, and reproducibility."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows npm ci is for CI and uses the lockfile but misses one behavior such as removal or mismatch failure."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Has used both commands but cannot explain operational differences."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would allow nondeterministic or broken CI dependency installs."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "Why is npm ci usually safer than npm install in a CI pipeline?",
+        "purpose": "Probe reproducibility and lockfile discipline."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "What happens if package.json changed but package-lock.json was not updated before running npm ci?",
+        "purpose": "Check mismatch-failure understanding."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "npm install versus npm ci",
+        "displayQuestion": "What is the difference between npm install and npm ci?",
+        "displayIntent": "Check whether the candidate understands repeatable dependency installation.",
+        "guidance": [
+          "Explain what npm install can change.",
+          "Explain npm ci clean install behavior.",
+          "Connect npm ci to CI reproducibility."
+        ],
+        "commonMistakes": [
+          "Calling npm ci only a faster install.",
+          "Forgetting lockfile mismatch failures.",
+          "Not knowing node_modules is removed."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "npm install và npm ci",
+        "displayQuestion": "npm install và npm ci khác nhau như thế nào?",
+        "displayIntent": "Kiểm tra hiểu biết về install dependency có thể tái lập.",
+        "guidance": [
+          "Giải thích npm install có thể thay đổi gì.",
+          "Giải thích behavior clean install của npm ci.",
+          "Liên hệ npm ci với tính ổn định trong CI."
+        ],
+        "commonMistakes": [
+          "Gọi npm ci chỉ là npm install nhanh hơn.",
+          "Quên trường hợp package.json và lockfile lệch nhau.",
+          "Không biết node_modules bị xóa trước khi npm ci install."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "npm install と npm ci",
+        "displayQuestion": "npm install と npm ci はどう違いますか。",
+        "displayIntent": "再現可能な dependency installation を理解しているか確認する。",
+        "guidance": [
+          "npm install が何を変更し得るか説明する。",
+          "npm ci の clean install behavior を説明する。",
+          "npm ci を CI reproducibility と結びつける。"
+        ],
+        "commonMistakes": [
+          "npm ci を速い npm install だと思う。",
+          "lockfile mismatch failure を忘れる。",
+          "node_modules が削除されることを知らない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "npm Docs: npm install",
+        "url": "https://docs.npmjs.com/cli/v10/commands/npm-install/",
+        "note": "Used for npm install behavior and dependency saving."
+      },
+      {
+        "label": "npm Docs: npm ci",
+        "url": "https://docs.npmjs.com/cli/v10/commands/npm-ci/",
+        "note": "Used for clean install, lockfile requirements, and CI behavior."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NODEJS_MODULES_NPM_FS_JR_TECH_NPM_SCRIPTS_008",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "communication"],
+    "techTags": ["nodejs", "npm", "scripts"],
+    "difficulty": 1,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate understands npm scripts as standardized project commands defined in package.json.",
+    "primaryQuestion": "What are npm scripts?",
+    "expectedSignals": [
+      "Explains that npm scripts are named commands defined under the scripts field in package.json.",
+      "Mentions common examples such as start, test, build, lint, and dev.",
+      "Explains that scripts can be run with npm run script-name, with some common shortcuts such as npm test or npm start.",
+      "Mentions that npm makes locally installed binaries from node_modules/.bin available to scripts, so teams can avoid relying on global tools.",
+      "Understands that scripts should be reviewed because they execute shell commands and can affect local, CI, or deployment environments."
+    ],
+    "redFlags": [
+      "Thinks npm scripts are JavaScript functions exported by Node modules.",
+      "Cannot identify where scripts are defined.",
+      "Assumes scripts require tools to be installed globally.",
+      "Runs unknown scripts without recognizing they execute commands on the machine."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains scripts field, npm run usage, common commands, local binary resolution, and command-execution caution."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows how to run and define scripts but misses local binary PATH or safety implications."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Has run npm commands but cannot explain package.json scripts."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer misrepresents scripts or ignores their execution behavior."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Why can an npm script run eslint even if eslint is not installed globally?",
+        "purpose": "Check node_modules/.bin PATH behavior."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "How would you pass an extra argument through an npm script command?",
+        "purpose": "Probe practical npm run usage."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "npm scripts",
+        "displayQuestion": "What are npm scripts?",
+        "displayIntent": "Check practical understanding of package.json command scripts.",
+        "guidance": [
+          "Define scripts as named package.json commands.",
+          "Mention npm run and common examples.",
+          "Explain local binary availability and command execution caution."
+        ],
+        "commonMistakes": [
+          "Thinking scripts are exported JavaScript functions.",
+          "Not knowing scripts live in package.json.",
+          "Depending on global tool installs unnecessarily."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "npm scripts",
+        "displayQuestion": "npm scripts là gì?",
+        "displayIntent": "Kiểm tra hiểu biết thực tế về command scripts trong package.json.",
+        "guidance": [
+          "Định nghĩa script là command có tên trong package.json.",
+          "Nhắc npm run và các ví dụ thường gặp.",
+          "Giải thích local binary và lưu ý script là command được execute."
+        ],
+        "commonMistakes": [
+          "Tưởng script là JavaScript function được export.",
+          "Không biết script nằm trong package.json.",
+          "Phụ thuộc không cần thiết vào tool cài global."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "npm scripts",
+        "displayQuestion": "npm scripts とは何ですか。",
+        "displayIntent": "package.json command scripts の実務的な理解を確認する。",
+        "guidance": [
+          "script を package.json 内の named command として定義する。",
+          "npm run と一般的な例に触れる。",
+          "local binary availability と command execution の注意点を説明する。"
+        ],
+        "commonMistakes": [
+          "script を export された JavaScript function だと思う。",
+          "script が package.json にあることを知らない。",
+          "不要に global tool install に依存する。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "npm Docs: Scripts",
+        "url": "https://docs.npmjs.com/cli/v10/using-npm/scripts/",
+        "note": "Used for package scripts behavior and lifecycle context."
+      },
+      {
+        "label": "npm Docs: npm run-script",
+        "url": "https://docs.npmjs.com/cli/v10/commands/npm-run-script/",
+        "note": "Used for running package scripts and local binary PATH behavior."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NODEJS_MODULES_NPM_FS_JR_TECH_NODE_MODULES_009",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "ownership"],
+    "techTags": ["nodejs", "npm", "node_modules"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate understands node_modules as an installed dependency artifact and why teams usually avoid committing it.",
+    "primaryQuestion": "What is node_modules, and why is it usually not committed?",
+    "expectedSignals": [
+      "Explains that node_modules is the directory where npm installs project dependencies and their transitive dependencies.",
+      "Mentions that Node.js module resolution commonly looks in node_modules when resolving package imports.",
+      "Explains that node_modules is usually large, generated, and can contain many platform-specific or environment-specific files.",
+      "States that package.json plus package-lock.json should be committed so node_modules can be recreated with npm install or npm ci.",
+      "Mentions that committing node_modules causes noisy diffs, repository bloat, and stale dependency artifacts in most application workflows."
+    ],
+    "redFlags": [
+      "Says node_modules must be committed so the app can run in production.",
+      "Does not know node_modules is generated by package installation.",
+      "Commits node_modules instead of understanding lockfile-based reproducible installs.",
+      "Thinks deleting node_modules permanently deletes dependency declarations from the project."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains installed dependency tree, module resolution, generated artifact status, lockfile-based recreation, and repository-bloat risks."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows node_modules is installed dependencies and should not be committed but misses resolution or lockfile details."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Has seen the folder but cannot explain how it relates to package.json and package-lock.json."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would lead to poor source control hygiene or unreproducible installs."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "If node_modules is deleted, what files let you recreate it reliably?",
+        "purpose": "Check package manifest and lockfile relationship."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "Why can committing node_modules make code review and repository size worse?",
+        "purpose": "Probe source control impact."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "node_modules and source control",
+        "displayQuestion": "What is node_modules, and why is it usually not committed?",
+        "displayIntent": "Check understanding of installed dependency artifacts and lockfile-based recreation.",
+        "guidance": [
+          "Explain what gets installed in node_modules.",
+          "Mention module resolution and generated artifacts.",
+          "Explain why package.json and package-lock.json are committed instead."
+        ],
+        "commonMistakes": [
+          "Committing node_modules for normal application workflows.",
+          "Thinking deletion removes dependency declarations.",
+          "Ignoring repository bloat and platform-specific files."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "node_modules và source control",
+        "displayQuestion": "node_modules là gì, và vì sao thường không commit nó?",
+        "displayIntent": "Kiểm tra hiểu biết về artifact dependency đã install và cách tái tạo bằng lockfile.",
+        "guidance": [
+          "Giải thích những gì được install trong node_modules.",
+          "Nhắc module resolution và artifact được generate.",
+          "Giải thích vì sao commit package.json và package-lock.json thay vào đó."
+        ],
+        "commonMistakes": [
+          "Commit node_modules cho workflow app thông thường.",
+          "Tưởng xóa node_modules là xóa dependency declaration.",
+          "Bỏ qua repository bloat và file phụ thuộc platform."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "node_modules と source control",
+        "displayQuestion": "node_modules とは何で、なぜ通常 commit しないのですか。",
+        "displayIntent": "installed dependency artifact と lockfile-based recreation の理解を確認する。",
+        "guidance": [
+          "node_modules に何が install されるか説明する。",
+          "module resolution と generated artifact に触れる。",
+          "代わりに package.json と package-lock.json を commit する理由を説明する。"
+        ],
+        "commonMistakes": [
+          "通常の app workflow で node_modules を commit する。",
+          "削除すると dependency declaration も消えると思う。",
+          "repository bloat や platform-specific files を無視する。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "npm Docs: Folders",
+        "url": "https://docs.npmjs.com/cli/v10/configuring-npm/folders/",
+        "note": "Used for npm folder layout and node_modules installation location."
+      },
+      {
+        "label": "Node.js API: Modules - CommonJS",
+        "url": "https://nodejs.org/api/modules.html",
+        "note": "Used for loading from node_modules folders."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NODEJS_MODULES_NPM_FS_JR_TECH_SEMVER_010",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "impact_measurement"],
+    "techTags": ["nodejs", "npm", "semver"],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Check whether the candidate can explain semantic versioning and common npm range operators well enough to avoid accidental dependency upgrades.",
+    "primaryQuestion": "What is semantic versioning, and what do ^ and ~ mean?",
+    "expectedSignals": [
+      "Explains semantic versioning as MAJOR.MINOR.PATCH.",
+      "States that major versions indicate breaking changes, minor versions add backward-compatible functionality, and patch versions fix backward-compatible bugs.",
+      "Explains that caret ranges such as ^1.2.3 generally allow compatible updates below the next major version, such as 1.x.x but not 2.0.0.",
+      "Explains that tilde ranges such as ~1.2.3 generally allow patch updates within the same minor version, such as 1.2.x but not 1.3.0.",
+      "Mentions that lockfiles pin the exact installed version even when package.json contains a range, and dependency updates should still be reviewed and tested."
+    ],
+    "redFlags": [
+      "Says ^ and ~ are the same.",
+      "Thinks semver guarantees that upgrades never break anything in practice.",
+      "Cannot identify major, minor, and patch positions.",
+      "Ignores package-lock.json when discussing what version is actually installed."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains MAJOR.MINOR.PATCH, ^ and ~ ranges, lockfile interaction, and the need to test dependency updates."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Correctly explains semver and basic ranges but misses lockfile or real-world trust limitations."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Has a rough idea of version numbers but cannot reason about allowed upgrades."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would lead to unsafe or misunderstood dependency upgrades."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "For ^2.3.4, what major version would npm avoid installing?",
+        "purpose": "Check caret range reasoning."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "If package.json says ^1.2.3 but package-lock.json records 1.2.5, which version will npm ci install?",
+        "purpose": "Connect ranges to lockfile behavior."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Semantic versioning ranges",
+        "displayQuestion": "What is semantic versioning, and what do ^ and ~ mean?",
+        "displayIntent": "Check semver and npm range operator understanding.",
+        "guidance": [
+          "Explain MAJOR.MINOR.PATCH.",
+          "Explain ^ and ~ with examples.",
+          "Mention lockfiles and testing dependency updates."
+        ],
+        "commonMistakes": [
+          "Treating ^ and ~ as identical.",
+          "Assuming semver prevents all breakages.",
+          "Ignoring the exact locked version."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Semantic versioning và range",
+        "displayQuestion": "Semantic versioning là gì, và ^ với ~ có nghĩa gì?",
+        "displayIntent": "Kiểm tra hiểu biết về semver và operator range trong npm.",
+        "guidance": [
+          "Giải thích MAJOR.MINOR.PATCH.",
+          "Giải thích ^ và ~ bằng ví dụ.",
+          "Nhắc lockfile và việc test khi update dependency."
+        ],
+        "commonMistakes": [
+          "Xem ^ và ~ là giống nhau.",
+          "Tưởng semver đảm bảo không bao giờ vỡ.",
+          "Bỏ qua version chính xác trong lockfile."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "Semantic versioning ranges",
+        "displayQuestion": "semantic versioning とは何で、^ と ~ は何を意味しますか。",
+        "displayIntent": "semver と npm range operator の理解を確認する。",
+        "guidance": [
+          "MAJOR.MINOR.PATCH を説明する。",
+          "^ と ~ を例で説明する。",
+          "lockfile と dependency update testing に触れる。"
+        ],
+        "commonMistakes": [
+          "^ と ~ を同じものとして扱う。",
+          "semver がすべての破壊を防ぐと思う。",
+          "lockfile の exact version を無視する。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "npm Docs: About semantic versioning",
+        "url": "https://docs.npmjs.com/about-semantic-versioning/",
+        "note": "Used for semantic versioning concepts and version range behavior."
+      },
+      {
+        "label": "npm Docs: package.json",
+        "url": "https://docs.npmjs.com/cli/v10/configuring-npm/package-json/",
+        "note": "Used for dependency version ranges in package manifests."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NODEJS_MODULES_NPM_FS_JR_TECH_LOCAL_GLOBAL_PACKAGE_011",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking"],
+    "techTags": ["nodejs", "npm", "packages"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate understands local versus global npm installs and why project tooling should usually be local.",
+    "primaryQuestion": "What is the difference between a local and global npm package?",
+    "expectedSignals": [
+      "Explains that a local package is installed into the project, usually under that project's node_modules, and recorded in package.json when saved.",
+      "Explains that a global package is installed into npm's global prefix and is usually used for command-line tools available across projects.",
+      "Mentions that application code normally resolves imports from local project dependencies, not arbitrary global packages.",
+      "Explains that local dev tools can be run through npm scripts or npx, helping every teammate and CI use the project-defined version.",
+      "Mentions risks of global packages such as version drift between machines, permission issues, and hidden environment dependencies."
+    ],
+    "redFlags": [
+      "Says global packages are automatically available to require from any Node.js application.",
+      "Installs project runtime dependencies globally instead of declaring them in package.json.",
+      "Cannot explain why CI should not depend on a developer's globally installed tool.",
+      "Thinks local packages can only be used by one file rather than by the whole project."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Clearly distinguishes install location, package resolution, CLI usage, npm scripts or npx, and global version-drift risks."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands local project packages versus global CLI tools but misses resolution or CI consistency implications."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows npm has -g but cannot decide when to use it."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would create undeclared dependencies or inconsistent builds."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "Why is eslint usually better as a devDependency than as a required global install for the team?",
+        "purpose": "Check project-level tool version control."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "If express is installed globally, can your API safely omit it from package.json?",
+        "purpose": "Expose misunderstanding of runtime dependency declaration."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Local and global npm packages",
+        "displayQuestion": "What is the difference between a local and global npm package?",
+        "displayIntent": "Check package install scope and reproducibility understanding.",
+        "guidance": [
+          "Explain local project installs.",
+          "Explain global CLI installs.",
+          "Mention npm scripts or npx for project tool versions."
+        ],
+        "commonMistakes": [
+          "Using global packages as undeclared runtime dependencies.",
+          "Assuming global packages are require-able everywhere.",
+          "Ignoring CI and teammate version drift."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "npm package local và global",
+        "displayQuestion": "npm package local và global khác nhau như thế nào?",
+        "displayIntent": "Kiểm tra hiểu biết về scope install package và tính tái lập của project.",
+        "guidance": [
+          "Giải thích install local trong project.",
+          "Giải thích install global cho CLI.",
+          "Nhắc npm scripts hoặc npx để dùng version tool của project."
+        ],
+        "commonMistakes": [
+          "Dùng package global như dependency runtime không khai báo.",
+          "Tưởng package global có thể require ở mọi project.",
+          "Bỏ qua lệch version giữa CI và máy developer."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "local npm package と global npm package",
+        "displayQuestion": "local npm package と global npm package はどう違いますか。",
+        "displayIntent": "package install scope と reproducibility の理解を確認する。",
+        "guidance": [
+          "local project install を説明する。",
+          "global CLI install を説明する。",
+          "project tool version には npm scripts や npx を使うことに触れる。"
+        ],
+        "commonMistakes": [
+          "global package を未宣言の runtime dependency として使う。",
+          "global package はどこでも require できると思う。",
+          "CI と developer machine の version drift を無視する。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "npm Docs: Folders",
+        "url": "https://docs.npmjs.com/cli/v10/configuring-npm/folders/",
+        "note": "Used for local and global npm folder layout."
+      },
+      {
+        "label": "npm Docs: npm install",
+        "url": "https://docs.npmjs.com/cli/v10/commands/npm-install/",
+        "note": "Used for local and global install behavior."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NODEJS_MODULES_NPM_FS_JR_TECH_CREATE_EXPORT_MODULE_012",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving"],
+    "techTags": ["nodejs", "javascript", "modules"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate can describe how to create and export a simple local module using either CommonJS or ES Modules.",
+    "primaryQuestion": "How do you create and export your own module?",
+    "expectedSignals": [
+      "Explains that a local module is usually a separate file that contains focused code such as a utility function, service, configuration helper, or class.",
+      "Shows a CommonJS approach such as assigning module.exports or properties on exports, then importing with require and a relative path.",
+      "Shows an ES Module approach such as export function, export const, or export default, then importing with import syntax.",
+      "Mentions that the project module system must match Node's configuration, such as package.json type or .cjs/.mjs extensions.",
+      "Understands that module code should avoid unnecessary side effects at import time, especially for reusable helpers."
+    ],
+    "redFlags": [
+      "Cannot show any valid export/import pair.",
+      "Mixes CommonJS and ES Module syntax randomly in the same file without knowing the project mode.",
+      "Thinks every file is automatically exported to the rest of the project.",
+      "Builds modules with heavy side effects on import, such as starting servers or opening connections, without recognizing the risk."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Can describe or write both CommonJS and ES Module examples, mentions module mode, relative imports, and side-effect control."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Can correctly create one style of module but misses module mode or side-effect concerns."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Understands file separation but cannot produce working import/export syntax."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not show usable local module creation knowledge."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Can you export a function called formatUser from one file and import it in another file?",
+        "purpose": "Force concrete module syntax."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "How would your answer change if the project uses package.json with type set to module?",
+        "purpose": "Check module-mode awareness."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Creating a local module",
+        "displayQuestion": "How do you create and export your own module?",
+        "displayIntent": "Check practical ability to create reusable local Node.js modules.",
+        "guidance": [
+          "Describe a separate focused file.",
+          "Show CommonJS or ES Module export/import syntax.",
+          "Mention project module mode and avoiding import-time side effects."
+        ],
+        "commonMistakes": [
+          "Assuming files export automatically.",
+          "Mixing module systems without awareness.",
+          "Creating heavy side effects during import."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Tạo module local",
+        "displayQuestion": "Bạn tạo và export module của mình như thế nào?",
+        "displayIntent": "Kiểm tra khả năng tạo module Node.js local có thể tái sử dụng.",
+        "guidance": [
+          "Mô tả một file riêng có trách nhiệm rõ ràng.",
+          "Nêu cú pháp export/import CommonJS hoặc ES Module.",
+          "Nhắc module mode của project và tránh side effect khi import."
+        ],
+        "commonMistakes": [
+          "Tưởng file tự động export.",
+          "Trộn module system mà không biết mode đang dùng.",
+          "Tạo side effect nặng ngay lúc import."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "local module を作る",
+        "displayQuestion": "自分の module をどう作成して export しますか。",
+        "displayIntent": "再利用可能な local Node.js module を作れるか確認する。",
+        "guidance": [
+          "責務が明確な separate file として説明する。",
+          "CommonJS または ES Module の export/import syntax を示す。",
+          "project module mode と import-time side effects の回避に触れる。"
+        ],
+        "commonMistakes": [
+          "file が自動的に export されると思う。",
+          "module system を理解せず混在させる。",
+          "import 時に重い side effect を起こす。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Node.js API: Modules - CommonJS",
+        "url": "https://nodejs.org/api/modules.html",
+        "note": "Used for local CommonJS modules, require, and module.exports."
+      },
+      {
+        "label": "Node.js API: ECMAScript modules",
+        "url": "https://nodejs.org/api/esm.html",
+        "note": "Used for ES Module import and export syntax in Node.js."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NODEJS_MODULES_NPM_FS_JR_TECH_FS_READFILE_013",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving"],
+    "techTags": ["nodejs", "filesystem", "async", "event-loop"],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Check whether the candidate can distinguish callback, synchronous, and promise-based filesystem APIs and understand their event loop impact.",
+    "primaryQuestion": "What is the difference between fs.readFile, fs.readFileSync, and fs/promises?",
+    "expectedSignals": [
+      "Explains that fs.readFile is asynchronous and uses a callback with an error-first pattern when the read completes.",
+      "Explains that fs.readFileSync blocks the current JavaScript thread until the file read finishes or throws an error.",
+      "Explains that fs/promises provides promise-based filesystem APIs that work naturally with async/await and reject on errors.",
+      "Mentions that all three read the whole file into memory, so streams may be better for large files.",
+      "Connects synchronous filesystem calls to event loop blocking, especially inside request handlers, while asynchronous forms let the server continue handling other work."
+    ],
+    "redFlags": [
+      "Says fs.readFileSync is faster and therefore better for APIs.",
+      "Does not mention error handling differences between callback, thrown errors, and promise rejection.",
+      "Thinks fs/promises is a different filesystem rather than a promise-based API.",
+      "Ignores memory impact when reading very large files."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Contrasts callback, sync, and promise APIs; covers error handling, event loop blocking, async/await usage, and whole-file memory behavior."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows sync versus async and promises but misses memory or error-handling nuance."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can name the APIs but cannot choose safely in request-serving code."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would likely block the event loop or mishandle filesystem errors."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "How would you handle an error from each of these three APIs?",
+        "purpose": "Probe callback, try/catch, and promise rejection handling."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "If the file can be hundreds of megabytes, what would you consider instead of readFile?",
+        "purpose": "Check memory and streaming awareness."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Node.js filesystem read APIs",
+        "displayQuestion": "What is the difference between fs.readFile, fs.readFileSync, and fs/promises?",
+        "displayIntent": "Check callback, synchronous, and promise-based filesystem API understanding.",
+        "guidance": [
+          "Explain callback-based fs.readFile.",
+          "Explain blocking behavior of fs.readFileSync.",
+          "Explain fs/promises with async/await and error handling.",
+          "Mention whole-file memory usage."
+        ],
+        "commonMistakes": [
+          "Using sync reads inside request handlers.",
+          "Ignoring error handling differences.",
+          "Reading huge files fully into memory by default."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "API đọc file trong Node.js",
+        "displayQuestion": "fs.readFile, fs.readFileSync và fs/promises khác nhau như thế nào?",
+        "displayIntent": "Kiểm tra hiểu biết về API filesystem dạng callback, đồng bộ và promise.",
+        "guidance": [
+          "Giải thích fs.readFile dùng callback.",
+          "Giải thích fs.readFileSync block event loop.",
+          "Giải thích fs/promises với async/await và xử lý lỗi.",
+          "Nhắc việc đọc toàn bộ file vào memory."
+        ],
+        "commonMistakes": [
+          "Dùng sync read trong request handler.",
+          "Bỏ qua khác biệt xử lý lỗi.",
+          "Mặc định đọc file rất lớn vào memory."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "Node.js filesystem read APIs",
+        "displayQuestion": "fs.readFile、fs.readFileSync、fs/promises はどう違いますか。",
+        "displayIntent": "callback、synchronous、promise-based filesystem API の理解を確認する。",
+        "guidance": [
+          "callback-based fs.readFile を説明する。",
+          "fs.readFileSync の blocking behavior を説明する。",
+          "fs/promises と async/await、error handling を説明する。",
+          "whole-file memory usage に触れる。"
+        ],
+        "commonMistakes": [
+          "request handler 内で sync read を使う。",
+          "error handling の違いを無視する。",
+          "巨大 file をデフォルトで全部 memory に読む。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Node.js API: File system",
+        "url": "https://nodejs.org/api/fs.html",
+        "note": "Used for callback, synchronous, and promise-based filesystem APIs."
+      },
+      {
+        "label": "Node.js Learn: Don't Block the Event Loop",
+        "url": "https://nodejs.org/learn/asynchronous-work/dont-block-the-event-loop",
+        "note": "Used for event loop and worker pool blocking considerations."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NODEJS_MODULES_NPM_FS_JR_TECH_BUFFER_014",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "communication"],
+    "techTags": ["nodejs", "buffer", "binary-data"],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Check whether the candidate understands Buffer as Node.js binary data and can recognize where it appears in backend work.",
+    "primaryQuestion": "What is a Buffer, and when might you see it in Node.js?",
+    "expectedSignals": [
+      "Defines Buffer as a Node.js object for handling raw binary bytes outside normal JavaScript string semantics.",
+      "Mentions common places Buffers appear, such as file reads without an encoding, network data, uploads, streams, crypto hashes, and base64 conversion.",
+      "Explains that converting between Buffer and string requires an encoding such as utf8, hex, or base64.",
+      "Understands that string length and byte length can differ for non-ASCII text, so byte handling matters for protocols and storage limits.",
+      "Mentions safe allocation practices at a basic level, such as preferring Buffer.alloc when initialized zero-filled memory matters."
+    ],
+    "redFlags": [
+      "Says Buffer is just an array of characters.",
+      "Converts binary data to string without considering encoding.",
+      "Confuses base64 encoding with encryption.",
+      "Ignores memory implications when buffering large uploads or files."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains binary bytes, common backend appearances, encoding conversion, byte length versus string length, and basic safe allocation awareness."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands Buffer as binary data and names use cases but misses encoding or memory nuance."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Has seen Buffer output but cannot explain what it represents."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would likely corrupt binary data or mishandle encodings."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "What happens if fs.readFile reads a file without an encoding option?",
+        "purpose": "Check practical Buffer appearance in filesystem code."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "Why can Buffer.byteLength('é', 'utf8') differ from 'é'.length?",
+        "purpose": "Probe byte versus character understanding."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Buffer and binary data",
+        "displayQuestion": "What is a Buffer, and when might you see it in Node.js?",
+        "displayIntent": "Check binary data and encoding fundamentals in Node.js.",
+        "guidance": [
+          "Define Buffer as raw bytes.",
+          "Name filesystem, streams, uploads, crypto, and base64 examples.",
+          "Explain encoding conversion and byte length issues."
+        ],
+        "commonMistakes": [
+          "Treating Buffer as a character array.",
+          "Ignoring encodings.",
+          "Confusing base64 with encryption."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Buffer và dữ liệu nhị phân",
+        "displayQuestion": "Buffer là gì, và khi nào bạn có thể gặp nó trong Node.js?",
+        "displayIntent": "Kiểm tra nền tảng về binary data và encoding trong Node.js.",
+        "guidance": [
+          "Định nghĩa Buffer là raw bytes.",
+          "Nêu ví dụ filesystem, stream, upload, crypto và base64.",
+          "Giải thích chuyển đổi encoding và vấn đề byte length."
+        ],
+        "commonMistakes": [
+          "Xem Buffer là mảng ký tự.",
+          "Bỏ qua encoding.",
+          "Nhầm base64 với encryption."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "Buffer と binary data",
+        "displayQuestion": "Buffer とは何で、Node.js ではどんな場面で見ますか。",
+        "displayIntent": "Node.js の binary data と encoding の基礎を確認する。",
+        "guidance": [
+          "Buffer を raw bytes として定義する。",
+          "filesystem、streams、uploads、crypto、base64 の例を挙げる。",
+          "encoding conversion と byte length の問題を説明する。"
+        ],
+        "commonMistakes": [
+          "Buffer を文字配列として扱う。",
+          "encoding を無視する。",
+          "base64 と encryption を混同する。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Node.js API: Buffer",
+        "url": "https://nodejs.org/api/buffer.html",
+        "note": "Used for Buffer, encodings, byte length, and allocation behavior."
+      },
+      {
+        "label": "Node.js API: File system",
+        "url": "https://nodejs.org/api/fs.html",
+        "note": "Used for filesystem APIs that may return Buffer objects."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NODEJS_MODULES_NPM_FS_JR_TECH_SYNC_FS_REQUEST_015",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "debugging",
+    "competencies": ["technical_fundamentals", "problem_solving", "system_thinking"],
+    "techTags": ["nodejs", "filesystem", "event-loop", "performance"],
+    "difficulty": 3,
+    "conversationDepth": "mid",
+    "intent": "Assess whether the candidate understands why synchronous filesystem work in request handlers can harm Node.js server responsiveness.",
+    "primaryQuestion": "Why should you avoid synchronous filesystem calls inside API request handlers?",
+    "expectedSignals": [
+      "Explains that synchronous filesystem calls block the Node.js event loop while the operation runs.",
+      "Connects event loop blocking to worse latency and throughput because other requests cannot be processed by the JavaScript thread during that time.",
+      "Mentions that a single slow disk operation or large file read can affect unrelated users, not just the current request.",
+      "Suggests alternatives such as fs/promises, callback-based fs APIs, streaming, caching data at startup, moving work outside the request path, or offloading heavy work.",
+      "Recognizes exceptions and nuance: small synchronous reads during startup may be acceptable, but per-request synchronous I/O in a server is risky."
+    ],
+    "redFlags": [
+      "Says synchronous filesystem calls are fine because Node.js is fast.",
+      "Only considers the current request and ignores impact on other concurrent requests.",
+      "Replaces sync read with async read but still performs huge CPU-heavy parsing in the request path without considering blocking.",
+      "Cannot explain what the event loop has to do with request handling."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains event loop blocking, latency and throughput impact, cross-request effects, safer alternatives, and startup-versus-request nuance."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows sync calls block Node.js and suggests async alternatives but misses broader concurrency or parsing concerns."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Repeats that async is better but cannot explain the server impact."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would allow blocking request handlers in production APIs."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "If every request calls fs.readFileSync on a large JSON file, what happens under concurrent traffic?",
+        "purpose": "Probe cross-request event loop impact."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "When might a synchronous filesystem call be acceptable in a Node.js service?",
+        "purpose": "Check practical nuance instead of rote avoidance."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Synchronous filesystem calls in APIs",
+        "displayQuestion": "Why should you avoid synchronous filesystem calls inside API request handlers?",
+        "displayIntent": "Check event loop and request-concurrency impact understanding.",
+        "guidance": [
+          "Explain event loop blocking.",
+          "Connect blocking to latency and throughput.",
+          "Suggest async, streaming, caching, or moving work out of the request path.",
+          "Mention startup-time exceptions."
+        ],
+        "commonMistakes": [
+          "Thinking sync I/O only affects one request.",
+          "Ignoring CPU parsing after async reads.",
+          "Treating all sync calls as equally acceptable in servers."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "debugging"
+        }
+      },
+      "vi": {
+        "title": "Filesystem sync trong API",
+        "displayQuestion": "Vì sao nên tránh synchronous filesystem calls bên trong API request handler?",
+        "displayIntent": "Kiểm tra hiểu biết về event loop và ảnh hưởng tới concurrent request.",
+        "guidance": [
+          "Giải thích event loop bị block.",
+          "Liên hệ blocking với latency và throughput.",
+          "Đề xuất async, streaming, cache hoặc chuyển việc ra khỏi request path.",
+          "Nhắc ngoại lệ khi chạy lúc startup."
+        ],
+        "commonMistakes": [
+          "Tưởng sync I/O chỉ ảnh hưởng một request.",
+          "Bỏ qua CPU parsing sau khi đọc async.",
+          "Xem mọi sync call đều ổn trong server."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "debugging"
+        }
+      },
+      "ja": {
+        "title": "API 内の synchronous filesystem calls",
+        "displayQuestion": "API request handler の中で synchronous filesystem calls を避けるべきなのはなぜですか。",
+        "displayIntent": "event loop と request concurrency への影響を理解しているか確認する。",
+        "guidance": [
+          "event loop blocking を説明する。",
+          "blocking を latency と throughput に結びつける。",
+          "async、streaming、caching、request path 外への移動を提案する。",
+          "startup-time exception に触れる。"
+        ],
+        "commonMistakes": [
+          "sync I/O は 1 request だけに影響すると思う。",
+          "async read 後の CPU parsing を無視する。",
+          "server での sync call をすべて問題ないと考える。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "debugging"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Node.js Learn: Don't Block the Event Loop",
+        "url": "https://nodejs.org/learn/asynchronous-work/dont-block-the-event-loop",
+        "note": "Used for event loop blocking, worker pool, and server responsiveness guidance."
+      },
+      {
+        "label": "Node.js API: File system",
+        "url": "https://nodejs.org/api/fs.html",
+        "note": "Used for synchronous and asynchronous filesystem API behavior."
+      }
+    ],
+    "status": "active"
+  }
+]

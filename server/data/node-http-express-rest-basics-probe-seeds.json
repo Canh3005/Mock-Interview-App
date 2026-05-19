@@ -1,0 +1,1962 @@
+[
+  {
+    "code": "NODE_HTTP_EXPRESS_JR_TECH_HTTP_SERVER_001",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "communication"],
+    "techTags": ["nodejs", "http"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate can describe the minimal pieces needed to serve HTTP requests with Node.js before using a framework.",
+    "primaryQuestion": "How do you create a basic HTTP server in Node.js?",
+    "expectedSignals": [
+      "Mentions importing the built-in http module, for example require('http') or import http from 'node:http'.",
+      "Describes using http.createServer with a request listener that receives req and res for every incoming request.",
+      "Explains that the handler should set a status code and optionally headers such as Content-Type before writing the response.",
+      "Mentions ending the response with res.end() or equivalent so the client is not left waiting.",
+      "Mentions calling server.listen(port, callback) to bind the server to a port and start accepting connections.",
+      "Can give a small route-like example using req.method and req.url, while recognizing that this becomes verbose as the API grows."
+    ],
+    "redFlags": [
+      "Says Node.js cannot create an HTTP server without Express.",
+      "Creates a handler but forgets to call listen, so no server actually starts.",
+      "Writes response data but never ends the response.",
+      "Confuses client-side fetch code with server-side request handling.",
+      "Thinks createServer automatically gives Express-style routing or JSON parsing."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Shows the createServer plus listen shape, explains req/res lifecycle, and notes why routing manually becomes repetitive."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Can describe the minimal server but misses one detail such as headers, status, or manual routing."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Has seen Node servers but cannot assemble the request listener and response completion flow clearly."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not show basic server-side Node HTTP knowledge."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Can you sketch the smallest GET /health endpoint using only the http module?",
+        "purpose": "Force the candidate to make the server lifecycle concrete."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "What part of that code starts accepting network connections?",
+        "purpose": "Check whether they understand server.listen rather than only the handler."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Basic Node HTTP server",
+        "displayQuestion": "How do you create a basic HTTP server in Node.js?",
+        "displayIntent": "Check whether the candidate understands the built-in Node HTTP server lifecycle.",
+        "guidance": [
+          "Look for http.createServer, a req/res handler, and server.listen.",
+          "Probe whether they know the response must be ended.",
+          "Ask how manual method and URL checks become routing."
+        ],
+        "commonMistakes": [
+          "Assuming Express is required.",
+          "Forgetting server.listen.",
+          "Not ending the response."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "HTTP server cơ bản trong Node",
+        "displayQuestion": "Bạn tạo một HTTP server cơ bản trong Node.js như thế nào?",
+        "displayIntent": "Kiểm tra ứng viên có hiểu vòng đời server HTTP built-in của Node hay không.",
+        "guidance": [
+          "Tìm các ý http.createServer, handler req/res và server.listen.",
+          "Đào sâu việc response phải được kết thúc.",
+          "Hỏi cách tự kiểm tra method và URL dẫn tới nhu cầu routing."
+        ],
+        "commonMistakes": [
+          "Tưởng phải có Express mới tạo được server.",
+          "Quên server.listen.",
+          "Không kết thúc response."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "Node の基本 HTTP server",
+        "displayQuestion": "Node.js で基本的な HTTP server を作るにはどうしますか。",
+        "displayIntent": "Node の built-in HTTP server の基本ライフサイクルを理解しているか確認する。",
+        "guidance": [
+          "http.createServer、req/res handler、server.listen に触れているかを見る。",
+          "response を終了する必要がある点を確認する。",
+          "method と URL の手動判定が routing につながることを聞く。"
+        ],
+        "commonMistakes": [
+          "Express が必須だと思う。",
+          "server.listen を忘れる。",
+          "response を終了しない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Node.js docs: HTTP",
+        "url": "https://nodejs.org/api/http.html",
+        "note": "Used for http.createServer, request listener, response, and server.listen concepts."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NODE_HTTP_EXPRESS_JR_TRADE_EXPRESS_VS_HTTP_002",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "trade_off",
+    "competencies": ["technical_fundamentals", "trade_off_analysis", "communication"],
+    "techTags": ["nodejs", "http", "express"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Evaluate whether the candidate understands the practical problems Express solves compared with writing all HTTP handling directly.",
+    "primaryQuestion": "What problem does Express solve compared with the built-in http module?",
+    "expectedSignals": [
+      "Explains that the built-in http module is low-level and requires manually checking methods, paths, headers, body streams, and response formatting.",
+      "Describes Express as a minimal web framework that adds routing, middleware, request/response helpers, and better structure for web APIs.",
+      "Mentions that Express is built on top of Node's HTTP request/response model rather than replacing HTTP itself.",
+      "Gives examples of conveniences such as app.get, app.post, routers, express.json, res.status, res.json, and centralized middleware.",
+      "Recognizes trade-offs: Express reduces boilerplate but developers still need to understand HTTP semantics, validation, errors, and security."
+    ],
+    "redFlags": [
+      "Says Express makes Node.js asynchronous or is required for async code.",
+      "Claims Express is a separate web server unrelated to Node's HTTP model.",
+      "Believes Express automatically handles all security, validation, and database work.",
+      "Cannot name any concrete feature beyond saying it is easier.",
+      "Says the built-in http module cannot serve real requests."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Clearly contrasts low-level HTTP handling with Express routing, middleware, helpers, and app structure while preserving HTTP understanding."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Names routing and middleware but gives a shallow comparison of what manual HTTP handling requires."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows Express is common but cannot explain the abstraction it provides."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer contains incorrect claims about Express replacing HTTP or solving unrelated runtime problems."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "What code would be more repetitive if you wrote the same API using only the http module?",
+        "purpose": "Move from generic convenience to concrete framework responsibilities."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "Does Express remove the need to know HTTP methods and status codes?",
+        "purpose": "Check whether the candidate understands Express as an abstraction over HTTP, not a replacement."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Why Express exists",
+        "displayQuestion": "What problem does Express solve compared with the built-in http module?",
+        "displayIntent": "Check whether the candidate understands Express as a routing and middleware framework over Node HTTP.",
+        "guidance": [
+          "Listen for routing, middleware, request parsing, and response helpers.",
+          "Confirm they know Express still uses HTTP concepts.",
+          "Ask for concrete boilerplate that Express removes."
+        ],
+        "commonMistakes": [
+          "Saying Express makes Node asynchronous.",
+          "Thinking Express handles business logic automatically.",
+          "Forgetting HTTP still matters."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "trade_off"
+        }
+      },
+      "vi": {
+        "title": "Vì sao dùng Express",
+        "displayQuestion": "Express giải quyết vấn đề gì so với module http built-in?",
+        "displayIntent": "Kiểm tra ứng viên có hiểu Express là framework routing và middleware trên nền Node HTTP hay không.",
+        "guidance": [
+          "Nghe các ý routing, middleware, parse request và helper response.",
+          "Xác nhận ứng viên vẫn hiểu các khái niệm HTTP.",
+          "Hỏi ví dụ boilerplate cụ thể mà Express loại bỏ."
+        ],
+        "commonMistakes": [
+          "Nói Express làm Node bất đồng bộ.",
+          "Tưởng Express tự xử lý business logic.",
+          "Quên rằng HTTP vẫn quan trọng."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "trade_off"
+        }
+      },
+      "ja": {
+        "title": "Express の役割",
+        "displayQuestion": "built-in の http module と比べて Express はどんな問題を解決しますか。",
+        "displayIntent": "Express を Node HTTP 上の routing と middleware framework として理解しているか確認する。",
+        "guidance": [
+          "routing、middleware、request parsing、response helper に触れるかを見る。",
+          "HTTP の知識がまだ必要だと理解しているか確認する。",
+          "Express が減らす boilerplate の具体例を聞く。"
+        ],
+        "commonMistakes": [
+          "Express が Node を非同期にすると言う。",
+          "Express が business logic を自動処理すると考える。",
+          "HTTP の理解が不要だと思う。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "trade_off"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Express docs: Hello world example",
+        "url": "https://expressjs.com/en/starter/hello-world.html",
+        "note": "Used for the minimal Express app shape and relationship to Node request and response objects."
+      },
+      {
+        "label": "Express docs: Using middleware",
+        "url": "https://expressjs.com/en/guide/using-middleware.html",
+        "note": "Used for Express as a routing and middleware web framework."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NODE_HTTP_EXPRESS_JR_TECH_ROUTING_003",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "communication"],
+    "techTags": ["nodejs", "express", "routing", "http"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate can define Express routing as method plus path plus handler matching.",
+    "primaryQuestion": "What is routing in Express?",
+    "expectedSignals": [
+      "Defines routing as deciding how the app responds to a request for a specific HTTP method and URL path.",
+      "Mentions the route shape app.METHOD(path, handler), such as app.get('/users/:id', handler).",
+      "Explains that method and path both matter, so GET /users and POST /users can execute different handlers.",
+      "Understands that route handlers receive req and res and should send a response or pass control.",
+      "Mentions route parameters, router modules, or route order as practical routing details.",
+      "Recognizes that if no route matches, the app should eventually return a 404 response."
+    ],
+    "redFlags": [
+      "Defines routing as only naming URLs without mentioning handlers.",
+      "Confuses Express routing with frontend client-side routing.",
+      "Thinks a matching path is enough regardless of HTTP method.",
+      "Cannot provide a minimal app.get or router.get example.",
+      "Assumes Express automatically creates routes from database models."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains routing through method, path, handler, matching behavior, and response responsibility with a concrete example."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Defines routing and gives a route example but misses method matching or 404 behavior."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Recognizes app.get syntax but cannot explain what Express matches."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not show practical Express routing knowledge."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Can you write a GET /users/:id route and identify the method, path, and handler?",
+        "purpose": "Force concrete understanding of route components."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "If only GET /users exists, should POST /users hit that route?",
+        "purpose": "Check method-aware route matching."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Express routing",
+        "displayQuestion": "What is routing in Express?",
+        "displayIntent": "Check whether the candidate understands routing as method and path mapped to a handler.",
+        "guidance": [
+          "Ask for the method, path, and handler pieces.",
+          "Probe whether method matching is understood.",
+          "Look for response or next responsibility."
+        ],
+        "commonMistakes": [
+          "Confusing backend routing with frontend navigation.",
+          "Ignoring HTTP method matching.",
+          "Forgetting what the handler must do."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Routing trong Express",
+        "displayQuestion": "Routing trong Express là gì?",
+        "displayIntent": "Kiểm tra ứng viên có hiểu route là mapping giữa method, path và handler hay không.",
+        "guidance": [
+          "Hỏi rõ các phần method, path và handler.",
+          "Đào sâu việc route match theo HTTP method.",
+          "Tìm hiểu trách nhiệm gửi response hoặc gọi next."
+        ],
+        "commonMistakes": [
+          "Nhầm routing backend với điều hướng frontend.",
+          "Bỏ qua HTTP method.",
+          "Quên handler phải kết thúc request hoặc chuyển tiếp."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "Express routing",
+        "displayQuestion": "Express の routing とは何ですか。",
+        "displayIntent": "route を method と path から handler へ対応付けるものとして理解しているか確認する。",
+        "guidance": [
+          "method、path、handler の要素を聞く。",
+          "HTTP method も match 条件になるか確認する。",
+          "response または next の責務を見る。"
+        ],
+        "commonMistakes": [
+          "backend routing と frontend navigation を混同する。",
+          "HTTP method の match を無視する。",
+          "handler が request を終える必要を忘れる。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Express docs: Routing",
+        "url": "https://expressjs.com/en/guide/routing.html",
+        "note": "Used for route definition, method/path matching, and handler behavior."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NODE_HTTP_EXPRESS_JR_TECH_HTTP_METHODS_004",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking", "communication"],
+    "techTags": ["nodejs", "express", "http", "rest"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Evaluate whether the candidate can connect common Express route helpers to HTTP method semantics.",
+    "primaryQuestion": "What is the difference between app.get, app.post, app.put, and app.delete?",
+    "expectedSignals": [
+      "Explains that each helper registers a route handler for a specific HTTP method.",
+      "Connects app.get to reading or retrieving a representation without intended server-side mutation.",
+      "Connects app.post to creating resources, submitting data, or triggering operations that may not be idempotent.",
+      "Connects app.put to replacing or updating a resource at a known URI, usually with idempotent intent.",
+      "Connects app.delete to removing or deactivating a resource.",
+      "Notes that Express routes by method but does not enforce REST semantics; handler code and API design must do that."
+    ],
+    "redFlags": [
+      "Says all methods are interchangeable because they can all return JSON.",
+      "Uses GET for destructive operations without recognizing the problem.",
+      "Believes app.post automatically inserts into a database.",
+      "Cannot explain the basic difference between reading, creating, updating, and deleting.",
+      "Thinks Express prevents developers from mutating data inside GET handlers."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Correctly maps route helpers to HTTP semantics and explains Express only performs method-specific routing."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands the common CRUD mapping but is shallow on idempotency or framework enforcement."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can name the helpers but treats them mostly as style choices."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is incorrect about HTTP method purpose or Express routing behavior."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "missing_context",
+        "question": "Why is GET /users/:id/delete a risky design?",
+        "purpose": "Probe safe method semantics and unintended side effects."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "For a todo API, which method would you use to list todos, create one, replace one, and delete one?",
+        "purpose": "Check applied method selection."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Express HTTP methods",
+        "displayQuestion": "What is the difference between app.get, app.post, app.put, and app.delete?",
+        "displayIntent": "Check whether the candidate maps Express helpers to HTTP method semantics.",
+        "guidance": [
+          "Map each helper to the underlying HTTP verb.",
+          "Listen for read, create, update, and delete intent.",
+          "Confirm Express does not enforce business semantics."
+        ],
+        "commonMistakes": [
+          "Treating all methods as interchangeable.",
+          "Using GET for mutations.",
+          "Assuming Express performs database actions automatically."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "HTTP methods trong Express",
+        "displayQuestion": "app.get, app.post, app.put và app.delete khác nhau như thế nào?",
+        "displayIntent": "Kiểm tra ứng viên có map helper của Express với ý nghĩa HTTP method hay không.",
+        "guidance": [
+          "Map từng helper với HTTP verb tương ứng.",
+          "Nghe các ý đọc, tạo, cập nhật và xóa.",
+          "Xác nhận Express không tự enforce semantic nghiệp vụ."
+        ],
+        "commonMistakes": [
+          "Xem mọi method là thay thế được cho nhau.",
+          "Dùng GET cho thao tác thay đổi dữ liệu.",
+          "Tưởng Express tự thao tác database."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "Express の HTTP methods",
+        "displayQuestion": "app.get、app.post、app.put、app.delete の違いは何ですか。",
+        "displayIntent": "Express helper を HTTP method の意味に結び付けて説明できるか確認する。",
+        "guidance": [
+          "各 helper を対応する HTTP verb に mapping する。",
+          "read、create、update、delete の意図を聞く。",
+          "Express が業務 semantic を自動 enforce しない点を確認する。"
+        ],
+        "commonMistakes": [
+          "すべての method を交換可能だと考える。",
+          "mutation に GET を使う。",
+          "Express が database 操作を自動で行うと思う。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Express docs: Route methods",
+        "url": "https://expressjs.com/en/guide/routing.html#route-methods",
+        "note": "Used for Express method-based route helpers."
+      },
+      {
+        "label": "MDN: HTTP request methods",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods",
+        "note": "Used for common HTTP method semantics."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NODE_HTTP_EXPRESS_JR_TECH_REQ_RES_005",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "communication", "problem_solving"],
+    "techTags": ["nodejs", "express", "request_response"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate understands the request and response objects used inside Express route handlers.",
+    "primaryQuestion": "What are req and res in an Express route handler?",
+    "expectedSignals": [
+      "Explains that req represents the incoming HTTP request and contains data such as method, URL, headers, params, query, body, cookies, and authentication context if middleware adds it.",
+      "Explains that res represents the HTTP response being built and is used to set status, headers, cookies, and send data.",
+      "Mentions common response helpers such as res.status(), res.json(), res.send(), res.redirect(), or res.end().",
+      "Understands that req and res are per-request objects and should not be stored globally for later reuse.",
+      "Mentions that a handler should normally send one final response or delegate control, not send multiple responses.",
+      "Recognizes that Express extends or wraps Node's request and response objects with convenience methods."
+    ],
+    "redFlags": [
+      "Thinks req is a database request and res is the returned data object.",
+      "Cannot name where to read path parameters, query string, headers, or body.",
+      "Sends multiple responses from the same request path without recognizing headers-sent errors.",
+      "Stores req or res in global state for background work.",
+      "Believes returning a JavaScript object from the handler automatically sends JSON in Express."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Clearly explains req and res, common fields/helpers, per-request lifecycle, and one-response responsibility."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Defines req and res correctly but misses lifecycle or duplicate response nuance."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows the names but cannot use them to describe practical request handling."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer confuses Express handler objects with unrelated application data."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Where would you read an Authorization header, a URL id, and a JSON payload?",
+        "purpose": "Check practical req usage across common request data sources."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "What happens if one branch calls res.json() and later code calls res.send() again?",
+        "purpose": "Probe response lifecycle and duplicate send awareness."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "req and res",
+        "displayQuestion": "What are req and res in an Express route handler?",
+        "displayIntent": "Check whether the candidate understands request data access and response construction.",
+        "guidance": [
+          "Ask what lives on req and what res is used for.",
+          "Probe common helpers like res.status and res.json.",
+          "Check that they avoid multiple responses."
+        ],
+        "commonMistakes": [
+          "Thinking returning an object sends JSON automatically.",
+          "Mixing up request and response headers.",
+          "Sending more than one final response."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "req và res",
+        "displayQuestion": "req và res trong Express route handler là gì?",
+        "displayIntent": "Kiểm tra ứng viên có hiểu cách đọc request và tạo response hay không.",
+        "guidance": [
+          "Hỏi req chứa gì và res dùng để làm gì.",
+          "Đào sâu các helper như res.status và res.json.",
+          "Kiểm tra việc tránh gửi nhiều response."
+        ],
+        "commonMistakes": [
+          "Tưởng return object là tự gửi JSON.",
+          "Nhầm request header với response header.",
+          "Gửi nhiều response cuối cùng."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "req と res",
+        "displayQuestion": "Express route handler の req と res は何ですか。",
+        "displayIntent": "request data の取得と response の構築を理解しているか確認する。",
+        "guidance": [
+          "req に何が入り、res を何に使うか聞く。",
+          "res.status や res.json などの helper を確認する。",
+          "複数 response を避ける理解を見る。"
+        ],
+        "commonMistakes": [
+          "object を return すれば自動で JSON になると思う。",
+          "request header と response header を混同する。",
+          "最終 response を複数送る。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Express docs: Hello world example",
+        "url": "https://expressjs.com/en/starter/hello-world.html",
+        "note": "Used for basic req and res route handler usage."
+      },
+      {
+        "label": "Express 5.x API",
+        "url": "https://expressjs.com/en/api.html",
+        "note": "Used for Express request and response object helpers."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NODE_HTTP_EXPRESS_JR_TECH_MIDDLEWARE_006",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking", "communication"],
+    "techTags": ["nodejs", "express", "middleware"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Verify whether the candidate understands Express middleware as request pipeline functions, not just route handlers.",
+    "primaryQuestion": "What is Express middleware?",
+    "expectedSignals": [
+      "Defines middleware as a function in the request-response cycle that has access to req, res, and next.",
+      "Explains that middleware can run before route handlers, after earlier middleware, or at route/router/application level depending on registration.",
+      "Mentions common uses such as logging, authentication, authorization, parsing JSON, validation, CORS, rate limiting, and error handling.",
+      "Understands middleware can modify req or res, end the response, or call next to continue.",
+      "Mentions that registration order matters because Express runs matching middleware in sequence.",
+      "Can distinguish normal middleware from error-handling middleware at a high level."
+    ],
+    "redFlags": [
+      "Says middleware is only authentication code.",
+      "Thinks middleware always runs after route handlers.",
+      "Does not know the role of next.",
+      "Assumes middleware must always send a response.",
+      "Ignores registration order and matching paths."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains middleware as ordered pipeline functions with req/res/next, common use cases, and continue-versus-end behavior."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Defines middleware and gives examples but misses order, path matching, or response lifecycle."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Has used middleware names but cannot explain the pipeline model."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not demonstrate practical Express middleware knowledge."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Where would you place an authentication middleware relative to protected routes?",
+        "purpose": "Check order and route scoping."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "What are two examples of middleware that do not directly belong to one business route?",
+        "purpose": "Probe cross-cutting concern understanding."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Express middleware",
+        "displayQuestion": "What is Express middleware?",
+        "displayIntent": "Check whether the candidate understands middleware as ordered request pipeline functions.",
+        "guidance": [
+          "Look for req, res, and next.",
+          "Ask what middleware can do to the request or response.",
+          "Probe registration order and common use cases."
+        ],
+        "commonMistakes": [
+          "Reducing middleware to authentication only.",
+          "Ignoring order.",
+          "Forgetting next or response completion."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Middleware trong Express",
+        "displayQuestion": "Express middleware là gì?",
+        "displayIntent": "Kiểm tra ứng viên có hiểu middleware là các hàm trong pipeline request hay không.",
+        "guidance": [
+          "Tìm các ý req, res và next.",
+          "Hỏi middleware có thể làm gì với request hoặc response.",
+          "Đào sâu thứ tự đăng ký và use case phổ biến."
+        ],
+        "commonMistakes": [
+          "Thu hẹp middleware thành authentication.",
+          "Bỏ qua thứ tự chạy.",
+          "Quên next hoặc việc kết thúc response."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "Express middleware",
+        "displayQuestion": "Express middleware とは何ですか。",
+        "displayIntent": "middleware を順序付きの request pipeline function として理解しているか確認する。",
+        "guidance": [
+          "req、res、next に触れるかを見る。",
+          "middleware が request や response に何をできるか聞く。",
+          "登録順と一般的な use case を確認する。"
+        ],
+        "commonMistakes": [
+          "middleware を authentication だけに限定する。",
+          "実行順を無視する。",
+          "next や response completion を忘れる。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Express docs: Using middleware",
+        "url": "https://expressjs.com/en/guide/using-middleware.html",
+        "note": "Used for middleware definition, capabilities, and next behavior."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NODE_HTTP_EXPRESS_JR_TECH_NEXT_007",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving", "communication"],
+    "techTags": ["nodejs", "express", "middleware"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate understands next() as explicit control transfer in the Express middleware chain.",
+    "primaryQuestion": "What does next() do in middleware?",
+    "expectedSignals": [
+      "Explains that next() passes control to the next matching middleware or route handler in the Express stack.",
+      "Understands that middleware should call next() only when it has not ended the response and wants processing to continue.",
+      "Mentions next(err) as the way to forward an error to error-handling middleware.",
+      "Recognizes that calling next() more than once can cause confusing flow, duplicate handlers, or duplicate responses.",
+      "Mentions that code after next() may still run unless the function returns or control flow is structured carefully.",
+      "Can describe a practical example such as authentication middleware calling next only after a token is valid."
+    ],
+    "redFlags": [
+      "Says next() sends the response to the client.",
+      "Thinks next() always routes to the next URL path instead of the next handler in the stack.",
+      "Calls next() after res.json() as a default habit without understanding duplicate response risk.",
+      "Does not know how errors are passed to centralized error middleware.",
+      "Assumes Express automatically calls next() if the middleware forgets."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains normal next, next(err), response-end boundaries, and exactly-once control flow with a practical example."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands next as passing control but misses error flow or duplicate-call hazards."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows next exists but cannot reason about when to call it."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is incorrect about middleware control flow."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "red_flag",
+        "question": "Should middleware call next() after it already sent a 401 response? Why or why not?",
+        "purpose": "Check response lifecycle boundaries."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "How would you pass a database error from middleware to a centralized error handler?",
+        "purpose": "Probe next(err) awareness."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "next in middleware",
+        "displayQuestion": "What does next() do in middleware?",
+        "displayIntent": "Check whether the candidate understands explicit control transfer in Express.",
+        "guidance": [
+          "Listen for next matching middleware or handler.",
+          "Probe when not to call next.",
+          "Ask about next(err) for errors."
+        ],
+        "commonMistakes": [
+          "Calling next after sending a response.",
+          "Thinking next sends the response.",
+          "Forgetting error forwarding."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "next trong middleware",
+        "displayQuestion": "next() làm gì trong middleware?",
+        "displayIntent": "Kiểm tra ứng viên có hiểu việc chuyển quyền xử lý rõ ràng trong Express hay không.",
+        "guidance": [
+          "Nghe ý chuyển sang middleware hoặc handler match tiếp theo.",
+          "Đào sâu khi nào không nên gọi next.",
+          "Hỏi về next(err) cho luồng lỗi."
+        ],
+        "commonMistakes": [
+          "Gọi next sau khi đã gửi response.",
+          "Tưởng next gửi response.",
+          "Quên cách forward lỗi."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "middleware の next",
+        "displayQuestion": "middleware の next() は何をしますか。",
+        "displayIntent": "Express における明示的な control transfer を理解しているか確認する。",
+        "guidance": [
+          "次に match する middleware または handler に渡す説明を聞く。",
+          "next を呼ばない場面を確認する。",
+          "error では next(err) を使うか聞く。"
+        ],
+        "commonMistakes": [
+          "response 送信後に next を呼ぶ。",
+          "next が response を送ると思う。",
+          "error forwarding を忘れる。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Express docs: Using middleware",
+        "url": "https://expressjs.com/en/guide/using-middleware.html",
+        "note": "Used for next middleware function and request-response cycle behavior."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NODE_HTTP_EXPRESS_JR_DEBUG_MIDDLEWARE_HANG_008",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "practical_scenario",
+    "competencies": ["technical_fundamentals", "problem_solving", "ownership"],
+    "techTags": ["nodejs", "express", "middleware", "debugging"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Verify whether the candidate can reason about a hung request caused by middleware that neither ends the response nor passes control.",
+    "primaryQuestion": "What happens if middleware does not call next() or send a response?",
+    "expectedSignals": [
+      "Explains that the request-response cycle is not completed, so the client keeps waiting until a timeout or connection close.",
+      "States that later matching middleware and route handlers will not run because control was not passed onward.",
+      "Distinguishes this bug from an intentional middleware that sends a response, such as returning 401 for unauthorized access.",
+      "Mentions that the fix is to either send/end a response or call next/next(err) on every code path.",
+      "Recognizes common causes such as missing return in a conditional branch, swallowed async error, or forgot next inside validation/auth middleware.",
+      "Can describe debugging by checking logs, browser/network pending requests, and middleware order."
+    ],
+    "redFlags": [
+      "Says Express automatically continues to the next route.",
+      "Says Express automatically sends a 404 if middleware stops without next.",
+      "Does not understand why the browser request remains pending.",
+      "Suggests calling next after every res.send without considering duplicate response risk.",
+      "Ignores unhandled async branches that never resolve the request."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains hanging requests, blocked later handlers, all-code-path completion, and practical debugging."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows the request hangs but gives limited detail on why or how to fix every branch."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Has seen pending requests but cannot connect them to middleware control flow."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer incorrectly assumes Express automatically recovers."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "In an auth middleware, how would you structure valid and invalid token branches so every request completes?",
+        "purpose": "Check practical branch control and response completion."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "Why would placing a middleware that never calls next before all routes make the whole API look down?",
+        "purpose": "Probe pipeline order and blocking behavior."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Middleware that hangs",
+        "displayQuestion": "What happens if middleware does not call next() or send a response?",
+        "displayIntent": "Check whether the candidate can diagnose a stalled Express request.",
+        "guidance": [
+          "Look for request left hanging or pending.",
+          "Ask how later handlers are affected.",
+          "Probe every branch sending, ending, nexting, or next(err)."
+        ],
+        "commonMistakes": [
+          "Thinking Express automatically continues.",
+          "Thinking Express automatically sends 404.",
+          "Calling next after a final response without thought."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "practical_scenario"
+        }
+      },
+      "vi": {
+        "title": "Middleware làm request treo",
+        "displayQuestion": "Điều gì xảy ra nếu middleware không gọi next() và cũng không gửi response?",
+        "displayIntent": "Kiểm tra ứng viên có chẩn đoán được request Express bị pending hay không.",
+        "guidance": [
+          "Tìm ý request bị treo hoặc pending.",
+          "Hỏi handler phía sau bị ảnh hưởng thế nào.",
+          "Đào sâu mọi nhánh phải send, end, next hoặc next(err)."
+        ],
+        "commonMistakes": [
+          "Tưởng Express tự chạy tiếp.",
+          "Tưởng Express tự trả 404.",
+          "Gọi next sau final response một cách máy móc."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "practical_scenario"
+        }
+      },
+      "ja": {
+        "title": "止まる middleware",
+        "displayQuestion": "middleware が next() も response 送信もしない場合、何が起きますか。",
+        "displayIntent": "Express request が pending になる原因を診断できるか確認する。",
+        "guidance": [
+          "request が hanging または pending になる説明を聞く。",
+          "後続 handler への影響を聞く。",
+          "すべての分岐で send、end、next、next(err) のいずれかが必要か確認する。"
+        ],
+        "commonMistakes": [
+          "Express が自動で続行すると思う。",
+          "Express が自動で 404 を返すと思う。",
+          "final response 後に機械的に next を呼ぶ。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "practical_scenario"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Express docs: Using middleware",
+        "url": "https://expressjs.com/en/guide/using-middleware.html",
+        "note": "Used for the requirement to end the request-response cycle or call next."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NODE_HTTP_EXPRESS_JR_TECH_PARAMS_QUERY_BODY_009",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving", "communication"],
+    "techTags": ["nodejs", "express", "request_response", "rest"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate can choose the correct Express request data source for path identity, URL options, and payloads.",
+    "primaryQuestion": "What is the difference between req.params, req.query, and req.body?",
+    "expectedSignals": [
+      "Explains that req.params contains named path parameters declared in the route pattern, such as /users/:id.",
+      "Explains that req.query contains URL query string values after ?, often used for filters, pagination, sorting, search, and optional flags.",
+      "Explains that req.body contains parsed request payload data, commonly used for POST, PUT, and PATCH create/update operations.",
+      "Mentions that req.body depends on body-parsing middleware such as express.json or express.urlencoded registered before the route.",
+      "Treats all three as user-controlled input that requires validation, normalization, and type conversion.",
+      "Can give a concrete example such as GET /users/:id?include=posts using params and query, versus POST /users using body."
+    ],
+    "redFlags": [
+      "Says params, query, and body are interchangeable.",
+      "Assumes req.query values are already numbers or booleans.",
+      "Forgets body parser middleware is required for JSON request bodies.",
+      "Uses request body for required resource identity without recognizing API design issues.",
+      "Trusts any of these values without validation."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Separates path identity, URL options, and payloads with examples, parser ordering, validation, and type conversion."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Defines the three correctly but misses parser middleware or untrusted input."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can define one or two properties but cannot choose consistently in endpoint design."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer shows confusion about where Express stores request data."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "For GET /products/:category?page=2 and POST /products, which values would you read from params, query, and body?",
+        "purpose": "Force concrete mapping between URL shape and request properties."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Why might req.query.limit be a string even when the client sends ?limit=10?",
+        "purpose": "Check type conversion and validation awareness."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "params, query, and body",
+        "displayQuestion": "What is the difference between req.params, req.query, and req.body?",
+        "displayIntent": "Check whether the candidate can choose the right request data source.",
+        "guidance": [
+          "Use params for path identity.",
+          "Use query for URL modifiers.",
+          "Use body for submitted payloads and mention parsing."
+        ],
+        "commonMistakes": [
+          "Treating all three as interchangeable.",
+          "Forgetting express.json for body data.",
+          "Skipping validation and type conversion."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "params, query và body",
+        "displayQuestion": "req.params, req.query và req.body khác nhau như thế nào?",
+        "displayIntent": "Kiểm tra ứng viên có chọn đúng nguồn dữ liệu request hay không.",
+        "guidance": [
+          "Dùng params cho định danh trong path.",
+          "Dùng query cho tùy chọn trên URL.",
+          "Dùng body cho payload gửi lên và nhắc tới parsing."
+        ],
+        "commonMistakes": [
+          "Xem cả ba là thay thế được cho nhau.",
+          "Quên express.json cho body data.",
+          "Bỏ qua validation và chuyển kiểu."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "params、query、body",
+        "displayQuestion": "req.params、req.query、req.body の違いは何ですか。",
+        "displayIntent": "適切な request data source を選べるか確認する。",
+        "guidance": [
+          "path identity には params を使う。",
+          "URL modifiers には query を使う。",
+          "送信 payload には body を使い、parsing に触れる。"
+        ],
+        "commonMistakes": [
+          "三つを交換可能だと扱う。",
+          "body data に express.json が必要なことを忘れる。",
+          "validation と type conversion を省く。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Express docs: Route parameters",
+        "url": "https://expressjs.com/en/guide/routing.html#route-parameters",
+        "note": "Used for path parameter behavior."
+      },
+      {
+        "label": "Express 5.x API: req.params, req.query, req.body",
+        "url": "https://expressjs.com/en/api.html",
+        "note": "Used for Express request data properties and parser requirements."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NODE_HTTP_EXPRESS_JR_TECH_EXPRESS_JSON_010",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving"],
+    "techTags": ["nodejs", "express", "json", "middleware"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Verify whether the candidate understands JSON body parsing middleware and its placement in the Express pipeline.",
+    "primaryQuestion": "Why do we use express.json()?",
+    "expectedSignals": [
+      "Explains that express.json() is built-in middleware for parsing incoming JSON request bodies.",
+      "States that it populates req.body with the parsed JavaScript object when the request has a matching JSON Content-Type.",
+      "Mentions it must be registered before routes that need req.body.",
+      "Distinguishes express.json() from res.json(): one parses incoming request bodies, the other sends JSON responses.",
+      "Mentions handling invalid JSON and considering size limits or validation after parsing.",
+      "Recognizes that parsing does not make input trusted; schema validation and sanitization may still be needed."
+    ],
+    "redFlags": [
+      "Says express.json() is used to return JSON responses.",
+      "Thinks it is needed for req.params or req.query.",
+      "Registers it after routes and expects earlier handlers to see req.body.",
+      "Assumes it parses every body type including multipart files.",
+      "Trusts parsed body values without validation."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains incoming JSON parsing, req.body population, middleware order, Content-Type, invalid JSON, and validation boundaries."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows it parses JSON body into req.body but misses order, Content-Type, or validation nuance."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Has used express.json but confuses it with response JSON helpers."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is unsafe or incorrect about request body parsing."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "red_flag",
+        "question": "What is the difference between app.use(express.json()) and res.json({ ok: true })?",
+        "purpose": "Separate request parsing from response serialization."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "What happens if the client sends invalid JSON to a route using express.json()?",
+        "purpose": "Probe error handling and parser behavior."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "express.json",
+        "displayQuestion": "Why do we use express.json()?",
+        "displayIntent": "Check whether the candidate understands JSON request body parsing.",
+        "guidance": [
+          "Clarify it parses incoming JSON.",
+          "Ask about req.body and middleware order.",
+          "Separate express.json from res.json."
+        ],
+        "commonMistakes": [
+          "Thinking it sends JSON responses.",
+          "Using it for query or params.",
+          "Skipping validation after parsing."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "express.json",
+        "displayQuestion": "Tại sao chúng ta dùng express.json()?",
+        "displayIntent": "Kiểm tra ứng viên có hiểu việc parse JSON request body hay không.",
+        "guidance": [
+          "Làm rõ nó parse JSON đi vào.",
+          "Hỏi về req.body và thứ tự middleware.",
+          "Phân biệt express.json với res.json."
+        ],
+        "commonMistakes": [
+          "Tưởng nó gửi JSON response.",
+          "Dùng nó cho query hoặc params.",
+          "Bỏ qua validation sau khi parse."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "express.json",
+        "displayQuestion": "なぜ express.json() を使いますか。",
+        "displayIntent": "JSON request body parsing を理解しているか確認する。",
+        "guidance": [
+          "incoming JSON を parse するものだと確認する。",
+          "req.body と middleware order を聞く。",
+          "express.json と res.json を分ける。"
+        ],
+        "commonMistakes": [
+          "JSON response を送るためだと思う。",
+          "query や params のために使うと思う。",
+          "parse 後の validation を省く。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Express 5.x API: express.json",
+        "url": "https://expressjs.com/en/api.html#express.json",
+        "note": "Used for JSON body parser behavior."
+      },
+      {
+        "label": "Express 5.x API: req.body",
+        "url": "https://expressjs.com/en/api.html#req.body",
+        "note": "Used for request body population and untrusted input guidance."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NODE_HTTP_EXPRESS_JR_TECH_REST_BASIC_011",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking", "communication"],
+    "techTags": ["nodejs", "express", "rest", "api_design", "http"],
+    "difficulty": 3,
+    "conversationDepth": "mid",
+    "intent": "Check whether the candidate can describe basic RESTful API design beyond simply returning JSON.",
+    "primaryQuestion": "What makes an API RESTful at a basic level?",
+    "expectedSignals": [
+      "Explains that RESTful APIs model resources with stable URIs, such as /users and /users/:id, rather than only action names.",
+      "Connects standard HTTP methods to resource operations, such as GET to read, POST to create, PUT/PATCH to update, and DELETE to remove.",
+      "Mentions stateless requests: each request should carry the information needed to authenticate and process it without relying on conversational server state.",
+      "Mentions using representations such as JSON and appropriate Content-Type headers.",
+      "Mentions meaningful HTTP status codes and predictable error responses.",
+      "Recognizes that basic RESTfulness is not guaranteed just because an endpoint uses Express or returns JSON."
+    ],
+    "redFlags": [
+      "Says REST means any API that returns JSON.",
+      "Uses only verb-based URLs such as /getUsers or /deleteUser without recognizing resource modeling issues.",
+      "Ignores HTTP methods and status codes.",
+      "Thinks REST requires no authentication or no database.",
+      "Treats every Express route as automatically RESTful."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains resources, URIs, method semantics, statelessness, representations, status codes, and the JSON-is-not-enough distinction."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Covers resources and methods but misses statelessness, representation, or status code details."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Describes common CRUD endpoints but cannot separate REST principles from framework habits."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer incorrectly equates REST with JSON or Express."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "How would you design endpoints for listing users, fetching one user, creating a user, and deleting a user?",
+        "purpose": "Move the answer into concrete resource and method design."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Why is POST /createUser less RESTful than POST /users?",
+        "purpose": "Probe resource-oriented URI design."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Basic RESTfulness",
+        "displayQuestion": "What makes an API RESTful at a basic level?",
+        "displayIntent": "Check whether the candidate understands resource-oriented HTTP API design.",
+        "guidance": [
+          "Look for resources and stable URIs.",
+          "Ask how HTTP methods map to operations.",
+          "Probe statelessness, representations, and status codes."
+        ],
+        "commonMistakes": [
+          "Equating REST with JSON.",
+          "Using only action-style URLs.",
+          "Ignoring HTTP method semantics."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "RESTful cơ bản",
+        "displayQuestion": "Ở mức cơ bản, điều gì làm một API được xem là RESTful?",
+        "displayIntent": "Kiểm tra ứng viên có hiểu thiết kế HTTP API theo resource hay không.",
+        "guidance": [
+          "Tìm các ý resource và URI ổn định.",
+          "Hỏi cách HTTP method map với thao tác.",
+          "Đào sâu statelessness, representation và status code."
+        ],
+        "commonMistakes": [
+          "Đồng nhất REST với JSON.",
+          "Chỉ dùng URL kiểu action.",
+          "Bỏ qua ý nghĩa HTTP method."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "基本的な RESTfulness",
+        "displayQuestion": "基本レベルで API が RESTful であるとはどういうことですか。",
+        "displayIntent": "resource-oriented な HTTP API design を理解しているか確認する。",
+        "guidance": [
+          "resource と安定した URI に触れるかを見る。",
+          "HTTP method が operation にどう対応するか聞く。",
+          "statelessness、representation、status code を確認する。"
+        ],
+        "commonMistakes": [
+          "REST を JSON と同一視する。",
+          "action-style URL だけを使う。",
+          "HTTP method semantics を無視する。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Roy Fielding dissertation: REST architectural style",
+        "url": "https://ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm",
+        "note": "Used for REST architectural framing and constraints."
+      },
+      {
+        "label": "MDN: HTTP request methods",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods",
+        "note": "Used for HTTP method semantics."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NODE_HTTP_EXPRESS_JR_TECH_STATUS_CODES_012",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving", "communication"],
+    "techTags": ["nodejs", "express", "http", "rest"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Verify whether the candidate knows common HTTP status codes and can choose them for basic API outcomes.",
+    "primaryQuestion": "Which HTTP status codes should a junior backend developer know?",
+    "expectedSignals": [
+      "Names common success codes: 200 OK, 201 Created, and 204 No Content, with appropriate use cases.",
+      "Names common client error codes: 400 Bad Request, 401 Unauthorized, 403 Forbidden, 404 Not Found, and often 409 Conflict or 422 Unprocessable Content.",
+      "Names common server error code 500 Internal Server Error and understands it represents unexpected server failure.",
+      "Explains the broad classes: 2xx success, 3xx redirects, 4xx client/request problems, and 5xx server problems.",
+      "Can map practical cases: validation error, missing auth, authenticated but not allowed, missing resource, successful deletion, and created resource.",
+      "Recognizes that returning HTTP 200 for every outcome makes clients and observability worse."
+    ],
+    "redFlags": [
+      "Returns 200 for errors and puts success false in the body as the only signal.",
+      "Uses 500 for validation errors or missing resources.",
+      "Confuses 401 authentication missing/invalid with 403 authenticated but forbidden.",
+      "Thinks status codes are only frontend concerns.",
+      "Cannot explain 201 versus 200 or 204 versus 200."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Knows common codes, their classes, and maps them accurately to real API outcomes."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows the main codes but is fuzzy on 401 versus 403, 201, or 204."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can list codes but cannot choose them reliably for scenarios."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer shows unsafe or misleading status code usage."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "What status would you return for invalid JSON, missing login token, no permission, and a deleted resource?",
+        "purpose": "Check scenario-based code selection."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "Why is always returning 200 with an error field in JSON a problem?",
+        "purpose": "Probe client behavior, caches, monitoring, and HTTP semantics."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "HTTP status codes",
+        "displayQuestion": "Which HTTP status codes should a junior backend developer know?",
+        "displayIntent": "Check whether the candidate can use common status codes correctly.",
+        "guidance": [
+          "Listen for 200, 201, 204, 400, 401, 403, 404, 409 or 422, and 500.",
+          "Ask for practical scenarios, not just memorized numbers.",
+          "Probe 401 versus 403 and 200 versus 201."
+        ],
+        "commonMistakes": [
+          "Returning 200 for every outcome.",
+          "Using 500 for client mistakes.",
+          "Confusing 401 and 403."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "HTTP status codes",
+        "displayQuestion": "Junior backend developer nên biết những HTTP status code nào?",
+        "displayIntent": "Kiểm tra ứng viên có dùng đúng các status code phổ biến hay không.",
+        "guidance": [
+          "Nghe các mã 200, 201, 204, 400, 401, 403, 404, 409 hoặc 422, và 500.",
+          "Hỏi theo tình huống thực tế, không chỉ đọc số.",
+          "Đào sâu 401 với 403 và 200 với 201."
+        ],
+        "commonMistakes": [
+          "Luôn trả 200 cho mọi kết quả.",
+          "Dùng 500 cho lỗi từ client.",
+          "Nhầm 401 và 403."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "HTTP status codes",
+        "displayQuestion": "Junior backend developer が知っておくべき HTTP status code は何ですか。",
+        "displayIntent": "一般的な status code を正しく使えるか確認する。",
+        "guidance": [
+          "200、201、204、400、401、403、404、409 または 422、500 を聞く。",
+          "番号の暗記ではなく実例で確認する。",
+          "401 と 403、200 と 201 を深掘りする。"
+        ],
+        "commonMistakes": [
+          "すべての結果で 200 を返す。",
+          "client mistake に 500 を使う。",
+          "401 と 403 を混同する。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "MDN: HTTP response status codes",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status",
+        "note": "Used for status code classes and common response codes."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NODE_HTTP_EXPRESS_JR_TECH_RETURN_JSON_013",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "problem_solving"],
+    "techTags": ["nodejs", "express", "json", "rest"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate can return JSON correctly from an Express route while managing status and response lifecycle.",
+    "primaryQuestion": "How do you return JSON from an Express route?",
+    "expectedSignals": [
+      "Uses res.json(data) to serialize a JavaScript object or array and send a JSON response.",
+      "Mentions setting the status code with res.status(code).json(data), such as res.status(201).json(createdUser).",
+      "Understands that res.json ends the response for that request and later code should not send another response.",
+      "Mentions that Express sets the JSON Content-Type header appropriately.",
+      "Avoids returning sensitive fields such as passwords, tokens, or internal-only data in the response body.",
+      "Can distinguish returning JSON from parsing incoming JSON with express.json()."
+    ],
+    "redFlags": [
+      "Thinks return { ok: true } from the handler automatically sends JSON.",
+      "Uses JSON.stringify manually without understanding headers or response completion.",
+      "Calls res.json multiple times in the same request path.",
+      "Confuses res.json with express.json.",
+      "Returns raw database records containing sensitive fields without considering response shape."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Uses res.status().json(), explains response completion, Content-Type, response shaping, and distinction from request parsing."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows res.json but misses status chaining, completion, or sensitive field concerns."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can send something but is unclear on JSON serialization and Express helpers."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would not reliably send a correct JSON response."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "How would you return a 201 response with a newly created user object?",
+        "purpose": "Check status chaining and practical syntax."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "What is the difference between res.json() and express.json()?",
+        "purpose": "Separate response serialization from request body parsing."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Returning JSON",
+        "displayQuestion": "How do you return JSON from an Express route?",
+        "displayIntent": "Check whether the candidate can send JSON with correct status and lifecycle handling.",
+        "guidance": [
+          "Look for res.json or res.status().json.",
+          "Check that one final response is sent.",
+          "Ask about sensitive fields and express.json confusion."
+        ],
+        "commonMistakes": [
+          "Returning an object directly.",
+          "Sending multiple JSON responses.",
+          "Confusing res.json and express.json."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "Trả JSON",
+        "displayQuestion": "Bạn trả JSON từ Express route như thế nào?",
+        "displayIntent": "Kiểm tra ứng viên có gửi JSON đúng status và lifecycle hay không.",
+        "guidance": [
+          "Tìm res.json hoặc res.status().json.",
+          "Kiểm tra chỉ gửi một final response.",
+          "Hỏi về dữ liệu nhạy cảm và nhầm lẫn với express.json."
+        ],
+        "commonMistakes": [
+          "Return object trực tiếp.",
+          "Gửi nhiều JSON response.",
+          "Nhầm res.json với express.json."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "JSON response",
+        "displayQuestion": "Express route から JSON を返すにはどうしますか。",
+        "displayIntent": "正しい status と lifecycle で JSON を送れるか確認する。",
+        "guidance": [
+          "res.json または res.status().json を確認する。",
+          "final response が一つだけかを見る。",
+          "sensitive fields と express.json との混同を聞く。"
+        ],
+        "commonMistakes": [
+          "object を直接 return する。",
+          "JSON response を複数送る。",
+          "res.json と express.json を混同する。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Express 5.x API: res.json",
+        "url": "https://expressjs.com/en/api.html#res.json",
+        "note": "Used for JSON response behavior."
+      },
+      {
+        "label": "Express 5.x API: res.status",
+        "url": "https://expressjs.com/en/api.html#res.status",
+        "note": "Used for setting HTTP status before sending a response."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NODE_HTTP_EXPRESS_JR_TECH_404_ROUTE_014",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "practical_scenario",
+    "competencies": ["technical_fundamentals", "problem_solving", "ownership"],
+    "techTags": ["nodejs", "express", "routing", "rest", "error_handling"],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate knows how to return a proper 404 for unmatched Express routes.",
+    "primaryQuestion": "How do you handle a route that does not exist?",
+    "expectedSignals": [
+      "Explains that unmatched routes should return a 404 Not Found response rather than a 500 server error.",
+      "Mentions adding a catch-all 404 middleware or route after all normal routes have been registered.",
+      "Shows the basic shape app.use((req, res) => res.status(404).json({ error: 'Not found' })) or equivalent.",
+      "Understands route order matters: placing the catch-all before real routes would block them.",
+      "Mentions returning a consistent JSON error shape for APIs.",
+      "Can distinguish 404 handling from centralized error-handling middleware for thrown or passed errors."
+    ],
+    "redFlags": [
+      "Returns 500 for unknown routes.",
+      "Registers the catch-all route before the actual routes.",
+      "Redirects every unknown API route to the frontend without considering API clients.",
+      "Leaves unmatched API requests hanging.",
+      "Says Express always returns the exact JSON 404 format the application needs without custom handling."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Describes after-routes catch-all 404 handling, correct status, JSON shape, order, and distinction from error middleware."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows to return 404 but misses order or error-middleware distinction."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Has seen 404s but cannot implement reliable Express fallback handling."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would misclassify or mishandle unmatched routes."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Where in app.js would you place the 404 handler relative to normal routes and error middleware?",
+        "purpose": "Probe Express order and pipeline understanding."
+      },
+      {
+        "trigger": "red_flag",
+        "question": "Why is an unknown route usually 404 instead of 500?",
+        "purpose": "Check client versus server error classification."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Handling missing routes",
+        "displayQuestion": "How do you handle a route that does not exist?",
+        "displayIntent": "Check whether the candidate can implement API 404 handling in Express.",
+        "guidance": [
+          "Look for a catch-all after normal routes.",
+          "Confirm 404, not 500.",
+          "Ask about JSON error shape and middleware order."
+        ],
+        "commonMistakes": [
+          "Putting the 404 handler first.",
+          "Returning 500.",
+          "Leaving the request hanging."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "practical_scenario"
+        }
+      },
+      "vi": {
+        "title": "Xử lý route không tồn tại",
+        "displayQuestion": "Bạn xử lý một route không tồn tại như thế nào?",
+        "displayIntent": "Kiểm tra ứng viên có implement được 404 cho API Express hay không.",
+        "guidance": [
+          "Tìm catch-all sau các route bình thường.",
+          "Xác nhận là 404, không phải 500.",
+          "Hỏi về JSON error shape và thứ tự middleware."
+        ],
+        "commonMistakes": [
+          "Đặt 404 handler ở đầu.",
+          "Trả 500.",
+          "Để request bị treo."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "practical_scenario"
+        }
+      },
+      "ja": {
+        "title": "存在しない route の処理",
+        "displayQuestion": "存在しない route はどう扱いますか。",
+        "displayIntent": "Express API の 404 handling を実装できるか確認する。",
+        "guidance": [
+          "通常 route の後に catch-all があるかを見る。",
+          "500 ではなく 404 か確認する。",
+          "JSON error shape と middleware order を聞く。"
+        ],
+        "commonMistakes": [
+          "404 handler を最初に置く。",
+          "500 を返す。",
+          "request を hanging にする。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "practical_scenario"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "Express docs: Hello world example",
+        "url": "https://expressjs.com/en/starter/hello-world.html",
+        "note": "Used for default 404 behavior when no route matches."
+      },
+      {
+        "label": "Express docs: Using middleware",
+        "url": "https://expressjs.com/en/guide/using-middleware.html",
+        "note": "Used for middleware ordering and request-response cycle behavior."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NODE_HTTP_EXPRESS_JR_TECH_CORS_015",
+    "stages": ["stage_2_tech_stack"],
+    "roleFamilies": ["backend", "fullstack"],
+    "levels": ["junior"],
+    "type": "technical_depth",
+    "competencies": ["technical_fundamentals", "system_thinking", "communication"],
+    "techTags": ["nodejs", "express", "http", "cors", "security"],
+    "difficulty": 3,
+    "conversationDepth": "mid",
+    "intent": "Evaluate whether the candidate understands why CORS appears in browser-to-backend calls and how to configure it safely at a basic level.",
+    "primaryQuestion": "What is CORS, and why does it appear when frontend calls backend APIs?",
+    "expectedSignals": [
+      "Defines CORS as Cross-Origin Resource Sharing, a browser security mechanism around cross-origin HTTP requests.",
+      "Explains that origins differ by scheme, host, or port, so http://localhost:3000 calling http://localhost:5000 is cross-origin.",
+      "Mentions that browsers enforce same-origin policy for frontend JavaScript and require the server to allow the origin with CORS response headers.",
+      "Mentions common headers or configuration such as Access-Control-Allow-Origin, allowed methods, allowed headers, and credentials handling.",
+      "Explains preflight OPTIONS requests for non-simple requests such as custom headers, JSON content type, or methods like PUT/DELETE.",
+      "Recognizes that CORS is enforced by browsers, not usually by curl or server-to-server requests, and that disabling it broadly can be unsafe."
+    ],
+    "redFlags": [
+      "Says CORS is a backend bug unrelated to browser security.",
+      "Thinks CORS is authentication or authorization.",
+      "Suggests always using Access-Control-Allow-Origin: * together with credentials.",
+      "Tries to fix CORS only in frontend code while the server never sends allow headers.",
+      "Does not understand why different localhost ports count as different origins.",
+      "Ignores preflight OPTIONS when debugging failed frontend API calls."
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains browser same-origin policy, origin components, server allow headers, preflight, credentials, and safe configuration."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands browser cross-origin blocking and server headers but misses preflight or credentials nuance."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Has seen CORS errors but explains them as generic network or frontend issues."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer recommends unsafe or incorrect CORS handling."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Why can curl call the API successfully while the browser shows a CORS error?",
+        "purpose": "Check browser-enforced policy understanding."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "What changes when the frontend sends cookies or Authorization headers?",
+        "purpose": "Probe credentials, allowed headers, and preflight behavior."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "CORS basics",
+        "displayQuestion": "What is CORS, and why does it appear when frontend calls backend APIs?",
+        "displayIntent": "Check whether the candidate understands browser cross-origin protection and server CORS headers.",
+        "guidance": [
+          "Look for same-origin policy and origin definition.",
+          "Ask about server allow headers and preflight OPTIONS.",
+          "Probe safe handling of credentials and allowed origins."
+        ],
+        "commonMistakes": [
+          "Treating CORS as authentication.",
+          "Trying to fix it only in frontend code.",
+          "Using wildcard origins unsafely with credentials."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "vi": {
+        "title": "CORS cơ bản",
+        "displayQuestion": "CORS là gì, và tại sao nó xuất hiện khi frontend gọi backend API?",
+        "displayIntent": "Kiểm tra ứng viên có hiểu bảo vệ cross-origin của browser và CORS header từ server hay không.",
+        "guidance": [
+          "Tìm same-origin policy và định nghĩa origin.",
+          "Hỏi về allow header từ server và preflight OPTIONS.",
+          "Đào sâu cách xử lý credentials và allowed origins an toàn."
+        ],
+        "commonMistakes": [
+          "Xem CORS là authentication.",
+          "Chỉ cố sửa ở frontend.",
+          "Dùng wildcard origin không an toàn với credentials."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      },
+      "ja": {
+        "title": "CORS の基礎",
+        "displayQuestion": "CORS とは何で、frontend が backend API を呼ぶときになぜ出てきますか。",
+        "displayIntent": "browser の cross-origin protection と server の CORS header を理解しているか確認する。",
+        "guidance": [
+          "same-origin policy と origin の定義を聞く。",
+          "server allow headers と preflight OPTIONS を確認する。",
+          "credentials と allowed origins の安全な扱いを深掘りする。"
+        ],
+        "commonMistakes": [
+          "CORS を authentication として扱う。",
+          "frontend だけで直そうとする。",
+          "credentials で wildcard origin を安全でない形で使う。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "MDN: Cross-Origin Resource Sharing",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS",
+        "note": "Used for same-origin policy, CORS headers, preflight, and credentials behavior."
+      }
+    ],
+    "status": "active"
+  }
+]
