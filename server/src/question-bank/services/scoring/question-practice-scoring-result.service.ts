@@ -231,7 +231,7 @@ export class QuestionPracticeScoringResultService {
         label: item.label,
         status: found.status,
         evidenceQuotes: quotes,
-        feedback: found.feedback,
+        feedback: found.feedback || item.label,
       };
     });
   }
@@ -261,7 +261,7 @@ export class QuestionPracticeScoringResultService {
         label: item.label,
         present: found.present,
         evidenceQuotes: quotes,
-        feedback: found.feedback,
+        feedback: found.feedback || item.label,
       };
     });
   }

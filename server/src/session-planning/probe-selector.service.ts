@@ -189,7 +189,11 @@ export class ProbeSelectorService {
       (_, i) => STAGE_PRIORITIES[stage] === 'must_include' || i < count,
     ).length;
     const fallbackRaw = scored.slice(count, count + fallbackCount);
-    const selected: PlannedProbe[] = selectedRaw.map((s, i) =>
+    const orderedRaw =
+      stage === 'stage_1_culture_fit'
+        ? this._sortIntroFirst(selectedRaw)
+        : selectedRaw;
+    const selected: PlannedProbe[] = orderedRaw.map((s, i) =>
       this._buildPlannedProbe({ probe: s.probe, order: i + 1, score: s.score }),
     );
     const fallbacks: PlannedProbe[] = fallbackRaw.map((s, i) =>
@@ -557,6 +561,14 @@ export class ProbeSelectorService {
     const claimFit: number =
       totalWeight > 0 ? weightedOverlap / totalWeight : 0.0;
     return Math.min(claimFit + typeBonus, 1.0);
+  }
+
+  private _sortIntroFirst(
+    scored: Array<{ probe: QuestionProbe; score: number }>,
+  ): Array<{ probe: QuestionProbe; score: number }> {
+    const intros = scored.filter((s) => s.probe.conversationDepth === 'intro');
+    const rest = scored.filter((s) => s.probe.conversationDepth !== 'intro');
+    return [...intros, ...rest];
   }
 
   private _buildPlannedProbe({

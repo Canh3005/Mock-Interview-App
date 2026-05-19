@@ -66,6 +66,9 @@ export class QuestionProbe {
   @Column({ type: 'varchar', length: 40, nullable: true })
   type!: QuestionProbeType | null;
 
+  @Column({ type: 'varchar', length: 20, nullable: true })
+  conversationDepth!: 'intro' | 'mid' | 'deep' | null;
+
   @Column({ type: 'text', array: true, default: [] })
   competencies!: QuestionProbeCompetency[];
 

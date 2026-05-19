@@ -81,7 +81,7 @@ export const LlmSignalExtractionSchema = z.object({
   label: z.string().min(1),
   status: SignalStatusSchema,
   evidenceQuotes: z.array(z.string()),
-  feedback: z.string().min(1),
+  feedback: z.string(),
 });
 
 export const LlmRedFlagExtractionSchema = z.object({
@@ -89,7 +89,7 @@ export const LlmRedFlagExtractionSchema = z.object({
   label: z.string().min(1),
   present: z.boolean(),
   evidenceQuotes: z.array(z.string()),
-  feedback: z.string().min(1),
+  feedback: z.string(),
 });
 
 export const LlmCvClaimExtractionSchema = z.object({

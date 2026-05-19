@@ -91,6 +91,7 @@ function _createProbe(overrides: Partial<QuestionProbe> = {}): QuestionProbe {
     roleFamilies: ['backend'],
     levels: ['mid'],
     type: 'technical_depth',
+    conversationDepth: null,
     competencies: ['technical_fundamentals'],
     techTags: ['redis'],
     difficulty: 3,
