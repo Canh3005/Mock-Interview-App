@@ -118,32 +118,41 @@ export class BehaviorSessionFlowService {
     if (stageIndex > 0) {
       const prevStage: QuestionProbeStage =
         plan.stageAllocations[stageIndex - 1].stage;
+      const prevStageName: string = this.stageDisplayName(
+        prevStage,
+        plan.language,
+      );
+      const transitionText: string =
+        await this.probeRenderer.buildStageTransition({
+          prevStageName,
+          nextStageName: stageName,
+          personaPolicy: plan.personaPolicy,
+          targetRole: plan.targetRole,
+          language: plan.language,
+        });
       turns.push(
         await this.saveTurn({
           session,
-          content: this.probeRenderer.buildStageTransition({
-            nextStageName: stageName,
-            language: plan.language,
-          }),
+          content: transitionText,
           type: 'stage_transition',
           stageKey: prevStage,
           probeId: null,
         }),
       );
-    }
-
-    turns.push(
-      await this.saveTurn({
-        session,
-        content: this.probeRenderer.buildStageIntro({
-          stageName,
-          language: plan.language,
+    } else {
+      turns.push(
+        await this.saveTurn({
+          session,
+          content: this.probeRenderer.buildStageIntro({
+            stageName,
+            language: plan.language,
+          }),
+          type: 'stage_intro',
+          stageKey: allocation.stage,
+          probeId: null,
         }),
-        type: 'stage_intro',
-        stageKey: allocation.stage,
-        probeId: null,
-      }),
-    );
+      );
+    }
 
     const probeTurns: InterviewTurn[] = await this.startProbe({
       session,
@@ -204,6 +213,7 @@ export class BehaviorSessionFlowService {
       followUpCount: 0,
       challengeCount: 0,
       redirectCount: 0,
+      rephraseCount: 0,
       totalTurnCount: 0,
       candidateAnswerTexts: [],
       lastScoringResult: null,
@@ -266,13 +276,18 @@ export class BehaviorSessionFlowService {
     const allocation: StageProbeAllocation =
       plan.stageAllocations[session.currentStageIndex];
 
+    const lastAnswer: string | undefined =
+      activeProbe.candidateAnswerTexts.at(-1);
+
     if (decision.action === 'REDIRECT') {
       activeProbe.redirectCount++;
       activeProbe.totalTurnCount++;
       session.interviewState = 'ASKING_REDIRECT';
-      const redirectText: string = this.probeRenderer.buildRedirectText(
-        plan.language,
-      );
+      const redirectText: string = await this.probeRenderer.buildRedirectText({
+        language: plan.language,
+        lastCandidateAnswer: lastAnswer,
+        personaPolicy: plan.personaPolicy,
+      });
       return [
         await this.saveTurn({
           session,
@@ -300,6 +315,7 @@ export class BehaviorSessionFlowService {
           personaPolicy: plan.personaPolicy,
           language: plan.language,
           renderedFollowUps: session.renderedFollowUps ?? {},
+          lastCandidateAnswer: lastAnswer,
         },
       );
       return [
@@ -330,6 +346,7 @@ export class BehaviorSessionFlowService {
           personaPolicy: plan.personaPolicy,
           language: plan.language,
           renderedFollowUps: session.renderedFollowUps ?? {},
+          lastCandidateAnswer: lastAnswer,
         },
       );
       return [
@@ -340,6 +357,28 @@ export class BehaviorSessionFlowService {
           stageKey: allocation.stage,
           probeId: probe.id,
           challengeReason: decision.challengeReason,
+        }),
+      ];
+    }
+
+    if (decision.action === 'REPHRASE') {
+      activeProbe.rephraseCount++;
+      activeProbe.totalTurnCount++;
+      session.interviewState = 'REPHRASING';
+      const originalQuestion: string =
+        session.renderedQuestions?.[probe.id] ?? probe.primaryQuestion ?? '';
+      const rephraseText: string = await this.probeRenderer.buildRephraseText({
+        originalQuestion,
+        language: plan.language,
+        personaPolicy: plan.personaPolicy,
+      });
+      return [
+        await this.saveTurn({
+          session,
+          content: rephraseText,
+          type: 'rephrase',
+          stageKey: allocation.stage,
+          probeId: probe.id,
         }),
       ];
     }
@@ -451,8 +490,10 @@ export class BehaviorSessionFlowService {
     if (hasNextProbe) {
       const transitionTurn: InterviewTurn = await this.saveTurn({
         session,
-        content: this.probeRenderer.buildProbeTransition({
+        content: await this.probeRenderer.buildProbeTransition({
           language: plan.language,
+          lastCandidateAnswer: activeProbe.candidateAnswerTexts.at(-1),
+          personaPolicy: plan.personaPolicy,
         }),
         type: 'probe_transition',
         stageKey: allocation.stage,
@@ -499,13 +540,19 @@ export class BehaviorSessionFlowService {
     session.stageProgress![session.currentStageIndex].probeRuns.push(summary);
     activeProbe.status = 'closed';
 
-    if (allocation.fallbackProbes.length === 0) {
+    const fallbackIndex = session.currentProbeIndex;
+    if (
+      allocation.fallbackProbes.length === 0 ||
+      fallbackIndex >= allocation.fallbackProbes.length
+    ) {
       return this._handleCloseStage({ session, plan, probeMap });
     }
     const transitionTurn: InterviewTurn = await this.saveTurn({
       session,
-      content: this.probeRenderer.buildProbeTransition({
+      content: await this.probeRenderer.buildProbeTransition({
         language: plan.language,
+        lastCandidateAnswer: activeProbe.candidateAnswerTexts.at(-1),
+        personaPolicy: plan.personaPolicy,
       }),
       type: 'probe_transition',
       stageKey: allocation.stage,
@@ -515,7 +562,7 @@ export class BehaviorSessionFlowService {
       session,
       plan,
       stageIndex: session.currentStageIndex,
-      probeIndex: 0,
+      probeIndex: fallbackIndex,
       probeMap,
       isFallback: true,
     });

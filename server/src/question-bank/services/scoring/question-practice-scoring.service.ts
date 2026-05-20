@@ -13,6 +13,7 @@ import {
   QuestionPracticeScoringResultService,
 } from './question-practice-scoring-result.service';
 import {
+  CandidateIntent,
   LlmScoringExtraction,
   LlmScoringExtractionSchema,
   ProbeScoringResult,
@@ -80,11 +81,22 @@ export class QuestionPracticeScoringService {
       }),
     );
 
+    const detectedIntent: CandidateIntent = this._detectIntent(answerText);
+    if (detectedIntent !== 'answer') {
+      return this.resultService.insufficientEvidenceResultFromRaw({
+        signalCatalog,
+        redFlagCatalog,
+        language,
+        candidateIntent: detectedIntent,
+      });
+    }
+
     if (!this._isEvaluable(answerText)) {
       return this.resultService.insufficientEvidenceResultFromRaw({
         signalCatalog,
         redFlagCatalog,
         language,
+        candidateIntent: 'answer',
       });
     }
 
@@ -251,6 +263,7 @@ ${context}
 
 Schema:
 {
+  "candidateIntent": "answer|dont_know|clarification_request",
   "signals": [{"key": "signal_1", "label": "...", "status": "covered|unclear|missing", "evidenceQuotes": ["exact quote from answer"], "feedback": "..."}],
   "redFlags": [{"key": "red_flag_1", "label": "...", "present": true, "evidenceQuotes": ["exact quote from answer"], "feedback": "..."}],
   "cvClaims": [{"claim": "...", "verification": "verified|not_verified|inflated_risk", "evidenceQuotes": ["exact quote from answer"], "feedback": "..."}],
@@ -258,6 +271,7 @@ Schema:
 }
 
 Rules:
+- candidateIntent: "dont_know" if candidate explicitly admits they don't know; "clarification_request" if candidate asks for clarification; otherwise "answer".
 - covered and unclear require exact evidenceQuotes from the answer.
 - missing uses an empty evidenceQuotes array.
 - similarity or topic mention alone is not enough for covered.
@@ -341,6 +355,7 @@ ${context}
 
 Schema:
 {
+  "candidateIntent": "answer|dont_know|clarification_request",
   "signals": [{"key": "signal_1", "label": "...", "status": "covered|unclear|missing", "evidenceQuotes": ["exact quote from answer"], "feedback": "..."}],
   "redFlags": [{"key": "red_flag_1", "label": "...", "present": true, "evidenceQuotes": ["exact quote from answer"], "feedback": "..."}],
   "cvClaims": [{"claim": "...", "verification": "verified|not_verified|inflated_risk", "evidenceQuotes": ["exact quote from answer"], "feedback": "..."}],
@@ -348,6 +363,7 @@ Schema:
 }
 
 Rules:
+- candidateIntent: "dont_know" if candidate explicitly admits they don't know; "clarification_request" if candidate asks for clarification; otherwise "answer".
 - covered and unclear require exact evidenceQuotes from the answer.
 - missing uses an empty evidenceQuotes array.
 - similarity or topic mention alone is not enough for covered.
@@ -535,6 +551,85 @@ Structured result: ${JSON.stringify(result)}`;
 
   private _isEvaluable(answerText: string): boolean {
     return answerText.trim().length >= MIN_EVALUABLE_CHARS;
+  }
+
+  /**
+   * Heuristic intent detection — chạy trước LLM, zero latency.
+   * Chỉ detect các trường hợp rõ ràng (answer ngắn < 200 chars hoặc câu xin làm rõ).
+   * Không detect: câu dài có "I'm not sure but..." → để LLM scoring xử lý.
+   */
+  private _detectIntent(answerText: string): CandidateIntent {
+    const text = answerText.trim().toLowerCase();
+
+    const dontKnowPatterns = [
+      // Vietnamese
+      'không biết',
+      'chưa biết',
+      'chưa rõ',
+      'chưa từng',
+      'chưa làm qua',
+      'chưa có kinh nghiệm',
+      'mình không biết',
+      'tôi không biết',
+      'em không biết',
+      'em chưa biết',
+      'chưa hiểu',
+      'chưa nắm',
+      // English
+      "don't know",
+      'do not know',
+      "i'm not sure",
+      'not sure about',
+      'no idea',
+      'never done',
+      "haven't done",
+      'not familiar with',
+      'no experience with',
+      // Japanese
+      'わかりません',
+      'わからない',
+      '知りません',
+      '経験がない',
+    ];
+
+    const clarificationPatterns = [
+      // Vietnamese
+      'ý bạn là',
+      'bạn nói rõ hơn',
+      'có thể nêu cụ thể hơn',
+      'bạn có thể giải thích',
+      'không hiểu câu hỏi',
+      'câu hỏi này ý là',
+      'bạn muốn hỏi gì',
+      'ý là gì vậy',
+      // English
+      'can you clarify',
+      'could you clarify',
+      'what do you mean',
+      'can you be more specific',
+      'could you be more specific',
+      'can you elaborate',
+      "i don't understand the question",
+      'could you rephrase',
+      'can you rephrase',
+      // Japanese
+      'もう少し詳しく',
+      '質問の意味',
+      'どういう意味',
+      '具体的に教えて',
+    ];
+
+    // Clarification: check regardless of length
+    if (clarificationPatterns.some((p) => text.includes(p))) {
+      return 'clarification_request';
+    }
+
+    // dont_know: only for short answers to avoid false positives
+    if (text.length < 200 && dontKnowPatterns.some((p) => text.includes(p))) {
+      return 'dont_know';
+    }
+
+    return 'answer';
   }
 
   private _errorMessage(error: unknown): string {

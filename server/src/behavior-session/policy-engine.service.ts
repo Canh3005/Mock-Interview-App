@@ -58,7 +58,28 @@ export class PolicyEngineService {
     const maxFollowUps: number = MAX_FOLLOW_UPS_PER_LEVEL[level];
     const maxTurns: number = MAX_TURNS_PER_PROBE[level];
 
-    // Step 0: câu trả lời lạc đề / rỗng — nhắc trước khi fallback
+    // Step 0a: ứng viên thừa nhận không biết → bỏ probe, chuyển fallback hoặc đóng
+    if (scoringResult.candidateIntent === 'dont_know') {
+      return {
+        action: hasFallbackProbe ? 'USE_FALLBACK' : 'CLOSE_PROBE',
+        closeReason: 'candidate_no_knowledge',
+        hasFallback: hasFallbackProbe,
+      };
+    }
+
+    // Step 0b: ứng viên xin làm rõ câu hỏi → rephrase (tối đa 1 lần)
+    if (scoringResult.candidateIntent === 'clarification_request') {
+      if (activeProbe.rephraseCount < 1) {
+        return { action: 'REPHRASE' };
+      }
+      return {
+        action: hasFallbackProbe ? 'USE_FALLBACK' : 'CLOSE_PROBE',
+        closeReason: 'candidate_no_knowledge',
+        hasFallback: hasFallbackProbe,
+      };
+    }
+
+    // Step 0c: câu trả lời lạc đề / rỗng — nhắc trước khi fallback
     if (overallBand === 'insufficient_evidence') {
       if (activeProbe.redirectCount < MAX_REDIRECTS_PER_PROBE) {
         return { action: 'REDIRECT' };

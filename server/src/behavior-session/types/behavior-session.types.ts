@@ -15,6 +15,7 @@ export type InterviewState =
   | 'ASKING_REDIRECT'
   | 'ASKING_FOLLOW_UP'
   | 'CHALLENGING'
+  | 'REPHRASING'
   | 'TRANSITIONING_PROBE'
   | 'TRANSITIONING_STAGE'
   | 'COMPLETED';
@@ -26,6 +27,7 @@ export type InterviewTurnType =
   | 'redirect'
   | 'follow_up'
   | 'challenge'
+  | 'rephrase'
   | 'probe_transition'
   | 'stage_transition'
   | 'candidate_answer';
@@ -53,7 +55,8 @@ export type ProbeCloseReason =
   | 'no_follow_up_available'
   | 'no_new_evidence'
   | 'no_relevant_story'
-  | 'fallback_triggered';
+  | 'fallback_triggered'
+  | 'candidate_no_knowledge';
 
 export interface ActiveProbeSession {
   plannedProbe: PlannedProbe;
@@ -66,6 +69,7 @@ export interface ActiveProbeSession {
   challengeCount: number;
   /** Số lần đã redirect (nhắc trả lời đúng câu hỏi) */
   redirectCount: number;
+  rephraseCount: number;
   /** Tổng follow_up + challenge + redirect đã emit — safety ceiling */
   totalTurnCount: number;
   /** Toàn bộ candidate answer texts tích lũy để scoring cumulative */
@@ -106,7 +110,8 @@ export type PolicyAction =
   | 'FOLLOW_UP'
   | 'CHALLENGE'
   | 'CLOSE_PROBE'
-  | 'USE_FALLBACK';
+  | 'USE_FALLBACK'
+  | 'REPHRASE';
 
 export interface PolicyDecision {
   action: PolicyAction;

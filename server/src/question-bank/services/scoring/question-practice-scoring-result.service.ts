@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { QuestionPracticeAttempt } from '../../entities/question-practice-attempt.entity';
 import {
+  CandidateIntent,
   LlmRedFlagExtraction,
   LlmScoringExtraction,
   LlmSignalExtraction,
@@ -52,11 +53,13 @@ export class QuestionPracticeScoringResultService {
       redFlags,
       cvClaimResults,
       improvementSuggestions: this.fallbackSuggestions({ signals }),
+      candidateIntent: extraction.candidateIntent ?? 'answer',
     };
   }
 
   insufficientEvidenceResult(
     attempt: QuestionPracticeAttempt,
+    candidateIntent: CandidateIntent = 'answer',
   ): ProbeScoringResult {
     const signals: ProbeSignalResult[] = this.signalCatalog(attempt).map(
       (item: CatalogItem) => this._missingSignal(item),
@@ -75,6 +78,7 @@ export class QuestionPracticeScoringResultService {
       ),
       cvClaimResults: [],
       improvementSuggestions: this.fallbackSuggestions({ signals }),
+      candidateIntent,
     };
   }
 
@@ -144,6 +148,7 @@ export class QuestionPracticeScoringResultService {
       redFlags,
       cvClaimResults,
       improvementSuggestions: this.fallbackSuggestions({ signals }),
+      candidateIntent: extraction.candidateIntent ?? 'answer',
     };
   }
 
@@ -153,16 +158,19 @@ export class QuestionPracticeScoringResultService {
    * @param signalCatalog - Signal catalog của probe
    * @param redFlagCatalog - Red flag catalog của probe
    * @param language - Ngôn ngữ phỏng vấn
+   * @param candidateIntent - Intent phát hiện được (default: 'answer')
    * @returns ProbeScoringResult với overallBand = 'insufficient_evidence'
    */
   insufficientEvidenceResultFromRaw({
     signalCatalog,
     redFlagCatalog,
     language,
+    candidateIntent = 'answer',
   }: {
     signalCatalog: CatalogItem[];
     redFlagCatalog: CatalogItem[];
     language: string;
+    candidateIntent?: CandidateIntent;
   }): ProbeScoringResult {
     const signals: ProbeSignalResult[] = signalCatalog.map(
       (item: CatalogItem) => this._missingSignal(item),
@@ -178,6 +186,7 @@ export class QuestionPracticeScoringResultService {
       ),
       cvClaimResults: [],
       improvementSuggestions: this.fallbackSuggestions({ signals }),
+      candidateIntent,
     };
   }
 

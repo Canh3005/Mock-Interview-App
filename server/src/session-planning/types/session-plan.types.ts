@@ -74,6 +74,8 @@ export interface ProbeSelectionContext {
   candidateClaims: CandidateClaim[];
   cvTechStack: string[];
   jdTechStack: string[];
+  selectionSeed: string;
+  recentlyUsedProbeIds: string[];
 }
 
 export interface BehavioralScoringParams {

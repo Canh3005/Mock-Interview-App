@@ -196,7 +196,7 @@ export class BehaviorSessionService {
           answerText: cumulativeAnswer,
           language: plan.language,
         });
-
+        console.log('Scoring result:', scoringResult);
       activeProbe.previousBand =
         activeProbe.lastScoringResult?.overallBand ?? null;
       activeProbe.lastScoringResult = scoringResult;
@@ -413,9 +413,11 @@ export class BehaviorSessionService {
     session: BehavioralSession,
     plan: SessionPlan,
   ): boolean {
+    if (session.activeProbeSession?.isFallback) return false;
     const alloc: StageProbeAllocation | undefined =
       plan.stageAllocations[session.currentStageIndex];
-    return (alloc?.fallbackProbes?.length ?? 0) > 0;
+    const fallbackIndex = session.currentProbeIndex;
+    return (alloc?.fallbackProbes?.length ?? 0) > fallbackIndex;
   }
 
   private _assertActiveProbe(session: BehavioralSession): void {

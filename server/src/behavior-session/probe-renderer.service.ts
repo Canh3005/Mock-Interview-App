@@ -131,6 +131,7 @@ export class ProbeRendererService {
     personaPolicy,
     language,
     renderedFollowUps,
+    lastCandidateAnswer,
   }: {
     probeId: string;
     trigger: QuestionProbeFollowUpTrigger;
@@ -139,28 +140,80 @@ export class ProbeRendererService {
     personaPolicy: PersonaPolicy;
     language: QuestionProbeLanguage;
     renderedFollowUps: RenderedFollowUpsMap;
+    lastCandidateAnswer?: string;
   }): Promise<string> {
     const key: string = `${probeId}:${trigger}`;
-    if (renderedFollowUps[key]) {
+    if (renderedFollowUps[key] && !lastCandidateAnswer) {
       return renderedFollowUps[key];
     }
-    // On-demand fallback: lazy pre-render chưa hoàn tất
     return this._renderFollowUpText({
-      followUpText: rawFollowUpText,
+      followUpText: renderedFollowUps[key] ?? rawFollowUpText,
       stageName,
       personaPolicy,
       language,
+      lastCandidateAnswer,
     });
   }
 
-  /** Redirect text là canned response — không cần LLM render */
-  buildRedirectText(language: QuestionProbeLanguage): string {
-    const redirectTexts: Record<QuestionProbeLanguage, string> = {
-      vi: 'Bạn có thể chia sẻ một tình huống cụ thể liên quan đến câu hỏi không?',
-      en: 'Could you share a specific situation that relates to the question?',
-      ja: '質問に関連する具体的な状況を共有していただけますか？',
+  async buildRedirectText({
+    language,
+    lastCandidateAnswer,
+    personaPolicy,
+  }: {
+    language: QuestionProbeLanguage;
+    lastCandidateAnswer?: string;
+    personaPolicy: PersonaPolicy;
+  }): Promise<string> {
+    const fallbacks: Record<QuestionProbeLanguage, string[]> = {
+      vi: [
+        'Bạn có thể cho tôi một ví dụ cụ thể không?',
+        'Bạn có thể kể một tình huống thực tế bạn đã gặp không?',
+        'Tôi muốn nghe một trường hợp cụ thể — bạn có thể chia sẻ không?',
+        'Bạn có thể nói rõ hơn với một ví dụ từ công việc thực tế không?',
+      ],
+      en: [
+        'Can you give me a concrete example?',
+        'Could you walk me through a specific situation where this happened?',
+        "Can you tell me about a real case you've dealt with?",
+        "I'd love to hear a specific example — can you share one?",
+      ],
+      ja: [
+        '具体的な例を教えていただけますか？',
+        '実際に経験した状況を教えていただけますか？',
+        '具体的なケースを共有していただけますか？',
+      ],
     };
-    return redirectTexts[language];
+
+    if (lastCandidateAnswer) {
+      try {
+        const result: string = await this.groqService.generateContent({
+          model: 'llama-3.1-8b-instant',
+          contents: [
+            {
+              role: 'user',
+              parts: [
+                {
+                  text: this._redirectRenderPrompt({
+                    lastCandidateAnswer,
+                    personaPolicy,
+                    language,
+                  }),
+                },
+              ],
+            },
+          ],
+          config: { maxOutputTokens: 80 },
+        });
+        if (result.trim()) return result.trim();
+      } catch (error: unknown) {
+        this.logger.warn(
+          `Redirect render failed: ${this._errorMessage(error)}`,
+        );
+      }
+    }
+
+    const pool = fallbacks[language];
+    return pool[Math.floor(Math.random() * pool.length)];
   }
 
   private async _renderFollowUpText({
@@ -168,11 +221,13 @@ export class ProbeRendererService {
     stageName,
     personaPolicy,
     language,
+    lastCandidateAnswer,
   }: {
     followUpText: string;
     stageName: string;
     personaPolicy: PersonaPolicy;
     language: QuestionProbeLanguage;
+    lastCandidateAnswer?: string;
   }): Promise<string> {
     try {
       const result: string = await this.groqService.generateContent({
@@ -187,6 +242,7 @@ export class ProbeRendererService {
                   stageName,
                   personaPolicy,
                   language,
+                  lastCandidateAnswer,
                 }),
               },
             ],
@@ -228,19 +284,79 @@ Stage context: ${stageName}`;
     stageName,
     personaPolicy,
     language,
+    lastCandidateAnswer,
   }: {
     followUpText: string;
     stageName: string;
     personaPolicy: PersonaPolicy;
     language: QuestionProbeLanguage;
+    lastCandidateAnswer?: string;
   }): string {
+    const answerContext = lastCandidateAnswer
+      ? `\nCandidate's last answer: "${lastCandidateAnswer.slice(0, 300)}"`
+      : '';
     return `You are ${personaPolicy.name}. Tone: ${personaPolicy.tone}.
-You are continuing an interview. Do NOT give feedback or hints. Ask exactly one question. Language: ${language}.
+You are continuing an interview. Do NOT give feedback or hints. Ask exactly one question. Language: ${language}.${answerContext}
 
-Rephrase this follow-up naturally for your persona:
+Rephrase this follow-up naturally for your persona, referencing the candidate's answer if relevant:
 "${followUpText}"
 
 Context: candidate just answered a question about ${stageName}.`;
+  }
+
+  private _redirectRenderPrompt({
+    lastCandidateAnswer,
+    personaPolicy,
+    language,
+  }: {
+    lastCandidateAnswer: string;
+    personaPolicy: PersonaPolicy;
+    language: QuestionProbeLanguage;
+  }): string {
+    return `You are ${personaPolicy.name}. Tone: ${personaPolicy.tone}.
+The candidate just said: "${lastCandidateAnswer.slice(0, 300)}"
+Their answer was too vague or generic. Ask them for a specific real example or situation. Language: ${language}.
+One sentence only. No feedback, no hints. Natural, conversational.`;
+  }
+
+  private _probeTransitionPrompt({
+    lastCandidateAnswer,
+    personaPolicy,
+    language,
+  }: {
+    lastCandidateAnswer: string;
+    personaPolicy: PersonaPolicy;
+    language: QuestionProbeLanguage;
+  }): string {
+    return `You are ${personaPolicy.name}. Tone: ${personaPolicy.tone}.
+The candidate just answered: "${lastCandidateAnswer.slice(0, 300)}"
+Write a brief natural acknowledgment (1 sentence) before moving to the next question. Language: ${language}.
+Do NOT ask a question. Do NOT give feedback or evaluation. Just a brief, natural transition.`;
+  }
+
+  private _stageTransitionPrompt({
+    prevStageName,
+    nextStageName,
+    personaPolicy,
+    targetRole,
+    language,
+  }: {
+    prevStageName: string;
+    nextStageName: string;
+    personaPolicy: PersonaPolicy;
+    targetRole: string;
+    language: QuestionProbeLanguage;
+  }): string {
+    return `You are ${personaPolicy.name}. Tone: ${personaPolicy.tone}.
+You are interviewing a candidate for a ${targetRole} position.
+The "${prevStageName}" section has just finished. Now transition naturally to the "${nextStageName}" section.
+
+Write 1-2 sentences that:
+1. Briefly close the previous section (optional — skip if it sounds forced)
+2. Set context for the next section in a natural, conversational way — briefly mention what this section is about in relation to the role (e.g. if moving to tech stack, mention the relevant technologies the role uses)
+3. Do NOT ask a question yet — only introduce the next section
+
+Language: ${language}. One to two sentences max. Natural, not robotic.`;
   }
 
   /** Build opening contract text — scripted, no LLM */
@@ -303,34 +419,164 @@ Context: candidate just answered a question about ${stageName}.`;
     return texts[language];
   }
 
-  /** Build probe transition text — scripted, no LLM */
-  buildProbeTransition({
+  async buildProbeTransition({
     language,
+    lastCandidateAnswer,
+    personaPolicy,
   }: {
     language: QuestionProbeLanguage;
-  }): string {
-    const texts: Record<QuestionProbeLanguage, string> = {
-      vi: 'Cảm ơn bạn. Hãy chuyển sang câu hỏi tiếp theo.',
-      en: "Thank you. Let's move on to the next question.",
-      ja: 'ありがとうございます。次の質問に移りましょう。',
+    lastCandidateAnswer?: string;
+    personaPolicy: PersonaPolicy;
+  }): Promise<string> {
+    const fallbacks: Record<QuestionProbeLanguage, string[]> = {
+      vi: [
+        'Được rồi, cảm ơn bạn.',
+        'Tôi hiểu ý bạn.',
+        'Cảm ơn bạn đã chia sẻ.',
+        'Được, cảm ơn.',
+      ],
+      en: [
+        'Got it, thanks.',
+        'Okay, I appreciate that.',
+        'Thanks for sharing.',
+        'Alright, thank you.',
+      ],
+      ja: [
+        'ありがとうございます。',
+        'なるほど、ありがとう。',
+        'わかりました、ありがとうございます。',
+      ],
     };
-    return texts[language];
+
+    if (lastCandidateAnswer) {
+      try {
+        const result: string = await this.groqService.generateContent({
+          model: 'llama-3.1-8b-instant',
+          contents: [
+            {
+              role: 'user',
+              parts: [
+                {
+                  text: this._probeTransitionPrompt({
+                    lastCandidateAnswer,
+                    personaPolicy,
+                    language,
+                  }),
+                },
+              ],
+            },
+          ],
+          config: { maxOutputTokens: 60 },
+        });
+        if (result.trim()) return result.trim();
+      } catch (error: unknown) {
+        this.logger.warn(
+          `Probe transition render failed: ${this._errorMessage(error)}`,
+        );
+      }
+    }
+
+    const pool = fallbacks[language];
+    return pool[Math.floor(Math.random() * pool.length)];
   }
 
-  /** Build stage transition text — scripted, no LLM */
-  buildStageTransition({
+  async buildStageTransition({
+    prevStageName,
     nextStageName,
+    personaPolicy,
+    targetRole,
     language,
   }: {
+    prevStageName: string;
     nextStageName: string;
+    personaPolicy: PersonaPolicy;
+    targetRole: string;
     language: QuestionProbeLanguage;
-  }): string {
-    const texts: Record<QuestionProbeLanguage, string> = {
-      vi: `Tốt. Bây giờ chúng ta chuyển sang phần tiếp theo: ${nextStageName}.`,
-      en: `Good. Now let's shift to the next section: ${nextStageName}.`,
-      ja: `了解しました。では次のセクション「${nextStageName}」に移ります。`,
+  }): Promise<string> {
+    const fallbacks: Record<QuestionProbeLanguage, string[]> = {
+      vi: [
+        `Được rồi. Tiếp theo chúng ta chuyển sang phần ${nextStageName}.`,
+        `Cảm ơn bạn. Chúng ta cùng chuyển qua ${nextStageName} nhé.`,
+        `Phần tiếp theo sẽ là ${nextStageName}.`,
+      ],
+      en: [
+        `Okay. Let's move on to ${nextStageName}.`,
+        `Thanks. Now let's shift to ${nextStageName}.`,
+        `Next up, we'll cover ${nextStageName}.`,
+      ],
+      ja: [
+        `ありがとうございます。次は「${nextStageName}」に移りましょう。`,
+        `では「${nextStageName}」のセクションに入ります。`,
+      ],
     };
-    return texts[language];
+
+    try {
+      const result: string = await this.groqService.generateContent({
+        model: 'llama-3.1-8b-instant',
+        contents: [
+          {
+            role: 'user',
+            parts: [
+              {
+                text: this._stageTransitionPrompt({
+                  prevStageName,
+                  nextStageName,
+                  personaPolicy,
+                  targetRole,
+                  language,
+                }),
+              },
+            ],
+          },
+        ],
+        config: { maxOutputTokens: 100 },
+      });
+      if (result.trim()) return result.trim();
+    } catch (error: unknown) {
+      this.logger.warn(
+        `Stage transition render failed, using fallback: ${this._errorMessage(error)}`,
+      );
+    }
+
+    const pool = fallbacks[language];
+    return pool[Math.floor(Math.random() * pool.length)];
+  }
+
+  async buildRephraseText({
+    originalQuestion,
+    language,
+    personaPolicy,
+  }: {
+    originalQuestion: string;
+    language: QuestionProbeLanguage;
+    personaPolicy: PersonaPolicy;
+  }): Promise<string> {
+    try {
+      const result: string = await this.groqService.generateContent({
+        model: 'llama-3.1-8b-instant',
+        contents: [
+          {
+            role: 'user',
+            parts: [
+              {
+                text: `You are ${personaPolicy.name}. Tone: ${personaPolicy.tone}.
+The candidate asked for clarification. Rephrase this question in a clearer, more specific way. Language: ${language}.
+Ask exactly one question. Do NOT give the answer or hints.
+
+Original question: "${originalQuestion}"`,
+              },
+            ],
+          },
+        ],
+        config: { maxOutputTokens: 150 },
+      });
+      return result.trim() || originalQuestion;
+    } catch (error: unknown) {
+      this.logger.warn(
+        `Rephrase render failed, using original: ${this._errorMessage(error)}`,
+      );
+      return originalQuestion;
+    }
   }
 
   /** Build localized content cho probe theo ngôn ngữ với fallback về en */

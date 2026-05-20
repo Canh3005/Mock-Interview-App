@@ -14,7 +14,11 @@ import { BehaviorCalibrationProfile } from '../documents/entities/behavior-calib
 import { CandidateClaim } from '../documents/entities/candidate-claim.entity';
 import { RiskHypothesis } from '../documents/entities/risk-hypothesis.entity';
 import { QuestionProbe } from '../question-bank/entities/question-probe.entity';
-import { QuestionProbeStage } from '../question-bank/constants/question-bank-taxonomy.constants';
+import {
+  QuestionProbeLevel,
+  QuestionProbeRoleFamily,
+  QuestionProbeStage,
+} from '../question-bank/constants/question-bank-taxonomy.constants';
 import type {
   InterviewDepth,
   PersonaPolicy,
@@ -24,6 +28,7 @@ import type {
 } from './types/session-plan.types';
 
 const OPENING_OVERHEAD_MINUTES = 2;
+const RECENT_SESSION_LOOKBACK = 3;
 const CLOSING_OVERHEAD_MINUTES = 3;
 const MIN_PROBE_MINUTES = 4;
 const MAX_PROBE_MINUTES = 12;
@@ -173,6 +178,13 @@ export class SessionPlanningService {
       targetLevel: profile.targetLevel,
       depth: dto.depth,
     });
+    const sessionId: string = dto.sessionId ?? uuidv4();
+
+    const recentlyUsedProbeIds: string[] = await this._fetchRecentProbeIds({
+      userId,
+      roleFamily: profile.roleFamily,
+      targetLevel: profile.targetLevel,
+    });
 
     const rawAllocations: StageProbeAllocation[] =
       this.probeSelectorService.buildStageAllocations({
@@ -187,6 +199,8 @@ export class SessionPlanningService {
         candidateClaims: claims,
         cvTechStack: profile.cvTechStack,
         jdTechStack,
+        selectionSeed: sessionId,
+        recentlyUsedProbeIds,
       });
 
     const stageAllocations: StageProbeAllocation[] = this._allocateDuration({
@@ -196,7 +210,7 @@ export class SessionPlanningService {
     });
 
     const plan: SessionPlan = this.planRepository.create({
-      sessionId: dto.sessionId ?? uuidv4(),
+      sessionId,
       userId,
       calibrationProfileId: profile.id,
       roleFamily: profile.roleFamily,
@@ -231,6 +245,30 @@ export class SessionPlanningService {
       where: { userId },
       order: { createdAt: 'DESC' },
     });
+  }
+
+  private async _fetchRecentProbeIds({
+    userId,
+    roleFamily,
+    targetLevel,
+  }: {
+    userId: string;
+    roleFamily: QuestionProbeRoleFamily;
+    targetLevel: QuestionProbeLevel;
+  }): Promise<string[]> {
+    const recentPlans = await this.planRepository.find({
+      where: { userId, roleFamily, targetLevel },
+      order: { createdAt: 'DESC' },
+      take: RECENT_SESSION_LOOKBACK,
+    });
+    const ids = new Set<string>();
+    for (const plan of recentPlans) {
+      for (const alloc of plan.stageAllocations) {
+        alloc.selectedProbes.forEach((p) => ids.add(p.questionProbeId));
+        alloc.fallbackProbes.forEach((p) => ids.add(p.questionProbeId));
+      }
+    }
+    return [...ids];
   }
 
   private _validateProfile(profile: BehaviorCalibrationProfile): void {

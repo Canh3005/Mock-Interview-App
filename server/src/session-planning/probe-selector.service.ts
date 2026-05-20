@@ -21,11 +21,28 @@ import type {
   TechnicalScoringParams,
 } from './types/session-plan.types';
 
-const STAGE_5_PRIORITY_COMPETENCIES: QuestionProbeCompetency[] = [
+const STAGE_5_BASE_PRIORITIES: QuestionProbeCompetency[] = [
   'conflict_handling',
   'collaboration',
   'communication',
   'impact_measurement',
+];
+
+const STAGE_5_SOFT_SKILL_POOL: QuestionProbeCompetency[] = [
+  'conflict_handling',
+  'collaboration',
+  'communication',
+  'impact_measurement',
+  'ownership',
+  'learning_agility',
+];
+
+const STAGE_3_DOMAIN_COMPETENCIES: QuestionProbeCompetency[] = [
+  'system_thinking',
+  'trade_off_analysis',
+  'problem_solving',
+  'impact_measurement',
+  'communication',
 ];
 
 const STAGE_PRIORITIES: Record<QuestionProbeStage, StagePriority> = {
@@ -42,9 +59,9 @@ const PROBE_COUNTS: Record<
   Record<InterviewDepth, number>
 > = {
   stage_1_culture_fit: { broad: 2, deep: 1 },
-  stage_2_tech_stack: { broad: 2, deep: 3 },
-  stage_3_domain_knowledge: { broad: 2, deep: 3 },
-  stage_4_cv_deep_dive: { broad: 1, deep: 1 },
+  stage_2_tech_stack: { broad: 8, deep: 10 },
+  stage_3_domain_knowledge: { broad: 6, deep: 8 },
+  stage_4_cv_deep_dive: { broad: 3, deep: 3 },
   stage_5_soft_skills: { broad: 2, deep: 1 },
   stage_6_reverse_interview: { broad: 1, deep: 1 },
 };
@@ -75,6 +92,67 @@ const ORDERED_STAGES: QuestionProbeStage[] = [
   'stage_5_soft_skills',
   'stage_6_reverse_interview',
 ];
+
+const TOP_K_MULTIPLIER = 2;
+const RECENT_PROBE_SCORE_PENALTY = 0.3;
+
+type ScoredProbe = { probe: QuestionProbe; score: number };
+type ConversationDepthBucket = 'intro' | 'mid_deep';
+
+const STAGE_3_TYPE_BONUS: Record<string, number> = {
+  situational: 0.08,
+  trade_off: 0.07,
+  debugging: 0.07,
+};
+
+const STAGE_3_COMPETENCY_BONUS: Partial<
+  Record<QuestionProbeCompetency, number>
+> = {
+  system_thinking: 0.06,
+  trade_off_analysis: 0.05,
+  problem_solving: 0.05,
+  impact_measurement: 0.04,
+  communication: 0.03,
+};
+
+const STAGE_3_THEME_TAGS: Record<string, string[]> = {
+  api_design: [
+    'api',
+    'api_design',
+    'rest',
+    'routing',
+    'graphql',
+    'grpc',
+    'http',
+  ],
+  auth_security: [
+    'auth',
+    'authentication',
+    'authorization',
+    'jwt',
+    'oauth',
+    'security',
+  ],
+  data_consistency: [
+    'consistency',
+    'transaction',
+    'postgresql',
+    'mysql',
+    'mongodb',
+    'database',
+  ],
+  performance_scalability: [
+    'performance',
+    'scalability',
+    'cache',
+    'caching',
+    'redis',
+    'rate_limit',
+    'rate-limiting',
+  ],
+  production_debugging: ['debugging', 'incident', 'logging', 'observability'],
+  reliability_rollout: ['reliability', 'rollout', 'rollback', 'migration'],
+};
 
 @Injectable()
 export class ProbeSelectorService {
@@ -139,7 +217,7 @@ export class ProbeSelectorService {
   }): QuestionProbe[] {
     return probes.filter((p) => {
       if (!p.stages.includes(stage)) return false;
-      if (!p.levels.includes(targetLevel)) return false;
+      if (p.levels.length > 0 && !p.levels.includes(targetLevel)) return false;
       if (p.roleFamilies.length > 0 && !p.roleFamilies.includes(roleFamily))
         return false;
       if (p.status !== 'active') return false;
@@ -169,26 +247,41 @@ export class ProbeSelectorService {
     count: number;
     context: ProbeSelectionContext;
   }): { selected: PlannedProbe[]; fallbacks: PlannedProbe[] } {
-    const { targetLevel, roleFamily, priorityCompetencies } = context;
+    const { targetLevel, roleFamily, priorityCompetencies, riskHypotheses } =
+      context;
     if (stage === 'stage_6_reverse_interview') {
-      return this._selectStage6({ probes, targetLevel, roleFamily });
+      return this._selectStage6({
+        probes,
+        targetLevel,
+        roleFamily,
+        selectionSeed: context.selectionSeed,
+        recentlyUsedProbeIds: context.recentlyUsedProbeIds,
+      });
     }
     const effectivePriorities: QuestionProbeCompetency[] =
       stage === 'stage_5_soft_skills'
-        ? STAGE_5_PRIORITY_COMPETENCIES
+        ? this._resolveStage5Priorities(riskHypotheses)
         : priorityCompetencies;
-    const scored = this._scoreProbesForStage({
+    const scored = this._applyRecentUsagePenalty(
+      this._scoreProbesForStage({
+        stage,
+        probes,
+        context,
+        effectivePriorities,
+      }),
+      context.recentlyUsedProbeIds,
+    );
+    const selectedRaw = this._selectRawForStage({
       stage,
-      probes,
+      scored,
+      count,
       context,
-      effectivePriorities,
     });
-    scored.sort((a, b) => b.score - a.score);
-    const selectedRaw = scored.slice(0, count);
-    const fallbackCount: number = selectedRaw.filter(
-      (_, i) => STAGE_PRIORITIES[stage] === 'must_include' || i < count,
-    ).length;
-    const fallbackRaw = scored.slice(count, count + fallbackCount);
+    const fallbackRaw = this._selectFallbackRaw({
+      scored,
+      selectedRaw,
+      fallbackCount: selectedRaw.length,
+    });
     const orderedRaw =
       stage === 'stage_1_culture_fit'
         ? this._sortIntroFirst(selectedRaw)
@@ -208,17 +301,630 @@ export class ProbeSelectorService {
     return { selected, fallbacks };
   }
 
+  private _selectRawForStage({
+    stage,
+    scored,
+    count,
+    context,
+  }: {
+    stage: QuestionProbeStage;
+    scored: ScoredProbe[];
+    count: number;
+    context: ProbeSelectionContext;
+  }): ScoredProbe[] {
+    if (stage === 'stage_2_tech_stack' && context.jdTechStack.length > 0) {
+      return this._selectStage2TechCoverage({
+        scored,
+        count,
+        jdTechStack: context.jdTechStack,
+        selectionSeed: context.selectionSeed,
+      });
+    }
+    if (stage === 'stage_3_domain_knowledge') {
+      return this._selectStage3DomainCoverage({
+        scored,
+        count,
+        selectionSeed: context.selectionSeed,
+      });
+    }
+    if (stage === 'stage_1_culture_fit' || stage === 'stage_5_soft_skills') {
+      return this._selectMMR({
+        scored,
+        count,
+        seed: context.selectionSeed,
+        scope: stage,
+        similarityFn: (a, b) => this._competencySimilarity(a, b),
+        lambda: stage === 'stage_1_culture_fit' ? 0.7 : 0.6,
+      });
+    }
+    if (stage === 'stage_4_cv_deep_dive') {
+      return this._selectStage4ClaimCoverage({
+        scored,
+        candidateClaims: context.candidateClaims,
+        count,
+        context,
+      });
+    }
+    return this._selectTopKSeeded({
+      candidates: scored,
+      count,
+      seed: context.selectionSeed,
+      scope: stage,
+    });
+  }
+
+  private _selectFallbackRaw({
+    scored,
+    selectedRaw,
+    fallbackCount,
+  }: {
+    scored: ScoredProbe[];
+    selectedRaw: ScoredProbe[];
+    fallbackCount: number;
+  }): ScoredProbe[] {
+    const selectedIds = new Set(selectedRaw.map((s) => s.probe.id));
+    const available = scored.filter((s) => !selectedIds.has(s.probe.id));
+    const usedFallbackIds = new Set<string>();
+    const result: ScoredProbe[] = [];
+
+    // Pair each fallback with its primary probe by tech overlap first, then score.
+    // This prevents high-score but tech-unrelated probes from becoming fallbacks
+    // for low-score probes selected purely for coverage reasons.
+    for (let i = 0; i < Math.min(fallbackCount, selectedRaw.length); i++) {
+      const primaryTechSet = new Set(selectedRaw[i].probe.techTags);
+      const best = available
+        .filter((s) => !usedFallbackIds.has(s.probe.id))
+        .sort((a, b) => {
+          const aOverlap = a.probe.techTags.filter((t) =>
+            primaryTechSet.has(t),
+          ).length;
+          const bOverlap = b.probe.techTags.filter((t) =>
+            primaryTechSet.has(t),
+          ).length;
+          return bOverlap - aOverlap || b.score - a.score;
+        })[0];
+      if (best) {
+        usedFallbackIds.add(best.probe.id);
+        result.push(best);
+      }
+    }
+    return result;
+  }
+
+  private _selectStage2TechCoverage({
+    scored,
+    count,
+    jdTechStack,
+    selectionSeed,
+  }: {
+    scored: ScoredProbe[];
+    count: number;
+    jdTechStack: string[];
+    selectionSeed: string;
+  }): ScoredProbe[] {
+    const targetTechs = this._targetStage2Techs({ scored, jdTechStack, count });
+    const selected: ScoredProbe[] = [];
+    const selectedIds = new Set<string>();
+
+    // Phase 1: guarantee ≥1 intro + ≥1 mid/deep per target tech
+    for (const tech of targetTechs) {
+      const notYetSelected = (s: ScoredProbe): boolean =>
+        s.probe.techTags.includes(tech) && !selectedIds.has(s.probe.id);
+
+      const introPool = scored.filter(
+        (s) => notYetSelected(s) && s.probe.conversationDepth === 'intro',
+      );
+      if (introPool.length > 0) {
+        const intro = this._pickOneFromTopK({
+          candidates: introPool,
+          count: 1,
+          seed: selectionSeed,
+          scope: `stage_2_tech_stack:${selected.length}`,
+          score: (c) => c.score,
+          id: (c) => c.probe.id,
+        });
+        selectedIds.add(intro.probe.id);
+        selected.push(intro);
+      }
+
+      const deepPool = scored.filter(
+        (s) =>
+          s.probe.techTags.includes(tech) &&
+          !selectedIds.has(s.probe.id) &&
+          (s.probe.conversationDepth === 'mid' ||
+            s.probe.conversationDepth === 'deep'),
+      );
+      if (deepPool.length > 0) {
+        const deep = this._pickOneFromTopK({
+          candidates: deepPool,
+          count: 1,
+          seed: selectionSeed,
+          scope: `stage_2_tech_stack:${selected.length}`,
+          score: (c) => c.score,
+          id: (c) => c.probe.id,
+        });
+        selectedIds.add(deep.probe.id);
+        selected.push(deep);
+      }
+    }
+
+    // Phase 2: fill remaining slots using depth-bucket deduplication + non-target-tech cap.
+    // Use bucket ('intro' | 'mid_deep') instead of exact depth strings so that
+    // Phase 1's intro+deep coverage blocks all same-bucket duplicates in Phase 2.
+    const coveredBuckets = new Set<string>();
+    for (const s of selected) {
+      for (const tech of targetTechs) {
+        if (s.probe.techTags.includes(tech)) {
+          coveredBuckets.add(
+            `${tech}:${this._conversationDepthBucket(s.probe.conversationDepth)}`,
+          );
+        }
+      }
+    }
+    const remaining = count - selected.length;
+    if (remaining > 0) {
+      // For non-target techs: allow at most 1 probe per tech in Phase 2 to prevent
+      // a single dominant tech (e.g. 'javascript') from filling all remaining slots.
+      // Must iterate one-by-one so the tracking set is updated between selections.
+      const nonTargetTechsUsed = new Set<string>();
+      const phase2Sorted = scored
+        .filter((s) => {
+          if (selectedIds.has(s.probe.id)) return false;
+          // Exclude probes that duplicate a covered tech+bucket for any target tech
+          return !targetTechs.some(
+            (tech) =>
+              s.probe.techTags.includes(tech) &&
+              coveredBuckets.has(
+                `${tech}:${this._conversationDepthBucket(s.probe.conversationDepth)}`,
+              ),
+          );
+        })
+        .sort((a, b) => b.score - a.score);
+
+      for (const s of phase2Sorted) {
+        if (selected.length >= count) break;
+        // Cap non-target techs at 1 probe each: skip if all tech tags belong to
+        // non-target techs and at least one is already represented
+        const hasTargetTag = s.probe.techTags.some((t) =>
+          targetTechs.includes(t),
+        );
+        if (
+          !hasTargetTag &&
+          s.probe.techTags.some((t) => nonTargetTechsUsed.has(t))
+        ) {
+          continue;
+        }
+        s.probe.techTags
+          .filter((t) => !targetTechs.includes(t))
+          .forEach((t) => nonTargetTechsUsed.add(t));
+        selected.push(s);
+      }
+    }
+
+    // Phase 3: group by tech (JD order), intro before mid/deep within each group
+    return this._orderStage2Probes({ selected, targetTechs });
+  }
+
+  private _targetStage2Techs({
+    scored,
+    jdTechStack,
+    count,
+  }: {
+    scored: ScoredProbe[];
+    jdTechStack: string[];
+    count: number;
+  }): string[] {
+    const maxCoveredTechs = Math.min(Math.floor(count / 2), jdTechStack.length);
+    return jdTechStack
+      .filter((tech) => scored.some((s) => s.probe.techTags.includes(tech)))
+      .sort((a, b) => {
+        const aCoverage = this._availableStage2CoverageScore({
+          scored,
+          tech: a,
+        });
+        const bCoverage = this._availableStage2CoverageScore({
+          scored,
+          tech: b,
+        });
+        return bCoverage - aCoverage;
+      })
+      .slice(0, maxCoveredTechs);
+  }
+
+  private _availableStage2CoverageScore({
+    scored,
+    tech,
+  }: {
+    scored: ScoredProbe[];
+    tech: string;
+  }): number {
+    const buckets = new Set(
+      scored
+        .filter((s) => s.probe.techTags.includes(tech))
+        .map((s) => this._conversationDepthBucket(s.probe.conversationDepth)),
+    );
+    return (buckets.has('intro') ? 1 : 0) + (buckets.has('mid_deep') ? 1 : 0);
+  }
+
+  private _orderStage2Probes({
+    selected,
+    targetTechs,
+  }: {
+    selected: ScoredProbe[];
+    targetTechs: string[];
+  }): ScoredProbe[] {
+    const groups = new Map<string, ScoredProbe[]>();
+    const ungrouped: ScoredProbe[] = [];
+
+    for (const probe of selected) {
+      const primaryTech = targetTechs.find((t) =>
+        probe.probe.techTags.includes(t),
+      );
+      if (primaryTech) {
+        if (!groups.has(primaryTech)) groups.set(primaryTech, []);
+        groups.get(primaryTech)!.push(probe);
+      } else {
+        ungrouped.push(probe);
+      }
+    }
+
+    const ordered: ScoredProbe[] = [];
+    for (const tech of targetTechs) {
+      const group = groups.get(tech) ?? [];
+      group.sort((a, b) => {
+        const aIsIntro = a.probe.conversationDepth === 'intro' ? 0 : 1;
+        const bIsIntro = b.probe.conversationDepth === 'intro' ? 0 : 1;
+        return aIsIntro - bIsIntro || b.score - a.score;
+      });
+      ordered.push(...group);
+    }
+    ordered.push(...ungrouped);
+
+    return ordered;
+  }
+
+  private _selectStage3DomainCoverage({
+    scored,
+    count,
+    selectionSeed,
+  }: {
+    scored: ScoredProbe[];
+    count: number;
+    selectionSeed: string;
+  }): ScoredProbe[] {
+    const selected: ScoredProbe[] = [];
+    const remaining: ScoredProbe[] = scored.filter(
+      (s) =>
+        !(
+          s.probe.type === 'technical_depth' &&
+          s.probe.conversationDepth === 'intro'
+        ),
+    );
+    const coveredThemes = new Set<string>();
+    const coveredTechs = new Set<string>();
+
+    while (selected.length < count && remaining.length > 0) {
+      const remainingSlots = count - selected.length;
+      const adjustedCandidates = remaining.map((candidate, index) => {
+        const adjusted = this._stage3AdjustedScore({
+          candidate,
+          coveredThemes,
+          coveredTechs,
+        });
+        return { ...candidate, adjustedScore: adjusted, originalIndex: index };
+      });
+      const picked = this._pickOneFromTopK({
+        candidates: adjustedCandidates,
+        count: remainingSlots,
+        seed: selectionSeed,
+        scope: `stage_3_domain_knowledge:${selected.length}`,
+        score: (candidate) => candidate.adjustedScore,
+        id: (candidate) => candidate.probe.id,
+      });
+      remaining.splice(picked.originalIndex, 1);
+      selected.push({
+        probe: picked.probe,
+        score: picked.adjustedScore,
+      });
+      this._stage3Themes(picked.probe).forEach((theme) =>
+        coveredThemes.add(theme),
+      );
+      picked.probe.techTags.forEach((tag) => coveredTechs.add(tag));
+    }
+
+    return selected;
+  }
+
+  private _selectStage4ClaimCoverage({
+    scored,
+    candidateClaims,
+    count,
+    context,
+  }: {
+    scored: ScoredProbe[];
+    candidateClaims: CandidateClaim[];
+    count: number;
+    context: ProbeSelectionContext;
+  }): ScoredProbe[] {
+    if (candidateClaims.length === 0) {
+      return this._selectMMR({
+        scored,
+        count,
+        seed: context.selectionSeed,
+        scope: 'stage_4_cv_deep_dive',
+        similarityFn: (a, b) => this._competencySimilarity(a, b),
+        lambda: 0.65,
+      });
+    }
+
+    const selected: ScoredProbe[] = [];
+    const selectedIds = new Set<string>();
+
+    const PRIORITY_ORDER: Record<string, number> = {
+      high: 3,
+      medium: 2,
+      low: 1,
+    };
+    const sortedClaims = [...candidateClaims].sort(
+      (a, b) =>
+        (PRIORITY_ORDER[b.verificationPriority] ?? 1) -
+        (PRIORITY_ORDER[a.verificationPriority] ?? 1),
+    );
+
+    // Phase 1: for each claim in priority order, pick best probe that verifies it
+    for (const claim of sortedClaims) {
+      if (selected.length >= count) break;
+
+      const claimScored = scored
+        .filter((s) => !selectedIds.has(s.probe.id))
+        .map((s) => ({
+          probe: s.probe,
+          score: this._scoreProbeForClaim({
+            probe: s.probe,
+            claim,
+            jdTechStack: context.jdTechStack,
+            targetLevel: context.targetLevel,
+            roleFamily: context.roleFamily,
+          }),
+        }))
+        .filter((s) => s.score > 0);
+
+      if (claimScored.length === 0) continue;
+
+      const picked = this._pickOneFromTopK({
+        candidates: claimScored,
+        count: count - selected.length,
+        seed: context.selectionSeed,
+        scope: `stage_4_cv_deep_dive:claim:${selected.length}`,
+        score: (c) => c.score,
+        id: (c) => c.probe.id,
+      });
+
+      selectedIds.add(picked.probe.id);
+      selected.push(picked);
+    }
+
+    // Phase 2: fill remaining slots with highest aggregate-scored probes
+    if (selected.length < count) {
+      scored
+        .filter((s) => !selectedIds.has(s.probe.id))
+        .sort((a, b) => b.score - a.score)
+        .slice(0, count - selected.length)
+        .forEach((s) => selected.push(s));
+    }
+
+    return selected;
+  }
+
+  private _stage3AdjustedScore({
+    candidate,
+    coveredThemes,
+    coveredTechs,
+  }: {
+    candidate: ScoredProbe;
+    coveredThemes: Set<string>;
+    coveredTechs: Set<string>;
+  }): number {
+    const probe = candidate.probe;
+    const themes = this._stage3Themes(probe);
+    const newThemeCount = themes.filter(
+      (theme) => !coveredThemes.has(theme),
+    ).length;
+    const duplicateThemeCount = themes.length - newThemeCount;
+    const duplicateTechCount = probe.techTags.filter((tag) =>
+      coveredTechs.has(tag),
+    ).length;
+
+    let adjusted = candidate.score;
+    if (newThemeCount > 0) adjusted += 0.12;
+    adjusted -= Math.min(duplicateThemeCount * 0.04, 0.08);
+    adjusted -= Math.min(duplicateTechCount * 0.02, 0.06);
+    adjusted += STAGE_3_TYPE_BONUS[probe.type ?? ''] ?? 0;
+    adjusted += this._bonusFromMap({
+      keys: probe.competencies,
+      weights: STAGE_3_COMPETENCY_BONUS,
+      cap: 0.12,
+    });
+    if (
+      probe.type === 'technical_depth' &&
+      probe.conversationDepth === 'intro'
+    ) {
+      adjusted -= 0.2;
+    }
+    if (probe.conversationDepth === 'mid' || probe.conversationDepth === 'deep')
+      adjusted += 0.04;
+    if (probe.techTags.length > 1) adjusted += 0.03;
+    return adjusted;
+  }
+
+  private _stage3Themes(probe: QuestionProbe): string[] {
+    const themes = new Set<string>();
+    const searchable = [
+      probe.type ?? '',
+      probe.intent ?? '',
+      probe.primaryQuestion ?? '',
+      ...probe.techTags,
+    ]
+      .join(' ')
+      .toLowerCase();
+
+    for (const [theme, tokens] of Object.entries(STAGE_3_THEME_TAGS)) {
+      if (tokens.some((token) => searchable.includes(token))) {
+        themes.add(theme);
+      }
+    }
+    if (probe.type === 'debugging') themes.add('production_debugging');
+    if (probe.type === 'trade_off') themes.add('trade_off_analysis');
+    if (probe.type === 'situational') themes.add('practical_scenario');
+    if (probe.competencies.includes('system_thinking'))
+      themes.add('system_design');
+    if (probe.competencies.includes('trade_off_analysis'))
+      themes.add('trade_off_analysis');
+    if (probe.competencies.includes('problem_solving'))
+      themes.add('practical_scenario');
+    return themes.size > 0 ? [...themes] : ['general_domain'];
+  }
+
+  private _selectTopKSeeded({
+    candidates,
+    count,
+    seed,
+    scope,
+  }: {
+    candidates: ScoredProbe[];
+    count: number;
+    seed: string;
+    scope: string;
+  }): ScoredProbe[] {
+    return this._topK({
+      candidates,
+      count,
+      score: (candidate) => candidate.score,
+    })
+      .sort(
+        (a, b) =>
+          this._seededRank({ seed, scope, id: a.probe.id }) -
+            this._seededRank({ seed, scope, id: b.probe.id }) ||
+          b.score - a.score ||
+          a.probe.id.localeCompare(b.probe.id),
+      )
+      .slice(0, count)
+      .sort(
+        (a, b) =>
+          b.score - a.score ||
+          this._seededRank({ seed, scope, id: a.probe.id }) -
+            this._seededRank({ seed, scope, id: b.probe.id }),
+      );
+  }
+
+  private _pickOneFromTopK<T>({
+    candidates,
+    count,
+    seed,
+    scope,
+    score,
+    id,
+  }: {
+    candidates: T[];
+    count: number;
+    seed: string;
+    scope: string;
+    score: (candidate: T) => number;
+    id: (candidate: T) => string;
+  }): T {
+    const pool = this._topK({ candidates, count, score });
+    return [...pool].sort(
+      (a, b) =>
+        this._seededRank({ seed, scope, id: id(a) }) -
+          this._seededRank({ seed, scope, id: id(b) }) ||
+        score(b) - score(a) ||
+        id(a).localeCompare(id(b)),
+    )[0];
+  }
+
+  private _topK<T>({
+    candidates,
+    count,
+    score,
+  }: {
+    candidates: T[];
+    count: number;
+    score: (candidate: T) => number;
+  }): T[] {
+    const topKSize = Math.min(
+      candidates.length,
+      Math.max(count, count * TOP_K_MULTIPLIER),
+    );
+    return [...candidates]
+      .sort((a, b) => score(b) - score(a))
+      .slice(0, topKSize);
+  }
+
+  private _seededRank({
+    seed,
+    scope,
+    id,
+  }: {
+    seed: string;
+    scope: string;
+    id: string;
+  }): number {
+    const input = `${seed}:${scope}:${id}`;
+    let hash = 2166136261;
+    for (let index = 0; index < input.length; index++) {
+      hash ^= input.charCodeAt(index);
+      hash = Math.imul(hash, 16777619);
+    }
+    return hash >>> 0;
+  }
+
+  private _conversationDepthBucket(
+    depth: QuestionProbe['conversationDepth'],
+  ): ConversationDepthBucket {
+    return depth === 'intro' ? 'intro' : 'mid_deep';
+  }
+
+  private _bonusFromMap<T extends string>({
+    keys,
+    weights,
+    cap,
+  }: {
+    keys: T[];
+    weights: Partial<Record<T, number>>;
+    cap: number;
+  }): number {
+    const total = keys.reduce((sum, key) => sum + (weights[key] ?? 0), 0);
+    return Math.min(total, cap);
+  }
+
+  private _applyRecentUsagePenalty(
+    scored: ScoredProbe[],
+    recentlyUsedProbeIds: string[],
+  ): ScoredProbe[] {
+    if (recentlyUsedProbeIds.length === 0) return scored;
+    const recentSet = new Set(recentlyUsedProbeIds);
+    return scored.map((s) =>
+      recentSet.has(s.probe.id)
+        ? { ...s, score: Math.max(0, s.score - RECENT_PROBE_SCORE_PENALTY) }
+        : s,
+    );
+  }
+
   private _selectStage6({
     probes,
     targetLevel,
     roleFamily,
+    selectionSeed,
+    recentlyUsedProbeIds,
   }: {
     probes: QuestionProbe[];
     targetLevel: QuestionProbeLevel;
     roleFamily: QuestionProbeRoleFamily;
+    selectionSeed: string;
+    recentlyUsedProbeIds: string[];
   }): { selected: PlannedProbe[]; fallbacks: PlannedProbe[] } {
-    const scored = probes
-      .map((p) => ({
+    const scored = this._applyRecentUsagePenalty(
+      probes.map((p) => ({
         probe: p,
         score: this._roleLevelFit({
           probeLevels: p.levels,
@@ -226,18 +932,36 @@ export class ProbeSelectorService {
           targetLevel,
           roleFamily,
         }),
-      }))
-      .sort((a, b) => b.score - a.score);
+      })),
+      recentlyUsedProbeIds,
+    );
     if (scored.length === 0) return { selected: [], fallbacks: [] };
+    const topTwo = this._selectTopKSeeded({
+      candidates: scored,
+      count: 2,
+      seed: selectionSeed,
+      scope: 'stage_6_reverse_interview',
+    });
     return {
       selected: [
         this._buildPlannedProbe({
-          probe: scored[0].probe,
+          probe: topTwo[0].probe,
           order: 1,
-          score: scored[0].score,
+          score: topTwo[0].score,
         }),
       ],
-      fallbacks: [],
+      fallbacks:
+        topTwo.length > 1
+          ? [
+              this._buildPlannedProbe({
+                probe: topTwo[1].probe,
+                order: 1,
+                score: topTwo[1].score,
+                isFallbackFor: topTwo[0].probe.id,
+                fallbackTrigger: 'no_relevant_story',
+              }),
+            ]
+          : [],
     };
   }
 
@@ -317,6 +1041,15 @@ export class ProbeSelectorService {
       return this._scoreCvProbe({
         probe,
         candidateClaims,
+        cvTechStack,
+        jdTechStack,
+        targetLevel,
+        roleFamily,
+      });
+    }
+    if (stage === 'stage_3_domain_knowledge') {
+      return this._scoreDomainProbe({
+        probe,
         cvTechStack,
         jdTechStack,
         targetLevel,
@@ -429,18 +1162,119 @@ export class ProbeSelectorService {
       probe,
       candidateClaims,
     });
-    const techFit: number = this._techTagFit({
-      probeTechTags: probe.techTags,
-      cvTechStack,
-      jdTechStack,
-    });
+    const techFit: number =
+      candidateClaims.length > 0
+        ? this._claimAwareTechFit({
+            probe,
+            candidateClaims,
+            cvTechStack,
+            jdTechStack,
+          })
+        : this._techTagFit({
+            probeTechTags: probe.techTags,
+            cvTechStack,
+            jdTechStack,
+          });
     const roleLevelFit: number = this._roleLevelFit({
       probeLevels: probe.levels,
       probeFamilies: probe.roleFamilies,
       targetLevel,
       roleFamily,
     });
-    return claimFit * 0.5 + techFit * 0.3 + roleLevelFit * 0.2;
+    const depthFit: number =
+      probe.conversationDepth === 'mid' || probe.conversationDepth === 'deep'
+        ? 1.0
+        : 0.0;
+    return (
+      claimFit * 0.4 + techFit * 0.25 + roleLevelFit * 0.2 + depthFit * 0.15
+    );
+  }
+
+  private _claimAwareTechFit({
+    probe,
+    candidateClaims,
+    cvTechStack,
+    jdTechStack,
+  }: {
+    probe: QuestionProbe;
+    candidateClaims: CandidateClaim[];
+    cvTechStack: string[];
+    jdTechStack: string[];
+  }): number {
+    const baseFit: number = this._techTagFit({
+      probeTechTags: probe.techTags,
+      cvTechStack,
+      jdTechStack,
+    });
+    const claimsWithTechContext = candidateClaims.filter(
+      (c) => c.techContext.length > 0,
+    );
+    if (claimsWithTechContext.length === 0) return baseFit;
+    const bestClaimFit: number = Math.max(
+      ...claimsWithTechContext.map((claim) =>
+        this._techTagFit({
+          probeTechTags: probe.techTags,
+          cvTechStack: claim.techContext,
+          jdTechStack,
+        }),
+      ),
+    );
+    // claim.techContext is the primary signal; cvTechStack covers probes
+    // that don't match any specific claim but are still relevant to the CV
+    return bestClaimFit * 0.7 + baseFit * 0.3;
+  }
+
+  private _scoreProbeForClaim({
+    probe,
+    claim,
+    jdTechStack,
+    targetLevel,
+    roleFamily,
+  }: {
+    probe: QuestionProbe;
+    claim: CandidateClaim;
+    jdTechStack: string[];
+    targetLevel: QuestionProbeLevel;
+    roleFamily: QuestionProbeRoleFamily;
+  }): number {
+    if (claim.impliedCompetencies.length === 0) return 0;
+    const matchingCompetencies = claim.impliedCompetencies.filter((c) =>
+      probe.competencies.includes(c),
+    );
+    if (matchingCompetencies.length === 0) return 0;
+
+    const competencyFit: number =
+      matchingCompetencies.length /
+      Math.max(claim.impliedCompetencies.length, probe.competencies.length);
+
+    const techFit: number = this._techTagFit({
+      probeTechTags: probe.techTags,
+      cvTechStack: claim.techContext,
+      jdTechStack,
+    });
+
+    const roleLevelFit: number = this._roleLevelFit({
+      probeLevels: probe.levels,
+      probeFamilies: probe.roleFamilies,
+      targetLevel,
+      roleFamily,
+    });
+
+    const depthFit: number =
+      probe.conversationDepth === 'mid' || probe.conversationDepth === 'deep'
+        ? 1.0
+        : 0.3;
+
+    const typeBonus: number = probe.type === 'cv_claim_verification' ? 0.1 : 0;
+
+    return Math.min(
+      competencyFit * 0.45 +
+        techFit * 0.3 +
+        roleLevelFit * 0.15 +
+        depthFit * 0.1 +
+        typeBonus,
+      1.0,
+    );
   }
 
   private _techTagFit({
@@ -553,13 +1387,26 @@ export class ProbeSelectorService {
       const weight: number =
         CLAIM_PRIORITY_WEIGHTS[claim.verificationPriority] ?? 0.3;
       totalWeight += weight;
-      const hasOverlap: boolean = claim.impliedCompetencies.some((c) =>
-        probe.competencies.includes(c),
+      const hasCompetencyOverlap: boolean = claim.impliedCompetencies.some(
+        (c) => probe.competencies.includes(c),
       );
-      if (hasOverlap) weightedOverlap += weight;
+      const hasTechContextOverlap: boolean =
+        claim.techContext.length > 0 &&
+        claim.techContext.some((t) => probe.techTags.includes(t));
+      if (hasCompetencyOverlap && hasTechContextOverlap) {
+        // Both competency and tech context match — strong signal this probe
+        // targets exactly what the candidate claimed
+        weightedOverlap += weight * 1.4;
+      } else if (hasCompetencyOverlap) {
+        weightedOverlap += weight;
+      } else if (hasTechContextOverlap) {
+        // Tech match alone is a weak signal: probe is in the right tech area
+        // but may not verify the specific competency claimed
+        weightedOverlap += weight * 0.4;
+      }
     }
     const claimFit: number =
-      totalWeight > 0 ? weightedOverlap / totalWeight : 0.0;
+      totalWeight > 0 ? Math.min(weightedOverlap / totalWeight, 1.0) : 0.0;
     return Math.min(claimFit + typeBonus, 1.0);
   }
 
@@ -599,5 +1446,129 @@ export class ProbeSelectorService {
         ? { isFallbackFor, fallbackTrigger }
         : {}),
     };
+  }
+
+  private _scoreDomainProbe({
+    probe,
+    cvTechStack,
+    jdTechStack,
+    targetLevel,
+    roleFamily,
+  }: {
+    probe: QuestionProbe;
+    cvTechStack: string[];
+    jdTechStack: string[];
+    targetLevel: QuestionProbeLevel;
+    roleFamily: QuestionProbeRoleFamily;
+  }): number {
+    const competencyFit: number = this._competencyFit({
+      probeCompetencies: probe.competencies,
+      priorityCompetencies: STAGE_3_DOMAIN_COMPETENCIES,
+      competencyWeights: Object.fromEntries(
+        STAGE_3_DOMAIN_COMPETENCIES.map((c) => [c, 1.0]),
+      ),
+    });
+    const techEcosystemFit: number = this._techEcosystemFit({
+      probeTechTags: probe.techTags,
+      cvTechStack,
+      jdTechStack,
+    });
+    const roleLevelFit: number = this._roleLevelFit({
+      probeLevels: probe.levels,
+      probeFamilies: probe.roleFamilies,
+      targetLevel,
+      roleFamily,
+    });
+    return competencyFit * 0.5 + techEcosystemFit * 0.3 + roleLevelFit * 0.2;
+  }
+
+  private _techEcosystemFit({
+    probeTechTags,
+    cvTechStack,
+    jdTechStack,
+  }: {
+    probeTechTags: string[];
+    cvTechStack: string[];
+    jdTechStack: string[];
+  }): number {
+    if (probeTechTags.length === 0) return 0.4;
+    const allStack = new Set([...cvTechStack, ...jdTechStack]);
+    const matchCount = probeTechTags.filter((t) => allStack.has(t)).length;
+    if (matchCount === 0) return 0.1;
+    return 0.3 + (matchCount / probeTechTags.length) * 0.7;
+  }
+
+  private _selectMMR({
+    scored,
+    count,
+    seed,
+    scope,
+    similarityFn,
+    lambda,
+  }: {
+    scored: ScoredProbe[];
+    count: number;
+    seed: string;
+    scope: string;
+    similarityFn: (a: QuestionProbe, b: QuestionProbe) => number;
+    lambda: number;
+  }): ScoredProbe[] {
+    const selected: ScoredProbe[] = [];
+    const remaining = scored.map((s, index) => ({
+      ...s,
+      originalIndex: index,
+    }));
+
+    while (selected.length < count && remaining.length > 0) {
+      const isFirst = selected.length === 0;
+      const mmrCandidates = remaining.map((candidate) => {
+        const mmrScore = isFirst
+          ? candidate.score
+          : lambda * candidate.score -
+            (1 - lambda) *
+              Math.max(
+                ...selected.map((s) => similarityFn(candidate.probe, s.probe)),
+              );
+        return { ...candidate, mmrScore };
+      });
+
+      const picked = this._pickOneFromTopK({
+        candidates: mmrCandidates,
+        count: count - selected.length,
+        seed,
+        scope: `${scope}:mmr:${selected.length}`,
+        score: (c) => c.mmrScore,
+        id: (c) => c.probe.id,
+      });
+
+      const idx = remaining.findIndex((r) => r.probe.id === picked.probe.id);
+      remaining.splice(idx, 1);
+      selected.push({ probe: picked.probe, score: picked.score });
+    }
+
+    return selected;
+  }
+
+  private _competencySimilarity(a: QuestionProbe, b: QuestionProbe): number {
+    if (a.competencies.length === 0 || b.competencies.length === 0) return 0;
+    const aSet = new Set(a.competencies);
+    const overlapCount = b.competencies.filter((c) => aSet.has(c)).length;
+    return (
+      overlapCount / Math.max(a.competencies.length, b.competencies.length)
+    );
+  }
+
+  private _resolveStage5Priorities(
+    riskHypotheses: RiskHypothesis[],
+  ): QuestionProbeCompetency[] {
+    const riskAdditions = riskHypotheses
+      .filter((r) => r.severity === 'high')
+      .flatMap((r) => r.relatedCompetencies)
+      .filter(
+        (c): c is QuestionProbeCompetency =>
+          (STAGE_5_SOFT_SKILL_POOL as readonly string[]).includes(c) &&
+          !(STAGE_5_BASE_PRIORITIES as readonly string[]).includes(c),
+      );
+    return [...new Set([...STAGE_5_BASE_PRIORITIES, ...riskAdditions])];
   }
 }

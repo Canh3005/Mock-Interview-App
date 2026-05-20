@@ -8,6 +8,7 @@ export type OverallBand =
   | 'needs_work'
   | 'insufficient_evidence';
 export type ScoringConfidence = 'high' | 'medium' | 'low';
+export type CandidateIntent = 'answer' | 'dont_know' | 'clarification_request';
 export type QuestionPracticeFailureCode =
   | 'ai_timeout'
   | 'invalid_ai_output'
@@ -46,6 +47,7 @@ export interface ProbeScoringResult {
   redFlags: ProbeRedFlagResult[];
   cvClaimResults?: ProbeCvClaimResult[];
   improvementSuggestions: string[];
+  candidateIntent: CandidateIntent;
 }
 
 export interface QuestionPracticeAttemptFeedbackResponse {
@@ -99,7 +101,12 @@ export const LlmCvClaimExtractionSchema = z.object({
   feedback: z.string().min(1),
 });
 
+export const CandidateIntentSchema = z
+  .enum(['answer', 'dont_know', 'clarification_request'])
+  .default('answer');
+
 export const LlmScoringExtractionSchema = z.object({
+  candidateIntent: CandidateIntentSchema,
   signals: z.array(LlmSignalExtractionSchema),
   redFlags: z.array(LlmRedFlagExtractionSchema),
   cvClaims: z.array(LlmCvClaimExtractionSchema).optional().default([]),
