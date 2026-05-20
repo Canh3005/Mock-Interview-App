@@ -319,46 +319,6 @@ Their answer was too vague or generic. Ask them for a specific real example or s
 One sentence only. No feedback, no hints. Natural, conversational.`;
   }
 
-  private _probeTransitionPrompt({
-    lastCandidateAnswer,
-    personaPolicy,
-    language,
-  }: {
-    lastCandidateAnswer: string;
-    personaPolicy: PersonaPolicy;
-    language: QuestionProbeLanguage;
-  }): string {
-    return `You are ${personaPolicy.name}. Tone: ${personaPolicy.tone}.
-The candidate just answered: "${lastCandidateAnswer.slice(0, 300)}"
-Write a brief natural acknowledgment (1 sentence) before moving to the next question. Language: ${language}.
-Do NOT ask a question. Do NOT give feedback or evaluation. Just a brief, natural transition.`;
-  }
-
-  private _stageTransitionPrompt({
-    prevStageName,
-    nextStageName,
-    personaPolicy,
-    targetRole,
-    language,
-  }: {
-    prevStageName: string;
-    nextStageName: string;
-    personaPolicy: PersonaPolicy;
-    targetRole: string;
-    language: QuestionProbeLanguage;
-  }): string {
-    return `You are ${personaPolicy.name}. Tone: ${personaPolicy.tone}.
-You are interviewing a candidate for a ${targetRole} position.
-The "${prevStageName}" section has just finished. Now transition naturally to the "${nextStageName}" section.
-
-Write 1-2 sentences that:
-1. Briefly close the previous section (optional — skip if it sounds forced)
-2. Set context for the next section in a natural, conversational way — briefly mention what this section is about in relation to the role (e.g. if moving to tech stack, mention the relevant technologies the role uses)
-3. Do NOT ask a question yet — only introduce the next section
-
-Language: ${language}. One to two sentences max. Natural, not robotic.`;
-  }
-
   /** Build opening contract text — scripted, no LLM */
   buildOpeningContract({
     targetRole,
@@ -468,7 +428,8 @@ Language: ${language}. One to two sentences max. Natural, not robotic.`;
           ],
           config: { maxOutputTokens: 60 },
         });
-        if (result.trim()) return result.trim();
+        const trimmed = result.trim();
+        if (trimmed && !this._containsQuestion(trimmed)) return trimmed;
       } catch (error: unknown) {
         this.logger.warn(
           `Probe transition render failed: ${this._errorMessage(error)}`,
@@ -531,7 +492,8 @@ Language: ${language}. One to two sentences max. Natural, not robotic.`;
         ],
         config: { maxOutputTokens: 100 },
       });
-      if (result.trim()) return result.trim();
+      const trimmed = result.trim();
+      if (trimmed && !this._containsQuestion(trimmed)) return trimmed;
     } catch (error: unknown) {
       this.logger.warn(
         `Stage transition render failed, using fallback: ${this._errorMessage(error)}`,
@@ -590,6 +552,60 @@ Original question: "${originalQuestion}"`,
     language: QuestionProbeLanguage;
   }): QuestionProbeLocalizedContent | null {
     return localizedContent[language] ?? localizedContent['en'] ?? null;
+  }
+
+  private _probeTransitionPrompt({
+    lastCandidateAnswer,
+    personaPolicy,
+    language,
+  }: {
+    lastCandidateAnswer: string;
+    personaPolicy: PersonaPolicy;
+    language: QuestionProbeLanguage;
+  }): string {
+    return `You are ${personaPolicy.name}. Tone: ${personaPolicy.tone}.
+The candidate just answered: "${lastCandidateAnswer.slice(0, 300)}"
+Write a brief natural acknowledgment (1 sentence) before moving to the next question. Language: ${language}.
+STRICT RULES — violating any rule means output is discarded and fallback is used:
+- Output must be a statement, NOT a question. Do NOT end with "?" or use question words (what, how, why, can you, could you, hãy, bạn có thể, như thế nào, tại sao).
+- Do NOT ask the candidate to continue, elaborate, or say more about their answer.
+- Do NOT give feedback or evaluation.
+- One sentence only.`;
+  }
+
+  private _stageTransitionPrompt({
+    prevStageName,
+    nextStageName,
+    personaPolicy,
+    targetRole,
+    language,
+  }: {
+    prevStageName: string;
+    nextStageName: string;
+    personaPolicy: PersonaPolicy;
+    targetRole: string;
+    language: QuestionProbeLanguage;
+  }): string {
+    return `You are ${personaPolicy.name}. Tone: ${personaPolicy.tone}.
+You are interviewing a candidate for a ${targetRole} position.
+The "${prevStageName}" section has just finished. Now transition naturally to the "${nextStageName}" section.
+Write 1-2 sentences. Language: ${language}.
+STRICT RULES — violating any rule means output is discarded and fallback is used:
+- Output must be statements only, NOT questions. Do NOT end any sentence with "?" or use question words (what, how, why, can you, could you, hãy, bạn có thể, như thế nào, tại sao).
+- Do NOT ask anything — only announce the transition to the next section.
+- Natural, not robotic. One to two sentences max.`;
+  }
+
+  private _containsQuestion(text: string): boolean {
+    if (text.includes('?')) return true;
+    const lower = text.toLowerCase();
+    const questionStarters = [
+      'hãy cho', 'bạn có thể', 'bạn hãy', 'như thế nào', 'tại sao', 'vì sao',
+      'can you', 'could you', 'would you', 'please tell', 'please describe',
+      'please explain', 'how do', 'how did', 'what is', 'what are', 'why did',
+      'あなたは', 'どのように', 'なぜ', 'できますか',
+    ];
+    return questionStarters.some((starter) => lower.includes(starter));
   }
 
   private _errorMessage(error: unknown): string {

@@ -130,7 +130,9 @@ describe('ProbeSelectorService', () => {
     expect(nodeIntros).toHaveLength(1);
 
     // each covered tech must have at least 1 mid/deep probe
-    expect(selectedIds).toEqual(expect.arrayContaining(['node-mid', 'express-intro', 'express-mid']));
+    expect(selectedIds).toEqual(
+      expect.arrayContaining(['node-mid', 'express-intro', 'express-mid']),
+    );
 
     // probes are grouped: all nodejs probes come before express probes
     const firstExpressIdx = selectedIds.findIndex((id) =>

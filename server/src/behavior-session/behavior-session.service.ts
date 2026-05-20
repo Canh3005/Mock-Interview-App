@@ -15,6 +15,8 @@ import { QuestionPracticeScoringService } from '../question-bank/services/scorin
 import { PolicyEngineService } from './policy-engine.service';
 import { ProbeRendererService } from './probe-renderer.service';
 import { BehaviorSessionFlowService } from './behavior-session-flow.service';
+import { SessionSynthesisService } from './session-synthesis.service';
+import type { BehaviorScorecardData } from './types/session-synthesis.types';
 import type { CreateBehaviorSessionDto } from './dto/create-behavior-session.dto';
 import type { SubmitAnswerDto } from './dto/submit-answer.dto';
 import type {
@@ -45,6 +47,7 @@ export class BehaviorSessionService {
     private readonly policyEngine: PolicyEngineService,
     private readonly probeRenderer: ProbeRendererService,
     private readonly flowService: BehaviorSessionFlowService,
+    private readonly synthesisService: SessionSynthesisService,
   ) {}
 
   /**
@@ -196,7 +199,7 @@ export class BehaviorSessionService {
           answerText: cumulativeAnswer,
           language: plan.language,
         });
-        console.log('Scoring result:', scoringResult);
+      console.log('Scoring result:', scoringResult);
       activeProbe.previousBand =
         activeProbe.lastScoringResult?.overallBand ?? null;
       activeProbe.lastScoringResult = scoringResult;
@@ -222,6 +225,9 @@ export class BehaviorSessionService {
       });
 
       await this.sessionRepo.save(session);
+      if ((session.interviewState as string) === 'COMPLETED') {
+        await this._runSynthesis(session, plan);
+      }
       for (const turn of nextTurns) {
         this._streamTurn(res, turn, session);
       }
@@ -301,7 +307,38 @@ export class BehaviorSessionService {
     session.status = 'SCORING';
     session.completedAt = new Date();
     await this.sessionRepo.save(session);
+
+    if (session.planId) {
+      const plan: SessionPlan = await this._loadPlan(session.planId);
+      await this._runSynthesis(session, plan);
+    } else {
+      session.status = 'COMPLETED';
+      await this.sessionRepo.save(session);
+    }
+
     return { sessionId, state: 'COMPLETED' };
+  }
+
+  private async _runSynthesis(
+    session: BehavioralSession,
+    plan: SessionPlan,
+  ): Promise<void> {
+    try {
+      const scorecard: BehaviorScorecardData = await this.synthesisService.run({
+        session,
+        plan,
+      });
+      session.finalScore = scorecard as unknown as Record<string, unknown>;
+      session.status = 'COMPLETED';
+      session.completedAt = session.completedAt ?? new Date();
+      await this.sessionRepo.save(session);
+    } catch (error: unknown) {
+      const msg: string =
+        error instanceof Error ? error.message : 'Synthesis failed';
+      this.logger.error(`Synthesis failed for session ${session.id}: ${msg}`);
+      session.status = 'COMPLETED';
+      await this.sessionRepo.save(session);
+    }
   }
 
   private async _loadSession({

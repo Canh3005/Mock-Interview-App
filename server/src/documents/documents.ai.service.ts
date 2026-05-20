@@ -7,6 +7,7 @@ import {
 } from './types/fit-assessment.types';
 
 export const DOCUMENT_FIT_ASSESSMENT_MODEL = 'llama-3.3-70b-versatile';
+const DOCUMENT_VALIDATION_MODEL = 'llama-3.1-8b-instant';
 
 export type Seniority =
   | 'intern'
@@ -396,7 +397,7 @@ ${JSON.stringify(requirements, null, 2)}`;
       typeof content === 'string' ? content : JSON.stringify(content);
 
     const result = await this.groq.generateJsonContent({
-      model: DOCUMENT_FIT_ASSESSMENT_MODEL,
+      model: DOCUMENT_VALIDATION_MODEL,
       contents: [
         {
           role: 'user',

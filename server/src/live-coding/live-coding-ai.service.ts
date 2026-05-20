@@ -7,7 +7,8 @@ import { Problem } from '../problems/entities/problem.entity';
 @Injectable()
 export class LiveCodingAiService {
   private readonly logger = new Logger(LiveCodingAiService.name);
-  private readonly MODEL = 'llama-3.3-70b-versatile';
+  private readonly hintModel = 'llama-3.1-8b-instant';
+  private readonly debriefModel = 'llama-3.3-70b-versatile';
 
   constructor(private readonly groqService: GroqService) {}
 
@@ -34,7 +35,7 @@ Trả lời trực tiếp câu hỏi, không có lời dẫn.`;
 
     try {
       const aiResponse = await this.groqService.generateContent({
-        model: this.MODEL,
+        model: this.hintModel,
         contents: [{ role: 'user', parts: [{ text: prompt }] }],
         config: { maxOutputTokens: 200 },
       });
@@ -75,7 +76,7 @@ Trả lời trực tiếp câu hỏi, không có lời dẫn.`;
 
     try {
       const aiResponse = await this.groqService.generateContent({
-        model: this.MODEL,
+        model: this.hintModel,
         contents: [{ role: 'user', parts: [{ text: prompt }] }],
         config: { maxOutputTokens: 150 },
       });
@@ -135,7 +136,7 @@ Trả về JSON hợp lệ (không markdown, chỉ JSON thuần):
 }`;
 
     const raw = await this.groqService.generateContent({
-      model: this.MODEL,
+      model: this.debriefModel,
       contents: [{ role: 'user', parts: [{ text: prompt }] }],
       config: { maxOutputTokens: 600 },
     });

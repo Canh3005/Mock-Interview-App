@@ -11,6 +11,7 @@ import { BehaviorSessionService } from './behavior-session.service';
 import { BehaviorSessionFlowService } from './behavior-session-flow.service';
 import { PolicyEngineService } from './policy-engine.service';
 import { ProbeRendererService } from './probe-renderer.service';
+import { SessionSynthesisService } from './session-synthesis.service';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { ProbeRendererService } from './probe-renderer.service';
     BehaviorSessionFlowService,
     PolicyEngineService,
     ProbeRendererService,
+    SessionSynthesisService,
   ],
 })
 export class BehaviorSessionModule {}

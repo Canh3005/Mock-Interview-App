@@ -48,7 +48,7 @@ export class QuestionPracticeScoringService {
       'llama-3.3-70b-versatile';
     this.narrativeModel =
       this.configService.get<string>('QUESTION_PRACTICE_NARRATIVE_MODEL') ??
-      this.model;
+      'llama-3.1-8b-instant';
   }
 
   /**

@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../router/routes';
 import { Loader2 } from 'lucide-react';
 import ScorecardDisplay from './ScorecardDisplay';
+import BehaviorScorecardDisplay from './BehaviorScorecardDisplay';
 import DSAScoringTab from './DSAScoringTab';
 import SDScoringTab from '../sd-debrief/SDScoringTab';
 import { interviewApi } from '../../api/interview.api';
@@ -30,7 +31,9 @@ export default function ScoringPage() {
   const [selectedSessionType, setSelectedSessionType] = useState(initialTab ?? 'behavioral');
   const [isLoadingSessions, setIsLoadingSessions] = useState(false);
 
+  const isNewProbeScorecard = allSessions?.behavioral?.finalScore?.scorecardVersion === '1.0';
   const isLoading = initialTab !== 'liveCoding' &&
+    !isNewProbeScorecard &&
     (status === 'completing' || (status === 'completed' && !scoreData));
 
   // Fetch all sessions for this interview
@@ -86,8 +89,9 @@ export default function ScoringPage() {
 
   // Get the score data for the selected session type
   const currentSessionData = allSessions?.[selectedSessionType];
+  const behavioralFinalScore = currentSessionData?.finalScore;
   const displayScore = selectedSessionType === 'behavioral'
-    ? (allSessions?.behavioral?.finalScore ?? scoreData)
+    ? (behavioralFinalScore ?? scoreData)
     : currentSessionData?.finalScore;
 
   // Session type labels
@@ -133,12 +137,14 @@ export default function ScoringPage() {
         ? <SDScoringTab session={currentSessionData} />
         : selectedSessionType === 'liveCoding'
           ? <DSAScoringTab session={currentSessionData} />
-          : (
-            <ScorecardDisplay
-              scoreData={displayScore}
-              isCombat={mode === 'combat'}
-            />
-          )
+          : behavioralFinalScore?.scorecardVersion === '1.0'
+            ? <BehaviorScorecardDisplay scorecard={behavioralFinalScore} />
+            : (
+              <ScorecardDisplay
+                scoreData={displayScore}
+                isCombat={mode === 'combat'}
+              />
+            )
       }
 
       {/* Extra sections */}
