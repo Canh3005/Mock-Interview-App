@@ -24,12 +24,6 @@ export const combatApi = {
   getIntegrity: (interviewSessionId) =>
     axiosClient.get(`/combat/sessions/${interviewSessionId}/integrity`),
 
-  /** Task 3.4 — Get stage intro text */
-  getStageIntro: (sessionId, stageNumber) =>
-    axiosClient.get(
-      `/behavioral/sessions/${sessionId}/stage-intro/${stageNumber}`,
-    ),
-
   /** SSE stream — combat message (reuses behavioral endpoint) */
   createCombatMessageStream: (sessionId, payload) =>
     fetchWithAuth(`${BASE_URL}/behavioral/sessions/${sessionId}/message`, {

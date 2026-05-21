@@ -14,7 +14,6 @@ import { AiModule } from './ai/ai.module';
 import { DocumentsModule } from './documents/documents.module';
 import { JobsModule } from './jobs/jobs.module';
 import { InterviewModule } from './interview/interview.module';
-import { BehavioralModule } from './behavioral/behavioral.module';
 import { CombatModule } from './combat/combat.module';
 import { TtsModule } from './tts/tts.module';
 import { LiveCodingModule } from './live-coding/live-coding.module';
@@ -72,7 +71,6 @@ import { BehaviorSessionModule } from './behavior-session/behavior-session.modul
     DocumentsModule,
     JobsModule,
     InterviewModule,
-    BehavioralModule,
     CombatModule,
     TtsModule,
     LiveCodingModule,
