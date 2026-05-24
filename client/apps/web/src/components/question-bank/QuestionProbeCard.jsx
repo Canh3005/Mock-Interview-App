@@ -17,7 +17,7 @@ function _difficultyLabel({ t, difficulty }) {
 
 function MetadataPill({ children }) {
   return (
-    <span className="inline-flex items-center rounded-md border border-slate-700/70 bg-slate-800/70 px-2 py-1 text-xs text-slate-300">
+    <span className="inline-flex items-center rounded-md border border-gray-200 bg-gray-100 px-2 py-1 text-xs text-gray-600">
       {children}
     </span>
   );
@@ -28,10 +28,10 @@ function CardHeader({ probe }) {
   return (
     <div className="flex items-start justify-between gap-3">
       <div className="min-w-0">
-        <p className="text-xs text-slate-500 font-mono truncate">
+        <p className="text-xs text-gray-400 font-mono truncate">
           {probe.code ?? probe.id}
         </p>
-        <h2 className="mt-1 text-lg font-heading font-semibold text-white leading-snug">
+        <h2 className="mt-1 text-lg font-heading font-semibold text-gray-900 leading-snug">
           {probe.title}
         </h2>
       </div>
@@ -67,11 +67,11 @@ function CardMetadata({ probe }) {
 function CardBody({ probe }) {
   return (
     <>
-      <p className="text-sm text-slate-300 leading-6 line-clamp-3">
+      <p className="text-sm text-gray-600 leading-6 line-clamp-3">
         {probe.displayQuestion}
       </p>
       {probe.displayIntent && (
-        <p className="text-xs text-slate-500 leading-5 line-clamp-2">
+        <p className="text-xs text-gray-500 leading-5 line-clamp-2">
           {probe.displayIntent}
         </p>
       )}
@@ -80,7 +80,7 @@ function CardBody({ probe }) {
         {probe.techTags.slice(0, 5).map((tag) => (
           <span
             key={tag}
-            className="rounded-md bg-slate-800 px-2 py-0.5 text-xs text-slate-400"
+            className="rounded-md bg-gray-100 px-2 py-0.5 text-xs text-gray-500"
           >
             {tag}
           </span>
@@ -93,14 +93,14 @@ function CardBody({ probe }) {
 function CardFooter({ probe }) {
   const { t } = useTranslation();
   return (
-    <div className="mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-slate-800 pt-3">
-      <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
+    <div className="mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-gray-100 pt-3">
+      <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500">
         <span className="inline-flex items-center gap-1">
           <Languages className="w-3.5 h-3.5" />
           {probe.resolvedLocale.toUpperCase()}
         </span>
         {probe.localeFallbackUsed && (
-          <span className="inline-flex items-center gap-1 text-amber-300">
+          <span className="inline-flex items-center gap-1 text-amber-500">
             <BadgeInfo className="w-3.5 h-3.5" />
             {t('questionBank.card.fallback')}
           </span>
@@ -127,7 +127,7 @@ function CardFooter({ probe }) {
 
 export default function QuestionProbeCard({ probe }) {
   return (
-    <article className="rounded-lg border border-slate-700/60 bg-slate-900/70 p-4 flex flex-col gap-4 min-h-[280px]">
+    <article className="rounded-lg border border-gray-100 bg-white shadow-card p-4 flex flex-col gap-4 min-h-[280px]">
       <CardHeader probe={probe} />
       <CardBody probe={probe} />
       <CardFooter probe={probe} />

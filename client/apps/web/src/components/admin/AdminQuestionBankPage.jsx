@@ -102,25 +102,25 @@ export default function AdminQuestionBankPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto flex flex-col gap-5 font-body animate-in fade-in duration-500">
-      <div className="flex justify-between items-start flex-wrap gap-4">
+    <main className="dash-page font-body animate-in fade-in duration-500">
+      <header className="dash-page-header">
         <div>
-          <h2 className="text-2xl font-bold font-heading text-white">
+          <h1 className="dash-page-title">
             {t('adminQuestionBank.title')}
-          </h2>
-          <p className="text-slate-400 mt-1">{t('adminQuestionBank.subtitle')}</p>
+          </h1>
+          <p className="dash-page-description">{t('adminQuestionBank.subtitle')}</p>
         </div>
         <button
           type="button"
           onClick={_openCreateModal}
-          className="bg-cta hover:bg-cta/90 text-black px-5 py-2.5 rounded-xl font-semibold flex items-center gap-2 transition-all shadow-lg shadow-cta/20 cursor-pointer"
+          className="dash-primary-button px-5 py-2.5 rounded-xl font-semibold flex items-center gap-2 transition-all cursor-pointer"
         >
           <Plus className="w-5 h-5" />
           {activeTab === 'probes'
             ? t('adminQuestionBank.createProbe')
             : t('adminQuestionBank.createSet')}
         </button>
-      </div>
+      </header>
 
       {error && (
         <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
@@ -128,14 +128,14 @@ export default function AdminQuestionBankPage() {
         </div>
       )}
 
-      <div className="flex gap-2 border-b border-slate-700/60">
+      <div className="dash-border flex gap-2 border-b">
         <button
           type="button"
           onClick={() => setActiveTab('probes')}
           className={`px-4 py-3 text-sm font-semibold border-b-2 flex items-center gap-2 cursor-pointer ${
             activeTab === 'probes'
-              ? 'border-cta text-white'
-              : 'border-transparent text-slate-500 hover:text-slate-300'
+              ? 'border-cta text-[var(--dash-text)]'
+              : 'border-transparent dash-subtle hover:text-[var(--dash-text)]'
           }`}
         >
           <BookOpenCheck className="w-4 h-4" />
@@ -146,8 +146,8 @@ export default function AdminQuestionBankPage() {
           onClick={() => setActiveTab('sets')}
           className={`px-4 py-3 text-sm font-semibold border-b-2 flex items-center gap-2 cursor-pointer ${
             activeTab === 'sets'
-              ? 'border-cta text-white'
-              : 'border-transparent text-slate-500 hover:text-slate-300'
+              ? 'border-cta text-[var(--dash-text)]'
+              : 'border-transparent dash-subtle hover:text-[var(--dash-text)]'
           }`}
         >
           <Layers3 className="w-4 h-4" />
@@ -215,6 +215,6 @@ export default function AdminQuestionBankPage() {
           onSave={_handleSaveSet}
         />
       )}
-    </div>
+    </main>
   );
 }

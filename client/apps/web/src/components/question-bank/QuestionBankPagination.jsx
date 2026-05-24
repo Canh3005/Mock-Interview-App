@@ -17,8 +17,8 @@ export default function QuestionBankPagination({
   if (total === 0) return null;
 
   return (
-    <div className="flex items-center justify-between gap-3 border-t border-slate-800 pt-4">
-      <span className="text-xs text-slate-500">
+    <div className="flex items-center justify-between gap-3 border-t border-gray-100 pt-4">
+      <span className="text-xs text-gray-500">
         {t('questionBank.pagination.summary', { start, end, total })}
       </span>
       <div className="flex items-center gap-2">
@@ -26,19 +26,19 @@ export default function QuestionBankPagination({
           type="button"
           disabled={!hasPrev || loading}
           onClick={() => onPageChange(page - 1)}
-          className="inline-flex items-center gap-1 rounded-lg border border-slate-700 bg-slate-800/80 px-3 py-2 text-xs font-semibold text-slate-300 hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed"
+          className="dash-control inline-flex items-center gap-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs font-semibold text-gray-600 disabled:opacity-40 disabled:cursor-not-allowed"
         >
           <ChevronLeft className="w-3.5 h-3.5" />
           {t('questionBank.pagination.previous')}
         </button>
-        <span className="min-w-9 text-center text-xs text-slate-400 tabular-nums">
+        <span className="min-w-9 text-center text-xs text-gray-500 tabular-nums">
           {page}
         </span>
         <button
           type="button"
           disabled={!hasNext || loading}
           onClick={() => onPageChange(page + 1)}
-          className="inline-flex items-center gap-1 rounded-lg border border-slate-700 bg-slate-800/80 px-3 py-2 text-xs font-semibold text-slate-300 hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed"
+          className="dash-control inline-flex items-center gap-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs font-semibold text-gray-600 disabled:opacity-40 disabled:cursor-not-allowed"
         >
           {t('questionBank.pagination.next')}
           <ChevronRight className="w-3.5 h-3.5" />

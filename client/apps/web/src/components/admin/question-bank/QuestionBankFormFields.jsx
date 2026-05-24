@@ -2,15 +2,15 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Check, ChevronDown, Minus, Plus, Search } from 'lucide-react';
 
 const inputClass =
-  'w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-sm text-slate-200 outline-none transition-all duration-150 hover:border-slate-500 focus:border-cta focus:ring-2 focus:ring-cta/20';
+  'dash-control w-full rounded-lg bg-white border border-gray-200 px-3 py-2 text-sm text-gray-700 outline-none transition-all duration-150 focus:border-cta focus:ring-2 focus:ring-cta/20';
 
 const selectButtonClass =
-  'w-full cursor-pointer rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 pr-9 text-left text-sm text-slate-200 shadow-inner shadow-black/10 outline-none transition-all duration-150 hover:border-slate-500 focus:border-cta focus:ring-2 focus:ring-cta/20';
+  'dash-control w-full cursor-pointer rounded-lg bg-white border border-gray-200 px-3 py-2 pr-9 text-left text-sm text-gray-700 outline-none transition-all duration-150 focus:border-cta focus:ring-2 focus:ring-cta/20';
 
 export function FormSection({ title, children }) {
   return (
-    <section className="border border-slate-800 rounded-lg p-4 space-y-4">
-      <h4 className="text-sm font-semibold text-white">{title}</h4>
+    <section className="border border-gray-100 rounded-lg p-4 space-y-4">
+      <h4 className="text-sm font-semibold text-gray-900">{title}</h4>
       {children}
     </section>
   );
@@ -18,7 +18,7 @@ export function FormSection({ title, children }) {
 
 export function TextField({ label, value, onChange, type = 'text', min, max }) {
   return (
-    <label className="flex flex-col gap-1 text-xs text-slate-400">
+    <label className="flex flex-col gap-1 text-xs text-gray-500">
       {label}
       <input
         type={type}
@@ -47,7 +47,7 @@ export function NumberField({ label, value, onChange, min = 1, max }) {
 
 export function TextAreaField({ label, value, onChange, rows = 3 }) {
   return (
-    <label className="flex flex-col gap-1 text-xs text-slate-400">
+    <label className="flex flex-col gap-1 text-xs text-gray-500">
       {label}
       <textarea
         rows={rows}
@@ -59,7 +59,7 @@ export function TextAreaField({ label, value, onChange, rows = 3 }) {
   );
 }
 
-export function SelectField({ label, value, options, onChange, labelClassName = 'flex flex-col gap-1 text-xs text-slate-400' }) {
+export function SelectField({ label, value, options, onChange, labelClassName = 'flex flex-col gap-1 text-xs text-gray-500' }) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef(null);
   const selectedOption = useMemo(
@@ -102,12 +102,12 @@ export function SelectField({ label, value, options, onChange, labelClassName = 
           <span className="block truncate">{selectedOption?.label ?? ''}</span>
         </button>
         <ChevronDown
-          className={`pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500 transition-transform duration-150 ${
+          className={`pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 transition-transform duration-150 ${
             open ? 'rotate-180' : ''
           }`}
         />
         {open && (
-          <div className="absolute left-0 right-0 top-[calc(100%+6px)] z-50 overflow-hidden rounded-lg border border-slate-700/80 bg-slate-900 shadow-2xl shadow-black/40">
+          <div className="dash-control absolute left-0 right-0 top-[calc(100%+6px)] z-50 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg">
             <div className="max-h-64 overflow-y-auto py-1">
               {options.map((option) => (
                 <button
@@ -116,8 +116,8 @@ export function SelectField({ label, value, options, onChange, labelClassName = 
                   onClick={() => _select(option.key)}
                   className={`flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-sm transition-colors duration-100 ${
                     option.key === (value ?? '')
-                      ? 'bg-cta/15 text-cta'
-                      : 'text-slate-200 hover:bg-slate-800 hover:text-white'
+                      ? 'bg-cta/10 text-cta'
+                      : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
                   }`}
                 >
                   <span className="truncate">{option.label}</span>
@@ -141,7 +141,7 @@ export function SearchableMultiSelectField({
   searchPlaceholder = 'Search...',
   clearLabel = 'Clear selection',
   noOptionsLabel = 'No options',
-  labelClassName = 'flex flex-col gap-1 text-xs text-slate-400',
+  labelClassName = 'flex flex-col gap-1 text-xs text-gray-500',
 }) {
   const [open, setOpen] = useState(false);
   const [searchText, setSearchText] = useState('');
@@ -209,15 +209,15 @@ export function SearchableMultiSelectField({
           <span className="block truncate">{displayLabel}</span>
         </button>
         <ChevronDown
-          className={`pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500 transition-transform duration-150 ${
+          className={`pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 transition-transform duration-150 ${
             open ? 'rotate-180' : ''
           }`}
         />
         {open && (
-          <div className="absolute left-0 right-0 top-[calc(100%+6px)] z-50 overflow-hidden rounded-lg border border-slate-700/80 bg-slate-900 shadow-2xl shadow-black/40">
-            <div className="border-b border-slate-800 p-2">
+          <div className="dash-control absolute left-0 right-0 top-[calc(100%+6px)] z-50 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg">
+            <div className="border-b border-gray-100 p-2">
               <div className="relative">
-                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                 <input
                   value={searchText}
                   onChange={(event) => setSearchText(event.target.value)}
@@ -230,28 +230,28 @@ export function SearchableMultiSelectField({
               {filteredOptions.map((option) => (
                 <label
                   key={option.key}
-                  className="flex w-full cursor-pointer items-center gap-3 px-3 py-2 text-left text-sm text-slate-200 transition-colors duration-100 hover:bg-slate-800 hover:text-white"
+                  className="flex w-full cursor-pointer items-center gap-3 px-3 py-2 text-left text-sm text-gray-700 transition-colors duration-100 hover:bg-gray-50 hover:text-gray-900"
                 >
                   <input
                     type="checkbox"
                     checked={selectedSet.has(option.key)}
                     onChange={() => _toggle(option.key)}
-                    className="h-4 w-4 rounded border-slate-600 bg-slate-950 text-cta"
+                    className="h-4 w-4 rounded border-gray-300 bg-white text-cta"
                   />
                   <span className="min-w-0 flex-1 truncate">{option.label}</span>
                   {selectedSet.has(option.key) && <Check className="h-4 w-4 shrink-0 text-cta" />}
                 </label>
               ))}
               {filteredOptions.length === 0 && (
-                <div className="px-3 py-3 text-sm text-slate-500">{noOptionsLabel}</div>
+                <div className="px-3 py-3 text-sm text-gray-400">{noOptionsLabel}</div>
               )}
             </div>
             {selectedValues.length > 0 && (
-              <div className="border-t border-slate-800 p-2">
+              <div className="border-t border-gray-100 p-2">
                 <button
                   type="button"
                   onClick={_clear}
-                  className="w-full rounded-md px-3 py-2 text-left text-sm text-slate-300 transition-colors duration-100 hover:bg-slate-800 hover:text-white"
+                  className="w-full rounded-md px-3 py-2 text-left text-sm text-gray-600 transition-colors duration-100 hover:bg-gray-50 hover:text-gray-900"
                 >
                   {clearLabel}
                 </button>
@@ -270,11 +270,11 @@ export function MultiCheckboxField({ label, values, options, onChange }) {
     onChange(selected.includes(key) ? selected.filter((item) => item !== key) : [...selected, key]);
   };
   return (
-    <div className="flex flex-col gap-2 text-xs text-slate-400">
+    <div className="flex flex-col gap-2 text-xs text-gray-500">
       <span>{label}</span>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
         {options.map((option) => (
-          <label key={option.key} className="flex items-center gap-2 rounded-lg border border-slate-800 bg-slate-950 px-3 py-2 text-slate-200">
+          <label key={option.key} className="dash-control flex items-center gap-2 rounded-lg border border-gray-100 bg-white px-3 py-2 text-gray-700">
             <input type="checkbox" checked={selected.includes(option.key)} onChange={() => _toggle(option.key)} />
             {option.label}
           </label>
@@ -306,7 +306,7 @@ export function AddButton({ label, onClick }) {
 
 export function RemoveButton({ label, onClick }) {
   return (
-    <button type="button" onClick={onClick} className="inline-flex items-center gap-2 text-xs text-red-300 hover:text-red-200 cursor-pointer">
+    <button type="button" onClick={onClick} className="inline-flex items-center gap-2 text-xs text-red-500 hover:text-red-600 cursor-pointer">
       <Minus className="w-3.5 h-3.5" />
       {label}
     </button>
@@ -316,7 +316,7 @@ export function RemoveButton({ label, onClick }) {
 export function ValidationSummary({ issues }) {
   if (!issues.length) return null;
   return (
-    <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-200">
+    <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-600">
       <ul className="list-disc pl-5 space-y-1">
         {issues.map((issue) => (
           <li key={issue}>{issue}</li>

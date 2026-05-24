@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { SelectField } from './QuestionBankFormFields';
 
 const controlClass =
-  'h-10 rounded-lg border border-slate-700/70 bg-slate-950/70 text-sm text-slate-200 shadow-inner shadow-black/10 outline-none transition-all duration-150 hover:border-slate-500/80 hover:bg-slate-900 focus:border-cta focus:ring-2 focus:ring-cta/20';
+  'dash-control h-10 rounded-lg border border-slate-700/70 bg-slate-950/70 text-sm text-slate-200 outline-none transition-all duration-150 focus:border-cta focus:ring-2 focus:ring-cta/20';
 
 export default function ProbeFilterBar({
   filters,
@@ -54,7 +54,7 @@ export default function ProbeFilterBar({
       <button
         type="button"
         onClick={onReset}
-        className="h-10 px-3 rounded-lg border border-slate-700/70 bg-slate-800/80 text-slate-300 transition-all duration-150 hover:border-slate-500 hover:bg-slate-700 hover:text-white cursor-pointer"
+        className="dash-control h-10 px-3 rounded-lg border border-slate-700/70 bg-slate-800/80 text-slate-300 transition-all duration-150 hover:text-white cursor-pointer"
       >
         <RotateCcw className="w-4 h-4" />
       </button>

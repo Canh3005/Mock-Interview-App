@@ -1,30 +1,41 @@
-/**
- * LanguageSwitcher — Dropdown to change the application language
- * Supports: Vietnamese (vi), English (en), Japanese (ja)
- */
 import { useState, useRef, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Languages, Check } from 'lucide-react'
 
 const LANGUAGES = [
-  { code: 'vi', label: 'Tiếng Việt', flag: '🇻🇳' },
-  { code: 'en', label: 'English', flag: '🇬🇧' },
-  { code: 'ja', label: '日本語', flag: '🇯🇵' },
+  { code: 'vi', short: 'VN', label: 'Tiếng Việt' },
+  { code: 'en', short: 'EN', label: 'English' },
+  { code: 'ja', short: 'JA', label: '日本語' },
 ]
 
-export default function LanguageSwitcher() {
+export default function LanguageSwitcher({ variant = 'dark' }) {
   const { i18n } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
   const dropdownRef = useRef(null)
 
-  const currentLanguage = LANGUAGES.find(lang => lang.code === i18n.language) || LANGUAGES[0]
+  const currentLanguage = LANGUAGES.find((lang) => lang.code === i18n.language) || LANGUAGES[0]
+  const isLight = variant === 'light'
+
+  const triggerClass = isLight
+    ? 'dash-control dash-muted hover:text-[var(--dash-text)]'
+    : 'border-slate-700/60 bg-slate-900 text-slate-300 hover:border-cta/60 hover:text-white'
+
+  const menuClass = isLight
+    ? 'dash-card shadow-xl'
+    : 'border-slate-700/60 bg-slate-900 shadow-lg'
+
+  const getItemClass = (active) => {
+    if (active) return 'dash-nav-active'
+    return isLight
+      ? 'dash-nav-muted hover:bg-[var(--dash-surface-muted)]'
+      : 'text-slate-300 hover:bg-slate-700/40 hover:text-white'
+  }
 
   const handleLanguageChange = (langCode) => {
     i18n.changeLanguage(langCode)
     setIsOpen(false)
   }
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -43,46 +54,40 @@ export default function LanguageSwitcher() {
 
   return (
     <div className="relative" ref={dropdownRef}>
-      {/* Trigger button */}
       <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-2 rounded-lg bg-primary border border-slate-700/60 text-slate-300 hover:text-white hover:border-cta/60 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta"
+        onClick={() => setIsOpen((open) => !open)}
+        className={`flex h-10 items-center gap-2 rounded-[14px] border px-3 text-sm font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta ${triggerClass}`}
         aria-label="Change language"
         aria-expanded={isOpen}
       >
         <Languages size={16} />
-        <span className="text-xs font-medium hidden sm:inline">
-          {currentLanguage.flag} {currentLanguage.label}
+        <span className="hidden whitespace-nowrap text-xs font-semibold sm:inline">
+          {currentLanguage.short} {currentLanguage.label}
         </span>
-        <span className="text-xs font-medium sm:hidden">
-          {currentLanguage.flag}
+        <span className="text-xs font-semibold sm:hidden">
+          {currentLanguage.short}
         </span>
       </button>
 
-      {/* Dropdown menu */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-primary border border-slate-700/60 rounded-lg shadow-lg z-50 overflow-hidden">
-          {LANGUAGES.map((lang) => (
-            <button
-              key={lang.code}
-              onClick={() => handleLanguageChange(lang.code)}
-              className={`
-                w-full flex items-center justify-between px-4 py-2.5 text-sm transition-colors duration-150
-                ${i18n.language === lang.code
-                  ? 'bg-cta/10 text-cta'
-                  : 'text-slate-300 hover:bg-slate-700/40 hover:text-white'
-                }
-              `}
-            >
-              <span className="flex items-center gap-2">
-                <span className="text-base">{lang.flag}</span>
-                <span className="font-medium">{lang.label}</span>
-              </span>
-              {i18n.language === lang.code && (
-                <Check size={16} className="text-cta" />
-              )}
-            </button>
-          ))}
+        <div className={`absolute right-0 z-50 mt-2 w-48 overflow-hidden rounded-[16px] border ${menuClass}`}>
+          {LANGUAGES.map((lang) => {
+            const active = i18n.language === lang.code
+
+            return (
+              <button
+                key={lang.code}
+                onClick={() => handleLanguageChange(lang.code)}
+                className={`flex w-full items-center justify-between px-4 py-2.5 text-sm transition-colors duration-150 ${getItemClass(active)}`}
+              >
+                <span className="flex items-center gap-2">
+                  <span className="dash-subtle text-xs font-semibold">{lang.short}</span>
+                  <span className="font-semibold">{lang.label}</span>
+                </span>
+                {active && <Check size={16} className="text-cta" />}
+              </button>
+            )
+          })}
         </div>
       )}
     </div>

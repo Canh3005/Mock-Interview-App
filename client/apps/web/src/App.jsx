@@ -1,5 +1,5 @@
-import { useEffect } from 'react'
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { useEffect, useLayoutEffect } from 'react'
+import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { checkAuthRequest } from './store/slices/authSlice'
 import { ROUTES } from './router/routes'
@@ -24,11 +24,23 @@ import ScoringPage from './components/scoring/ScoringPage'
 import ProblemBankPage from './components/practice/ProblemBankPage'
 import PublicQuestionBankPage from './components/question-bank/PublicQuestionBankPage'
 import QuestionProbeDetailPage from './components/question-bank/QuestionProbeDetailPage'
-import AdminLayout from './components/admin/AdminLayout'
 import AdminProblemsPage from './components/admin/AdminProblemsPage'
 import AdminTestCasesPage from './components/admin/AdminTestCasesPage'
 import AdminSDProblemsPage from './components/admin/AdminSDProblemsPage'
 import AdminQuestionBankPage from './components/admin/AdminQuestionBankPage'
+import DashboardShell from './components/shared/DashboardShell'
+
+function PublicDarkTheme() {
+  useLayoutEffect(() => {
+    document.documentElement.classList.add('dark')
+  }, [])
+
+  return (
+    <div className="public-dark-theme min-h-screen">
+      <Outlet />
+    </div>
+  )
+}
 
 function AppRoutes() {
   const dispatch = useDispatch()
@@ -41,20 +53,35 @@ function AppRoutes() {
   return (
     <>
       <Routes>
-        <Route path={ROUTES.LANDING} element={<LandingPage />} />
+        <Route element={<PublicDarkTheme />}>
+          <Route path={ROUTES.LANDING} element={<LandingPage />} />
 
-        <Route element={<GuestRoute />}>
-          <Route path={ROUTES.LOGIN} element={<LoginPage />} />
-          <Route path={ROUTES.REGISTER} element={<RegisterPage />} />
+          <Route element={<GuestRoute />}>
+            <Route path={ROUTES.LOGIN} element={<LoginPage />} />
+            <Route path={ROUTES.REGISTER} element={<RegisterPage />} />
+          </Route>
         </Route>
 
         <Route element={<ProtectedRoute />}>
-          <Route path={ROUTES.DASHBOARD} element={<DashboardPage />} />
-          <Route path={ROUTES.DASHBOARD_PROFILE} element={<SkillPassportPage />} />
+          {/* Dashboard shell — sidebar layout */}
+          <Route element={<DashboardShell />}>
+            <Route path={ROUTES.DASHBOARD} element={<DashboardPage />} />
+            <Route path={ROUTES.DASHBOARD_PROFILE} element={<SkillPassportPage />} />
+            <Route path={ROUTES.PRACTICE_PROBLEMS} element={<ProblemBankPage />} />
+            <Route path={ROUTES.QUESTION_BANK} element={<PublicQuestionBankPage />} />
+            <Route path={ROUTES.QUESTION_BANK_DETAIL} element={<QuestionProbeDetailPage />} />
+
+            {/* Admin pages — vẫn dùng sidebar chung, bỏ AdminLayout */}
+            <Route element={<AdminRoute />}>
+              <Route path={ROUTES.ADMIN} element={<AdminProblemsPage />} />
+              <Route path={ROUTES.ADMIN_TESTCASES} element={<AdminTestCasesPage />} />
+              <Route path={ROUTES.ADMIN_SD_PROBLEMS} element={<AdminSDProblemsPage />} />
+              <Route path={ROUTES.ADMIN_QUESTION_BANK} element={<AdminQuestionBankPage />} />
+            </Route>
+          </Route>
+
+          {/* Full-screen routes (no sidebar) */}
           <Route path={ROUTES.INTERVIEW_SETUP} element={<InterviewSetupFlow />} />
-          <Route path={ROUTES.PRACTICE_PROBLEMS} element={<ProblemBankPage />} />
-          <Route path={ROUTES.QUESTION_BANK} element={<PublicQuestionBankPage />} />
-          <Route path={ROUTES.QUESTION_BANK_DETAIL} element={<QuestionProbeDetailPage />} />
           <Route path={ROUTES.DSA_ROOM_SOLO} element={<DSASessionPage />} />
 
           <Route element={<InterviewRoomRoute />}>
@@ -64,13 +91,6 @@ function AppRoutes() {
             <Route path={ROUTES.DSA_ROOM} element={<DSASessionPage />} />
             <Route path={ROUTES.SD_ROOM} element={<SDRoomPage />} />
             <Route path={ROUTES.SCORING} element={<ScoringPage />} />
-          </Route>
-
-          <Route element={<AdminRoute />}>
-            <Route path={ROUTES.ADMIN} element={<AdminLayout><AdminProblemsPage /></AdminLayout>} />
-            <Route path={ROUTES.ADMIN_TESTCASES} element={<AdminLayout><AdminTestCasesPage /></AdminLayout>} />
-            <Route path={ROUTES.ADMIN_SD_PROBLEMS} element={<AdminLayout><AdminSDProblemsPage /></AdminLayout>} />
-            <Route path={ROUTES.ADMIN_QUESTION_BANK} element={<AdminLayout><AdminQuestionBankPage /></AdminLayout>} />
           </Route>
         </Route>
 

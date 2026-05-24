@@ -1,101 +1,61 @@
-/**
- * UpcomingSessions — Upcoming scheduled interview practice sessions
- */
-import { Calendar, Clock, Video, ChevronRight, Plus } from 'lucide-react'
+import { Clock, Video, Plus } from 'lucide-react'
 
 const SESSIONS = [
-  {
-    id: 1,
-    date: 'Thứ 3, 25 Feb',
-    time: '19:00',
-    topic: 'System Design: Design Twitter',
-    type: 'Video Call',
-    level: 'Senior',
-    levelColor: 'text-rose-400 bg-rose-400/10 border-rose-400/30',
-  },
-  {
-    id: 2,
-    date: 'Thứ 5, 27 Feb',
-    time: '20:30',
-    topic: 'LeetCode: Hard DP Problems',
-    type: 'Mock Test',
-    level: 'Hard',
-    levelColor: 'text-amber-400 bg-amber-400/10 border-amber-400/30',
-  },
-  {
-    id: 3,
-    date: 'Thứ 7, 01 Mar',
-    time: '10:00',
-    topic: 'Behavioral Interview Simulation',
-    type: 'Video Call',
-    level: 'Medium',
-    levelColor: 'text-sky-400 bg-sky-400/10 border-sky-400/30',
-  },
+  { id: 1, month: 'Th 10', day: '24', topic: 'Mock Interview: Frontend', time: '14:00 - 15:30', type: 'Video Call', status: 'Sắp diễn ra', tone: 'dash-chip border' },
+  { id: 2, month: 'Th 10', day: '26', topic: 'System Design Practice', time: '09:00 - 10:00', type: 'Mock Test', status: 'Đã xác nhận', tone: 'dash-badge border' },
+  { id: 3, month: 'Th 11', day: '02', topic: 'Behavioral Q&A', time: '15:00 - 16:00', type: 'Video Call', status: 'Lên lịch', tone: 'dash-badge border' },
 ]
 
-export default function UpcomingSessions({ colSpan = '' }) {
+export default function UpcomingSessions({ colSpan = '', compact = false }) {
+  const gridClass = compact
+    ? 'grid grid-cols-1 gap-3'
+    : 'grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3'
+
   return (
-    <div className={[colSpan, 'bg-primary border border-slate-700/60 rounded-[12px] p-6 shadow-md'].join(' ')}>
-      {/* Header */}
-      <div className="flex items-center justify-between mb-5">
+    <section className={[colSpan, 'dash-card rounded-[20px] p-5 transition-colors duration-200 sm:p-6'].join(' ')}>
+      <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="font-heading text-base font-semibold text-white tracking-tight">Phiên sắp tới</h2>
-          <p className="font-body text-xs text-slate-400 mt-0.5">3 buổi đã đặt lịch</p>
+          <h2 className="dash-card-title">Lịch phỏng vấn sắp tới</h2>
+          <p className="dash-subtle mt-1 text-xs font-medium">Các phiên đã lên lịch</p>
         </div>
-        <button
-          className="flex items-center gap-1.5 font-body text-xs font-medium text-cta bg-cta/10 border border-cta/30 hover:bg-cta/20 transition-colors duration-200 cursor-pointer px-3 py-1.5 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta"
-          aria-label="Đặt lịch phiên mới"
-        >
-          <Plus size={12} />
-          Đặt lịch
+        <button className="dash-chip inline-flex h-10 items-center justify-center gap-2 rounded-[13px] border px-3 text-sm font-semibold transition-colors hover:opacity-85">
+          <Plus size={16} />
+          Đặt lịch mới
         </button>
       </div>
 
-      {/* Sessions list */}
-      <div className="flex flex-col gap-3">
+      <div className={gridClass}>
         {SESSIONS.map((session) => (
-          <div
+          <article
             key={session.id}
-            className="group flex items-center gap-4 bg-slate-800/60 border border-slate-700/60 rounded-xl p-4 cursor-pointer hover:border-slate-600 hover:bg-slate-800/80 transition-all duration-200"
+            className="dash-muted-panel group flex gap-3 rounded-[16px] border p-3.5 transition-colors hover:bg-[var(--dash-surface-raised)]"
           >
-            {/* Date block */}
-            <div className="shrink-0 flex flex-col items-center justify-center w-12 h-12 rounded-xl bg-cta/10 border border-cta/30">
-              <span className="font-heading text-cta text-xs font-bold leading-none">
-                {session.date.split(' ')[2]}
-              </span>
-              <span className="font-body text-cta/70 text-[9px] mt-0.5 uppercase tracking-wide">
-                {session.date.split(' ')[3]}
-              </span>
+            <div className="flex min-w-14 flex-col items-center justify-center rounded-[13px] border border-[var(--dash-border)] bg-[var(--dash-surface-raised)] p-2.5 shadow-[var(--dash-shadow-control)]">
+              <span className="text-[10px] font-bold uppercase text-[var(--dash-danger)]">{session.month}</span>
+              <span className="dash-text text-2xl font-bold leading-none">{session.day}</span>
             </div>
 
-            {/* Info */}
-            <div className="flex-1 min-w-0">
-              <p className="font-body text-sm font-medium text-white truncate">{session.topic}</p>
-              <div className="flex items-center gap-3 mt-1 flex-wrap">
-                <span className="flex items-center gap-1 font-body text-xs text-slate-400">
-                  <Clock size={10} />
+            <div className="min-w-0 flex-1">
+              <h3 className="dash-text truncate text-sm font-semibold transition-colors group-hover:text-[var(--dash-accent-text)]">
+                {session.topic}
+              </h3>
+              <div className="dash-muted mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
+                <span className="inline-flex items-center gap-1">
+                  <Clock size={13} />
                   {session.time}
                 </span>
-                <span className="flex items-center gap-1 font-body text-xs text-slate-400">
-                  <Video size={10} />
+                <span className="inline-flex items-center gap-1">
+                  <Video size={13} />
                   {session.type}
                 </span>
-                <span
-                  className={`font-body text-[10px] font-medium px-2 py-0.5 rounded border ${session.levelColor}`}
-                >
-                  {session.level}
-                </span>
               </div>
+              <span className={`mt-3 inline-flex rounded-full px-2.5 py-1 text-[11px] font-semibold ${session.tone}`}>
+                {session.status}
+              </span>
             </div>
-
-            {/* Arrow */}
-            <ChevronRight
-              size={16}
-              className="shrink-0 text-slate-600 group-hover:text-cta transition-colors duration-200"
-            />
-          </div>
+          </article>
         ))}
       </div>
-    </div>
+    </section>
   )
 }

@@ -110,7 +110,7 @@ export default function ProblemEditor({ onCancel }) {
 
   if (loading && !currentProblem) {
     return (
-      <div className="max-w-6xl mx-auto flex flex-col gap-6 font-body pb-12 animate-pulse">
+      <main className="dash-page font-body pb-12 animate-pulse">
         <div className="flex items-center justify-between">
           <div className="space-y-2">
             <div className="h-7 w-56 bg-slate-700/60 rounded-lg" />
@@ -125,7 +125,7 @@ export default function ProblemEditor({ onCancel }) {
         <div className="flex gap-4 border-b border-slate-700/60 pb-0">
           {[1, 2, 3].map(i => <div key={i} className="h-10 w-28 bg-slate-700/40 rounded-t-lg" />)}
         </div>
-        <div className="bg-slate-800/40 border border-slate-700/60 rounded-xl p-6 min-h-[500px] space-y-5">
+        <div className="dash-card rounded-xl p-6 min-h-[500px] space-y-5">
           {[1, 2, 3, 4].map(i => (
             <div key={i} className="space-y-2">
               <div className="h-4 w-32 bg-slate-700/50 rounded" />
@@ -133,30 +133,30 @@ export default function ProblemEditor({ onCancel }) {
             </div>
           ))}
         </div>
-      </div>
+      </main>
     );
   }
 
   return (
-    <div className="max-w-6xl mx-auto flex flex-col gap-6 animate-in slide-in-from-bottom-4 duration-500 font-body pb-12">
-      <div className="flex items-center justify-between">
+    <main className="dash-page animate-in slide-in-from-bottom-4 duration-500 font-body pb-12">
+      <header className="dash-page-header">
         <div>
           <h2 className="text-2xl font-bold font-heading text-white">{currentProblem ? 'Chỉnh Sửa Bài Tập' : 'Tạo Bài Tập Mới'}</h2>
           <p className="text-slate-400">Thiết kế một thử thách thuật toán hoàn hảo.</p>
         </div>
         <div className="flex gap-3">
-          <button onClick={onCancel} className="px-4 py-2 rounded-lg font-medium text-slate-300 bg-slate-800 hover:bg-slate-700 transition-colors border border-slate-700/60 cursor-pointer">
+          <button onClick={onCancel} className="dash-card px-4 py-2 rounded-lg font-medium hover:brightness-95 transition-colors cursor-pointer">
             Hủy
           </button>
           <button onClick={handleSave} className="px-4 py-2 rounded-lg font-medium text-white bg-blue-600 hover:bg-blue-500 transition-colors flex items-center gap-2 shadow-md cursor-pointer">
             <Save className="w-4 h-4" /> Lưu (DRAFT)
           </button>
-          <button onClick={handleVerify} disabled={verifyLoading} className="px-4 py-2 rounded-lg font-medium text-white bg-cta hover:bg-cta/90 transition-colors flex items-center gap-2 shadow-md disabled:opacity-50 cursor-pointer">
+          <button onClick={handleVerify} disabled={verifyLoading} className="dash-primary-button px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 disabled:opacity-50 cursor-pointer">
             {verifyLoading ? <Clock className="w-4 h-4 animate-spin" /> : <ShieldCheck className="w-4 h-4" />}
             {verifyLoading ? 'Đang chấm...' : 'Duyệt hệ thống'}
           </button>
         </div>
-      </div>
+      </header>
 
       {/* Verification Result Feedback */}
       {verifyResult && (
@@ -420,6 +420,6 @@ export default function ProblemEditor({ onCancel }) {
           </div>
         )}
       </div>
-    </div>
+    </main>
   );
 }

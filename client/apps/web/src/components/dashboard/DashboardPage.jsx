@@ -1,61 +1,46 @@
-/**
- * DashboardPage — Main dashboard with Bento Box grid layout
- * Layout (12-col grid):
- *   Row 1: 4 StatCards (col-span-3 each)
- *   Row 2: RadarChart (col-span-5, center) + SkillBreakdown (col-span-4) + UpcomingSessions (col-span-3)
- *   Row 3: InterviewHistory (col-span-8) + LearningPath (col-span-4)
- */
-import { useState, useEffect } from 'react'
-import { Github, Code2, Target, Award, Activity, BookOpen, BookOpenCheck } from 'lucide-react'
+import { Github, Code2, Target, Award, Activity, Play } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import SharedNavbar from '../shared/SharedNavbar'
 import { ROUTES } from '../../router/routes'
 import StatCard from './StatCard'
 import RadarChartPlaceholder from './RadarChartPlaceholder'
-
 import LearningPath from './LearningPath'
 import SkillBreakdown from './SkillBreakdown'
 import UpcomingSessions from './UpcomingSessions'
 import InProgressSessions from './InProgressSessions'
 
 export default function DashboardPage() {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   const { t } = useTranslation()
   const token = useSelector((state) => state.auth.accessToken)
   const user = useSelector((state) => state.auth.user)
-  const [darkMode, setDarkMode] = useState(true)
   const isGithubLinked = user?.linkedProviders?.includes('github')
-  // Sync dark class on <html>
-  useEffect(() => {
-    document.documentElement.classList.toggle('dark', darkMode)
-  }, [darkMode])
 
   const stats = [
     {
-      icon: <Code2 size={18} />,
+      icon: <Code2 size={20} />,
       label: t('dashboard.stats.totalInterviews'),
       value: '47',
-      change: `+3 ${t('dashboard.stats.weekChange')}`,
+      change: '+12%',
       changeType: 'up',
     },
     {
-      icon: <Target size={18} />,
+      icon: <Target size={20} />,
       label: t('dashboard.stats.avgScore'),
       value: '77.4',
-      change: `+2.1 ${t('dashboard.stats.monthChange')}`,
+      change: '+3.2',
       changeType: 'up',
     },
     {
-      icon: <Award size={18} />,
+      icon: <Award size={20} />,
       label: t('dashboard.stats.skillsMastered'),
       value: '12',
-      change: `2 ${t('dashboard.stats.newSkills')}`,
-      changeType: 'up',
+      change: 'Mới',
+      changeType: 'neutral',
     },
     {
-      icon: <Activity size={18} />,
+      icon: <Activity size={20} />,
       label: t('dashboard.stats.studyStreak'),
       value: '14 ngày',
       change: t('dashboard.stats.personalRecord'),
@@ -63,127 +48,63 @@ export default function DashboardPage() {
     },
   ]
 
+  const handleGithubLink = () => {
+    const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+    window.location.href = `${backendUrl}/auth/github/link?t=${token}`
+  }
+
   return (
-    <div className={darkMode ? 'dark' : ''}>
-      <div className="min-h-screen bg-background text-text-base font-body transition-colors duration-300">
-
-        {/* ── Shared Navbar ── */}
-        <SharedNavbar
-          page="dashboard"
-          darkMode={darkMode}
-          onToggleDark={() => setDarkMode(d => !d)}
-        />
-
-        {/* ── Main Content ── */}
-        <main className="max-w-[1400px] mx-auto px-4 sm:px-6 py-6 space-y-5">
-
-          {/* Page header */}
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
-            <div>
-              <h1 className="font-heading text-2xl font-bold text-white leading-tight">
-                {t('dashboard.welcome')}, {user?.name || 'User'}
-              </h1>
-              <p className="font-body text-sm text-slate-400 mt-1">
-                {t('dashboard.greeting')} — Chủ nhật, 22 tháng 2 năm 2026
-              </p>
-            </div>
-            <div className="flex items-center gap-3 shrink-0">
-              {!isGithubLinked && (
-                <button
-                  onClick={() => {
-                    const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
-                    window.location.href = `${backendUrl}/auth/github/link?t=${token}`;
-                  }}
-                  className="inline-flex items-center gap-2 font-body text-sm font-medium text-slate-300 bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 px-4 py-2.5 rounded-xl transition-all duration-200 cursor-pointer hover:-translate-y-0.5"
-                >
-                  <Github size={15} />
-                  {t('auth.linkingGitHub')}
-                </button>
-              )}
-              <button
-                onClick={() => navigate(ROUTES.PRACTICE_PROBLEMS)}
-                className="inline-flex items-center gap-2 font-body text-sm font-semibold text-slate-200 bg-slate-700 hover:bg-slate-600 px-5 py-2.5 rounded-xl transition-all duration-200 cursor-pointer hover:-translate-y-0.5"
-              >
-                <BookOpen size={15} />
-                Luyện tập thuật toán
-              </button>
-              <button
-                onClick={() => navigate(ROUTES.QUESTION_BANK)}
-                className="inline-flex items-center gap-2 font-body text-sm font-semibold text-slate-200 bg-slate-700 hover:bg-slate-600 px-5 py-2.5 rounded-xl transition-all duration-200 cursor-pointer hover:-translate-y-0.5"
-              >
-                <BookOpenCheck size={15} />
-                {t('questionBank.navLabel')}
-              </button>
-              <button
-                onClick={() => navigate(ROUTES.INTERVIEW_SETUP)}
-                className="inline-flex items-center gap-2 font-body text-sm font-semibold text-white bg-cta hover:bg-cta/90 px-5 py-2.5 rounded-xl transition-all duration-200 cursor-pointer hover:-translate-y-0.5 shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta"
-              >
-                <Code2 size={15} />
-                {t('dashboard.startInterview')}
-              </button>
-            </div>
-          </div>
-
-          {/* ── Row 1: Stat Cards (4 × col-span-3) ── */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {stats.map((s, i) => (
-              <StatCard key={i} {...s} onClick={() => {}} />
-            ))}
-          </div>
-
-          {/* ── Row 2: Radar (center) + Skill Breakdown + Upcoming Sessions ── */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-            {/* Radar Chart — center piece (5 cols) */}
-            <div className="lg:col-span-5">
-              <RadarChartPlaceholder />
-            </div>
-
-            {/* Skill Breakdown (4 cols) */}
-            <div className="lg:col-span-4">
-              <SkillBreakdown />
-            </div>
-
-            {/* Upcoming Sessions (3 cols) */}
-            <div className="lg:col-span-3">
-              <UpcomingSessions />
-            </div>
-          </div>
-
-          {/* ── Row 3: In-Progress Sessions (8 cols) + Learning Path (4 cols) ── */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-            <div className="lg:col-span-8">
-              <InProgressSessions />
-            </div>
-            <div className="lg:col-span-4">
-              <LearningPath />
-            </div>
-          </div>
-
-        </main>
-
-        {/* ── Footer ── */}
-        <footer className="max-w-[1400px] mx-auto px-6 py-6 border-t border-slate-700/40 mt-4">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-            <p className="font-body text-xs text-slate-500">
-              {t('dashboard.footer.copyright')}
+    <div className="dash-page-shell min-h-full transition-colors duration-200">
+      <main className="dash-page">
+        <header className="dash-page-header">
+          <div>
+            <h1 className="dash-page-title">{t('dashboard.title') || 'Dashboard'}</h1>
+            <p className="dash-page-description">
+              Theo dõi tiến độ luyện phỏng vấn, kỹ năng và lịch luyện tập của bạn.
             </p>
-            <div className="flex items-center gap-5">
-              {[
-                { key: 'support', label: t('dashboard.footer.support') },
-                { key: 'privacy', label: t('dashboard.footer.privacy') },
-                { key: 'terms', label: t('dashboard.footer.terms') }
-              ].map((link) => (
-                <button
-                  key={link.key}
-                  className="font-body text-xs text-slate-500 hover:text-slate-300 transition-colors duration-200 cursor-pointer"
-                >
-                  {link.label}
-                </button>
-              ))}
-            </div>
           </div>
-        </footer>
-      </div>
+
+          <div className="flex shrink-0 flex-col gap-3 sm:flex-row">
+            {!isGithubLinked && (
+              <button
+                onClick={handleGithubLink}
+                className="dash-card inline-flex h-11 items-center justify-center gap-2 rounded-[14px] px-5 text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5 hover:text-[var(--dash-accent-text)]"
+              >
+                <Github size={16} />
+                {t('auth.linkingGitHub')}
+              </button>
+            )}
+            <button
+              onClick={() => navigate(ROUTES.INTERVIEW_SETUP)}
+              className="dash-primary-button inline-flex h-11 items-center justify-center gap-2 rounded-[14px] px-5 text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5"
+            >
+              <Play size={17} />
+              {t('dashboard.startInterview')}
+            </button>
+          </div>
+        </header>
+
+        <section className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
+          {stats.map((stat, index) => (
+            <StatCard key={stat.label} {...stat} isPrimary={index === 0} />
+          ))}
+        </section>
+
+        <section className="grid grid-cols-1 gap-5 lg:grid-cols-12">
+          <RadarChartPlaceholder colSpan="lg:col-span-4" />
+          <SkillBreakdown colSpan="lg:col-span-8" />
+        </section>
+
+        <section className="grid grid-cols-1 gap-5 lg:grid-cols-12">
+          <div className="lg:col-span-8">
+            <InProgressSessions />
+          </div>
+          <div className="flex flex-col gap-5 lg:col-span-4">
+            <LearningPath />
+            <UpcomingSessions compact />
+          </div>
+        </section>
+      </main>
     </div>
   )
 }

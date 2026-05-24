@@ -11,7 +11,7 @@ function ScoreBar({ score }) {
     'from-red-500 to-rose-400';
   return (
     <div className="flex items-center gap-3">
-      <div className="flex-1 bg-slate-700 rounded-full h-2 overflow-hidden">
+      <div className="flex-1 bg-gray-200 rounded-full h-2 overflow-hidden">
         <div
           className={`bg-gradient-to-r ${color} h-2 rounded-full transition-all duration-500`}
           style={{ width: `${score}%` }}

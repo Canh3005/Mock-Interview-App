@@ -1,185 +1,86 @@
-/**
- * RadarChartPlaceholder — Styled placeholder for Radar Chart (to be replaced with Recharts/Chart.js)
- * Renders a visual spider/radar grid with CSS, labeled axes for:
- *   Communication, Algorithm, System Design, Problem Solving, Behavioral
- */
 export default function RadarChartPlaceholder({ colSpan = '' }) {
   const axes = [
-    { label: 'Giao tiếp',    angle: -90,  score: 78 },
-    { label: 'Thuật toán',   angle: -18,  score: 85 },
-    { label: 'System Design',angle: 54,   score: 62 },
-    { label: 'Problem Solving', angle: 126, score: 90 },
-    { label: 'Behavioral',   angle: 198,  score: 70 },
+    { label: 'Thuật toán', angle: 0, score: 85 },
+    { label: 'System Design', angle: 72, score: 62 },
+    { label: 'Giao tiếp', angle: 144, score: 78 },
+    { label: 'Problem Solving', angle: 216, score: 90 },
+    { label: 'Behavioral', angle: 288, score: 70 },
   ]
 
-  const cx = 50   // percent
-  const cy = 50   // percent
-  const r  = 38   // percent radius of outermost ring
+  const cx = 50
+  const cy = 50
+  const r = 36
 
-  // Convert polar (angle in deg from top, radius 0–1) → SVG %coords
   const polar = (angleDeg, frac) => {
     const rad = ((angleDeg - 90) * Math.PI) / 180
-    return {
-      x: cx + frac * r * Math.cos(rad),
-      y: cy + frac * r * Math.sin(rad),
-    }
+    return { x: cx + frac * r * Math.cos(rad), y: cy + frac * r * Math.sin(rad) }
   }
 
-  // Build polygon points for score polygon
-  const scorePoints = axes
-    .map(({ angle, score }) => {
-      const pt = polar(angle, score / 100)
-      return `${pt.x}% ${pt.y}%`
-    })
-    .join(', ')
-
-  // Build background ring polygons (4 rings at 25%, 50%, 75%, 100%)
   const rings = [0.25, 0.5, 0.75, 1].map((frac) =>
     axes.map(({ angle }) => {
-      const pt = polar(angle, frac)
-      return `${pt.x}% ${pt.y}%`
-    }).join(', ')
+      const point = polar(angle, frac)
+      return `${point.x},${point.y}`
+    }).join(' ')
   )
 
+  const dataPoints = axes.map(({ angle, score }) => {
+    const point = polar(angle, score / 100)
+    return `${point.x},${point.y}`
+  }).join(' ')
+
   return (
-    <div
-      className={[
-        colSpan,
-        'bg-primary border border-slate-700/60 rounded-[12px] p-6 shadow-md',
-        'flex flex-col',
-      ].join(' ')}
-    >
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h2 className="font-heading text-base font-semibold text-white tracking-tight">
-            Radar Năng lực
-          </h2>
-          <p className="font-body text-xs text-slate-400 mt-0.5">
-            Đánh giá tổng quan 5 nhóm kỹ năng
-          </p>
-        </div>
-        <span className="font-heading text-xs font-medium text-cta bg-cta/10 border border-cta/30 px-2.5 py-1 rounded-full">
-          Avg 77%
-        </span>
+    <div className={[colSpan, 'dash-card flex min-h-[380px] flex-col rounded-[20px] p-5 transition-colors duration-200 sm:p-6'].join(' ')}>
+      <div>
+        <h2 className="dash-card-title">Radar Năng lực</h2>
+        <p className="dash-subtle mt-1 text-xs font-medium">So sánh các nhóm kỹ năng chính</p>
       </div>
 
-      {/* Chart area */}
-      <div className="relative flex-1 min-h-[260px] flex items-center justify-center">
-        <div className="relative w-full max-w-[300px] aspect-square mx-auto">
-          {/* SVG Radar Grid */}
-          <svg
-            viewBox="0 0 100 100"
-            className="w-full h-full absolute inset-0"
-            aria-label="Radar chart placeholder"
-          >
-            {/* Concentric rings */}
-            {rings.map((pts, i) => (
-              <polygon
-                key={i}
-                points={pts.replace(/(\d+\.?\d*)%/g, (_, n) => (parseFloat(n) * 1))}
-                // We use CSS polygon via clipPath trick — actually easier with real % coords in a foreignObject.
-                // For pure SVG, we convert % to 0–100 units directly.
-                className="fill-none stroke-slate-700/60"
-                strokeWidth="0.5"
-              />
+      <div className="relative flex flex-1 items-center justify-center pt-5">
+        <div className="relative aspect-square w-full max-w-[315px]">
+          <svg viewBox="0 0 100 100" className="absolute inset-0 h-full w-full" aria-label="Radar chart">
+            <defs>
+              <linearGradient id="skillRadarFill" x1="0" x2="1" y1="0" y2="1">
+                <stop offset="0%" stopColor="var(--dash-accent)" stopOpacity="0.5" />
+                <stop offset="100%" stopColor="#22C55E" stopOpacity="0.26" />
+              </linearGradient>
+            </defs>
+            {rings.map((points) => (
+              <polygon key={points} points={points} fill="none" stroke="var(--dash-border-strong)" strokeWidth="1" />
             ))}
-
-            {/* Axis lines */}
-            {axes.map(({ angle }, i) => {
+            {axes.map(({ angle }) => {
               const outer = polar(angle, 1)
               return (
                 <line
-                  key={i}
+                  key={angle}
                   x1={cx}
                   y1={cy}
-                  x2={parseFloat(outer.x)}
-                  y2={parseFloat(outer.y)}
-                  className="stroke-slate-700/50"
-                  strokeWidth="0.5"
+                  x2={outer.x}
+                  y2={outer.y}
+                  stroke="var(--dash-border)"
+                  strokeWidth="1"
                 />
               )
             })}
-
-            {/* Score polygon fill */}
-            <polygon
-              points={axes
-                .map(({ angle, score }) => {
-                  const pt = polar(angle, score / 100)
-                  return `${parseFloat(pt.x)},${parseFloat(pt.y)}`
-                })
-                .join(' ')}
-              className="fill-cta/20 stroke-cta"
-              strokeWidth="1"
-            />
-
-            {/* Score dots */}
-            {axes.map(({ angle, score }, i) => {
-              const pt = polar(angle, score / 100)
-              return (
-                <circle
-                  key={i}
-                  cx={parseFloat(pt.x)}
-                  cy={parseFloat(pt.y)}
-                  r="1.5"
-                  className="fill-cta stroke-background"
-                  strokeWidth="0.5"
-                />
-              )
+            <polygon points={dataPoints} fill="url(#skillRadarFill)" stroke="var(--dash-accent)" strokeWidth="1.7" />
+            {axes.map(({ angle, score }) => {
+              const point = polar(angle, score / 100)
+              return <circle key={angle} cx={point.x} cy={point.y} r="1.5" fill="var(--dash-accent)" />
             })}
-
-            {/* Ring percentage labels */}
-            {[25, 50, 75, 100].map((pct) => (
-              <text
-                key={pct}
-                x={cx + 1}
-                y={cy - (pct / 100) * r}
-                fontSize="2.2"
-                className="fill-slate-500"
-                textAnchor="start"
-              >
-                {pct}%
-              </text>
-            ))}
           </svg>
 
-          {/* Axis labels — positioned via absolute with rotation trick */}
-          {axes.map(({ label, angle, score }, i) => {
-            const labelPt = polar(angle, 1.22)
+          {axes.map(({ label, angle }) => {
+            const labelPoint = polar(angle, 1.22)
             return (
-              <div
-                key={i}
-                className="absolute pointer-events-none text-center"
-                style={{
-                  left: `${parseFloat(labelPt.x)}%`,
-                  top:  `${parseFloat(labelPt.y)}%`,
-                  transform: 'translate(-50%, -50%)',
-                  width: '72px',
-                }}
+              <span
+                key={label}
+                className="dash-muted absolute w-24 -translate-x-1/2 -translate-y-1/2 text-center text-xs font-semibold leading-tight"
+                style={{ left: `${labelPoint.x}%`, top: `${labelPoint.y}%` }}
               >
-                <span className="font-body text-[10px] font-medium text-slate-300 leading-tight block">
-                  {label}
-                </span>
-                <span className="font-heading text-[10px] font-bold text-cta">{score}%</span>
-              </div>
+                {label}
+              </span>
             )
           })}
         </div>
-      </div>
-
-      {/* Legend */}
-      <div className="mt-4 pt-4 border-t border-slate-700/60 flex items-center gap-4 flex-wrap">
-        <div className="flex items-center gap-1.5">
-          <span className="w-3 h-3 rounded-sm bg-cta/20 border border-cta inline-block" />
-          <span className="font-body text-xs text-slate-400">Điểm của bạn</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <span className="w-3 h-3 rounded-sm bg-slate-700/60 border border-slate-600 inline-block" />
-          <span className="font-body text-xs text-slate-400">Mức chuẩn</span>
-        </div>
-        <span className="ml-auto font-body text-xs text-slate-500 italic">
-          Chart.js / Recharts sẽ được tích hợp tại đây
-        </span>
       </div>
     </div>
   )

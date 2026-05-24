@@ -1,8 +1,7 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { AlertCircle, BookOpenCheck, Loader2, SearchX } from 'lucide-react';
+import { useCallback, useEffect, useMemo } from 'react';
+import { AlertCircle, Loader2, SearchX } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import SharedNavbar from '../shared/SharedNavbar';
 import {
   fetchQuestionProbesRequest,
   fetchTaxonomyRequest,
@@ -23,34 +22,27 @@ function _appLocale(i18n) {
 function PageHeader({ page, totalPages, total }) {
   const { t } = useTranslation();
   return (
-    <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+    <header className="dash-page-header">
       <div>
-        <div className="flex items-center gap-2.5 mb-1">
-          <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-cta/15 border border-cta/30 text-cta">
-            <BookOpenCheck size={16} />
-          </span>
-          <h1 className="font-heading text-2xl font-bold text-white leading-tight">
-            {t('questionBank.title')}
-          </h1>
-        </div>
-        <p className="text-sm text-slate-400">{t('questionBank.subtitle')}</p>
+        <h1 className="dash-page-title">{t('questionBank.title')}</h1>
+        <p className="dash-page-description">{t('questionBank.subtitle')}</p>
       </div>
-      <div className="rounded-lg border border-slate-700/60 bg-slate-900/60 px-4 py-2 text-right">
-        <p className="text-xs text-slate-500">
+      <div className="dash-card rounded-lg px-4 py-2 text-right">
+        <p className="dash-subtle text-xs">
           {t('questionBank.pageCount', { page, totalPages })}
         </p>
-        <p className="text-lg font-semibold text-white">
+        <p className="dash-text text-lg font-semibold">
           {t('questionBank.resultCount', { count: total })}
         </p>
       </div>
-    </div>
+    </header>
   );
 }
 
 function ErrorBanner({ error }) {
   if (!error) return null;
   return (
-    <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200 flex items-center gap-2">
+    <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600 flex items-center gap-2">
       <AlertCircle className="w-4 h-4" />
       {error}
     </div>
@@ -60,12 +52,12 @@ function ErrorBanner({ error }) {
 function EmptyState() {
   const { t } = useTranslation();
   return (
-    <div className="flex flex-col items-center justify-center gap-3 rounded-lg border border-slate-700/60 bg-slate-900/50 py-20 text-center">
-      <SearchX className="w-10 h-10 text-slate-700" />
-      <h2 className="text-base font-semibold text-slate-300">
+    <div className="flex flex-col items-center justify-center gap-3 rounded-lg border border-gray-100 bg-gray-50 py-20 text-center">
+      <SearchX className="w-10 h-10 text-gray-300" />
+      <h2 className="text-base font-semibold text-gray-700">
         {t('questionBank.emptyTitle')}
       </h2>
-      <p className="max-w-md text-sm text-slate-500">
+      <p className="max-w-md text-sm text-gray-500">
         {t('questionBank.emptyBody')}
       </p>
     </div>
@@ -76,7 +68,7 @@ function Results({ probes, page, limit, total, loading, onPageChange }) {
   const { t } = useTranslation();
   if (loading) {
     return (
-      <div className="flex items-center justify-center gap-2 py-20 text-slate-500">
+      <div className="flex items-center justify-center gap-2 py-20 text-gray-400">
         <Loader2 className="w-5 h-5 animate-spin" />
         <span className="text-sm">{t('questionBank.loading')}</span>
       </div>
@@ -99,14 +91,6 @@ function Results({ probes, page, limit, total, loading, onPageChange }) {
       />
     </section>
   );
-}
-
-function useDarkMode() {
-  const [darkMode, setDarkMode] = useState(true);
-  useEffect(() => {
-    document.documentElement.classList.toggle('dark', darkMode);
-  }, [darkMode]);
-  return [darkMode, setDarkMode];
 }
 
 function useQuestionBankLocale({ dispatch, filters, i18n }) {
@@ -149,7 +133,6 @@ function useQuestionBankActions(dispatch) {
 export default function PublicQuestionBankPage() {
   const dispatch = useDispatch();
   const { i18n } = useTranslation();
-  const [darkMode, setDarkMode] = useDarkMode();
   const {
     probes,
     taxonomy,
@@ -167,35 +150,27 @@ export default function PublicQuestionBankPage() {
   const totalPages = Math.max(1, Math.ceil(total / limit));
 
   return (
-    <div className={darkMode ? 'dark' : ''}>
-      <div className="min-h-screen bg-background text-text-base font-body transition-colors duration-300">
-        <SharedNavbar
-          page="dashboard"
-          darkMode={darkMode}
-          onToggleDark={() => setDarkMode((value) => !value)}
+    <div className="dash-page-shell min-h-full text-text-base font-body">
+      <main className="dash-page">
+        <PageHeader page={page} totalPages={totalPages} total={total} />
+
+        <QuestionBankFilters
+          filters={filters}
+          taxonomy={taxonomy}
+          onChange={handleFilterChange}
+          onReset={handleReset}
         />
 
-        <main className="max-w-[1400px] mx-auto px-4 sm:px-6 py-6 space-y-5">
-          <PageHeader page={page} totalPages={totalPages} total={total} />
-
-          <QuestionBankFilters
-            filters={filters}
-            taxonomy={taxonomy}
-            onChange={handleFilterChange}
-            onReset={handleReset}
-          />
-
-          <ErrorBanner error={error} />
-          <Results
-            probes={probes}
-            page={page}
-            limit={limit}
-            total={total}
-            loading={loading}
-            onPageChange={handlePageChange}
-          />
-        </main>
-      </div>
+        <ErrorBanner error={error} />
+        <Results
+          probes={probes}
+          page={page}
+          limit={limit}
+          total={total}
+          loading={loading}
+          onPageChange={handlePageChange}
+        />
+      </main>
     </div>
   );
 }

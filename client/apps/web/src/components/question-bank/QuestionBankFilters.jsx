@@ -7,7 +7,7 @@ import {
 } from '../admin/question-bank/QuestionBankFormFields';
 
 const controlClass =
-  'h-10 rounded-lg border border-slate-700/70 bg-slate-950/70 text-sm text-slate-200 shadow-inner shadow-black/10 outline-none transition-all duration-150 hover:border-slate-500/80 hover:bg-slate-900 focus:border-cta focus:ring-2 focus:ring-cta/20';
+  'dash-control h-10 rounded-lg border border-gray-200 bg-white text-sm text-gray-700 outline-none transition-all duration-150 focus:border-cta focus:ring-2 focus:ring-cta/20';
 
 const SEARCH_DEBOUNCE_MS = 400;
 
@@ -45,10 +45,10 @@ function _techTagOptions(taxonomy) {
 
 function SearchControl({ value, onChange, placeholder, label }) {
   return (
-    <label className="flex flex-col gap-1 text-xs text-slate-400 min-w-[240px] flex-[2]">
+    <label className="flex flex-col gap-1 text-xs text-gray-500 min-w-[240px] flex-[2]">
       {label}
       <div className="relative">
-        <Search className="w-4 h-4 absolute left-3 top-3 text-slate-500" />
+        <Search className="w-4 h-4 absolute left-3 top-3 text-gray-400" />
         <input
           value={value}
           onChange={(event) => onChange(event.target.value)}
@@ -101,7 +101,7 @@ function FilterSelects({ filters, taxonomy, techTagOptions, allLabel, onChange }
           value={control.value}
           options={control.options}
           onChange={(value) => onChange({ [control.key]: value })}
-          labelClassName="flex flex-col gap-1 text-xs text-slate-400 min-w-[150px] flex-1"
+          labelClassName="flex flex-col gap-1 text-xs text-gray-500 min-w-[150px] flex-1"
         />
       ))}
       <SearchableMultiSelectField
@@ -113,7 +113,7 @@ function FilterSelects({ filters, taxonomy, techTagOptions, allLabel, onChange }
         searchPlaceholder={t('questionBank.filters.searchTechTags')}
         clearLabel={t('questionBank.filters.clearTechTags')}
         noOptionsLabel={t('questionBank.filters.noTechTags')}
-        labelClassName="flex flex-col gap-1 text-xs text-slate-400 min-w-[190px] flex-1"
+        labelClassName="flex flex-col gap-1 text-xs text-gray-500 min-w-[190px] flex-1"
       />
       {extraControls.map((control) => (
         <SelectField
@@ -122,7 +122,7 @@ function FilterSelects({ filters, taxonomy, techTagOptions, allLabel, onChange }
           value={control.value}
           options={control.options}
           onChange={(value) => onChange({ [control.key]: value })}
-          labelClassName="flex flex-col gap-1 text-xs text-slate-400 min-w-[150px] flex-1"
+          labelClassName="flex flex-col gap-1 text-xs text-gray-500 min-w-[150px] flex-1"
         />
       ))}
     </>
@@ -179,7 +179,7 @@ export default function QuestionBankFilters({
   };
 
   return (
-    <form onSubmit={_handleSubmit} className="border border-slate-700/60 bg-slate-900/50 rounded-lg p-4 flex flex-wrap gap-3 items-end">
+    <form onSubmit={_handleSubmit} className="border border-gray-100 bg-white shadow-card rounded-lg p-4 flex flex-wrap gap-3 items-end">
       <SearchControl
         value={searchInput}
         onChange={setSearchInput}
@@ -193,7 +193,7 @@ export default function QuestionBankFilters({
         allLabel={allLabel}
         onChange={onChange}
       />
-      <button type="button" onClick={_handleReset} className="h-10 px-3 rounded-lg border border-slate-700/70 bg-slate-800/80 text-slate-300 hover:border-slate-500 hover:bg-slate-700 hover:text-white" aria-label={t('questionBank.filters.reset')}>
+      <button type="button" onClick={_handleReset} className="dash-control h-10 px-3 rounded-lg border border-gray-200 bg-white text-gray-500 hover:text-gray-900" aria-label={t('questionBank.filters.reset')}>
         <RotateCcw className="w-4 h-4" />
       </button>
     </form>

@@ -16,7 +16,6 @@ import {
 import { Link, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import SharedNavbar from '../shared/SharedNavbar';
 import { SelectField } from '../admin/question-bank/QuestionBankFormFields';
 import { ROUTES } from '../../router/routes';
 import {
@@ -69,7 +68,7 @@ function _difficultyLabel({ t, difficulty }) {
 
 function MetadataChip({ children }) {
   return (
-    <span className="inline-flex items-center rounded-md border border-slate-700/70 bg-slate-900 px-2.5 py-1 text-xs text-slate-300">
+    <span className="inline-flex items-center rounded-md border border-gray-200 bg-gray-100 px-2.5 py-1 text-xs text-gray-600">
       {children}
     </span>
   );
@@ -78,7 +77,7 @@ function MetadataChip({ children }) {
 function ErrorBanner({ error }) {
   if (!error) return null;
   return (
-    <div className="flex items-center gap-2 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+    <div className="flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
       <AlertCircle className="h-4 w-4 shrink-0" />
       {error}
     </div>
@@ -118,7 +117,7 @@ function DetailHeader({ detail, displayLocale, onDisplayLocaleChange }) {
     <header className="space-y-4">
       <Link
         to={ROUTES.QUESTION_BANK}
-        className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-white"
+        className="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-gray-900"
       >
         <ArrowLeft className="h-4 w-4" />
         {t('questionBank.detail.back')}
@@ -126,10 +125,10 @@ function DetailHeader({ detail, displayLocale, onDisplayLocaleChange }) {
 
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div className="min-w-0 space-y-3">
-          <p className="font-mono text-xs text-slate-500">
+          <p className="font-mono text-xs text-gray-400">
             {detail.code ?? detail.id}
           </p>
-          <h1 className="font-heading text-3xl font-bold leading-tight text-white md:text-4xl">
+          <h1 className="font-heading text-3xl font-bold leading-tight text-gray-900 md:text-4xl">
             {detail.title}
           </h1>
           <div className="flex flex-wrap gap-2">
@@ -138,13 +137,13 @@ function DetailHeader({ detail, displayLocale, onDisplayLocaleChange }) {
               <MetadataChip key={item}>{item}</MetadataChip>
             ))}
           </div>
-          <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500">
+          <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500">
             <span className="inline-flex items-center gap-1.5">
               <Languages className="h-3.5 w-3.5" />
               {detail.resolvedLocale.toUpperCase()}
             </span>
             {detail.localeFallbackUsed && (
-              <span className="inline-flex items-center gap-1.5 text-amber-300">
+              <span className="inline-flex items-center gap-1.5 text-amber-500">
                 <BadgeInfo className="h-3.5 w-3.5" />
                 {t('questionBank.card.fallback')}
               </span>
@@ -168,32 +167,32 @@ function QuestionContent({ detail }) {
   const { t } = useTranslation();
   return (
     <section className="space-y-5">
-      <div className="rounded-lg border border-slate-700/70 bg-slate-900/70 p-5">
+      <div className="rounded-lg border border-gray-100 bg-gray-50 p-5">
         <p className="text-xs font-semibold uppercase tracking-[0.12em] text-cta">
           {t('questionBank.detail.question')}
         </p>
-        <p className="mt-3 text-xl leading-8 text-white">
+        <p className="mt-3 text-xl leading-8 text-gray-900">
           {detail.displayQuestion}
         </p>
       </div>
 
       {detail.displayIntent && (
-        <section className="rounded-lg border border-slate-800 bg-slate-950/70 p-4">
-          <h2 className="text-sm font-semibold text-white">
+        <section className="rounded-lg border border-gray-100 bg-white p-4">
+          <h2 className="text-sm font-semibold text-gray-900">
             {t('questionBank.detail.intent')}
           </h2>
-          <p className="mt-2 text-sm leading-6 text-slate-300">
+          <p className="mt-2 text-sm leading-6 text-gray-600">
             {detail.displayIntent}
           </p>
         </section>
       )}
 
       {detail.guidance?.length > 0 && (
-        <section className="rounded-lg border border-slate-800 bg-slate-950/70 p-4">
-          <h2 className="text-sm font-semibold text-white">
+        <section className="rounded-lg border border-gray-100 bg-white p-4">
+          <h2 className="text-sm font-semibold text-gray-900">
             {t('questionBank.detail.guidance')}
           </h2>
-          <ul className="mt-3 space-y-2 text-sm leading-6 text-slate-300">
+          <ul className="mt-3 space-y-2 text-sm leading-6 text-gray-600">
             {detail.guidance.map((item) => (
               <li key={item} className="flex gap-2">
                 <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-cta" />
@@ -205,14 +204,14 @@ function QuestionContent({ detail }) {
       )}
 
       {detail.commonMistakes?.length > 0 && (
-        <section className="rounded-lg border border-slate-800 bg-slate-950/70 p-4">
-          <h2 className="text-sm font-semibold text-white">
+        <section className="rounded-lg border border-gray-100 bg-white p-4">
+          <h2 className="text-sm font-semibold text-gray-900">
             {t('questionBank.detail.commonMistakes')}
           </h2>
-          <ul className="mt-3 space-y-2 text-sm leading-6 text-slate-300">
+          <ul className="mt-3 space-y-2 text-sm leading-6 text-gray-600">
             {detail.commonMistakes.map((item) => (
               <li key={item} className="flex gap-2">
-                <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-300" />
+                <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-400" />
                 <span>{item}</span>
               </li>
             ))}
@@ -244,17 +243,17 @@ function PracticePanel({
   const locked = Boolean(currentAttempt) || submitLoading;
 
   return (
-    <aside className="space-y-4 rounded-lg border border-slate-700/70 bg-slate-900/90 p-4 lg:sticky lg:top-6">
+    <aside className="space-y-4 rounded-lg border border-gray-100 bg-white p-4 lg:sticky lg:top-6 shadow-card">
       <div>
         <div className="flex items-center gap-2">
           <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-cta/30 bg-cta/10 text-cta">
             <Sparkles className="h-4 w-4" />
           </span>
           <div>
-            <h2 className="text-base font-semibold text-white">
+            <h2 className="text-base font-semibold text-gray-900">
               {t('questionBank.detail.practiceTitle')}
             </h2>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-gray-500">
               {t('questionBank.detail.practiceSubtitle')}
             </p>
           </div>
@@ -267,15 +266,15 @@ function PracticePanel({
         onChange={onFeedbackLocaleChange}
       />
 
-      <div className="grid grid-cols-2 gap-2 rounded-lg border border-slate-800 bg-slate-950/70 p-1">
+      <div className="grid grid-cols-2 gap-2 rounded-lg border border-gray-100 bg-gray-50 p-1">
         <button
           type="button"
           onClick={() => onAnswerInputModeChange('text')}
           disabled={locked}
           className={`inline-flex items-center justify-center gap-2 rounded-md px-3 py-2 text-xs font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${
             answerInputMode === 'text'
-              ? 'bg-slate-700 text-white'
-              : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
+              ? 'bg-white text-gray-900 shadow-sm'
+              : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
           }`}
         >
           <Keyboard className="h-3.5 w-3.5" />
@@ -287,8 +286,8 @@ function PracticePanel({
           disabled={locked || !isVoiceSupported}
           className={`inline-flex items-center justify-center gap-2 rounded-md px-3 py-2 text-xs font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${
             answerInputMode === 'voice'
-              ? 'bg-cta/20 text-cta'
-              : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
+              ? 'bg-cta/10 text-cta'
+              : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
           }`}
         >
           <Mic className="h-3.5 w-3.5" />
@@ -296,7 +295,7 @@ function PracticePanel({
         </button>
       </div>
 
-      <label className="flex flex-col gap-2 text-xs text-slate-400">
+      <label className="flex flex-col gap-2 text-xs text-gray-500">
         {t('questionBank.detail.answerLabel')}
         <textarea
           value={answerText}
@@ -308,13 +307,13 @@ function PracticePanel({
               ? t('questionBank.detail.voicePlaceholder')
               : t('questionBank.detail.answerPlaceholder')
           }
-          className="min-h-[260px] resize-y rounded-lg border border-slate-700 bg-slate-950 px-3 py-3 text-sm leading-6 text-slate-200 outline-none hover:border-slate-500 focus:border-cta focus:ring-2 focus:ring-cta/20 disabled:cursor-not-allowed disabled:opacity-70"
+          className="min-h-[260px] resize-y rounded-lg border border-gray-200 bg-white px-3 py-3 text-sm leading-6 text-gray-700 outline-none hover:border-gray-400 focus:border-cta focus:ring-2 focus:ring-cta/20 disabled:cursor-not-allowed disabled:opacity-70"
         />
       </label>
 
-      <div className="rounded-lg border border-slate-800 bg-slate-950/80 p-3 text-xs leading-5 text-slate-500">
+      <div className="rounded-lg border border-gray-100 bg-gray-50 p-3 text-xs leading-5 text-gray-500">
         <div className="mb-2 flex items-center justify-between gap-3">
-          <div className="flex min-w-0 items-center gap-2 text-slate-300">
+          <div className="flex min-w-0 items-center gap-2 text-gray-700">
             {isListening ? (
               <MicOff className="h-3.5 w-3.5 text-red-300" />
             ) : (
@@ -380,7 +379,7 @@ function PracticePanel({
           type="button"
           onClick={onSubmit}
           disabled={answerIsEmpty || submitLoading}
-          className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-cta px-4 py-3 text-sm font-semibold text-white hover:bg-cta/90 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-400"
+          className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-cta px-4 py-3 text-sm font-semibold text-white hover:bg-cta/90 disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-400"
         >
           {submitLoading ? (
             <Loader2 className="h-4 w-4 animate-spin" />
@@ -399,7 +398,7 @@ function RelatedQuestions({ questions }) {
   if (!questions?.length) return null;
   return (
     <section className="space-y-3">
-      <h2 className="text-base font-semibold text-white">
+      <h2 className="text-base font-semibold text-gray-900">
         {t('questionBank.detail.related')}
       </h2>
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
@@ -411,19 +410,10 @@ function RelatedQuestions({ questions }) {
   );
 }
 
-function useDarkMode() {
-  const [darkMode, setDarkMode] = useState(true);
-  useEffect(() => {
-    document.documentElement.classList.toggle('dark', darkMode);
-  }, [darkMode]);
-  return [darkMode, setDarkMode];
-}
-
 export default function QuestionProbeDetailPage() {
   const { probeId } = useParams();
   const dispatch = useDispatch();
   const { t, i18n } = useTranslation();
-  const [darkMode, setDarkMode] = useDarkMode();
   const appLocale = useMemo(() => _appLocale(i18n), [i18n.language, i18n.resolvedLanguage]);
   const [displayLocale, setDisplayLocale] = useState(appLocale);
   const [feedbackLocale, setFeedbackLocale] = useState(appLocale);
@@ -578,17 +568,10 @@ export default function QuestionProbeDetailPage() {
   }, [currentAttempt?.attemptId, dispatch]);
 
   return (
-    <div className={darkMode ? 'dark' : ''}>
-      <div className="min-h-screen bg-background text-text-base font-body transition-colors duration-300">
-        <SharedNavbar
-          page="dashboard"
-          darkMode={darkMode}
-          onToggleDark={() => setDarkMode((value) => !value)}
-        />
-
-        <main className="mx-auto max-w-[1400px] space-y-6 px-4 py-6 sm:px-6">
+    <div className="min-h-full bg-background text-text-base font-body">
+      <main className="mx-auto max-w-[1400px] space-y-6 px-4 py-6 sm:px-6">
           {detailLoading && !detail ? (
-            <div className="flex items-center justify-center gap-2 py-24 text-slate-500">
+            <div className="flex items-center justify-center gap-2 py-24 text-gray-400">
               <Loader2 className="h-5 w-5 animate-spin" />
               <span className="text-sm">{t('questionBank.detail.loading')}</span>
             </div>
@@ -635,8 +618,7 @@ export default function QuestionProbeDetailPage() {
               </div>
             </>
           ) : null}
-        </main>
-      </div>
+      </main>
     </div>
   );
 }
