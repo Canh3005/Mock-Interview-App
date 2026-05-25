@@ -21,12 +21,17 @@ import {
   ChevronRight,
   Search,
   CircleHelp,
+  AlertTriangle,
 } from 'lucide-react'
 import { ROUTES } from '../../router/routes'
 import { logoutRequest } from '../../store/slices/authSlice'
+import { resetBehavioral } from '../../store/slices/behavioralSlice'
+import { resetDSASession } from '../../store/slices/dsaSessionSlice'
+import { resetSetup } from '../../store/slices/interviewSetupSlice'
 import LanguageSwitcher from './LanguageSwitcher'
 
 const SidebarCollapsedContext = createContext(false)
+const NavigationRequestContext = createContext(null)
 
 function CreditBadge() {
   const { t } = useTranslation()
@@ -41,11 +46,46 @@ function CreditBadge() {
   )
 }
 
-function TopBar({ darkMode, onToggleDark }) {
-  const navigate = useNavigate()
+function TopBar({ darkMode, onToggleDark, focusMode = false, focusLabel, onNavigate }) {
+  const { t } = useTranslation()
   const { user } = useSelector((s) => s.auth)
   const userName = user?.name || 'User'
   const initial = userName.trim().charAt(0).toUpperCase() || 'U'
+
+  if (focusMode) {
+    return (
+      <header className="dash-surface shrink-0 rounded-[22px] border px-3 py-2.5 shadow-shell transition-colors duration-200 sm:px-4">
+        <div className="flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <p className="dash-subtle text-xs font-semibold uppercase tracking-[0.08em]">
+              {t('dashboard.focus.mode')}
+            </p>
+            <h1 className="dash-text truncate text-sm font-bold sm:text-base">{focusLabel}</h1>
+          </div>
+
+          <div className="flex min-w-0 items-center gap-2">
+            <LanguageSwitcher variant="light" />
+            <button
+              onClick={onToggleDark}
+              aria-label={darkMode ? 'Light mode' : 'Dark mode'}
+              className="dash-icon-button"
+            >
+              {darkMode ? <Sun size={19} /> : <Moon size={19} />}
+            </button>
+            <button
+              onClick={() => onNavigate?.(ROUTES.DASHBOARD_PROFILE)}
+              className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-cta text-sm font-bold text-[var(--dash-accent-contrast)] ring-2 ring-[var(--dash-accent-soft)]"
+              title={userName}
+            >
+              {user?.avatarUrl
+                ? <img src={user.avatarUrl} alt="Avatar" className="h-full w-full object-cover" />
+                : initial}
+            </button>
+          </div>
+        </div>
+      </header>
+    )
+  }
 
   return (
     <header className="dash-surface shrink-0 rounded-[24px] border px-3 py-3 shadow-shell transition-colors duration-200 sm:px-4 lg:px-5">
@@ -92,7 +132,7 @@ function TopBar({ darkMode, onToggleDark }) {
           </button>
 
           <button
-            onClick={() => navigate(ROUTES.DASHBOARD_PROFILE)}
+            onClick={() => onNavigate?.(ROUTES.DASHBOARD_PROFILE)}
             className="group ml-1 flex h-11 min-w-0 items-center gap-3 rounded-[14px] border border-[var(--dash-border)] bg-[var(--dash-surface-raised)] px-2.5 text-left shadow-[var(--dash-shadow-control)] transition-colors hover:border-[var(--dash-border-strong)]"
             title={userName}
           >
@@ -114,8 +154,9 @@ function TopBar({ darkMode, onToggleDark }) {
   )
 }
 
-function NavItem({ to, icon: Icon, label, exact = false, collapsed: collapsedProp }) {
+function NavItem({ to, icon: Icon, label, exact = false, collapsed: collapsedProp, onRequestNavigate }) {
   const collapsed = collapsedProp ?? useContext(SidebarCollapsedContext)
+  const requestNavigate = onRequestNavigate ?? useContext(NavigationRequestContext)
 
   return (
     <NavLink
@@ -123,6 +164,7 @@ function NavItem({ to, icon: Icon, label, exact = false, collapsed: collapsedPro
       end={exact}
       title={collapsed ? label : undefined}
       aria-label={collapsed ? label : undefined}
+      onClick={(event) => requestNavigate?.(to, event)}
       className={({ isActive }) =>
         [
           collapsed
@@ -138,10 +180,10 @@ function NavItem({ to, icon: Icon, label, exact = false, collapsed: collapsedPro
   )
 }
 
-function NavItemGroup({ icon: Icon, label, children, matchPrefix, collapsed: collapsedProp }) {
+function NavItemGroup({ icon: Icon, label, children, matchPrefix, collapsed: collapsedProp, onRequestNavigate }) {
   const { pathname } = useLocation()
-  const navigate = useNavigate()
   const collapsed = collapsedProp ?? useContext(SidebarCollapsedContext)
+  const requestNavigate = onRequestNavigate ?? useContext(NavigationRequestContext)
   const isAnyChildActive = pathname.startsWith(matchPrefix)
   const [open, setOpen] = useState(isAnyChildActive)
 
@@ -152,7 +194,7 @@ function NavItemGroup({ icon: Icon, label, children, matchPrefix, collapsed: col
   if (collapsed) {
     return (
       <button
-        onClick={() => navigate(matchPrefix)}
+        onClick={() => requestNavigate?.(matchPrefix)}
         title={label}
         aria-label={label}
         className={[
@@ -188,11 +230,14 @@ function NavItemGroup({ icon: Icon, label, children, matchPrefix, collapsed: col
   )
 }
 
-function NavSubItem({ to, label, exact = false }) {
+function NavSubItem({ to, label, exact = false, onRequestNavigate }) {
+  const requestNavigate = onRequestNavigate ?? useContext(NavigationRequestContext)
+
   return (
     <NavLink
       to={to}
       end={exact}
+      onClick={(event) => requestNavigate?.(to, event)}
       className={({ isActive }) =>
         [
           'flex w-full items-center rounded-xl px-3 py-2 text-sm font-medium transition-colors duration-150',
@@ -205,17 +250,11 @@ function NavSubItem({ to, label, exact = false }) {
   )
 }
 
-function Sidebar({ collapsed, onToggleCollapsed }) {
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
+function Sidebar({ collapsed, collapseLocked = false, onToggleCollapsed, onNavigate, onLogout }) {
   const { t } = useTranslation()
   const { user } = useSelector((s) => s.auth)
+  const requestNavigate = onNavigate ?? useContext(NavigationRequestContext)
   const sidebarToggleLabel = collapsed ? 'Mo rong thanh dieu huong' : 'Thu gon thanh dieu huong'
-
-  const handleLogout = () => {
-    dispatch(logoutRequest())
-    navigate(ROUTES.LANDING)
-  }
 
   return (
     <SidebarCollapsedContext.Provider value={collapsed}>
@@ -229,7 +268,7 @@ function Sidebar({ collapsed, onToggleCollapsed }) {
       <div className={collapsed ? 'px-3 pb-5 pt-5' : 'px-5 pb-6 pt-7'}>
         <div className={collapsed ? 'flex justify-center' : 'flex items-center'}>
           <button
-            onClick={() => navigate(ROUTES.LANDING)}
+            onClick={() => requestNavigate?.(ROUTES.LANDING)}
             title={collapsed ? 'MockInterview' : undefined}
             aria-label={collapsed ? 'MockInterview' : undefined}
             className={[
@@ -255,24 +294,17 @@ function Sidebar({ collapsed, onToggleCollapsed }) {
         className={collapsed ? 'flex-1 space-y-2 overflow-y-auto pb-4' : 'flex-1 space-y-1 overflow-y-auto pb-4'}
         aria-label="Sidebar navigation"
       >
-        <NavItem to={ROUTES.DASHBOARD} icon={LayoutDashboard} label={t('navbar.dashboard')} exact collapsed={collapsed} />
+        <NavItem to={ROUTES.DASHBOARD} icon={LayoutDashboard} label={t('navbar.dashboard')} exact collapsed={collapsed} onRequestNavigate={onNavigate} />
         <NavItem to={ROUTES.QUESTION_BANK} icon={BookOpenCheck} label={t('navbar.questionBank') || 'Ngân hàng câu hỏi'} />
-        <NavItem to={ROUTES.DASHBOARD_PROFILE} icon={User} label="Skill Passport" collapsed={collapsed} />
+        <NavItem to={ROUTES.DASHBOARD_PROFILE} icon={User} label="Skill Passport" collapsed={collapsed} onRequestNavigate={onNavigate} />
         <NavItem to={ROUTES.PRACTICE_PROBLEMS} icon={BookOpen} label="Luyện tập thuật toán" />
-        <button
-          onClick={() => navigate(ROUTES.INTERVIEW_SETUP)}
-          title={collapsed ? (t('dashboard.startInterview') || 'Bat dau phong van') : undefined}
-          aria-label={collapsed ? (t('dashboard.startInterview') || 'Bat dau phong van') : undefined}
-          className={[
-            'dash-nav-muted flex text-sm font-semibold transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta/50',
-            collapsed
-              ? 'mx-auto h-11 w-11 items-center justify-center rounded-[14px] border [&>span]:hidden'
-              : 'mx-3 min-h-11 w-[calc(100%-1.5rem)] items-center gap-3 rounded-[14px] border-l-[3px] px-3 py-2.5',
-          ].join(' ')}
-        >
-          <Play size={18} className="shrink-0" />
-          <span className="truncate">{t('dashboard.startInterview') || 'Bắt đầu phỏng vấn'}</span>
-        </button>
+        <NavItem
+          to={ROUTES.INTERVIEW_SETUP}
+          icon={Play}
+          label={t('dashboard.startInterview') || 'Bat dau phong van'}
+          collapsed={collapsed}
+          onRequestNavigate={onNavigate}
+        />
 
         {user?.role === 'admin' && (
           <NavItemGroup icon={Shield} label="Quản trị" matchPrefix="/admin">
@@ -323,7 +355,7 @@ function Sidebar({ collapsed, onToggleCollapsed }) {
             <p className="dash-subtle truncate text-xs">{user?.email || ''}</p>
           </div>
           <button
-            onClick={handleLogout}
+            onClick={onLogout}
             aria-label="Đăng xuất"
             className={[
               'flex shrink-0 items-center justify-center text-[var(--dash-subtle)] transition-colors hover:bg-red-500/10 hover:text-red-500',
@@ -336,22 +368,104 @@ function Sidebar({ collapsed, onToggleCollapsed }) {
       </div>
         </aside>
 
-        <button
-          onClick={onToggleCollapsed}
-          aria-controls="dashboard-sidebar-nav"
-          aria-expanded={!collapsed}
-          aria-label={sidebarToggleLabel}
-          title={sidebarToggleLabel}
-          className="dash-control absolute -right-3 top-7 z-20 flex h-8 w-8 items-center justify-center rounded-full border text-[var(--dash-muted)] shadow-[var(--dash-shadow-control)] transition-colors hover:text-[var(--dash-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta/50"
-        >
-          {collapsed ? <ChevronRight size={17} /> : <ChevronLeft size={17} />}
-        </button>
+        {!collapseLocked && (
+          <button
+            onClick={onToggleCollapsed}
+            aria-controls="dashboard-sidebar-nav"
+            aria-expanded={!collapsed}
+            aria-label={sidebarToggleLabel}
+            title={sidebarToggleLabel}
+            className="dash-control absolute -right-3 top-7 z-20 flex h-8 w-8 items-center justify-center rounded-full border text-[var(--dash-muted)] shadow-[var(--dash-shadow-control)] transition-colors hover:text-[var(--dash-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta/50"
+          >
+            {collapsed ? <ChevronRight size={17} /> : <ChevronLeft size={17} />}
+          </button>
+        )}
       </div>
     </SidebarCollapsedContext.Provider>
   )
 }
 
+function NavigationConfirmModal({ onCancel, onConfirm }) {
+  const { t } = useTranslation()
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 p-4 backdrop-blur-sm"
+      onClick={onCancel}
+    >
+      <div
+        className="dash-card w-full max-w-sm rounded-[20px] p-5 shadow-2xl"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <div className="mb-5 flex items-start gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[14px] border border-red-500/30 bg-red-500/10 text-red-500">
+            <AlertTriangle size={18} />
+          </div>
+          <div>
+            <h2 className="dash-text text-base font-bold">{t('dashboard.focus.exitModal.title')}</h2>
+            <p className="dash-subtle mt-1 text-sm leading-relaxed">
+              {t('dashboard.focus.exitModal.description')}{' '}
+              <span className="font-semibold text-red-500">{t('dashboard.focus.exitModal.descriptionHighlight')}</span>
+              {t('dashboard.focus.exitModal.descriptionSuffix')}
+            </p>
+          </div>
+        </div>
+        <div className="flex gap-2">
+          <button
+            onClick={onCancel}
+            className="dash-control flex-1 rounded-[14px] border px-4 py-2.5 text-sm font-semibold"
+          >
+            {t('dashboard.focus.exitModal.cancel')}
+          </button>
+          <button
+            onClick={onConfirm}
+            className="flex-1 rounded-[14px] bg-red-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-red-500"
+          >
+            {t('dashboard.focus.exitModal.confirm')}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function DashboardShell() {
+  const navigate = useNavigate()
+  const location = useLocation()
+  const dispatch = useDispatch()
+  const { t } = useTranslation()
+  const { status: behavioralStatus, isStreaming, isEvaluating } = useSelector((s) => s.behavioral)
+  const {
+    sessionId: dsaSessionId,
+    problems: dsaProblems,
+    problemProgress: dsaProblemProgress,
+    pendingNextProblemId,
+    scoringStatus: dsaScoringStatus,
+    loading: dsaLoading,
+    mode: dsaMode,
+  } = useSelector((s) => s.dsaSession)
+  const [pendingNavigation, setPendingNavigation] = useState(null)
+  const isBehaviorFocusRoute = location.pathname === ROUTES.BEHAVIORAL_ROOM
+  const isDsaFocusRoute = location.pathname === ROUTES.DSA_ROOM
+  const isScoringFocusRoute = location.pathname === ROUTES.SCORING
+  const focusMode = isBehaviorFocusRoute || isDsaFocusRoute || isScoringFocusRoute
+  const hasUnsubmittedDsaProblems =
+    dsaMode !== 'solo' &&
+    !!dsaSessionId &&
+    dsaProblems.some((problem) => !dsaProblemProgress[problem.id]?.submittedAt)
+  const shouldGuardBehaviorNavigation =
+    isBehaviorFocusRoute && (behavioralStatus === 'active' || isStreaming || isEvaluating)
+  const shouldGuardDsaNavigation =
+    isDsaFocusRoute &&
+    dsaMode !== 'solo' &&
+    (dsaLoading || dsaScoringStatus === 'scoring' || !!pendingNextProblemId || hasUnsubmittedDsaProblems)
+  const shouldGuardNavigation = shouldGuardBehaviorNavigation || shouldGuardDsaNavigation
+  const focusLabel = isScoringFocusRoute
+    ? t('dashboard.focus.labels.scoring')
+    : isDsaFocusRoute
+      ? t('dashboard.focus.labels.dsa')
+      : t('dashboard.focus.labels.behavioral')
+
   const [darkMode, setDarkMode] = useState(() => {
     if (typeof window === 'undefined') return false
 
@@ -365,6 +479,7 @@ export default function DashboardShell() {
 
     return window.localStorage.getItem('dashboard-sidebar-collapsed') === 'true'
   })
+  const effectiveSidebarCollapsed = focusMode ? true : sidebarCollapsed
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', darkMode)
@@ -375,18 +490,81 @@ export default function DashboardShell() {
     window.localStorage.setItem('dashboard-sidebar-collapsed', sidebarCollapsed ? 'true' : 'false')
   }, [sidebarCollapsed])
 
+  const runNavigationIntent = (intent) => {
+    if (!intent) return
+    if (intent.resetInterview) {
+      dispatch(resetBehavioral())
+      dispatch(resetDSASession())
+      dispatch(resetSetup())
+    }
+    if (intent.type === 'logout') {
+      dispatch(logoutRequest())
+      navigate(ROUTES.LANDING)
+      return
+    }
+    navigate(intent.to)
+  }
+
+  const requestNavigation = (to, event) => {
+    if (!to || to === location.pathname) return true
+    if (shouldGuardNavigation) {
+      event?.preventDefault()
+      setPendingNavigation({ type: 'route', to, resetInterview: true })
+      return false
+    }
+    if (!event) navigate(to)
+    return true
+  }
+
+  const requestLogout = () => {
+    if (shouldGuardNavigation) {
+      setPendingNavigation({ type: 'logout', resetInterview: true })
+      return
+    }
+    dispatch(logoutRequest())
+    navigate(ROUTES.LANDING)
+  }
+
+  const confirmPendingNavigation = () => {
+    const intent = pendingNavigation
+    setPendingNavigation(null)
+    runNavigationIntent(intent)
+  }
+
   return (
-    <div className="dashboard-theme dash-app flex h-screen gap-4 overflow-hidden p-3 font-body transition-colors duration-200 sm:p-4">
-      <Sidebar
-        collapsed={sidebarCollapsed}
-        onToggleCollapsed={() => setSidebarCollapsed((value) => !value)}
-      />
-      <div className="flex min-w-0 flex-1 flex-col gap-4">
-        <TopBar darkMode={darkMode} onToggleDark={() => setDarkMode((value) => !value)} />
-        <main className="dash-page-shell min-h-0 flex-1 overflow-y-auto rounded-[24px] transition-colors duration-200">
-          <Outlet />
-        </main>
+    <NavigationRequestContext.Provider value={requestNavigation}>
+      <div className="dashboard-theme dash-app flex h-screen gap-4 overflow-hidden p-3 font-body transition-colors duration-200 sm:p-4">
+        <Sidebar
+          collapsed={effectiveSidebarCollapsed}
+          collapseLocked={focusMode}
+          onToggleCollapsed={() => setSidebarCollapsed((value) => !value)}
+          onNavigate={requestNavigation}
+          onLogout={requestLogout}
+        />
+        <div className={['flex min-w-0 flex-1 flex-col', focusMode ? 'gap-3' : 'gap-4'].join(' ')}>
+          <TopBar
+            darkMode={darkMode}
+            focusLabel={focusLabel}
+            focusMode={focusMode}
+            onNavigate={requestNavigation}
+            onToggleDark={() => setDarkMode((value) => !value)}
+          />
+          <main
+            className={[
+              'dash-page-shell min-h-0 flex-1 transition-colors duration-200',
+              isBehaviorFocusRoute || isDsaFocusRoute ? 'overflow-hidden' : 'overflow-y-auto',
+            ].join(' ')}
+          >
+            <Outlet />
+          </main>
+        </div>
       </div>
-    </div>
+      {pendingNavigation && (
+        <NavigationConfirmModal
+          onCancel={() => setPendingNavigation(null)}
+          onConfirm={confirmPendingNavigation}
+        />
+      )}
+    </NavigationRequestContext.Provider>
   )
 }

@@ -73,9 +73,12 @@ export class InterviewService {
       throw new BadRequestException('Interview session not found');
     }
 
-    const [behavioralSession, liveCodingSession] = await Promise.all([
-      this.behavioralSessionRepo.findOne({ where: { interviewSessionId } }),
+    const [liveCodingSession, sdSession] = await Promise.all([
       this.liveCodingSessionRepo.findOne({ where: { interviewSessionId } }),
+      this.sdSessionRepo.findOne({
+        where: { interviewSessionId },
+        relations: ['problem'],
+      }),
     ]);
 
     let liveCodingData: Record<string, unknown> | null = null;
@@ -96,15 +99,14 @@ export class InterviewService {
       };
     }
 
-    const sdSession: SDSession | null = await this.sdSessionRepo.findOne({
-      where: { interviewSessionId },
-      relations: ['problem'],
-    });
-
     return {
       interviewSessionId,
+      status: interviewSession.status,
+      finalScorecard: interviewSession.finalScorecard ?? null,
       sessions: {
-        behavioral: behavioralSession || null,
+        behavioral: interviewSession.rounds.includes('hr_behavioral')
+          ? {}
+          : null,
         liveCoding: liveCodingData,
         prompt: null,
         systemDesign: sdSession ?? null,

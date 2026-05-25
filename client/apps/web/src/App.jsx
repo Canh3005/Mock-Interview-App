@@ -67,9 +67,15 @@ function AppRoutes() {
           <Route element={<DashboardShell />}>
             <Route path={ROUTES.DASHBOARD} element={<DashboardPage />} />
             <Route path={ROUTES.DASHBOARD_PROFILE} element={<SkillPassportPage />} />
+            <Route path={ROUTES.INTERVIEW_SETUP} element={<InterviewSetupFlow />} />
             <Route path={ROUTES.PRACTICE_PROBLEMS} element={<ProblemBankPage />} />
             <Route path={ROUTES.QUESTION_BANK} element={<PublicQuestionBankPage />} />
             <Route path={ROUTES.QUESTION_BANK_DETAIL} element={<QuestionProbeDetailPage />} />
+            <Route element={<InterviewRoomRoute />}>
+              <Route path={ROUTES.BEHAVIORAL_ROOM} element={<BehavioralRoomPage />} />
+              <Route path={ROUTES.DSA_ROOM} element={<DSASessionPage />} />
+              <Route path={ROUTES.SCORING} element={<ScoringPage />} />
+            </Route>
 
             {/* Admin pages — vẫn dùng sidebar chung, bỏ AdminLayout */}
             <Route element={<AdminRoute />}>
@@ -81,16 +87,12 @@ function AppRoutes() {
           </Route>
 
           {/* Full-screen routes (no sidebar) */}
-          <Route path={ROUTES.INTERVIEW_SETUP} element={<InterviewSetupFlow />} />
           <Route path={ROUTES.DSA_ROOM_SOLO} element={<DSASessionPage />} />
 
           <Route element={<InterviewRoomRoute />}>
             <Route path={ROUTES.INTERVIEW_ROOM} element={<InterviewRoomPage />} />
-            <Route path={ROUTES.BEHAVIORAL_ROOM} element={<BehavioralRoomPage />} />
             <Route path={ROUTES.COMBAT_ROOM} element={<CombatInterviewRoom />} />
-            <Route path={ROUTES.DSA_ROOM} element={<DSASessionPage />} />
             <Route path={ROUTES.SD_ROOM} element={<SDRoomPage />} />
-            <Route path={ROUTES.SCORING} element={<ScoringPage />} />
           </Route>
         </Route>
 

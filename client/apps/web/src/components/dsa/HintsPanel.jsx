@@ -1,7 +1,9 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Lightbulb, Lock, ChevronDown, ChevronUp, AlertTriangle } from 'lucide-react'
 
 export default function HintsPanel({ hints = [], unlockedIndices = [], onUnlock }) {
+  const { t } = useTranslation()
   const [expandedIndex, setExpandedIndex] = useState(null)
 
   if (!hints.length) return null
@@ -12,7 +14,7 @@ export default function HintsPanel({ hints = [], unlockedIndices = [], onUnlock 
     <div className="space-y-2">
       <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide flex items-center gap-1.5">
         <Lightbulb className="w-3.5 h-3.5" />
-        Hints
+        {t('dsaRoom.hints.title')}
       </p>
 
       <div className="space-y-1.5">
@@ -29,7 +31,7 @@ export default function HintsPanel({ hints = [], unlockedIndices = [], onUnlock 
                 >
                   <span className="text-xs font-medium text-amber-400 flex items-center gap-1.5">
                     <Lightbulb className="w-3.5 h-3.5" />
-                    Hint {i + 1}
+                    {t('dsaRoom.hints.item', { index: i + 1 })}
                   </span>
                   {isExpanded
                     ? <ChevronUp className="w-3.5 h-3.5 text-slate-400" />
@@ -60,7 +62,7 @@ export default function HintsPanel({ hints = [], unlockedIndices = [], onUnlock 
           return (
             <div key={i} className="rounded-lg border border-slate-700/40 bg-slate-800/30 px-3 py-2 flex items-center gap-2 opacity-40">
               <Lock className="w-3.5 h-3.5 text-slate-500 shrink-0" />
-              <span className="text-xs text-slate-500">Hint {i + 1}</span>
+              <span className="text-xs text-slate-500">{t('dsaRoom.hints.item', { index: i + 1 })}</span>
             </div>
           )
         })}
@@ -70,6 +72,7 @@ export default function HintsPanel({ hints = [], unlockedIndices = [], onUnlock 
 }
 
 function UnlockPrompt({ index, onUnlock }) {
+  const { t } = useTranslation()
   const [confirming, setConfirming] = useState(false)
 
   if (confirming) {
@@ -77,20 +80,20 @@ function UnlockPrompt({ index, onUnlock }) {
       <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 px-3 py-2.5 space-y-2">
         <p className="text-xs text-amber-400 flex items-center gap-1.5">
           <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
-          Xem hint có thể ảnh hưởng đến điểm số của bạn.
+          {t('dsaRoom.hints.penaltyWarning')}
         </p>
         <div className="flex gap-2">
           <button
             onClick={onUnlock}
             className="px-3 py-1 rounded-md bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-xs font-medium transition-colors"
           >
-            Xem Hint {index + 1}
+            {t('dsaRoom.hints.unlockConfirm', { index: index + 1 })}
           </button>
           <button
             onClick={() => setConfirming(false)}
             className="px-3 py-1 rounded-md bg-slate-700/50 hover:bg-slate-700 text-slate-400 text-xs transition-colors"
           >
-            Huỷ
+            {t('dsaRoom.hints.cancel')}
           </button>
         </div>
       </div>
@@ -104,7 +107,7 @@ function UnlockPrompt({ index, onUnlock }) {
     >
       <Lock className="w-3.5 h-3.5 text-slate-500 group-hover:text-amber-500 transition-colors shrink-0" />
       <span className="text-xs text-slate-400 group-hover:text-amber-400 transition-colors">
-        Unlock Hint {index + 1}
+        {t('dsaRoom.hints.unlock', { index: index + 1 })}
       </span>
     </button>
   )

@@ -38,6 +38,18 @@ const behavioralSlice = createSlice({
       state.status = 'active';
       state.turns = [openingTurn];
     },
+    hydrateSessionSuccess(state, action) {
+      const { sessionId, state: interviewState, turnHistory = [], stageProgress = [] } = action.payload;
+      state.sessionId = sessionId;
+      state.interviewState = interviewState;
+      state.status = interviewState === 'COMPLETED' ? 'completed' : 'active';
+      state.turns = turnHistory;
+      state.stageProgress = stageProgress;
+      state.error = null;
+      state.isEvaluating = false;
+      state.isStreaming = false;
+      state.streamingText = '';
+    },
     createSessionFailure(state, action) {
       state.status = 'error';
       state.error = action.payload;
@@ -110,6 +122,7 @@ export const {
   createSessionRequest,
   createSessionSuccess,
   createSessionFailure,
+  hydrateSessionSuccess,
   addCandidateTurn,
   evaluatingStarted,
   turnStreamStart,

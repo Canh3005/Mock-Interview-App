@@ -10,9 +10,9 @@ function _StageIcon({ status }) {
 
 function _stageIndicatorClass(status) {
   if (status === 'completed') return 'bg-emerald-500/20 border-emerald-500 text-emerald-400'
-  if (status === 'active') return 'bg-cta/20 border-cta text-cta'
-  if (status === 'skipped') return 'bg-slate-700/50 border-slate-600 text-slate-500'
-  return 'bg-slate-800 border-slate-600 text-slate-500'
+  if (status === 'active') return 'dash-chip'
+  if (status === 'skipped') return 'dash-muted-panel dash-subtle'
+  return 'dash-muted-panel dash-subtle'
 }
 
 function _LevelBadge({ level }) {
@@ -34,8 +34,8 @@ export default function StageProgressPanel({ stageProgress, candidateLevel }) {
   const { t } = useTranslation()
 
   return (
-    <div className="flex flex-col gap-1 py-4">
-      <p className="text-xs text-slate-500 uppercase tracking-wider font-medium mb-3 px-2">
+    <div className="flex flex-col gap-1 py-2">
+      <p className="dash-subtle mb-3 px-2 text-xs font-semibold uppercase tracking-[0.08em]">
         {t('behavioralRoom.stage.progress')}
       </p>
 
@@ -49,7 +49,7 @@ export default function StageProgressPanel({ stageProgress, candidateLevel }) {
           <div
             key={stage.stage}
             className={`flex items-start gap-3 px-2 py-2.5 rounded-xl transition-colors ${
-              isActive ? 'bg-cta/10 border border-cta/30' : isDone ? 'opacity-70' : 'opacity-40'
+              isActive ? 'dash-chip border' : isDone ? 'opacity-80' : 'opacity-50'
             }`}
           >
             <div className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold border transition-colors ${_stageIndicatorClass(stage.status)}`}>
@@ -61,12 +61,12 @@ export default function StageProgressPanel({ stageProgress, candidateLevel }) {
             </div>
 
             <div className="flex flex-col gap-0.5 min-w-0">
-              <span className={`text-sm leading-tight ${isActive ? 'text-white font-semibold' : isDone ? 'text-slate-400' : 'text-slate-500'}`}>
+              <span className={`text-sm leading-tight ${isActive ? 'dash-text font-semibold' : isDone ? 'dash-muted' : 'dash-subtle'}`}>
                 {stageName}
               </span>
               {/* Probe progress bar */}
               {(isActive || isDone) && stage.probeRuns.length > 0 && (
-                <p className="text-[10px] text-slate-600">
+                <p className="dash-subtle text-[10px]">
                   {stage.probeRuns.length} probe{stage.probeRuns.length > 1 ? 's' : ''} · {isSkipped ? t('behavioralRoom.stage.status.skipped') : isDone ? t('behavioralRoom.stage.status.completed') : t('behavioralRoom.stage.status.active')}
                 </p>
               )}

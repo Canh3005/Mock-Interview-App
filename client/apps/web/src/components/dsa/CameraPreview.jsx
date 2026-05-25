@@ -1,9 +1,28 @@
 import { useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
-export default function CameraPreview({ mediaStream }) {
+const PREVIEW_WIDTH = 144
+const PREVIEW_HEIGHT = 96
+const COLLAPSED_SIZE = 32
+
+export default function CameraPreview({ mediaStream, boundsRef = null, contained = false }) {
+  const { t } = useTranslation()
   const videoRef = useRef(null)
   const dragRef = useRef(null)
-  const defaultPosition = () => ({ x: 16, y: window.innerHeight - 96 - 16 })
+  const getBounds = () => {
+    if (contained && boundsRef?.current) {
+      return {
+        width: boundsRef.current.clientWidth,
+        height: boundsRef.current.clientHeight,
+      }
+    }
+    if (typeof window === 'undefined') return { width: PREVIEW_WIDTH + 32, height: PREVIEW_HEIGHT + 32 }
+    return { width: window.innerWidth, height: window.innerHeight }
+  }
+  const defaultPosition = () => {
+    const bounds = getBounds()
+    return { x: 16, y: Math.max(16, bounds.height - PREVIEW_HEIGHT - 16) }
+  }
   const positionRef = useRef(defaultPosition())
   const velocityRef = useRef({ x: 0, y: 0 })
   const [position, setPosition] = useState(defaultPosition)
@@ -24,14 +43,25 @@ export default function CameraPreview({ mediaStream }) {
   }, [mediaStream, isCollapsed])
 
   const updatePosition = (x, y) => {
-    const maxX = window.innerWidth - 144
-    const maxY = window.innerHeight - 96
+    const bounds = getBounds()
+    const width = dragRef.current?.offsetWidth ?? (isCollapsed ? COLLAPSED_SIZE : PREVIEW_WIDTH)
+    const height = dragRef.current?.offsetHeight ?? (isCollapsed ? COLLAPSED_SIZE : PREVIEW_HEIGHT)
+    const maxX = Math.max(0, bounds.width - width)
+    const maxY = Math.max(0, bounds.height - height)
     const clampedX = Math.max(0, Math.min(x, maxX))
     const clampedY = Math.max(0, Math.min(y, maxY))
     
     positionRef.current = { x: clampedX, y: clampedY }
     setPosition({ x: clampedX, y: clampedY })
   }
+
+  useEffect(() => {
+    if (!mediaStream) return undefined
+    const frame = requestAnimationFrame(() => {
+      updatePosition(positionRef.current.x, positionRef.current.y)
+    })
+    return () => cancelAnimationFrame(frame)
+  }, [mediaStream, contained])
 
   const dragStartPosRef = useRef({ x: 0, y: 0 })
 
@@ -123,7 +153,7 @@ export default function CameraPreview({ mediaStream }) {
       ref={dragRef}
       onMouseDown={handleMouseDown}
       style={{
-        position: 'fixed',
+        position: contained ? 'absolute' : 'fixed',
         left: `${position.x}px`,
         top: `${position.y}px`,
         zIndex: 40,
@@ -150,7 +180,7 @@ export default function CameraPreview({ mediaStream }) {
               setIsCollapsed(true)
             }}
             className="absolute top-1 left-1 p-1 bg-slate-800 hover:bg-slate-700 rounded transition-colors"
-            title="Collapse"
+            title={t('dsaRoom.camera.collapse')}
           >
             <svg className="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -170,7 +200,7 @@ export default function CameraPreview({ mediaStream }) {
             }
           }}
           className="p-2 bg-slate-800 hover:bg-slate-700 rounded transition-colors relative"
-          title="Drag to move / Click to expand"
+          title={t('dsaRoom.camera.expand')}
         >
           <svg className="w-4 h-4 text-red-400" fill="currentColor" viewBox="0 0 24 24">
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm3.5 11h-2.5v2.5h-2v-2.5H8.5v-2h2.5V8.5h2v2.5h2.5v2z" />

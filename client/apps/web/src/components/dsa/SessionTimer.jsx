@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Clock } from 'lucide-react'
 
 const DIFFICULTY_LIMIT = { EASY: 20, MEDIUM: 35, HARD: 50 }
@@ -10,6 +11,7 @@ function formatTime(seconds) {
 }
 
 export default function SessionTimer({ mode, difficulty, onExpire }) {
+  const { t } = useTranslation()
   const limitSec = (DIFFICULTY_LIMIT[difficulty] ?? 35) * 60
   const [elapsed, setElapsed] = useState(0)
   const onExpireRef = useRef(onExpire)
@@ -39,7 +41,7 @@ export default function SessionTimer({ mode, difficulty, onExpire }) {
       <Clock className="w-4 h-4" />
       {displayTime}
       {mode === 'combat' && isCritical && (
-        <span className="text-xs font-sans font-normal text-red-400">còn lại</span>
+        <span className="text-xs font-sans font-normal text-red-400">{t('dsaRoom.timer.remaining')}</span>
       )}
     </div>
   )

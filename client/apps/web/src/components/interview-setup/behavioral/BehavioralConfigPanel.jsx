@@ -1,57 +1,81 @@
-import { useDispatch, useSelector } from 'react-redux';
-import { Layers, Zap } from 'lucide-react';
-import { setBehavioralConfig } from '../../../store/slices/interviewSetupSlice';
+import { useDispatch, useSelector } from 'react-redux'
+import { useTranslation } from 'react-i18next'
+import { Layers, Zap } from 'lucide-react'
+import { setBehavioralConfig } from '../../../store/slices/interviewSetupSlice'
 
 const DEPTH_OPTIONS = [
-  { value: 'broad', label: 'Toàn diện', icon: Layers, hint: '6 giai đoạn cân bằng' },
-  { value: 'deep', label: 'Chuyên sâu', icon: Zap, hint: 'Đào sâu kỹ thuật' },
-];
+  {
+    value: 'broad',
+    labelKey: 'interviewSetup.behavioralConfig.broad',
+    icon: Layers,
+    hintKey: 'interviewSetup.behavioralConfig.broadHint',
+  },
+  {
+    value: 'deep',
+    labelKey: 'interviewSetup.behavioralConfig.deep',
+    icon: Zap,
+    hintKey: 'interviewSetup.behavioralConfig.deepHint',
+  },
+]
 
-const DURATION_OPTIONS = [30, 45, 60, 75, 90];
+const DURATION_OPTIONS = [30, 45, 60, 75, 90]
 
 export default function BehavioralConfigPanel() {
-  const dispatch = useDispatch();
-  const { depth, durationMinutes } = useSelector((s) => s.interviewSetup.behavioralConfig);
+  const dispatch = useDispatch()
+  const { t } = useTranslation()
+  const { depth, durationMinutes } = useSelector((s) => s.interviewSetup.behavioralConfig)
 
   return (
-    <div className="mt-3 ml-12 p-3 bg-slate-900/60 rounded-lg border border-slate-700/50 space-y-3">
-      <div className="flex items-center gap-2 flex-wrap">
-        <span className="text-xs text-slate-400 font-medium">Chiến lược:</span>
-        {DEPTH_OPTIONS.map(({ value, label, icon: Icon, hint }) => (
-          <button
-            key={value}
-            onClick={() => dispatch(setBehavioralConfig({ depth: value }))}
-            title={hint}
-            className={[
-              'flex items-center gap-1.5 px-3 h-8 rounded-lg text-xs font-semibold transition-colors',
-              depth === value
-                ? 'bg-cta text-black'
-                : 'bg-slate-700 text-slate-300 hover:bg-slate-600',
-            ].join(' ')}
-          >
-            <Icon className="w-3.5 h-3.5" />
-            {label}
-          </button>
-        ))}
+    <div className="dash-muted-panel ml-0 mt-3 space-y-4 rounded-[16px] border p-4 sm:ml-12">
+      <div>
+        <p className="dash-subtle mb-2 text-xs font-semibold uppercase tracking-[0.08em]">
+          {t('interviewSetup.behavioralConfig.strategy')}
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {DEPTH_OPTIONS.map(({ value, labelKey, icon: Icon, hintKey }) => {
+            const active = depth === value
+            return (
+              <button
+                key={value}
+                type="button"
+                onClick={() => dispatch(setBehavioralConfig({ depth: value }))}
+                title={t(hintKey)}
+                className={[
+                  'inline-flex h-9 items-center gap-1.5 rounded-[12px] border px-3 text-xs font-bold transition-colors',
+                  active ? 'dash-nav-active' : 'dash-nav-muted',
+                ].join(' ')}
+              >
+                <Icon className="h-3.5 w-3.5" />
+                {t(labelKey)}
+              </button>
+            )
+          })}
+        </div>
       </div>
 
-      <div className="flex items-center gap-2 flex-wrap">
-        <span className="text-xs text-slate-400 font-medium">Thời lượng:</span>
-        {DURATION_OPTIONS.map((n) => (
-          <button
-            key={n}
-            onClick={() => dispatch(setBehavioralConfig({ durationMinutes: n }))}
-            className={[
-              'px-3 h-8 rounded-lg text-xs font-semibold transition-colors',
-              durationMinutes === n
-                ? 'bg-cta text-black'
-                : 'bg-slate-700 text-slate-300 hover:bg-slate-600',
-            ].join(' ')}
-          >
-            {n} phút
-          </button>
-        ))}
+      <div>
+        <p className="dash-subtle mb-2 text-xs font-semibold uppercase tracking-[0.08em]">
+          {t('interviewSetup.behavioralConfig.duration')}
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {DURATION_OPTIONS.map((minutes) => {
+            const active = durationMinutes === minutes
+            return (
+              <button
+                key={minutes}
+                type="button"
+                onClick={() => dispatch(setBehavioralConfig({ durationMinutes: minutes }))}
+                className={[
+                  'h-9 rounded-[12px] border px-3 text-xs font-bold transition-colors',
+                  active ? 'dash-nav-active' : 'dash-nav-muted',
+                ].join(' ')}
+              >
+                {t('interviewSetup.behavioralConfig.minutes', { minutes })}
+              </button>
+            )
+          })}
+        </div>
       </div>
     </div>
-  );
+  )
 }

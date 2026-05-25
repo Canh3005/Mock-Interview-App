@@ -17,14 +17,14 @@ function _ChatBubble({ turn, isStreamingTarget, streamingText, userAvatar }) {
   return (
     <div className={`flex gap-3 ${isInterviewer ? 'justify-start' : 'justify-end'}`}>
       {isInterviewer && (
-        <div className="w-8 h-8 rounded-full bg-cta/20 border border-cta/40 flex items-center justify-center flex-shrink-0 mt-1">
+        <div className="dash-chip mt-1 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border">
           <Bot className="w-4 h-4 text-cta" />
         </div>
       )}
       <div className={`max-w-[78%] px-4 py-3 rounded-2xl text-sm leading-relaxed ${
         isInterviewer
-          ? 'bg-slate-800 border border-slate-700 text-slate-100 rounded-tl-md'
-          : 'bg-cta/15 border border-cta/30 text-slate-100 rounded-tr-md'
+          ? 'dash-muted-panel border rounded-tl-md'
+          : 'border border-cta/30 bg-cta/10 text-[var(--dash-text)] rounded-tr-md'
       }`}>
         {isStreamingTarget && !content ? (
           <span className="inline-flex gap-1 items-center text-slate-500">
@@ -40,7 +40,7 @@ function _ChatBubble({ turn, isStreamingTarget, streamingText, userAvatar }) {
         )}
       </div>
       {!isInterviewer && (
-        <div className="w-8 h-8 rounded-full border border-slate-600 flex-shrink-0 mt-1 overflow-hidden flex items-center justify-center bg-slate-700">
+      <div className="dash-muted-panel mt-1 flex h-8 w-8 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border">
           {userAvatar ? (
             <img src={userAvatar} alt="User" className="w-full h-full object-cover" />
           ) : (
@@ -56,10 +56,10 @@ function _ChatBubble({ turn, isStreamingTarget, streamingText, userAvatar }) {
 function _EvaluatingBubble({ label }) {
   return (
     <div className="flex gap-3 justify-start">
-      <div className="w-8 h-8 rounded-full bg-cta/20 border border-cta/40 flex items-center justify-center flex-shrink-0 mt-1">
+      <div className="dash-chip mt-1 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border">
         <Bot className="w-4 h-4 text-cta" />
       </div>
-      <div className="max-w-[78%] px-4 py-3 rounded-2xl text-sm bg-slate-800 border border-slate-700 text-slate-100 rounded-tl-md">
+      <div className="dash-muted-panel max-w-[78%] rounded-2xl rounded-tl-md border px-4 py-3 text-sm">
         <span className="inline-flex gap-1 items-center">
           <span className="w-1.5 h-1.5 rounded-full bg-slate-500 animate-bounce" style={{ animationDelay: '0ms' }} />
           <span className="w-1.5 h-1.5 rounded-full bg-slate-500 animate-bounce" style={{ animationDelay: '150ms' }} />
@@ -160,7 +160,7 @@ export default function ChatInterface() {
   return (
     <div className="flex flex-col h-full">
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-4 min-h-0">
+      <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-4 py-4">
         {turns.map((turn, idx) => {
           const isLast = idx === turns.length - 1
           const isStreamTarget = isLast && isLastTurnStreaming
@@ -178,10 +178,10 @@ export default function ChatInterface() {
         {/* Streaming bubble khi AI đang stream nhưng turn chưa push vào turns */}
         {isStreaming && lastTurn?.role === 'candidate' && (
           <div className="flex gap-3 justify-start">
-            <div className="w-8 h-8 rounded-full bg-cta/20 border border-cta/40 flex items-center justify-center flex-shrink-0 mt-1">
+            <div className="dash-chip mt-1 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border">
               <Bot className="w-4 h-4 text-cta" />
             </div>
-            <div className="max-w-[78%] px-4 py-3 rounded-2xl text-sm bg-slate-800 border border-slate-700 text-slate-100 rounded-tl-md">
+            <div className="dash-muted-panel max-w-[78%] rounded-2xl rounded-tl-md border px-4 py-3 text-sm">
               {streamingText ? (
                 <>
                   <span className="whitespace-pre-wrap">{streamingText}</span>
@@ -215,7 +215,7 @@ export default function ChatInterface() {
       )}
 
       {/* Input area */}
-      <div className="border-t border-slate-800 px-4 pt-3 pb-4 flex flex-col gap-2">
+      <div className="dash-border flex flex-col gap-2 border-t px-4 pb-4 pt-3">
         {charCount > WARN_CHARS && charCount <= MAX_CHARS && (
           <p className="text-xs text-amber-400 flex items-center gap-1">
             <AlertTriangle className="w-3 h-3" />
@@ -229,7 +229,7 @@ export default function ChatInterface() {
           </p>
         )}
         {charCount > 0 && charCount < MIN_CHARS && (
-          <p className="text-xs text-slate-500">{t('behavioralRoom.chat.charMin')}</p>
+          <p className="dash-subtle text-xs">{t('behavioralRoom.chat.charMin')}</p>
         )}
 
         <div className="flex gap-2 items-end">
@@ -247,12 +247,12 @@ export default function ChatInterface() {
               }
               disabled={inputDisabled}
               rows={1}
-              className={`w-full bg-slate-800/80 border rounded-xl px-4 py-3 text-sm text-slate-100 placeholder-slate-500 resize-none focus:outline-none focus:ring-1 transition-colors disabled:opacity-50 ${
+              className={`dash-input w-full resize-none rounded-[14px] px-4 py-3 text-sm placeholder:text-[var(--dash-subtle)] focus:outline-none transition-colors disabled:opacity-50 ${
                 charCount > MAX_CHARS
                   ? 'border-red-500/50 focus:ring-red-500/50'
                   : charCount > WARN_CHARS
                   ? 'border-amber-500/50 focus:ring-amber-500/50'
-                  : 'border-slate-700 focus:ring-cta/50'
+                  : ''
               }`}
             />
             <span className={`absolute bottom-2 right-3 text-[10px] font-mono transition-colors ${counterColor}`}>
@@ -263,12 +263,12 @@ export default function ChatInterface() {
           {isSupported && (
             <button
               onClick={_toggleVoice}
-              className={`p-3 rounded-xl border transition-all flex-shrink-0 ${
+              className={`flex-shrink-0 rounded-[14px] border p-3 transition-all ${
                 isListening
                   ? 'bg-red-500/20 border-red-500 text-red-400 animate-pulse'
                   : voiceMode
                   ? 'bg-blue-500/20 border-blue-500 text-blue-400'
-                  : 'bg-slate-800 border-slate-700 text-slate-400 hover:border-slate-600 hover:text-slate-300'
+                  : 'dash-control text-[var(--dash-muted)] hover:text-[var(--dash-text)]'
               }`}
               title={isListening ? t('behavioralRoom.chat.stopVoice') : t('behavioralRoom.chat.enableVoice')}
             >
@@ -280,7 +280,7 @@ export default function ChatInterface() {
             <button
               onClick={_handleSend}
               disabled={sendDisabled}
-              className="p-3 rounded-xl bg-cta hover:bg-cta/90 text-black font-semibold transition-all flex-shrink-0 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="dash-primary-button flex-shrink-0 rounded-[14px] p-3 font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-40"
               title={t('behavioralRoom.chat.send')}
             >
               <Send className="w-4 h-4" />

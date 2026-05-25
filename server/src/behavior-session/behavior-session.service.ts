@@ -5,7 +5,9 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { InjectQueue } from '@nestjs/bullmq';
 import { In, Repository } from 'typeorm';
+import { Queue } from 'bullmq';
 import { Response } from 'express';
 import { BehavioralSession } from '../behavioral/entities/behavioral-session.entity';
 import { BehavioralStageLog } from '../behavioral/entities/behavioral-stage-log.entity';
@@ -15,8 +17,11 @@ import { QuestionPracticeScoringService } from '../question-bank/services/scorin
 import { PolicyEngineService } from './policy-engine.service';
 import { ProbeRendererService } from './probe-renderer.service';
 import { BehaviorSessionFlowService } from './behavior-session-flow.service';
-import { SessionSynthesisService } from './session-synthesis.service';
-import type { BehaviorScorecardData } from './types/session-synthesis.types';
+import {
+  BEHAVIOR_SCORING_QUEUE,
+  BehaviorScoringJobName,
+} from '../jobs/jobs.constants';
+import type { BehaviorScoringJobData } from '../jobs/workers/behavior-scoring.worker';
 import type { CreateBehaviorSessionDto } from './dto/create-behavior-session.dto';
 import type { SubmitAnswerDto } from './dto/submit-answer.dto';
 import type {
@@ -47,7 +52,8 @@ export class BehaviorSessionService {
     private readonly policyEngine: PolicyEngineService,
     private readonly probeRenderer: ProbeRendererService,
     private readonly flowService: BehaviorSessionFlowService,
-    private readonly synthesisService: SessionSynthesisService,
+    @InjectQueue(BEHAVIOR_SCORING_QUEUE)
+    private readonly behaviorScoringQueue: Queue,
   ) {}
 
   /**
@@ -70,6 +76,15 @@ export class BehaviorSessionService {
     openingTurn: InterviewTurn;
     state: string;
   }> {
+    const existing: BehavioralSession | null = await this.sessionRepo.findOne({
+      where: { interviewSessionId: dto.interviewSessionId },
+    });
+    if (existing) {
+      throw new BadRequestException(
+        `Behavioral session already exists for interviewSessionId: ${dto.interviewSessionId}`,
+      );
+    }
+
     const plan: SessionPlan | null = await this.planRepo.findOne({
       where: { sessionId: dto.interviewSessionId },
     });
@@ -226,7 +241,12 @@ export class BehaviorSessionService {
 
       await this.sessionRepo.save(session);
       if ((session.interviewState as string) === 'COMPLETED') {
-        await this._runSynthesis(session, plan);
+        await this._enqueueScoringJob(session);
+        this._emitSse(res, {
+          type: 'session_completed',
+          state: 'COMPLETED',
+          stageProgress: session.stageProgress ?? [],
+        });
       }
       for (const turn of nextTurns) {
         this._streamTurn(res, turn, session);
@@ -303,15 +323,16 @@ export class BehaviorSessionService {
       sessionId,
       userId,
     });
+    const alreadyQueued =
+      session.status === 'SCORING' || session.status === 'COMPLETED';
     session.interviewState = 'COMPLETED';
     session.status = 'SCORING';
-    session.completedAt = new Date();
+    session.completedAt = session.completedAt ?? new Date();
     await this.sessionRepo.save(session);
 
-    if (session.planId) {
-      const plan: SessionPlan = await this._loadPlan(session.planId);
-      await this._runSynthesis(session, plan);
-    } else {
+    if (session.planId && !alreadyQueued) {
+      await this._enqueueScoringJob(session);
+    } else if (!session.planId) {
       session.status = 'COMPLETED';
       await this.sessionRepo.save(session);
     }
@@ -319,26 +340,20 @@ export class BehaviorSessionService {
     return { sessionId, state: 'COMPLETED' };
   }
 
-  private async _runSynthesis(
-    session: BehavioralSession,
-    plan: SessionPlan,
-  ): Promise<void> {
-    try {
-      const scorecard: BehaviorScorecardData = await this.synthesisService.run({
-        session,
-        plan,
-      });
-      session.finalScore = scorecard as unknown as Record<string, unknown>;
-      session.status = 'COMPLETED';
-      session.completedAt = session.completedAt ?? new Date();
-      await this.sessionRepo.save(session);
-    } catch (error: unknown) {
-      const msg: string =
-        error instanceof Error ? error.message : 'Synthesis failed';
-      this.logger.error(`Synthesis failed for session ${session.id}: ${msg}`);
+  private async _enqueueScoringJob(session: BehavioralSession): Promise<void> {
+    const interviewSessionId = session.interviewSessionId;
+    if (!interviewSessionId) {
+      this.logger.warn(`Session ${session.id} has no interviewSessionId — skipping scoring job`);
       session.status = 'COMPLETED';
       await this.sessionRepo.save(session);
+      return;
     }
+    const jobData: BehaviorScoringJobData = {
+      behavioralSessionId: session.id,
+      interviewSessionId,
+    };
+    await this.behaviorScoringQueue.add(BehaviorScoringJobName.SCORE_SESSION, jobData);
+    this.logger.log(`Enqueued scoring job for behavior session ${session.id}`);
   }
 
   private async _loadSession({

@@ -1,82 +1,223 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { ROUTES } from '../../router/routes'
-import { Loader2, X, ChevronDown, ChevronUp, AlertTriangle } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import {
-  preflightRequest,
-  saveContextRequest,
-  resetSetup,
-  initSessionRequest,
-  proceedFromRoundSelect,
+  AlertTriangle,
+  ArrowLeft,
+  Briefcase,
+  ChevronDown,
+  ChevronUp,
+  FileText,
+  Loader2,
+  Play,
+  Upload,
+} from 'lucide-react'
+import { ROUTES } from '../../router/routes'
+import {
   clearCreditError,
+  initSessionRequest,
+  preflightRequest,
+  proceedFromRoundSelect,
+  resetSetup,
+  saveContextRequest,
 } from '../../store/slices/interviewSetupSlice'
 import { resetBehavioral } from '../../store/slices/behavioralSlice'
 import { resetCombatOrchestrator } from '../../store/slices/combatOrchestratorSlice'
 import { resetDSASession, startDSARound } from '../../store/slices/dsaSessionSlice'
 import { resetSDSession } from '../../store/slices/sdSessionSlice'
 import { resetInterviewer } from '../../store/slices/sdInterviewerSlice'
-import ModeSelectionStep from './steps/ModeSelectionStep'
 import CombatPermissionGate from './steps/CombatPermissionGate'
 import RoundSelectionStep from './steps/RoundSelectionStep'
 import InsufficientCreditModal from './InsufficientCreditModal'
 
-// ─── Missing context modal ────────────────────────────────────────────────────
-function MissingContextModal({ missing, onGoUpload, onCancel }) {
-  const labels = { cv_context: 'CV', jd_context: 'JD' }
-  const missingText = missing.map((k) => labels[k] ?? k).join(' và ')
+const inputClass =
+  'dash-input w-full rounded-[14px] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cta/30'
+const labelClass = 'dash-subtle mb-1 block text-xs font-semibold uppercase tracking-[0.06em]'
+
+function splitTrim(value) {
+  return value
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean)
+}
+
+function LoadingScreen({ message }) {
+  return (
+    <div className="dash-card flex min-h-[320px] flex-col items-center justify-center gap-4 rounded-[22px] p-8 text-center">
+      <Loader2 className="h-10 w-10 animate-spin text-cta" />
+      <p className="dash-muted text-sm">{message}</p>
+    </div>
+  )
+}
+
+function SkeletonBlock({ className = '' }) {
+  return (
+    <span
+      className={[
+        'block rounded-full bg-[var(--dash-border)]/80 motion-safe:animate-pulse',
+        className,
+      ].join(' ')}
+    />
+  )
+}
+
+function ContextSkeletonCard({ icon: Icon, title, rows = 4 }) {
+  return (
+    <section className="dash-card overflow-hidden rounded-[22px]">
+      <div className="flex items-center justify-between gap-3 px-5 py-4">
+        <span className="flex min-w-0 items-center gap-3">
+          <span className="dash-chip flex h-10 w-10 shrink-0 items-center justify-center rounded-[14px] border">
+            <Icon className="h-5 w-5 text-cta" />
+          </span>
+          <span className="min-w-0">
+            <SkeletonBlock className="mb-2 h-2.5 w-28" />
+            <span className="dash-text block truncate text-base font-bold">{title}</span>
+          </span>
+        </span>
+        <SkeletonBlock className="h-5 w-5 rounded-md" />
+      </div>
+      <div className="dash-border space-y-4 border-t p-5" aria-hidden="true">
+        {Array.from({ length: rows }).map((_, index) => (
+          <div key={index} className="space-y-2">
+            <SkeletonBlock className={index % 2 === 0 ? 'h-2.5 w-24' : 'h-2.5 w-36'} />
+            <SkeletonBlock className="h-10 w-full rounded-[14px]" />
+          </div>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+function PreflightSkeleton({ message }) {
+  const { t } = useTranslation()
 
   return (
-    <div className="flex flex-col items-center text-center gap-6 py-2">
-      <div className="w-14 h-14 rounded-full bg-amber-500/15 flex items-center justify-center">
-        <AlertTriangle className="w-8 h-8 text-amber-400" />
+    <div className="space-y-5" aria-busy="true">
+      <div className="dash-surface rounded-[22px] border p-5 sm:p-6">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+          <div className="min-w-0 flex-1">
+            <h2 className="dash-text text-xl font-bold">{t('interviewSetup.context.title')}</h2>
+            <p className="dash-muted mt-2 max-w-3xl text-sm leading-relaxed">{message}</p>
+          </div>
+          <SkeletonBlock className="h-10 w-32 rounded-[14px]" />
+        </div>
+      </div>
+
+      <div className="grid gap-5 xl:grid-cols-2">
+        <ContextSkeletonCard icon={FileText} title={t('interviewSetup.context.cvTitle')} rows={5} />
+        <ContextSkeletonCard icon={Briefcase} title={t('interviewSetup.context.jdTitle')} rows={4} />
+      </div>
+
+      <div className="dash-surface flex flex-col gap-3 rounded-[22px] border p-4 shadow-shell sm:flex-row sm:items-center sm:justify-between">
+        <SkeletonBlock className="h-3 w-full max-w-lg" />
+        <SkeletonBlock className="h-11 w-32 shrink-0 rounded-[14px]" />
+      </div>
+    </div>
+  )
+}
+
+function ErrorPanel({ message, onRetry }) {
+  const { t } = useTranslation()
+
+  return (
+    <div className="dash-card flex min-h-[320px] flex-col items-center justify-center gap-5 rounded-[22px] p-8 text-center">
+      <div className="flex h-14 w-14 items-center justify-center rounded-[18px] border border-red-500/30 bg-red-500/10 text-red-500">
+        <AlertTriangle className="h-7 w-7" />
       </div>
       <div>
-        <h2 className="text-xl font-heading font-bold text-white mb-2">
-          Thiếu ngữ cảnh phỏng vấn
-        </h2>
-        <p className="text-slate-400 leading-relaxed max-w-sm">
-          Bạn chưa upload <span className="text-amber-400 font-medium">{missingText}</span>.
-          Hãy hoàn thiện hồ sơ trước để AI có thể cá nhân hóa đúng trình độ và vị trí của bạn.
+        <h2 className="dash-text text-lg font-bold">{t('interviewSetup.preflightError.title')}</h2>
+        <p className="dash-muted mt-2 max-w-md text-sm leading-relaxed">
+          {message || t('interviewSetup.preflightError.fallback')}
         </p>
       </div>
-      <div className="flex gap-3 w-full">
+      <button
+        type="button"
+        onClick={onRetry}
+        className="dash-primary-button inline-flex h-11 items-center justify-center rounded-[14px] px-5 text-sm font-bold"
+      >
+        {t('interviewSetup.preflightError.retry')}
+      </button>
+    </div>
+  )
+}
+
+function MissingContextPanel({ missing, onGoUpload, onCancel }) {
+  const { t } = useTranslation()
+  const labels = { cv_context: 'CV', jd_context: 'JD' }
+  const missingText = missing.map((key) => labels[key] ?? key).join(' và ')
+
+  return (
+    <div className="dash-card rounded-[22px] p-6 sm:p-8">
+      <div className="grid gap-6 lg:grid-cols-[auto_minmax(0,1fr)] lg:items-center">
+        <div className="flex h-16 w-16 items-center justify-center rounded-[20px] border border-amber-500/30 bg-amber-500/10 text-amber-500">
+          <AlertTriangle className="h-8 w-8" />
+        </div>
+        <div>
+          <h2 className="dash-text text-xl font-bold">{t('interviewSetup.missingContext.title')}</h2>
+          <p className="dash-muted mt-2 max-w-2xl text-sm leading-relaxed">
+            {t('interviewSetup.missingContext.body', { missing: missingText })}
+          </p>
+        </div>
+      </div>
+      <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-end">
         <button
+          type="button"
           onClick={onCancel}
-          className="flex-1 px-4 py-2.5 rounded-xl border border-slate-700 text-slate-300 hover:bg-slate-700/50 transition-colors text-sm font-medium"
+          className="dash-control inline-flex h-11 items-center justify-center rounded-[14px] border px-5 text-sm font-bold"
         >
-          Huỷ
+          {t('interviewSetup.missingContext.backDashboard')}
         </button>
         <button
+          type="button"
           onClick={onGoUpload}
-          className="flex-1 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-semibold text-sm transition-colors"
+          className="dash-primary-button inline-flex h-11 items-center justify-center gap-2 rounded-[14px] px-5 text-sm font-bold"
         >
-          Đi đến trang Upload
+          <Upload className="h-4 w-4" />
+          {t('interviewSetup.missingContext.upload')}
         </button>
       </div>
     </div>
   )
 }
 
-// ─── Context confirm modal (editable) ────────────────────────────────────────
-function ContextConfirmModal({ cv, jd, onConfirm, onGoUpload }) {
+function ContextSection({ icon: Icon, title, expanded, onToggle, children }) {
+  return (
+    <section className="dash-card overflow-hidden rounded-[22px]">
+      <button
+        type="button"
+        onClick={onToggle}
+        className="flex w-full items-center justify-between gap-3 px-5 py-4 text-left transition-colors hover:bg-[var(--dash-surface-muted)]"
+      >
+        <span className="flex min-w-0 items-center gap-3">
+          <span className="dash-chip flex h-10 w-10 shrink-0 items-center justify-center rounded-[14px] border">
+            <Icon className="h-5 w-5 text-cta" />
+          </span>
+          <span className="min-w-0">
+            <span className="dash-text block truncate text-base font-bold">{title}</span>
+          </span>
+        </span>
+        {expanded ? <ChevronUp className="h-5 w-5 shrink-0 dash-muted" /> : <ChevronDown className="h-5 w-5 shrink-0 dash-muted" />}
+      </button>
+      {expanded && <div className="dash-border border-t p-5">{children}</div>}
+    </section>
+  )
+}
+
+function ContextConfirmPanel({ cv, jd, onConfirm, onGoUpload }) {
+  const { t } = useTranslation()
   const [cvExpanded, setCvExpanded] = useState(true)
   const [jdExpanded, setJdExpanded] = useState(true)
-
-  const [skills, setSkills] = useState(
-    (cv?.skills ?? []).join(', ')
-  )
-
+  const [skills, setSkills] = useState((cv?.skills ?? []).join(', '))
   const [experiences, setExperiences] = useState(
-    (cv?.experience ?? []).map((e) => ({
-      title: e.title ?? '',
-      company: e.company ?? '',
-      startDate: e.startDate ?? '',
-      endDate: e.endDate ?? '',
-      responsibilities: e.responsibilities ?? [],
-    }))
+    (cv?.experience ?? []).map((item) => ({
+      title: item.title ?? '',
+      company: item.company ?? '',
+      startDate: item.startDate ?? '',
+      endDate: item.endDate ?? '',
+      responsibilities: item.responsibilities ?? [],
+    })),
   )
-
   const [jdForm, setJdForm] = useState({
     role: jd?.role ?? '',
     required_skills: (jd?.required_skills ?? []).join(', '),
@@ -85,299 +226,254 @@ function ContextConfirmModal({ cv, jd, onConfirm, onGoUpload }) {
   })
 
   const handleConfirm = () => {
-    const splitTrim = (str) =>
-      str.split(',').map((s) => s.trim()).filter(Boolean)
-
-    const updatedCv = {
-      ...cv,
-      skills: splitTrim(skills),
-      experience: experiences.map((e) => ({ ...e })),
-    }
-
-    const updatedJd = {
-      ...jd,
-      role: jdForm.role,
-      required_skills: splitTrim(jdForm.required_skills),
-      minimum_experience_years: jdForm.minimum_experience_years
-        ? Number(jdForm.minimum_experience_years)
-        : undefined,
-      key_responsibilities: jdForm.key_responsibilities
-        .split('\n')
-        .map((s) => s.trim())
-        .filter(Boolean),
-    }
-
-    onConfirm(updatedCv, updatedJd)
+    onConfirm(
+      {
+        ...cv,
+        skills: splitTrim(skills),
+        experience: experiences.map((item) => ({ ...item })),
+      },
+      {
+        ...jd,
+        role: jdForm.role,
+        required_skills: splitTrim(jdForm.required_skills),
+        minimum_experience_years: jdForm.minimum_experience_years
+          ? Number(jdForm.minimum_experience_years)
+          : undefined,
+        key_responsibilities: jdForm.key_responsibilities
+          .split('\n')
+          .map((item) => item.trim())
+          .filter(Boolean),
+      },
+    )
   }
 
-  const inputCls =
-    'w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm placeholder-slate-600 focus:outline-none focus:border-cta transition-colors'
-  const labelCls = 'block text-xs text-slate-500 mb-1 font-medium'
-
   return (
-    <div className="flex flex-col gap-4 py-2">
-      <div className="text-center">
-        <h2 className="text-xl font-heading font-bold text-white mb-1">
-          Ngữ cảnh phỏng vấn của bạn
-        </h2>
-        <p className="text-slate-400 text-sm">
-          Kiểm tra và chỉnh sửa thông tin trước khi AI cá nhân hóa buổi phỏng vấn.
-        </p>
-      </div>
-
-      {/* Form area */}
-      <div className="flex flex-col gap-3">
-        {/* CV Section */}
-        <div className="bg-slate-800/60 border border-slate-700 rounded-xl overflow-hidden">
+    <div className="space-y-5">
+      <div className="dash-surface rounded-[22px] border p-5 sm:p-6">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+          <div>
+            <h2 className="dash-text text-xl font-bold">{t('interviewSetup.context.title')}</h2>
+            <p className="dash-muted mt-2 max-w-3xl text-sm leading-relaxed">
+              {t('interviewSetup.context.description')}
+            </p>
+          </div>
           <button
             type="button"
-            onClick={() => setCvExpanded((v) => !v)}
-            className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-slate-700/30 transition-colors"
+            onClick={onGoUpload}
+            className="dash-control inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-[14px] border px-4 text-sm font-bold"
           >
-            <span className="text-xs text-slate-400 uppercase tracking-wider font-semibold">
-              CV của bạn
-            </span>
-            {cvExpanded ? (
-              <ChevronUp className="w-4 h-4 text-slate-500" />
-            ) : (
-              <ChevronDown className="w-4 h-4 text-slate-500" />
-            )}
+            <Upload className="h-4 w-4" />
+            {t('interviewSetup.context.uploadAgain')}
           </button>
+        </div>
+      </div>
 
-          {cvExpanded && (
-            <div className="px-4 pb-4 flex flex-col gap-4 max-h-64 overflow-y-auto">
-              {/* Skills */}
-              <div className="flex flex-col gap-2">
-                <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider">
-                  Kỹ năng
-                </p>
-                <div>
-                  <label className={labelCls}>Kỹ năng (phân cách bằng dấu phẩy)</label>
-                  <input
-                    className={inputCls}
-                    value={skills}
-                    onChange={(e) => setSkills(e.target.value)}
-                    placeholder="React, TypeScript, Docker, PostgreSQL..."
-                  />
-                </div>
-              </div>
+      <div className="grid gap-5 xl:grid-cols-2">
+        <ContextSection
+          icon={FileText}
+          title={t('interviewSetup.context.cvTitle')}
+          expanded={cvExpanded}
+          onToggle={() => setCvExpanded((value) => !value)}
+        >
+          <div className="space-y-5">
+            <div>
+              <label className={labelClass}>{t('interviewSetup.context.skills')}</label>
+              <input
+                className={inputClass}
+                value={skills}
+                onChange={(event) => setSkills(event.target.value)}
+                placeholder={t('interviewSetup.context.skillsPlaceholder')}
+              />
+            </div>
 
-              {/* Experiences */}
-              {experiences.length > 0 && (
-                <div className="flex flex-col gap-2">
-                  <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider">
-                    Kinh nghiệm
-                  </p>
-                  {experiences.map((exp, i) => (
-                    <div
-                      key={i}
-                      className="grid grid-cols-[1fr_1fr_auto_auto] gap-2 items-start"
-                    >
-                      <div>
-                        {i === 0 && <label className={labelCls}>Vị trí</label>}
-                        <input
-                          className={inputCls}
-                          value={exp.title}
-                          onChange={(e) => {
-                            const next = [...experiences]
-                            next[i] = { ...next[i], title: e.target.value }
-                            setExperiences(next)
-                          }}
-                          placeholder="Software Engineer"
-                        />
-                      </div>
-                      <div>
-                        {i === 0 && <label className={labelCls}>Công ty</label>}
-                        <input
-                          className={inputCls}
-                          value={exp.company}
-                          onChange={(e) => {
-                            const next = [...experiences]
-                            next[i] = { ...next[i], company: e.target.value }
-                            setExperiences(next)
-                          }}
-                          placeholder="Company Name"
-                        />
-                      </div>
-                      <div>
-                        {i === 0 && <label className={labelCls}>Từ</label>}
-                        <input
-                          className={inputCls + ' w-24'}
-                          value={exp.startDate}
-                          onChange={(e) => {
-                            const next = [...experiences]
-                            next[i] = { ...next[i], startDate: e.target.value }
-                            setExperiences(next)
-                          }}
-                          placeholder="2022-01"
-                        />
-                      </div>
-                      <div>
-                        {i === 0 && <label className={labelCls}>Đến</label>}
-                        <input
-                          className={inputCls + ' w-24'}
-                          value={exp.endDate}
-                          onChange={(e) => {
-                            const next = [...experiences]
-                            next[i] = { ...next[i], endDate: e.target.value }
-                            setExperiences(next)
-                          }}
-                          placeholder="2024-06"
-                        />
+            <div>
+              <p className="dash-subtle mb-3 text-xs font-semibold uppercase tracking-[0.08em]">
+                {t('interviewSetup.context.experience')}
+              </p>
+              {experiences.length > 0 ? (
+                <div className="space-y-3">
+                  {experiences.map((experience, index) => (
+                    <div key={`${experience.company}-${index}`} className="dash-muted-panel rounded-[16px] border p-3">
+                      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-[1fr_1fr_96px_96px]">
+                        <div>
+                          <label className={labelClass}>{t('interviewSetup.context.position')}</label>
+                          <input
+                            className={inputClass}
+                            value={experience.title}
+                            onChange={(event) => {
+                              const next = [...experiences]
+                              next[index] = { ...next[index], title: event.target.value }
+                              setExperiences(next)
+                            }}
+                            placeholder={t('interviewSetup.context.positionPlaceholder')}
+                          />
+                        </div>
+                        <div>
+                          <label className={labelClass}>{t('interviewSetup.context.company')}</label>
+                          <input
+                            className={inputClass}
+                            value={experience.company}
+                            onChange={(event) => {
+                              const next = [...experiences]
+                              next[index] = { ...next[index], company: event.target.value }
+                              setExperiences(next)
+                            }}
+                            placeholder={t('interviewSetup.context.companyPlaceholder')}
+                          />
+                        </div>
+                        <div>
+                          <label className={labelClass}>{t('interviewSetup.context.from')}</label>
+                          <input
+                            className={inputClass}
+                            value={experience.startDate}
+                            onChange={(event) => {
+                              const next = [...experiences]
+                              next[index] = { ...next[index], startDate: event.target.value }
+                              setExperiences(next)
+                            }}
+                            placeholder="2022-01"
+                          />
+                        </div>
+                        <div>
+                          <label className={labelClass}>{t('interviewSetup.context.to')}</label>
+                          <input
+                            className={inputClass}
+                            value={experience.endDate}
+                            onChange={(event) => {
+                              const next = [...experiences]
+                              next[index] = { ...next[index], endDate: event.target.value }
+                              setExperiences(next)
+                            }}
+                            placeholder="2024-06"
+                          />
+                        </div>
                       </div>
                     </div>
                   ))}
                 </div>
+              ) : (
+                <p className="dash-muted text-sm">{t('interviewSetup.context.emptyExperience')}</p>
               )}
             </div>
-          )}
-        </div>
+          </div>
+        </ContextSection>
 
-        {/* JD Section */}
-        <div className="bg-slate-800/60 border border-slate-700 rounded-xl overflow-hidden">
-          <button
-            type="button"
-            onClick={() => setJdExpanded((v) => !v)}
-            className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-slate-700/30 transition-colors"
-          >
-            <span className="text-xs text-slate-400 uppercase tracking-wider font-semibold">
-              JD - Vị trí ứng tuyển
-            </span>
-            {jdExpanded ? (
-              <ChevronUp className="w-4 h-4 text-slate-500" />
-            ) : (
-              <ChevronDown className="w-4 h-4 text-slate-500" />
-            )}
-          </button>
-
-          {jdExpanded && (
-            <div className="px-4 pb-4 flex flex-col gap-3 max-h-64 overflow-y-auto">
-              <div>
-                <label className={labelCls}>Vị trí tuyển dụng</label>
-                <input
-                  className={inputCls}
-                  value={jdForm.role}
-                  onChange={(e) =>
-                    setJdForm((f) => ({ ...f, role: e.target.value }))
-                  }
-                  placeholder="Frontend Engineer"
-                />
-              </div>
-              <div>
-                <label className={labelCls}>Kỹ năng yêu cầu (phân cách bằng dấu phẩy)</label>
-                <input
-                  className={inputCls}
-                  value={jdForm.required_skills}
-                  onChange={(e) =>
-                    setJdForm((f) => ({ ...f, required_skills: e.target.value }))
-                  }
-                  placeholder="React, TypeScript, REST API..."
-                />
-              </div>
-              <div>
-                <label className={labelCls}>Số năm kinh nghiệm tối thiểu</label>
-                <input
-                  type="number"
-                  min="0"
-                  max="20"
-                  className={inputCls + ' w-24'}
-                  value={jdForm.minimum_experience_years}
-                  onChange={(e) =>
-                    setJdForm((f) => ({
-                      ...f,
-                      minimum_experience_years: e.target.value,
-                    }))
-                  }
-                  placeholder="2"
-                />
-              </div>
-              <div>
-                <label className={labelCls}>Trách nhiệm chính (mỗi dòng một mục)</label>
-                <textarea
-                  rows={3}
-                  className={inputCls + ' resize-none'}
-                  value={jdForm.key_responsibilities}
-                  onChange={(e) =>
-                    setJdForm((f) => ({
-                      ...f,
-                      key_responsibilities: e.target.value,
-                    }))
-                  }
-                  placeholder="Phát triển tính năng frontend&#10;Review code và mentoring..."
-                />
-              </div>
+        <ContextSection
+          icon={Briefcase}
+          title={t('interviewSetup.context.jdTitle')}
+          expanded={jdExpanded}
+          onToggle={() => setJdExpanded((value) => !value)}
+        >
+          <div className="space-y-4">
+            <div>
+              <label className={labelClass}>{t('interviewSetup.context.role')}</label>
+              <input
+                className={inputClass}
+                value={jdForm.role}
+                onChange={(event) => setJdForm((form) => ({ ...form, role: event.target.value }))}
+                placeholder={t('interviewSetup.context.rolePlaceholder')}
+              />
             </div>
-          )}
-        </div>
+            <div>
+              <label className={labelClass}>{t('interviewSetup.context.requiredSkills')}</label>
+              <input
+                className={inputClass}
+                value={jdForm.required_skills}
+                onChange={(event) => setJdForm((form) => ({ ...form, required_skills: event.target.value }))}
+                placeholder={t('interviewSetup.context.requiredSkillsPlaceholder')}
+              />
+            </div>
+            <div>
+              <label className={labelClass}>{t('interviewSetup.context.minimumExperience')}</label>
+              <input
+                type="number"
+                min="0"
+                max="20"
+                className={`${inputClass} max-w-32`}
+                value={jdForm.minimum_experience_years}
+                onChange={(event) => setJdForm((form) => ({ ...form, minimum_experience_years: event.target.value }))}
+                placeholder="2"
+              />
+            </div>
+            <div>
+              <label className={labelClass}>{t('interviewSetup.context.responsibilities')}</label>
+              <textarea
+                rows={6}
+                className={`${inputClass} resize-none`}
+                value={jdForm.key_responsibilities}
+                onChange={(event) => setJdForm((form) => ({ ...form, key_responsibilities: event.target.value }))}
+                placeholder={t('interviewSetup.context.responsibilitiesPlaceholder')}
+              />
+            </div>
+          </div>
+        </ContextSection>
       </div>
 
-      <p className="text-xs text-slate-500 text-center">
-        Thông tin không đúng?{' '}
+      <div className="dash-surface sticky bottom-0 z-10 flex flex-col gap-3 rounded-[22px] border p-4 shadow-shell sm:flex-row sm:items-center sm:justify-between">
+        <p className="dash-muted text-sm">
+          {t('interviewSetup.context.note')}
+        </p>
         <button
-          onClick={onGoUpload}
-          className="text-cta underline hover:text-cta/80 transition-colors"
+          type="button"
+          onClick={handleConfirm}
+          className="dash-primary-button inline-flex h-11 items-center justify-center gap-2 rounded-[14px] px-5 text-sm font-bold"
         >
-          Upload lại CV/JD
+          <Play className="h-4 w-4" />
+          {t('interviewSetup.context.continue')}
         </button>
-      </p>
-
-      <button
-        onClick={handleConfirm}
-        className="w-full px-4 py-3 rounded-xl bg-cta hover:bg-cta/90 text-black font-semibold transition-colors"
-      >
-        Tiếp tục
-      </button>
+      </div>
     </div>
   )
 }
 
-// ─── Loading screen ───────────────────────────────────────────────────────────
-function LoadingScreen({ message }) {
-  return (
-    <div className="flex flex-col items-center justify-center gap-4 py-12">
-      <Loader2 className="w-10 h-10 text-cta animate-spin" />
-      <p className="text-slate-400 text-sm">{message}</p>
-    </div>
-  )
-}
-
-// ─── Main orchestrator ────────────────────────────────────────────────────────
 export default function InterviewSetupFlow() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const { step, missing, cv, jd, loading, session, selectedRounds, creditError } = useSelector(
-    (s) => s.interviewSetup,
-  )
+  const { t } = useTranslation()
+  const {
+    step,
+    missing,
+    cv,
+    jd,
+    loading,
+    error,
+    session,
+    selectedRounds,
+    selectedMode,
+    creditError,
+  } = useSelector((state) => state.interviewSetup)
 
-  // Reset setup state and trigger preflight on mount
   useEffect(() => {
     dispatch(resetSetup())
     dispatch(preflightRequest())
   }, [dispatch])
 
-  const selectedMode = useSelector((s) => s.interviewSetup.selectedMode)
-
-  // Navigate to the correct room when session is created
   useEffect(() => {
-    if (step === 'done' && session) {
-      if (selectedRounds.includes('hr_behavioral')) {
-        // Clear stale state before entering the room so first render sees clean slate
-        dispatch(resetBehavioral())
-        if (selectedMode === 'combat') dispatch(resetCombatOrchestrator())
-        navigate(selectedMode === 'combat' ? ROUTES.COMBAT_ROOM : ROUTES.BEHAVIORAL_ROOM)
-      } else if (selectedRounds.includes('dsa')) {
-        dispatch(resetDSASession())
-        dispatch(startDSARound({ interviewSessionId: session.sessionId }))
-        navigate(ROUTES.DSA_ROOM)
-      } else if (selectedRounds.includes('system_design')) {
-        dispatch(resetSDSession())
-        dispatch(resetInterviewer())
-        navigate(ROUTES.SD_ROOM)
-      } else {
-        navigate(ROUTES.INTERVIEW_ROOM)
-      }
+    if (step !== 'done' || !session) return
+
+    if (selectedRounds.includes('hr_behavioral')) {
+      dispatch(resetBehavioral())
+      if (selectedMode === 'combat') dispatch(resetCombatOrchestrator())
+      navigate(selectedMode === 'combat' ? ROUTES.COMBAT_ROOM : ROUTES.BEHAVIORAL_ROOM)
+      return
     }
-  }, [step, session, selectedRounds, selectedMode, navigate])
+
+    if (selectedRounds.includes('dsa')) {
+      dispatch(resetDSASession())
+      dispatch(startDSARound({ interviewSessionId: session.sessionId }))
+      navigate(ROUTES.DSA_ROOM)
+      return
+    }
+
+    if (selectedRounds.includes('system_design')) {
+      dispatch(resetSDSession())
+      dispatch(resetInterviewer())
+      navigate(ROUTES.SD_ROOM)
+      return
+    }
+
+    navigate(ROUTES.INTERVIEW_ROOM)
+  }, [dispatch, navigate, selectedMode, selectedRounds, session, step])
 
   const handleClose = () => {
     dispatch(resetSetup())
@@ -389,13 +485,17 @@ export default function InterviewSetupFlow() {
     navigate(ROUTES.DASHBOARD_PROFILE)
   }
 
+  const handleRetryPreflight = () => {
+    dispatch(preflightRequest())
+  }
+
   const handleClearCreditError = () => {
     dispatch(clearCreditError())
   }
 
   const handleTopUp = () => {
     dispatch(resetSetup())
-    navigate(ROUTES.DASHBOARD) // TODO: replace with ROUTES.PURCHASE when story 014 is done
+    navigate(ROUTES.DASHBOARD)
   }
 
   const handleStartSession = () => {
@@ -410,26 +510,33 @@ export default function InterviewSetupFlow() {
     dispatch(saveContextRequest({ cv: updatedCv, jd: updatedJd }))
   }
 
-  // ─── Render step content ─────────────────────────────────────────────────
   const renderStep = () => {
     if (creditError) {
       return (
-        <InsufficientCreditModal
-          creditError={creditError}
-          onClose={handleClearCreditError}
-          onTopUp={handleTopUp}
-        />
+        <div className="dash-card mx-auto max-w-xl rounded-[22px] p-6 sm:p-8">
+          <InsufficientCreditModal
+            creditError={creditError}
+            onClose={handleClearCreditError}
+            onTopUp={handleTopUp}
+          />
+        </div>
       )
     }
 
     switch (step) {
       case 'idle':
+        return error ? (
+          <ErrorPanel message={error} onRetry={handleRetryPreflight} />
+        ) : (
+          <PreflightSkeleton message={t('interviewSetup.loading.preparingPreflight')} />
+        )
+
       case 'preflight_loading':
-        return <LoadingScreen message="Đang kiểm tra ngữ cảnh phỏng vấn..." />
+        return <PreflightSkeleton message={t('interviewSetup.loading.checkingContext')} />
 
       case 'context_missing':
         return (
-          <MissingContextModal
+          <MissingContextPanel
             missing={missing}
             onGoUpload={handleGoUpload}
             onCancel={handleClose}
@@ -438,7 +545,7 @@ export default function InterviewSetupFlow() {
 
       case 'context_confirm':
         return (
-          <ContextConfirmModal
+          <ContextConfirmPanel
             cv={cv}
             jd={jd}
             onConfirm={handleSaveContext}
@@ -447,47 +554,54 @@ export default function InterviewSetupFlow() {
         )
 
       case 'mode_select':
-        return <ModeSelectionStep />
+      case 'round_select':
+        return <RoundSelectionStep onStart={handleStartSession} />
 
       case 'combat_permission':
         return <CombatPermissionGate />
 
-      case 'round_select':
-        return <RoundSelectionStep onStart={handleStartSession} />
-
       case 'initializing':
-        return <LoadingScreen message="Đang khởi tạo phiên phỏng vấn..." />
+        return <LoadingScreen message={t('interviewSetup.loading.initializing')} />
 
       default:
-        return null
+        return <ErrorPanel message={t('interviewSetup.preflightError.fallback')} onRetry={handleRetryPreflight} />
     }
   }
 
-  // Steps that should show a close button
-  const showClose = !['preflight_loading', 'idle', 'initializing'].includes(step)
+  const showSavingOverlay = loading && !['idle', 'preflight_loading', 'initializing'].includes(step)
 
   return (
-    // Fullscreen backdrop
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-      <div className="relative w-full max-w-2xl bg-slate-900 border border-slate-700/60 rounded-2xl shadow-2xl p-6 sm:p-8">
-        {showClose && (
-          <button
-            onClick={handleClose}
-            className="absolute top-4 right-4 text-slate-500 hover:text-slate-300 transition-colors"
-            aria-label="Đóng"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        )}
-
-        {loading && !['preflight_loading', 'initializing'].includes(step) && (
-          <div className="absolute inset-0 rounded-2xl bg-slate-900/70 flex items-center justify-center z-10">
-            <Loader2 className="w-8 h-8 text-cta animate-spin" />
+    <div className="dash-page-shell min-h-full pb-10">
+      <main className="dash-page">
+        <header className="dash-page-header">
+          <div>
+            <h1 className="dash-page-title">{t('interviewSetup.page.title')}</h1>
+            <p className="dash-page-description">
+              {t('interviewSetup.page.description')}
+            </p>
           </div>
-        )}
+          <button
+            type="button"
+            onClick={handleClose}
+            className="dash-control inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-[14px] border px-4 text-sm font-bold"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            {t('interviewSetup.page.backDashboard')}
+          </button>
+        </header>
 
-        {renderStep()}
-      </div>
+        <section className="relative">
+          {renderStep()}
+          {showSavingOverlay && (
+            <div className="absolute inset-0 z-20 flex min-h-[240px] items-center justify-center rounded-[24px] bg-[var(--dash-shell)]/70 backdrop-blur-sm">
+              <div className="dash-card flex items-center gap-3 rounded-[18px] p-4 shadow-shell">
+                <Loader2 className="h-5 w-5 animate-spin text-cta" />
+                <span className="dash-text text-sm font-semibold">{t('interviewSetup.loading.saving')}</span>
+              </div>
+            </div>
+          )}
+        </section>
+      </main>
     </div>
   )
 }

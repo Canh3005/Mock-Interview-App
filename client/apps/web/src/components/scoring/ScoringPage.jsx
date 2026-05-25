@@ -28,10 +28,12 @@ export default function ScoringPage() {
   const { status, scoreData } = useSelector((s) => s.behavioral);
   const sdEvaluatorStatus = useSelector((s) => s.sdEvaluator.status);
   const [allSessions, setAllSessions] = useState(null);
+  const [finalScorecard, setFinalScorecard] = useState(null);
   const [selectedSessionType, setSelectedSessionType] = useState(initialTab ?? 'behavioral');
   const [isLoadingSessions, setIsLoadingSessions] = useState(false);
 
-  const isNewProbeScorecard = allSessions?.behavioral?.finalScore?.scorecardVersion === '1.0';
+  const behavioralScorecard = finalScorecard?.behavioral;
+  const isNewProbeScorecard = behavioralScorecard?.scorecardVersion === '1.0';
   const isLoading = initialTab !== 'liveCoding' &&
     !isNewProbeScorecard &&
     (status === 'completing' || (status === 'completed' && !scoreData));
@@ -44,6 +46,7 @@ export default function ScoringPage() {
         .getAllSessionsForInterview(interviewSessionId)
         .then((data) => {
           setAllSessions(data.sessions);
+          setFinalScorecard(data.finalScorecard ?? null);
           // Honour initialTab if that session exists, otherwise pick first available
           const sessions = data.sessions;
           if (initialTab && sessions[initialTab] !== null && sessions[initialTab] !== undefined) {
@@ -69,19 +72,21 @@ export default function ScoringPage() {
         .getAllSessionsForInterview(interviewSessionId)
         .then((data) => {
           setAllSessions(data.sessions);
+          setFinalScorecard(data.finalScorecard ?? null);
         })
         .catch((err) => console.error('Failed to re-fetch sessions:', err))
         .finally(() => setIsLoadingSessions(false));
     }
   }, [sdEvaluatorStatus]);
 
+
   if (isLoading || isLoadingSessions) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="flex flex-col items-center gap-3">
+      <div className="flex min-h-full items-center justify-center p-6">
+        <div className="dash-card flex flex-col items-center gap-3 rounded-[20px] p-8 text-center">
           <Loader2 className="w-10 h-10 text-cta animate-spin" />
-          <p className="text-slate-400 text-sm">AI đang phân tích buổi phỏng vấn của bạn...</p>
-          <p className="text-slate-600 text-xs">Quá trình này mất khoảng 15–30 giây</p>
+          <p className="dash-text text-sm font-semibold">AI đang phân tích buổi phỏng vấn của bạn...</p>
+          <p className="dash-subtle text-xs">Quá trình này mất khoảng 15-30 giây</p>
         </div>
       </div>
     );
@@ -89,7 +94,7 @@ export default function ScoringPage() {
 
   // Get the score data for the selected session type
   const currentSessionData = allSessions?.[selectedSessionType];
-  const behavioralFinalScore = currentSessionData?.finalScore;
+  const behavioralFinalScore = finalScorecard?.behavioral ?? null;
   const displayScore = selectedSessionType === 'behavioral'
     ? (behavioralFinalScore ?? scoreData)
     : currentSessionData?.finalScore;
@@ -108,20 +113,20 @@ export default function ScoringPage() {
     : [];
 
   return (
-    <div className="min-h-screen bg-background overflow-y-auto">
+    <div className="min-h-full p-3 sm:p-4">
       {/* Session Type Tabs */}
       {availableSessions.length > 1 && (
-        <div className="border-b border-slate-700 sticky top-0 z-10 bg-background">
-          <div className="max-w-2xl mx-auto px-4">
-            <div className="flex gap-2 overflow-x-auto">
+        <div className="sticky top-0 z-10 mb-4">
+          <div className="mx-auto max-w-5xl">
+            <div className="dash-surface flex gap-2 overflow-x-auto rounded-[18px] border p-1.5 shadow-shell">
               {availableSessions.map(([sessionType]) => (
                 <button
                   key={sessionType}
                   onClick={() => setSelectedSessionType(sessionType)}
                   className={`px-4 py-3 font-medium text-sm whitespace-nowrap transition-colors ${
                     selectedSessionType === sessionType
-                      ? 'text-cta border-b-2 border-cta'
-                      : 'text-slate-400 hover:text-slate-300'
+                      ? 'dash-nav-active rounded-[14px]'
+                      : 'dash-nav-muted rounded-[14px]'
                   }`}
                 >
                   {SESSION_LABELS[sessionType]}

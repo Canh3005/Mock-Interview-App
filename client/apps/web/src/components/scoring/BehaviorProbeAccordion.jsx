@@ -83,16 +83,16 @@ function _ProbeBody({ probe }) {
   const { t } = useTranslation()
   const firstAnswer = probe.candidateAnswerQuotes?.[0]
   return (
-    <div className="px-4 py-3 bg-slate-900/50 flex flex-col gap-0">
+    <div className="dash-muted-panel flex flex-col gap-0 px-4 py-3">
       {probe.summary && (
-        <p className="text-xs text-slate-400 leading-relaxed mb-3">{probe.summary}</p>
+        <p className="dash-muted mb-3 text-xs leading-relaxed">{probe.summary}</p>
       )}
       {firstAnswer && (
-        <div className="mb-3 p-2.5 rounded-lg bg-slate-800/60 border border-slate-700/50">
-          <p className="text-[10px] text-slate-500 uppercase tracking-wider mb-1">
+        <div className="dash-card mb-3 rounded-[14px] p-2.5">
+          <p className="dash-subtle mb-1 text-[10px] uppercase tracking-[0.08em]">
             {t('behaviorScorecard.answerQuoteLabel')}
           </p>
-          <p className="text-xs text-slate-300 italic line-clamp-3">&ldquo;{firstAnswer}&rdquo;</p>
+          <p className="dash-muted line-clamp-3 text-xs italic">&ldquo;{firstAnswer}&rdquo;</p>
         </div>
       )}
       <_ProbeSignals signalResults={probe.signalResults} />
@@ -120,10 +120,10 @@ export default function BehaviorProbeAccordion({ probe }) {
   const title = probe.primaryQuestion?.slice(0, 80) ?? ''
 
   return (
-    <div className="border border-slate-700 rounded-xl overflow-hidden">
+    <div className="dash-card overflow-hidden rounded-[18px]">
       <button
         onClick={() => setOpen((o) => !o)}
-        className="w-full flex items-center justify-between px-4 py-3 bg-slate-800/60 hover:bg-slate-800 transition-colors text-left gap-3"
+        className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-[var(--dash-surface-muted)]"
       >
         <div className="flex items-center gap-2 min-w-0">
           {probe.isFallback && (
@@ -131,7 +131,7 @@ export default function BehaviorProbeAccordion({ probe }) {
               {t('behaviorScorecard.fallbackBadge')}
             </span>
           )}
-          <span className="text-sm text-slate-200 truncate">{title}</span>
+          <span className="dash-text truncate text-sm font-semibold">{title}</span>
         </div>
         <div className="flex items-center gap-2 shrink-0">
           <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full border ${bandClass}`}>

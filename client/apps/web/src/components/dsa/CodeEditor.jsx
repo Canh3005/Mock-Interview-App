@@ -57,7 +57,7 @@ export default function CodeEditor({ problemId, starterCode, disabled }) {
   }
 
   return (
-    <div className={`h-full rounded-lg overflow-hidden border ${disabled ? 'border-slate-700/50 opacity-60' : 'border-slate-700'}`}>
+    <div className={`dsa-editor-frame h-full overflow-hidden rounded-lg border ${disabled ? 'opacity-60' : ''}`}>
       <Editor
         height="100%"
         language={LANGUAGE_MAP[language] ?? 'python'}

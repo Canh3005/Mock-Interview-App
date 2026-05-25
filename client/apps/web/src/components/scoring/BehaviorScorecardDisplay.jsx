@@ -36,27 +36,27 @@ function _HeroSection({ scorecard }) {
   const bandLabel = t(`behaviorScorecard.readinessBand.${readiness.band}`)
 
   return (
-    <div className="bg-slate-800/50 border border-slate-700 rounded-2xl p-5">
-      <p className="text-xs text-slate-500 mb-3">{t('behaviorScorecard.scoreLabel')}</p>
-      <div className="flex items-center gap-5">
+    <section className="dash-card rounded-[22px] p-5 sm:p-6">
+      <p className="dash-subtle mb-3 text-xs font-semibold uppercase tracking-[0.08em]">{t('behaviorScorecard.scoreLabel')}</p>
+      <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
         <div className="relative shrink-0">
           <_ScoreRing score={readiness.finalScore} />
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-2xl font-bold text-white">{readiness.finalScore}</span>
-            <span className="text-[10px] text-slate-500">/100</span>
+            <span className="dash-text text-2xl font-bold">{readiness.finalScore}</span>
+            <span className="dash-subtle text-[10px]">/100</span>
           </div>
         </div>
         <div className="flex flex-col gap-2 min-w-0">
           <span className={`self-start px-3 py-1 rounded-full text-xs font-semibold border ${bandConf.bg} ${bandConf.color}`}>
             {bandLabel}
           </span>
-          <div className="flex gap-4 text-xs text-slate-500">
-            <span>{scorecard.probeAuditTrail?.length ?? 0} {t('behaviorScorecard.probeCountSuffix')}</span>
-            <span>{scorecard.stagesCompleted?.length ?? 0} {t('behaviorScorecard.stagesCompletedSuffix')}</span>
+          <div className="flex flex-wrap gap-2 text-xs">
+            <span className="dash-badge rounded-full border px-2.5 py-1 font-semibold">{scorecard.probeAuditTrail?.length ?? 0} {t('behaviorScorecard.probeCountSuffix')}</span>
+            <span className="dash-badge rounded-full border px-2.5 py-1 font-semibold">{scorecard.stagesCompleted?.length ?? 0} {t('behaviorScorecard.stagesCompletedSuffix')}</span>
           </div>
         </div>
       </div>
-    </div>
+    </section>
   )
 }
 
@@ -64,8 +64,8 @@ function _CompetencySection({ competencyScores }) {
   const { t } = useTranslation()
   if (!competencyScores?.length) return null
   return (
-    <div className="bg-slate-800/50 border border-slate-700 rounded-2xl p-4">
-      <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-3">
+    <section className="dash-card rounded-[22px] p-5">
+      <p className="dash-subtle mb-3 text-[10px] font-semibold uppercase tracking-[0.08em]">
         {t('behaviorScorecard.competencies')}
       </p>
       <div className="flex flex-col gap-3">
@@ -73,7 +73,7 @@ function _CompetencySection({ competencyScores }) {
           <BehaviorCompetencyBar key={c.competencyKey} label={c.label} score={c.score} />
         ))}
       </div>
-    </div>
+    </section>
   )
 }
 
@@ -90,7 +90,7 @@ function _ProbesByStage({ probeAuditTrail }) {
 
   return (
     <div className="flex flex-col gap-3">
-      <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
+      <p className="dash-subtle text-[10px] font-semibold uppercase tracking-[0.08em]">
         {t('behaviorScorecard.probeDetail')}
       </p>
       {Object.entries(byStage).map(([stageKey, { label, probes }]) => (
@@ -109,17 +109,17 @@ function _Actions() {
   const { t } = useTranslation()
   const navigate = useNavigate()
   return (
-    <div className="flex gap-3 mt-2">
+    <div className="mt-2 flex flex-col gap-3 sm:flex-row">
       <button
         onClick={() => navigate(ROUTES.DASHBOARD)}
-        className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-700 text-slate-300 hover:bg-slate-800 transition-colors text-sm font-medium"
+        className="dash-control flex flex-1 items-center justify-center gap-2 rounded-[14px] border px-4 py-2.5 text-sm font-medium transition-colors"
       >
         <Home className="w-4 h-4" />
         {t('behaviorScorecard.backHome')}
       </button>
       <button
         onClick={() => navigate(ROUTES.INTERVIEW_SETUP)}
-        className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-cta hover:bg-cta/90 text-black font-semibold text-sm transition-colors"
+        className="dash-primary-button flex flex-1 items-center justify-center gap-2 rounded-[14px] px-4 py-2.5 text-sm font-semibold transition-colors"
       >
         <RotateCcw className="w-4 h-4" />
         {t('behaviorScorecard.practiceAgain')}
@@ -131,7 +131,7 @@ function _Actions() {
 export default function BehaviorScorecardDisplay({ scorecard }) {
   if (!scorecard) return null
   return (
-    <div className="flex flex-col max-w-2xl mx-auto py-6 px-4 gap-4">
+    <div className="mx-auto flex max-w-5xl flex-col gap-4">
       <_HeroSection scorecard={scorecard} />
       <_CompetencySection competencyScores={scorecard.competencyScores} />
       <_ProbesByStage probeAuditTrail={scorecard.probeAuditTrail} />

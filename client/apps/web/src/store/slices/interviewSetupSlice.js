@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 // step flow:
 // 'idle' → preflight_loading → context_missing | context_confirm
-// → mode_select → round_select → (combat? combat_permission :) initializing → done
+// -> mode_select -> (combat? combat_permission :) initializing -> done
 const initialState = {
   step: 'idle',
 
@@ -16,7 +16,7 @@ const initialState = {
   selectedLanguage: 'vi', // 'vi' | 'en' | 'ja'
 
   // mode
-  selectedMode: null, // 'practice' | 'combat'
+  selectedMode: 'practice', // 'practice' | 'combat'
 
   // combat permission
   combatPermissions: {
@@ -101,7 +101,7 @@ const interviewSetupSlice = createSlice({
       state.selectedMode = action.payload; // 'practice' | 'combat'
     },
     proceedFromMode(state) {
-      state.step = 'round_select';
+      state.step = 'mode_select';
     },
     proceedFromRoundSelect(state) {
       if (state.selectedMode === 'combat') {
@@ -114,7 +114,7 @@ const interviewSetupSlice = createSlice({
     },
     proceedFromCombatPermission(state) {
       // Only used when user switches from combat → practice inside permission gate
-      state.step = 'round_select';
+      state.step = 'mode_select';
     },
     setDsaProblemCount(state, action) {
       state.dsaConfig.problemCount = action.payload; // 1 | 2 | 3
@@ -157,7 +157,7 @@ const interviewSetupSlice = createSlice({
       state.loading = false;
       state.error = null;
       state.creditError = action.payload;
-      state.step = 'round_select';
+      state.step = 'mode_select';
     },
     clearCreditError(state) {
       state.creditError = null;
@@ -178,7 +178,7 @@ const interviewSetupSlice = createSlice({
     initSessionFailure(state, action) {
       state.loading = false;
       state.error = action.payload;
-      state.step = 'round_select';
+      state.step = 'mode_select';
     },
 
     // ─── Resume (direct re-entry for in-progress sessions) ────────────────

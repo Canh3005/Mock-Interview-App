@@ -1,12 +1,14 @@
+import { useTranslation } from 'react-i18next'
 import { Bot } from 'lucide-react'
 
 export default function AIChat({ messages, problemId }) {
+  const { t } = useTranslation()
   const filtered = messages?.filter((m) => m.problemId === problemId) ?? []
 
   if (!filtered.length) {
     return (
       <div className="text-slate-600 text-xs text-center py-4 italic">
-        AI Interviewer sẽ hỏi khi cần thiết
+        {t('dsaRoom.ai.empty')}
       </div>
     )
   }

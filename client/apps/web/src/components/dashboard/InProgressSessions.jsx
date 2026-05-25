@@ -253,14 +253,24 @@ export default function InProgressSessions() {
   }, [])
 
   function handleResume(session) {
-    dispatch(resumeSession({ sessionId: session.sessionId, candidateLevel: session.candidateLevel, mode: session.mode }))
+    dispatch(resumeSession({
+      sessionId: session.sessionId,
+      candidateLevel: session.candidateLevel,
+      mode: session.mode,
+      behavioralSessionId: session.behavioralSession?.sessionId,
+    }))
     dispatch(resetBehavioral())
     navigate(session.mode === 'combat' ? ROUTES.COMBAT_ROOM : ROUTES.BEHAVIORAL_ROOM)
   }
 
   function handleViewResult(session) {
     dispatch(resetBehavioral())
-    dispatch(resumeSession({ sessionId: session.sessionId, candidateLevel: session.candidateLevel, mode: session.mode }))
+    dispatch(resumeSession({
+      sessionId: session.sessionId,
+      candidateLevel: session.candidateLevel,
+      mode: session.mode,
+      behavioralSessionId: session.behavioralSession?.sessionId,
+    }))
     navigate(ROUTES.SCORING)
   }
 

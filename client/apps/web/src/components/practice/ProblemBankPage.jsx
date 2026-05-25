@@ -137,10 +137,10 @@ export default function ProblemBankPage() {
         </div>
 
         {/* Table card */}
-        <div className="rounded-2xl bg-white border border-gray-200 overflow-hidden shadow-card">
+        <div className="dash-card rounded-2xl overflow-hidden">
 
           {/* Table header */}
-          <div className="grid grid-cols-[48px_1fr_110px_1fr_72px] gap-3 px-5 py-3 border-b border-gray-100 bg-gray-50">
+          <div className="dash-border grid grid-cols-[48px_1fr_110px_1fr_72px] gap-3 px-5 py-3 border-b bg-gray-50">
             <span className="text-xs font-semibold text-gray-400 uppercase tracking-widest text-center">#</span>
             <span className="text-xs font-semibold text-gray-400 uppercase tracking-widest">Tiêu đề</span>
             <span className="text-xs font-semibold text-gray-400 uppercase tracking-widest">Độ khó</span>
@@ -164,7 +164,7 @@ export default function ProblemBankPage() {
               <p className="text-gray-400 text-sm font-body">Không tìm thấy bài tập nào.</p>
             </div>
           ) : (
-            <div className="divide-y divide-gray-100">
+            <div className="dash-border divide-y">
               {problems.map((p, idx) => {
                 const isSolved = solvedProblemIds.includes(p.id)
                 const rowNum   = (currentPage - 1) * limit + idx + 1
@@ -210,7 +210,7 @@ export default function ProblemBankPage() {
                     <div className="flex justify-center">
                       {isSolved
                         ? <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                        : <span className="w-4 h-4 rounded-full border border-gray-300" />
+                        : <span className="w-4 h-4 rounded-full border border-[var(--dash-border-strong)]" />
                       }
                     </div>
                   </div>
@@ -221,7 +221,7 @@ export default function ProblemBankPage() {
 
           {/* Pagination */}
           {total > 0 && (
-            <div className="flex items-center justify-between px-5 py-3.5 border-t border-gray-100 bg-gray-50">
+            <div className="dash-border flex items-center justify-between px-5 py-3.5 border-t bg-gray-50">
               <span className="text-xs text-gray-500 font-body">
                 {start}–{end} / <span className="text-gray-700 font-medium">{total}</span> bài tập
               </span>

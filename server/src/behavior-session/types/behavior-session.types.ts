@@ -126,6 +126,7 @@ export type SseEventType =
   | 'turn_start'
   | 'chunk'
   | 'turn_complete'
+  | 'session_completed'
   | 'error';
 
 export interface SseEvaluatingEvent {
@@ -149,6 +150,12 @@ export interface SseTurnCompleteEvent {
   stageProgress: StageProgress[];
 }
 
+export interface SseSessionCompletedEvent {
+  type: 'session_completed';
+  state: 'COMPLETED';
+  stageProgress: StageProgress[];
+}
+
 export interface SseErrorEvent {
   type: 'error';
   message: string;
@@ -159,6 +166,7 @@ export type SseEvent =
   | SseTurnStartEvent
   | SseChunkEvent
   | SseTurnCompleteEvent
+  | SseSessionCompletedEvent
   | SseErrorEvent;
 
 /** Map probeId → rendered question text (pre-rendered at session init) */

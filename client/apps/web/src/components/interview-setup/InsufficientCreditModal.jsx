@@ -1,36 +1,45 @@
 import { Coins } from 'lucide-react'
+import { Trans, useTranslation } from 'react-i18next'
 
 export default function InsufficientCreditModal({ creditError, onClose, onTopUp }) {
+  const { t } = useTranslation()
   const { required, current, deficit } = creditError
+
   return (
-    <div className="flex flex-col items-center text-center gap-6 py-2">
-      <div className="w-14 h-14 rounded-full bg-red-500/15 flex items-center justify-center">
-        <Coins className="w-8 h-8 text-red-400" />
+    <div className="flex flex-col items-center gap-6 text-center">
+      <div className="flex h-14 w-14 items-center justify-center rounded-[18px] border border-red-500/30 bg-red-500/10 text-red-500">
+        <Coins className="h-8 w-8" />
       </div>
       <div>
-        <h2 className="text-xl font-heading font-bold text-white mb-2">
-          Không đủ Credit
-        </h2>
-        <p className="text-slate-400 leading-relaxed max-w-sm">
-          Bạn cần{' '}
-          <span className="text-white font-semibold">{required} Credit</span> để bắt đầu phiên này.
-          Hiện có{' '}
-          <span className="text-white font-semibold">{current} Credit</span>. Thiếu{' '}
-          <span className="text-red-400 font-semibold">{deficit} Credit</span>.
+        <p className="dash-subtle text-xs font-semibold uppercase tracking-[0.08em]">
+          {t('interviewSetup.credit.eyebrow')}
+        </p>
+        <h2 className="dash-text mt-1 text-xl font-bold">{t('interviewSetup.credit.title')}</h2>
+        <p className="dash-muted mt-2 max-w-sm text-sm leading-relaxed">
+          <Trans
+            i18nKey="interviewSetup.credit.body"
+            values={{ required, current, deficit }}
+            components={{
+              strong: <span className="dash-text font-semibold" />,
+              danger: <span className="font-semibold text-red-500" />,
+            }}
+          />
         </p>
       </div>
-      <div className="flex gap-3 w-full">
+      <div className="grid w-full gap-3 sm:grid-cols-2">
         <button
+          type="button"
           onClick={onClose}
-          className="flex-1 px-4 py-2.5 rounded-xl border border-slate-700 text-slate-300 hover:bg-slate-700/50 transition-colors text-sm font-medium"
+          className="dash-control inline-flex h-11 items-center justify-center rounded-[14px] border px-4 text-sm font-bold"
         >
-          Đóng
+          {t('interviewSetup.credit.close')}
         </button>
         <button
+          type="button"
           onClick={onTopUp}
-          className="flex-1 px-4 py-2.5 rounded-xl bg-cta hover:bg-cta/90 text-black font-semibold text-sm transition-colors"
+          className="dash-primary-button inline-flex h-11 items-center justify-center rounded-[14px] px-4 text-sm font-bold"
         >
-          Nạp Credit
+          {t('interviewSetup.credit.topUp')}
         </button>
       </div>
     </div>

@@ -20,3 +20,10 @@ export const QUESTION_PRACTICE_SCORING_QUEUE =
 export const QuestionPracticeScoringJobName = {
   SCORE_ATTEMPT: 'score-question-practice-attempt',
 } as const;
+
+export const BEHAVIOR_SCORING_QUEUE =
+  process.env.BEHAVIOR_SCORING_QUEUE || 'behavior-scoring';
+
+export const BehaviorScoringJobName = {
+  SCORE_SESSION: 'score-behavior-session',
+} as const;

@@ -5,9 +5,11 @@ import {
   take,
   takeLatest,
   cancelled,
+  delay,
 } from 'redux-saga/effects';
 import { eventChannel, END } from 'redux-saga';
 import { behavioralApi } from '../../api/behavioral.api';
+import { interviewApi } from '../../api/interview.api';
 import { toast } from 'sonner';
 import {
   createSessionRequest,
@@ -121,11 +123,10 @@ function* _submitAnswer(action) {
             state: event.state,
             stageProgress: event.stageProgress,
           }));
-          if (event.state === 'COMPLETED') {
-            const sid = yield select((s) => s.behavioral.sessionId);
-            yield call(behavioralApi.complete, sid);
-            yield put(sessionCompleted());
-          }
+          break;
+
+        case 'session_completed':
+          yield call(_pollForBehavioralScore);
           break;
 
         case 'error':
@@ -143,6 +144,25 @@ function* _submitAnswer(action) {
       yield put(streamError('Cancelled'));
     }
   }
+}
+
+// ─── Poll behavioral score sau khi session_completed ─────────────────────────
+function* _pollForBehavioralScore() {
+  const interviewSessionId = yield select((s) => s.interviewSetup.session?.sessionId);
+  for (let i = 0; i < 20; i++) {
+    yield delay(3000);
+    try {
+      const data = yield call(interviewApi.getAllSessionsForInterview, interviewSessionId);
+      if (data.finalScorecard?.behavioral) {
+        yield put(sessionCompleted());
+        return;
+      }
+    } catch {
+      // bỏ qua lỗi poll, thử lại lần sau
+    }
+  }
+  // timeout 60s — navigate anyway để không kẹt mãi
+  yield put(sessionCompleted());
 }
 
 // ─── Root watcher ─────────────────────────────────────────────────────────────
