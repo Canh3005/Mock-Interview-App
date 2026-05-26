@@ -29,7 +29,10 @@ function BaseNode({ data, borderColor, Icon }) {
             defaultValue={data.label}
             className="text-xs text-center bg-transparent border-b border-slate-400 outline-none text-foreground w-full"
             onBlur={(e) => data.onLabelChange?.(e.target.value)}
-            onKeyDown={(e) => { if (e.key === 'Enter') e.target.blur() }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') e.target.blur()
+              if (e.key === 'Escape') { data.onLabelChange?.(data.label); e.target.blur() }
+            }}
           />
         ) : (
           <span className="text-xs text-center text-foreground font-medium leading-tight">

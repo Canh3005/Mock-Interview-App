@@ -5,6 +5,11 @@ import { ROUTES } from '../../router/routes'
 import { Loader2, AlertTriangle, CheckCircle2, Clock, AlertCircle, LogOut } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { loadRequest, resetSDSession } from '../../store/slices/sdSessionSlice'
+import { resetInterviewer } from '../../store/slices/sdInterviewerSlice'
+import { evaluationReset } from '../../store/slices/sdEvaluatorSlice'
+import { resetSetup } from '../../store/slices/interviewSetupSlice'
+import { resetBehavioral } from '../../store/slices/behavioralSlice'
+import { resetDSASession } from '../../store/slices/dsaSessionSlice'
 import SDCanvas from './SDCanvas'
 import NodeLibrary from './NodeLibrary'
 import RightPanel from './RightPanel'
@@ -69,6 +74,50 @@ function PhaseProgressBar({ phase }) {
   )
 }
 
+function ExitConfirmModal({ onCancel, onConfirm }) {
+  const { t } = useTranslation()
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 p-4 backdrop-blur-sm"
+      onClick={onCancel}
+    >
+      <div
+        className="dash-card w-full max-w-sm rounded-[20px] p-5 shadow-2xl"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <div className="mb-5 flex items-start gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[14px] border border-red-500/30 bg-red-500/10 text-red-500">
+            <AlertTriangle size={18} />
+          </div>
+          <div>
+            <h2 className="dash-text text-base font-bold">{t('dashboard.focus.exitModal.title')}</h2>
+            <p className="dash-subtle mt-1 text-sm leading-relaxed">
+              {t('dashboard.focus.exitModal.description')}{' '}
+              <span className="font-semibold text-red-500">{t('dashboard.focus.exitModal.descriptionHighlight')}</span>
+              {t('dashboard.focus.exitModal.descriptionSuffix')}
+            </p>
+          </div>
+        </div>
+        <div className="flex gap-2">
+          <button
+            onClick={onCancel}
+            className="dash-control flex-1 rounded-[14px] border px-4 py-2.5 text-sm font-semibold"
+          >
+            {t('dashboard.focus.exitModal.cancel')}
+          </button>
+          <button
+            onClick={onConfirm}
+            className="flex-1 rounded-[14px] bg-red-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-red-500"
+          >
+            {t('dashboard.focus.exitModal.confirm')}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function SDRoomPage() {
   const { t } = useTranslation()
   const dispatch = useDispatch()
@@ -77,6 +126,7 @@ export default function SDRoomPage() {
   const { loading, error, phase, autoSaveStatus } = useSelector((s) => s.sdSession)
   const drawingComplete = useSelector((s) => s.sdInterviewer.drawingComplete)
   const [rightWidth, setRightWidth] = useState(RIGHT_PANEL_DEFAULT)
+  const [showExitModal, setShowExitModal] = useState(false)
 
   const handleResizeStart = useCallback((e) => {
     e.preventDefault()
@@ -105,39 +155,52 @@ export default function SDRoomPage() {
     return () => { dispatch(resetSDSession()) }
   }, [sdSessionId, dispatch])
 
+  const handleConfirmExit = () => {
+    dispatch(resetBehavioral())
+    dispatch(resetDSASession())
+    dispatch(resetSDSession())
+    dispatch(resetInterviewer())
+    dispatch(evaluationReset())
+    dispatch(resetSetup())
+    navigate(ROUTES.DASHBOARD)
+  }
+
   const isCanvasLocked = phase === 'CLARIFICATION'
   const isCanvasViewOnly = !isCanvasLocked && (phase !== 'DESIGN' || drawingComplete)
   if (loading)
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="w-8 h-8 text-cta animate-spin" />
+      <div className="flex h-full min-h-[420px] items-center justify-center">
+        <div className="dash-card flex flex-col items-center gap-3 rounded-[20px] p-8">
+          <Loader2 className="w-8 h-8 text-cta animate-spin" />
+          <p className="dash-subtle text-sm">{t('sdRoom.loading')}</p>
+        </div>
       </div>
     )
 
   if (error)
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="flex flex-col items-center gap-4 text-center max-w-sm">
+      <div className="flex h-full min-h-[420px] items-center justify-center">
+        <div className="dash-card flex max-w-sm flex-col items-center gap-4 rounded-[20px] p-8 text-center">
           <AlertTriangle className="w-10 h-10 text-red-400" />
-          <p className="text-sm text-slate-300">{error}</p>
+          <p className="dash-subtle text-sm">{error}</p>
           <button
             onClick={() => dispatch(loadRequest(sdSessionId))}
-            className="px-4 py-2 rounded-lg bg-cta text-cta-foreground text-sm font-medium hover:bg-cta/90"
+            className="dash-control rounded-[14px] border px-5 py-2 text-sm font-semibold transition-colors"
           >
-            Retry
+            {t('sdRoom.retry')}
           </button>
         </div>
       </div>
     )
 
   return (
-    <div className="h-screen flex flex-col bg-background relative">
-      <nav className="h-11 bg-slate-900 border-b border-slate-800 flex items-center justify-between px-4 shrink-0">
+    <div className="relative flex h-full min-h-0 flex-col gap-2 overflow-hidden p-2 text-[var(--dash-text)] sm:gap-3 sm:p-3">
+      <nav className="flex min-h-11 shrink-0 flex-wrap items-center justify-between gap-2 rounded-[18px] border border-slate-800/60 bg-slate-900 px-3 py-2 shadow-shell">
         <PhaseProgressBar phase={phase} />
-        <div className="flex items-center gap-4">
+        <div className="flex shrink-0 items-center gap-4">
           <AutoSaveIndicator status={autoSaveStatus} />
           <button
-            onClick={() => navigate(ROUTES.DASHBOARD)}
+            onClick={() => setShowExitModal(true)}
             className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-300 transition-colors"
           >
             <LogOut className="w-3.5 h-3.5" />
@@ -146,7 +209,7 @@ export default function SDRoomPage() {
         </div>
       </nav>
 
-      <div className="flex flex-1 overflow-hidden gap-0 p-1.5 pt-1">
+      <div className="flex min-h-0 flex-1 overflow-hidden gap-0">
         <NodeLibrary />
         <div className="flex-1 flex flex-col rounded-xl overflow-hidden border border-slate-800/60 ml-1.5">
           <SDCanvas isLocked={isCanvasLocked} isViewOnly={isCanvasViewOnly} />
@@ -155,6 +218,12 @@ export default function SDRoomPage() {
         <RightPanel width={rightWidth} />
       </div>
       <EvaluationLoadingOverlay />
+      {showExitModal && (
+        <ExitConfirmModal
+          onCancel={() => setShowExitModal(false)}
+          onConfirm={handleConfirmExit}
+        />
+      )}
     </div>
   )
 }

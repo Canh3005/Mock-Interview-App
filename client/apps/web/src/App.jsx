@@ -74,6 +74,7 @@ function AppRoutes() {
             <Route element={<InterviewRoomRoute />}>
               <Route path={ROUTES.BEHAVIORAL_ROOM} element={<BehavioralRoomPage />} />
               <Route path={ROUTES.DSA_ROOM} element={<DSASessionPage />} />
+              <Route path={ROUTES.SD_ROOM} element={<SDRoomPage />} />
               <Route path={ROUTES.SCORING} element={<ScoringPage />} />
             </Route>
 
@@ -92,7 +93,6 @@ function AppRoutes() {
           <Route element={<InterviewRoomRoute />}>
             <Route path={ROUTES.INTERVIEW_ROOM} element={<InterviewRoomPage />} />
             <Route path={ROUTES.COMBAT_ROOM} element={<CombatInterviewRoom />} />
-            <Route path={ROUTES.SD_ROOM} element={<SDRoomPage />} />
           </Route>
         </Route>
 

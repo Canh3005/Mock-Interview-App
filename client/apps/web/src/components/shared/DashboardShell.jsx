@@ -27,6 +27,9 @@ import { ROUTES } from '../../router/routes'
 import { logoutRequest } from '../../store/slices/authSlice'
 import { resetBehavioral } from '../../store/slices/behavioralSlice'
 import { resetDSASession } from '../../store/slices/dsaSessionSlice'
+import { resetSDSession } from '../../store/slices/sdSessionSlice'
+import { resetInterviewer } from '../../store/slices/sdInterviewerSlice'
+import { evaluationReset } from '../../store/slices/sdEvaluatorSlice'
 import { resetSetup } from '../../store/slices/interviewSetupSlice'
 import LanguageSwitcher from './LanguageSwitcher'
 
@@ -444,11 +447,18 @@ export default function DashboardShell() {
     loading: dsaLoading,
     mode: dsaMode,
   } = useSelector((s) => s.dsaSession)
+  const {
+    sessionId: sdSessionId,
+    phase: sdPhase,
+  } = useSelector((s) => s.sdSession)
+  const setupSDSessionId = useSelector((s) => s.interviewSetup.session?.sdSessionId)
+  const { status: sdEvaluationStatus } = useSelector((s) => s.sdEvaluator)
   const [pendingNavigation, setPendingNavigation] = useState(null)
   const isBehaviorFocusRoute = location.pathname === ROUTES.BEHAVIORAL_ROOM
   const isDsaFocusRoute = location.pathname === ROUTES.DSA_ROOM
+  const isSDFocusRoute = location.pathname === ROUTES.SD_ROOM
   const isScoringFocusRoute = location.pathname === ROUTES.SCORING
-  const focusMode = isBehaviorFocusRoute || isDsaFocusRoute || isScoringFocusRoute
+  const focusMode = isBehaviorFocusRoute || isDsaFocusRoute || isSDFocusRoute || isScoringFocusRoute
   const hasUnsubmittedDsaProblems =
     dsaMode !== 'solo' &&
     !!dsaSessionId &&
@@ -459,12 +469,18 @@ export default function DashboardShell() {
     isDsaFocusRoute &&
     dsaMode !== 'solo' &&
     (dsaLoading || dsaScoringStatus === 'scoring' || !!pendingNextProblemId || hasUnsubmittedDsaProblems)
-  const shouldGuardNavigation = shouldGuardBehaviorNavigation || shouldGuardDsaNavigation
+  const shouldGuardSDNavigation =
+    isSDFocusRoute &&
+    !!(sdSessionId || setupSDSessionId) &&
+    (sdPhase !== 'COMPLETED' || sdEvaluationStatus === 'processing')
+  const shouldGuardNavigation = shouldGuardBehaviorNavigation || shouldGuardDsaNavigation || shouldGuardSDNavigation
   const focusLabel = isScoringFocusRoute
     ? t('dashboard.focus.labels.scoring')
     : isDsaFocusRoute
       ? t('dashboard.focus.labels.dsa')
-      : t('dashboard.focus.labels.behavioral')
+      : isSDFocusRoute
+        ? t('dashboard.focus.labels.systemDesign')
+        : t('dashboard.focus.labels.behavioral')
 
   const [darkMode, setDarkMode] = useState(() => {
     if (typeof window === 'undefined') return false
@@ -495,6 +511,9 @@ export default function DashboardShell() {
     if (intent.resetInterview) {
       dispatch(resetBehavioral())
       dispatch(resetDSASession())
+      dispatch(resetSDSession())
+      dispatch(resetInterviewer())
+      dispatch(evaluationReset())
       dispatch(resetSetup())
     }
     if (intent.type === 'logout') {
@@ -552,7 +571,7 @@ export default function DashboardShell() {
           <main
             className={[
               'dash-page-shell min-h-0 flex-1 transition-colors duration-200',
-              isBehaviorFocusRoute || isDsaFocusRoute ? 'overflow-hidden' : 'overflow-y-auto',
+              isBehaviorFocusRoute || isDsaFocusRoute || isSDFocusRoute ? 'overflow-hidden' : 'overflow-y-auto',
             ].join(' ')}
           >
             <Outlet />

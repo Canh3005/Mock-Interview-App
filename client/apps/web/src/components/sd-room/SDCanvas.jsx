@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   ReactFlow,
@@ -38,6 +38,9 @@ function SDCanvasInner({ savedJSON, dispatch, isViewOnly }) {
 
   const [nodes, setNodes, onNodesChange] = useNodesState(savedJSON?.nodes ?? [])
   const [edges, setEdges, onEdgesChange] = useEdgesState(savedJSON?.edges ?? [])
+  const edgesRef = useRef(edges)
+
+  useEffect(() => { edgesRef.current = edges }, [edges])
 
   useEffect(() => {
     if (savedJSON) {
@@ -48,9 +51,43 @@ function SDCanvasInner({ savedJSON, dispatch, isViewOnly }) {
 
   const dispatchChange = useCallback(
     (newNodes, newEdges) => {
-      dispatch(canvasChanged({ nodes: newNodes, edges: newEdges }))
+      // Strip transient UI state before persisting
+      const clean = newNodes.map(({ data: { editing: _e, onLabelChange: _f, ...restData }, ...rest }) => ({
+        ...rest,
+        data: restData,
+      }))
+      dispatch(canvasChanged({ nodes: clean, edges: newEdges }))
     },
     [dispatch]
+  )
+
+  const handleLabelChange = useCallback(
+    (nodeId, newLabel) => {
+      setNodes((nds) => {
+        const updated = nds.map((n) =>
+          n.id === nodeId
+            ? { ...n, data: { ...n.data, label: newLabel.trim() || n.data.label, editing: false, onLabelChange: undefined } }
+            : n
+        )
+        dispatchChange(updated, edgesRef.current)
+        return updated
+      })
+    },
+    [setNodes, dispatchChange]
+  )
+
+  const handleNodeDoubleClick = useCallback(
+    (event, node) => {
+      if (isViewOnly) return
+      setNodes((nds) =>
+        nds.map((n) =>
+          n.id === node.id
+            ? { ...n, data: { ...n.data, editing: true, onLabelChange: (newLabel) => handleLabelChange(node.id, newLabel) } }
+            : { ...n, data: { ...n.data, editing: false, onLabelChange: undefined } }
+        )
+      )
+    },
+    [setNodes, handleLabelChange, isViewOnly]
   )
 
   const handleNodesChange = useCallback(
@@ -97,11 +134,16 @@ function SDCanvasInner({ savedJSON, dispatch, isViewOnly }) {
 
       const position = screenToFlowPosition({ x: event.clientX, y: event.clientY })
 
+      const newId = makeNodeId()
       const newNode = {
-        id: makeNodeId(),
+        id: newId,
         type,
         position,
-        data: { label: type.replace(/([A-Z])/g, ' $1').trim() },
+        data: {
+          label: type.replace(/([A-Z])/g, ' $1').trim(),
+          editing: true,
+          onLabelChange: (newLabel) => handleLabelChange(newId, newLabel),
+        },
       }
 
       setNodes((nds) => {
@@ -123,6 +165,7 @@ function SDCanvasInner({ savedJSON, dispatch, isViewOnly }) {
       onConnect={isViewOnly ? undefined : handleConnect}
       onDrop={isViewOnly ? undefined : handleDrop}
       onDragOver={(e) => e.preventDefault()}
+      onNodeDoubleClick={isViewOnly ? undefined : handleNodeDoubleClick}
       nodesDraggable={!isViewOnly}
       nodesConnectable={!isViewOnly}
       elementsSelectable={!isViewOnly}
