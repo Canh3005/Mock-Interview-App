@@ -24,6 +24,7 @@ When the user asks for a workflow such as `ba`, `sa`, `be`, `fe`, `review`, `tes
 
 | Lệnh | Vai trò | Đọc trước | Output |
 |------|---------|-----------|--------|
+| `codex review <file hoặc mô tả>` | Codex Reviewer | file cần review + spec/design doc liên quan | findings trả thẳng trong chat — không tạo file |
 | `ba <feature>` | BA Agent | `ba-guide.md` + `docs/features/` | `docs/features/<NNN>-<feature>/BA.md` |
 | `sa <feature>` | SA Agent | `sa-guide.md` + `BA.md` + `convention-be.md` + `convention-fe.md` + codebase | `docs/features/<NNN>-<feature>/HOW.md` (architecture brief) |
 | `be <feature>` | Dev BE | `dev-guide.md` + `HOW.md` (hoặc `BA.md` nếu SA skip) + `convention-be.md` | code + done report — KHÔNG commit |
@@ -52,6 +53,27 @@ Convention, dev guide, và review checklist: `docs/agent-guide/`
 - Dev → code + done report: implementation, acceptance mapping, verification.
 - Reviewer → verdict: approve hoặc request changes dựa trên BA/HOW/diff.
 - Test → test case matrix + automated/manual split + execution result trong `TEST.md`.
+
+---
+
+## Codex Review — `codex review <file hoặc mô tả>`
+
+**Trigger:** `codex review <file>` hoặc người dùng nói "dùng codex review ...".
+
+**Bắt buộc:** LUÔN dùng `mcp__codex__codex` tool — không tự review bằng tay.
+
+**Quy trình:**
+1. Đọc file cần review + spec/design doc liên quan (nếu có).
+2. Gọi `mcp__codex__codex` với prompt chứa đầy đủ: nội dung file, spec rules, và câu hỏi review cụ thể.
+3. Trả kết quả codex về cho người dùng — không paraphrase lại, không tự thêm nhận xét ngoài codex output.
+4. Nếu người dùng muốn follow-up → dùng `mcp__codex__codex-reply` với `threadId` của session đó.
+
+**Params mặc định khi gọi codex:**
+- `sandbox: "read-only"` — review không cần write.
+- `approval-policy: "never"` — không cần approve shell commands.
+- `cwd`: thư mục gốc project.
+
+**Done khi:** codex trả findings và người dùng đã đọc. Nếu có fix cần làm → người dùng nói "fix đi" → thực hiện edit trực tiếp, không cần codex thêm lần nữa.
 
 ---
 

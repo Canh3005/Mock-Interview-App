@@ -139,11 +139,7 @@ function SDCanvasInner({ savedJSON, dispatch, isViewOnly }) {
         id: newId,
         type,
         position,
-        data: {
-          label: type.replace(/([A-Z])/g, ' $1').trim(),
-          editing: true,
-          onLabelChange: (newLabel) => handleLabelChange(newId, newLabel),
-        },
+        data: { label: type.replace(/([A-Z])/g, ' $1').trim() },
       }
 
       setNodes((nds) => {
