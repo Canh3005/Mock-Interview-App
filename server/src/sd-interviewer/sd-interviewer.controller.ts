@@ -4,11 +4,15 @@ import { Response } from 'express';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { SDInterviewerService } from './sd-interviewer.service';
 import { SendMessageDto } from './dto/send-message.dto';
+import { SDOrchestratorService } from '../sd-orchestrator/sd-orchestrator.service';
 
 @ApiTags('sd-interviewer')
 @Controller('sd-sessions')
 export class SDInterviewerController {
-  constructor(private readonly sdInterviewerService: SDInterviewerService) {}
+  constructor(
+    private readonly sdInterviewerService: SDInterviewerService,
+    private readonly sdOrchestrator: SDOrchestratorService,
+  ) {}
 
   @Post(':id/start')
   @UseGuards(JwtAuthGuard)
@@ -20,7 +24,7 @@ export class SDInterviewerController {
     @Param('id') sessionId: string,
     @Res() res: Response,
   ): Promise<void> {
-    await this.sdInterviewerService.startSession({ sessionId, res });
+    await this.sdOrchestrator.openSession(sessionId, res);
   }
 
   @Post(':id/message')
@@ -32,12 +36,25 @@ export class SDInterviewerController {
     @Body() dto: SendMessageDto,
     @Res() res: Response,
   ): Promise<void> {
-    await this.sdInterviewerService.streamMessage({
+    await this.sdOrchestrator.handleCandidateTurn(
       sessionId,
-      userMessage: dto.userMessage,
-      isSilenceTrigger: dto.isSilenceTrigger,
+      dto.userMessage,
       res,
-    });
+    );
+  }
+
+  @Post(':id/done-drawing')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary:
+      'Candidate finished drawing — trigger graph check and transition (SSE)',
+  })
+  async doneDrawing(
+    @Param('id') sessionId: string,
+    @Res() res: Response,
+  ): Promise<void> {
+    await this.sdOrchestrator.handleDoneDrawing(sessionId, res);
   }
 
   @Post(':id/hint')

@@ -26,6 +26,7 @@ import { WalletModule } from './wallet/wallet.module';
 import { QuestionBankModule } from './question-bank/question-bank.module';
 import { SessionPlanningModule } from './session-planning/session-planning.module';
 import { BehaviorSessionModule } from './behavior-session/behavior-session.module';
+import { SDOrchestratorModule } from './sd-orchestrator/sd-orchestrator.module';
 
 @Module({
   imports: [
@@ -83,6 +84,7 @@ import { BehaviorSessionModule } from './behavior-session/behavior-session.modul
     QuestionBankModule,
     SessionPlanningModule,
     BehaviorSessionModule,
+    SDOrchestratorModule,
   ],
   controllers: [AppController],
   providers: [AppService],

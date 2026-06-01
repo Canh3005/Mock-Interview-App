@@ -343,7 +343,9 @@ export class BehaviorSessionService {
   private async _enqueueScoringJob(session: BehavioralSession): Promise<void> {
     const interviewSessionId = session.interviewSessionId;
     if (!interviewSessionId) {
-      this.logger.warn(`Session ${session.id} has no interviewSessionId — skipping scoring job`);
+      this.logger.warn(
+        `Session ${session.id} has no interviewSessionId — skipping scoring job`,
+      );
       session.status = 'COMPLETED';
       await this.sessionRepo.save(session);
       return;
@@ -352,7 +354,10 @@ export class BehaviorSessionService {
       behavioralSessionId: session.id,
       interviewSessionId,
     };
-    await this.behaviorScoringQueue.add(BehaviorScoringJobName.SCORE_SESSION, jobData);
+    await this.behaviorScoringQueue.add(
+      BehaviorScoringJobName.SCORE_SESSION,
+      jobData,
+    );
     this.logger.log(`Enqueued scoring job for behavior session ${session.id}`);
   }
 

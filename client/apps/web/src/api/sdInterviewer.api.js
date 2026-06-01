@@ -26,10 +26,9 @@ export const sdInterviewerApi = {
     }),
 
   createDrawingCompleteStream: (sessionId) =>
-    fetchWithAuth(`${BASE_URL}/sd-sessions/${sessionId}/message`, {
+    fetchWithAuth(`${BASE_URL}/sd-sessions/${sessionId}/done-drawing`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userMessage: '[DONE_DRAWING]', isSilenceTrigger: true }),
     }),
 
   requestHint: (sessionId) => axiosClient.post(`/sd-sessions/${sessionId}/hint`),

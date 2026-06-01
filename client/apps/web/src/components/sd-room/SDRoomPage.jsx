@@ -20,7 +20,7 @@ const RIGHT_PANEL_MIN = 240
 const RIGHT_PANEL_MAX = 560
 const RIGHT_PANEL_DEFAULT = 320
 
-const PHASES = ['CLARIFICATION', 'DESIGN', 'DEEP_DIVE', 'WRAP_UP']
+const PHASES = ['CLARIFICATION', 'DESIGN_DRAWING', 'DESIGN_WALKTHROUGH', 'DEEP_DIVE', 'WRAP_UP']
 
 function AutoSaveIndicator({ status }) {
   const { t } = useTranslation()
@@ -166,7 +166,7 @@ export default function SDRoomPage() {
   }
 
   const isCanvasLocked = phase === 'CLARIFICATION'
-  const isCanvasViewOnly = !isCanvasLocked && (phase !== 'DESIGN' || drawingComplete)
+  const isCanvasViewOnly = !isCanvasLocked && (phase !== 'DESIGN_DRAWING' || drawingComplete)
   if (loading)
     return (
       <div className="flex h-full min-h-[420px] items-center justify-center">

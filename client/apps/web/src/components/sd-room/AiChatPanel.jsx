@@ -53,7 +53,7 @@ export default function AiChatPanel() {
   const [inputValue, setInputValue] = useState('')
   const bottomRef = useRef(null)
 
-  const isDrawingSubState = phase === 'DESIGN' && !drawingComplete
+  const isDrawingSubState = phase === 'DESIGN_DRAWING' && !drawingComplete
   const hasNodes = (architectureJSON?.nodes?.length ?? 0) > 0
 
   const { cancelTriggers } = useSilenceDetection({

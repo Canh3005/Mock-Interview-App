@@ -11,9 +11,11 @@ import { SDProblem } from '../../sd-problem/entities/sd-problem.entity';
 
 export type SDPhase =
   | 'CLARIFICATION'
-  | 'DESIGN'
+  | 'DESIGN_DRAWING'
+  | 'DESIGN_WALKTHROUGH'
   | 'DEEP_DIVE'
   | 'WRAP_UP'
+  | 'EVALUATING'
   | 'COMPLETED';
 
 export type SDSessionStatus = 'IN_PROGRESS' | 'COMPLETED' | 'ABANDONED';
@@ -62,6 +64,9 @@ export class SDSession {
 
   @Column({ type: 'jsonb', nullable: true })
   curveballArchitectureSnapshot!: { nodes: unknown[]; edges: unknown[] } | null;
+
+  @Column({ type: 'jsonb', nullable: true })
+  stageState!: Record<string, unknown> | null;
 
   @Column({ type: 'jsonb', nullable: true })
   evaluationResult!: Record<string, unknown> | null;

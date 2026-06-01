@@ -4,7 +4,8 @@ import { silenceTriggerRequest } from '../store/slices/sdInterviewerSlice';
 
 const SILENCE_THRESHOLDS = {
   CLARIFICATION: 90_000,
-  DESIGN: 90_000,
+  DESIGN_DRAWING: 90_000,
+  DESIGN_WALKTHROUGH: 90_000,
   DEEP_DIVE: 90_000,
   WRAP_UP: 120_000,
 };

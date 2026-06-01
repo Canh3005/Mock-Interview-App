@@ -10,6 +10,8 @@ import { InjectQueue } from '@nestjs/bullmq';
 import { Queue, Job } from 'bullmq';
 import { SDSession } from '../sd-session/entities/sd-session.entity';
 import { CurveBallScenario } from '../sd-problem/entities/sd-problem.entity';
+import { SDStageSummary } from '../sd-orchestrator/entities/sd-stage-summary.entity';
+import { SDGraphSnapshotEntity } from '../sd-orchestrator/entities/sd-graph-snapshot.entity';
 import { GroqService } from '../ai/groq.service';
 import {
   SD_EVALUATION_QUEUE,
@@ -58,6 +60,10 @@ export class SDEvaluatorService {
   constructor(
     @InjectRepository(SDSession)
     private readonly sdSessionRepo: Repository<SDSession>,
+    @InjectRepository(SDStageSummary)
+    private readonly stageSummaryRepo: Repository<SDStageSummary>,
+    @InjectRepository(SDGraphSnapshotEntity)
+    private readonly graphSnapshotRepo: Repository<SDGraphSnapshotEntity>,
     @InjectQueue(SD_EVALUATION_QUEUE)
     private readonly sdEvaluationQueue: Queue,
     private readonly groqService: GroqService,
@@ -68,7 +74,7 @@ export class SDEvaluatorService {
       where: { id: sessionId },
     });
     if (!session) throw new NotFoundException('Session not found');
-    if (session.phase !== 'COMPLETED')
+    if (session.phase !== 'COMPLETED' && session.phase !== 'EVALUATING')
       throw new BadRequestException('Session not completed');
     if (session.evaluationResult !== null)
       throw new BadRequestException('Already evaluated');
@@ -142,7 +148,26 @@ export class SDEvaluatorService {
       hasCurveball,
     ) as unknown as Record<string, unknown>;
 
-    const update: DeepPartial<SDSession> = { id: sessionId, evaluationResult };
+    // Enrich evaluation result with orchestrator stage summaries if available
+    const stageSummaryAggregation =
+      await this._aggregateStageSummaries(sessionId);
+    const graphDeltaSignal = await this._loadGraphDeltaSignal(sessionId);
+
+    const enrichedResult: Record<string, unknown> = {
+      ...evaluationResult,
+      ...(stageSummaryAggregation
+        ? { stageSummaries: stageSummaryAggregation }
+        : {}),
+      ...(graphDeltaSignal
+        ? { graphDeltaAfterCurveball: graphDeltaSignal }
+        : {}),
+    };
+
+    const update: DeepPartial<SDSession> = {
+      id: sessionId,
+      evaluationResult: enrichedResult,
+      phase: 'COMPLETED',
+    };
     await this.sdSessionRepo.save(update);
     this.logger.log(`Evaluation completed for session ${sessionId}`);
   }
@@ -420,6 +445,50 @@ export class SDEvaluatorService {
     if (score >= 60) return 'Good';
     if (score >= 45) return 'Developing';
     return 'Needs Work';
+  }
+
+  private async _aggregateStageSummaries(
+    sessionId: string,
+  ): Promise<Record<string, unknown> | null> {
+    try {
+      const summaries = await this.stageSummaryRepo.find({
+        where: { sessionId },
+      });
+      if (summaries.length === 0) return null;
+      const stageScores: Record<string, number> = {};
+      const allRedFlags: string[] = [];
+      for (const s of summaries) {
+        const avg =
+          Object.values(s.scores ?? {}).reduce((a, b) => a + b, 0) /
+          Math.max(Object.values(s.scores ?? {}).length, 1);
+        stageScores[s.stage] = avg;
+        allRedFlags.push(...(s.redFlags ?? []));
+      }
+      return {
+        stageScores,
+        redFlags: allRedFlags,
+        totalStages: summaries.length,
+      };
+    } catch {
+      return null;
+    }
+  }
+
+  private async _loadGraphDeltaSignal(sessionId: string): Promise<{
+    nodesAdded: number;
+    edgesAdded: number;
+    changedLabels: number;
+  } | null> {
+    try {
+      const wrapUpSummary = await this.stageSummaryRepo.findOne({
+        where: { sessionId, stage: 'WRAP_UP' },
+      });
+      if (!wrapUpSummary?.leftoverJson) return null;
+      const leftover = wrapUpSummary.leftoverJson as any;
+      return leftover.graphDeltaAfterCurveball ?? null;
+    } catch {
+      return null;
+    }
   }
 
   private async _annotateTranscript(

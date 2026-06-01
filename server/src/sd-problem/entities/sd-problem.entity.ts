@@ -5,6 +5,12 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import type {
+  SDClarificationData,
+  SDFlowPath,
+  SDCurveball,
+  SDProbe,
+} from '../../sd-orchestrator/types/sd-orchestrator.types';
 
 export type SDProblemTargetLevel = 'mid' | 'senior' | 'staff';
 export type SDProblemDifficulty = 'medium' | 'hard';
@@ -65,6 +71,18 @@ export class SDProblem {
 
   @Column({ type: 'jsonb', default: [] })
   curveBallScenarios!: CurveBallScenario[];
+
+  @Column({ type: 'jsonb', nullable: true })
+  clarificationData!: SDClarificationData | null;
+
+  @Column({ type: 'jsonb', default: [] })
+  flowPaths!: SDFlowPath[];
+
+  @Column({ type: 'jsonb', default: [] })
+  curveballs!: SDCurveball[];
+
+  @Column({ type: 'jsonb', default: [] })
+  probeBank!: SDProbe[];
 
   @Column({ type: 'text', array: true, default: [] })
   tags!: string[];

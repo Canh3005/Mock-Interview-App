@@ -59,7 +59,7 @@ const sdInterviewerSlice = createSlice({
       state.streamingMessage = '';
     },
     streamChunk(state, action) {
-      state.streamingMessage = (state.streamingMessage + action.payload).replace('[PHASE_COMPLETE]', '');
+      state.streamingMessage = state.streamingMessage + action.payload;
     },
     streamDone(state, action) {
       const { fullText, meta } = action.payload;

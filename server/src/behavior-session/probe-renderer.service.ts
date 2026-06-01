@@ -600,10 +600,27 @@ STRICT RULES — violating any rule means output is discarded and fallback is us
     if (text.includes('?')) return true;
     const lower = text.toLowerCase();
     const questionStarters = [
-      'hãy cho', 'bạn có thể', 'bạn hãy', 'như thế nào', 'tại sao', 'vì sao',
-      'can you', 'could you', 'would you', 'please tell', 'please describe',
-      'please explain', 'how do', 'how did', 'what is', 'what are', 'why did',
-      'あなたは', 'どのように', 'なぜ', 'できますか',
+      'hãy cho',
+      'bạn có thể',
+      'bạn hãy',
+      'như thế nào',
+      'tại sao',
+      'vì sao',
+      'can you',
+      'could you',
+      'would you',
+      'please tell',
+      'please describe',
+      'please explain',
+      'how do',
+      'how did',
+      'what is',
+      'what are',
+      'why did',
+      'あなたは',
+      'どのように',
+      'なぜ',
+      'できますか',
     ];
     return questionStarters.some((starter) => lower.includes(starter));
   }

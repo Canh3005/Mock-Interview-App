@@ -46,7 +46,7 @@ function _createStartChannel(sessionId) {
                   const json = JSON.parse(line.slice(6));
                   if (json.error) { emit({ type: 'error', error: json.error }); emit(END); return; }
                   if (json.token !== undefined) { fullText += json.token; emit({ type: 'chunk', token: json.token }); }
-                  if (json.done === true) { done = true; emit({ type: 'done', fullText: fullText.replace('[PHASE_COMPLETE]', '').trim() }); emit(END); return; }
+                  if (json.done === true) { done = true; emit({ type: 'done', fullText: fullText.trim() }); emit(END); return; }
                 } catch {
                   // ignore malformed line
                 }
@@ -99,7 +99,7 @@ function _createSSEChannel(sessionId, userMessage) {
                   }
                   if (json.done === true) {
                     done = true;
-                    emit({ type: 'done', fullText: fullText.replace('[PHASE_COMPLETE]', '').trim(), meta: json.meta });
+                    emit({ type: 'done', fullText: fullText.trim(), meta: json.meta });
                     emit(END);
                     return;
                   }
@@ -155,7 +155,7 @@ function _createSilenceChannel(sessionId, { userMessage, silenceCount }) {
                   if (json.token !== undefined) { fullText += json.token; emit({ type: 'chunk', token: json.token }); }
                   if (json.done === true) {
                     done = true;
-                    emit({ type: 'done', fullText: fullText.replace('[PHASE_COMPLETE]', '').trim(), meta: json.meta });
+                    emit({ type: 'done', fullText: fullText.trim(), meta: json.meta });
                     emit(END);
                     return;
                   }
@@ -212,12 +212,12 @@ function* _handleSendMessage(action) {
         yield put(streamChunk(event.token));
       } else if (event.type === 'done') {
         yield put(streamDone({ userMessage, fullText: event.fullText, meta: event.meta }));
-        if (event.meta?.phaseChanged && event.meta?.phase) {
-          yield put(phaseUpdated(event.meta.phase));
-          if (event.meta.phase !== 'COMPLETED') {
-            yield put(startSessionRequest());
-          } else {
+        if (event.meta?.stageChanged && event.meta?.stage) {
+          yield put(phaseUpdated(event.meta.stage));
+          if (event.meta.stage === 'EVALUATING' || event.meta.stage === 'COMPLETED') {
             yield put(triggerEvaluation(sessionId));
+          } else {
+            yield put(startSessionRequest());
           }
         }
         break;
@@ -288,7 +288,7 @@ function _createDrawingCompleteChannel(sessionId) {
                   if (json.token !== undefined) { fullText += json.token; emit({ type: 'chunk', token: json.token }); }
                   if (json.done === true) {
                     done = true;
-                    emit({ type: 'done', fullText: fullText.replace('[PHASE_COMPLETE]', '').trim(), meta: json.meta });
+                    emit({ type: 'done', fullText: fullText.trim(), meta: json.meta });
                     emit(END);
                     return;
                   }
@@ -318,6 +318,12 @@ function* _handleDrawingComplete() {
         yield put(streamChunk(event.token));
       } else if (event.type === 'done') {
         yield put(streamDone({ fullText: event.fullText, meta: event.meta }));
+        if (event.meta?.stageChanged && event.meta?.stage) {
+          yield put(phaseUpdated(event.meta.stage));
+          if (event.meta.stage === 'EVALUATING' || event.meta.stage === 'COMPLETED') {
+            yield put(triggerEvaluation(sessionId));
+          }
+        }
         break;
       } else if (event.type === 'error') {
         yield put(streamFailure(''));
