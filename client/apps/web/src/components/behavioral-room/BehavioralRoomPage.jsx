@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
@@ -13,6 +13,8 @@ import {
 } from '../../store/slices/behavioralSlice'
 import { resetSetup } from '../../store/slices/interviewSetupSlice'
 import { behavioralApi } from '../../api/behavioral.api'
+import { useCombatSession } from '../../hooks/useCombatSession'
+import CameraPreview from '../dsa/CameraPreview'
 import StageProgressPanel from './StageProgressPanel'
 import ChatInterface from './ChatInterface'
 
@@ -84,13 +86,34 @@ export default function BehavioralRoomPage() {
 
   const interviewSessionId = useSelector((s) => s.interviewSetup.session?.sessionId)
   const candidateLevel = useSelector((s) => s.interviewSetup.session?.candidateLevel)
+  const mode = useSelector((s) => s.interviewSetup.session?.mode)
+  const language = useSelector((s) => s.interviewSetup.session?.language)
   const resumeBehavioralSessionId = useSelector((s) => s.interviewSetup.session?.behavioralSessionId)
-  const { sessionId, status, interviewState, stageProgress, isStreaming, isEvaluating, elapsedSeconds, error } =
+  const { sessionId, status, interviewState, stageProgress, turns, isStreaming, isEvaluating, elapsedSeconds, error } =
     useSelector((s) => s.behavioral)
 
   const [showExitModal, setShowExitModal] = useState(false)
   const [isHydratingSession, setIsHydratingSession] = useState(false)
   const timerRef = useRef(null)
+  const roomRef = useRef(null)
+  const videoRef = useRef(null)
+
+  // Combat engine: webcam + multimodal + proctoring + TTS. No-op khi mode !== 'combat'.
+  const aiConversation = useMemo(
+    () => turns.map((tn) => ({ role: tn.role === 'interviewer' ? 'ai' : 'user', content: tn.content })),
+    [turns],
+  )
+  const ttsOptions = useMemo(() => ({ language: language ?? 'vi', level: candidateLevel }), [language, candidateLevel])
+  // Chỉ kích hoạt engine khi phòng đã active — lúc này <video> đã mount nên
+  // multimodalEngine.start() nhận được videoRef hợp lệ (eye/expression cần video frame).
+  const combatActive = mode === 'combat' && status === 'active'
+  const { mediaStream } = useCombatSession({
+    mode: combatActive ? 'combat' : 'practice',
+    interviewSessionId,
+    videoRef,
+    aiConversation,
+    ttsOptions,
+  })
 
   const _handleConfirmExit = () => {
     dispatch(resetBehavioral())
@@ -188,7 +211,7 @@ export default function BehavioralRoomPage() {
   const currentStageIndex = stageProgress.findIndex((s) => s.status === 'active')
 
   return (
-    <div className="flex h-full min-h-0 flex-col gap-3 overflow-hidden p-2 sm:p-3">
+    <div ref={roomRef} className="relative flex h-full min-h-0 flex-col gap-3 overflow-hidden p-2 sm:p-3">
       {/* Header */}
       <header className="dash-surface flex shrink-0 flex-wrap items-center justify-between gap-3 rounded-[22px] border px-4 py-3 shadow-shell">
         <div className="flex min-w-0 items-center gap-3">
@@ -228,7 +251,7 @@ export default function BehavioralRoomPage() {
 
         {/* Center: Chat */}
         <main className="dash-card relative flex min-h-0 min-w-0 flex-col overflow-hidden rounded-[22px]">
-          <ChatInterface />
+          <ChatInterface combat={mode === 'combat'} />
           <div className="dash-border shrink-0 border-t px-4 py-2">
             <p className="dash-subtle text-xs">
               {isStreaming
@@ -240,6 +263,14 @@ export default function BehavioralRoomPage() {
           </div>
         </main>
       </div>
+
+      {/* Combat: hidden video feed cho multimodal engine + camera preview nổi */}
+      {mode === 'combat' && (
+        <>
+          <video ref={videoRef} muted playsInline style={{ display: 'none' }} />
+          <CameraPreview mediaStream={mediaStream} boundsRef={roomRef} contained />
+        </>
+      )}
 
       <AnimatePresence>
         {showExitModal && (

@@ -17,7 +17,6 @@ import InterviewSetupFlow from './components/interview-setup/InterviewSetupFlow'
 import RoundTransitionScreen from './components/interview-setup/RoundTransitionScreen'
 import InterviewRoomPage from './components/interview-room/InterviewRoomPage'
 import BehavioralRoomPage from './components/behavioral-room/BehavioralRoomPage'
-import CombatInterviewRoom from './components/combat-room/CombatInterviewRoom'
 import DSASessionPage from './components/dsa/DSASessionPage'
 import SDRoomPage from './components/sd-room/SDRoomPage'
 import ScoringPage from './components/scoring/ScoringPage'
@@ -92,7 +91,6 @@ function AppRoutes() {
 
           <Route element={<InterviewRoomRoute />}>
             <Route path={ROUTES.INTERVIEW_ROOM} element={<InterviewRoomPage />} />
-            <Route path={ROUTES.COMBAT_ROOM} element={<CombatInterviewRoom />} />
           </Route>
         </Route>
 

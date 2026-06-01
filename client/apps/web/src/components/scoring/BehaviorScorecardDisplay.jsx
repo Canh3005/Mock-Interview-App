@@ -1,9 +1,11 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Home, RotateCcw } from 'lucide-react'
+import { Home, RotateCcw, LayoutGrid, Swords } from 'lucide-react'
 import { ROUTES } from '../../router/routes'
 import BehaviorCompetencyBar from './BehaviorCompetencyBar'
 import BehaviorProbeAccordion from './BehaviorProbeAccordion'
+import CombatTab from './CombatTab'
 
 const READINESS_BAND_CONFIG = {
   ready:          { color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/40' },
@@ -128,13 +130,50 @@ function _Actions() {
   )
 }
 
+function _ViewTabs({ view, setView }) {
+  const tabs = [
+    { id: 'report', label: 'Báo cáo', Icon: LayoutGrid },
+    { id: 'combat', label: 'Thực chiến', Icon: Swords },
+  ]
+  return (
+    <div className="dash-card flex gap-1 rounded-[18px] p-1">
+      {tabs.map(({ id, label, Icon }) => (
+        <button
+          key={id}
+          onClick={() => setView(id)}
+          className={`flex flex-1 items-center justify-center gap-1.5 rounded-[14px] py-2 text-xs font-semibold transition-colors ${
+            view === id ? 'dash-nav-active' : 'dash-nav-muted'
+          }`}
+        >
+          <Icon className="w-3.5 h-3.5" />
+          <span>{label}</span>
+        </button>
+      ))}
+    </div>
+  )
+}
+
 export default function BehaviorScorecardDisplay({ scorecard }) {
+  const [view, setView] = useState('report')
   if (!scorecard) return null
+
+  // Combat mode: scorecard mang theo multimodal/integrity → hiện tab Thực chiến.
+  const isCombat = !!(scorecard.multimodal || scorecard.integrity)
+
   return (
     <div className="mx-auto flex max-w-5xl flex-col gap-4">
       <_HeroSection scorecard={scorecard} />
-      <_CompetencySection competencyScores={scorecard.competencyScores} />
-      <_ProbesByStage probeAuditTrail={scorecard.probeAuditTrail} />
+      {isCombat && <_ViewTabs view={view} setView={setView} />}
+      {isCombat && view === 'combat' ? (
+        <section className="dash-card rounded-[22px] p-5">
+          <CombatTab scoreData={scorecard} behavioralScore={scorecard.readiness?.finalScore} />
+        </section>
+      ) : (
+        <>
+          <_CompetencySection competencyScores={scorecard.competencyScores} />
+          <_ProbesByStage probeAuditTrail={scorecard.probeAuditTrail} />
+        </>
+      )}
       <_Actions />
     </div>
   )

@@ -71,7 +71,7 @@ function _EvaluatingBubble({ label }) {
   )
 }
 
-export default function ChatInterface() {
+export default function ChatInterface({ combat = false }) {
   const dispatch = useDispatch()
   const { t } = useTranslation()
   const { turns, isStreaming, isEvaluating, streamingText } = useSelector((s) => s.behavioral)
@@ -82,6 +82,7 @@ export default function ChatInterface() {
   const [pasteWarning, setPasteWarning] = useState(false)
   const bottomRef = useRef(null)
   const textareaRef = useRef(null)
+  const autoVoiceStartedRef = useRef(false)
 
   const { isListening, transcript, isSupported, startListening, stopListening, resetTranscript } =
     useVoiceInput()
@@ -89,6 +90,16 @@ export default function ChatInterface() {
   useEffect(() => {
     if (voiceMode && transcript) setText(transcript)
   }, [transcript, voiceMode])
+
+  // Combat: phỏng vấn voice-driven — bật voice mode mặc định 1 lần khi vào phòng.
+  // Vẫn giữ text input làm fallback nếu STT lỗi.
+  useEffect(() => {
+    if (!combat || !isSupported || autoVoiceStartedRef.current) return
+    autoVoiceStartedRef.current = true
+    setVoiceMode(true)
+    resetTranscript()
+    startListening()
+  }, [combat, isSupported, startListening, resetTranscript])
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })

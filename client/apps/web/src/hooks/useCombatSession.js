@@ -3,7 +3,18 @@ import { multimodalEngine } from '../services/MultimodalEngine'
 import { sentenceTtsBuffer } from '../services/SentenceTtsBuffer'
 import { CombatProctoringMonitor } from '../services/proctoring/combatProctoring'
 
-export function useDSACombat({ mode, interviewSessionId, videoRef, aiConversation }) {
+/**
+ * Session-neutral combat engine hook. Drives webcam capture, multimodal
+ * analysis, proctoring and TTS for any interview session (DSA, behavior, …).
+ *
+ * @param {object}  args
+ * @param {string}  args.mode               'practice' | 'combat' | 'solo'
+ * @param {string}  args.interviewSessionId combat aggregate key
+ * @param {object}  args.videoRef           ref to a hidden <video> element
+ * @param {Array}   args.aiConversation     [{ role: 'ai'|'user', content }]
+ * @param {object} [args.ttsOptions]        passed to sentenceTtsBuffer.init
+ */
+export function useCombatSession({ mode, interviewSessionId, videoRef, aiConversation, ttsOptions }) {
   const [mediaStream, setMediaStream] = useState(null)
   const monitorRef = useRef(null)
   const engineStartedRef = useRef(false)
@@ -24,7 +35,7 @@ export function useDSACombat({ mode, interviewSessionId, videoRef, aiConversatio
         }
 
         setMediaStream(stream)
-        sentenceTtsBuffer.init({})
+        sentenceTtsBuffer.init(ttsOptions ?? {})
 
         if (!engineStartedRef.current) {
           engineStartedRef.current = true

@@ -7,7 +7,6 @@ export const ROUTES = {
   INTERVIEW_SETUP: '/interview-setup',
   INTERVIEW_ROOM: '/interview-room',
   BEHAVIORAL_ROOM: '/behavioral-room',
-  COMBAT_ROOM: '/combat-room',
   DSA_ROOM: '/dsa-room',
   DSA_ROOM_SOLO: '/dsa-room-solo',
   SD_ROOM: '/sd-room',

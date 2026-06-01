@@ -4,7 +4,6 @@ import { watchAdminProblemsSaga } from './adminProblemsSaga';
 import { watchProfileSaga } from './profileSaga';
 import { watchInterviewSetupSaga } from './interviewSetupSaga';
 import { watchBehavioralSaga } from './behavioralSaga';
-import { watchCombat } from './combatSaga';
 import { watchDsaSessionSaga } from './dsaSessionSaga';
 import { watchPracticeDSASaga } from './practiceDSASaga';
 import { watchSDProblemSaga } from './sdProblemSaga';
@@ -22,7 +21,6 @@ export default function* rootSaga() {
     fork(watchProfileSaga),
     fork(watchInterviewSetupSaga),
     fork(watchBehavioralSaga),
-    fork(watchCombat),
     fork(watchDsaSessionSaga),
     fork(watchPracticeDSASaga),
     fork(watchSDProblemSaga),

@@ -116,7 +116,7 @@ export class SDOrchestratorService {
       (await this.problemRepo.findOneOrFail({
         where: { id: session.problemId },
       }));
-    const stageState = (session.stageState ?? {}) as SDSessionStageState;
+    const stageState = (session.stageState ?? {}) as unknown as SDSessionStageState;
     const tracker = this.getClarificationTracker(session);
     const lang = session.language as 'vi' | 'en' | 'ja';
     const level = (session as any).targetLevel ?? 'senior';
@@ -376,7 +376,7 @@ export class SDOrchestratorService {
       (await this.problemRepo.findOneOrFail({
         where: { id: session.problemId },
       }));
-    const stageState = (session.stageState ?? {}) as SDSessionStageState;
+    const stageState = (session.stageState ?? {}) as unknown as SDSessionStageState;
     const lang = session.language as 'vi' | 'en' | 'ja';
     const level = (session as any).targetLevel ?? 'senior';
     const elapsedSeconds = this.computeElapsedSeconds(session);
@@ -612,8 +612,9 @@ export class SDOrchestratorService {
       (await this.problemRepo.findOneOrFail({
         where: { id: session.problemId },
       }));
-    const stageState = (session.stageState ?? {}) as SDSessionStageState;
+    const stageState = (session.stageState ?? {}) as unknown as SDSessionStageState;
     const lang = session.language as 'vi' | 'en' | 'ja';
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const level = (session as any).targetLevel ?? 'senior';
     const elapsedSeconds = this.computeElapsedSeconds(session);
     const graph = this.extractGraph(session);
@@ -964,7 +965,7 @@ export class SDOrchestratorService {
     res: Response,
     lang: 'vi' | 'en' | 'ja',
   ): Promise<void> {
-    const stageState = (session.stageState ?? {}) as SDSessionStageState;
+    const stageState = (session.stageState ?? {}) as unknown as SDSessionStageState;
     const leftover: SDDeepDiveLeftoverJson = {
       completedProbeIds: tracker.progress.completedProbeIds,
       perProbeSignals: {},
@@ -1008,7 +1009,7 @@ export class SDOrchestratorService {
       (await this.problemRepo.findOneOrFail({
         where: { id: session.problemId },
       }));
-    const stageState = (session.stageState ?? {}) as SDSessionStageState;
+    const stageState = (session.stageState ?? {}) as unknown as SDSessionStageState;
     const lang = session.language as 'vi' | 'en' | 'ja';
     const elapsedSeconds = this.computeElapsedSeconds(session);
     const curveballs = problem.curveballs ?? [];
@@ -1382,7 +1383,7 @@ export class SDOrchestratorService {
     res: Response,
     lang: 'vi' | 'en' | 'ja',
   ): Promise<void> {
-    const stageState = (session.stageState ?? {}) as SDSessionStageState;
+    const stageState = (session.stageState ?? {}) as unknown as SDSessionStageState;
     const delta = this.wrapUpAssessor.detectGraphDelta(currentGraph, baseGraph);
     const leftover: SDWrapUpLeftoverJson = {
       completedItemIds: tracker.progress.completedItemIds,
@@ -1492,7 +1493,7 @@ export class SDOrchestratorService {
     const problem = await this.problemRepo.findOneOrFail({
       where: { id: session.problemId },
     });
-    const stageState = (session.stageState ?? {}) as SDSessionStageState;
+    const stageState = (session.stageState ?? {}) as unknown as SDSessionStageState;
     const hasNudged = stageState.hasNudgedEmptyCanvas ?? false;
 
     const graph: SDGraphState = this.extractGraph(session);
@@ -1629,7 +1630,7 @@ export class SDOrchestratorService {
   // ─── Tracker helpers ─────────────────────────────────────────────────────────
 
   getClarificationTracker(session: SDSession): SDClarificationTracker {
-    const state = (session.stageState ?? {}) as SDSessionStageState;
+    const state = (session.stageState ?? {}) as unknown as SDSessionStageState;
     const tracker = state.trackerJson as
       | Partial<SDClarificationTracker>
       | undefined;
@@ -1663,7 +1664,7 @@ export class SDOrchestratorService {
     session: SDSession,
     newDelta: Record<string, number>,
   ): Record<string, number> {
-    const stageState = (session.stageState ?? {}) as SDSessionStageState;
+    const stageState = (session.stageState ?? {}) as unknown as SDSessionStageState;
     const existing = stageState.runningScores ?? {};
     const result: Record<string, number> = { ...existing };
     for (const [key, val] of Object.entries(newDelta)) {

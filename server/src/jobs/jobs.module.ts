@@ -12,6 +12,7 @@ import { SDEvaluatorModule } from '../sd-evaluator/sd-evaluator.module';
 import { QuestionBankModule } from '../question-bank/question-bank.module';
 import { BehaviorSessionModule } from '../behavior-session/behavior-session.module';
 import { InterviewModule } from '../interview/interview.module';
+import { CombatModule } from '../combat/combat.module';
 import { BehavioralSession } from '../behavioral/entities/behavioral-session.entity';
 import { InterviewSession } from '../interview/entities/interview-session.entity';
 import { SessionPlan } from '../session-planning/entities/session-plan.entity';
@@ -41,6 +42,7 @@ import {
     QuestionBankModule,
     BehaviorSessionModule,
     InterviewModule,
+    CombatModule,
   ],
   providers: [
     DocumentWorker,

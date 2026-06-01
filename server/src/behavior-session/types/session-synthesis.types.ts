@@ -6,6 +6,7 @@ import type {
 import type { QuestionProbeStage } from '../../question-bank/constants/question-bank-taxonomy.constants';
 import type { OverallBand } from '../../question-bank/types/question-practice-scoring.types';
 import type { ProbeCloseReason } from './behavior-session.types';
+import type { MultimodalScore } from '../../combat/multimodal-scoring.service';
 
 export type ReadinessBand =
   | 'ready'
@@ -117,4 +118,8 @@ export interface BehaviorScorecardData {
   readiness: ReadinessSummary;
   stagesCompleted: QuestionProbeStage[];
   stagesSkipped: QuestionProbeStage[];
+  /** Combat mode only — phân tích multimodal (eye/filler/expression/pace) toàn phiên. */
+  multimodal?: MultimodalScore;
+  /** Combat mode only — điểm liêm chính + timeline proctoring. */
+  integrity?: Record<string, unknown>;
 }

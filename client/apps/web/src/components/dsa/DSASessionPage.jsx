@@ -39,7 +39,7 @@ import RunResultPanel from './RunResultPanel'
 import AIChat from './AIChat'
 import SessionTimer from './SessionTimer'
 import CameraPreview from './CameraPreview'
-import { useDSACombat } from '../../hooks/useDSACombat'
+import { useCombatSession } from '../../hooks/useCombatSession'
 
 const DIFF_COLOR = { EASY: 'text-emerald-400', MEDIUM: 'text-yellow-400', HARD: 'text-red-400' }
 const DIFF_BG = {
@@ -264,7 +264,7 @@ export default function DSASessionPage() {
   const isWideLayout = useIsWideLayout()
   const roomRef = useRef(null)
   const videoRef = useRef(null)
-  const { mediaStream } = useDSACombat({ mode, interviewSessionId, videoRef, aiConversation })
+  const { mediaStream } = useCombatSession({ mode, interviewSessionId, videoRef, aiConversation })
 
   const activeSessionProblem = sessionProblems.find((sp) => sp.problemId === activeProblemId)
   const currentLanguage = activeSessionProblem?.language ?? 'python'

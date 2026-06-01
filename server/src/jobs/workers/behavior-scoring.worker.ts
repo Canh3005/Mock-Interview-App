@@ -9,6 +9,8 @@ import {
 } from '../jobs.constants';
 import { SessionSynthesisService } from '../../behavior-session/session-synthesis.service';
 import { RoundOrchestratorService } from '../../interview/round-orchestrator.service';
+import { MultimodalScoringService } from '../../combat/multimodal-scoring.service';
+import { IntegrityCalculatorService } from '../../combat/integrity-calculator.service';
 import { BehavioralSession } from '../../behavioral/entities/behavioral-session.entity';
 import { InterviewSession } from '../../interview/entities/interview-session.entity';
 import { SessionPlan } from '../../session-planning/entities/session-plan.entity';
@@ -32,6 +34,8 @@ export class BehaviorScoringWorker extends WorkerHost {
     private readonly sessionPlanRepo: Repository<SessionPlan>,
     private readonly synthesisService: SessionSynthesisService,
     private readonly roundOrchestrator: RoundOrchestratorService,
+    private readonly multimodalScoring: MultimodalScoringService,
+    private readonly integrityCalculator: IntegrityCalculatorService,
   ) {
     super();
   }
@@ -83,14 +87,25 @@ export class BehaviorScoringWorker extends WorkerHost {
       return;
     }
 
+    const interviewSession = await this.interviewSessionRepo.findOne({
+      where: { id: interviewSessionId },
+    });
+
+    // Combat mode: gắn multimodal + integrity vào scorecard trước khi persist cả hai bản
+    // (behavioralSession.finalScore và interviewSession.finalScorecard chia sẻ cùng object).
+    if (interviewSession?.mode === 'combat') {
+      await this._enrichWithCombat(
+        scorecard,
+        interviewSessionId,
+        behavioralSessionId,
+      );
+    }
+
     session.finalScore = scorecard as unknown as Record<string, unknown>;
     session.status = 'COMPLETED';
     session.completedAt = session.completedAt ?? new Date();
     await this.behavioralSessionRepo.save(session);
 
-    const interviewSession = await this.interviewSessionRepo.findOne({
-      where: { id: interviewSessionId },
-    });
     if (!interviewSession) {
       this.logger.warn(
         `InterviewSession ${interviewSessionId} not found — skipping finalScorecard update`,
@@ -116,5 +131,40 @@ export class BehaviorScoringWorker extends WorkerHost {
     }
 
     await this.interviewSessionRepo.save(interviewSession);
+  }
+
+  /**
+   * Tính & gắn multimodal soft-skill + integrity (proctoring) vào scorecard.
+   * Cả hai service đã null-guard khi thiếu aggregate (camera bị từ chối) nên
+   * degrade an toàn; lỗi từng nhánh không chặn việc lưu scorecard.
+   */
+  private async _enrichWithCombat(
+    scorecard: BehaviorScorecardData,
+    interviewSessionId: string,
+    behavioralSessionId: string,
+  ): Promise<void> {
+    const [mmRes, intRes] = await Promise.allSettled([
+      this.multimodalScoring.scoreSession(interviewSessionId),
+      this.integrityCalculator.calculateIntegrity(
+        interviewSessionId,
+        behavioralSessionId,
+      ),
+    ]);
+
+    if (mmRes.status === 'fulfilled' && mmRes.value) {
+      scorecard.multimodal = mmRes.value;
+    } else if (mmRes.status === 'rejected') {
+      this.logger.warn(
+        `Multimodal scoring failed for ${interviewSessionId}: ${String(mmRes.reason)}`,
+      );
+    }
+
+    if (intRes.status === 'fulfilled' && intRes.value) {
+      scorecard.integrity = intRes.value;
+    } else if (intRes.status === 'rejected') {
+      this.logger.warn(
+        `Integrity calculation failed for ${interviewSessionId}: ${String(intRes.reason)}`,
+      );
+    }
   }
 }

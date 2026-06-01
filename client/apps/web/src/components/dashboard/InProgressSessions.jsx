@@ -260,7 +260,7 @@ export default function InProgressSessions() {
       behavioralSessionId: session.behavioralSession?.sessionId,
     }))
     dispatch(resetBehavioral())
-    navigate(session.mode === 'combat' ? ROUTES.COMBAT_ROOM : ROUTES.BEHAVIORAL_ROOM)
+    navigate(ROUTES.BEHAVIORAL_ROOM)
   }
 
   function handleViewResult(session) {

@@ -23,7 +23,6 @@ import {
   saveContextRequest,
 } from '../../store/slices/interviewSetupSlice'
 import { resetBehavioral } from '../../store/slices/behavioralSlice'
-import { resetCombatOrchestrator } from '../../store/slices/combatOrchestratorSlice'
 import { resetDSASession, startDSARound } from '../../store/slices/dsaSessionSlice'
 import { resetSDSession } from '../../store/slices/sdSessionSlice'
 import { resetInterviewer } from '../../store/slices/sdInterviewerSlice'
@@ -453,8 +452,7 @@ export default function InterviewSetupFlow() {
 
     if (selectedRounds.includes('hr_behavioral')) {
       dispatch(resetBehavioral())
-      if (selectedMode === 'combat') dispatch(resetCombatOrchestrator())
-      navigate(selectedMode === 'combat' ? ROUTES.COMBAT_ROOM : ROUTES.BEHAVIORAL_ROOM)
+      navigate(ROUTES.BEHAVIORAL_ROOM)
       return
     }
 
