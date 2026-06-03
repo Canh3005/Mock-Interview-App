@@ -13,59 +13,9 @@ import {
 @Injectable()
 export class SDWalkthroughPlannerService {
   planNextIntent(input: SDWalkthroughPlannerInput): SDWalkthroughIntent {
-    const {
-      graph,
-      flowPaths,
-      tracker,
-      clarificationLeftover,
-      graphMetrics,
-      context,
-      isFirstTurn,
-    } = input;
+    const { graph, flowPaths, tracker, context } = input;
     const { language } = context;
     const { progress } = tracker;
-
-    // Turn 1 — opening intent
-    if (isFirstTurn) {
-      const isSparse =
-        graphMetrics.componentCoverage < 0.4 || graphMetrics.nodeCount < 3;
-      if (isSparse) {
-        const gap = this._findCriticalGap(
-          graph,
-          graphMetrics,
-          clarificationLeftover,
-        );
-        return {
-          stage: 'DESIGN_WALKTHROUGH',
-          type: 'WALKTHROUGH_OPEN_GAP',
-          promptTemplate: `Graph is missing ${gap.componentType}. Ask candidate about: ${gap.description}.`,
-          forbiddenHints: this._buildForbiddenHints(
-            graph,
-            progress.unexplainedNodeIds,
-            null,
-          ),
-          maxSentences: 2,
-          language,
-        };
-      }
-      const nodeChain = this._buildNodeChain(graph);
-      const pathList = flowPaths
-        .filter((p) => p.required)
-        .map((p, i) => `(${i + 1}) ${p.name}`)
-        .join(', ');
-      return {
-        stage: 'DESIGN_WALKTHROUGH',
-        type: 'WALKTHROUGH_OPEN',
-        promptTemplate: `Ask candidate to explain their design end-to-end. Graph: ${nodeChain}. Paths to cover: ${pathList}.`,
-        forbiddenHints: this._buildForbiddenHints(
-          graph,
-          progress.unexplainedNodeIds,
-          null,
-        ),
-        maxSentences: 2,
-        language,
-      };
-    }
 
     // Rule 1: required paths not covered — check exception first
     const uncoveredRequiredPath = flowPaths
@@ -220,32 +170,6 @@ export class SDWalkthroughPlannerService {
       .join(' → ');
   }
 
-  private _findCriticalGap(
-    graph: { nodes: SDGraphNode[] },
-    graphMetrics: { componentCoverage: number },
-    leftover: unknown,
-  ): { componentType: string; description: string } {
-    void graphMetrics;
-    void leftover;
-    const hasDatabase = graph.nodes.some((n) =>
-      ['database', 'cache', 'storage'].some(
-        (t) =>
-          (n.type ?? '').toLowerCase().includes(t) ||
-          n.label.toLowerCase().includes(t),
-      ),
-    );
-    if (!hasDatabase) {
-      return {
-        componentType: 'storage layer',
-        description: 'where data is stored and how it is accessed',
-      };
-    }
-    return {
-      componentType: 'entry point or service layer',
-      description: 'how requests enter the system and are routed',
-    };
-  }
-
   private _buildComponentProbe(
     graph: { nodes: SDGraphNode[]; edges: SDGraphEdge[] },
     targetNodeId: string,
@@ -314,5 +238,25 @@ export class SDWalkthroughPlannerService {
     if (nonActor) return nonActor.id;
 
     return nodes[0]?.id;
+  }
+
+  buildRedirectIntent(
+    lang: 'vi' | 'en' | 'ja',
+    reason: 'scope_violation' | 'dont_know',
+  ): SDWalkthroughIntent {
+    const templates: Record<'scope_violation' | 'dont_know', string> = {
+      scope_violation:
+        'Candidate mentioned components outside the agreed scope. Redirect them to stay within clarified requirements without naming missing components.',
+      dont_know:
+        "Candidate said they don't know or went off-topic. Acknowledge briefly and redirect to another part of the diagram they haven't explained yet.",
+    };
+    return {
+      stage: 'DESIGN_WALKTHROUGH',
+      type: 'WALKTHROUGH_REDIRECT',
+      promptTemplate: templates[reason],
+      forbiddenHints: [],
+      maxSentences: 2,
+      language: lang,
+    };
   }
 }

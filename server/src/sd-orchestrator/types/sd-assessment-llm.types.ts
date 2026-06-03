@@ -38,6 +38,7 @@ export interface LLMWalkthroughOutput {
   requirementSynthesis?: boolean;
   scaleReasoning?: boolean;
   scopeControl?: boolean;
+  persistenceMissing?: boolean;
   walkthroughCompleteness: number;
   flowClarity: number;
   graphVerbalAlignment: number;

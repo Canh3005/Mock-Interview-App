@@ -38,6 +38,7 @@ import type {
   SDDeepDiveTracker,
   SDDeepDiveLeftoverJson,
   SDActiveProbeState,
+  SDProbe,
   SDWrapUpTracker,
   SDWrapUpLeftoverJson,
   SDActiveScenarioState,
@@ -469,7 +470,6 @@ export class SDOrchestratorService {
       (clarificationSummary?.leftoverJson as SDClarificationLeftoverJson | null) ?? {
         requirementContract: { disclosedFacts: [], coveredDimensions: [] },
         uncoveredDimensions: [],
-        disclosedFactCount: 0,
       };
 
     const graphMetrics = await this._getGraphMetrics(session);
@@ -597,6 +597,7 @@ export class SDOrchestratorService {
         completedProbeIds: [],
         activeProbe: null,
         probeBudgetRemaining: ddCriteria.maxProbes,
+        perProbeSignals: {} as Record<string, string[]>,
       };
       const firstProbe = this.deepDivePlanner.selectNextProbe({
         graph,
@@ -678,27 +679,57 @@ export class SDOrchestratorService {
       };
       intentText = await this.renderer.renderWalkthrough(challengeIntent);
       recordIntentType = 'CONTRADICTION_CHALLENGE';
+    } else if (decision.action === 'REDIRECT') {
+      const redirectReason =
+        assessment.candidateIntent === 'dont_know' ||
+        assessment.candidateIntent === 'off_topic'
+          ? ('dont_know' as const)
+          : ('scope_violation' as const);
+      const redirectIntent = this.walkthroughPlanner.buildRedirectIntent(
+        lang,
+        redirectReason,
+      );
+      intentText = await this.renderer.renderWalkthrough(redirectIntent);
+      recordIntentType = 'REDIRECT';
     } else {
-      const nextIntent = this.walkthroughPlanner.planNextIntent({
-        graph,
-        flowPaths,
-        tracker: updatedTracker,
-        clarificationLeftover,
-        graphMetrics: graphMetrics ?? {
-          componentCoverage: 0.5,
-          topologyCoverage: 0.5,
-          dataFlowCompleteness: 0.5,
-          requirementAlignment: 0.5,
-          architectureSimplicity: 1,
-          nodeCount: graph.nodes.length,
-          edgeCount: graph.edges.length,
-        },
-        context: { language: lang, level },
-        isFirstTurn: false,
-        elapsedSeconds,
-      });
-      intentText = await this.renderer.renderWalkthrough(nextIntent);
-      recordIntentType = nextIntent.type;
+      if (
+        assessment.signals.persistenceMissing &&
+        updatedTracker.turnCount >= 2
+      ) {
+        const persistenceIntent = {
+          stage: 'DESIGN_WALKTHROUGH' as const,
+          type: 'PERSISTENCE_GAP_PROBE' as const,
+          promptTemplate:
+            'Candidate has not mentioned how or where data is stored. Ask them to explain the persistence strategy in their design.',
+          forbiddenHints: newUnexplainedNodes
+            .map((id) => graph.nodes.find((n) => n.id === id)?.label ?? '')
+            .filter(Boolean),
+          maxSentences: 2,
+          language: lang,
+        };
+        intentText = await this.renderer.renderWalkthrough(persistenceIntent);
+        recordIntentType = 'PERSISTENCE_GAP_PROBE';
+      } else {
+        const nextIntent = this.walkthroughPlanner.planNextIntent({
+          graph,
+          flowPaths,
+          tracker: updatedTracker,
+          clarificationLeftover,
+          graphMetrics: graphMetrics ?? {
+            componentCoverage: 0.5,
+            topologyCoverage: 0.5,
+            dataFlowCompleteness: 0.5,
+            requirementAlignment: 0.5,
+            architectureSimplicity: 1,
+            nodeCount: graph.nodes.length,
+            edgeCount: graph.edges.length,
+          },
+          context: { language: lang, level },
+          elapsedSeconds,
+        });
+        intentText = await this.renderer.renderWalkthrough(nextIntent);
+        recordIntentType = nextIntent.type;
+      }
     }
 
     // TODO: wrap persistTurnRecord + updateStageState in a DB transaction to prevent inconsistent state on partial failure
@@ -762,6 +793,7 @@ export class SDOrchestratorService {
           rawProgress.probeBudgetRemaining,
           criteria.maxProbes,
         ),
+        perProbeSignals: this.toStringArrayRecord(rawProgress.perProbeSignals),
       },
     };
 
@@ -773,7 +805,6 @@ export class SDOrchestratorService {
       (clarificationSummary?.leftoverJson as SDClarificationLeftoverJson | null) ?? {
         requirementContract: { disclosedFacts: [], coveredDimensions: [] },
         uncoveredDimensions: [],
-        disclosedFactCount: 0,
       };
     const walkthroughSummary = await this.summaryRepo.findOne({
       where: { sessionId: session.id, stage: 'DESIGN_WALKTHROUGH' },
@@ -810,67 +841,22 @@ export class SDOrchestratorService {
         return;
       }
 
-      const firstAssessment = candidateAnswer.trim()
-        ? await this.deepDiveAssessor.assess(
-            candidateAnswer,
-            graph,
-            nextProbe,
-            [],
-            clarificationLeftover,
-          )
-        : null;
-
-      const newActiveProbe: SDActiveProbeState = {
-        probeId: nextProbe.id,
-        turnCount: 1,
-        followUpCount: 0,
-        challengeCount: 0,
-        coveredSignals: firstAssessment?.signals.expectedSignalsCovered ?? [],
-      };
-      const primaryIntent = this.deepDivePlanner.buildPrimaryIntent(
-        nextProbe,
-        lang,
-        newActiveProbe.coveredSignals,
-      );
-      console.log('initial primary intent for new probe:', primaryIntent);
-      const primaryText = await this.renderer.renderDeepDive(primaryIntent);
-      console.log('Rendered primary text for new probe:', primaryText);
-      const updatedTracker: SDDeepDiveTracker = {
-        turnCount: tracker.turnCount + 1,
+      await this._startNextProbeOrClose(
+        session,
+        tracker,
+        stageState,
         elapsedSeconds,
-        progress: { ...tracker.progress, activeProbe: newActiveProbe },
-      };
-
-      await this.persistTurnRecord({
-        sessionId: session.id,
-        stage: 'DEEP_DIVE',
-        turnIndex: updatedTracker.turnCount,
-        intentType: 'PROBE_PRIMARY',
-        intentTargetJson: {
-          probeId: nextProbe.id,
-          probeDimension: nextProbe.dimension,
-        },
-        promptRendered: primaryText,
-        candidateAnswer,
-        candidateIntent: firstAssessment?.candidateIntent,
-        signalsJson: firstAssessment
-          ? this.toJsonRecord(firstAssessment.signals)
-          : undefined,
-        scoreDeltas: firstAssessment?.scoreDelta,
-        action: 'ASK_FOLLOW_UP',
-        decisionReason: 'New probe started',
-      });
-
-      await this.updateStageState(session, {
-        ...stageState,
-        stage: 'DEEP_DIVE',
-        trackerJson: this.toJsonRecord(updatedTracker),
-        runningScores: firstAssessment
-          ? this._aggregateScores(session, firstAssessment.scoreDelta)
-          : (stageState.runningScores ?? {}),
-      });
-
-      this.streamText(res, primaryText, null);
+        res,
+        lang,
+        level,
+        graph,
+        probeBank,
+        graphMetrics,
+        clarificationLeftover,
+        walkthroughLeftover,
+        walkthroughSummary?.scores ?? {},
+        stageState.runningScores ?? {},
+      );
       return;
     }
 
@@ -928,7 +914,6 @@ export class SDOrchestratorService {
       decision.action === 'TRANSITION_STAGE' ||
       decision.action === 'CLOSE_PROBE'
     ) {
-      // Close probe
       updatedActive.closeReason =
         decision.action === 'TRANSITION_STAGE' ? 'timebox' : 'signals_covered';
       const newBudget = tracker.progress.probeBudgetRemaining - 1;
@@ -942,6 +927,10 @@ export class SDOrchestratorService {
           ],
           activeProbe: null,
           probeBudgetRemaining: newBudget,
+          perProbeSignals: {
+            ...tracker.progress.perProbeSignals,
+            [probeObj.id]: newCoveredSignals,
+          },
         },
       };
 
@@ -949,7 +938,7 @@ export class SDOrchestratorService {
         sessionId: session.id,
         stage: 'DEEP_DIVE',
         turnIndex: updatedTracker.turnCount,
-        intentType: 'PROBE_PRIMARY',
+        intentType: 'PROBE_CLOSE',
         intentTargetJson: { probeId: probeObj.id },
         promptRendered: '',
         candidateAnswer,
@@ -969,57 +958,22 @@ export class SDOrchestratorService {
           lang,
         );
       } else {
-        // Select next probe immediately — emit in same stream
-        const nextProbe = this.deepDivePlanner.selectNextProbe({
+        await this._startNextProbeOrClose(
+          session,
+          updatedTracker,
+          stageState,
+          elapsedSeconds,
+          res,
+          lang,
+          level,
           graph,
-          graphMetrics: this._resolveGraphMetrics(graphMetrics, graph),
+          probeBank,
+          graphMetrics,
           clarificationLeftover,
           walkthroughLeftover,
-          walkthroughScores: walkthroughSummary?.scores ?? {},
-          tracker: updatedTracker,
-          probeBank,
-          context: { language: lang, level },
-          elapsedSeconds,
-        });
-
-        if (!nextProbe) {
-          await this._closeDeepDive(
-            session,
-            updatedTracker,
-            elapsedSeconds,
-            res,
-            lang,
-          );
-          return;
-        }
-
-        const newActive: SDActiveProbeState = {
-          probeId: nextProbe.id,
-          turnCount: 1,
-          followUpCount: 0,
-          challengeCount: 0,
-          coveredSignals: [],
-        };
-        const primaryIntent = this.deepDivePlanner.buildPrimaryIntent(
-          nextProbe,
-          lang,
-          [],
+          walkthroughSummary?.scores ?? {},
+          this._aggregateScores(session, assessment.scoreDelta),
         );
-        const primaryText = await this.renderer.renderDeepDive(primaryIntent);
-
-        const finalTracker: SDDeepDiveTracker = {
-          ...updatedTracker,
-          progress: { ...updatedTracker.progress, activeProbe: newActive },
-        };
-
-        await this.updateStageState(session, {
-          ...stageState,
-          stage: 'DEEP_DIVE',
-          trackerJson: this.toJsonRecord(finalTracker),
-          runningScores: this._aggregateScores(session, assessment.scoreDelta),
-        });
-
-        this.streamText(res, primaryText, null);
       }
       return;
     }
@@ -1068,6 +1022,71 @@ export class SDOrchestratorService {
         : '';
     }
 
+    // No intent text: planner has no trigger or probe is missing followUp definition.
+    // Treat as CLOSE_PROBE — avoid streaming a silent turn.
+    if (!intentText) {
+      updatedActive.closeReason = 'signals_covered';
+      const newBudget = tracker.progress.probeBudgetRemaining - 1;
+      const closedTracker: SDDeepDiveTracker = {
+        turnCount: tracker.turnCount + 1,
+        elapsedSeconds,
+        progress: {
+          completedProbeIds: [
+            ...tracker.progress.completedProbeIds,
+            probeObj.id,
+          ],
+          activeProbe: null,
+          probeBudgetRemaining: newBudget,
+          perProbeSignals: {
+            ...tracker.progress.perProbeSignals,
+            [probeObj.id]: newCoveredSignals,
+          },
+        },
+      };
+      await this.persistTurnRecord({
+        sessionId: session.id,
+        stage: 'DEEP_DIVE',
+        turnIndex: closedTracker.turnCount,
+        intentType: 'PROBE_CLOSE',
+        intentTargetJson: { probeId: probeObj.id },
+        promptRendered: '',
+        candidateAnswer,
+        candidateIntent: assessment.candidateIntent,
+        signalsJson: this.toJsonRecord(assessment.signals),
+        scoreDeltas: assessment.scoreDelta,
+        action: 'CLOSE_PROBE',
+        decisionReason:
+          'No follow-up trigger or probe missing followUp definition',
+      });
+      if (newBudget <= 0) {
+        await this._closeDeepDive(
+          session,
+          closedTracker,
+          elapsedSeconds,
+          res,
+          lang,
+        );
+      } else {
+        await this._startNextProbeOrClose(
+          session,
+          closedTracker,
+          stageState,
+          elapsedSeconds,
+          res,
+          lang,
+          level,
+          graph,
+          probeBank,
+          graphMetrics,
+          clarificationLeftover,
+          walkthroughLeftover,
+          walkthroughSummary?.scores ?? {},
+          this._aggregateScores(session, assessment.scoreDelta),
+        );
+      }
+      return;
+    }
+
     const updatedTracker: SDDeepDiveTracker = {
       turnCount: tracker.turnCount + 1,
       elapsedSeconds,
@@ -1096,9 +1115,84 @@ export class SDOrchestratorService {
       runningScores: this._aggregateScores(session, assessment.scoreDelta),
     });
 
-    if (intentText) {
-      this.streamText(res, intentText, null);
+    this.streamText(res, intentText, null);
+  }
+
+  private async _startNextProbeOrClose(
+    session: SDSession,
+    tracker: SDDeepDiveTracker,
+    stageState: Partial<SDSessionStageState>,
+    elapsedSeconds: number,
+    res: Response,
+    lang: SDLanguage,
+    level: SDTargetLevel,
+    graph: SDGraphState,
+    probeBank: SDProbe[],
+    graphMetrics: SDGraphMetrics | null,
+    clarificationLeftover: SDClarificationLeftoverJson,
+    walkthroughLeftover: SDWalkthroughLeftoverJson,
+    walkthroughScores: Record<string, number>,
+    runningScores: Record<string, number>,
+  ): Promise<void> {
+    const nextProbe = this.deepDivePlanner.selectNextProbe({
+      graph,
+      graphMetrics: this._resolveGraphMetrics(graphMetrics, graph),
+      clarificationLeftover,
+      walkthroughLeftover,
+      walkthroughScores,
+      tracker,
+      probeBank,
+      context: { language: lang, level },
+      elapsedSeconds,
+    });
+
+    if (!nextProbe) {
+      await this._closeDeepDive(session, tracker, elapsedSeconds, res, lang);
+      return;
     }
+
+    const newActive: SDActiveProbeState = {
+      probeId: nextProbe.id,
+      turnCount: 1,
+      followUpCount: 0,
+      challengeCount: 0,
+      coveredSignals: [],
+    };
+    const primaryIntent = this.deepDivePlanner.buildPrimaryIntent(
+      nextProbe,
+      lang,
+      [],
+    );
+    const primaryText = await this.renderer.renderDeepDive(primaryIntent);
+
+    const finalTracker: SDDeepDiveTracker = {
+      ...tracker,
+      progress: { ...tracker.progress, activeProbe: newActive },
+    };
+
+    await this.persistTurnRecord({
+      sessionId: session.id,
+      stage: 'DEEP_DIVE',
+      turnIndex: finalTracker.turnCount,
+      intentType: 'PROBE_PRIMARY',
+      intentTargetJson: {
+        probeId: nextProbe.id,
+        probeDimension: nextProbe.dimension,
+      },
+      promptRendered: primaryText,
+      candidateAnswer: '',
+      action: 'ASK_FOLLOW_UP',
+      decisionReason: 'New probe started',
+    });
+
+    await this.updateStageState(session, {
+      ...stageState,
+      stage: 'DEEP_DIVE',
+      trackerJson: this.toJsonRecord(finalTracker),
+      runningScores,
+    });
+
+    this.streamText(res, primaryText, null);
   }
 
   private async _closeDeepDive(
@@ -1111,7 +1205,7 @@ export class SDOrchestratorService {
     const stageState = this.getStageState(session);
     const leftover: SDDeepDiveLeftoverJson = {
       completedProbeIds: tracker.progress.completedProbeIds,
-      perProbeSignals: {},
+      perProbeSignals: tracker.progress.perProbeSignals,
       unresolvedRedFlags: [],
     };
     const transitionText = this.renderer.buildTransitionText(
@@ -1145,7 +1239,6 @@ export class SDOrchestratorService {
       (clarificationSummary?.leftoverJson as SDClarificationLeftoverJson | null) ?? {
         requirementContract: { disclosedFacts: [], coveredDimensions: [] },
         uncoveredDimensions: [],
-        disclosedFactCount: 0,
       };
     const deepDiveSummary = await this.summaryRepo.findOne({
       where: { sessionId: session.id, stage: 'DEEP_DIVE' },
@@ -1170,7 +1263,7 @@ export class SDOrchestratorService {
         clarificationLeftover,
         deepDiveLeftover: {
           completedProbeIds: tracker.progress.completedProbeIds,
-          perProbeSignals: {},
+          perProbeSignals: tracker.progress.perProbeSignals,
           unresolvedRedFlags: [],
         },
         deepDiveScores:
@@ -1294,7 +1387,6 @@ export class SDOrchestratorService {
       (clarificationSummary?.leftoverJson as SDClarificationLeftoverJson | null) ?? {
         requirementContract: { disclosedFacts: [], coveredDimensions: [] },
         uncoveredDimensions: [],
-        disclosedFactCount: 0,
       };
 
     // Load deep-dive leftover and scores from stage summary
@@ -1697,7 +1789,6 @@ export class SDOrchestratorService {
     const stageState = this.getStageState(session);
     const delta = this.wrapUpAssessor.detectGraphDelta(currentGraph, baseGraph);
     const leftover: SDWrapUpLeftoverJson = {
-      completedItemIds: tracker.progress.completedItemIds,
       graphDeltaAfterCurveball: delta,
     };
 
@@ -2012,6 +2103,15 @@ export class SDOrchestratorService {
       : [];
   }
 
+  private toStringArrayRecord(value: unknown): Record<string, string[]> {
+    const raw = this.toJsonRecord(value);
+    const result: Record<string, string[]> = {};
+    for (const [k, v] of Object.entries(raw)) {
+      result[k] = this.stringArray(v);
+    }
+    return result;
+  }
+
   private isPresent<T>(value: T | null | undefined): value is T {
     return value !== null && value !== undefined;
   }
@@ -2135,7 +2235,6 @@ export class SDOrchestratorService {
       uncoveredDimensions: criteria.requiredDimensions.filter(
         (d) => !newCoveredDims.includes(d),
       ),
-      disclosedFactCount: newDisclosedKeys.length,
     };
 
     await this.persistStageSummary({
@@ -2164,14 +2263,14 @@ export class SDOrchestratorService {
     session: SDSession,
     newDelta: Record<string, number>,
   ): Record<string, number> {
+    // EMA α=0.4: recent turns weighted higher, one strong turn doesn't lock in a high score
+    const alpha = 0.4;
     const stageState = this.getStageState(session);
     const existing = stageState.runningScores ?? {};
     const result: Record<string, number> = { ...existing };
     for (const [key, val] of Object.entries(newDelta)) {
       const prev = result[key];
-      // Running average starting from first observation — avoids discounting
-      // turn 1 by 50% when averaged against the initial 0 baseline
-      result[key] = prev !== undefined ? Math.max(prev, val) : val;
+      result[key] = prev !== undefined ? alpha * val + (1 - alpha) * prev : val;
     }
     return result;
   }

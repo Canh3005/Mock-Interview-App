@@ -130,6 +130,16 @@ export class SDPolicyEngineService {
       };
     }
 
+    if (
+      assessment.candidateIntent === 'dont_know' ||
+      assessment.candidateIntent === 'off_topic'
+    ) {
+      return {
+        action: 'REDIRECT',
+        reason: `candidateIntent=${assessment.candidateIntent}`,
+      };
+    }
+
     return {
       action: 'ASK_FOLLOW_UP',
       reason: 'Continue walkthrough — unexplained nodes/paths remain',
@@ -279,6 +289,11 @@ export class SDPolicyEngineService {
         action: 'ASK_CHALLENGE',
         reason: 'consistencyWithOriginalDesign=false — challenging assumption',
       };
+    }
+
+    // Hard cap — mirrors Deep Dive: force close when follow-up budget exhausted
+    if (followUpBudgetExhausted) {
+      return { action: 'CLOSE_PROBE', reason: 'Follow-up budget exhausted' };
     }
 
     // Follow-up: missing blast radius

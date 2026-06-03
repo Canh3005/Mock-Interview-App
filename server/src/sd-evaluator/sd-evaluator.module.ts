@@ -4,6 +4,7 @@ import { BullModule } from '@nestjs/bullmq';
 import { SDSession } from '../sd-session/entities/sd-session.entity';
 import { SDStageSummary } from '../sd-orchestrator/entities/sd-stage-summary.entity';
 import { SDGraphSnapshotEntity } from '../sd-orchestrator/entities/sd-graph-snapshot.entity';
+import { SDTurnRecord } from '../sd-orchestrator/entities/sd-turn-record.entity';
 import { SDEvaluatorController } from './sd-evaluator.controller';
 import { SDEvaluatorService } from './sd-evaluator.service';
 import { SD_EVALUATION_QUEUE } from '../jobs/jobs.constants';
@@ -14,6 +15,7 @@ import { SD_EVALUATION_QUEUE } from '../jobs/jobs.constants';
       SDSession,
       SDStageSummary,
       SDGraphSnapshotEntity,
+      SDTurnRecord,
     ]),
     BullModule.registerQueueAsync({ name: SD_EVALUATION_QUEUE }),
   ],

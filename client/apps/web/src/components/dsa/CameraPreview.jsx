@@ -21,7 +21,10 @@ export default function CameraPreview({ mediaStream, boundsRef = null, contained
   }
   const defaultPosition = () => {
     const bounds = getBounds()
-    return { x: 16, y: Math.max(16, bounds.height - PREVIEW_HEIGHT - 16) }
+    return {
+      x: Math.max(16, bounds.width - PREVIEW_WIDTH - 16),
+      y: Math.max(16, bounds.height - PREVIEW_HEIGHT - 16),
+    }
   }
   const positionRef = useRef(defaultPosition())
   const velocityRef = useRef({ x: 0, y: 0 })

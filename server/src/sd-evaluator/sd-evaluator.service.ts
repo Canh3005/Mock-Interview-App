@@ -5,13 +5,14 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeepPartial, Repository } from 'typeorm';
+import { DeepPartial, In, Repository } from 'typeorm';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue, Job } from 'bullmq';
 import { SDSession } from '../sd-session/entities/sd-session.entity';
 import { CurveBallScenario } from '../sd-problem/entities/sd-problem.entity';
 import { SDStageSummary } from '../sd-orchestrator/entities/sd-stage-summary.entity';
 import { SDGraphSnapshotEntity } from '../sd-orchestrator/entities/sd-graph-snapshot.entity';
+import { SDTurnRecord } from '../sd-orchestrator/entities/sd-turn-record.entity';
 import { GroqService } from '../ai/groq.service';
 import {
   SD_EVALUATION_QUEUE,
@@ -29,11 +30,29 @@ import {
   AI_TIMEOUT_MS,
   FAST_MODEL,
   NO_CURVEBALL_MAX,
+  CLARIFICATION_SCORE_KEYS,
+  WALKTHROUGH_ARCH_KEYS,
+  WALKTHROUGH_COMM_KEYS,
+  DEEP_DIVE_SCORE_KEYS,
+  WRAP_UP_SCORE_KEYS,
+  GRAPH_METRIC_KEYS,
+  ARCH_WALKTHROUGH_WEIGHT,
+  ARCH_GRAPH_WEIGHT,
+  CONSTRAINT_REUSE_MAX_BONUS,
+  GRAPH_DELTA_BONUS_MAX,
+  WRAP_UP_QUALITY_SIGNAL_MAX_BONUS,
+  UNCOVERED_DIMENSION_PENALTY_PER_DIM,
+  UNCOVERED_DIMENSION_MAX_PENALTY,
+  DIMENSION_WEIGHTS_WITH_CURVEBALL,
+  DIMENSION_WEIGHTS_NO_CURVEBALL,
 } from './constants/sd-evaluator.constants';
 import type {
   DimensionResult,
   EvaluationProgress,
   EvaluationStatusResponse,
+  SDStructuredEvalInput,
+  SDGraphMetricsFlat,
+  GraphDelta,
 } from './types/sd-evaluator.types';
 
 @Injectable()
@@ -47,6 +66,8 @@ export class SDEvaluatorService {
     private readonly stageSummaryRepo: Repository<SDStageSummary>,
     @InjectRepository(SDGraphSnapshotEntity)
     private readonly graphSnapshotRepo: Repository<SDGraphSnapshotEntity>,
+    @InjectRepository(SDTurnRecord)
+    private readonly sdTurnRepo: Repository<SDTurnRecord>,
     @InjectQueue(SD_EVALUATION_QUEUE)
     private readonly sdEvaluationQueue: Queue,
     private readonly groqService: GroqService,
@@ -104,8 +125,6 @@ export class SDEvaluatorService {
     if (!session) throw new Error(`Session ${sessionId} not found`);
 
     const completedDimensions: DimensionResult[] = [];
-    const hasCurveball: boolean =
-      session.curveballArchitectureSnapshot !== null;
 
     const pushAndUpdate = async (result: DimensionResult): Promise<void> => {
       completedDimensions.push(result);
@@ -114,10 +133,19 @@ export class SDEvaluatorService {
       });
     };
 
-    await pushAndUpdate(this._computeComponentCoverage(session));
-    await this._runAiDimensions({ session, hasCurveball, pushAndUpdate });
+    const input = await this._loadStructuredInput(sessionId, session);
+    let scoringDimensions: DimensionResult[];
 
-    const scoringDimensions: DimensionResult[] = [...completedDimensions];
+    if (input.hasStageSummaries) {
+      scoringDimensions = this._computeStructuredDimensions(input);
+    } else {
+      scoringDimensions = await this._runLegacyEvaluation(session);
+    }
+
+    for (const dim of scoringDimensions) {
+      await pushAndUpdate(dim);
+    }
+
     await Promise.allSettled([
       this._annotateTranscript(session).then(pushAndUpdate),
       this._generateSuggestions({ session, scoringDimensions }).then(
@@ -126,24 +154,30 @@ export class SDEvaluatorService {
     ]);
 
     const evaluationResult: Record<string, unknown> = this._computeFinalScore(
-      completedDimensions,
+      scoringDimensions,
       session.hintsUsed,
-      hasCurveball,
+      input.hasCurveball,
+      input.hasStageSummaries,
     ) as unknown as Record<string, unknown>;
-
-    // Enrich evaluation result with orchestrator stage summaries if available
-    const stageSummaryAggregation =
-      await this._aggregateStageSummaries(sessionId);
-    const graphDeltaSignal = await this._loadGraphDeltaSignal(sessionId);
 
     const enrichedResult: Record<string, unknown> = {
       ...evaluationResult,
-      ...(stageSummaryAggregation
-        ? { stageSummaries: stageSummaryAggregation }
-        : {}),
-      ...(graphDeltaSignal
-        ? { graphDeltaAfterCurveball: graphDeltaSignal }
-        : {}),
+      dimensions: completedDimensions,
+      ...(input.hasStageSummaries
+        ? {
+            stageSummaries: {
+              stageScores: Object.fromEntries(
+                input.summaries.map((s) => [
+                  s.stage,
+                  this._avgScores(s.scores),
+                ]),
+              ),
+              redFlags: input.allRedFlags,
+              totalStages: input.summaries.length,
+            },
+            graphDeltaAfterCurveball: input.graphDeltaAfterCurveball,
+          }
+        : await this._legacyEnrichment(sessionId)),
     };
 
     const update: DeepPartial<SDSession> = {
@@ -155,23 +189,278 @@ export class SDEvaluatorService {
     this.logger.log(`Evaluation completed for session ${sessionId}`);
   }
 
-  private async _runAiDimensions({
-    session,
-    hasCurveball,
-    pushAndUpdate,
-  }: {
-    session: SDSession;
-    hasCurveball: boolean;
-    pushAndUpdate: (r: DimensionResult) => Promise<void>;
-  }): Promise<void> {
+  // ─── Structured path ─────────────────────────────────────────────────────────
+
+  private async _loadStructuredInput(
+    sessionId: string,
+    session: SDSession,
+  ): Promise<SDStructuredEvalInput> {
+    const summaries = await this.stageSummaryRepo.find({
+      where: { sessionId },
+    });
+
+    const snapshot = await this.graphSnapshotRepo.findOne({
+      where: { sessionId, stage: 'DESIGN_WALKTHROUGH' },
+      order: { capturedAt: 'DESC' },
+    });
+
+    const turns = await this.sdTurnRepo.find({
+      where: { sessionId, stage: In(['DEEP_DIVE', 'WRAP_UP']) },
+    });
+
+    const clarificationSummary = summaries.find(
+      (s) => s.stage === 'CLARIFICATION',
+    );
+    const clarificationLeftover = clarificationSummary?.leftoverJson as
+      | { uncoveredDimensions?: string[] }
+      | null
+      | undefined;
+
+    const wrapUpSummary = summaries.find((s) => s.stage === 'WRAP_UP');
+    const wrapUpLeftover = wrapUpSummary?.leftoverJson as
+      | { graphDeltaAfterCurveball?: GraphDelta }
+      | null
+      | undefined;
+
+    const finalGraphMetrics: SDGraphMetricsFlat | null = snapshot?.metrics
+      ? (snapshot.metrics as unknown as SDGraphMetricsFlat)
+      : null;
+
+    return {
+      sessionId,
+      hasStageSummaries: summaries.length >= 1,
+      hasCurveball: session.curveballArchitectureSnapshot !== null,
+      hintsUsed: session.hintsUsed,
+      summaries: summaries.map((s) => ({
+        stage: s.stage,
+        scores: s.scores ?? {},
+        redFlags: s.redFlags ?? [],
+        leftoverJson: s.leftoverJson as Record<string, unknown> | null,
+      })),
+      finalGraphMetrics,
+      graphDeltaAfterCurveball:
+        wrapUpLeftover?.graphDeltaAfterCurveball ?? null,
+      constraintReuseCount: this._computeConstraintReuse(turns),
+      wrapUpQualitySignalCount: this._computeWrapUpQualitySignals(turns),
+      uncoveredRequiredDimensions:
+        clarificationLeftover?.uncoveredDimensions ?? [],
+      allRedFlags: summaries.flatMap((s) => s.redFlags ?? []),
+    };
+  }
+
+  private _computeConstraintReuse(turns: SDTurnRecord[]): number {
+    return turns.filter((t) => t.signalsJson?.constraintLinked === true).length;
+  }
+
+  private _computeWrapUpQualitySignals(turns: SDTurnRecord[]): number {
+    return turns.filter((t) => {
+      if (t.stage !== 'WRAP_UP') return false;
+      const s = t.signalsJson;
+      return (
+        s?.tradeoffMentioned === true ||
+        s?.costOrLatencyImpactMentioned === true
+      );
+    }).length;
+  }
+
+  private _computeStructuredDimensions(
+    input: SDStructuredEvalInput,
+  ): DimensionResult[] {
+    const findSummary = (stage: string) =>
+      input.summaries.find((s) => s.stage === stage);
+
+    return [
+      this._computeRequirementElicitation(
+        findSummary('CLARIFICATION'),
+        input.uncoveredRequiredDimensions,
+      ),
+      this._computeArchitectureAndCoverage(
+        findSummary('DESIGN_WALKTHROUGH'),
+        input.finalGraphMetrics,
+        input.hasCurveball,
+      ),
+      this._computeTechnicalDepth(
+        findSummary('DEEP_DIVE'),
+        input.constraintReuseCount,
+      ),
+      this._computeAdaptationAndResilience(
+        findSummary('WRAP_UP'),
+        input.graphDeltaAfterCurveball,
+        input.wrapUpQualitySignalCount,
+        input.hasCurveball,
+      ),
+      this._computeCommunicationAndStructure(
+        findSummary('DESIGN_WALKTHROUGH'),
+        findSummary('CLARIFICATION'),
+      ),
+    ];
+  }
+
+  private _computeRequirementElicitation(
+    summary: { scores: Record<string, number> } | undefined,
+    uncoveredDims: string[],
+  ): DimensionResult {
+    const maxScore = DIMENSION_WEIGHTS_WITH_CURVEBALL.requirementElicitation;
+    const avg = this._avgKeys(summary?.scores ?? {}, CLARIFICATION_SCORE_KEYS);
+    const penalty = Math.min(
+      uncoveredDims.length * UNCOVERED_DIMENSION_PENALTY_PER_DIM,
+      UNCOVERED_DIMENSION_MAX_PENALTY,
+    );
+    const score = Math.max(Math.round(avg * maxScore) - penalty, 0);
+    return {
+      dimension: 'requirementElicitation',
+      score,
+      maxScore,
+      data: {
+        avgRaw: avg,
+        uncoveredDimensions: uncoveredDims,
+        penalty,
+        perKey: this._pickKeys(summary?.scores ?? {}, CLARIFICATION_SCORE_KEYS),
+      },
+    };
+  }
+
+  private _computeArchitectureAndCoverage(
+    walkthroughSummary: { scores: Record<string, number> } | undefined,
+    graphMetrics: SDGraphMetricsFlat | null,
+    hasCurveball: boolean,
+  ): DimensionResult {
+    const weights = hasCurveball
+      ? DIMENSION_WEIGHTS_WITH_CURVEBALL
+      : DIMENSION_WEIGHTS_NO_CURVEBALL;
+    const maxScore = weights.architectureAndCoverage;
+
+    const walkthroughAvg = this._avgKeys(
+      walkthroughSummary?.scores ?? {},
+      WALKTHROUGH_ARCH_KEYS,
+    );
+    const graphAvg = graphMetrics
+      ? this._avgKeys(
+          graphMetrics as unknown as Record<string, number>,
+          GRAPH_METRIC_KEYS,
+        )
+      : 0;
+
+    const blended =
+      walkthroughAvg * ARCH_WALKTHROUGH_WEIGHT + graphAvg * ARCH_GRAPH_WEIGHT;
+    const score = Math.round(blended * maxScore);
+
+    return {
+      dimension: 'architectureAndCoverage',
+      score,
+      maxScore,
+      data: {
+        walkthroughAvg,
+        graphAvg,
+        blended,
+        graphMetrics,
+      },
+    };
+  }
+
+  private _computeTechnicalDepth(
+    summary: { scores: Record<string, number> } | undefined,
+    constraintReuseCount: number,
+  ): DimensionResult {
+    const maxScore = DIMENSION_WEIGHTS_WITH_CURVEBALL.technicalDepth;
+    const avg = this._avgKeys(summary?.scores ?? {}, DEEP_DIVE_SCORE_KEYS);
+    const bonus = Math.min(constraintReuseCount, CONSTRAINT_REUSE_MAX_BONUS);
+    const score = Math.min(Math.round(avg * maxScore) + bonus, maxScore);
+    return {
+      dimension: 'technicalDepth',
+      score,
+      maxScore,
+      data: {
+        avgRaw: avg,
+        constraintReuseCount,
+        bonus,
+        perKey: this._pickKeys(summary?.scores ?? {}, DEEP_DIVE_SCORE_KEYS),
+      },
+    };
+  }
+
+  private _computeAdaptationAndResilience(
+    summary: { scores: Record<string, number> } | undefined,
+    graphDelta: GraphDelta | null,
+    qualitySignalCount: number,
+    hasCurveball: boolean,
+  ): DimensionResult {
+    const weights = hasCurveball
+      ? DIMENSION_WEIGHTS_WITH_CURVEBALL
+      : DIMENSION_WEIGHTS_NO_CURVEBALL;
+    const maxScore = weights.adaptationAndResilience;
+
+    const baseAvg = this._avgKeys(summary?.scores ?? {}, WRAP_UP_SCORE_KEYS);
+    const deltaBonus =
+      graphDelta && graphDelta.nodesAdded + graphDelta.edgesAdded > 0
+        ? Math.min(
+            (graphDelta.nodesAdded + graphDelta.edgesAdded) * 0.05,
+            GRAPH_DELTA_BONUS_MAX,
+          )
+        : 0;
+    const scaledBase = Math.round(
+      Math.min(baseAvg + deltaBonus, 1.0) * maxScore,
+    );
+    const qualityBonus = Math.min(
+      qualitySignalCount,
+      WRAP_UP_QUALITY_SIGNAL_MAX_BONUS,
+    );
+    const score = Math.min(scaledBase + qualityBonus, maxScore);
+
+    return {
+      dimension: 'adaptationAndResilience',
+      score,
+      maxScore,
+      data: {
+        baseAvg,
+        deltaBonus,
+        qualitySignalCount,
+        qualityBonus,
+        graphDelta,
+        perKey: this._pickKeys(summary?.scores ?? {}, WRAP_UP_SCORE_KEYS),
+      },
+    };
+  }
+
+  private _computeCommunicationAndStructure(
+    walkthroughSummary: { scores: Record<string, number> } | undefined,
+    clarificationSummary: { scores: Record<string, number> } | undefined,
+  ): DimensionResult {
+    const maxScore = DIMENSION_WEIGHTS_WITH_CURVEBALL.communicationAndStructure;
+    const commStructure =
+      walkthroughSummary?.scores?.[WALKTHROUGH_COMM_KEYS[0]] ?? 0;
+    const prioritization =
+      clarificationSummary?.scores?.['prioritization'] ?? 0;
+    const avg = (commStructure + prioritization) / 2;
+    const score = Math.round(avg * maxScore);
+    return {
+      dimension: 'communicationAndStructure',
+      score,
+      maxScore,
+      data: { communicationStructure: commStructure, prioritization, avg },
+    };
+  }
+
+  // ─── Legacy path (old LLM-based scoring) ─────────────────────────────────────
+
+  private async _runLegacyEvaluation(
+    session: SDSession,
+  ): Promise<DimensionResult[]> {
+    const hasCurveball = session.curveballArchitectureSnapshot !== null;
+    const results: DimensionResult[] = [];
+
+    results.push(this._computeComponentCoverage(session));
+
     await Promise.allSettled([
-      this._evaluateScalability(session).then(pushAndUpdate),
-      this._evaluateTradeoff(session).then(pushAndUpdate),
-      this._evaluateCommunication(session).then(pushAndUpdate),
+      this._evaluateScalability(session).then((r) => results.push(r)),
+      this._evaluateTradeoff(session).then((r) => results.push(r)),
+      this._evaluateCommunication(session).then((r) => results.push(r)),
       hasCurveball
-        ? this._evaluateCurveball(session).then(pushAndUpdate)
+        ? this._evaluateCurveball(session).then((r) => results.push(r))
         : Promise.resolve(),
     ]);
+
+    return results;
   }
 
   private _computeComponentCoverage(session: SDSession): DimensionResult {
@@ -270,7 +559,7 @@ export class SDEvaluatorService {
       language: session.language,
     });
     try {
-      const raw: string = await this._callWithTimeout(prompt);
+      const raw = await this._callWithTimeout(prompt);
       return this._parseAiJson({
         raw,
         dimension: 'scalabilityFit',
@@ -291,13 +580,13 @@ export class SDEvaluatorService {
   ): Promise<DimensionResult> {
     const transcript: unknown[] = (session.transcriptHistory ??
       []) as unknown[];
-    const prompt: string = buildTradeoffPrompt({
+    const prompt = buildTradeoffPrompt({
       problemTitle: session.problem.title,
       transcriptHistory: transcript,
       language: session.language,
     });
     try {
-      const raw: string = await this._callWithTimeout(prompt);
+      const raw = await this._callWithTimeout(prompt);
       return this._parseAiJson({
         raw,
         dimension: 'tradeoffArticulation',
@@ -318,13 +607,13 @@ export class SDEvaluatorService {
   ): Promise<DimensionResult> {
     const transcript: unknown[] = (session.transcriptHistory ??
       []) as unknown[];
-    const prompt: string = buildCommunicationPrompt({
+    const prompt = buildCommunicationPrompt({
       problemTitle: session.problem.title,
       transcriptHistory: transcript,
       language: session.language,
     });
     try {
-      const raw: string = await this._callWithTimeout(prompt);
+      const raw = await this._callWithTimeout(prompt);
       return this._parseAiJson({
         raw,
         dimension: 'communicationClarity',
@@ -358,17 +647,13 @@ export class SDEvaluatorService {
     const afterNodes = (session.architectureJSON?.nodes ?? []) as {
       type?: string;
     }[];
-    const beforeTypes: string[] = beforeNodes
-      .map((n) => n.type ?? '')
-      .filter(Boolean);
-    const afterTypes: string[] = afterNodes
-      .map((n) => n.type ?? '')
-      .filter(Boolean);
-    const diff: Record<string, string[]> = {
+    const beforeTypes = beforeNodes.map((n) => n.type ?? '').filter(Boolean);
+    const afterTypes = afterNodes.map((n) => n.type ?? '').filter(Boolean);
+    const diff = {
       addedNodes: afterTypes.filter((t) => !beforeTypes.includes(t)),
       removedNodes: beforeTypes.filter((t) => !afterTypes.includes(t)),
     };
-    const prompt: string = buildCurveballPrompt({
+    const prompt = buildCurveballPrompt({
       problemTitle: session.problem.title,
       curveballScenarioPrompt: scenario.prompt,
       expectedAdaptation: scenario.expectedAdaptation,
@@ -378,7 +663,7 @@ export class SDEvaluatorService {
       language: session.language,
     });
     try {
-      const raw: string = await this._callWithTimeout(prompt);
+      const raw = await this._callWithTimeout(prompt);
       return this._parseAiJson({
         raw,
         dimension: 'curveballAdaptation',
@@ -394,26 +679,30 @@ export class SDEvaluatorService {
     }
   }
 
+  // ─── Final score ──────────────────────────────────────────────────────────────
+
   private _computeFinalScore(
     completedDimensions: DimensionResult[],
     hintsUsed: number,
     hasCurveball: boolean,
+    isStructured: boolean,
   ): object {
-    const dims: DimensionResult[] = hasCurveball
+    const dims: DimensionResult[] = isStructured
       ? completedDimensions
-      : completedDimensions.map((d) => {
-          const newMax: number = NO_CURVEBALL_MAX[d.dimension] ?? d.maxScore;
-          const scaledScore: number =
-            d.maxScore > 0 ? Math.round((d.score / d.maxScore) * newMax) : 0;
-          return { ...d, score: scaledScore, maxScore: newMax };
-        });
+      : hasCurveball
+        ? completedDimensions
+        : completedDimensions.map((d) => {
+            const newMax: number = NO_CURVEBALL_MAX[d.dimension] ?? d.maxScore;
+            const scaledScore: number =
+              d.maxScore > 0 ? Math.round((d.score / d.maxScore) * newMax) : 0;
+            return { ...d, score: scaledScore, maxScore: newMax };
+          });
 
     const rawScore: number = dims.reduce((sum, d) => sum + d.score, 0);
     const hintPenalty: number = Math.min(hintsUsed * 5, 15);
     const finalScore: number = Math.max(rawScore - hintPenalty, 0);
 
     return {
-      dimensions: dims,
       rawScore,
       hintPenalty,
       finalScore,
@@ -430,51 +719,7 @@ export class SDEvaluatorService {
     return 'Needs Work';
   }
 
-  private async _aggregateStageSummaries(
-    sessionId: string,
-  ): Promise<Record<string, unknown> | null> {
-    try {
-      const summaries = await this.stageSummaryRepo.find({
-        where: { sessionId },
-      });
-      if (summaries.length === 0) return null;
-      const stageScores: Record<string, number> = {};
-      const allRedFlags: string[] = [];
-      for (const s of summaries) {
-        const avg =
-          Object.values(s.scores ?? {}).reduce((a, b) => a + b, 0) /
-          Math.max(Object.values(s.scores ?? {}).length, 1);
-        stageScores[s.stage] = avg;
-        allRedFlags.push(...(s.redFlags ?? []));
-      }
-      return {
-        stageScores,
-        redFlags: allRedFlags,
-        totalStages: summaries.length,
-      };
-    } catch {
-      return null;
-    }
-  }
-
-  private async _loadGraphDeltaSignal(sessionId: string): Promise<{
-    nodesAdded: number;
-    edgesAdded: number;
-    changedLabels: number;
-  } | null> {
-    try {
-      const wrapUpSummary = await this.stageSummaryRepo.findOne({
-        where: { sessionId, stage: 'WRAP_UP' },
-      });
-      if (!wrapUpSummary?.leftoverJson) return null;
-      const leftover = wrapUpSummary.leftoverJson;
-      return 'graphDeltaAfterCurveball' in leftover
-        ? leftover.graphDeltaAfterCurveball
-        : null;
-    } catch {
-      return null;
-    }
-  }
+  // ─── Annotation + suggestions (both paths) ───────────────────────────────────
 
   private async _annotateTranscript(
     session: SDSession,
@@ -485,8 +730,6 @@ export class SDEvaluatorService {
     const filtered = transcript.filter(
       (e) => e.role === 'user' || e.role === 'ai',
     );
-    // Only send candidate turns to the annotation prompt.
-    // Pre-bake entryIndex so the AI cannot reference ai entries.
     const candidateEntries = filtered
       .map((entry, idx) => ({ ...entry, entryIndex: idx }))
       .filter((e) => e.role === 'user');
@@ -499,7 +742,7 @@ export class SDEvaluatorService {
       };
     }
     try {
-      const raw: string = await this._callWithTimeout(
+      const raw = await this._callWithTimeout(
         buildAnnotationPrompt({
           problemTitle: session.problem.title,
           transcriptHistory: candidateEntries,
@@ -536,7 +779,7 @@ export class SDEvaluatorService {
     scoringDimensions: DimensionResult[];
   }): Promise<DimensionResult> {
     try {
-      const raw: string = await this._callWithTimeout(
+      const raw = await this._callWithTimeout(
         buildSuggestionsPrompt({
           problemTitle: session.problem.title,
           dimensions: scoringDimensions,
@@ -560,6 +803,63 @@ export class SDEvaluatorService {
         maxScore: 0,
         data: { suggestions: [] },
       };
+    }
+  }
+
+  // ─── Helpers ─────────────────────────────────────────────────────────────────
+
+  private _avgKeys(
+    scores: Record<string, number>,
+    keys: readonly string[],
+  ): number {
+    const values = keys.map((k) => scores[k] ?? 0);
+    return values.reduce((a, b) => a + b, 0) / keys.length;
+  }
+
+  private _avgScores(scores: Record<string, number>): number {
+    const vals = Object.values(scores);
+    if (vals.length === 0) return 0;
+    return vals.reduce((a, b) => a + b, 0) / vals.length;
+  }
+
+  private _pickKeys(
+    scores: Record<string, number>,
+    keys: readonly string[],
+  ): Record<string, number> {
+    return Object.fromEntries(keys.map((k) => [k, scores[k] ?? 0]));
+  }
+
+  private async _legacyEnrichment(
+    sessionId: string,
+  ): Promise<Record<string, unknown>> {
+    try {
+      const summaries = await this.stageSummaryRepo.find({
+        where: { sessionId },
+      });
+      if (summaries.length === 0) return {};
+      const stageScores: Record<string, number> = {};
+      const allRedFlags: string[] = [];
+      for (const s of summaries) {
+        const avg = this._avgScores(s.scores ?? {});
+        stageScores[s.stage] = avg;
+        allRedFlags.push(...(s.redFlags ?? []));
+      }
+      const wrapUpSummary = summaries.find((s) => s.stage === 'WRAP_UP');
+      const leftover = wrapUpSummary?.leftoverJson;
+      const graphDeltaAfterCurveball =
+        leftover && 'graphDeltaAfterCurveball' in leftover
+          ? leftover.graphDeltaAfterCurveball
+          : null;
+      return {
+        stageSummaries: {
+          stageScores,
+          redFlags: allRedFlags,
+          totalStages: summaries.length,
+        },
+        ...(graphDeltaAfterCurveball ? { graphDeltaAfterCurveball } : {}),
+      };
+    } catch {
+      return {};
     }
   }
 }

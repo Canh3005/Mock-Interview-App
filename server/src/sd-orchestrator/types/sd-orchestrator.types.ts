@@ -47,10 +47,13 @@ export type SDIntentType =
   | 'COMPONENT_PROBE'
   | 'EDGE_PROBE'
   | 'CONTRADICTION_CHALLENGE'
+  | 'WALKTHROUGH_REDIRECT'
+  | 'PERSISTENCE_GAP_PROBE'
   | 'PROBE_PRIMARY'
   | 'PROBE_FOLLOW_UP'
   | 'PROBE_CHALLENGE'
   | 'PROBE_REDIRECT'
+  | 'PROBE_CLOSE'
   | 'SCENARIO_PRESENT'
   | 'SCENARIO_FOLLOW_UP'
   | 'SCENARIO_CHALLENGE'
@@ -188,7 +191,6 @@ export interface SDGraphSnapshot {
 export interface SDClarificationLeftoverJson {
   requirementContract: SDRequirementContract;
   uncoveredDimensions: string[];
-  disclosedFactCount: number;
 }
 
 export interface SDWalkthroughLeftoverJson {
@@ -202,7 +204,6 @@ export interface SDDeepDiveLeftoverJson {
 }
 
 export interface SDWrapUpLeftoverJson {
-  completedItemIds: string[];
   graphDeltaAfterCurveball: {
     nodesAdded: number;
     edgesAdded: number;
@@ -330,7 +331,9 @@ export type SDWalkthroughIntentType =
   | 'FLOW_PROBE'
   | 'COMPONENT_PROBE'
   | 'EDGE_PROBE'
-  | 'CONTRADICTION_CHALLENGE';
+  | 'CONTRADICTION_CHALLENGE'
+  | 'WALKTHROUGH_REDIRECT'
+  | 'PERSISTENCE_GAP_PROBE';
 
 export type SDWalkthroughIntent = SDQuestionIntent<
   SDWalkthroughIntentType,
@@ -344,6 +347,7 @@ export interface SDWalkthroughSignals {
   constraintLinked: boolean;
   scopeViolation: boolean;
   contradictionDetected: boolean;
+  persistenceMissing: boolean;
 }
 
 export interface SDWalkthroughExtra {
@@ -399,7 +403,6 @@ export interface SDWalkthroughPlannerInput {
   clarificationLeftover: SDClarificationLeftoverJson;
   graphMetrics: SDGraphMetrics;
   context: { language: 'vi' | 'en' | 'ja'; level: string };
-  isFirstTurn: boolean;
   elapsedSeconds: number;
 }
 
@@ -454,6 +457,7 @@ export interface SDDeepDiveProgress {
   completedProbeIds: string[];
   activeProbe: SDActiveProbeState | null;
   probeBudgetRemaining: number;
+  perProbeSignals: Record<string, string[]>;
 }
 
 export type SDDeepDiveTracker = SDStageTracker<SDDeepDiveProgress>;

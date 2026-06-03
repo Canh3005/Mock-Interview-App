@@ -107,6 +107,7 @@ Analyze the candidate text and output JSON:
 - scopeViolation: candidate mentioned components outside the clarified scope/requirements.
 - contradictionDetected: candidate said something that contradicts the graph structure.
 - contradictionDetail: if contradictionDetected=true, describe the specific contradiction.
+- persistenceMissing: candidate walked through a read or write flow but never mentioned how or where data is stored (no database, cache, file, or storage mentioned) — true/false.
 ${
   isFirstTurn
     ? `- requirementSynthesis: candidate's opening statement shows they synthesized the requirements (mentions scope, functional goal) — true/false
@@ -153,6 +154,7 @@ Respond with raw JSON only. No markdown.`;
         constraintLinked: Boolean(parsed.constraintLinked),
         scopeViolation: Boolean(parsed.scopeViolation),
         contradictionDetected: Boolean(parsed.contradictionDetected),
+        persistenceMissing: Boolean(parsed.persistenceMissing),
       },
       scoreDelta: {
         walkthroughCompleteness: Math.max(
@@ -225,6 +227,7 @@ Respond with raw JSON only. No markdown.`;
         constraintLinked: false,
         scopeViolation: false,
         contradictionDetected: false,
+        persistenceMissing: false,
       },
       scoreDelta: {
         walkthroughCompleteness: 0.3,
