@@ -155,10 +155,10 @@ Respond with raw JSON only. No markdown.`;
         constraintLinked: false,
       },
       scoreDelta: {
-        technicalDepth: 0.3,
+        technicalDepth: 0,
         tradeoffArticulation: 0,
         bottleneckReasoning: 0,
-        componentOwnership: 0.3,
+        componentOwnership: 0,
         operationalAwareness: 0,
       },
       redFlags: [],

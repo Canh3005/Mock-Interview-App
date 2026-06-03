@@ -104,10 +104,12 @@ export class SDSessionService {
   }
 
   private async _selectProblem(candidateLevel?: string): Promise<SDProblem> {
+    // todo đổi lại candidateLevel
     if (candidateLevel) {
       const matched: SDProblem[] = await this.sdProblemRepository.find({
-        where: { targetLevel: candidateLevel as SDProblem['targetLevel'] },
+        where: { targetLevel: 'mid' as SDProblem['targetLevel'] },
       });
+      console.log(matched);
       if (matched.length > 0) {
         return matched[Math.floor(Math.random() * matched.length)];
       }

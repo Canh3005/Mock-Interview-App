@@ -1,5 +1,6 @@
 import { DataSource } from 'typeorm';
 import { SDProblem } from './entities/sd-problem.entity';
+import { SD_PROBLEM_ORCHESTRATOR_DATA } from './sd-problem-orchestrator-data';
 
 export const SD_PROBLEM_SEEDS: Partial<SDProblem>[] = [
   // ─── 1. URL Shortener (Pastebin / Bit.ly) ───────────────────────────────────
@@ -9,7 +10,7 @@ export const SD_PROBLEM_SEEDS: Partial<SDProblem>[] = [
       "When you paste a long URL like 'https://example.com/very/long/path?with=params' into Bit.ly, you get back a short link like 'bit.ly/3xK9mZ'. Anyone clicking that short link is redirected to the original. Pastebin works similarly but stores text snippets instead. Your task is to design the service that creates short links (or paste IDs), stores the content, and resolves them at scale.",
     domain: 'url-shortener',
     targetRole: ['backend', 'full-stack'],
-    targetLevel: 'mid',
+    targetLevel: 'senior',
     difficulty: 'medium',
     estimatedDuration: 45,
     scalingConstraints: {
@@ -88,7 +89,7 @@ export const SD_PROBLEM_SEEDS: Partial<SDProblem>[] = [
           'Cần unique constraint trên slug column; retry logic khi collision; rate-limit custom aliases để tránh namespace squatting',
       },
     ],
-    tags: ['url-shortener', 'caching', 'read-heavy', 'hashing', 'mid-level'],
+    tags: ['url-shortener', 'caching', 'read-heavy', 'hashing', 'senior-level'],
   },
 
   // ─── 2. Twitter Timeline & Search ──────────────────────────────────────────
@@ -334,7 +335,7 @@ export const SD_PROBLEM_SEEDS: Partial<SDProblem>[] = [
       'Mint.com lets users link their bank accounts and credit cards. The app automatically categorizes transactions, tracks monthly budgets per category, and sends alerts when spending approaches the limit. Your task is to design the backend that syncs financial data from multiple bank APIs, categorizes it, and serves a spending dashboard.',
     domain: 'fintech',
     targetRole: ['backend', 'full-stack'],
-    targetLevel: 'mid',
+    targetLevel: 'senior',
     difficulty: 'medium',
     estimatedDuration: 45,
     scalingConstraints: {
@@ -461,7 +462,7 @@ export const SD_PROBLEM_SEEDS: Partial<SDProblem>[] = [
       'async-processing',
       'notification',
       'write-heavy',
-      'mid-level',
+      'senior-level',
     ],
   },
 
@@ -472,7 +473,7 @@ export const SD_PROBLEM_SEEDS: Partial<SDProblem>[] = [
       'Redis and Memcached are in-memory stores used to cache expensive database queries and serve hot data with sub-millisecond latency. Your task is to design a distributed key-value cache from scratch — covering how data is partitioned across nodes, how cache misses fall back to the database, and how the system evicts old entries when memory is full.',
     domain: 'distributed-cache',
     targetRole: ['backend'],
-    targetLevel: 'mid',
+    targetLevel: 'senior',
     difficulty: 'medium',
     estimatedDuration: 45,
     scalingConstraints: {
@@ -561,7 +562,7 @@ export const SD_PROBLEM_SEEDS: Partial<SDProblem>[] = [
       'consistent-hashing',
       'distributed',
       'read-heavy',
-      'mid-level',
+      'senior-level',
     ],
   },
 
@@ -984,7 +985,7 @@ export const SD_PROBLEM_SEEDS: Partial<SDProblem>[] = [
       'api-gateway',
       'token-bucket',
       'sliding-window',
-      'mid-level',
+      'senior-level',
     ],
   },
 
@@ -1590,7 +1591,7 @@ export const SD_PROBLEM_SEEDS: Partial<SDProblem>[] = [
       'When you type "app" into the Google search bar, suggestions like "apple", "app store", and "application download" appear instantly below the input. Your task is to design the backend system that generates these real-time prefix-based search suggestions as users type, serving millions of users with sub-100ms response times.',
     domain: 'search-autocomplete',
     targetRole: ['backend', 'full-stack'],
-    targetLevel: 'mid',
+    targetLevel: 'senior',
     difficulty: 'medium',
     estimatedDuration: 45,
     scalingConstraints: {
@@ -1710,7 +1711,7 @@ export const SD_PROBLEM_SEEDS: Partial<SDProblem>[] = [
       'redis-sorted-set',
       'read-heavy',
       'search',
-      'mid-level',
+      'senior-level',
     ],
   },
 
@@ -1723,7 +1724,7 @@ export const SD_PROBLEM_SEEDS: Partial<SDProblem>[] = [
       'When someone likes your Instagram post, your phone buzzes with a push notification within seconds. The same event can also send an email or SMS depending on user preferences. Your task is to design the notification pipeline that reliably routes and delivers millions of alerts per day across iOS push, Android push, email, and SMS channels.',
     domain: 'notification-system',
     targetRole: ['backend'],
-    targetLevel: 'mid',
+    targetLevel: 'senior',
     difficulty: 'medium',
     estimatedDuration: 45,
     scalingConstraints: {
@@ -1855,7 +1856,7 @@ export const SD_PROBLEM_SEEDS: Partial<SDProblem>[] = [
       'fcm',
       'kafka',
       'fan-out',
-      'mid-level',
+      'senior-level',
     ],
   },
 ];
@@ -1866,12 +1867,20 @@ export async function seedSDProblems(dataSource: DataSource): Promise<void> {
   let created = 0;
 
   for (const seed of SD_PROBLEM_SEEDS) {
+    const orchestratorData = seed.title
+      ? (SD_PROBLEM_ORCHESTRATOR_DATA[seed.title] ?? {})
+      : {};
+    const merged: Partial<SDProblem> = {
+      ...seed,
+      ...orchestratorData,
+    } as Partial<SDProblem>;
+
     const existing = await repo.findOne({ where: { title: seed.title } });
     if (existing) {
-      await repo.update(existing.id, seed as any);
+      await repo.update(existing.id, merged as any);
       updated++;
     } else {
-      await repo.save(repo.create(seed as SDProblem));
+      await repo.save(repo.create(merged as SDProblem));
       created++;
     }
   }

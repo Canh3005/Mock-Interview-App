@@ -41,6 +41,9 @@ export class SDSession {
   @Column({ type: 'boolean', default: true })
   enableCurveball!: boolean;
 
+  @Column({ type: 'varchar', length: 20, default: 'mid', nullable: true })
+  targetLevel!: string;
+
   @Column({ type: 'varchar', length: 5, default: 'vi' })
   language!: string; // 'vi' | 'en' | 'ja'
 
@@ -70,6 +73,9 @@ export class SDSession {
 
   @Column({ type: 'jsonb', nullable: true })
   evaluationResult!: Record<string, unknown> | null;
+
+  @Column({ type: 'timestamptz', nullable: true })
+  stageStartedAt!: Date | null;
 
   @CreateDateColumn()
   createdAt!: Date;

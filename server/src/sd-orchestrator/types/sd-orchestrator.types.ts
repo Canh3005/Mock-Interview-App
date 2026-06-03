@@ -481,7 +481,8 @@ export type SDWrapUpIntentType =
   | 'SCENARIO_PRESENT'
   | 'SCENARIO_FOLLOW_UP'
   | 'SCENARIO_CHALLENGE'
-  | 'SCENARIO_REDIRECT';
+  | 'SCENARIO_REDIRECT'
+  | 'SCENARIO_CLOSE';
 
 export type SDWrapUpIntent = SDQuestionIntent<
   SDWrapUpIntentType,
@@ -517,6 +518,7 @@ export interface SDActiveScenarioState {
   followUpCount: number;
   challengeCount: number;
   closeReason?: 'signals_covered' | 'turn_limit' | 'timebox';
+  perScenarioBaseSnapshotId?: string;
 }
 
 export interface SDWrapUpProgress {
@@ -533,6 +535,7 @@ export interface SDWrapUpTransitionCriteria {
   minScenarios: number;
   maxScenarios: number;
   maxStageSeconds: number;
+  maxFollowUpsPerScenario: number;
 }
 
 export interface SDWrapUpPlannerInput {

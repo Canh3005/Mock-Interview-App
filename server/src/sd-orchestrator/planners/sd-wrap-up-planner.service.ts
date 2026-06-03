@@ -11,6 +11,7 @@ export const WRAP_UP_CRITERIA: SDWrapUpTransitionCriteria = {
   minScenarios: 1,
   maxScenarios: 2,
   maxStageSeconds: 600,
+  maxFollowUpsPerScenario: 2,
 };
 
 @Injectable()
@@ -64,7 +65,7 @@ export class SDWrapUpPlannerService {
     scenario: SDCurveball | SDProbe,
     language: 'vi' | 'en' | 'ja',
     cumulativeMentionedMitigations: string[],
-    reason: 'blastRadius' | 'graphAdaptation' | 'consistency',
+    reason: 'blastRadius' | 'graphAdaptation' | 'consistency' | 'mitigation',
   ): SDWrapUpIntent {
     const isCurveball = 'scenarioTemplate' in scenario;
     const expectedMitigations = isCurveball
@@ -80,6 +81,8 @@ export class SDWrapUpPlannerService {
         'Ask candidate to update the diagram to reflect how their design handles this scenario.',
       consistency:
         'Ask how this scenario affects the consistency or correctness guarantees of their original design.',
+      mitigation:
+        'Ask the candidate to propose a concrete mitigation or adaptation strategy for this scenario.',
     };
     const target: any = isCurveball
       ? { source: 'curveball' as const, scenarioId: scenario.id }

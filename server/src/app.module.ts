@@ -49,6 +49,7 @@ import { SDOrchestratorModule } from './sd-orchestrator/sd-orchestrator.module';
           configService.get('DB_SSL') === 'true'
             ? { rejectUnauthorized: false }
             : false,
+        timezone: 'UTC',
       }),
       inject: [ConfigService],
     }),

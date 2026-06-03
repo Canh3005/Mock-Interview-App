@@ -34,7 +34,6 @@ export class SDClarificationAssessorService {
   ): Promise<SDClarificationAssessment> {
     const systemPrompt = this._buildSystemPrompt(data, tracker, context);
     const userPrompt = `Candidate said: "${candidateText}"\n\nRespond with JSON only.`;
-
     try {
       const raw = await this.groq.generateJsonContent({
         model: GROQ_MODEL,

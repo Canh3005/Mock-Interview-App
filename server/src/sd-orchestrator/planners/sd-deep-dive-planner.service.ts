@@ -185,6 +185,25 @@ export class SDDeepDivePlannerService {
     };
   }
 
+  buildRedirectIntent(
+    probe: SDProbe,
+    language: 'vi' | 'en' | 'ja',
+    cumulativeCoveredSignals: string[],
+  ): SDDeepDiveIntent {
+    const forbiddenHints = probe.expectedSignals.filter(
+      (s) => !cumulativeCoveredSignals.includes(s),
+    );
+    return {
+      stage: 'DEEP_DIVE',
+      type: 'PROBE_REDIRECT',
+      promptTemplate: probe.primaryQuestionTemplate,
+      forbiddenHints,
+      maxSentences: 2,
+      language,
+      target: { probeId: probe.id, probeDimension: probe.dimension },
+    };
+  }
+
   pickFollowUpTrigger(
     signalsCovered: string[],
     expectedSignals: string[],

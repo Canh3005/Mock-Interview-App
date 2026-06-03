@@ -30,6 +30,9 @@ import type {
   SDSessionStageState,
   SDClarificationTracker,
   SDClarificationLeftoverJson,
+  SDClarificationAssessment,
+  SDClarificationData,
+  SDClarificationTransitionCriteria,
   SDWalkthroughTracker,
   SDWalkthroughLeftoverJson,
   SDDeepDiveTracker,
@@ -39,6 +42,7 @@ import type {
   SDWrapUpLeftoverJson,
   SDActiveScenarioState,
   SDGraphState,
+  SDGraphMetrics,
 } from './types/sd-orchestrator.types';
 
 @Injectable()
@@ -68,7 +72,7 @@ export class SDOrchestratorService {
     private readonly deepDiveAssessor: SDDeepDiveAssessorService,
     private readonly wrapUpPlanner: SDWrapUpPlannerService,
     private readonly wrapUpAssessor: SDWrapUpAssessorService,
-  ) {}
+  ) { }
 
   // ─── Main turn handler ───────────────────────────────────────────────────────
 
@@ -116,15 +120,22 @@ export class SDOrchestratorService {
       (await this.problemRepo.findOneOrFail({
         where: { id: session.problemId },
       }));
-    const stageState = (session.stageState ?? {}) as unknown as SDSessionStageState;
+    const stageState = (session.stageState ??
+      {}) as unknown as SDSessionStageState;
     const tracker = this.getClarificationTracker(session);
     const lang = session.language as 'vi' | 'en' | 'ja';
-    const level = (session as any).targetLevel ?? 'senior';
+    const level = (session as any).targetLevel ?? 'mid';
     const criteria =
       CLARIFICATION_CRITERIA[level] ?? CLARIFICATION_CRITERIA['senior'];
-    const elapsedSeconds = this.computeElapsedSeconds(session);
+    const elapsedSeconds = this.computeStageElapsedSeconds(session);
     const data = problem.clarificationData ?? { facts: [] };
-
+    console.log('Clarification turn input:', {
+      candidateAnswer,
+      data,
+      tracker,
+      context: { language: lang, level },
+      elapsedSeconds,
+    });
     // Assess candidate response
     const assessment = await this.clarificationAssessor.assess(
       candidateAnswer,
@@ -135,7 +146,7 @@ export class SDOrchestratorService {
         level,
       },
     );
-
+    console.log('Clarification turn assessment output:', assessment);
     // Update tracker
     const newCoveredDims = [
       ...new Set([
@@ -145,11 +156,11 @@ export class SDOrchestratorService {
     ];
     const newDisclosedKeys = assessment.signals.matchedFactKey
       ? [
-          ...new Set([
-            ...tracker.progress.disclosedFactKeys,
-            assessment.signals.matchedFactKey,
-          ]),
-        ]
+        ...new Set([
+          ...tracker.progress.disclosedFactKeys,
+          assessment.signals.matchedFactKey,
+        ]),
+      ]
       : tracker.progress.disclosedFactKeys;
 
     const updatedTracker: SDClarificationTracker = {
@@ -168,33 +179,20 @@ export class SDOrchestratorService {
       criteria,
       elapsedSeconds,
     );
-
+    console.log('Clarification turn policy decision:', decision);
     // Handle each action
     if (decision.action === 'TRANSITION_STAGE') {
-      // Build transition text
-      const transitionIntent =
-        this.clarificationPlanner.buildTransitionIntent(lang);
-      const transitionText =
-        await this.renderer.renderClarification(transitionIntent);
-
-      // Compute leftover
-      const leftover: SDClarificationLeftoverJson = {
-        requirementContract: {
-          disclosedFacts: data.facts
-            .filter((f) => newDisclosedKeys.includes(f.key))
-            .map((f) => ({
-              dimension: f.dimension,
-              key: f.key,
-              value: f.answer,
-            })),
-          coveredDimensions: newCoveredDims,
-        },
-        uncoveredDimensions: criteria.requiredDimensions.filter(
-          (d) => !newCoveredDims.includes(d),
-        ),
-        disclosedFactCount: newDisclosedKeys.length,
-      };
-
+      const { transitionText } = await this._commitClarificationTransition(
+        session,
+        updatedTracker,
+        elapsedSeconds,
+        assessment,
+        data,
+        newDisclosedKeys,
+        newCoveredDims,
+        criteria,
+        lang,
+      );
       await this.persistTurnRecord({
         sessionId: session.id,
         stage: 'CLARIFICATION',
@@ -209,24 +207,6 @@ export class SDOrchestratorService {
         action: 'TRANSITION_STAGE',
         decisionReason: decision.reason,
       });
-
-      await this.persistStageSummary({
-        sessionId: session.id,
-        stage: 'CLARIFICATION',
-        totalTurns: updatedTracker.turnCount,
-        elapsedSeconds,
-        scores: this._aggregateScores(session, assessment.scoreDelta),
-        redFlags: assessment.redFlags,
-        leftoverJson: leftover as any,
-      });
-
-      await this.updateSessionPhase(session, 'DESIGN_DRAWING', {
-        stage: 'DESIGN_DRAWING',
-        trackerJson: {},
-        runningScores: {},
-        hasNudgedEmptyCanvas: false,
-      });
-
       this.streamText(res, transitionText, {
         stageChanged: true,
         stage: 'DESIGN_DRAWING',
@@ -244,6 +224,8 @@ export class SDOrchestratorService {
       });
       const redirectText = await this.renderer.renderClarification(
         intent.nextIntent!,
+        undefined,
+        candidateAnswer,
       );
 
       await this.persistTurnRecord({
@@ -276,55 +258,103 @@ export class SDOrchestratorService {
       const fact = data.facts.find(
         (f) => f.key === assessment.signals.matchedFactKey,
       );
-      const factDecision = this.clarificationPlanner.buildAnswerFactDecision(
-        assessment.signals.matchedFactKey!,
-        fact?.dimension ?? '',
-        fact?.answer ?? '',
-        updatedTracker,
-        criteria,
-        elapsedSeconds,
-        lang,
-      );
+      if (fact) {
+        const factDecision = this.clarificationPlanner.buildAnswerFactDecision(
+          assessment.signals.matchedFactKey!,
+          fact.dimension,
+          fact.answer,
+          updatedTracker,
+          criteria,
+          elapsedSeconds,
+          lang,
+        );
+        console.log('Answer fact decision:', factDecision);
+        const answerIntent = factDecision.nextIntent!;
+        console.log('Answer fact intent:', answerIntent);
+        const answerText = await this.renderer.renderClarification(
+          answerIntent,
+          fact.answer,
+        );
+        console.log('Answer fact text:', answerText);
+        await this.persistTurnRecord({
+          sessionId: session.id,
+          stage: 'CLARIFICATION',
+          turnIndex: updatedTracker.turnCount,
+          intentType: 'ANSWER_FACT',
+          intentTargetJson: {
+            factKey: assessment.signals.matchedFactKey,
+            dimension: fact.dimension,
+          },
+          promptRendered: answerText,
+          candidateAnswer,
+          candidateIntent: assessment.candidateIntent,
+          signalsJson: assessment.signals as any,
+          scoreDeltas: assessment.scoreDelta,
+          action: 'ANSWER_FACT',
+          decisionReason: decision.reason,
+        });
 
-      const answerIntent = factDecision.nextIntent!;
-      const answerText = await this.renderer.renderClarification(
-        answerIntent,
-        fact?.answer,
-      );
+        // Check if answering this fact completes the transition criteria
+        const allCoveredAfterFact = criteria.requiredDimensions.every((d) =>
+          newCoveredDims.includes(d),
+        );
+        const meetsMinCriteria =
+          updatedTracker.turnCount >= criteria.minCandidateTurns &&
+          elapsedSeconds >= criteria.minDurationSeconds;
 
-      await this.persistTurnRecord({
-        sessionId: session.id,
-        stage: 'CLARIFICATION',
-        turnIndex: updatedTracker.turnCount,
-        intentType: 'ANSWER_FACT',
-        intentTargetJson: {
-          factKey: assessment.signals.matchedFactKey,
-          dimension: fact?.dimension,
-        },
-        promptRendered: answerText,
-        candidateAnswer,
-        candidateIntent: assessment.candidateIntent,
-        signalsJson: assessment.signals as any,
-        scoreDeltas: assessment.scoreDelta,
-        action: 'ANSWER_FACT',
-        decisionReason: decision.reason,
-      });
+        if (allCoveredAfterFact && meetsMinCriteria) {
+          const { transitionText } = await this._commitClarificationTransition(
+            session,
+            updatedTracker,
+            elapsedSeconds,
+            assessment,
+            data,
+            newDisclosedKeys,
+            newCoveredDims,
+            criteria,
+            lang,
+          );
+          await this.persistTurnRecord({
+            sessionId: session.id,
+            stage: 'CLARIFICATION',
+            turnIndex: updatedTracker.turnCount,
+            intentType: 'ANSWER_FACT',
+            intentTargetJson: {
+              factKey: assessment.signals.matchedFactKey,
+              dimension: fact.dimension,
+            },
+            promptRendered: `${answerText}\n\n${transitionText}`,
+            candidateAnswer,
+            candidateIntent: assessment.candidateIntent,
+            signalsJson: assessment.signals as any,
+            scoreDeltas: assessment.scoreDelta,
+            action: 'TRANSITION_STAGE',
+            decisionReason: 'All dimensions covered after fact answer',
+          });
+          this.streamText(res, `${answerText}\n\n${transitionText}`, {
+            stageChanged: true,
+            stage: 'DESIGN_DRAWING',
+          });
+          return;
+        }
 
-      await this.updateStageState(session, {
-        ...stageState,
-        stage: 'CLARIFICATION',
-        trackerJson: updatedTracker as any,
-        runningScores: this._aggregateScores(session, assessment.scoreDelta),
-      });
+        await this.updateStageState(session, {
+          ...stageState,
+          stage: 'CLARIFICATION',
+          trackerJson: updatedTracker as any,
+          runningScores: this._aggregateScores(session, assessment.scoreDelta),
+        });
 
-      if (factDecision.chainedAction) {
-        const nudgeIntent = factDecision.chainedAction.intent;
-        const nudgeText = await this.renderer.renderClarification(nudgeIntent);
-        this.streamText(res, `${answerText}\n\n${nudgeText}`, null);
-      } else {
-        this.streamText(res, answerText, null);
+        if (factDecision.chainedAction) {
+          const nudgeIntent = factDecision.chainedAction.intent;
+          const nudgeText = await this.renderer.renderClarification(nudgeIntent);
+          this.streamText(res, `${answerText}\n\n${nudgeText}`, null);
+        } else {
+          this.streamText(res, answerText, null);
+        }
+        return;
       }
-      return;
+      // fact not found — LLM returned a key not in data.facts; fall through to ASK_NUDGE
     }
 
     // ASK_NUDGE or default
@@ -335,15 +365,34 @@ export class SDOrchestratorService {
       context: { language: lang, level },
       elapsedSeconds,
     });
-
+    console.log('Clarification turn nudge plan:', nudgePlan);
     if (nudgePlan.action === 'TRANSITION_STAGE') {
-      // Edge case: planner says transition but policy said nudge — trust policy, re-check
-      const finalText = this.renderer.buildTransitionText(
-        'CLARIFICATION',
-        'DESIGN_DRAWING',
+      const { transitionText } = await this._commitClarificationTransition(
+        session,
+        updatedTracker,
+        elapsedSeconds,
+        assessment,
+        data,
+        newDisclosedKeys,
+        newCoveredDims,
+        criteria,
         lang,
       );
-      this.streamText(res, finalText, {
+      await this.persistTurnRecord({
+        sessionId: session.id,
+        stage: 'CLARIFICATION',
+        turnIndex: updatedTracker.turnCount,
+        intentType: 'OPENING',
+        intentTargetJson: {},
+        promptRendered: transitionText,
+        candidateAnswer,
+        candidateIntent: assessment.candidateIntent,
+        signalsJson: assessment.signals as any,
+        scoreDeltas: assessment.scoreDelta,
+        action: 'TRANSITION_STAGE',
+        decisionReason: nudgePlan.reason,
+      });
+      this.streamText(res, transitionText, {
         stageChanged: true,
         stage: 'DESIGN_DRAWING',
       });
@@ -376,10 +425,13 @@ export class SDOrchestratorService {
       (await this.problemRepo.findOneOrFail({
         where: { id: session.problemId },
       }));
-    const stageState = (session.stageState ?? {}) as unknown as SDSessionStageState;
+    const stageState = (session.stageState ??
+      {}) as unknown as SDSessionStageState;
     const lang = session.language as 'vi' | 'en' | 'ja';
-    const level = (session as any).targetLevel ?? 'senior';
-    const elapsedSeconds = this.computeElapsedSeconds(session);
+    // TODO: add targetLevel to SDSession entity
+    const level: string =
+      (session as { targetLevel?: string }).targetLevel ?? 'mid';
+    const elapsedSeconds = this.computeStageElapsedSeconds(session);
     const graph = this.extractGraph(session);
     const flowPaths = problem.flowPaths ?? [];
 
@@ -418,7 +470,15 @@ export class SDOrchestratorService {
       };
 
     const graphMetrics = await this._getGraphMetrics(session);
-
+    console.log('Walkthrough turn input:', {
+      candidateAnswer,
+      graph,
+      flowPaths,
+      tracker,
+      clarificationLeftover,
+      isFirstTurn,
+      graphMetrics,
+    });
     // Assess candidate response
     const assessment = await this.walkthroughAssessor.assess(
       candidateAnswer,
@@ -428,20 +488,16 @@ export class SDOrchestratorService {
       clarificationLeftover,
       isFirstTurn,
     );
-
+    console.log('Walkthrough turn assessment output:', {
+      signals: assessment.signals,
+      scoreDelta: assessment.scoreDelta,
+      redFlags: assessment.redFlags,
+    });
     // Update tracker (merge per-turn IDs into cumulative)
     const extra = assessment.extra ?? {
       explainedNodeIds: [],
       explainedEdgeIds: [],
     };
-    const newExplainedNodes = [
-      ...new Set([
-        ...graph.nodes
-          .map((n) => n.id)
-          .filter((id) => !tracker.progress.unexplainedNodeIds.includes(id)),
-        ...extra.explainedNodeIds,
-      ]),
-    ];
     const newUnexplainedNodes = tracker.progress.unexplainedNodeIds.filter(
       (id) => !(extra.explainedNodeIds ?? []).includes(id),
     );
@@ -458,20 +514,11 @@ export class SDOrchestratorService {
       .filter((p) => p.required)
       .every((p) => newCoveredPaths.includes(p.id));
 
-    // Contradiction challenge bump
-    let contradictionChallengesUsed =
-      tracker.progress.contradictionChallengesUsed;
-    const decision = this.policyEngine.decideWalkthrough(
-      assessment,
-      tracker,
-      WALKTHROUGH_CRITERIA,
-    );
-
-    if (decision.action === 'ASK_CHALLENGE') {
-      contradictionChallengesUsed += 1; // increment when SENT
-    }
-
-    const updatedTracker: SDWalkthroughTracker = {
+    // Build tracker reflecting this turn's progress — pass to policy so transition
+    // check uses updated criticalPathsCovered/unexplained, not stale pre-turn state.
+    // Contradiction counter stays at current value (not yet bumped) so policy
+    // correctly decides whether to issue another challenge.
+    const trackerForPolicy: SDWalkthroughTracker = {
       turnCount: tracker.turnCount + 1,
       elapsedSeconds,
       progress: {
@@ -479,8 +526,26 @@ export class SDOrchestratorService {
         unexplainedEdgeIds: newUnexplainedEdges,
         coveredPathIds: newCoveredPaths,
         criticalPathsCovered,
-        contradictionChallengesUsed,
+        contradictionChallengesUsed:
+          tracker.progress.contradictionChallengesUsed,
       },
+    };
+
+    const decision = this.policyEngine.decideWalkthrough(
+      assessment,
+      trackerForPolicy,
+      WALKTHROUGH_CRITERIA,
+    );
+    console.log('Walkthrough turn policy decision:', decision);
+    // Bump counter only when a challenge is actually sent
+    const contradictionChallengesUsed =
+      decision.action === 'ASK_CHALLENGE'
+        ? trackerForPolicy.progress.contradictionChallengesUsed + 1
+        : trackerForPolicy.progress.contradictionChallengesUsed;
+
+    const updatedTracker: SDWalkthroughTracker = {
+      ...trackerForPolicy,
+      progress: { ...trackerForPolicy.progress, contradictionChallengesUsed },
     };
 
     // Handle TRANSITION_STAGE
@@ -501,7 +566,7 @@ export class SDOrchestratorService {
         sessionId: session.id,
         stage: 'DESIGN_WALKTHROUGH',
         turnIndex: updatedTracker.turnCount,
-        intentType: 'FLOW_PROBE',
+        intentType: 'TRANSITION_STAGE',
         intentTargetJson: {},
         promptRendered: transitionText,
         candidateAnswer,
@@ -523,13 +588,67 @@ export class SDOrchestratorService {
         leftoverJson: leftover as any,
       });
 
+      const probeBank = problem.probeBank ?? [];
+      const ddCriteria = this.deepDivePlanner.getCriteriaForLevel(level);
+      const initialDDProgress = {
+        completedProbeIds: [],
+        activeProbe: null,
+        probeBudgetRemaining: ddCriteria.maxProbes,
+      };
+      const firstProbe = this.deepDivePlanner.selectNextProbe({
+        graph,
+        graphMetrics: this._resolveGraphMetrics(graphMetrics, graph),
+        clarificationLeftover,
+        walkthroughLeftover: leftover,
+        walkthroughScores: this._aggregateScores(
+          session,
+          assessment.scoreDelta,
+        ),
+        tracker: {
+          turnCount: 0,
+          elapsedSeconds: 0,
+          progress: initialDDProgress,
+        },
+        probeBank,
+        context: { language: lang, level },
+        elapsedSeconds: 0,
+      });
+
+      let ddOpeningText = transitionText;
+      let ddTrackerJson: Record<string, unknown> = {
+        turnCount: 0,
+        elapsedSeconds: 0,
+        progress: initialDDProgress,
+      };
+      if (firstProbe) {
+        const firstActive: SDActiveProbeState = {
+          probeId: firstProbe.id,
+          turnCount: 0,
+          followUpCount: 0,
+          challengeCount: 0,
+          coveredSignals: [],
+        };
+        const probeIntent = this.deepDivePlanner.buildPrimaryIntent(
+          firstProbe,
+          lang,
+          [],
+        );
+        const probeText = await this.renderer.renderDeepDive(probeIntent);
+        ddOpeningText = `${transitionText}\n\n${probeText}`;
+        ddTrackerJson = {
+          turnCount: 0,
+          elapsedSeconds: 0,
+          progress: { ...initialDDProgress, activeProbe: firstActive },
+        };
+      }
+
       await this.updateSessionPhase(session, 'DEEP_DIVE', {
         stage: 'DEEP_DIVE',
-        trackerJson: {},
+        trackerJson: ddTrackerJson as any,
         runningScores: {},
       });
 
-      this.streamText(res, transitionText, {
+      this.streamText(res, ddOpeningText, {
         stageChanged: true,
         stage: 'DEEP_DIVE',
       });
@@ -538,6 +657,7 @@ export class SDOrchestratorService {
 
     // Plan next intent (CHALLENGE, REDIRECT, or FOLLOW_UP)
     let intentText: string;
+    let recordIntentType: string;
     if (
       decision.action === 'ASK_CHALLENGE' &&
       assessment.extra?.contradictionDetail
@@ -554,6 +674,7 @@ export class SDOrchestratorService {
         target: {},
       };
       intentText = await this.renderer.renderWalkthrough(challengeIntent);
+      recordIntentType = 'CONTRADICTION_CHALLENGE';
     } else {
       const nextIntent = this.walkthroughPlanner.planNextIntent({
         graph,
@@ -574,13 +695,15 @@ export class SDOrchestratorService {
         elapsedSeconds,
       });
       intentText = await this.renderer.renderWalkthrough(nextIntent);
+      recordIntentType = nextIntent.type;
     }
 
+    // TODO: wrap persistTurnRecord + updateStageState in a DB transaction to prevent inconsistent state on partial failure
     await this.persistTurnRecord({
       sessionId: session.id,
       stage: 'DESIGN_WALKTHROUGH',
       turnIndex: updatedTracker.turnCount,
-      intentType: 'FLOW_PROBE',
+      intentType: recordIntentType,
       intentTargetJson: {},
       promptRendered: intentText,
       candidateAnswer,
@@ -612,11 +735,12 @@ export class SDOrchestratorService {
       (await this.problemRepo.findOneOrFail({
         where: { id: session.problemId },
       }));
-    const stageState = (session.stageState ?? {}) as unknown as SDSessionStageState;
+    const stageState = (session.stageState ??
+      {}) as unknown as SDSessionStageState;
     const lang = session.language as 'vi' | 'en' | 'ja';
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const level = (session as any).targetLevel ?? 'senior';
-    const elapsedSeconds = this.computeElapsedSeconds(session);
+    const level = (session as any).targetLevel ?? 'mid';
+    const elapsedSeconds = this.computeStageElapsedSeconds(session);
     const graph = this.extractGraph(session);
     const probeBank = problem.probeBank ?? [];
     const graphMetrics = await this._getGraphMetrics(session);
@@ -656,20 +780,20 @@ export class SDOrchestratorService {
       (walkthroughSummary?.leftoverJson as SDWalkthroughLeftoverJson | null) ?? {
         unexplainedAtEnd: { nodeIds: [], edgeIds: [] },
       };
-
+    console.log('Deep Dive turn input:', {
+      candidateAnswer,
+      graph,
+      probeBank,
+      tracker,
+      clarificationLeftover,
+      walkthroughLeftover,
+      graphMetrics,
+    });
     // If no active probe, select one
     if (!tracker.progress.activeProbe) {
       const nextProbe = this.deepDivePlanner.selectNextProbe({
         graph,
-        graphMetrics: graphMetrics ?? {
-          componentCoverage: 0.5,
-          topologyCoverage: 0.5,
-          dataFlowCompleteness: 0.5,
-          requirementAlignment: 0.5,
-          architectureSimplicity: 1,
-          nodeCount: graph.nodes.length,
-          edgeCount: graph.edges.length,
-        },
+        graphMetrics: this._resolveGraphMetrics(graphMetrics, graph),
         clarificationLeftover,
         walkthroughLeftover,
         walkthroughScores: walkthroughSummary?.scores ?? {},
@@ -680,26 +804,35 @@ export class SDOrchestratorService {
       });
 
       if (!nextProbe || tracker.progress.probeBudgetRemaining === 0) {
-        // No probe available or budget exhausted — transition
         await this._closeDeepDive(session, tracker, elapsedSeconds, res, lang);
         return;
       }
 
-      // Start new probe — emit PROBE_PRIMARY
+      const firstAssessment = candidateAnswer.trim()
+        ? await this.deepDiveAssessor.assess(
+            candidateAnswer,
+            graph,
+            nextProbe,
+            [],
+            clarificationLeftover,
+          )
+        : null;
+
       const newActiveProbe: SDActiveProbeState = {
         probeId: nextProbe.id,
         turnCount: 1,
         followUpCount: 0,
         challengeCount: 0,
-        coveredSignals: [],
+        coveredSignals: firstAssessment?.signals.expectedSignalsCovered ?? [],
       };
       const primaryIntent = this.deepDivePlanner.buildPrimaryIntent(
         nextProbe,
         lang,
-        [],
+        newActiveProbe.coveredSignals,
       );
+      console.log('initial primary intent for new probe:', primaryIntent);
       const primaryText = await this.renderer.renderDeepDive(primaryIntent);
-
+      console.log('Rendered primary text for new probe:', primaryText);
       const updatedTracker: SDDeepDiveTracker = {
         turnCount: tracker.turnCount + 1,
         elapsedSeconds,
@@ -717,6 +850,9 @@ export class SDOrchestratorService {
         },
         promptRendered: primaryText,
         candidateAnswer,
+        candidateIntent: firstAssessment?.candidateIntent,
+        signalsJson: firstAssessment?.signals as any,
+        scoreDeltas: firstAssessment?.scoreDelta,
         action: 'ASK_FOLLOW_UP',
         decisionReason: 'New probe started',
       });
@@ -725,7 +861,9 @@ export class SDOrchestratorService {
         ...stageState,
         stage: 'DEEP_DIVE',
         trackerJson: updatedTracker as any,
-        runningScores: stageState.runningScores ?? {},
+        runningScores: firstAssessment
+          ? this._aggregateScores(session, firstAssessment.scoreDelta)
+          : (stageState.runningScores ?? {}),
       });
 
       this.streamText(res, primaryText, null);
@@ -747,7 +885,11 @@ export class SDOrchestratorService {
       activeProbe.coveredSignals,
       clarificationLeftover,
     );
-
+    console.log('Deep Dive turn assessment output:', {
+      signals: assessment.signals,
+      scoreDelta: assessment.scoreDelta,
+      redFlags: assessment.redFlags,
+    });
     // Update cumulative covered signals
     const newCoveredSignals = [
       ...new Set([
@@ -762,7 +904,7 @@ export class SDOrchestratorService {
       criteria,
       probeObj.expectedSignals,
     );
-
+    console.log('Deep Dive turn policy decision:', decision);
     // Update active probe state
     const updatedActive: SDActiveProbeState = {
       ...activeProbe,
@@ -826,15 +968,7 @@ export class SDOrchestratorService {
         // Select next probe immediately — emit in same stream
         const nextProbe = this.deepDivePlanner.selectNextProbe({
           graph,
-          graphMetrics: graphMetrics ?? {
-            componentCoverage: 0.5,
-            topologyCoverage: 0.5,
-            dataFlowCompleteness: 0.5,
-            requirementAlignment: 0.5,
-            architectureSimplicity: 1,
-            nodeCount: graph.nodes.length,
-            edgeCount: graph.edges.length,
-          },
+          graphMetrics: this._resolveGraphMetrics(graphMetrics, graph),
           clarificationLeftover,
           walkthroughLeftover,
           walkthroughScores: walkthroughSummary?.scores ?? {},
@@ -909,7 +1043,12 @@ export class SDOrchestratorService {
       intentText = await this.renderer.renderDeepDive(challengeIntent);
       intentType = 'PROBE_CHALLENGE';
     } else if (decision.action === 'REDIRECT') {
-      intentText = `Let's stay focused on ${probeObj.dimension}. ${probeObj.primaryQuestionTemplate}`;
+      const redirectIntent = this.deepDivePlanner.buildRedirectIntent(
+        probeObj,
+        lang,
+        newCoveredSignals,
+      );
+      intentText = await this.renderer.renderDeepDive(redirectIntent);
       intentType = 'PROBE_REDIRECT';
     } else {
       const followUpIntent = trigger
@@ -965,7 +1104,8 @@ export class SDOrchestratorService {
     res: Response,
     lang: 'vi' | 'en' | 'ja',
   ): Promise<void> {
-    const stageState = (session.stageState ?? {}) as unknown as SDSessionStageState;
+    const stageState = (session.stageState ??
+      {}) as unknown as SDSessionStageState;
     const leftover: SDDeepDiveLeftoverJson = {
       completedProbeIds: tracker.progress.completedProbeIds,
       perProbeSignals: {},
@@ -987,13 +1127,95 @@ export class SDOrchestratorService {
       leftoverJson: leftover as any,
     });
 
+    const problem =
+      session.problem ??
+      (await this.problemRepo.findOneOrFail({
+        where: { id: session.problemId },
+      }));
+    const curveballs = problem.curveballs ?? [];
+    const probeBank = problem.probeBank ?? [];
+    const wuCriteria = this.wrapUpPlanner.getCriteria();
+    const clarificationSummary = await this.summaryRepo.findOne({
+      where: { sessionId: session.id, stage: 'CLARIFICATION' },
+    });
+    const clarificationLeftover =
+      (clarificationSummary?.leftoverJson as SDClarificationLeftoverJson | null) ?? {
+        requirementContract: { disclosedFacts: [], coveredDimensions: [] },
+        uncoveredDimensions: [],
+        disclosedFactCount: 0,
+      };
+    const deepDiveSummary = await this.summaryRepo.findOne({
+      where: { sessionId: session.id, stage: 'DEEP_DIVE' },
+    });
+    const graph = this.extractGraph(session);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+    const level: string = (session as any).targetLevel ?? 'mid';
+    const initialWUProgress = {
+      completedItemIds: [] as string[],
+      baseGraphSnapshotId: '',
+      activeScenario: null,
+      scenarioBudgetRemaining: wuCriteria.maxScenarios,
+    };
+    const initialWUTracker: SDWrapUpTracker = {
+      turnCount: 0,
+      elapsedSeconds: 0,
+      progress: initialWUProgress,
+    };
+    const firstScenario =
+      this.wrapUpPlanner.selectNextScenario({
+        graph,
+        curveballs,
+        clarificationLeftover,
+        deepDiveLeftover: {
+          completedProbeIds: tracker.progress.completedProbeIds,
+          perProbeSignals: {},
+          unresolvedRedFlags: [],
+        },
+        deepDiveScores:
+          (deepDiveSummary?.scores as Record<string, number>) ?? {},
+        tracker: initialWUTracker,
+        context: { language: lang, level },
+        timeRemainingSeconds: wuCriteria.maxStageSeconds,
+      }) ??
+      probeBank.find(
+        (p) =>
+          p.stage === 'WRAP_UP' &&
+          !initialWUProgress.completedItemIds.includes(p.id),
+      ) ??
+      null;
+
+    let wuOpeningText = transitionText;
+    let wuTrackerJson: Record<string, unknown> = initialWUProgress;
+    if (firstScenario) {
+      const firstActiveScenario: SDActiveScenarioState = {
+        source:
+          'scenarioTemplate' in firstScenario ? 'curveball' : 'probe_fallback',
+        scenarioId: firstScenario.id,
+        turnCount: 0,
+        followUpCount: 0,
+        challengeCount: 0,
+      };
+      const presentIntent = this.wrapUpPlanner.buildPresentIntent(
+        firstScenario,
+        lang,
+        [],
+      );
+      const presentText = await this.renderer.renderWrapUp(presentIntent);
+      wuOpeningText = `${transitionText}\n\n${presentText}`;
+      wuTrackerJson = {
+        turnCount: 0,
+        elapsedSeconds: 0,
+        progress: { ...initialWUProgress, activeScenario: firstActiveScenario },
+      };
+    }
+
     await this.updateSessionPhase(session, 'WRAP_UP', {
       stage: 'WRAP_UP',
-      trackerJson: {},
+      trackerJson: wuTrackerJson,
       runningScores: {},
     });
 
-    this.streamText(res, transitionText, {
+    this.streamText(res, wuOpeningText, {
       stageChanged: true,
       stage: 'WRAP_UP',
     });
@@ -1009,9 +1231,10 @@ export class SDOrchestratorService {
       (await this.problemRepo.findOneOrFail({
         where: { id: session.problemId },
       }));
-    const stageState = (session.stageState ?? {}) as unknown as SDSessionStageState;
+    const stageState = (session.stageState ??
+      {}) as unknown as SDSessionStageState;
     const lang = session.language as 'vi' | 'en' | 'ja';
-    const elapsedSeconds = this.computeElapsedSeconds(session);
+    const elapsedSeconds = this.computeStageElapsedSeconds(session);
     const curveballs = problem.curveballs ?? [];
     const probeBank = problem.probeBank ?? [];
     const criteria = this.wrapUpPlanner.getCriteria();
@@ -1071,6 +1294,21 @@ export class SDOrchestratorService {
         disclosedFactCount: 0,
       };
 
+    // Load deep-dive leftover and scores from stage summary
+    const deepDiveSummary = await this.summaryRepo.findOne({
+      where: { sessionId: session.id, stage: 'DEEP_DIVE' },
+    });
+    const deepDiveLeftover: SDDeepDiveLeftoverJson =
+      (deepDiveSummary?.leftoverJson as SDDeepDiveLeftoverJson | null) ?? {
+        completedProbeIds: [],
+        perProbeSignals: {},
+        unresolvedRedFlags: [],
+      };
+    const deepDiveScores =
+      (deepDiveSummary?.scores as Record<string, number>) ?? {};
+
+    const level = (session as { targetLevel?: string }).targetLevel ?? 'mid';
+
     // If no active scenario, select one
     if (!tracker.progress.activeScenario) {
       if (
@@ -1094,17 +1332,10 @@ export class SDOrchestratorService {
           graph,
           curveballs,
           clarificationLeftover,
-          deepDiveLeftover: {
-            completedProbeIds: [],
-            perProbeSignals: {},
-            unresolvedRedFlags: [],
-          },
-          deepDiveScores: {},
+          deepDiveLeftover,
+          deepDiveScores,
           tracker,
-          context: {
-            language: lang,
-            level: (session as any).targetLevel ?? 'senior',
-          },
+          context: { language: lang, level },
           timeRemainingSeconds: criteria.maxStageSeconds - elapsedSeconds,
         }) ??
         probeBank.find(
@@ -1127,6 +1358,22 @@ export class SDOrchestratorService {
         return;
       }
 
+      // Save per-scenario baseline so graphAdaptation tracks only changes within this scenario
+      const scenarioSnap = await this.drawingTransition.saveGraphSnapshot(
+        session.id,
+        'WRAP_UP',
+        graph,
+        {
+          componentCoverage: 0,
+          topologyCoverage: 0,
+          dataFlowCompleteness: 0,
+          requirementAlignment: 0,
+          architectureSimplicity: 1,
+          nodeCount: graph.nodes.length,
+          edgeCount: graph.edges.length,
+        },
+      );
+
       const newActiveScenario: SDActiveScenarioState = {
         source:
           'scenarioTemplate' in nextScenario ? 'curveball' : 'probe_fallback',
@@ -1134,6 +1381,7 @@ export class SDOrchestratorService {
         turnCount: 1,
         followUpCount: 0,
         challengeCount: 0,
+        perScenarioBaseSnapshotId: scenarioSnap.id,
       };
 
       const presentIntent = this.wrapUpPlanner.buildPresentIntent(
@@ -1191,11 +1439,22 @@ export class SDOrchestratorService {
       return;
     }
 
+    // Use per-scenario baseline for accurate graphAdaptation detection
+    let assessmentBaseGraph = baseGraph;
+    if (activeScenario.perScenarioBaseSnapshotId) {
+      const perScenarioSnap = await this.snapshotRepo.findOne({
+        where: { id: activeScenario.perScenarioBaseSnapshotId },
+      });
+      if (perScenarioSnap) {
+        assessmentBaseGraph = perScenarioSnap.graph as unknown as SDGraphState;
+      }
+    }
+
     const assessment = await this.wrapUpAssessor.assess(
       candidateAnswer,
       scenarioObj,
       graph,
-      baseGraph,
+      assessmentBaseGraph,
       clarificationLeftover,
     );
 
@@ -1238,7 +1497,32 @@ export class SDOrchestratorService {
         },
       };
 
+      // Persist close record — audit trail for this scenario's final assessment
+      await this.persistTurnRecord({
+        sessionId: session.id,
+        stage: 'WRAP_UP',
+        turnIndex: updatedTracker.turnCount,
+        intentType: 'SCENARIO_CLOSE',
+        intentTargetJson: { scenarioId: scenarioObj.id },
+        promptRendered: '',
+        candidateAnswer,
+        candidateIntent: assessment.candidateIntent,
+        signalsJson: assessment.signals as any,
+        scoreDeltas: assessment.scoreDelta,
+        action: decision.action,
+        decisionReason: decision.reason,
+      });
+
       if (newBudget <= 0 || decision.action === 'COMPLETE_SESSION') {
+        // Aggregate final scenario scores before completing so _completeSession reads them
+        const aggregatedScores = this._aggregateScores(
+          session,
+          assessment.scoreDelta,
+        );
+        session.stageState = {
+          ...(session.stageState ?? {}),
+          runningScores: aggregatedScores,
+        };
         await this._completeSession(
           session,
           updatedTracker,
@@ -1248,90 +1532,114 @@ export class SDOrchestratorService {
           res,
           lang,
         );
-      } else {
-        // Next scenario in same stream
-        const nextScenario =
-          this.wrapUpPlanner.selectNextScenario({
-            graph,
-            curveballs,
-            clarificationLeftover,
-            deepDiveLeftover: {
-              completedProbeIds: [],
-              perProbeSignals: {},
-              unresolvedRedFlags: [],
-            },
-            deepDiveScores: {},
-            tracker: updatedTracker,
-            context: {
-              language: lang,
-              level: (session as any).targetLevel ?? 'senior',
-            },
-            timeRemainingSeconds: criteria.maxStageSeconds - elapsedSeconds,
-          }) ??
-          probeBank.find(
-            (p) => p.stage === 'WRAP_UP' && !newCompleted.includes(p.id),
-          ) ??
-          null;
-
-        if (!nextScenario) {
-          await this._completeSession(
-            session,
-            updatedTracker,
-            elapsedSeconds,
-            graph,
-            baseGraph,
-            res,
-            lang,
-          );
-          return;
-        }
-
-        const newActive: SDActiveScenarioState = {
-          source:
-            'scenarioTemplate' in nextScenario ? 'curveball' : 'probe_fallback',
-          scenarioId: nextScenario.id,
-          turnCount: 1,
-          followUpCount: 0,
-          challengeCount: 0,
-        };
-        const presentIntent = this.wrapUpPlanner.buildPresentIntent(
-          nextScenario,
-          lang,
-          [],
-        );
-        const presentText = await this.renderer.renderWrapUp(presentIntent);
-        const finalTracker: SDWrapUpTracker = {
-          ...updatedTracker,
-          progress: { ...updatedTracker.progress, activeScenario: newActive },
-        };
-
-        await this.updateStageState(session, {
-          ...stageState,
-          stage: 'WRAP_UP',
-          trackerJson: finalTracker as any,
-          runningScores: this._aggregateScores(session, assessment.scoreDelta),
-        });
-        this.streamText(res, presentText, null);
+        return;
       }
+
+      // Next scenario in same stream
+      const nextScenario =
+        this.wrapUpPlanner.selectNextScenario({
+          graph,
+          curveballs,
+          clarificationLeftover,
+          deepDiveLeftover,
+          deepDiveScores,
+          tracker: updatedTracker,
+          context: { language: lang, level },
+          timeRemainingSeconds: criteria.maxStageSeconds - elapsedSeconds,
+        }) ??
+        probeBank.find(
+          (p) => p.stage === 'WRAP_UP' && !newCompleted.includes(p.id),
+        ) ??
+        null;
+
+      if (!nextScenario) {
+        const aggregatedScores = this._aggregateScores(
+          session,
+          assessment.scoreDelta,
+        );
+        session.stageState = {
+          ...(session.stageState ?? {}),
+          runningScores: aggregatedScores,
+        };
+        await this._completeSession(
+          session,
+          updatedTracker,
+          elapsedSeconds,
+          graph,
+          baseGraph,
+          res,
+          lang,
+        );
+        return;
+      }
+
+      // Save per-scenario baseline for the next scenario
+      const nextScenarioSnap = await this.drawingTransition.saveGraphSnapshot(
+        session.id,
+        'WRAP_UP',
+        graph,
+        {
+          componentCoverage: 0,
+          topologyCoverage: 0,
+          dataFlowCompleteness: 0,
+          requirementAlignment: 0,
+          architectureSimplicity: 1,
+          nodeCount: graph.nodes.length,
+          edgeCount: graph.edges.length,
+        },
+      );
+      const newActive: SDActiveScenarioState = {
+        source:
+          'scenarioTemplate' in nextScenario ? 'curveball' : 'probe_fallback',
+        scenarioId: nextScenario.id,
+        turnCount: 1,
+        followUpCount: 0,
+        challengeCount: 0,
+        perScenarioBaseSnapshotId: nextScenarioSnap.id,
+      };
+      const presentIntent = this.wrapUpPlanner.buildPresentIntent(
+        nextScenario,
+        lang,
+        [],
+      );
+      const presentText = await this.renderer.renderWrapUp(presentIntent);
+      const finalTracker: SDWrapUpTracker = {
+        ...updatedTracker,
+        progress: { ...updatedTracker.progress, activeScenario: newActive },
+      };
+
+      await this.updateStageState(session, {
+        ...stageState,
+        stage: 'WRAP_UP',
+        trackerJson: finalTracker as any,
+        runningScores: this._aggregateScores(session, assessment.scoreDelta),
+      });
+      this.streamText(res, presentText, null);
       return;
     }
 
     // Follow-up or challenge
     let intentText: string;
     if (decision.action === 'ASK_CHALLENGE') {
+      const challengeDetail =
+        assessment.redFlags.length > 0
+          ? assessment.redFlags[0]
+          : 'Candidate assumption contradicts original design';
       const challengeIntent = this.wrapUpPlanner.buildChallengeIntent(
         scenarioObj,
         lang,
         [],
-        'Candidate assumption contradicts original design',
+        challengeDetail,
       );
       intentText = await this.renderer.renderWrapUp(challengeIntent);
     } else {
       const followUpReason = !assessment.signals.blastRadiusRecognized
         ? 'blastRadius'
-        : !assessment.signals.graphAdaptationMade
-          ? 'graphAdaptation'
-          : 'consistency';
+        : !assessment.signals.mitigationProposed
+          ? 'mitigation'
+          : !assessment.signals.graphAdaptationMade
+            ? 'graphAdaptation'
+            : 'consistency';
       const followUpIntent = this.wrapUpPlanner.buildFollowUpIntent(
         scenarioObj,
         lang,
@@ -1383,7 +1691,8 @@ export class SDOrchestratorService {
     res: Response,
     lang: 'vi' | 'en' | 'ja',
   ): Promise<void> {
-    const stageState = (session.stageState ?? {}) as unknown as SDSessionStageState;
+    const stageState = (session.stageState ??
+      {}) as unknown as SDSessionStageState;
     const delta = this.wrapUpAssessor.detectGraphDelta(currentGraph, baseGraph);
     const leftover: SDWrapUpLeftoverJson = {
       completedItemIds: tracker.progress.completedItemIds,
@@ -1427,7 +1736,9 @@ export class SDOrchestratorService {
       if (stage === 'CLARIFICATION') {
         await this.openClarification(session, res);
       } else {
-        this.streamText(res, `Session is in stage: ${stage}`, null);
+        const lang = session.language as 'vi' | 'en' | 'ja';
+        const statusText = this.renderer.buildStageStatusText(stage, lang);
+        this.streamText(res, statusText, null);
       }
     } finally {
       this.endSSE(res);
@@ -1465,6 +1776,8 @@ export class SDOrchestratorService {
       decisionReason: 'Session opening',
     });
 
+    await this.sessionRepo.update(session.id, { stageStartedAt: new Date() });
+
     await this.updateStageState(session, {
       stage: 'CLARIFICATION',
       trackerJson: {
@@ -1493,7 +1806,8 @@ export class SDOrchestratorService {
     const problem = await this.problemRepo.findOneOrFail({
       where: { id: session.problemId },
     });
-    const stageState = (session.stageState ?? {}) as unknown as SDSessionStageState;
+    const stageState = (session.stageState ??
+      {}) as unknown as SDSessionStageState;
     const hasNudged = stageState.hasNudgedEmptyCanvas ?? false;
 
     const graph: SDGraphState = this.extractGraph(session);
@@ -1624,6 +1938,7 @@ export class SDOrchestratorService {
     await this.sessionRepo.update(session.id, {
       phase: phase as any,
       stageState: stageState as any,
+      stageStartedAt: new Date(),
     });
   }
 
@@ -1644,8 +1959,12 @@ export class SDOrchestratorService {
     };
   }
 
-  computeElapsedSeconds(session: SDSession): number {
-    return Math.floor((Date.now() - session.createdAt.getTime()) / 1000);
+  computeStageElapsedSeconds(session: SDSession): number {
+    const stageStartedAt = session.stageStartedAt as Date | null;
+    const refMs = stageStartedAt
+      ? stageStartedAt.getTime()
+      : session.createdAt.getTime();
+    return Math.floor((Date.now() - refMs) / 1000);
   }
 
   // ─── Graph metrics helper ────────────────────────────────────────────────────
@@ -1658,19 +1977,89 @@ export class SDOrchestratorService {
     return snapshot?.metrics ?? null;
   }
 
+  // ─── Clarification transition helper ────────────────────────────────────────
+
+  private async _commitClarificationTransition(
+    session: SDSession,
+    updatedTracker: SDClarificationTracker,
+    elapsedSeconds: number,
+    assessment: SDClarificationAssessment,
+    data: SDClarificationData,
+    newDisclosedKeys: string[],
+    newCoveredDims: string[],
+    criteria: SDClarificationTransitionCriteria,
+    lang: 'vi' | 'en' | 'ja',
+  ): Promise<{ transitionText: string; leftover: SDClarificationLeftoverJson }> {
+    const transitionIntent = this.clarificationPlanner.buildTransitionIntent(lang);
+    const transitionText = await this.renderer.renderClarification(transitionIntent);
+
+    const leftover: SDClarificationLeftoverJson = {
+      requirementContract: {
+        disclosedFacts: data.facts
+          .filter((f) => newDisclosedKeys.includes(f.key))
+          .map((f) => ({ dimension: f.dimension, key: f.key, value: f.answer })),
+        coveredDimensions: newCoveredDims,
+      },
+      uncoveredDimensions: criteria.requiredDimensions.filter(
+        (d) => !newCoveredDims.includes(d),
+      ),
+      disclosedFactCount: newDisclosedKeys.length,
+    };
+
+    await this.persistStageSummary({
+      sessionId: session.id,
+      stage: 'CLARIFICATION',
+      totalTurns: updatedTracker.turnCount,
+      elapsedSeconds,
+      scores: this._aggregateScores(session, assessment.scoreDelta),
+      redFlags: assessment.redFlags,
+      leftoverJson: leftover as any,
+    });
+
+    await this.updateSessionPhase(session, 'DESIGN_DRAWING', {
+      stage: 'DESIGN_DRAWING',
+      trackerJson: {},
+      runningScores: {},
+      hasNudgedEmptyCanvas: false,
+    });
+
+    return { transitionText, leftover };
+  }
+
   // ─── Score aggregation ───────────────────────────────────────────────────────
 
   private _aggregateScores(
     session: SDSession,
     newDelta: Record<string, number>,
   ): Record<string, number> {
-    const stageState = (session.stageState ?? {}) as unknown as SDSessionStageState;
+    const stageState = (session.stageState ??
+      {}) as unknown as SDSessionStageState;
     const existing = stageState.runningScores ?? {};
     const result: Record<string, number> = { ...existing };
     for (const [key, val] of Object.entries(newDelta)) {
-      result[key] = ((result[key] ?? 0) + val) / 2;
+      const prev = result[key];
+      // Running average starting from first observation — avoids discounting
+      // turn 1 by 50% when averaged against the initial 0 baseline
+      result[key] = prev !== undefined ? Math.max(prev, val) : val;
     }
     return result;
+  }
+
+  private _resolveGraphMetrics(
+    metrics: SDGraphMetrics | null | undefined,
+    graph: SDGraphState,
+  ): SDGraphMetrics {
+    return (
+      metrics ?? {
+        componentCoverage: 0.5,
+        topologyCoverage: 0.5,
+        dataFlowCompleteness: 0.5,
+        requirementAlignment: 0.5,
+        architectureSimplicity: 1,
+        nodeCount: graph.nodes.length,
+        edgeCount: graph.edges.length,
+      }
+    );
   }
 
   // ─── SSE helpers ─────────────────────────────────────────────────────────────

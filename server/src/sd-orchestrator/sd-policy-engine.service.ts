@@ -56,16 +56,23 @@ export class SDPolicyEngineService {
       elapsedSeconds >= criteria.minDurationSeconds;
     const maxTimeReached = elapsedSeconds >= criteria.maxDurationSeconds;
 
-    if ((allRequiredCovered && meetsMinCriteria) || maxTimeReached) {
+    const candidateReady = candidateIntent === 'ready_to_continue';
+    if (
+      (allRequiredCovered && (meetsMinCriteria || candidateReady)) ||
+      maxTimeReached
+    ) {
       return {
         action: 'TRANSITION_STAGE',
-        reason: 'All required dimensions covered and min criteria met',
+        reason:
+          allRequiredCovered && candidateReady && !meetsMinCriteria
+            ? 'Candidate ready and all required dimensions covered — transitioning early'
+            : 'All required dimensions covered and min criteria met',
       };
     }
 
     // 4. ASK_NUDGE — candidate is ready_to_continue or dont_know but missing required dims
     if (
-      candidateIntent === 'ready_to_continue' ||
+      candidateReady ||
       candidateIntent === 'dont_know' ||
       candidateIntent === 'off_topic'
     ) {
@@ -213,7 +220,8 @@ export class SDPolicyEngineService {
     // Vague answer / redirect
     if (
       assessment.candidateIntent === 'dont_know' ||
-      assessment.candidateIntent === 'off_topic'
+      assessment.candidateIntent === 'off_topic' ||
+      assessment.candidateIntent === 'clarification_question'
     ) {
       return {
         action: 'REDIRECT',
@@ -233,7 +241,6 @@ export class SDPolicyEngineService {
     assessment: SDWrapUpAssessment,
     tracker: SDWrapUpTracker,
     criteria: SDWrapUpTransitionCriteria,
-    maxFollowUpsPerScenario = 2,
   ): SDWrapUpDecision {
     const { signals } = assessment;
     const { progress } = tracker;
@@ -257,7 +264,7 @@ export class SDPolicyEngineService {
 
     // Check close condition
     const followUpBudgetExhausted =
-      activeScenario.followUpCount >= maxFollowUpsPerScenario;
+      activeScenario.followUpCount >= criteria.maxFollowUpsPerScenario;
     const isClosed =
       signals.mitigationProposed &&
       signals.blastRadiusRecognized &&

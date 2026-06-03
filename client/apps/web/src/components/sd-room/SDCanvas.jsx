@@ -6,7 +6,7 @@ import {
   useNodesState,
   useEdgesState,
   useReactFlow,
-  addEdge,
+  MarkerType,
   Background,
   Controls,
 } from '@xyflow/react'
@@ -117,7 +117,20 @@ function SDCanvasInner({ savedJSON, dispatch, isViewOnly }) {
       if (isViewOnly) return
       const label = window.prompt('Edge label (optional):', '') ?? ''
       setEdges((eds) => {
-        const newEdges = addEdge({ ...params, label, animated: false }, eds)
+        const parallelCount = eds.filter(
+          (e) =>
+            (e.source === params.source && e.target === params.target) ||
+            (e.source === params.target && e.target === params.source)
+        ).length
+        const newEdge = {
+          ...params,
+          id: `edge-${Date.now()}`,
+          label,
+          animated: false,
+          markerEnd: { type: MarkerType.ArrowClosed },
+          pathOptions: { curvature: 0.25 + parallelCount * 0.35 },
+        }
+        const newEdges = [...eds, newEdge]
         dispatchChange(nodes, newEdges)
         return newEdges
       })

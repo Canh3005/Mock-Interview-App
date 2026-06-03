@@ -197,26 +197,37 @@ export class SDClarificationPlannerService {
     // 4. ANSWER_FACT — if planner is called after an ANSWER_FACT, we need to check if nudge is chained
     // (This is handled by the orchestrator calling this method with the assessment result)
 
-    // 5. ASK_NUDGE — if candidate says ready_to_continue but missing required dims
+    // 5. ASK_NUDGE — missing required dims
     const missingDimensions = criteria.requiredDimensions.filter(
       (d) => !tracker.progress.coveredDimensions.includes(d),
     );
-    if (
-      missingDimensions.length > 0 &&
-      (lastCandidateIntent === 'ready_to_continue' ||
-        lastCandidateIntent === 'dont_know')
-    ) {
+    if (missingDimensions.length > 0) {
       const nudgeDimension = missingDimensions[0];
       return {
         action: 'ASK_NUDGE',
-        reason: `Candidate ready to continue but missing required dimension: ${nudgeDimension}`,
+        reason: `Missing required dimension: ${nudgeDimension}`,
         nextIntent: this._buildNudgeIntent(nudgeDimension, language),
       };
     }
 
+    // All required dimensions are covered but min criteria not met yet
+    const holdingTemplates: Record<string, string> = {
+      vi: 'Bạn đã hỏi về những điểm chính. Có điều gì khác bạn muốn làm rõ trước khi bắt đầu thiết kế không?',
+      en: "You've covered the main areas. Is there anything else you'd like to clarify before moving to the design?",
+      ja: '主なポイントについて質問されました。設計に移る前に、他に確認したいことはありますか？',
+    };
     return {
       action: 'ASK_NUDGE',
-      reason: 'Waiting for candidate clarification questions',
+      reason:
+        'All required dimensions covered — prompting candidate to continue or confirm readiness',
+      nextIntent: {
+        stage: 'CLARIFICATION',
+        type: 'NUDGE',
+        promptTemplate: holdingTemplates[language] ?? holdingTemplates['en'],
+        forbiddenHints: [...FORBIDDEN_ARCHITECTURE_TERMS],
+        maxSentences: 2,
+        language,
+      },
     };
   }
 
@@ -240,31 +251,31 @@ export class SDClarificationPlannerService {
     };
 
     // Check if a nudge should be chained (required dimensions still missing after this answer)
-    const willCoverDimensions = [
-      ...tracker.progress.coveredDimensions,
-      dimension,
-    ];
-    const stillMissing = criteria.requiredDimensions.filter(
-      (d) => !willCoverDimensions.includes(d),
-    );
+    // const willCoverDimensions = [
+    //   ...tracker.progress.coveredDimensions,
+    //   dimension,
+    // ];
+    // const stillMissing = criteria.requiredDimensions.filter(
+    //   (d) => !willCoverDimensions.includes(d),
+    // );
 
-    const canTransitionAfter =
-      stillMissing.length === 0 &&
-      tracker.turnCount + 1 >= criteria.minCandidateTurns &&
-      elapsedSeconds >= criteria.minDurationSeconds;
+    // const canTransitionAfter =
+    //   stillMissing.length === 0 &&
+    //   tracker.turnCount + 1 >= criteria.minCandidateTurns &&
+    //   elapsedSeconds >= criteria.minDurationSeconds;
 
-    if (stillMissing.length > 0 && !canTransitionAfter) {
-      const chainDimension = stillMissing[0];
-      return {
-        action: 'ANSWER_FACT',
-        reason: `matchedFactKey=${factKey}; dimension ${chainDimension} still missing`,
-        nextIntent: intent,
-        chainedAction: {
-          action: 'ASK_NUDGE',
-          intent: this._buildNudgeIntent(chainDimension, language),
-        },
-      };
-    }
+    // if (stillMissing.length > 0 && !canTransitionAfter) {
+    //   const chainDimension = stillMissing[0];
+    //   return {
+    //     action: 'ANSWER_FACT',
+    //     reason: `matchedFactKey=${factKey}; dimension ${chainDimension} still missing`,
+    //     nextIntent: intent,
+    //     chainedAction: {
+    //       action: 'ASK_NUDGE',
+    //       intent: this._buildNudgeIntent(chainDimension, language),
+    //     },
+    //   };
+    // }
 
     return {
       action: 'ANSWER_FACT',
@@ -362,9 +373,9 @@ export class SDClarificationPlannerService {
 
   buildTransitionIntent(language: 'vi' | 'en' | 'ja'): SDClarificationIntent {
     const templates: Record<string, string> = {
-      vi: 'Tốt rồi. Hãy vẽ kiến trúc của bạn — bạn có thể nêu assumptions trong khi vẽ.',
-      en: 'Good. Go ahead and draw your architecture — feel free to state your assumptions as you start.',
-      ja: 'よし、アーキテクチャを描いてください。描きながら前提条件を述べても構いません。',
+      vi: 'Tốt rồi, bạn đã tìm hiểu đủ các yêu cầu của hệ thống. Hãy vẽ kiến trúc của bạn.',
+      en: 'Great, you have gathered enough requirements. Go ahead and draw your architecture.',
+      ja: '素晴らしい、十分な要件が集まりました。アーキテクチャを描いてください。',
     };
     return {
       stage: 'CLARIFICATION',
