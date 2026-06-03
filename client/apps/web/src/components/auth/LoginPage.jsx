@@ -131,7 +131,7 @@ export default function LoginPage() {
               </div>
               <div className="relative flex justify-center text-sm">
                 <span className="px-2 bg-slate-800/50 text-slate-400 backdrop-blur-xl">
-                  {t('auth.orContinueWith') || 'Hoặc tiếp tục với'}
+                  {t('auth.orContinueWith')}
                 </span>
               </div>
             </div>

@@ -1,4 +1,5 @@
 import { Eye, MessageSquare, Smile, AlertCircle, Clock } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 // ── helpers ────────────────────────────────────────────────────────────────────
 function scoreColor(score) {
@@ -42,24 +43,18 @@ function MetricCard({ icon: Icon, iconColor, label, score, children }) {
 
 // ── main component ─────────────────────────────────────────────────────────────
 export default function MultimodalScoreCard({ multimodal }) {
+  const { t } = useTranslation()
   if (!multimodal) return null
 
   const { eye_tracking, filler_words, expression, overall_soft_skill_score } = multimodal
-
-  const dominantLabel = {
-    confident: 'Tự tin',
-    neutral: 'Bình thường',
-    stressed: 'Căng thẳng',
-    uncertain: 'Do dự',
-  }
 
   return (
     <div className="flex flex-col gap-4">
       {/* Section header + overall score */}
       <div className="flex items-center justify-between">
-        <h2 className="text-sm font-semibold text-slate-300">Phân tích soft skills (Combat)</h2>
+        <h2 className="text-sm font-semibold text-slate-300">{t('scoring.combat.softSkillsAnalysis')}</h2>
         <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/30">
-          <span className="text-xs text-red-400 font-medium">Tổng</span>
+          <span className="text-xs text-red-400 font-medium">{t('scoring.combat.total')}</span>
           <span className={`text-sm font-bold ${scoreColor(overall_soft_skill_score)}`}>
             {overall_soft_skill_score}/100
           </span>
@@ -71,11 +66,11 @@ export default function MultimodalScoreCard({ multimodal }) {
         <MetricCard
           icon={Eye}
           iconColor="text-cyan-400"
-          label="Giao tiếp bằng mắt"
+          label={t('scoring.combat.eyeContact')}
           score={eye_tracking.score}
         >
           <div className="flex items-center justify-between text-xs text-slate-400">
-            <span>Nhìn vào camera</span>
+            <span>{t('scoring.combat.lookAtCamera')}</span>
             <span className="font-semibold text-slate-200">{eye_tracking.screen_gaze_percent}%</span>
           </div>
           {eye_tracking.feedback && (
@@ -89,11 +84,11 @@ export default function MultimodalScoreCard({ multimodal }) {
         <MetricCard
           icon={MessageSquare}
           iconColor="text-violet-400"
-          label="Từ đệm (Filler words)"
+          label={t('scoring.combat.fillerWords')}
           score={filler_words.score}
         >
           <div className="flex items-center justify-between text-xs text-slate-400">
-            <span>Tỉ lệ từ đệm</span>
+            <span>{t('scoring.combat.fillerRate')}</span>
             <span className={`font-semibold ${filler_words.avg_filler_rate < 0.05 ? 'text-emerald-400' : filler_words.avg_filler_rate < 0.15 ? 'text-amber-400' : 'text-red-400'}`}>
               {Math.round(filler_words.avg_filler_rate * 100)}%
             </span>
@@ -121,16 +116,16 @@ export default function MultimodalScoreCard({ multimodal }) {
         <MetricCard
           icon={Smile}
           iconColor="text-amber-400"
-          label="Biểu cảm khuôn mặt"
+          label={t('scoring.combat.facialExpression')}
           score={expression.score}
         >
           <div className="flex items-center justify-between text-xs text-slate-400">
-            <span>Biểu cảm chủ đạo</span>
+            <span>{t('scoring.combat.dominantExpression')}</span>
             <span className={`font-semibold ${
               expression.dominant_expression === 'confident' ? 'text-emerald-400' :
               expression.dominant_expression === 'stressed' ? 'text-red-400' : 'text-slate-300'
             }`}>
-              {dominantLabel[expression.dominant_expression] ?? expression.dominant_expression}
+              {t(`scoring.combat.expression.${expression.dominant_expression}`, expression.dominant_expression)}
             </span>
           </div>
 
@@ -138,7 +133,7 @@ export default function MultimodalScoreCard({ multimodal }) {
             <div className="flex items-start gap-2 p-2 rounded-lg bg-amber-500/10 border border-amber-500/20">
               <Clock className="w-3 h-3 text-amber-400 flex-shrink-0 mt-0.5" />
               <p className="text-[11px] text-amber-300 leading-relaxed">
-                Căng thẳng cao tại phút: {expression.stress_peak_minutes.join(', ')}
+                {t('scoring.combat.stressPeaks', { minutes: expression.stress_peak_minutes.join(', ') })}
               </p>
             </div>
           )}
@@ -154,7 +149,7 @@ export default function MultimodalScoreCard({ multimodal }) {
         <div className="flex items-center gap-3 p-4 rounded-xl bg-slate-800/50 border border-slate-700">
           <AlertCircle className="w-4 h-4 text-slate-500 flex-shrink-0" />
           <p className="text-xs text-slate-500">
-            Không có dữ liệu phân tích — camera hoặc MediaPipe chưa hoạt động trong phiên này.
+            {t('scoring.combat.noAnalysisData')}
           </p>
         </div>
       )}

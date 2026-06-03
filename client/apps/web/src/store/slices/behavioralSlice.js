@@ -97,7 +97,7 @@ const behavioralSlice = createSlice({
       state.isStreaming = false;
       state.isEvaluating = false;
       state.streamingText = '';
-      state.error = action.payload ?? 'Lỗi kết nối.';
+      state.error = action.payload ?? null;
     },
 
     // ─── Session completed ───────────────────────────────────────────────────
@@ -155,13 +155,5 @@ export const scoringPolled = sessionCompleted;
 export const scoringFailure = (payload) => streamError(payload);
 export const SEND_MESSAGE = SUBMIT_ANSWER;
 export const sendMessage = submitAnswer;
-export const STAGE_NAMES = {
-  1: 'Culture Fit & Company Alignment',
-  2: 'Tech Stack Deep-Dive',
-  3: 'Domain Knowledge',
-  4: 'Thực chiến CV',
-  5: 'Kỹ năng mềm & Xử lý tình huống',
-  6: 'Reverse Interview',
-};
 
 export default behavioralSlice.reducer;

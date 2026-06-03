@@ -175,7 +175,7 @@ export default function CameraPreview({ mediaStream, boundsRef = null, contained
           />
           <div className="absolute top-2 right-2 flex items-center gap-1">
             <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-            <span className="text-[9px] text-red-400 font-medium uppercase tracking-wider">REC</span>
+            <span className="text-[9px] text-red-400 font-medium uppercase tracking-wider">{t('dsaRoom.camera.rec')}</span>
           </div>
           <button
             onClick={(e) => {

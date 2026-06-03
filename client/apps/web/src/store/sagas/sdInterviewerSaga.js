@@ -1,6 +1,7 @@
 import { call, put, take, takeLatest, select, cancelled } from 'redux-saga/effects';
 import { eventChannel, END } from 'redux-saga';
 import { sdInterviewerApi } from '../../api/sdInterviewer.api';
+import i18n from '../../i18n/config';
 import { toast } from 'sonner';
 import {
   startSessionRequest,
@@ -53,11 +54,11 @@ function _createStartChannel(sessionId) {
               }
               pump();
             })
-            .catch((err) => { emit({ type: 'error', error: err.message || 'Stream error' }); emit(END); });
+            .catch((err) => { emit({ type: 'error', error: err.message || i18n.t('shared.streamError') }); emit(END); });
         }
         pump();
       })
-      .catch((err) => { emit({ type: 'error', error: err.message || 'Connection error' }); emit(END); });
+      .catch((err) => { emit({ type: 'error', error: err.message || i18n.t('shared.connectionError') }); emit(END); });
 
     return () => {};
   });
@@ -110,7 +111,7 @@ function _createSSEChannel(sessionId, userMessage) {
               pump();
             })
             .catch((err) => {
-              emit({ type: 'error', error: err.message || 'Stream read error' });
+              emit({ type: 'error', error: err.message || i18n.t('shared.streamReadError') });
               emit(END);
             });
         }
@@ -118,7 +119,7 @@ function _createSSEChannel(sessionId, userMessage) {
         pump();
       })
       .catch((err) => {
-        emit({ type: 'error', error: err.message || 'Connection error' });
+        emit({ type: 'error', error: err.message || i18n.t('shared.connectionError') });
         emit(END);
       });
 
@@ -165,11 +166,11 @@ function _createSilenceChannel(sessionId, { userMessage, silenceCount }) {
               }
               pump();
             })
-            .catch((err) => { emit({ type: 'error', error: err.message || 'Stream read error' }); emit(END); });
+            .catch((err) => { emit({ type: 'error', error: err.message || i18n.t('shared.streamReadError') }); emit(END); });
         }
         pump();
       })
-      .catch((err) => { emit({ type: 'error', error: err.message || 'Connection error' }); emit(END); });
+      .catch((err) => { emit({ type: 'error', error: err.message || i18n.t('shared.connectionError') }); emit(END); });
 
     return () => {};
   });
@@ -189,7 +190,7 @@ function* _handleStartSession() {
         yield put(startSessionDone({ fullText: event.fullText }));
         break;
       } else if (event.type === 'error') {
-        yield put(startSessionFailure(event.error || 'Failed to start session'));
+        yield put(startSessionFailure(event.error || i18n.t('sdRoom.errors.startSessionFailed')));
         break;
       }
     }
@@ -222,7 +223,7 @@ function* _handleSendMessage(action) {
         }
         break;
       } else if (event.type === 'error') {
-        const msg = typeof event.error === 'string' ? event.error : 'AI service error';
+        const msg = typeof event.error === 'string' ? event.error : i18n.t('sdRoom.errors.aiServiceError');
         yield put(streamFailure(msg));
         toast.error(msg);
         break;
@@ -296,11 +297,11 @@ function _createDrawingCompleteChannel(sessionId) {
               }
               pump();
             })
-            .catch((err) => { emit({ type: 'error', error: err.message || 'Stream read error' }); emit(END); });
+            .catch((err) => { emit({ type: 'error', error: err.message || i18n.t('shared.streamReadError') }); emit(END); });
         }
         pump();
       })
-      .catch((err) => { emit({ type: 'error', error: err.message || 'Connection error' }); emit(END); });
+      .catch((err) => { emit({ type: 'error', error: err.message || i18n.t('shared.connectionError') }); emit(END); });
 
     return () => {};
   });
@@ -342,7 +343,7 @@ function* _handleRequestHint() {
     const response = yield call(sdInterviewerApi.requestHint, sessionId);
     yield put(requestHintSuccess(response));
   } catch (err) {
-    const msg = err.response?.data?.message || 'Failed to get hint';
+    const msg = err.response?.data?.message || i18n.t('sdRoom.errors.getHintFailed');
     yield put(requestHintFailure(msg));
     toast.error(msg);
   }

@@ -83,7 +83,7 @@ function LandingBar() {
       <div className="max-w-[1400px] mx-auto px-6 h-16 flex items-center justify-between gap-4">
         <Brand />
 
-        <nav className="hidden md:flex items-center gap-6" aria-label="Landing navigation">
+        <nav className="hidden md:flex items-center gap-6" aria-label={t('shared.landingNavigation')}>
           {[
             { label: t('navbar.features'),   id: 'features'     },
             { label: t('navbar.howItWorks'), id: 'how-it-works' },
@@ -122,17 +122,17 @@ function DashboardBar({ darkMode, onToggleDark }) {
         <div className="flex items-center gap-3">
           <Brand />
           <span className="font-body text-xs text-slate-500 hidden md:block">/</span>
-          <span className="font-heading text-sm font-medium text-cta hidden md:block">Dashboard</span>
+          <span className="font-heading text-sm font-medium text-cta hidden md:block">{t('navbar.dashboard')}</span>
         </div>
 
-        <nav className="hidden lg:flex items-center gap-1" aria-label="Dashboard navigation">
+        <nav className="hidden lg:flex items-center gap-1" aria-label={t('shared.dashboardNavigation')}>
           {user?.role === 'admin' && (
             <button
               onClick={() => navigate(ROUTES.ADMIN)}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-body text-sm font-medium text-amber-500 hover:text-amber-400 hover:bg-slate-700/40 transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
             >
               <Shield size={16} />
-              Quản trị (Admin)
+              {t('shared.admin')}
             </button>
           )}
           <button
@@ -164,18 +164,18 @@ function DashboardBar({ darkMode, onToggleDark }) {
           {user?.role === 'admin' && (
             <IconBtn
               icon={Shield}
-              label={t('navbar.admin') || 'Quản trị viên'}
+              label={t('shared.admin')}
               onClick={() => navigate(ROUTES.ADMIN)}
               className="lg:hidden text-amber-500 border-amber-500/30 hover:border-amber-500/60 hover:text-amber-400"
             />
           )}
           <IconBtn
             icon={darkMode ? Sun : Moon}
-            label={darkMode ? 'Chuyển sang light mode' : 'Chuyển sang dark mode'}
+            label={darkMode ? t('shared.lightMode') : t('shared.darkMode')}
             onClick={onToggleDark}
           />
-          <IconBtn icon={Bell} label="Thông báo" badge />
-          <IconBtn icon={Settings} label="Cài đặt" />
+          <IconBtn icon={Bell} label={t('shared.notifications')} badge />
+          <IconBtn icon={Settings} label={t('shared.settings')} />
           <DashboardUserMenu />
         </div>
       </div>
@@ -210,7 +210,7 @@ function InterviewBar({ children }) {
             onClick={() => navigate(ROUTES.DASHBOARD)}
             className="text-slate-500 hover:text-slate-300 transition-colors duration-150 cursor-pointer focus-visible:outline-none"
           >
-            Dashboard
+            {t('navbar.dashboard')}
           </button>
           <span className="text-slate-600">/</span>
           <span className="text-cta font-medium">{t('navbar.dashboard')}</span>
@@ -256,7 +256,7 @@ function AuthButtons() {
         onClick={() => navigate(ROUTES.DASHBOARD)}
         className="inline-flex items-center gap-2 font-body text-sm font-semibold text-white bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-lg transition-all duration-200 cursor-pointer"
       >
-        Dashboard
+        {t('navbar.dashboard')}
       </button>
     )
   }
@@ -266,12 +266,13 @@ function AuthButtons() {
       onClick={() => navigate(ROUTES.LOGIN)}
       className="inline-flex items-center gap-2 font-body text-sm font-semibold text-white bg-cta hover:bg-cta/90 px-4 py-2 rounded-lg transition-all duration-200 cursor-pointer shadow-md"
     >
-      {t('auth.loginTitle') || 'Đăng nhập'}
+      {t('auth.loginTitle')}
     </button>
   )
 }
 
 function DashboardUserMenu() {
+  const { t } = useTranslation()
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const { user } = useSelector((state) => state.auth)
@@ -284,21 +285,21 @@ function DashboardUserMenu() {
   return (
     <div className="flex items-center gap-3 ml-2">
       <div className="flex flex-col items-end hidden md:flex">
-        <span className="text-sm font-medium text-white">{user?.name || 'User'}</span>
+        <span className="text-sm font-medium text-white">{user?.name || t('shared.user')}</span>
         <button
           onClick={handleLogout}
           className="text-xs text-slate-500 cursor-pointer hover:text-red-400 transition-colors"
         >
-          Đăng xuất
+          {t('adminLayout.logout')}
         </button>
       </div>
       <button
         onClick={() => navigate(ROUTES.DASHBOARD_PROFILE)}
         className="flex overflow-hidden items-center justify-center w-9 h-9 rounded-full border-2 border-cta/50 bg-cta/10 text-cta cursor-pointer hover:border-cta transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta"
-        title="Skill Passport"
+        title={t('profile.page.title')}
       >
         {user?.avatarUrl ? (
-          <img src={user.avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+          <img src={user.avatarUrl} alt={t('shared.avatarAlt')} className="w-full h-full object-cover" />
         ) : (
           <User size={16} />
         )}

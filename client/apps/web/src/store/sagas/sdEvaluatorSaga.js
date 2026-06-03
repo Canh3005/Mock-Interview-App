@@ -1,5 +1,6 @@
 import { call, put, delay, takeLatest } from 'redux-saga/effects';
 import { sdEvaluatorApi } from '../../api/sdEvaluator.api';
+import i18n from '../../i18n/config';
 import {
   triggerEvaluation,
   progressPolled,
@@ -16,7 +17,7 @@ function* _handleTriggerEvaluation(action) {
   try {
     yield call(sdEvaluatorApi.enqueue, sessionId);
   } catch (err) {
-    const message = err.response?.data?.message || 'Failed to start evaluation';
+    const message = err.response?.data?.message || i18n.t('sdRoom.evaluation.errors.startFailed');
     yield put(evaluationFailed(message));
     return;
   }
@@ -37,12 +38,12 @@ function* _handleTriggerEvaluation(action) {
       yield put(evaluationCompleted(response.result));
       return;
     } else if (response.status === 'failed') {
-      yield put(evaluationFailed('Evaluation job failed'));
+      yield put(evaluationFailed(i18n.t('sdRoom.evaluation.errors.jobFailed')));
       return;
     }
   }
 
-  yield put(evaluationFailed('Evaluation timed out'));
+  yield put(evaluationFailed(i18n.t('sdRoom.evaluation.errors.timedOut')));
 }
 
 export function* watchSDEvaluatorSaga() {

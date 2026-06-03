@@ -15,7 +15,7 @@ export default function ProblemStatement() {
           #42 · {t('interviewRoom.problemTitle')}
         </h2>
         <div className="flex flex-wrap gap-1.5 mt-2">
-          {['Array', 'Hash Map', t('interviewRoom.difficulty.easy')].map(tag => (
+            {[t('interviewRoom.tags.array'), t('interviewRoom.tags.hashMap'), t('interviewRoom.difficulty.easy')].map(tag => (
             <span
               key={tag}
               className={`inline-block text-[10px] font-semibold px-2 py-0.5 rounded-full border ${
@@ -64,11 +64,11 @@ export default function ProblemStatement() {
             className="bg-[#0D1424] border border-slate-700/50 rounded-lg p-3 space-y-1.5"
           >
             <p className="font-['Fira_Code',monospace] text-[11px] text-slate-400">
-              <span className="text-slate-500">Input: </span>
+              <span className="text-slate-500">{t('interviewRoom.examplesInput')}: </span>
               <span className="text-sky-300">{ex.input}</span>
             </p>
             <p className="font-['Fira_Code',monospace] text-[11px] text-slate-400">
-              <span className="text-slate-500">Output: </span>
+              <span className="text-slate-500">{t('interviewRoom.examplesOutput')}: </span>
               <span className="text-[#22C55E]">{ex.output}</span>
             </p>
             <p className="font-['Fira_Code',monospace] text-[11px] text-slate-500">
@@ -101,8 +101,8 @@ export default function ProblemStatement() {
       {/* Follow-up */}
       <div className="pt-2 border-t border-slate-700/40">
         <p className="text-[11px] text-slate-500 font-['Fira_Sans',sans-serif] leading-relaxed">
-          <span className="text-amber-400 font-semibold">Follow-up:</span>{' '}
-          Bạn có thể nghĩ ra thuật toán có độ phức tạp thời gian dưới O(n²) không?
+          <span className="text-amber-400 font-semibold">{t('interviewRoom.followUpLabel')}:</span>{' '}
+          {t('interviewRoom.followUpQuestion')}
         </p>
       </div>
     </article>

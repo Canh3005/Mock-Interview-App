@@ -219,9 +219,9 @@ const dsaSessionSlice = createSlice({
       state.scoringStatus = 'completed'
       state.finalScore = action.payload
     },
-    debriefTimeout(state) {
+    debriefTimeout(state, action) {
       state.scoringStatus = 'error'
-      state.error = 'Chấm điểm mất quá nhiều thời gian. Vui lòng tải lại.'
+      state.error = action.payload
     },
 
     // ─── Reset ───────────────────────────────────────────────────────────

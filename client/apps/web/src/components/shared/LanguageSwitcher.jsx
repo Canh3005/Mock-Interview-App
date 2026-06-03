@@ -3,13 +3,13 @@ import { useTranslation } from 'react-i18next'
 import { Languages, Check } from 'lucide-react'
 
 const LANGUAGES = [
-  { code: 'vi', short: 'VN', label: 'Tiếng Việt' },
-  { code: 'en', short: 'EN', label: 'English' },
-  { code: 'ja', short: 'JA', label: '日本語' },
+  { code: 'vi', short: 'VN', labelKey: 'interviewSetup.languages.vi' },
+  { code: 'en', short: 'EN', labelKey: 'interviewSetup.languages.en' },
+  { code: 'ja', short: 'JA', labelKey: 'interviewSetup.languages.ja' },
 ]
 
 export default function LanguageSwitcher({ variant = 'dark' }) {
-  const { i18n } = useTranslation()
+  const { t, i18n } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
   const dropdownRef = useRef(null)
 
@@ -57,12 +57,12 @@ export default function LanguageSwitcher({ variant = 'dark' }) {
       <button
         onClick={() => setIsOpen((open) => !open)}
         className={`flex h-10 items-center gap-2 rounded-[14px] border px-3 text-sm font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cta ${triggerClass}`}
-        aria-label="Change language"
+        aria-label={t('shared.changeLanguage')}
         aria-expanded={isOpen}
       >
         <Languages size={16} />
         <span className="hidden whitespace-nowrap text-xs font-semibold sm:inline">
-          {currentLanguage.short} {currentLanguage.label}
+          {currentLanguage.short} {t(currentLanguage.labelKey)}
         </span>
         <span className="text-xs font-semibold sm:hidden">
           {currentLanguage.short}
@@ -82,7 +82,7 @@ export default function LanguageSwitcher({ variant = 'dark' }) {
               >
                 <span className="flex items-center gap-2">
                   <span className="dash-subtle text-xs font-semibold">{lang.short}</span>
-                  <span className="font-semibold">{lang.label}</span>
+                  <span className="font-semibold">{t(lang.labelKey)}</span>
                 </span>
                 {active && <Check size={16} className="text-cta" />}
               </button>

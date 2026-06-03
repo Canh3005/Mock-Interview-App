@@ -1,4 +1,5 @@
 import { useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bot, MessageCircle, Repeat2 } from 'lucide-react';
 import CombatChatBubble from './CombatChatBubble';
@@ -7,6 +8,7 @@ export default function CombatChatArea({
   messages, isStreaming, streamingText, userAvatar,
   silenceFlags, isWaitingForCandidate, onSkip,
 }) {
+  const { t } = useTranslation();
   const bottomRef = useRef(null);
 
   useEffect(() => {
@@ -62,7 +64,7 @@ export default function CombatChatArea({
             className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-400 text-xs"
           >
             <MessageCircle className="w-3 h-3 flex-shrink-0" />
-            Bạn có thể bắt đầu trả lời bất cứ lúc nào...
+            {t('combatRoom.chat.silenceHint')}
           </motion.div>
         )}
         {silenceFlags.promptedRepeat && isWaitingForCandidate && (
@@ -72,7 +74,7 @@ export default function CombatChatArea({
             className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs"
           >
             <Repeat2 className="w-3 h-3 flex-shrink-0" />
-            Bạn cần mình nhắc lại câu hỏi không?
+            {t('combatRoom.chat.repeatPrompt')}
           </motion.div>
         )}
         {silenceFlags.offeredSkip && isWaitingForCandidate && (
@@ -81,12 +83,12 @@ export default function CombatChatArea({
             initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 4 }}
             className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-400 text-xs"
           >
-            <span className="flex-1">Bạn có muốn bỏ qua câu này?</span>
+            <span className="flex-1">{t('combatRoom.chat.skipPrompt')}</span>
             <button
               onClick={onSkip}
               className="text-slate-300 border border-slate-600 px-2 py-0.5 rounded-md hover:bg-slate-700 transition-colors"
             >
-              Bỏ qua
+              {t('combatRoom.chat.skip')}
             </button>
           </motion.div>
         )}

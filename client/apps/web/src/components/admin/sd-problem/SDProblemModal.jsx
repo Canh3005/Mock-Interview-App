@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { X, Loader2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import SDProblemForm from './SDProblemForm';
 
 const EMPTY = {
@@ -32,6 +33,7 @@ function _toFormState(problem) {
 }
 
 export default function SDProblemModal({ problem, saving, onSave, onClose }) {
+  const { t } = useTranslation();
   const [form, setForm] = useState(() => _toFormState(problem));
 
   useEffect(() => { setForm(_toFormState(problem)); }, [problem]);
@@ -61,7 +63,7 @@ export default function SDProblemModal({ problem, saving, onSave, onClose }) {
       <div className="bg-slate-900 border border-slate-700/60 rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl">
         <div className="flex items-center justify-between p-6 border-b border-slate-700/60 shrink-0">
           <h3 className="text-lg font-heading font-semibold text-white">
-            {problem ? 'Chỉnh sửa Problem' : 'Tạo Problem mới'}
+            {problem ? t('adminSdProblems.editModalTitle') : t('adminSdProblems.createModalTitle')}
           </h3>
           <button onClick={onClose} className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors cursor-pointer">
             <X className="w-5 h-5" />
@@ -75,11 +77,11 @@ export default function SDProblemModal({ problem, saving, onSave, onClose }) {
 
           <div className="p-6 border-t border-slate-700/60 flex justify-end gap-3 shrink-0">
             <button type="button" onClick={onClose} className="px-4 py-2 rounded-xl border border-slate-700 text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer text-sm">
-              Hủy
+              {t('adminSdProblems.cancel')}
             </button>
             <button type="submit" disabled={saving || !form.title} className="px-5 py-2 rounded-xl bg-cta hover:bg-cta/90 text-black font-semibold text-sm transition-colors disabled:opacity-50 flex items-center gap-2 cursor-pointer">
               {saving && <Loader2 className="w-4 h-4 animate-spin" />}
-              Lưu
+              {t('adminSdProblems.save')}
             </button>
           </div>
         </form>

@@ -1,5 +1,6 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
 import { authApi } from '../../api/auth';
+import i18n from '../../i18n/config';
 import axios from 'axios';
 import {
   checkAuthRequest,
@@ -40,7 +41,7 @@ function* handleLogin(action) {
     const response = yield call(authApi.login, action.payload);
     yield put(loginSuccess(response));
   } catch (error) {
-    const message = error.response?.data?.message || 'Login failed';
+    const message = error.response?.data?.message || i18n.t('auth.errors.loginFailed');
     yield put(loginFailure(message));
   }
 }
@@ -50,7 +51,7 @@ function* handleRegister(action) {
     const response = yield call(authApi.register, action.payload);
     yield put(registerSuccess(response));
   } catch (error) {
-    const message = error.response?.data?.message || 'Registration failed';
+    const message = error.response?.data?.message || i18n.t('auth.errors.registrationFailed');
     yield put(registerFailure(message));
   }
 }
@@ -60,7 +61,7 @@ function* handleLogout() {
     yield call(authApi.logout);
     yield put(logoutSuccess());
   } catch (error) {
-    const message = error.response?.data?.message || 'Logout failed';
+    const message = error.response?.data?.message || i18n.t('auth.errors.logoutFailed');
     yield put(logoutFailure(message));
   }
 }

@@ -144,7 +144,7 @@ function ErrorPanel({ message, onRetry }) {
 function MissingContextPanel({ missing, onGoUpload, onCancel }) {
   const { t } = useTranslation()
   const labels = { cv_context: 'CV', jd_context: 'JD' }
-  const missingText = missing.map((key) => labels[key] ?? key).join(' và ')
+  const missingText = missing.map((key) => labels[key] ?? key).join(` ${t('common.and')} `)
 
   return (
     <div className="dash-card rounded-[22px] p-6 sm:p-8">
@@ -207,21 +207,21 @@ function ContextConfirmPanel({ cv, jd, onConfirm, onGoUpload }) {
   const { t } = useTranslation()
   const [cvExpanded, setCvExpanded] = useState(true)
   const [jdExpanded, setJdExpanded] = useState(true)
-  const [skills, setSkills] = useState((cv?.skills ?? []).join(', '))
+  const [skills, setSkills] = useState((Array.isArray(cv?.skills) ? cv.skills : []).join(', '))
   const [experiences, setExperiences] = useState(
-    (cv?.experience ?? []).map((item) => ({
+    (Array.isArray(cv?.experience) ? cv.experience : []).map((item) => ({
       title: item.title ?? '',
       company: item.company ?? '',
       startDate: item.startDate ?? '',
       endDate: item.endDate ?? '',
-      responsibilities: item.responsibilities ?? [],
+      responsibilities: Array.isArray(item.responsibilities) ? item.responsibilities : [],
     })),
   )
   const [jdForm, setJdForm] = useState({
     role: jd?.role ?? '',
-    required_skills: (jd?.required_skills ?? []).join(', '),
+    required_skills: (Array.isArray(jd?.required_skills) ? jd.required_skills : []).join(', '),
     minimum_experience_years: jd?.minimum_experience_years ?? '',
-    key_responsibilities: (jd?.key_responsibilities ?? []).join('\n'),
+    key_responsibilities: (Array.isArray(jd?.key_responsibilities) ? jd.key_responsibilities : []).join('\n'),
   })
 
   const handleConfirm = () => {

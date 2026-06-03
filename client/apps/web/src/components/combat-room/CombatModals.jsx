@@ -1,4 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { AlertTriangle, X } from 'lucide-react';
 
 export default function CombatModals({
@@ -6,6 +7,8 @@ export default function CombatModals({
   onCloseExit, onConfirmExit,
   onCloseFinish, onConfirmFinish,
 }) {
+  const { t } = useTranslation();
+
   return (
     <>
       {/* ── Exit Modal ── */}
@@ -27,11 +30,11 @@ export default function CombatModals({
                   <AlertTriangle className="w-5 h-5 text-red-400" />
                 </div>
                 <div>
-                  <h3 className="text-white font-semibold text-base mb-1">Thoát Combat Mode?</h3>
+                  <h3 className="text-white font-semibold text-base mb-1">{t('combatRoom.modals.exitTitle')}</h3>
                   <p className="text-slate-400 text-sm leading-relaxed">
-                    Phiên thi sẽ bị hủy và{' '}
-                    <span className="text-red-400 font-medium">không được chấm điểm</span>.
-                    Tiến trình và câu trả lời hiện tại sẽ mất hoàn toàn.
+                    {t('combatRoom.modals.exitDescription')}{' '}
+                    <span className="text-red-400 font-medium">{t('combatRoom.modals.notScored')}</span>.
+                    {' '}{t('combatRoom.modals.exitSuffix')}
                   </p>
                 </div>
               </div>
@@ -40,13 +43,13 @@ export default function CombatModals({
                   onClick={onCloseExit}
                   className="flex-1 px-4 py-2.5 rounded-xl border border-slate-700 text-slate-300 hover:bg-slate-800 transition-colors text-sm font-medium"
                 >
-                  Tiếp tục thi
+                  {t('combatRoom.modals.continue')}
                 </button>
                 <button
                   onClick={onConfirmExit}
                   className="flex-1 px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-semibold text-sm transition-colors"
                 >
-                  Thoát
+                  {t('combatRoom.modals.exitConfirm')}
                 </button>
               </div>
             </motion.div>
@@ -74,11 +77,13 @@ export default function CombatModals({
                     <AlertTriangle className="w-5 h-5 text-red-400" />
                   </div>
                   <div>
-                    <h3 className="text-white font-semibold text-base mb-1">Kết thúc sớm?</h3>
+                    <h3 className="text-white font-semibold text-base mb-1">{t('combatRoom.modals.finishTitle')}</h3>
                     <p className="text-slate-400 text-sm leading-relaxed">
-                      Bạn mới hoàn thành{' '}
-                      <span className="text-red-400 font-medium">{currentStage}/6 giai đoạn</span>.
-                      Kết thúc sớm sẽ ảnh hưởng đến điểm số — các giai đoạn chưa hoàn thành sẽ không được tính.
+                      {t('combatRoom.modals.finishDescription')}{' '}
+                      <span className="text-red-400 font-medium">
+                        {t('combatRoom.modals.finishProgress', { current: currentStage, total: 6 })}
+                      </span>.
+                      {' '}{t('combatRoom.modals.finishSuffix')}
                     </p>
                   </div>
                 </div>
@@ -94,13 +99,13 @@ export default function CombatModals({
                   onClick={onCloseFinish}
                   className="flex-1 px-4 py-2.5 rounded-xl border border-slate-700 text-slate-300 hover:bg-slate-800 transition-colors text-sm font-medium"
                 >
-                  Tiếp tục thi
+                  {t('combatRoom.modals.continue')}
                 </button>
                 <button
                   onClick={onConfirmFinish}
                   className="flex-1 px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-semibold text-sm transition-colors"
                 >
-                  Vẫn kết thúc
+                  {t('combatRoom.modals.finishConfirm')}
                 </button>
               </div>
             </motion.div>

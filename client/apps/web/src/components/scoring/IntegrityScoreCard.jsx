@@ -1,26 +1,27 @@
 import { ShieldCheck, ShieldAlert, ShieldX, AlertTriangle, Activity } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 const VERDICT_STYLE = {
   CLEAN: {
-    label: 'Tính minh bạch: Đạt',
+    labelKey: 'scoring.integrity.verdict.CLEAN',
     color: 'text-emerald-400',
     bg: 'bg-emerald-500/10 border-emerald-500/30',
     icon: ShieldCheck,
   },
   MINOR_FLAGS: {
-    label: 'Có một số sự kiện ghi nhận',
+    labelKey: 'scoring.integrity.verdict.MINOR_FLAGS',
     color: 'text-amber-400',
     bg: 'bg-amber-500/10 border-amber-500/30',
     icon: ShieldAlert,
   },
   SUSPICIOUS: {
-    label: 'Cần hậu kiểm',
+    labelKey: 'scoring.integrity.verdict.SUSPICIOUS',
     color: 'text-orange-400',
     bg: 'bg-orange-500/10 border-orange-500/30',
     icon: ShieldAlert,
   },
   HIGHLY_SUSPICIOUS: {
-    label: 'Nhiều dấu hiệu bất thường',
+    labelKey: 'scoring.integrity.verdict.HIGHLY_SUSPICIOUS',
     color: 'text-red-400',
     bg: 'bg-red-500/10 border-red-500/30',
     icon: ShieldX,
@@ -46,6 +47,7 @@ function scoreColor(s) {
 }
 
 export default function IntegrityScoreCard({ scoreData }) {
+  const { t } = useTranslation()
   const integrity = scoreData?.integrity
   if (!integrity) return null
 
@@ -58,24 +60,24 @@ export default function IntegrityScoreCard({ scoreData }) {
       {/* Combat overall + integrity in one row */}
       <div className="grid grid-cols-2 gap-3">
         <div className="bg-slate-800/50 border border-slate-700 rounded-2xl p-4 flex flex-col gap-1">
-          <p className="text-[10px] text-slate-500 uppercase tracking-wider">Combat tổng hợp</p>
+          <p className="text-[10px] text-slate-500 uppercase tracking-wider">{t('scoring.combat.combined')}</p>
           <span className={`text-2xl font-bold ${scoreColor(overallScore)}`}>
             {overallScore}<span className="text-sm text-slate-500 font-normal">/100</span>
           </span>
           <p className="text-[10px] text-slate-600 leading-relaxed mt-0.5">
-            65% Behavioral + 35% Soft Skills
+            {t('scoring.combat.scoreFormula')}
           </p>
         </div>
 
         <div className={`rounded-2xl border p-4 flex flex-col gap-1 ${style.bg}`}>
-          <p className="text-[10px] text-slate-500 uppercase tracking-wider">Integrity</p>
+          <p className="text-[10px] text-slate-500 uppercase tracking-wider">{t('scoring.integrity.title')}</p>
           <div className="flex items-center gap-1.5">
             <Icon className={`w-4 h-4 ${style.color} flex-shrink-0`} />
             <span className={`text-2xl font-bold ${style.color}`}>
               {integrity.integrity_score}<span className="text-sm font-normal">/100</span>
             </span>
           </div>
-          <p className={`text-[10px] font-medium ${style.color}`}>{style.label}</p>
+          <p className={`text-[10px] font-medium ${style.color}`}>{t(style.labelKey)}</p>
         </div>
       </div>
 
@@ -92,7 +94,7 @@ export default function IntegrityScoreCard({ scoreData }) {
           <div className="flex items-center gap-2 mb-3">
             <Activity className="w-3.5 h-3.5 text-amber-400" />
             <h3 className="text-xs font-semibold text-slate-300">
-              Sự kiện bất thường ({integrity.events_timeline.length})
+              {t('scoring.integrity.events', { count: integrity.events_timeline.length })}
             </h3>
           </div>
           <div className="grid grid-cols-2 gap-2">

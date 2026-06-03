@@ -123,7 +123,7 @@ export default function RunResultPanel({ results, showHidden = false }) {
             </>
           )}
           {selected.timeMs != null && (
-            <p className="text-[10px] text-slate-600 font-mono">{selected.timeMs} ms</p>
+            <p className="text-[10px] text-slate-600 font-mono">{t('dsaRoom.results.timeMs', { ms: selected.timeMs })}</p>
           )}
         </div>
       )}

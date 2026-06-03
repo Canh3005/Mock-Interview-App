@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { uploadDocumentRequest, resetPollingState } from '../../../store/slices/profileSlice';
 import { UploadCloud, FileText, CheckCircle, XCircle, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -7,6 +8,7 @@ import FitAssessmentSummary from './FitAssessmentSummary';
 import BehaviorCalibrationSummary from './BehaviorCalibrationSummary';
 
 export default function DocumentUploadZone() {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const { uploadingDoc, pollingStatus, pollingResult } = useSelector(state => state.profile);
   
@@ -32,11 +34,11 @@ export default function DocumentUploadZone() {
   const validateAndUpload = (file) => {
     if (!file) return;
     if (!ALLOWED_TYPES.includes(file.type)) {
-      toast.error('Only PDF and DOCX files are supported.');
+      toast.error(t('profile.upload.errors.unsupportedType'));
       return;
     }
     if (file.size > MAX_FILE_SIZE) {
-      toast.error('File size must be less than or equal to 5MB.');
+      toast.error(t('profile.upload.errors.tooLarge'));
       return;
     }
 
@@ -74,7 +76,7 @@ export default function DocumentUploadZone() {
             onChange={() => setUploadType('CV')}
             className="text-cta focus:ring-cta bg-slate-800 border-slate-600"
           />
-          Upload CV Profile
+          {t('profile.upload.cv')}
         </label>
         <label className="flex items-center gap-2 cursor-pointer text-slate-300">
           <input 
@@ -85,7 +87,7 @@ export default function DocumentUploadZone() {
             onChange={() => setUploadType('JD')}
             className="text-cta focus:ring-cta bg-slate-800 border-slate-600"
           />
-          Upload Job Description (JD)
+          {t('profile.upload.jd')}
         </label>
       </div>
 
@@ -111,13 +113,15 @@ export default function DocumentUploadZone() {
         {uploadingDoc ? (
           <div className="flex flex-col items-center text-cta">
             <Loader2 size={40} className="animate-spin mb-3" />
-            <p className="font-semibold">{pollingStatus === 'waiting' ? 'Queueing document...' : 'AI is analyzing document (approx ~10s)...'}</p>
+            <p className="font-semibold">
+              {pollingStatus === 'waiting' ? t('profile.upload.queueing') : t('profile.upload.analyzing')}
+            </p>
           </div>
         ) : (
           <div className="flex flex-col items-center text-slate-400">
             <UploadCloud size={40} className="mb-3 text-slate-500 group-hover:text-cta transition-colors" />
-            <p className="font-medium text-slate-300">Click or drag & drop a PDF or DOCX here</p>
-            <p className="text-sm mt-1">Maximum file size 5MB.</p>
+            <p className="font-medium text-slate-300">{t('profile.upload.dropTitle')}</p>
+            <p className="text-sm mt-1">{t('profile.upload.maxSize')}</p>
           </div>
         )}
       </div>
@@ -133,26 +137,28 @@ export default function DocumentUploadZone() {
            </button>
            <div className="flex items-center gap-3 mb-3 text-green-400">
              <CheckCircle size={24} />
-             <h3 className="font-semibold text-lg">Analysis Complete!</h3>
+              <h3 className="font-semibold text-lg">{t('profile.upload.analysisComplete')}</h3>
            </div>
            
            {pollingResult.type === 'CV' && (
              <p className="text-slate-300 text-sm">
-               Your CV has been successfully processed. Look at the Profile Information below to see your extracted Data!
+                {t('profile.upload.cvProcessed')}
              </p>
            )}
 
            {pollingResult.type === 'JD' && hasFitScore && (
              <div className="mt-4 space-y-4">
                <div>
-                  <h4 className="text-white font-medium mb-1">Fit Score Requirement</h4>
+                   <h4 className="text-white font-medium mb-1">{t('profile.upload.fitScoreTitle')}</h4>
                   <div className="w-full bg-slate-800 rounded-full h-4 relative overflow-hidden">
                     <div 
                       className="bg-gradient-to-r from-blue-500 to-cta h-4 rounded-full"
                       style={{ width: `${pollingResult.fitScore}%` }}
                     />
                   </div>
-                  <p className="text-end text-sm text-cta font-bold mt-1">{pollingResult.fitScore}% Match</p>
+                   <p className="text-end text-sm text-cta font-bold mt-1">
+                     {t('profile.upload.matchPercent', { score: pollingResult.fitScore })}
+                   </p>
                </div>
                
                <FitAssessmentSummary summary={pollingResult.fitAssessmentSummary} />
@@ -162,8 +168,8 @@ export default function DocumentUploadZone() {
            {pollingResult.type === 'JD' && !hasFitScore && (
              <p className="text-slate-300 text-sm">
                {pollingResult.missingSources?.includes('cv_context')
-                 ? 'Your JD has been processed. Upload a CV to generate the fit breakdown for this role.'
-                 : 'Your JD has been processed, but the fit breakdown could not be generated yet. Please try again later.'}
+                  ? t('profile.upload.jdNeedsCv')
+                  : t('profile.upload.jdFitUnavailable')}
              </p>
            )}
 
@@ -178,7 +184,7 @@ export default function DocumentUploadZone() {
 
            {pollingResult.type === 'CV' && pollingResult.missingSources?.includes('jd_context') && (
              <p className="text-slate-400 text-xs mt-1">
-               CV đã xử lý. Upload JD để calibration đầy đủ theo vai trò mục tiêu.
+                {t('profile.upload.cvNeedsJd')}
              </p>
            )}
         </div>

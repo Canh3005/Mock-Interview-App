@@ -1,10 +1,14 @@
 {
   "common": {
     "appName": "MockInterview",
-    "logoText": "Mock Interview"
+    "logoText": "Mock Interview",
+    "and": "and"
   },
   "wallet": {
-    "credits": "Credits"
+    "credits": "Credits",
+    "errors": {
+      "loadBalance": "Failed to load balance"
+    }
   },
   "payment": {
     "title": "Buy Credits",
@@ -24,7 +28,11 @@
     "resultSuccess": "Payment successful! Credits are being added to your wallet.",
     "resultFailed": "Payment was not completed. Please try again.",
     "backToDashboard": "Back to Dashboard",
-    "tryAgain": "Try Again"
+    "tryAgain": "Try Again",
+    "errors": {
+      "createOrder": "Failed to create order",
+      "loadPackages": "Failed to load packages"
+    }
   },
   "adminLayout": {
     "title": "Admin Portal",
@@ -141,7 +149,22 @@
     "validationDuration": "Duration must be at least one minute.",
     "validationQuestionCount": "Question count must be at least one.",
     "validationSetComposition": "Add at least one probe ID or slot rule.",
-    "validationSetLocale": "Fill localized title for {{locale}}."
+    "validationSetLocale": "Fill localized title for {{locale}}.",
+    "toast": {
+      "loadTaxonomyFailed": "Unable to load taxonomy.",
+      "loadProbesFailed": "Unable to load probes.",
+      "probeUpdated": "Probe updated.",
+      "probeCreated": "Draft probe created.",
+      "saveProbeFailed": "Unable to save probe.",
+      "probeStatusUpdated": "Probe status updated.",
+      "updateProbeStatusFailed": "Unable to update probe status.",
+      "loadSetsFailed": "Unable to load interview sets.",
+      "setUpdated": "Interview set updated.",
+      "setCreated": "Draft interview set created.",
+      "saveSetFailed": "Unable to save interview set.",
+      "setStatusUpdated": "Interview set status updated.",
+      "updateSetStatusFailed": "Unable to update interview set status."
+    }
   },
   "questionBank": {
     "navLabel": "Question Bank",
@@ -305,6 +328,16 @@
         "en": "English",
         "ja": "Japanese"
       }
+    },
+    "toast": {
+      "loadTaxonomyFailed": "Unable to load taxonomy.",
+      "loadBankFailed": "Unable to load question bank.",
+      "loadDetailFailed": "Unable to load question detail.",
+      "answerSubmitted": "Answer submitted. Feedback is being prepared.",
+      "submitAnswerFailed": "Unable to submit your answer.",
+      "loadFeedbackFailed": "Unable to load feedback.",
+      "feedbackRetryStarted": "Feedback retry started.",
+      "retryFeedbackFailed": "Unable to retry feedback."
     }
   },
   "creditGate": {
@@ -398,7 +431,8 @@
     "docs": "Documentation",
     "community": "Community",
     "privacy": "Privacy Policy",
-    "terms": "Terms of Service"
+    "terms": "Terms of Service",
+    "copyrightShort": "? {{year}} Mock Interview App - Smart skill analysis"
   },
   "auth": {
     "loginTitle": "Sign In",
@@ -414,7 +448,12 @@
     "linkingGitHub": "Link GitHub",
     "errorGithubCancelled": "GitHub authorization cancelled",
     "errorAccountLinked": "This GitHub account is already linked to another user.",
-    "orContinueWith": "Or continue with"
+    "orContinueWith": "Or continue with",
+    "errors": {
+      "loginFailed": "Login failed",
+      "logoutFailed": "Logout failed",
+      "registrationFailed": "Registration failed"
+    }
   },
   "dashboard": {
     "title": "Dashboard",
@@ -424,7 +463,11 @@
       "totalSessions": "Total Sessions",
       "avgScore": "Average Score",
       "skillsImproved": "Skills Improved",
-      "studyTime": "Study Time"
+      "studyTime": "Study Time",
+      "totalInterviews": "Total Interviews",
+      "skillsMastered": "Skills Mastered",
+      "studyStreak": "Study Streak",
+      "dayCount": "{{count}} days"
     },
     "skillBreakdown": {
       "title": "Skill Breakdown",
@@ -446,19 +489,29 @@
       "subtitle": "Personalized recommendations based on your performance",
       "phase1": {
         "title": "Foundation",
-        "description": "Basic concepts and fundamentals"
+        "description": "Basic concepts and fundamentals",
+        "desc": "Build the core interview foundations."
       },
       "phase2": {
         "title": "Practice",
-        "description": "Apply knowledge through exercises"
+        "description": "Apply knowledge through exercises",
+        "desc": "Practice targeted exercises and review feedback."
       },
       "phase3": {
         "title": "Master",
-        "description": "Advanced patterns and optimization"
+        "description": "Advanced patterns and optimization",
+        "desc": "Polish advanced patterns and trade-offs."
       },
       "phase4": {
         "title": "Expert",
-        "description": "System design and architecture"
+        "description": "System design and architecture",
+        "desc": "Simulate senior-level interviews end to end."
+      },
+      "phases": {
+        "phase1": "Phase 1",
+        "phase2": "Phase 2",
+        "phase3": "Phase 3",
+        "phase4": "Phase 4"
       }
     },
     "upcomingSessions": {
@@ -498,6 +551,74 @@
         "descriptionSuffix": ". Your current progress will be lost.",
         "cancel": "Continue",
         "confirm": "Leave"
+      }
+    },
+    "description": "Track progress, resume interviews, and focus your next practice session.",
+    "sessions": {
+      "historyTitle": "Interview History",
+      "recentCount": "{{count}} recent sessions",
+      "viewAll": "View all",
+      "sessionCount": "{{count}} sessions",
+      "empty": "No sessions yet.",
+      "allShown": "All sessions shown",
+      "completed": "Completed",
+      "result": "Result",
+      "resume": "Resume",
+      "justNow": "Just now",
+      "minutesAgo": "{{count}} min ago",
+      "hoursAgo": "{{count}} hr ago",
+      "daysAgo": "{{count}} days ago",
+      "stageFallback": "Stage {{stage}}",
+      "mode": {
+        "combat": "Combat",
+        "practice": "Practice"
+      },
+      "level": {
+        "junior": "Junior",
+        "mid": "Mid-level",
+        "senior": "Senior"
+      }
+    },
+    "radar": {
+      "title": "Readiness Radar",
+      "subtitle": "Average performance across core interview skills",
+      "ariaLabel": "Interview skill radar chart",
+      "noData": "No score data yet.",
+      "axes": {
+        "algorithms": "Algorithms",
+        "systemDesign": "System Design",
+        "behavioral": "Behavioral",
+        "communication": "Communication",
+        "problemSolving": "Problem Solving"
+      }
+    },
+    "skillAnalysis": {
+      "title": "Skill Analysis",
+      "subtitle": "Your strongest and weakest areas",
+      "empty": "No skill analysis yet.",
+      "viewAll": "View all"
+    },
+    "upcoming": {
+      "title": "Upcoming Sessions",
+      "subtitle": "Your scheduled practice sessions",
+      "newSchedule": "New schedule",
+      "month": {
+        "oct": "Oct",
+        "nov": "Nov"
+      },
+      "topic": {
+        "frontend": "Frontend Interview",
+        "systemDesign": "System Design",
+        "behavioral": "Behavioral Interview"
+      },
+      "type": {
+        "videoCall": "Video call",
+        "mockTest": "Mock test"
+      },
+      "status": {
+        "upcoming": "Upcoming",
+        "confirmed": "Confirmed",
+        "scheduled": "Scheduled"
       }
     }
   },
@@ -654,7 +775,8 @@
         "tab": "Tab is visible",
         "focus": "Window is focused",
         "viewport": "Window size is large enough"
-      }
+      },
+      "readinessChecklist": "Readiness checklist"
     },
     "credit": {
       "eyebrow": "Credit gate",
@@ -662,6 +784,21 @@
       "body": "You need {{required}} Credits to start this session. Current balance: {{current}} Credits. Deficit: {{deficit}} Credits.",
       "close": "Close",
       "topUp": "Top up Credits"
+    },
+    "toast": {
+      "preflightFailed": "Unable to check interview context.",
+      "saveContextFailed": "Unable to save CV/JD information.",
+      "initFailed": "Unable to initialize interview session."
+    },
+    "transition": {
+      "roundComplete": "Round {{round}} complete",
+      "nextRound": "Next round: DSA & Live Coding",
+      "solvePrefix": "You will solve",
+      "problemCount": "{{count}} coding problem(s)",
+      "solveSuffix": "in the next round.",
+      "prepare": "Prepare your approach before coding.",
+      "resultNote": "Your behavioral result is saved and will appear in the final debrief.",
+      "start": "Start DSA round"
     }
   },
   "interviewRoom": {
@@ -741,7 +878,25 @@
     },
     "endSession": "End Session",
     "confirmEnd": "End the interview session and return to Dashboard?",
-    "dragToResize": "Drag to resize"
+    "dragToResize": "Drag to resize",
+    "tags": {
+      "array": "Array",
+      "hashMap": "Hash Map"
+    },
+    "examplesInput": "Input",
+    "examplesOutput": "Output",
+    "followUpLabel": "Follow-up",
+    "followUpQuestion": "Can you solve it with one pass?",
+    "video": {
+      "interviewer": "Interviewer",
+      "you": "You",
+      "speaking": "Speaking"
+    },
+    "notes": {
+      "title": "Notes",
+      "ariaLabel": "Interview notes",
+      "placeholder": "Write private notes here..."
+    }
   },
   "sdRoom": {
     "canvasLockedMessage": "Canvas will unlock after Clarification phase",
@@ -852,7 +1007,19 @@
         "tradeoffArticulation": "Trade-off Articulation",
         "communicationClarity": "Communication Clarity",
         "curveballAdaptation": "Curveball Adaptation"
+      },
+      "errors": {
+        "startFailed": "Failed to start evaluation",
+        "jobFailed": "Evaluation job failed",
+        "timedOut": "Evaluation timed out"
       }
+    },
+    "edgeLabelPrompt": "Edge label (optional):",
+    "errors": {
+      "loadSessionFailed": "Cannot load SD session",
+      "startSessionFailed": "Failed to start session",
+      "aiServiceError": "AI service error",
+      "getHintFailed": "Failed to get hint"
     }
   },
   "sdDebrief": {
@@ -903,7 +1070,8 @@
         "stage_4_cv_deep_dive": "CV Deep-Dive",
         "stage_5_soft_skills": "Soft Skills",
         "stage_6_reverse_interview": "Reverse Interview"
-      }
+      },
+      "probeCount": "{{count}} probes"
     },
     "chat": {
       "evaluating": "Interviewer is thinking...",
@@ -928,6 +1096,28 @@
       "descriptionSuffix": ". Your current answers will be lost.",
       "cancel": "Continue",
       "confirm": "Exit"
+    },
+    "star": {
+      "checklist": "STAR checklist",
+      "open": "Open STAR guide",
+      "collapse": "Collapse STAR guide",
+      "realtimeNote": "The checklist updates as your answer includes stronger STAR evidence.",
+      "situation": {
+        "label": "Situation",
+        "hint": "Set the context clearly."
+      },
+      "task": {
+        "label": "Task",
+        "hint": "Explain your responsibility."
+      },
+      "action": {
+        "label": "Action",
+        "hint": "Describe what you did."
+      },
+      "result": {
+        "label": "Result",
+        "hint": "Share outcome and impact."
+      }
     }
   },
   "dsaRoom": {
@@ -968,7 +1158,8 @@
       "readInstruction": "Read the prompt carefully. When ready, write your approach before coding.",
       "submitted": "Submitted",
       "readPlaceholder": "Read the prompt, then click Ready.",
-      "approachPlaceholder": "Write your approach to unlock the editor."
+      "approachPlaceholder": "Write your approach to unlock the editor.",
+      "loading": "Loading problem..."
     },
     "approach": {
       "title": "Your approach",
@@ -993,7 +1184,8 @@
         "timeLimit": "Time Limit Exceeded",
         "runtimeError": "Runtime Error",
         "compileError": "Compile Error"
-      }
+      },
+      "timeMs": "{{ms}} ms"
     },
     "ai": {
       "empty": "The AI interviewer will ask when needed"
@@ -1030,11 +1222,14 @@
     "toast": {
       "approachFailed": "Unable to save approach.",
       "runFailed": "Error while running code.",
-      "submitFailed": "Unable to submit solution."
+      "submitFailed": "Unable to submit solution.",
+      "initFailed": "Unable to initialize the DSA round.",
+      "scoringTimeout": "Scoring is taking too long. Please reload."
     },
     "camera": {
       "collapse": "Collapse camera",
-      "expand": "Drag to move / Click to expand"
+      "expand": "Drag to move / Click to expand",
+      "rec": "REC"
     }
   },
   "behaviorScorecard": {
@@ -1066,6 +1261,537 @@
     "stagesCompletedSuffix": "stages completed",
     "backHome": "Home",
     "practiceAgain": "Practice Again",
-    "scoreLabel": "Readiness Score"
+    "scoreLabel": "Readiness Score",
+    "tabs": {
+      "report": "Report",
+      "combat": "Combat"
+    }
+  },
+  "shared": {
+    "admin": "Admin",
+    "appSubtitle": "AI Interview Practice",
+    "avatarAlt": "Avatar",
+    "cancelled": "Cancelled",
+    "changeLanguage": "Change language",
+    "collapseSidebar": "Collapse sidebar",
+    "connectionError": "Connection error",
+    "connectionRetryError": "Connection error. Please try again.",
+    "darkMode": "Switch to dark mode",
+    "dashboardNavigation": "Dashboard navigation",
+    "expandSidebar": "Expand sidebar",
+    "help": "Help",
+    "landingNavigation": "Landing navigation",
+    "lightMode": "Switch to light mode",
+    "notifications": "Notifications",
+    "searchPlaceholder": "Search task...",
+    "settings": "Settings",
+    "sidebarNavigation": "Sidebar navigation",
+    "streamError": "Stream error",
+    "streamReadError": "Stream read error",
+    "student": "Student",
+    "user": "User"
+  },
+  "adminTestCases": {
+    "title": "Upload Test Cases",
+    "subtitle": "Upload a ZIP package of test cases for one or more coding problems.",
+    "dropTitle": "Drop a ZIP file here",
+    "dropDescription": "or click to choose a file from your computer",
+    "chooseFile": "Choose ZIP file",
+    "format": "Format: .zip",
+    "namingRule": "Naming: problem-slug/input*.txt and output*.txt"
+  },
+  "adminProblems": {
+    "title": "Problem Management",
+    "subtitle": "Create, import, verify, and manage coding problems.",
+    "searchPlaceholder": "Search title, slug, or tags",
+    "allDifficulties": "All difficulties",
+    "importJson": "Import JSON",
+    "importing": "Importing...",
+    "newProblem": "New problem",
+    "edit": "Edit",
+    "delete": "Delete",
+    "confirmDelete": "Delete this problem?",
+    "empty": "No problems found.",
+    "pagination": "Page {{page}} / {{totalPages}} ({{total}} problems)",
+    "importInvalidStructure": "Import file must be a JSON array or an object with a problems array.",
+    "importParseError": "Unable to parse JSON file.",
+    "importDone": "Import complete! Successful: {{successful}}, Failed: {{failed}}\n{{errors}}",
+    "importError": "Import error: {{message}}",
+    "difficulty": {
+      "EASY": "Easy",
+      "MEDIUM": "Medium",
+      "HARD": "Hard"
+    },
+    "columns": {
+      "id": "ID",
+      "title": "Title",
+      "difficulty": "Difficulty",
+      "status": "Status",
+      "actions": "Actions"
+    }
+  },
+  "adminProblemEditor": {
+    "createTitle": "Create Problem",
+    "editTitle": "Edit Problem",
+    "subtitle": "Configure statement, language templates, and test cases.",
+    "verify": "Verify",
+    "verifying": "Verifying...",
+    "verifySuccess": "Verification passed.",
+    "verifyFailed": "Verification failed.",
+    "verifyNeedsDraft": "Save the problem before verification.",
+    "saveDraft": "Save draft",
+    "cancel": "Cancel",
+    "languageConfig": "Language configuration",
+    "noLanguageSelected": "No language selected.",
+    "largeInput": "Large input",
+    "testCasesTitle": "Test cases",
+    "addRow": "Add row",
+    "emptyTestCases": "No test cases yet.",
+    "timeMs": "{{ms}} ms",
+    "hintLabel": "Hint {{index}}",
+    "hintPlaceholder": "Write a hint for candidates",
+    "hintsHelp": "Hints are revealed gradually during practice.",
+    "tabs": {
+      "general": "General",
+      "content": "Content",
+      "testcases": "Test cases"
+    },
+    "fields": {
+      "title": "Title",
+      "difficulty": "Difficulty",
+      "tags": "Tags",
+      "hints": "Hints",
+      "description": "Description",
+      "timeLimitMultiplier": "Time limit multiplier"
+    },
+    "placeholders": {
+      "title": "Problem title",
+      "tags": "array, two-pointers, dynamic-programming",
+      "markdown": "Write the problem statement in Markdown..."
+    },
+    "codeView": {
+      "starterCode": "Starter",
+      "solutionCode": "Solution",
+      "driverCode": "Driver"
+    },
+    "columns": {
+      "input": "Input",
+      "expected": "Expected",
+      "expectedOutput": "Expected output",
+      "hidden": "Hidden",
+      "language": "Language",
+      "actual": "Actual",
+      "action": "Action"
+    }
+  },
+  "adminSdProblems": {
+    "title": "System Design Problems",
+    "subtitle": "Manage system design prompts and reference architectures.",
+    "create": "Create problem",
+    "createModalTitle": "Create System Design Problem",
+    "editModalTitle": "Edit System Design Problem",
+    "cancel": "Cancel",
+    "save": "Save",
+    "confirmDelete": "Delete this problem?",
+    "empty": "No system design problems found.",
+    "pagination": "Page {{page}} / {{totalPages}} ({{total}} problems)",
+    "columns": {
+      "title": "Title",
+      "domain": "Domain",
+      "level": "Level",
+      "difficulty": "Difficulty",
+      "actions": "Actions"
+    },
+    "form": {
+      "title": "Title",
+      "domain": "Domain",
+      "targetRole": "Target role",
+      "targetLevel": "Target level",
+      "difficulty": "Difficulty",
+      "duration": "Duration minutes",
+      "tags": "Tags",
+      "context": "Context",
+      "contextPlaceholder": "Describe the product, users, scale, and requirements...",
+      "expectedComponents": "Expected components",
+      "scalingConstraints": "Scaling constraints",
+      "curveballScenarios": "Curveball scenarios",
+      "referenceArchitecture": "Reference architecture"
+    },
+    "level": {
+      "mid": "Mid-level",
+      "senior": "Senior",
+      "staff": "Staff"
+    },
+    "difficulty": {
+      "medium": "Medium",
+      "hard": "Hard"
+    },
+    "toast": {
+      "loadFailed": "Unable to load problem list.",
+      "updated": "Problem updated.",
+      "created": "New problem created.",
+      "saveFailed": "Save failed.",
+      "deleted": "Problem deleted.",
+      "deleteFailed": "Delete failed."
+    }
+  },
+  "practiceBank": {
+    "title": "Algorithm Practice",
+    "summary": "{{total}} problems, {{solved}} solved",
+    "emptySummary": "No problems available yet",
+    "searchPlaceholder": "Search problems",
+    "tagPlaceholder": "Filter by tag",
+    "allDifficulties": "All difficulties",
+    "loading": "Loading problems...",
+    "empty": "No matching problems.",
+    "difficulty": {
+      "EASY": "Easy",
+      "MEDIUM": "Medium",
+      "HARD": "Hard",
+      "easy": "Easy",
+      "medium": "Medium",
+      "hard": "Hard"
+    },
+    "columns": {
+      "title": "Title",
+      "difficulty": "Difficulty",
+      "tags": "Tags",
+      "status": "Status"
+    },
+    "pagination": {
+      "summary": "{{start}}-{{end}} / {{total}} problems",
+      "previous": "Previous",
+      "next": "Next"
+    },
+    "errors": {
+      "loadListFailed": "Unable to load problem list.",
+      "loadProblemFailed": "Unable to load problem."
+    }
+  },
+  "combatRoom": {
+    "chat": {
+      "silenceHint": "Need a moment? You can repeat the question or skip.",
+      "repeatPrompt": "Please repeat the question.",
+      "skipPrompt": "Skip this question.",
+      "skip": "Skip",
+      "userAlt": "Candidate avatar"
+    },
+    "header": {
+      "exit": "Exit",
+      "exitTitle": "Exit Combat room",
+      "mode": "Combat mode",
+      "stage": "Stage {{current}}/{{total}} - {{name}}",
+      "finish": "Finish",
+      "monitoring": "Monitoring"
+    },
+    "state": {
+      "AI_SPEAKING": "AI speaking",
+      "CANDIDATE_THINKING": "Thinking",
+      "CANDIDATE_SPEAKING": "Speaking",
+      "WAITING_FOR_CANDIDATE": "Waiting",
+      "IDLE": "Idle"
+    },
+    "level": {
+      "junior": "Junior",
+      "mid": "Mid-level",
+      "senior": "Senior"
+    },
+    "input": {
+      "voice": "Voice",
+      "text": "Text",
+      "listening": "Listening...",
+      "waitingTurn": "Waiting for your turn",
+      "clear": "Clear",
+      "placeholder": "Type your answer...",
+      "send": "Send"
+    },
+    "modals": {
+      "continue": "Continue",
+      "notScored": "not scored",
+      "exitTitle": "Exit Combat room?",
+      "exitDescription": "This session will be cancelled and",
+      "exitSuffix": ". Your current answers will be lost.",
+      "exitConfirm": "Exit",
+      "finishTitle": "Finish interview?",
+      "finishDescription": "The session will be closed and",
+      "finishSuffix": ". You can review the result afterward.",
+      "finishProgress": "Current progress: {{current}}/{{total}} stages",
+      "finishConfirm": "Finish"
+    },
+    "sidebar": {
+      "rec": "REC",
+      "aiSpeaking": "AI speaking",
+      "progress": "Progress"
+    },
+    "stageNames": {
+      "1": "Culture Fit",
+      "2": "Tech Stack",
+      "3": "Domain Knowledge",
+      "4": "CV Deep-Dive",
+      "5": "Soft Skills",
+      "6": "Reverse Interview"
+    }
+  },
+  "profile": {
+    "page": {
+      "title": "Skill Passport",
+      "subtitle": "Keep your CV, JD context, and interview readiness profile up to date.",
+      "contextTitle": "CV/JD Context",
+      "professionalDetails": "Professional Details",
+      "globalCapabilities": "Global Capabilities"
+    },
+    "upload": {
+      "cv": "CV",
+      "jd": "Job Description",
+      "queueing": "Queueing analysis...",
+      "analyzing": "Analyzing document...",
+      "dropTitle": "Drop your document here or click to upload",
+      "maxSize": "PDF, DOC, or DOCX up to 10 MB",
+      "analysisComplete": "Analysis complete",
+      "cvProcessed": "CV processed successfully.",
+      "fitScoreTitle": "Fit score",
+      "matchPercent": "{{score}}% match",
+      "jdNeedsCv": "Upload a CV to calculate fit score.",
+      "jdFitUnavailable": "Fit score is unavailable for this JD.",
+      "cvNeedsJd": "Upload a JD to compare it with your CV.",
+      "errors": {
+        "unsupportedType": "Unsupported file type.",
+        "tooLarge": "File is too large."
+      }
+    },
+    "behaviorCalibration": {
+      "title": "Behavior Calibration",
+      "notStarted": "Upload a CV and JD to calibrate behavioral practice.",
+      "evidence": "Evidence strictness: {{value}}",
+      "levelMismatch": "Your selected level may not match the evidence in your CV/JD.",
+      "jdOnly": "JD context found. Upload a CV for personalized calibration.",
+      "cvOnly": "CV context found. Upload a JD for role-specific calibration.",
+      "focusCompetencies": "Focus competencies",
+      "whatToPrepare": "What to prepare",
+      "evidenceToPrepare": "Evidence to prepare",
+      "note": "Calibration is used to choose stronger probes and follow-ups.",
+      "status": {
+        "ready": "Ready",
+        "partial": "Partial",
+        "failed": "Failed",
+        "not_started": "Not started"
+      },
+      "strictness": {
+        "strict": "Strict",
+        "balanced": "Balanced",
+        "lenient": "Lenient",
+        "high": "High",
+        "medium": "Medium",
+        "low": "Low"
+      }
+    },
+    "fit": {
+      "title": "JD Fit Assessment",
+      "confidence": "Confidence: {{value}}",
+      "riskDeductions": "Risk deductions",
+      "whatToImprove": "What to improve",
+      "strengths": "Strengths",
+      "note": "Use these gaps to choose practice topics before the interview.",
+      "breakdown": {
+        "mustHaveSkillCoverage": "Required skills",
+        "roleResponsibilityFit": "Responsibilities",
+        "experienceLevelFit": "Experience level",
+        "evidenceQuality": "Evidence quality",
+        "transferableExperience": "Transferable experience",
+        "niceToHaveCoverage": "Nice-to-have skills",
+        "domainFit": "Domain fit"
+      },
+      "gaps": {
+        "missingRequiredSkills": "Missing required skills",
+        "weakEvidence": "Weak evidence",
+        "levelMismatch": "Level mismatch",
+        "transferableButNotDirect": "Transferable but indirect"
+      },
+      "severity": {
+        "high": "High",
+        "medium": "Medium",
+        "low": "Low"
+      }
+    },
+    "radar": {
+      "emptyLine1": "No assessment history yet.",
+      "emptyLine2": "Upload documents to build your radar.",
+      "avgScore": "Average score",
+      "skillLevel": "Skill level",
+      "dimensions": {
+        "requiredSkills": "Required Skills",
+        "responsibilities": "Responsibilities",
+        "experience": "Experience",
+        "evidenceQuality": "Evidence Quality",
+        "domainFit": "Domain Fit"
+      }
+    },
+    "assessmentHistory": {
+      "title": "Assessment History",
+      "loading": "Loading history...",
+      "empty": "No assessment history yet.",
+      "delete": "Delete assessment",
+      "showDetails": "Show details",
+      "hideDetails": "Hide details"
+    },
+    "form": {
+      "role": "Target role",
+      "rolePlaceholder": "Frontend Engineer",
+      "seniority": "Seniority",
+      "domain": "Domain",
+      "domainPlaceholder": "Fintech, e-commerce, healthcare...",
+      "techStack": "Tech stack",
+      "skillPlaceholder": "React, Node.js, PostgreSQL...",
+      "add": "Add",
+      "education": "Education",
+      "languages": "Languages",
+      "experience": "Experience",
+      "save": "Save profile",
+      "seniorityOptions": {
+        "intern": "Intern",
+        "fresher": "Fresher",
+        "junior": "Junior",
+        "mid": "Mid-level",
+        "senior": "Senior",
+        "lead": "Lead"
+      }
+    },
+    "toast": {
+      "fetchFailed": "Failed to fetch profile",
+      "updated": "Profile updated successfully",
+      "updateFailed": "Failed to update profile",
+      "uploadFailed": "Failed to upload document",
+      "uploadFailedWithMessage": "Upload failed: {{message}}",
+      "unknownError": "Unknown error",
+      "processingComplete": "AI processing complete.",
+      "processingFailedWithMessage": "AI processing failed: {{message}}",
+      "jobFailed": "Job failed",
+      "jobNotFound": "Job not found",
+      "jobStatusFailed": "Failed to check job status",
+      "assessmentDeleted": "Assessment deleted.",
+      "deleteFailed": "Failed to delete. Please try again."
+    }
+  },
+  "scoring": {
+    "loading": {
+      "title": "Loading results",
+      "subtitle": "Preparing your interview debrief..."
+    },
+    "errors": {
+      "fetchSessions": "Unable to load interview sessions.",
+      "refetchSessions": "Unable to refresh interview sessions."
+    },
+    "sessions": {
+      "prompt": "Choose a session to review",
+      "behavioral": "Behavioral",
+      "liveCoding": "Live Coding",
+      "systemDesign": "System Design"
+    },
+    "combat": {
+      "overall": "Combat Overall",
+      "softSkills": "Soft Skills",
+      "realtimeAnalysis": "Realtime Analysis",
+      "eyeContact": "Eye Contact",
+      "lookAtCamera": "Looking at camera",
+      "fillerWords": "Filler Words",
+      "fillerRate": "Filler rate",
+      "facialExpression": "Facial Expression",
+      "dominantExpression": "Dominant expression",
+      "stressPeaks": "Stress peaks around minute(s): {{minutes}}",
+      "noAnalysisData": "No detailed realtime analysis data.",
+      "noMultimodalData": "No multimodal data for this session.",
+      "softSkillsAnalysis": "Soft Skills Analysis",
+      "noData": "No combat data available.",
+      "noFeedback": "No feedback available.",
+      "total": "Total",
+      "combined": "Combined score",
+      "scoreFormula": "Behavioral + soft skills minus integrity penalty",
+      "expression": {
+        "confident": "Confident",
+        "neutral": "Neutral",
+        "stressed": "Stressed",
+        "happy": "Positive",
+        "sad": "Subdued",
+        "angry": "Tense",
+        "surprised": "Surprised"
+      }
+    },
+    "integrity": {
+      "title": "Integrity",
+      "events": "Integrity events ({{count}})",
+      "verdict": {
+        "CLEAN": "Clean",
+        "MINOR_FLAGS": "Minor flags",
+        "SUSPICIOUS": "Suspicious",
+        "HIGHLY_SUSPICIOUS": "Highly suspicious"
+      }
+    },
+    "dsa": {
+      "title": "Live Coding Results",
+      "noProblems": "No coding problems found.",
+      "noData": "No DSA score data.",
+      "noFeedback": "No feedback yet.",
+      "complexity": "Complexity",
+      "submittedCode": "Submitted code",
+      "submittedComplexity": "Submitted complexity",
+      "optimalComplexity": "Optimal complexity",
+      "stuckPoints": "Stuck points",
+      "followUp": "Follow-up",
+      "improvement": "Improvement",
+      "pendingFeedback": "Feedback pending"
+    },
+    "legacy": {
+      "title": "Interview Scorecard",
+      "strengths": "Strengths",
+      "redFlags": "Red flags",
+      "improvements": "Improvements",
+      "stageScores": "Stage scores",
+      "stageDetails": "Stage details",
+      "starAnalysis": "STAR Analysis",
+      "contradiction": "Contradiction detected",
+      "cvVerification": "CV Verification",
+      "verified": "Verified",
+      "unverified": "Unverified or inflated",
+      "noCommunicationData": "No communication data available.",
+      "verdict": {
+        "SENIOR_PASS": "Senior Pass",
+        "MID_PASS": "Mid Pass",
+        "MID_BORDERLINE": "Mid Borderline",
+        "JUNIOR_RECOMMEND": "Junior Recommended",
+        "JUNIOR_FAIL": "Junior Not Ready",
+        "SENIOR_FAIL": "Senior Not Ready",
+        "SCORING_ERROR": "Scoring Error"
+      },
+      "stage": {
+        "cultureFit": "Culture Fit",
+        "techStack": "Tech Stack Deep-Dive",
+        "domain": "Domain Knowledge",
+        "cvDeepDive": "CV Deep-Dive",
+        "softSkills": "Soft Skills",
+        "reverseInterview": "Reverse Interview"
+      },
+      "tabs": {
+        "overview": "Overview",
+        "detail": "Details",
+        "communication": "Communication",
+        "combat": "Combat"
+      },
+      "star": {
+        "situation": "Situation",
+        "task": "Task",
+        "action": "Action",
+        "result": "Result"
+      },
+      "impact": {
+        "significant": "Significant",
+        "minor": "Minor"
+      },
+      "communication": {
+        "title": "Communication Quality",
+        "clarity": "Clarity",
+        "conciseness": "Conciseness",
+        "structure": "Structure"
+      }
+    }
   }
 }

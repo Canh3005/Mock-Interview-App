@@ -1,6 +1,7 @@
 import { call, put, select, take, fork, takeLatest, delay } from 'redux-saga/effects'
 import { eventChannel } from 'redux-saga'
 import { sdSessionApi } from '../../api/sdSession'
+import i18n from '../../i18n/config'
 import {
   loadRequest,
   loadSuccess,
@@ -21,7 +22,7 @@ function* _handleLoad(action) {
     yield fork(_pollPhase)
     yield fork(_autoSaveLoop)
   } catch (err) {
-    yield put(loadFailure(err.response?.data?.message || 'Cannot load SD session'))
+    yield put(loadFailure(err.response?.data?.message || i18n.t('sdRoom.errors.loadSessionFailed')))
   }
 }
 

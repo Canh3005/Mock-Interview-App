@@ -10,13 +10,14 @@ import {
   Clock,
   AlertCircle,
 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 // ── shared combat helpers/atoms ──────────────────────────────────────────────
 export const INTEGRITY_STYLE = {
-  CLEAN:            { label: 'Tính minh bạch: Đạt',       color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/30', Icon: ShieldCheck },
-  MINOR_FLAGS:      { label: 'Có một số sự kiện ghi nhận', color: 'text-amber-400',   bg: 'bg-amber-500/10 border-amber-500/30',   Icon: ShieldAlert },
-  SUSPICIOUS:       { label: 'Cần hậu kiểm',               color: 'text-orange-400',  bg: 'bg-orange-500/10 border-orange-500/30', Icon: ShieldAlert },
-  HIGHLY_SUSPICIOUS:{ label: 'Nhiều dấu hiệu bất thường',  color: 'text-red-400',     bg: 'bg-red-500/10 border-red-500/30',       Icon: ShieldX },
+  CLEAN:            { labelKey: 'scoring.integrity.verdict.CLEAN',             color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/30', Icon: ShieldCheck },
+  MINOR_FLAGS:      { labelKey: 'scoring.integrity.verdict.MINOR_FLAGS',       color: 'text-amber-400',   bg: 'bg-amber-500/10 border-amber-500/30',   Icon: ShieldAlert },
+  SUSPICIOUS:       { labelKey: 'scoring.integrity.verdict.SUSPICIOUS',        color: 'text-orange-400',  bg: 'bg-orange-500/10 border-orange-500/30', Icon: ShieldAlert },
+  HIGHLY_SUSPICIOUS:{ labelKey: 'scoring.integrity.verdict.HIGHLY_SUSPICIOUS', color: 'text-red-400',     bg: 'bg-red-500/10 border-red-500/30',       Icon: ShieldX },
 }
 
 function scoreColor(s) {
@@ -67,6 +68,7 @@ export function getOverallCombatScore(scoreData, behavioralScore) {
 
 // ── combat tab ───────────────────────────────────────────────────────────────
 export default function CombatTab({ scoreData, behavioralScore }) {
+  const { t } = useTranslation()
   const multimodal  = scoreData?.multimodal
   const integrity   = scoreData?.integrity
   const overallCombat = getOverallCombatScore(scoreData, behavioralScore)
@@ -74,7 +76,7 @@ export default function CombatTab({ scoreData, behavioralScore }) {
   const intStyle = INTEGRITY_STYLE[integrity?.verdict] ?? INTEGRITY_STYLE.MINOR_FLAGS
   const IntIcon  = intStyle.Icon
 
-  const dominantLabel = { confident: 'Tự tin', neutral: 'Bình thường', stressed: 'Căng thẳng', uncertain: 'Do dự' }
+  const dominantLabel = (value) => t(`scoring.combat.expression.${value}`, value)
 
   return (
     <div className="flex flex-col gap-4">
@@ -82,13 +84,13 @@ export default function CombatTab({ scoreData, behavioralScore }) {
       <div className="grid grid-cols-3 gap-2">
         {/* Combat overall */}
         <div className="bg-slate-800/50 border border-slate-700 rounded-2xl p-3 flex flex-col gap-0.5">
-          <p className="text-[10px] text-slate-500 uppercase tracking-wider">Combat</p>
+          <p className="text-[10px] text-slate-500 uppercase tracking-wider">{t('scoring.combat.overall')}</p>
           <span className={`text-xl font-bold leading-tight ${scoreColor(overallCombat)}`}>{overallCombat}</span>
           <span className="text-[10px] text-slate-500">/100</span>
         </div>
         {/* Soft skills */}
         <div className="bg-slate-800/50 border border-slate-700 rounded-2xl p-3 flex flex-col gap-0.5">
-          <p className="text-[10px] text-slate-500 uppercase tracking-wider">Soft Skills</p>
+          <p className="text-[10px] text-slate-500 uppercase tracking-wider">{t('scoring.combat.softSkills')}</p>
           <span className={`text-xl font-bold leading-tight ${scoreColor(multimodal?.overall_soft_skill_score ?? 0)}`}>
             {multimodal?.overall_soft_skill_score ?? '—'}
           </span>
@@ -97,7 +99,7 @@ export default function CombatTab({ scoreData, behavioralScore }) {
         {/* Integrity */}
         {integrity && (
           <div className={`rounded-2xl border p-3 flex flex-col gap-0.5 ${intStyle.bg}`}>
-            <p className="text-[10px] text-slate-500 uppercase tracking-wider">Integrity</p>
+            <p className="text-[10px] text-slate-500 uppercase tracking-wider">{t('scoring.integrity.title')}</p>
             <span className={`text-xl font-bold leading-tight ${intStyle.color}`}>{integrity.integrity_score}</span>
             <span className="text-[10px] text-slate-500">/100</span>
           </div>
@@ -109,7 +111,7 @@ export default function CombatTab({ scoreData, behavioralScore }) {
         <div className={`rounded-2xl border p-3 flex items-start gap-3 ${intStyle.bg}`}>
           <IntIcon className={`w-4 h-4 ${intStyle.color} flex-shrink-0 mt-0.5`} />
           <div className="min-w-0">
-            <p className={`text-xs font-semibold ${intStyle.color}`}>{intStyle.label}</p>
+            <p className={`text-xs font-semibold ${intStyle.color}`}>{t(intStyle.labelKey)}</p>
             {integrity.hr_notes && (
               <p className="text-xs text-slate-400 leading-relaxed mt-1">{integrity.hr_notes}</p>
             )}
@@ -120,7 +122,7 @@ export default function CombatTab({ scoreData, behavioralScore }) {
       {/* ── Multimodal breakdown ── */}
       {multimodal ? (
         <div className="flex flex-col gap-3">
-          <SectionLabel>Phân tích hành vi thời gian thực</SectionLabel>
+          <SectionLabel>{t('scoring.combat.realtimeAnalysis')}</SectionLabel>
 
           {/* Eye tracking */}
           {multimodal.eye_tracking && (
@@ -128,7 +130,7 @@ export default function CombatTab({ scoreData, behavioralScore }) {
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <Eye className="w-4 h-4 text-cyan-400" />
-                  <span className="text-sm font-semibold text-slate-200">Giao tiếp bằng mắt</span>
+                  <span className="text-sm font-semibold text-slate-200">{t('scoring.combat.eyeContact')}</span>
                 </div>
                 <span className={`text-sm font-bold ${scoreColor(multimodal.eye_tracking.score)}`}>
                   {multimodal.eye_tracking.score}/100
@@ -136,7 +138,7 @@ export default function CombatTab({ scoreData, behavioralScore }) {
               </div>
               <ScoreBar score={multimodal.eye_tracking.score} />
               <div className="flex items-center justify-between text-xs text-slate-400 mt-2">
-                <span>Nhìn vào camera</span>
+                <span>{t('scoring.combat.lookAtCamera')}</span>
                 <span className="font-semibold text-slate-200">{multimodal.eye_tracking.screen_gaze_percent}%</span>
               </div>
               {multimodal.eye_tracking.feedback && (
@@ -151,7 +153,7 @@ export default function CombatTab({ scoreData, behavioralScore }) {
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <MessageSquare className="w-4 h-4 text-violet-400" />
-                  <span className="text-sm font-semibold text-slate-200">Từ đệm</span>
+                  <span className="text-sm font-semibold text-slate-200">{t('scoring.combat.fillerWords')}</span>
                 </div>
                 <span className={`text-sm font-bold ${scoreColor(multimodal.filler_words.score)}`}>
                   {multimodal.filler_words.score}/100
@@ -159,7 +161,7 @@ export default function CombatTab({ scoreData, behavioralScore }) {
               </div>
               <ScoreBar score={multimodal.filler_words.score} />
               <div className="flex items-center justify-between text-xs text-slate-400 mt-2">
-                <span>Tỉ lệ từ đệm</span>
+                <span>{t('scoring.combat.fillerRate')}</span>
                 <span className={`font-semibold ${
                   multimodal.filler_words.avg_filler_rate < 0.05 ? 'text-emerald-400'
                   : multimodal.filler_words.avg_filler_rate < 0.15 ? 'text-amber-400'
@@ -189,7 +191,7 @@ export default function CombatTab({ scoreData, behavioralScore }) {
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <Smile className="w-4 h-4 text-amber-400" />
-                  <span className="text-sm font-semibold text-slate-200">Biểu cảm khuôn mặt</span>
+                  <span className="text-sm font-semibold text-slate-200">{t('scoring.combat.facialExpression')}</span>
                 </div>
                 <span className={`text-sm font-bold ${scoreColor(multimodal.expression.score)}`}>
                   {multimodal.expression.score}/100
@@ -197,20 +199,20 @@ export default function CombatTab({ scoreData, behavioralScore }) {
               </div>
               <ScoreBar score={multimodal.expression.score} />
               <div className="flex items-center justify-between text-xs text-slate-400 mt-2">
-                <span>Biểu cảm chủ đạo</span>
+                <span>{t('scoring.combat.dominantExpression')}</span>
                 <span className={`font-semibold ${
                   multimodal.expression.dominant_expression === 'confident' ? 'text-emerald-400'
                   : multimodal.expression.dominant_expression === 'stressed' ? 'text-red-400'
                   : 'text-slate-300'
                 }`}>
-                  {dominantLabel[multimodal.expression.dominant_expression] ?? multimodal.expression.dominant_expression}
+                  {dominantLabel(multimodal.expression.dominant_expression)}
                 </span>
               </div>
               {multimodal.expression.stress_peak_minutes?.length > 0 && (
                 <div className="flex items-start gap-2 p-2 rounded-lg bg-amber-500/10 border border-amber-500/20 mt-2">
                   <Clock className="w-3 h-3 text-amber-400 flex-shrink-0 mt-0.5" />
                   <p className="text-[11px] text-amber-300 leading-relaxed">
-                    Căng thẳng cao tại phút: {multimodal.expression.stress_peak_minutes.join(', ')}
+                    {t('scoring.combat.stressPeaks', { minutes: multimodal.expression.stress_peak_minutes.join(', ') })}
                   </p>
                 </div>
               )}
@@ -224,7 +226,7 @@ export default function CombatTab({ scoreData, behavioralScore }) {
             <div className="flex items-center gap-3 p-4 rounded-xl bg-slate-800/50 border border-slate-700">
               <AlertCircle className="w-4 h-4 text-slate-500 flex-shrink-0" />
               <p className="text-xs text-slate-500">
-                Không có dữ liệu phân tích — camera hoặc MediaPipe chưa hoạt động trong phiên này.
+                {t('scoring.combat.noAnalysisData')}
               </p>
             </div>
           )}
@@ -232,7 +234,7 @@ export default function CombatTab({ scoreData, behavioralScore }) {
       ) : (
         <div className="flex items-center gap-3 p-4 rounded-xl bg-slate-800/50 border border-slate-700">
           <AlertCircle className="w-4 h-4 text-slate-500 flex-shrink-0" />
-          <p className="text-xs text-slate-500">Không có dữ liệu multimodal cho phiên này.</p>
+          <p className="text-xs text-slate-500">{t('scoring.combat.noMultimodalData')}</p>
         </div>
       )}
 
@@ -241,7 +243,7 @@ export default function CombatTab({ scoreData, behavioralScore }) {
         <div className="bg-slate-800/50 border border-slate-700 rounded-2xl p-4">
           <div className="flex items-center gap-2 mb-3">
             <Activity className="w-3.5 h-3.5 text-amber-400" />
-            <SectionLabel>Sự kiện bất thường ({integrity.events_timeline.length})</SectionLabel>
+            <SectionLabel>{t('scoring.integrity.events', { count: integrity.events_timeline.length })}</SectionLabel>
           </div>
           <div className="grid grid-cols-2 gap-2">
             {integrity.events_timeline.slice(0, 8).map((event, index) => (

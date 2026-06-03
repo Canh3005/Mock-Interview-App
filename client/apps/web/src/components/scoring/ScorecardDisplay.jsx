@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { ROUTES } from '../../router/routes'
 import {
   RadarChart,
@@ -32,22 +33,22 @@ import CombatTab from './CombatTab'
 
 // ── constants ──────────────────────────────────────────────────────────────────
 const VERDICT_CONFIG = {
-  SENIOR_PASS:      { label: 'Senior – Đạt',       color: 'text-purple-400',  bg: 'bg-purple-500/10 border-purple-500/40' },
-  MID_PASS:         { label: 'Mid – Đạt',           color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/40' },
-  MID_BORDERLINE:   { label: 'Mid – Cần cải thiện', color: 'text-amber-400',   bg: 'bg-amber-500/10 border-amber-500/40' },
-  JUNIOR_RECOMMEND: { label: 'Junior – Tiềm năng',  color: 'text-blue-400',    bg: 'bg-blue-500/10 border-blue-500/40' },
-  JUNIOR_FAIL:      { label: 'Junior – Chưa đạt',   color: 'text-red-400',     bg: 'bg-red-500/10 border-red-500/40' },
-  SENIOR_FAIL:      { label: 'Senior – Chưa đạt',   color: 'text-red-400',     bg: 'bg-red-500/10 border-red-500/40' },
-  SCORING_ERROR:    { label: 'Lỗi chấm điểm',       color: 'text-slate-400',   bg: 'bg-slate-800 border-slate-700' },
+  SENIOR_PASS:      { labelKey: 'scoring.legacy.verdict.SENIOR_PASS',      color: 'text-purple-400',  bg: 'bg-purple-500/10 border-purple-500/40' },
+  MID_PASS:         { labelKey: 'scoring.legacy.verdict.MID_PASS',         color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/40' },
+  MID_BORDERLINE:   { labelKey: 'scoring.legacy.verdict.MID_BORDERLINE',   color: 'text-amber-400',   bg: 'bg-amber-500/10 border-amber-500/40' },
+  JUNIOR_RECOMMEND: { labelKey: 'scoring.legacy.verdict.JUNIOR_RECOMMEND', color: 'text-blue-400',    bg: 'bg-blue-500/10 border-blue-500/40' },
+  JUNIOR_FAIL:      { labelKey: 'scoring.legacy.verdict.JUNIOR_FAIL',      color: 'text-red-400',     bg: 'bg-red-500/10 border-red-500/40' },
+  SENIOR_FAIL:      { labelKey: 'scoring.legacy.verdict.SENIOR_FAIL',      color: 'text-red-400',     bg: 'bg-red-500/10 border-red-500/40' },
+  SCORING_ERROR:    { labelKey: 'scoring.legacy.verdict.SCORING_ERROR',    color: 'text-slate-400',   bg: 'bg-slate-800 border-slate-700' },
 }
 
 const STAGE_LABELS = {
-  stage_1_culture_fit:       'Culture Fit',
-  stage_2_tech_stack:        'Tech Stack',
-  stage_3_domain:            'Domain',
-  stage_4_cv_deepdive:       'CV Deep-dive',
-  stage_5_soft_skills:       'Soft Skills',
-  stage_6_reverse_interview: 'Reverse Interview',
+  stage_1_culture_fit:       'scoring.legacy.stage.cultureFit',
+  stage_2_tech_stack:        'scoring.legacy.stage.techStack',
+  stage_3_domain:            'scoring.legacy.stage.domain',
+  stage_4_cv_deepdive:       'scoring.legacy.stage.cvDeepDive',
+  stage_5_soft_skills:       'scoring.legacy.stage.softSkills',
+  stage_6_reverse_interview: 'scoring.legacy.stage.reverseInterview',
 }
 
 const BAR_COLORS = ['#60a5fa', '#f59e0b', '#22d3ee', '#34d399']
@@ -106,8 +107,9 @@ function SectionLabel({ children }) {
 
 // ── stage accordion ────────────────────────────────────────────────────────────
 function AccordionStage({ stageKey, data }) {
+  const { t } = useTranslation()
   const [open, setOpen] = useState(false)
-  const label = STAGE_LABELS[stageKey] ?? stageKey
+  const label = STAGE_LABELS[stageKey] ? t(STAGE_LABELS[stageKey]) : stageKey
   const score = data?.score ?? 0
 
   return (
@@ -127,7 +129,7 @@ function AccordionStage({ stageKey, data }) {
           <p className="text-sm text-slate-300 leading-relaxed">{data?.feedback}</p>
           {data?.highlights?.length > 0 && (
             <div>
-              <p className="text-xs text-emerald-400 font-semibold mb-1.5">Điểm mạnh</p>
+              <p className="text-xs text-emerald-400 font-semibold mb-1.5">{t('scoring.legacy.strengths')}</p>
               <ul className="flex flex-col gap-1">
                 {data.highlights.map((h, i) => (
                   <li key={i} className="text-xs text-slate-400 flex gap-2">
@@ -140,7 +142,7 @@ function AccordionStage({ stageKey, data }) {
           {data?.red_flags?.length > 0 && (
             <div>
               <p className="text-xs text-red-400 font-semibold mb-1.5 flex items-center gap-1">
-                <AlertTriangle className="w-3 h-3" /> Red Flags
+                <AlertTriangle className="w-3 h-3" /> {t('scoring.legacy.redFlags')}
               </p>
               <ul className="flex flex-col gap-1">
                 {data.red_flags.map((f, i) => (
@@ -159,22 +161,23 @@ function AccordionStage({ stageKey, data }) {
 
 // ── tab panels ─────────────────────────────────────────────────────────────────
 function OverviewTab({ scoreData }) {
+  const { t } = useTranslation()
   const radarData = Object.entries(scoreData.breakdown ?? {}).map(([key, val]) => ({
-    subject: STAGE_LABELS[key] ?? key,
+    subject: STAGE_LABELS[key] ? t(STAGE_LABELS[key]) : key,
     score: val?.score ?? 0,
     fullMark: 100,
   }))
   const starData = [
-    { name: 'Situation', score: scoreData.star_analysis?.avg_situation_score ?? 0 },
-    { name: 'Task',      score: scoreData.star_analysis?.avg_task_score      ?? 0 },
-    { name: 'Action',    score: scoreData.star_analysis?.avg_action_score    ?? 0 },
-    { name: 'Result',    score: scoreData.star_analysis?.avg_result_score    ?? 0 },
+    { name: t('scoring.legacy.star.situation'), score: scoreData.star_analysis?.avg_situation_score ?? 0 },
+    { name: t('scoring.legacy.star.task'),      score: scoreData.star_analysis?.avg_task_score      ?? 0 },
+    { name: t('scoring.legacy.star.action'),    score: scoreData.star_analysis?.avg_action_score    ?? 0 },
+    { name: t('scoring.legacy.star.result'),    score: scoreData.star_analysis?.avg_result_score    ?? 0 },
   ]
 
   return (
     <div className="flex flex-col gap-4">
       <div className="bg-slate-800/50 border border-slate-700 rounded-2xl p-4">
-        <SectionLabel>Điểm theo giai đoạn</SectionLabel>
+        <SectionLabel>{t('scoring.legacy.stageScores')}</SectionLabel>
         <ResponsiveContainer width="100%" height={240}>
           <RadarChart data={radarData}>
             <PolarGrid stroke="#334155" />
@@ -185,7 +188,7 @@ function OverviewTab({ scoreData }) {
       </div>
 
       <div className="bg-slate-800/50 border border-slate-700 rounded-2xl p-4">
-        <SectionLabel>Phân tích STAR</SectionLabel>
+        <SectionLabel>{t('scoring.legacy.starAnalysis')}</SectionLabel>
         {scoreData.star_analysis?.weakness && (
           <p className="text-xs text-amber-400 mb-3 flex items-center gap-1.5">
             <AlertTriangle className="w-3 h-3 flex-shrink-0" />
@@ -209,7 +212,7 @@ function OverviewTab({ scoreData }) {
 
       {scoreData.actionable_feedback && (
         <div className="bg-blue-500/10 border border-blue-500/30 rounded-2xl p-4">
-          <SectionLabel>Điểm cần cải thiện</SectionLabel>
+          <SectionLabel>{t('scoring.legacy.improvements')}</SectionLabel>
           <p className="text-sm text-slate-300 leading-relaxed whitespace-pre-line">
             {scoreData.actionable_feedback}
           </p>
@@ -220,10 +223,11 @@ function OverviewTab({ scoreData }) {
 }
 
 function DetailTab({ scoreData }) {
+  const { t } = useTranslation()
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-col gap-2">
-        <SectionLabel>Chi tiết từng giai đoạn</SectionLabel>
+        <SectionLabel>{t('scoring.legacy.stageDetails')}</SectionLabel>
         {Object.entries(scoreData.breakdown ?? {}).map(([key, data]) => (
           <AccordionStage key={key} stageKey={key} data={data} />
         ))}
@@ -234,10 +238,12 @@ function DetailTab({ scoreData }) {
           <AlertTriangle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
           <div>
             <p className="text-xs font-semibold text-red-400 mb-1">
-              Mâu thuẫn giữa các giai đoạn
+              {t('scoring.legacy.contradiction')}
               {scoreData.consistency_check.impact !== 'none' && (
                 <span className="ml-2 text-[10px] px-1.5 py-0.5 rounded bg-red-500/20">
-                  {scoreData.consistency_check.impact === 'significant' ? 'Nghiêm trọng' : 'Nhỏ'}
+                  {scoreData.consistency_check.impact === 'significant'
+                    ? t('scoring.legacy.impact.significant')
+                    : t('scoring.legacy.impact.minor')}
                 </span>
               )}
             </p>
@@ -248,10 +254,10 @@ function DetailTab({ scoreData }) {
 
       {scoreData.cv_claim_verification && (
         <div className="bg-slate-800/50 border border-slate-700 rounded-2xl p-4">
-          <SectionLabel>Kiểm chứng CV</SectionLabel>
+          <SectionLabel>{t('scoring.legacy.cvVerification')}</SectionLabel>
           {scoreData.cv_claim_verification.verified?.length > 0 && (
             <div className="mb-3">
-              <p className="text-[10px] text-emerald-400 uppercase tracking-wider font-semibold mb-1.5">Đã xác nhận</p>
+              <p className="text-[10px] text-emerald-400 uppercase tracking-wider font-semibold mb-1.5">{t('scoring.legacy.verified')}</p>
               <ul className="flex flex-col gap-1">
                 {scoreData.cv_claim_verification.verified.map((item, i) => (
                   <li key={i} className="flex items-start gap-2 text-xs text-slate-400">
@@ -264,7 +270,7 @@ function DetailTab({ scoreData }) {
           {scoreData.cv_claim_verification.unverified_or_inflated?.length > 0 && (
             <div>
               <p className="text-[10px] text-amber-400 uppercase tracking-wider font-semibold mb-1.5">
-                Chưa xác minh / Có thể thổi phồng
+                {t('scoring.legacy.unverified')}
               </p>
               <ul className="flex flex-col gap-1">
                 {scoreData.cv_claim_verification.unverified_or_inflated.map((item, i) => (
@@ -282,20 +288,21 @@ function DetailTab({ scoreData }) {
 }
 
 function CommunicationTab({ scoreData }) {
+  const { t } = useTranslation()
   const cq = scoreData.communication_quality
-  if (!cq) return <p className="text-sm text-slate-500 text-center py-8">Không có dữ liệu giao tiếp</p>
+  if (!cq) return <p className="text-sm text-slate-500 text-center py-8">{t('scoring.legacy.noCommunicationData')}</p>
 
   const cqScore = cq.score ?? 0
   const metrics = [
-    { label: 'Độ rõ ràng', value: cq.clarity },
-    { label: 'Súc tích',   value: cq.conciseness },
-    { label: 'Cấu trúc',   value: cq.structure },
+    { label: t('scoring.legacy.communication.clarity'), value: cq.clarity },
+    { label: t('scoring.legacy.communication.conciseness'), value: cq.conciseness },
+    { label: t('scoring.legacy.communication.structure'), value: cq.structure },
   ]
 
   return (
     <div className="bg-slate-800/50 border border-slate-700 rounded-2xl p-4">
       <div className="flex items-center justify-between mb-4">
-        <SectionLabel>Chất lượng giao tiếp</SectionLabel>
+        <SectionLabel>{t('scoring.legacy.communication.title')}</SectionLabel>
         <span className={`text-lg font-bold ${scoreColor(cqScore)}`}>{cqScore}/100</span>
       </div>
       <div className="flex flex-col gap-3">
@@ -312,13 +319,14 @@ function CommunicationTab({ scoreData }) {
 
 // ── main export ────────────────────────────────────────────────────────────────
 const BASE_TABS = [
-  { id: 'overview',      label: 'Tổng quan',  Icon: LayoutGrid },
-  { id: 'detail',        label: 'Chi tiết',   Icon: List },
-  { id: 'communication', label: 'Giao tiếp',  Icon: MessageSquare },
+  { id: 'overview',      labelKey: 'scoring.legacy.tabs.overview',      Icon: LayoutGrid },
+  { id: 'detail',        labelKey: 'scoring.legacy.tabs.detail',        Icon: List },
+  { id: 'communication', labelKey: 'scoring.legacy.tabs.communication', Icon: MessageSquare },
 ]
-const COMBAT_TAB = { id: 'combat', label: 'Thực chiến', Icon: Swords }
+const COMBAT_TAB = { id: 'combat', labelKey: 'scoring.legacy.tabs.combat', Icon: Swords }
 
 export default function ScorecardDisplay({ scoreData, isCombat = false }) {
+  const { t } = useTranslation()
   const navigate = useNavigate();
   const tabs = isCombat ? [...BASE_TABS, COMBAT_TAB] : BASE_TABS
   const [tab, setTab] = useState(isCombat ? 'combat' : 'overview')
@@ -334,12 +342,12 @@ export default function ScorecardDisplay({ scoreData, isCombat = false }) {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <Star className="w-5 h-5 text-amber-400" />
-            <h1 className="text-base font-bold text-white">Kết quả phỏng vấn</h1>
+            <h1 className="text-base font-bold text-white">{t('scoring.legacy.title')}</h1>
           </div>
           {isCombat && (
             <span className="flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full bg-red-500/10 border border-red-500/30 text-red-400 font-medium">
               <Swords className="w-3 h-3" />
-              Combat
+               {t('scoring.combat.overall')}
             </span>
           )}
         </div>
@@ -356,7 +364,7 @@ export default function ScorecardDisplay({ scoreData, isCombat = false }) {
           </div>
           <div className="flex flex-col gap-2 min-w-0">
             <span className={`inline-flex items-center self-start px-3 py-1 rounded-full text-xs font-semibold border ${verdict.bg} ${verdict.color}`}>
-              {verdict.label}
+              {t(verdict.labelKey)}
             </span>
             {scoreData.actionable_feedback && (
               <p className="text-xs text-slate-400 leading-relaxed line-clamp-3">
@@ -369,7 +377,7 @@ export default function ScorecardDisplay({ scoreData, isCombat = false }) {
 
       {/* ── Tab bar ── */}
       <div className="flex gap-1 bg-slate-800/60 border border-slate-700 rounded-xl p-1">
-        {tabs.map(({ id, label, Icon }) => (
+        {tabs.map(({ id, labelKey, Icon }) => (
           <button
             key={id}
             onClick={() => setTab(id)}
@@ -377,7 +385,7 @@ export default function ScorecardDisplay({ scoreData, isCombat = false }) {
               ${tab === id ? 'bg-slate-700 text-white' : 'text-slate-500 hover:text-slate-300'}`}
           >
             <Icon className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">{label}</span>
+            <span className="hidden sm:inline">{t(labelKey)}</span>
           </button>
         ))}
       </div>
@@ -395,14 +403,14 @@ export default function ScorecardDisplay({ scoreData, isCombat = false }) {
           className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-700 text-slate-300 hover:bg-slate-800 transition-colors text-sm font-medium"
         >
           <Home className="w-4 h-4" />
-          Về trang chủ
+          {t('behaviorScorecard.backHome')}
         </button>
         <button
           onClick={() => navigate(ROUTES.INTERVIEW_SETUP)}
           className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-cta hover:bg-cta/90 text-black font-semibold text-sm transition-colors"
         >
           <RotateCcw className="w-4 h-4" />
-          Luyện tập lại
+          {t('behaviorScorecard.practiceAgain')}
         </button>
       </div>
     </div>

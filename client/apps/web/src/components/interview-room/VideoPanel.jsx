@@ -4,10 +4,11 @@
  *   Bottom section: Problem statement
  */
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { User, BookOpen, ChevronDown, ChevronUp, Tag } from 'lucide-react'
 import ProblemStatement from './ProblemStatement'
 
-function VideoTile({ label, isSelf = false, speaking = false }) {
+function VideoTile({ label, isSelf = false, speaking = false, speakingLabel }) {
   return (
     <div
       className={`relative flex-1 min-h-0 rounded-xl overflow-hidden border transition-all duration-200 ${
@@ -29,7 +30,7 @@ function VideoTile({ label, isSelf = false, speaking = false }) {
 
       {/* Speaking indicator bar */}
       {speaking && (
-        <div className="absolute inset-x-0 bottom-0 h-0.5 bg-[#22C55E]" aria-label="Đang phát biểu" />
+        <div className="absolute inset-x-0 bottom-0 h-0.5 bg-[#22C55E]" aria-label={speakingLabel} />
       )}
 
       {/* Participant label */}
@@ -47,6 +48,7 @@ function VideoTile({ label, isSelf = false, speaking = false }) {
 }
 
 export default function VideoPanel() {
+  const { t } = useTranslation()
   const [problemOpen, setProblemOpen] = useState(true)
   const [activeTab, setActiveTab] = useState('problem') // 'problem' | 'notes'
 
@@ -55,7 +57,7 @@ export default function VideoPanel() {
       {/* ── Video section ── */}
       <div className="flex flex-col gap-2 p-3 flex-shrink-0" style={{ height: problemOpen ? '260px' : '200px' }}>
         {/* Main interviewer tile */}
-        <VideoTile label="Interviewer · Nguyễn Văn A" speaking={false} />
+        <VideoTile label={t('interviewRoom.video.interviewer')} speaking={false} speakingLabel={t('interviewRoom.video.speaking')} />
 
         {/* Self (candidate) — smaller tile */}
         <div className="h-20 flex-shrink-0">
@@ -69,7 +71,7 @@ export default function VideoPanel() {
             <div className="absolute inset-x-0 bottom-0 h-0.5 bg-[#22C55E]" />
             <div className="absolute bottom-1.5 left-2 flex items-center gap-1 bg-[#0A0F1E]/80 px-1.5 py-0.5 rounded">
               <span className="w-1.5 h-1.5 rounded-full bg-[#22C55E] animate-pulse" aria-hidden="true" />
-              <span className="font-['Fira_Sans',sans-serif] text-[10px] text-slate-300 font-medium">Bạn (You)</span>
+              <span className="font-['Fira_Sans',sans-serif] text-[10px] text-slate-300 font-medium">{t('interviewRoom.video.you')}</span>
             </div>
           </div>
         </div>
@@ -87,11 +89,11 @@ export default function VideoPanel() {
           <div className="flex items-center gap-2">
             <BookOpen size={14} className="text-[#22C55E]" />
             <span className="font-['Fira_Code',monospace] text-xs font-semibold text-slate-200">
-              Đề bài
+              {t('interviewRoom.problem')}
             </span>
             <span className="flex items-center gap-1 bg-[#22C55E]/10 border border-[#22C55E]/25 text-[#22C55E] text-[10px] font-['Fira_Sans',sans-serif] font-medium px-1.5 py-0.5 rounded-full">
               <Tag size={9} />
-              Medium
+              {t('interviewRoom.difficulty.medium')}
             </span>
           </div>
           <span className="text-slate-500">
@@ -112,7 +114,7 @@ export default function VideoPanel() {
                     : 'border-transparent text-slate-500 hover:text-slate-300'
                 }`}
               >
-                {tab === 'problem' ? 'Đề bài' : 'Ghi chú'}
+                {tab === 'problem' ? t('interviewRoom.problem') : t('interviewRoom.notes.title')}
               </button>
             ))}
           </div>
@@ -134,11 +136,13 @@ export default function VideoPanel() {
 }
 
 function NotesArea() {
+  const { t } = useTranslation()
+
   return (
     <div className="p-4">
       <textarea
-        aria-label="Ghi chú trong phiên phỏng vấn"
-        placeholder="Ghi chú của bạn trong quá trình phỏng vấn…"
+        aria-label={t('interviewRoom.notes.ariaLabel')}
+        placeholder={t('interviewRoom.notes.placeholder')}
         className="w-full h-48 bg-transparent resize-none font-['Fira_Sans',sans-serif] text-sm text-slate-300 placeholder-slate-600 focus:outline-none focus-visible:outline-none leading-relaxed"
       />
     </div>

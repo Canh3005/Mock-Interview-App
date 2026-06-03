@@ -1,5 +1,6 @@
 import { call, put, select, takeLatest, delay } from 'redux-saga/effects'
 import { dsaApi } from '../../api/dsa.api'
+import i18n from '../../i18n/config'
 import { toast } from 'sonner'
 import {
   startDSARound,
@@ -38,7 +39,7 @@ function* startDSARoundSaga(action) {
 
     yield put(sessionCreated({ session: sessionData, sessionProblems, problems, templates, testCases }))
   } catch (err) {
-    const msg = err.response?.data?.message || 'Không thể khởi tạo vòng DSA.'
+    const msg = err.response?.data?.message || i18n.t('dsaRoom.toast.initFailed')
     yield put(sessionError(msg))
     toast.error(msg)
   }
@@ -57,7 +58,7 @@ function* submitApproachSaga(action) {
       updatedProgress: updatedSession.problemProgress?.[problemId] ?? { phase: 'CODE' },
     }))
   } catch (err) {
-    toast.error('Không thể lưu approach.')
+    toast.error(i18n.t('dsaRoom.toast.approachFailed'))
   }
 }
 
@@ -74,7 +75,7 @@ function* runCodeSaga(action) {
     const { results, hasTLE } = yield call(dsaApi.runCode, sessionId, problemId, code, language)
     yield put(runCompleted({ problemId, results, hasTLE }))
   } catch (err) {
-    const msg = err.response?.data?.message || 'Lỗi khi chạy code.'
+    const msg = err.response?.data?.message || i18n.t('dsaRoom.toast.runFailed')
     yield put(runFailed(msg))
     toast.error(msg)
   }
@@ -133,7 +134,7 @@ function* submitProblemSaga(action) {
       }
     }
   } catch (err) {
-    toast.error('Không thể nộp bài.')
+    toast.error(i18n.t('dsaRoom.toast.submitFailed'))
   }
 }
 
@@ -156,7 +157,7 @@ function* pollForDebrief(sessionId) {
       // Ignore polling errors, keep trying
     }
   }
-  yield put(debriefTimeout())
+  yield put(debriefTimeout(i18n.t('dsaRoom.toast.scoringTimeout')))
 }
 
 // ─── Root watcher ─────────────────────────────────────────────────────────────

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../router/routes';
 import { Loader2 } from 'lucide-react';
@@ -19,6 +20,7 @@ import { interviewApi } from '../../api/interview.api';
  *   extraSections — (optional) React node rendered below scorecard for combat-specific data
  */
 export default function ScoringPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { session, scoringInitialTab } = useSelector((s) => s.interviewSetup);
   const mode = session?.mode === 'combat' ? 'combat' : 'behavioral';
@@ -56,7 +58,7 @@ export default function ScoringPage() {
             if (firstAvailable) setSelectedSessionType(firstAvailable[0]);
           }
         })
-        .catch((err) => console.error('Failed to fetch sessions:', err))
+        .catch((err) => console.error(t('scoring.errors.fetchSessions'), err))
         .finally(() => setIsLoadingSessions(false));
     }
   }, [interviewSessionId]);
@@ -74,7 +76,7 @@ export default function ScoringPage() {
           setAllSessions(data.sessions);
           setFinalScorecard(data.finalScorecard ?? null);
         })
-        .catch((err) => console.error('Failed to re-fetch sessions:', err))
+        .catch((err) => console.error(t('scoring.errors.refetchSessions'), err))
         .finally(() => setIsLoadingSessions(false));
     }
   }, [sdEvaluatorStatus]);
@@ -85,8 +87,8 @@ export default function ScoringPage() {
       <div className="flex min-h-full items-center justify-center p-6">
         <div className="dash-card flex flex-col items-center gap-3 rounded-[20px] p-8 text-center">
           <Loader2 className="w-10 h-10 text-cta animate-spin" />
-          <p className="dash-text text-sm font-semibold">AI đang phân tích buổi phỏng vấn của bạn...</p>
-          <p className="dash-subtle text-xs">Quá trình này mất khoảng 15-30 giây</p>
+          <p className="dash-text text-sm font-semibold">{t('scoring.loading.title')}</p>
+          <p className="dash-subtle text-xs">{t('scoring.loading.subtitle')}</p>
         </div>
       </div>
     );
@@ -101,10 +103,10 @@ export default function ScoringPage() {
 
   // Session type labels
   const SESSION_LABELS = {
-    behavioral: 'Behavioral',
-    liveCoding: 'Live Coding',
-    prompt: 'AI Prompting',
-    systemDesign: 'System Design',
+    behavioral: t('scoring.sessions.behavioral'),
+    liveCoding: t('scoring.sessions.liveCoding'),
+    prompt: t('scoring.sessions.prompt'),
+    systemDesign: t('scoring.sessions.systemDesign'),
   };
 
   // Available sessions (non-null)

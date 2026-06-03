@@ -12,4 +12,6 @@ export const interviewApi = {
 
   getAllSessionsForInterview: (interviewSessionId) =>
     axiosClient.get(`/interview/sessions/${interviewSessionId}/all-sessions`),
+
+  getAnalytics: () => axiosClient.get('/interview/sessions/analytics'),
 };

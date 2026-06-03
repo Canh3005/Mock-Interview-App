@@ -1,7 +1,9 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { ChevronDown, ChevronUp, Code } from 'lucide-react'
 
 export default function SolutionWalkthrough({ code, language = 'python' }) {
+  const { t } = useTranslation()
   const [open, setOpen] = useState(false)
 
   if (!code) return null
@@ -14,7 +16,7 @@ export default function SolutionWalkthrough({ code, language = 'python' }) {
       >
         <div className="flex items-center gap-2">
           <Code className="w-3.5 h-3.5 text-slate-400" />
-          <span className="text-xs font-semibold text-slate-300">Code đã nộp</span>
+          <span className="text-xs font-semibold text-slate-300">{t('scoring.dsa.submittedCode')}</span>
           <span className="text-[10px] text-slate-500 font-mono">{language}</span>
         </div>
         {open

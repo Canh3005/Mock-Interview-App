@@ -1,10 +1,13 @@
 import { Mic, MicOff, Send, RotateCcw, Keyboard } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export default function CombatInputBar({
   inputMode, transcript, textInput, setTextInput,
   isRecording, isStreaming, isAiSpeaking, canSend,
   onSend, onClearTranscript, onSwitchToVoice, onSwitchToText,
 }) {
+  const { t } = useTranslation();
+
   return (
     <div className="border-t border-slate-800 px-4 pt-3 pb-4 flex flex-col gap-2 flex-shrink-0">
       {/* Mode toggle */}
@@ -19,7 +22,7 @@ export default function CombatInputBar({
             }`}
           >
             <Mic className="w-3 h-3" />
-            Voice
+            {t('combatRoom.input.voice')}
           </button>
           <button
             onClick={onSwitchToText}
@@ -30,7 +33,7 @@ export default function CombatInputBar({
             }`}
           >
             <Keyboard className="w-3 h-3" />
-            Text
+            {t('combatRoom.input.text')}
           </button>
         </div>
       </div>
@@ -43,13 +46,13 @@ export default function CombatInputBar({
           }`}>
             {isRecording && <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse flex-shrink-0" />}
             <span className={`text-sm flex-1 ${transcript ? 'text-slate-100' : 'text-slate-500'}`}>
-              {transcript || (isRecording ? 'Đang lắng nghe...' : 'Chờ lượt của bạn...')}
+              {transcript || (isRecording ? t('combatRoom.input.listening') : t('combatRoom.input.waitingTurn'))}
             </span>
             {transcript && (
               <button
                 onClick={onClearTranscript}
                 className="text-slate-500 hover:text-slate-300 transition-colors flex-shrink-0"
-                title="Xóa"
+                title={t('combatRoom.input.clear')}
               >
                 <RotateCcw className="w-3.5 h-3.5" />
               </button>
@@ -63,7 +66,7 @@ export default function CombatInputBar({
           <textarea
             value={textInput}
             onChange={(e) => setTextInput(e.target.value)}
-            placeholder="Nhập câu trả lời của bạn... (Enter để gửi)"
+            placeholder={t('combatRoom.input.placeholder')}
             disabled={isStreaming || isAiSpeaking}
             rows={2}
             className="flex-1 bg-slate-800/80 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-100 placeholder-slate-500 resize-none focus:outline-none focus:ring-1 focus:ring-cta/50 transition-colors"
@@ -77,7 +80,7 @@ export default function CombatInputBar({
           onClick={onSend}
           disabled={!canSend || isStreaming}
           className="p-3 rounded-xl bg-cta hover:bg-cta/90 text-black font-semibold transition-all flex-shrink-0 disabled:opacity-40 disabled:cursor-not-allowed"
-          title="Gửi"
+          title={t('combatRoom.input.send')}
         >
           <Send className="w-4 h-4" />
         </button>

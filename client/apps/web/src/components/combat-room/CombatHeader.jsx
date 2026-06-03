@@ -1,18 +1,5 @@
 import { Clock, Radio, LogOut, CheckCircle2 } from 'lucide-react';
-
-const STATE_LABELS = {
-  INITIALIZING:       'Đang khởi động...',
-  GREETING:           'AI đang chào hỏi',
-  STAGE_INTRO:        'Giới thiệu phần mới',
-  AI_ASKING:          'AI đang hỏi',
-  CANDIDATE_THINKING: 'Đến lượt bạn',
-  CANDIDATE_SPEAKING: 'Đang ghi âm',
-  AI_PROCESSING:      'AI đang xử lý',
-  AI_FOLLOW_UP:       'AI hỏi thêm',
-  STAGE_TRANSITION:   'Chuyển phần...',
-  CLOSING:            'Đang kết thúc',
-  COMPLETED:          'Hoàn thành',
-};
+import { useTranslation } from 'react-i18next';
 
 function formatTime(ms) {
   const totalSec = Math.floor(ms / 1000);
@@ -27,6 +14,7 @@ export default function CombatHeader({
   isStreaming, elapsedMs, isLastStageFinished,
   onExit, onFinish,
 }) {
+  const { t } = useTranslation();
   const statusStyle = isAiSpeaking
     ? 'bg-blue-500/10 border-blue-500/30 text-blue-400'
     : isRecording
@@ -45,21 +33,21 @@ export default function CombatHeader({
         <button
           onClick={onExit}
           className="flex items-center gap-1.5 text-xs text-slate-400 border border-slate-700 hover:border-red-500/50 hover:text-red-400 px-2.5 py-1.5 rounded-lg transition-colors"
-          title="Thoát phỏng vấn"
+          title={t('combatRoom.header.exitTitle')}
         >
           <LogOut className="w-3.5 h-3.5" />
-          Thoát
+          {t('combatRoom.header.exit')}
         </button>
-        <span className="text-sm font-semibold text-white">Combat Mode</span>
+        <span className="text-sm font-semibold text-white">{t('combatRoom.header.mode')}</span>
         <span className="text-slate-600">·</span>
         <span className="text-sm text-slate-400">
-          Giai đoạn {currentStage}/6 – {stageName}
+          {t('combatRoom.header.stage', { current: currentStage, total: 6, name: stageName })}
         </span>
       </div>
 
       <div className="flex items-center gap-3">
         <span className={`text-xs px-2.5 py-1 rounded-full border font-medium ${statusStyle}`}>
-          {STATE_LABELS[combatState] ?? combatState}
+          {t(`combatRoom.state.${combatState}`, combatState)}
         </span>
 
         <div className="flex items-center gap-1.5 text-slate-400 text-sm">
@@ -75,7 +63,7 @@ export default function CombatHeader({
               ? 'bg-blue-500/10 border-blue-500/30 text-blue-400'
               : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
           }`}>
-            {candidateLevel === 'senior' ? 'Senior' : candidateLevel === 'mid' ? 'Mid-level' : 'Junior'}
+            {t(`combatRoom.level.${candidateLevel}`, candidateLevel)}
           </span>
         )}
 
@@ -85,12 +73,12 @@ export default function CombatHeader({
           className={`flex items-center gap-1.5 text-xs border px-2.5 py-1.5 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${finishStyle}`}
         >
           <CheckCircle2 className="w-3.5 h-3.5" />
-          Kết thúc
+          {t('combatRoom.header.finish')}
         </button>
 
         <div className="flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full bg-red-500/10 border border-red-500/30 text-red-400">
           <Radio className="w-3 h-3" />
-          Đang giám sát
+          {t('combatRoom.header.monitoring')}
         </div>
       </div>
     </header>

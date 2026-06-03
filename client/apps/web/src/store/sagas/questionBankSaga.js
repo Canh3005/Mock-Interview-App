@@ -1,6 +1,7 @@
 import { call, delay, put, select, takeLatest } from 'redux-saga/effects';
 import { toast } from 'sonner';
 import { questionBankApi } from '../../api/questionBank.api';
+import i18n from '../../i18n/config';
 import {
   fetchQuestionProbesFailure,
   fetchQuestionProbeDetailFailure,
@@ -62,7 +63,7 @@ function* _handleFetchTaxonomy() {
     const response = yield call(questionBankApi.getTaxonomy);
     yield put(fetchTaxonomySuccess(response));
   } catch (error) {
-    const message = _messageFromError(error, 'Unable to load taxonomy.');
+    const message = _messageFromError(error, i18n.t('questionBank.toast.loadTaxonomyFailed'));
     yield put(fetchTaxonomyFailure(message));
     toast.error(message);
   }
@@ -78,7 +79,7 @@ function* _handleFetchProbes(action) {
     const response = yield call(questionBankApi.getProbes, params);
     yield put(fetchQuestionProbesSuccess(response));
   } catch (error) {
-    const message = _messageFromError(error, 'Unable to load question bank.');
+    const message = _messageFromError(error, i18n.t('questionBank.toast.loadBankFailed'));
     yield put(fetchQuestionProbesFailure(message));
     toast.error(message);
   }
@@ -93,7 +94,7 @@ function* _handleFetchProbeDetail(action) {
     });
     yield put(fetchQuestionProbeDetailSuccess(response));
   } catch (error) {
-    const message = _messageFromError(error, 'Unable to load question detail.');
+    const message = _messageFromError(error, i18n.t('questionBank.toast.loadDetailFailed'));
     yield put(fetchQuestionProbeDetailFailure(message));
     toast.error(message);
   }
@@ -107,10 +108,10 @@ function* _handleSubmitPracticeAttempt(action) {
       data,
     });
     yield put(submitQuestionPracticeAttemptSuccess(response));
-    toast.success('Answer submitted. Feedback is being prepared.');
+    toast.success(i18n.t('questionBank.toast.answerSubmitted'));
     yield put(pollQuestionPracticeAttemptRequest({ attemptId: response.attemptId }));
   } catch (error) {
-    const message = _messageFromError(error, 'Unable to submit your answer.');
+    const message = _messageFromError(error, i18n.t('questionBank.toast.submitAnswerFailed'));
     yield put(submitQuestionPracticeAttemptFailure(message));
     toast.error(message);
   }
@@ -124,7 +125,7 @@ function* _handleFetchPracticeAttempt(action) {
     });
     yield put(fetchQuestionPracticeAttemptSuccess(response));
   } catch (error) {
-    const message = _messageFromError(error, 'Unable to load feedback.');
+    const message = _messageFromError(error, i18n.t('questionBank.toast.loadFeedbackFailed'));
     yield put(fetchQuestionPracticeAttemptFailure(message));
     toast.error(message);
   }
@@ -146,7 +147,7 @@ function* _handlePollPracticeAttempt(action) {
       yield put(fetchQuestionPracticeAttemptSuccess(response));
       if (_isTerminalAttempt(response)) break;
     } catch (error) {
-      const message = _messageFromError(error, 'Unable to load feedback.');
+      const message = _messageFromError(error, i18n.t('questionBank.toast.loadFeedbackFailed'));
       yield put(fetchQuestionPracticeAttemptFailure(message));
       break;
     }
@@ -161,10 +162,10 @@ function* _handleRetryPracticeFeedback(action) {
       attemptId,
     });
     yield put(retryQuestionPracticeFeedbackSuccess(response));
-    toast.success('Feedback retry started.');
+    toast.success(i18n.t('questionBank.toast.feedbackRetryStarted'));
     yield put(pollQuestionPracticeAttemptRequest({ attemptId }));
   } catch (error) {
-    const message = _messageFromError(error, 'Unable to retry feedback.');
+    const message = _messageFromError(error, i18n.t('questionBank.toast.retryFeedbackFailed'));
     yield put(retryQuestionPracticeFeedbackFailure(message));
     toast.error(message);
   }

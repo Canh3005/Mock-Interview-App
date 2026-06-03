@@ -1,5 +1,6 @@
 import { call, put, takeLatest, delay } from 'redux-saga/effects';
 import { profileApi } from '../../api/profile.api';
+import i18n from '../../i18n/config';
 import {
   fetchProfileRequest, fetchProfileSuccess, fetchProfileFailure,
   updateProfileRequest, updateProfileSuccess, updateProfileFailure,
@@ -16,7 +17,7 @@ function* fetchProfileSaga() {
     const response = yield call(profileApi.getProfile);
     yield put(fetchProfileSuccess(response));
   } catch (error) {
-    yield put(fetchProfileFailure(error.response?.data?.message || 'Failed to fetch profile'));
+    yield put(fetchProfileFailure(error.response?.data?.message || i18n.t('profile.toast.fetchFailed')));
   }
 }
 
@@ -24,10 +25,10 @@ function* updateProfileSaga(action) {
   try {
     const response = yield call(profileApi.updateProfile, action.payload);
     yield put(updateProfileSuccess(response));
-    toast.success('Profile updated successfully');
+    toast.success(i18n.t('profile.toast.updated'));
   } catch (error) {
-    yield put(updateProfileFailure(error.response?.data?.message || 'Failed to update profile'));
-    toast.error('Failed to update profile');
+    yield put(updateProfileFailure(error.response?.data?.message || i18n.t('profile.toast.updateFailed')));
+    toast.error(i18n.t('profile.toast.updateFailed'));
   }
 }
 
@@ -40,8 +41,9 @@ function* uploadDocumentSaga(action) {
     // Auto-start polling after a successful upload
     yield put(pollJobStatusRequest(response.jobId));
   } catch (error) {
-    yield put(uploadDocumentFailure(error.response?.data?.message || 'Failed to upload document'));
-    toast.error('Upload failed: ' + (error.response?.data?.message || 'Unknown error'));
+    const message = error.response?.data?.message || i18n.t('profile.toast.unknownError');
+    yield put(uploadDocumentFailure(error.response?.data?.message || i18n.t('profile.toast.uploadFailed')));
+    toast.error(i18n.t('profile.toast.uploadFailedWithMessage', { message }));
   }
 }
 
@@ -58,16 +60,17 @@ function* pollJobStatusSaga(action) {
 
       if (status === 'completed') {
         isPolling = false;
-        toast.success('AI Processing Complete!');
+        toast.success(i18n.t('profile.toast.processingComplete'));
         // After parsing is done, refresh the entire profile to reflect new DB state
         yield put(fetchProfileRequest());
       } else if (status === 'failed') {
         isPolling = false;
-        yield put(pollJobStatusFailure(failedReason || 'Job failed'));
-        toast.error('AI Processing Failed: ' + (failedReason || 'Unknown error'));
+        const message = failedReason || i18n.t('profile.toast.unknownError');
+        yield put(pollJobStatusFailure(failedReason || i18n.t('profile.toast.jobFailed')));
+        toast.error(i18n.t('profile.toast.processingFailedWithMessage', { message }));
       } else if (status === 'not_found' || !status) {
         isPolling = false;
-        yield put(pollJobStatusFailure('Job not found'));
+        yield put(pollJobStatusFailure(i18n.t('profile.toast.jobNotFound')));
       } else {
         // waiting, active, delayed => wait and poll again
         yield delay(2000); // 2 seconds between polls
@@ -75,7 +78,7 @@ function* pollJobStatusSaga(action) {
     } catch (error) {
       isPolling = false;
       yield put(pollJobStatusFailure(error.message));
-      toast.error('Failed to check job status');
+      toast.error(i18n.t('profile.toast.jobStatusFailed'));
     }
   }
 }
@@ -92,10 +95,10 @@ function* fetchAssessmentHistorySaga() {
 function* deleteAssessmentSaga(action) {
   try {
     yield call(profileApi.deleteAssessment, action.payload);
-    toast.success('Assessment deleted.');
+    toast.success(i18n.t('profile.toast.assessmentDeleted'));
   } catch {
     yield put(deleteAssessmentFailure());
-    toast.error('Failed to delete. Please try again.');
+    toast.error(i18n.t('profile.toast.deleteFailed'));
     // Re-fetch to restore optimistic removal
     yield put(fetchAssessmentHistoryRequest());
   }

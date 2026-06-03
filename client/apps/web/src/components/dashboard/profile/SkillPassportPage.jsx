@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
+import { useTranslation } from 'react-i18next'
 import { fetchProfileRequest } from '../../../store/slices/profileSlice'
 import StaticProfileForm from './StaticProfileForm'
 import ProfileRadarChart from './ProfileRadarChart'
@@ -7,6 +8,7 @@ import DocumentUploadZone from './DocumentUploadZone'
 import AssessmentHistory from './AssessmentHistory'
 
 export default function SkillPassportPage() {
+  const { t } = useTranslation()
   const dispatch = useDispatch()
   const { data: profile, loading } = useSelector((state) => state.profile)
 
@@ -19,9 +21,9 @@ export default function SkillPassportPage() {
         <main className="dash-page">
           <header className="dash-page-header">
             <div>
-              <h1 className="dash-page-title">Skill Passport</h1>
+              <h1 className="dash-page-title">{t('profile.page.title')}</h1>
               <p className="dash-page-description">
-                Manage your CV context, track capabilities, and inject them into AI interviews.
+                {t('profile.page.subtitle')}
               </p>
             </div>
           </header>
@@ -33,13 +35,13 @@ export default function SkillPassportPage() {
 
               {/* Document Processing Card */}
               <div className="dash-card rounded-2xl p-6">
-                <h2 className="dash-text text-xl font-heading font-semibold mb-4">Context Injection (CV & JD)</h2>
+                <h2 className="dash-text text-xl font-heading font-semibold mb-4">{t('profile.page.contextTitle')}</h2>
                 <DocumentUploadZone />
               </div>
 
               {/* Static Profile Information Form */}
               <div className="dash-card rounded-2xl p-6">
-                <h2 className="dash-text text-xl font-heading font-semibold mb-4">Professional Details</h2>
+                <h2 className="dash-text text-xl font-heading font-semibold mb-4">{t('profile.page.professionalDetails')}</h2>
                 {loading && !profile ? (
                   <div className="animate-pulse flex space-x-4">
                     <div className="flex-1 space-y-4 py-1">
@@ -60,7 +62,7 @@ export default function SkillPassportPage() {
             {/* Right Column: Radar Chart + Assessment History */}
             <div className="lg:col-span-5 flex flex-col gap-6">
               <div className="dash-card rounded-2xl p-6">
-                <h2 className="dash-text text-xl font-heading font-semibold mb-4 text-center">Global Capabilities</h2>
+                <h2 className="dash-text text-xl font-heading font-semibold mb-4 text-center">{t('profile.page.globalCapabilities')}</h2>
                 <ProfileRadarChart />
               </div>
 

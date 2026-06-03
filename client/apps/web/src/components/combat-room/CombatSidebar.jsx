@@ -1,9 +1,11 @@
 import { Check, Lock } from 'lucide-react';
-import { STAGE_NAMES } from '../../store/slices/behavioralSlice';
+import { useTranslation } from 'react-i18next';
 
 const STAGES = [1, 2, 3, 4, 5, 6];
 
 export default function CombatSidebar({ videoRef, isRecording, isAiSpeaking, currentStage }) {
+  const { t } = useTranslation();
+
   return (
     <aside className="w-52 flex-shrink-0 border-r border-slate-800 flex-col hidden md:flex">
       <div className="p-3 border-b border-slate-800">
@@ -20,7 +22,7 @@ export default function CombatSidebar({ videoRef, isRecording, isAiSpeaking, cur
           {isRecording && (
             <div className="absolute top-2 right-2 flex items-center gap-1 bg-red-500/90 backdrop-blur-sm text-white text-[10px] px-2 py-0.5 rounded-full">
               <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-              REC
+              {t('combatRoom.sidebar.rec')}
             </div>
           )}
 
@@ -29,7 +31,7 @@ export default function CombatSidebar({ videoRef, isRecording, isAiSpeaking, cur
               <span className="w-1 h-1 rounded-full bg-white animate-bounce" style={{ animationDelay: '0ms' }} />
               <span className="w-1 h-1 rounded-full bg-white animate-bounce" style={{ animationDelay: '120ms' }} />
               <span className="w-1 h-1 rounded-full bg-white animate-bounce" style={{ animationDelay: '240ms' }} />
-              <span className="ml-1">AI đang nói</span>
+              <span className="ml-1">{t('combatRoom.sidebar.aiSpeaking')}</span>
             </div>
           )}
         </div>
@@ -37,7 +39,7 @@ export default function CombatSidebar({ videoRef, isRecording, isAiSpeaking, cur
 
       <div className="flex-1 overflow-y-auto px-2 py-3">
         <p className="text-xs text-slate-500 uppercase tracking-wider font-medium mb-3 px-2">
-          Tiến độ
+          {t('combatRoom.sidebar.progress')}
         </p>
         {STAGES.map((s) => {
           const isPast    = s < currentStage;
@@ -59,7 +61,7 @@ export default function CombatSidebar({ videoRef, isRecording, isAiSpeaking, cur
               <span className={`text-xs leading-tight ${
                 isCurrent ? 'text-white font-semibold' : isPast ? 'text-slate-400' : 'text-slate-500'
               }`}>
-                {STAGE_NAMES[s]}
+                {t(`combatRoom.stageNames.${s}`)}
               </span>
             </div>
           );

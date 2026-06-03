@@ -1,6 +1,7 @@
 import { call, put, select, takeLatest, delay } from 'redux-saga/effects';
 import { interviewApi } from '../../api/interview.api';
 import { sdSessionApi } from '../../api/sdSession';
+import i18n from '../../i18n/config';
 import {
   preflightRequest,
   preflightSuccess,
@@ -25,7 +26,7 @@ function* preflightSaga() {
     const data = yield call(interviewApi.preflight);
     yield put(preflightSuccess(data));
   } catch (err) {
-    const msg = err.response?.data?.message || 'Không thể kiểm tra ngữ cảnh phỏng vấn.';
+    const msg = err.response?.data?.message || i18n.t('interviewSetup.toast.preflightFailed');
     yield put(preflightFailure(msg));
     toast.error(msg);
   }
@@ -39,7 +40,7 @@ function* saveContextSaga(action) {
     });
     yield put(saveContextSuccess());
   } catch (err) {
-    const msg = err.response?.data?.message || 'Không thể lưu thông tin CV/JD.';
+    const msg = err.response?.data?.message || i18n.t('interviewSetup.toast.saveContextFailed');
     yield put(saveContextFailure(msg));
     toast.error(msg);
   }
@@ -60,11 +61,9 @@ function* initSessionSaga() {
     if (typeof data.newBalance === 'number') {
       yield put(setBalance(data.newBalance));
       if (data.newBalance === 0) {
-        toast.warning('Bạn đã hết Credit sau phiên này. Nạp thêm để tiếp tục luyện tập.');
+        toast.warning(i18n.t('creditGate.zeroBalanceWarning'));
       } else if (data.newBalance < LOW_BALANCE_THRESHOLD) {
-        toast.warning(
-          `Bạn còn ${data.newBalance} Credit. Nạp thêm để không bị gián đoạn phiên tiếp theo.`,
-        );
+        toast.warning(i18n.t('creditGate.lowBalanceWarning', { balance: data.newBalance }));
       }
     }
 
@@ -86,7 +85,7 @@ function* initSessionSaga() {
       yield put(setCreditError(errData));
       return;
     }
-    const msg = errData?.message || 'Không thể khởi tạo phiên phỏng vấn.';
+    const msg = errData?.message || i18n.t('interviewSetup.toast.initFailed');
     yield put(initSessionFailure(msg));
     toast.error(msg);
   }

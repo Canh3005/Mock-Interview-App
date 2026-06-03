@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { ROUTES } from '../../router/routes'
 import {
@@ -13,13 +14,12 @@ import {
   startPracticeDSASession,
 } from '../../store/slices/practiceDSASlice'
 
-const DIFF_COLOR  = { EASY: 'text-emerald-600', MEDIUM: 'text-yellow-600', HARD: 'text-red-600' }
-const DIFF_BG     = { EASY: 'bg-emerald-50 border-emerald-200', MEDIUM: 'bg-yellow-50 border-yellow-200', HARD: 'bg-red-50 border-red-200' }
-const DIFF_LABEL  = { EASY: 'Easy', MEDIUM: 'Medium', HARD: 'Hard' }
+const DIFF_COLOR  = { EASY: 'text-emerald-600 dark:text-emerald-400', MEDIUM: 'text-yellow-600 dark:text-yellow-400', HARD: 'text-red-600 dark:text-red-400' }
+const DIFF_BG     = { EASY: 'bg-emerald-50 border-emerald-200 dark:bg-emerald-900/20 dark:border-emerald-800/50', MEDIUM: 'bg-yellow-50 border-yellow-200 dark:bg-yellow-900/20 dark:border-yellow-800/50', HARD: 'bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800/50' }
 const DIFFICULTIES = ['', 'EASY', 'MEDIUM', 'HARD']
-const DIFF_OPTION_LABEL = { '': 'Tất cả độ khó', EASY: 'Easy', MEDIUM: 'Medium', HARD: 'Hard' }
 
 export default function ProblemBankPage() {
+  const { t } = useTranslation()
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const { problems, total, currentPage, limit, filters, loading, error, solvedProblemIds, problemLoading } =
@@ -33,10 +33,10 @@ export default function ProblemBankPage() {
   }, [dispatch])
 
   useEffect(() => {
-    const t = setTimeout(() => {
+    const timeoutId = setTimeout(() => {
       if (searchInput !== filters.search) dispatch(setFilters({ search: searchInput }))
     }, 300)
-    return () => clearTimeout(t)
+    return () => clearTimeout(timeoutId)
   }, [searchInput, dispatch, filters.search])
 
   const handleRowClick = (problem) => {
@@ -69,14 +69,14 @@ export default function ProblemBankPage() {
               <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-cta/10 border border-cta/20 text-cta flex-shrink-0">
               </span>
               <h1 className="dash-page-title">
-                Luyện tập thuật toán
+                {t('practiceBank.title')}
               </h1>
             </div>
-            <h1 className="dash-page-title">Luyện tập thuật toán</h1>
+            <h1 className="dash-page-title">{t('practiceBank.title')}</h1>
             <p className="dash-page-description">
               {total > 0
-                ? `${total} bài tập · ${solvedCount} đã hoàn thành`
-                : 'Chọn một bài để bắt đầu luyện tập'}
+                ? t('practiceBank.summary', { total, solved: solvedCount })
+                : t('practiceBank.emptySummary')}
             </p>
           </div>
 
@@ -93,7 +93,7 @@ export default function ProblemBankPage() {
                     : 'dash-control text-gray-500',
                 ].join(' ')}
               >
-                {DIFF_LABEL[d]}
+                {t(`practiceBank.difficulty.${d}`)}
               </button>
             ))}
           </div>
@@ -105,23 +105,23 @@ export default function ProblemBankPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
             <input
               type="text"
-              placeholder="Tìm kiếm theo tên bài..."
+              placeholder={t('practiceBank.searchPlaceholder')}
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              className="dash-control w-full bg-white border border-gray-200 rounded-xl pl-8 pr-3 py-2 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-cta/50 transition-colors"
+              className="dash-control w-full rounded-xl pl-8 pr-3 py-2 text-sm text-gray-700 dark:text-[var(--dash-text)] placeholder-gray-400 dark:placeholder-[var(--dash-subtle)] focus:outline-none focus:border-cta/50 transition-colors"
             />
           </div>
 
-          <div className="dash-control flex items-center gap-1.5 bg-white border border-gray-200 rounded-xl px-3 py-2">
-            <SlidersHorizontal className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
+          <div className="dash-control flex items-center gap-1.5 rounded-xl px-3 py-2">
+            <SlidersHorizontal className="w-3.5 h-3.5 text-gray-400 dark:text-[var(--dash-subtle)] flex-shrink-0" />
             <select
               value={filters.difficulty}
               onChange={(e) => dispatch(setFilters({ difficulty: e.target.value }))}
-              className="bg-transparent text-sm text-gray-600 focus:outline-none cursor-pointer"
+              className="bg-transparent text-sm text-gray-600 dark:text-[var(--dash-text)] focus:outline-none cursor-pointer"
             >
               {DIFFICULTIES.map((d) => (
                 <option key={d} value={d}>
-                  {DIFF_OPTION_LABEL[d]}
+                  {d ? t(`practiceBank.difficulty.${d}`) : t('practiceBank.allDifficulties')}
                 </option>
               ))}
             </select>
@@ -129,10 +129,10 @@ export default function ProblemBankPage() {
 
           <input
             type="text"
-            placeholder="Lọc theo tag..."
+            placeholder={t('practiceBank.tagPlaceholder')}
             value={filters.tag}
             onChange={(e) => dispatch(setFilters({ tag: e.target.value }))}
-            className="dash-control bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-600 placeholder-gray-400 focus:outline-none focus:border-cta/50 w-40 transition-colors"
+            className="dash-control rounded-xl px-3 py-2 text-sm text-gray-600 dark:text-[var(--dash-text)] placeholder-gray-400 dark:placeholder-[var(--dash-subtle)] focus:outline-none focus:border-cta/50 w-40 transition-colors"
           />
         </div>
 
@@ -140,19 +140,19 @@ export default function ProblemBankPage() {
         <div className="dash-card rounded-2xl overflow-hidden">
 
           {/* Table header */}
-          <div className="dash-border grid grid-cols-[48px_1fr_110px_1fr_72px] gap-3 px-5 py-3 border-b bg-gray-50">
+          <div className="dash-border grid grid-cols-[48px_1fr_110px_1fr_72px] gap-3 px-5 py-3 border-b bg-[var(--dash-surface-muted)]">
             <span className="text-xs font-semibold text-gray-400 uppercase tracking-widest text-center">#</span>
-            <span className="text-xs font-semibold text-gray-400 uppercase tracking-widest">Tiêu đề</span>
-            <span className="text-xs font-semibold text-gray-400 uppercase tracking-widest">Độ khó</span>
-            <span className="text-xs font-semibold text-gray-400 uppercase tracking-widest">Tags</span>
-            <span className="text-xs font-semibold text-gray-400 uppercase tracking-widest text-center">Trạng thái</span>
+            <span className="text-xs font-semibold text-gray-400 uppercase tracking-widest">{t('practiceBank.columns.title')}</span>
+            <span className="text-xs font-semibold text-gray-400 uppercase tracking-widest">{t('practiceBank.columns.difficulty')}</span>
+            <span className="text-xs font-semibold text-gray-400 uppercase tracking-widest">{t('practiceBank.columns.tags')}</span>
+            <span className="text-xs font-semibold text-gray-400 uppercase tracking-widest text-center">{t('practiceBank.columns.status')}</span>
           </div>
 
           {/* Body */}
           {loading ? (
             <div className="flex items-center justify-center py-24 gap-2.5 text-gray-400">
               <Loader2 className="w-5 h-5 animate-spin" />
-              <span className="text-sm font-body">Đang tải danh sách...</span>
+              <span className="text-sm font-body">{t('practiceBank.loading')}</span>
             </div>
           ) : error ? (
             <div className="flex items-center justify-center py-24 text-red-500 text-sm font-body">
@@ -161,7 +161,7 @@ export default function ProblemBankPage() {
           ) : problems.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-24 gap-3">
               <Code2 className="w-10 h-10 text-gray-300" />
-              <p className="text-gray-400 text-sm font-body">Không tìm thấy bài tập nào.</p>
+              <p className="text-gray-400 text-sm font-body">{t('practiceBank.empty')}</p>
             </div>
           ) : (
             <div className="dash-border divide-y">
@@ -175,8 +175,8 @@ export default function ProblemBankPage() {
                     className={[
                       'grid grid-cols-[48px_1fr_110px_1fr_72px] gap-3 px-5 py-3.5 cursor-pointer transition-colors items-center group',
                       isSolved
-                        ? 'bg-emerald-50/60 hover:bg-emerald-50'
-                        : 'hover:bg-gray-50',
+                        ? 'bg-emerald-50/60 hover:bg-emerald-50 dark:bg-emerald-900/15 dark:hover:bg-emerald-900/25'
+                        : 'hover:bg-gray-50 dark:hover:bg-[var(--dash-surface-raised)]',
                     ].join(' ')}
                   >
                     <span className="text-xs text-gray-400 text-center tabular-nums font-body">
@@ -185,20 +185,20 @@ export default function ProblemBankPage() {
 
                     <span className={[
                       'text-sm font-medium font-body truncate transition-colors',
-                      isSolved ? 'text-emerald-600 group-hover:text-emerald-700' : 'text-gray-700 group-hover:text-gray-900',
+                      isSolved ? 'text-emerald-600 group-hover:text-emerald-700 dark:text-emerald-400 dark:group-hover:text-emerald-300' : 'text-gray-700 group-hover:text-gray-900 dark:text-[var(--dash-text)] dark:group-hover:text-[var(--dash-text)]',
                     ].join(' ')}>
                       {p.title}
                     </span>
 
                     <div>
                       <span className={`inline-block text-xs font-semibold px-2 py-0.5 rounded-full border ${DIFF_BG[p.difficulty] ?? ''} ${DIFF_COLOR[p.difficulty] ?? ''}`}>
-                        {DIFF_LABEL[p.difficulty] ?? p.difficulty}
+                        {t(`practiceBank.difficulty.${p.difficulty}`, p.difficulty)}
                       </span>
                     </div>
 
                     <div className="flex flex-wrap gap-1">
                       {(p.tags ?? []).slice(0, 3).map((tag) => (
-                        <span key={tag} className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full font-body">
+                        <span key={tag} className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full font-body dark:bg-[var(--dash-surface-raised)] dark:text-[var(--dash-subtle)]">
                           {tag}
                         </span>
                       ))}
@@ -221,9 +221,9 @@ export default function ProblemBankPage() {
 
           {/* Pagination */}
           {total > 0 && (
-            <div className="dash-border flex items-center justify-between px-5 py-3.5 border-t bg-gray-50">
+            <div className="dash-border flex items-center justify-between px-5 py-3.5 border-t bg-[var(--dash-surface-muted)]">
               <span className="text-xs text-gray-500 font-body">
-                {start}–{end} / <span className="text-gray-700 font-medium">{total}</span> bài tập
+                {t('practiceBank.pagination.summary', { start, end, total })}
               </span>
               <div className="flex items-center gap-1">
                 <button
@@ -232,7 +232,7 @@ export default function ProblemBankPage() {
                   className="dash-control flex items-center gap-1 px-3 py-1.5 text-xs font-body rounded-lg border border-gray-200 bg-white disabled:opacity-40 disabled:cursor-not-allowed transition-colors text-gray-600"
                 >
                   <ChevronLeft className="w-3.5 h-3.5" />
-                  Trước
+                  {t('practiceBank.pagination.previous')}
                 </button>
                 <span className="px-3 py-1.5 text-xs text-gray-500 tabular-nums font-body">
                   {currentPage}
@@ -242,7 +242,7 @@ export default function ProblemBankPage() {
                   onClick={() => dispatch(setPage(currentPage + 1))}
                   className="dash-control flex items-center gap-1 px-3 py-1.5 text-xs font-body rounded-lg border border-gray-200 bg-white disabled:opacity-40 disabled:cursor-not-allowed transition-colors text-gray-600"
                 >
-                  Tiếp
+                  {t('practiceBank.pagination.next')}
                   <ChevronRight className="w-3.5 h-3.5" />
                 </button>
               </div>

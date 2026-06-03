@@ -1,4 +1,5 @@
 import { ChevronLeft, ChevronRight, Edit2, Loader2, Plus, Trash2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const LEVEL_COLORS = {
   mid: 'bg-sky-500/10 border-sky-500/20 text-sky-500',
@@ -7,11 +8,12 @@ const LEVEL_COLORS = {
 };
 
 function PaginationBar({ page, total, limit, onPageChange }) {
+  const { t } = useTranslation();
   const totalPages = Math.ceil(total / limit) || 1;
 
   return (
     <div className="dash-border p-4 border-t flex items-center justify-between text-sm dash-subtle">
-      <span>Trang {page} / {totalPages} ({total} problems)</span>
+      <span>{t('adminSdProblems.pagination', { page, totalPages, total })}</span>
       <div className="flex gap-2">
         <button
           type="button"
@@ -35,12 +37,14 @@ function PaginationBar({ page, total, limit, onPageChange }) {
 }
 
 export default function SDProblemList({ problems, loading, page, total, limit, onPageChange, onCreateNew, onEdit, onDelete }) {
+  const { t } = useTranslation();
+
   return (
     <main className="dash-page animate-in fade-in duration-500 font-body">
       <header className="dash-page-header">
         <div>
-          <h1 className="dash-page-title">SD Problem Bank</h1>
-          <p className="dash-page-description">Quản lý ngân hàng bài tập System Design.</p>
+          <h1 className="dash-page-title">{t('adminSdProblems.title')}</h1>
+          <p className="dash-page-description">{t('adminSdProblems.subtitle')}</p>
         </div>
         <button
           type="button"
@@ -48,7 +52,7 @@ export default function SDProblemList({ problems, loading, page, total, limit, o
           className="dash-primary-button px-5 py-2.5 rounded-xl font-semibold flex items-center gap-2 transition-all cursor-pointer"
         >
           <Plus className="w-5 h-5" />
-          Tạo mới
+          {t('adminSdProblems.create')}
         </button>
       </header>
 
@@ -61,11 +65,11 @@ export default function SDProblemList({ problems, loading, page, total, limit, o
         <table className="w-full text-left text-sm min-w-[600px] flex-1">
           <thead className="dash-muted-panel dash-border border-b">
             <tr>
-              <th className="px-6 py-4 font-semibold dash-subtle">Tiêu đề</th>
-              <th className="px-6 py-4 font-semibold dash-subtle">Domain</th>
-              <th className="px-6 py-4 font-semibold dash-subtle">Level</th>
-              <th className="px-6 py-4 font-semibold dash-subtle">Difficulty</th>
-              <th className="px-6 py-4 font-semibold dash-subtle text-right">Thao tác</th>
+              <th className="px-6 py-4 font-semibold dash-subtle">{t('adminSdProblems.columns.title')}</th>
+              <th className="px-6 py-4 font-semibold dash-subtle">{t('adminSdProblems.columns.domain')}</th>
+              <th className="px-6 py-4 font-semibold dash-subtle">{t('adminSdProblems.columns.level')}</th>
+              <th className="px-6 py-4 font-semibold dash-subtle">{t('adminSdProblems.columns.difficulty')}</th>
+              <th className="px-6 py-4 font-semibold dash-subtle text-right">{t('adminSdProblems.columns.actions')}</th>
             </tr>
           </thead>
           <tbody className="dash-border divide-y">
@@ -101,7 +105,7 @@ export default function SDProblemList({ problems, loading, page, total, limit, o
             ))}
             {problems.length === 0 && !loading && (
               <tr>
-                <td colSpan="5" className="text-center py-8 dash-subtle italic">Chưa có problem nào. Hãy tạo mới.</td>
+                <td colSpan="5" className="text-center py-8 dash-subtle italic">{t('adminSdProblems.empty')}</td>
               </tr>
             )}
           </tbody>

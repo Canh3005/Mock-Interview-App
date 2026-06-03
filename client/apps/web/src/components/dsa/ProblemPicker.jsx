@@ -1,10 +1,12 @@
 import { useDispatch, useSelector } from 'react-redux'
+import { useTranslation } from 'react-i18next'
 import { switchProblem } from '../../store/slices/dsaSessionSlice'
 import { CheckCircle, Circle } from 'lucide-react'
 
 const DIFFICULTY_COLOR = { EASY: 'text-emerald-400', MEDIUM: 'text-yellow-400', HARD: 'text-red-400' }
 
 export default function ProblemPicker() {
+  const { t } = useTranslation()
   const dispatch = useDispatch()
   const { problems, activeProblemId, problemProgress } = useSelector((s) => s.dsaSession)
 
@@ -31,7 +33,7 @@ export default function ProblemPicker() {
             {isDone
               ? <CheckCircle className="w-3.5 h-3.5 text-emerald-400" />
               : <Circle className="w-3.5 h-3.5" />}
-            <span>Bài {i + 1}</span>
+            <span>{t('dsaRoom.header.problemFallback', { index: i + 1 })}</span>
             <span className={`${DIFFICULTY_COLOR[p.difficulty] ?? ''}`}>
               {p.difficulty?.[0]}
             </span>

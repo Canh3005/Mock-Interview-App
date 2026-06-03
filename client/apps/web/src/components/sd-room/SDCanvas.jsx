@@ -35,6 +35,7 @@ function LockedCanvasOverlay() {
 
 function SDCanvasInner({ savedJSON, dispatch, isViewOnly }) {
   const { screenToFlowPosition } = useReactFlow()
+  const { t } = useTranslation()
 
   const [nodes, setNodes, onNodesChange] = useNodesState(savedJSON?.nodes ?? [])
   const [edges, setEdges, onEdgesChange] = useEdgesState(savedJSON?.edges ?? [])
@@ -115,7 +116,7 @@ function SDCanvasInner({ savedJSON, dispatch, isViewOnly }) {
   const handleConnect = useCallback(
     (params) => {
       if (isViewOnly) return
-      const label = window.prompt('Edge label (optional):', '') ?? ''
+      const label = window.prompt(t('sdRoom.edgeLabelPrompt'), '') ?? ''
       setEdges((eds) => {
         const parallelCount = eds.filter(
           (e) =>
@@ -135,7 +136,7 @@ function SDCanvasInner({ savedJSON, dispatch, isViewOnly }) {
         return newEdges
       })
     },
-    [setEdges, nodes, dispatchChange, isViewOnly]
+    [setEdges, nodes, dispatchChange, isViewOnly, t]
   )
 
   const handleDrop = useCallback(

@@ -1,6 +1,7 @@
 import { call, put, select, takeLatest } from 'redux-saga/effects';
 import { toast } from 'sonner';
 import { sdProblemApi } from '../../api/sdProblem.api';
+import i18n from '../../i18n/config';
 import {
   fetchSDProblemsRequest,
   fetchSDProblemsSuccess,
@@ -23,7 +24,7 @@ function* _handleFetch(action) {
     });
     yield put(fetchSDProblemsSuccess(response));
   } catch {
-    const msg = 'Không thể tải danh sách problem.';
+    const msg = i18n.t('adminSdProblems.toast.loadFailed');
     yield put(fetchSDProblemsFailure(msg));
     toast.error(msg);
   }
@@ -34,15 +35,15 @@ function* _handleSave(action) {
   try {
     if (id) {
       yield call(sdProblemApi.update, { id, data: dto });
-      toast.success('Đã cập nhật problem.');
+      toast.success(i18n.t('adminSdProblems.toast.updated'));
     } else {
       yield call(sdProblemApi.create, dto);
-      toast.success('Đã tạo problem mới.');
+      toast.success(i18n.t('adminSdProblems.toast.created'));
     }
     yield put(saveSDProblemSuccess());
     yield put(fetchSDProblemsRequest(currentPage));
   } catch (error) {
-    const msg = error.response?.data?.message || 'Lưu thất bại.';
+    const msg = error.response?.data?.message || i18n.t('adminSdProblems.toast.saveFailed');
     yield put(saveSDProblemFailure(msg));
     toast.error(msg);
   }
@@ -53,12 +54,12 @@ function* _handleDelete(action) {
   try {
     yield call(sdProblemApi.remove, id);
     yield put(deleteSDProblemSuccess());
-    toast.success('Đã xóa problem.');
+    toast.success(i18n.t('adminSdProblems.toast.deleted'));
     const { problems, page } = yield select((state) => state.sdProblem);
     const targetPage = problems.length === 1 && page > 1 ? page - 1 : page;
     yield put(fetchSDProblemsRequest(targetPage));
   } catch {
-    const msg = 'Xóa thất bại.';
+    const msg = i18n.t('adminSdProblems.toast.deleteFailed');
     yield put(deleteSDProblemFailure(msg));
     toast.error(msg);
   }

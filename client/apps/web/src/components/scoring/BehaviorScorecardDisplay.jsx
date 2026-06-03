@@ -131,9 +131,10 @@ function _Actions() {
 }
 
 function _ViewTabs({ view, setView }) {
+  const { t } = useTranslation()
   const tabs = [
-    { id: 'report', label: 'Báo cáo', Icon: LayoutGrid },
-    { id: 'combat', label: 'Thực chiến', Icon: Swords },
+    { id: 'report', label: t('behaviorScorecard.tabs.report'), Icon: LayoutGrid },
+    { id: 'combat', label: t('behaviorScorecard.tabs.combat'), Icon: Swords },
   ]
   return (
     <div className="dash-card flex gap-1 rounded-[18px] p-1">

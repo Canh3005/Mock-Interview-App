@@ -1,6 +1,8 @@
 import { Bot, User } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export default function CombatChatBubble({ msg, isStreamingTarget, streamingText, userAvatar }) {
+  const { t } = useTranslation();
   const isAi = msg.role === 'ai';
   const content = isStreamingTarget ? streamingText : msg.content;
 
@@ -34,7 +36,7 @@ export default function CombatChatBubble({ msg, isStreamingTarget, streamingText
       {!isAi && (
         <div className="w-8 h-8 rounded-full border border-slate-600 flex-shrink-0 mt-1 overflow-hidden flex items-center justify-center bg-slate-700">
           {userAvatar ? (
-            <img src={userAvatar} alt="User" className="w-full h-full object-cover" />
+            <img src={userAvatar} alt={t('combatRoom.chat.userAlt')} className="w-full h-full object-cover" />
           ) : (
             <User className="w-4 h-4 text-slate-400" />
           )}

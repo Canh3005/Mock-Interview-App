@@ -11,6 +11,7 @@ const MIN_CHARS = 100
 
 // ─── Chat bubble: interviewer hoặc candidate ─────────────────────────────────
 function _ChatBubble({ turn, isStreamingTarget, streamingText, userAvatar }) {
+  const { t } = useTranslation()
   const isInterviewer = turn.role === 'interviewer'
   const content = isStreamingTarget ? streamingText : turn.content
 
@@ -42,7 +43,7 @@ function _ChatBubble({ turn, isStreamingTarget, streamingText, userAvatar }) {
       {!isInterviewer && (
       <div className="dash-muted-panel mt-1 flex h-8 w-8 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border">
           {userAvatar ? (
-            <img src={userAvatar} alt="User" className="w-full h-full object-cover" />
+            <img src={userAvatar} alt={t('combatRoom.chat.userAlt')} className="w-full h-full object-cover" />
           ) : (
             <User className="w-4 h-4 text-slate-400" />
           )}

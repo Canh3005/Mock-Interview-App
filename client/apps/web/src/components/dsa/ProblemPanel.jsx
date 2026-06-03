@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import HintsPanel from './HintsPanel'
 
 const DIFFICULTY_STYLE = {
@@ -7,10 +8,12 @@ const DIFFICULTY_STYLE = {
 }
 
 export default function ProblemPanel({ problem, phase, unlockedHintIndices = [], onUnlockHint }) {
+  const { t } = useTranslation()
+
   if (!problem) {
     return (
       <div className="flex items-center justify-center h-full text-slate-500 text-sm">
-        Đang tải bài...
+        {t('dsaRoom.problem.loading')}
       </div>
     )
   }
@@ -23,7 +26,7 @@ export default function ProblemPanel({ problem, phase, unlockedHintIndices = [],
       <div className="space-y-2">
         <div className="flex items-center gap-2 flex-wrap">
           <span className={`text-xs font-semibold px-2 py-0.5 rounded-full border ${DIFFICULTY_STYLE[problem.difficulty] ?? DIFFICULTY_STYLE.MEDIUM}`}>
-            {problem.difficulty}
+            {t(`dsaRoom.difficulty.${String(problem.difficulty).toLowerCase()}`, problem.difficulty)}
           </span>
           {problem.tags?.map((tag) => (
             <span key={tag} className="text-xs text-slate-400 bg-slate-800 px-2 py-0.5 rounded-full">
@@ -42,7 +45,7 @@ export default function ProblemPanel({ problem, phase, unlockedHintIndices = [],
       {/* Constraints */}
       {problem.constraints?.length > 0 && (
         <div className="space-y-1">
-          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Constraints</p>
+          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide">{t('dsaRoom.problem.constraints')}</p>
           <ul className="space-y-0.5">
             {problem.constraints.map((c, i) => (
               <li key={i} className="text-xs text-slate-400 font-mono">

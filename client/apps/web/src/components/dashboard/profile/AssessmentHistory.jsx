@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { fetchAssessmentHistoryRequest, deleteAssessmentRequest } from '../../../store/slices/profileSlice';
 import { History, FileText, Loader2, Trash2 } from 'lucide-react';
 import FitAssessmentSummary from './FitAssessmentSummary';
@@ -27,6 +28,7 @@ function ScoreBar({ score }) {
 }
 
 export default function AssessmentHistory() {
+  const { t, i18n } = useTranslation();
   const dispatch = useDispatch();
   const { assessmentHistory, historyLoading, pollingStatus } = useSelector((state) => state.profile);
 
@@ -49,18 +51,18 @@ export default function AssessmentHistory() {
     <div className="bg-slate-800/50 border border-slate-700/60 rounded-2xl p-6 backdrop-blur-sm">
       <div className="flex items-center gap-2 mb-5">
         <History size={20} className="text-cta" />
-        <h2 className="text-xl font-heading font-semibold text-white">Assessment History</h2>
+        <h2 className="text-xl font-heading font-semibold text-white">{t('profile.assessmentHistory.title')}</h2>
       </div>
 
       {historyLoading && assessmentHistory.length === 0 ? (
         <div className="flex items-center justify-center py-10 text-slate-400">
           <Loader2 size={24} className="animate-spin mr-2" />
-          <span>Loading history...</span>
+          <span>{t('profile.assessmentHistory.loading')}</span>
         </div>
       ) : assessmentHistory.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-10 text-slate-500 gap-2">
           <FileText size={36} />
-          <p className="text-sm">No JD assessments yet. Upload a JD with a CV to get started.</p>
+          <p className="text-sm">{t('profile.assessmentHistory.empty')}</p>
         </div>
       ) : (
         <div className="space-y-3 max-h-[520px] overflow-y-auto pr-1 custom-scrollbar">
@@ -73,14 +75,14 @@ export default function AssessmentHistory() {
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                   <span className="text-xs text-slate-500">
-                    {new Date(item.createdAt).toLocaleDateString('vi-VN', {
+                    {new Date(item.createdAt).toLocaleDateString(i18n.language === 'ja' ? 'ja-JP' : i18n.language === 'en' ? 'en-US' : 'vi-VN', {
                       day: '2-digit', month: '2-digit', year: 'numeric',
                     })}
                   </span>
                   <button
                     onClick={() => handleDelete(item.id)}
                     className="text-slate-600 hover:text-red-400 transition-colors"
-                    title="Delete"
+                    title={t('profile.assessmentHistory.delete')}
                   >
                     <Trash2 size={14} />
                   </button>
@@ -94,8 +96,8 @@ export default function AssessmentHistory() {
               {item.fitAssessmentSummary && (
                 <details className="mt-3 group">
                   <summary className="text-xs text-slate-400 cursor-pointer hover:text-slate-200 select-none list-none flex items-center gap-1">
-                    <span className="group-open:hidden">▶ Show details</span>
-                    <span className="hidden group-open:inline">▼ Hide details</span>
+                    <span className="group-open:hidden">{t('profile.assessmentHistory.showDetails')}</span>
+                    <span className="hidden group-open:inline">{t('profile.assessmentHistory.hideDetails')}</span>
                   </summary>
                   <div className="mt-3">
                     <FitAssessmentSummary summary={item.fitAssessmentSummary} />

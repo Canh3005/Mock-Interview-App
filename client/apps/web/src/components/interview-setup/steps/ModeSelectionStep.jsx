@@ -1,11 +1,12 @@
 import { useDispatch, useSelector } from 'react-redux'
+import { useTranslation } from 'react-i18next'
 import { Target, Swords, AlertTriangle, Globe } from 'lucide-react'
 import { selectMode, proceedFromMode, selectLanguage } from '../../../store/slices/interviewSetupSlice'
 
 const LANGUAGES = [
   {
     key: 'vi',
-    label: 'Tiếng Việt',
+    labelKey: 'interviewSetup.languages.vi',
     badge: 'VI',
     badgeColor: 'bg-red-500/15 text-red-400',
     borderActive: 'border-red-500',
@@ -13,7 +14,7 @@ const LANGUAGES = [
   },
   {
     key: 'en',
-    label: 'English',
+    labelKey: 'interviewSetup.languages.en',
     badge: 'EN',
     badgeColor: 'bg-sky-500/15 text-sky-400',
     borderActive: 'border-sky-500',
@@ -21,7 +22,7 @@ const LANGUAGES = [
   },
   {
     key: 'ja',
-    label: '日本語',
+    labelKey: 'interviewSetup.languages.ja',
     badge: 'JA',
     badgeColor: 'bg-pink-500/15 text-pink-400',
     borderActive: 'border-pink-500',
@@ -35,10 +36,9 @@ const MODES = [
     Icon: Target,
     iconColor: 'text-sky-400',
     iconBg: 'bg-sky-500/10',
-    title: 'Luyện tập',
-    description:
-      'AI đóng vai Mentor thân thiện. Có gợi ý khi bạn bị kẹt. Không áp lực. Thích hợp để làm quen với format phỏng vấn.',
-    badges: ['Không giới hạn thời gian', 'Không cần Webcam'],
+    titleKey: 'interviewSetup.modes.practice.title',
+    descriptionKey: 'interviewSetup.modes.practice.description',
+    badgeKeys: ['interviewSetup.modes.practice.badge1', 'interviewSetup.modes.practice.badge2'],
     badgeColor: 'bg-sky-500/15 text-sky-400',
     borderActive: 'border-sky-500',
     ringActive: 'ring-sky-500/30',
@@ -48,19 +48,18 @@ const MODES = [
     Icon: Swords,
     iconColor: 'text-orange-400',
     iconBg: 'bg-orange-500/10',
-    title: 'Thực chiến',
-    description:
-      'Mô phỏng phỏng vấn thực tế. AI đánh giá nghiêm khắc theo đúng level. Kích hoạt giám sát và phân tích cảm xúc.',
-    badges: ['Giới hạn thời gian', 'Yêu cầu Webcam + Mic'],
+    titleKey: 'interviewSetup.modes.combat.title',
+    descriptionKey: 'interviewSetup.modes.combat.description',
+    badgeKeys: ['interviewSetup.modes.combat.badge1', 'interviewSetup.modes.combat.badge2'],
     badgeColor: 'bg-orange-500/15 text-orange-400',
     borderActive: 'border-orange-500',
     ringActive: 'ring-orange-500/30',
-    warning:
-      'Mọi sự kiện bất thường sẽ được ghi lại dưới dạng cờ đỏ để hậu kiểm — bạn sẽ không bị đuổi ra ngay. Dữ liệu video không được lưu trữ.',
+    warningKey: 'interviewSetup.modes.combat.warning',
   },
 ]
 
 export default function ModeSelectionStep() {
+  const { t } = useTranslation()
   const dispatch = useDispatch()
   const selectedMode = useSelector((s) => s.interviewSetup.selectedMode)
   const selectedLanguage = useSelector((s) => s.interviewSetup.selectedLanguage)
@@ -70,8 +69,8 @@ export default function ModeSelectionStep() {
   return (
     <div className="flex flex-col gap-6">
       <div className="text-center">
-        <h2 className="text-xl font-heading font-bold text-white mb-1">Chọn chế độ phỏng vấn</h2>
-        <p className="text-slate-400 text-sm">Hai chế độ có sự khác biệt về tài nguyên và cơ chế đánh giá.</p>
+        <h2 className="text-xl font-heading font-bold text-white mb-1">{t('interviewSetup.config.modeTitle')}</h2>
+        <p className="text-slate-400 text-sm">{t('interviewSetup.config.modeDescription')}</p>
       </div>
 
       <div className="flex flex-col gap-3">
@@ -95,23 +94,23 @@ export default function ModeSelectionStep() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1 flex-wrap">
-                    <span className="font-semibold text-white text-sm">{mode.title}</span>
-                    {mode.badges.map((b) => (
+                    <span className="font-semibold text-white text-sm">{t(mode.titleKey)}</span>
+                    {mode.badgeKeys.map((badgeKey) => (
                       <span
-                        key={b}
+                        key={badgeKey}
                         className={`text-xs px-2 py-0.5 rounded-full font-medium ${mode.badgeColor}`}
                       >
-                        {b}
+                        {t(badgeKey)}
                       </span>
                     ))}
                   </div>
-                  <p className="text-slate-400 text-xs leading-relaxed">{mode.description}</p>
+                  <p className="text-slate-400 text-xs leading-relaxed">{t(mode.descriptionKey)}</p>
 
                   {/* Combat warning — show when selected */}
-                  {isSelected && mode.warning && (
+                  {isSelected && mode.warningKey && (
                     <div className="mt-3 p-3 rounded-lg bg-orange-500/10 border border-orange-500/30 text-orange-300 text-xs leading-relaxed">
                       <AlertTriangle className="w-3.5 h-3.5 flex-shrink-0 inline mr-1.5" />
-                      {mode.warning}
+                      {t(mode.warningKey)}
                     </div>
                   )}
                 </div>
@@ -135,7 +134,7 @@ export default function ModeSelectionStep() {
       <div className="flex flex-col gap-2">
         <div className="flex items-center gap-2 text-slate-400 text-xs">
           <Globe className="w-3.5 h-3.5" />
-          <span>Ngôn ngữ phỏng vấn</span>
+          <span>{t('interviewSetup.config.languageTitle')}</span>
         </div>
         <div className="flex gap-2">
           {LANGUAGES.map((lang) => {
@@ -155,7 +154,7 @@ export default function ModeSelectionStep() {
                 <span className={`text-xs px-1.5 py-0.5 rounded font-semibold mr-1.5 ${lang.badgeColor}`}>
                   {lang.badge}
                 </span>
-                {lang.label}
+                {t(lang.labelKey)}
               </button>
             )
           })}
@@ -167,7 +166,7 @@ export default function ModeSelectionStep() {
         onClick={() => dispatch(proceedFromMode())}
         className="w-full px-4 py-3 rounded-xl bg-cta hover:bg-cta/90 disabled:opacity-40 disabled:cursor-not-allowed text-black font-semibold text-sm transition-colors"
       >
-        Tiếp tục
+        {t('interviewSetup.context.continue')}
       </button>
     </div>
   )

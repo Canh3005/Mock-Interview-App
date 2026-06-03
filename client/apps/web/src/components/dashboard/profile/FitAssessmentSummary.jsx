@@ -1,18 +1,20 @@
+import { useTranslation } from 'react-i18next';
+
 const BREAKDOWN_ITEMS = [
-  ['mustHaveSkillCoverage', 'Required skills'],
-  ['roleResponsibilityFit', 'Responsibilities'],
-  ['experienceLevelFit', 'Experience level'],
-  ['evidenceQuality', 'Evidence quality'],
-  ['transferableExperience', 'Transferable experience'],
-  ['niceToHaveCoverage', 'Nice-to-have skills'],
-  ['domainFit', 'Domain fit'],
+  ['mustHaveSkillCoverage', 'mustHaveSkillCoverage'],
+  ['roleResponsibilityFit', 'roleResponsibilityFit'],
+  ['experienceLevelFit', 'experienceLevelFit'],
+  ['evidenceQuality', 'evidenceQuality'],
+  ['transferableExperience', 'transferableExperience'],
+  ['niceToHaveCoverage', 'niceToHaveCoverage'],
+  ['domainFit', 'domainFit'],
 ];
 
 const GAP_GROUPS = [
-  ['missingRequiredSkills', 'Missing required skills'],
-  ['weakEvidence', 'Weak evidence'],
-  ['levelMismatch', 'Level mismatch'],
-  ['transferableButNotDirect', 'Transferable but not direct'],
+  ['missingRequiredSkills', 'missingRequiredSkills'],
+  ['weakEvidence', 'weakEvidence'],
+  ['levelMismatch', 'levelMismatch'],
+  ['transferableButNotDirect', 'transferableButNotDirect'],
 ];
 
 function MiniBar({ value }) {
@@ -47,6 +49,8 @@ function GapList({ title, gaps }) {
 }
 
 export default function FitAssessmentSummary({ summary }) {
+  const { t } = useTranslation();
+
   if (!summary) return null;
 
   const groupedGaps = summary.groupedGaps ?? {};
@@ -55,10 +59,10 @@ export default function FitAssessmentSummary({ summary }) {
   return (
     <div className="bg-slate-900/50 rounded-lg p-3 border border-slate-700 space-y-3">
       <div className="flex items-center justify-between gap-3">
-        <h4 className="text-sm font-semibold text-slate-200">Fit breakdown</h4>
+        <h4 className="text-sm font-semibold text-slate-200">{t('profile.fit.title')}</h4>
         {summary.confidence && (
           <span className="text-[11px] px-2 py-0.5 rounded border border-slate-700 text-slate-400">
-            Confidence: {summary.confidence}
+            {t('profile.fit.confidence', { value: summary.confidence })}
           </span>
         )}
       </div>
@@ -66,16 +70,16 @@ export default function FitAssessmentSummary({ summary }) {
       {summary.headline && <p className="text-xs text-slate-400">{summary.headline}</p>}
 
       <div className="grid gap-2">
-        {BREAKDOWN_ITEMS.map(([key, label]) => (
+        {BREAKDOWN_ITEMS.map(([key, labelKey]) => (
           <div key={key} className="grid grid-cols-[130px_1fr] items-center gap-2">
-            <span className="text-xs text-slate-400">{label}</span>
+            <span className="text-xs text-slate-400">{t(`profile.fit.breakdown.${labelKey}`)}</span>
             <MiniBar value={summary.scoreBreakdown?.[key]} />
           </div>
         ))}
         {summary.scoreBreakdown?.riskPenalty > 0 && (
           <div className="space-y-1.5">
             <div className="grid grid-cols-[130px_1fr] items-center gap-2">
-              <span className="text-xs text-red-400">Risk deductions</span>
+              <span className="text-xs text-red-400">{t('profile.fit.riskDeductions')}</span>
               <div className="flex items-center gap-2">
                 <div className="h-1.5 flex-1 rounded-full bg-slate-800 overflow-hidden">
                   <div
@@ -93,7 +97,7 @@ export default function FitAssessmentSummary({ summary }) {
                 {summary.riskFlags.map((flag, i) => (
                   <li key={i} className="text-[11px] text-red-400/80 leading-relaxed">
                     <span className={`font-semibold mr-1 ${flag.severity === 'high' ? 'text-red-400' : flag.severity === 'medium' ? 'text-orange-400' : 'text-yellow-400'}`}>
-                      [{flag.severity}]
+                      [{t(`profile.fit.severity.${flag.severity}`, flag.severity)}]
                     </span>
                     {flag.explanation}
                   </li>
@@ -106,15 +110,15 @@ export default function FitAssessmentSummary({ summary }) {
 
       {hasAnyGap ? (
         <div className="space-y-2">
-          <p className="text-xs font-semibold text-slate-300">What to improve</p>
-          {GAP_GROUPS.map(([key, label]) => (
-            <GapList key={key} title={label} gaps={groupedGaps[key]} />
+          <p className="text-xs font-semibold text-slate-300">{t('profile.fit.whatToImprove')}</p>
+          {GAP_GROUPS.map(([key, labelKey]) => (
+            <GapList key={key} title={t(`profile.fit.gaps.${labelKey}`)} gaps={groupedGaps[key]} />
           ))}
         </div>
       ) : (
         summary.strengths?.length > 0 && (
           <div>
-            <p className="text-xs font-semibold text-slate-300 mb-1">Strengths</p>
+            <p className="text-xs font-semibold text-slate-300 mb-1">{t('profile.fit.strengths')}</p>
             <ul className="list-disc pl-4 space-y-1">
               {summary.strengths.map((strength, index) => (
                 <li key={index} className="text-xs text-slate-400">
@@ -127,7 +131,7 @@ export default function FitAssessmentSummary({ summary }) {
       )}
 
       <p className="text-[11px] text-slate-500">
-        Fit score measures how this CV matches this JD, not behavior interview readiness.
+        {t('profile.fit.note')}
       </p>
     </div>
   );

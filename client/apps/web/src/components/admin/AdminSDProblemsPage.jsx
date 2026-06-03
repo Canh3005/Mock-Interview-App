@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import {
   fetchSDProblemsRequest,
   saveSDProblemRequest,
@@ -9,6 +10,7 @@ import SDProblemList from './sd-problem/SDProblemList';
 import SDProblemModal from './sd-problem/SDProblemModal';
 
 export default function AdminSDProblemsPage() {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const { problems, total, page, loading, saving } = useSelector((state) => state.sdProblem);
   const [selected, setSelected] = useState(null);
@@ -24,7 +26,7 @@ export default function AdminSDProblemsPage() {
   };
 
   const _handleDelete = (id) => {
-    if (!confirm('Bạn có chắc muốn xóa problem này?')) return;
+    if (!confirm(t('adminSdProblems.confirmDelete'))) return;
     dispatch(deleteSDProblemRequest({ id }));
   };
 

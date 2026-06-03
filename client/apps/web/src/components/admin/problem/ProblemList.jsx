@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { CheckCircle2, ChevronLeft, ChevronRight, Clock, Edit2, Plus, Save, Search, ShieldCheck, Trash2 } from 'lucide-react';
 import {
   clearCurrentProblem,
@@ -11,6 +12,7 @@ import {
 } from '../../../store/slices/adminProblemsSlice';
 
 export default function ProblemList({ onCreateNew, onEdit }) {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const fileInputRef = useRef(null);
 
@@ -46,12 +48,12 @@ export default function ProblemList({ onCreateNew, onEdit }) {
       try {
         const json = JSON.parse(event.target.result);
         if (!Array.isArray(json)) {
-          alert('Cau truc file JSON khong hop le. Vui long upload mot mang bai tap Array [{}].');
+          alert(t('adminProblems.importInvalidStructure'));
           return;
         }
         dispatch(importProblemsStart(json));
       } catch (err) {
-        alert(`Khong the phan tich file JSON: ${err.message}`);
+        alert(t('adminProblems.importParseError', { message: err.message }));
       }
     };
     reader.readAsText(file);
@@ -62,8 +64,8 @@ export default function ProblemList({ onCreateNew, onEdit }) {
     <main className="dash-page animate-in fade-in duration-500 font-body">
       <header className="dash-page-header">
         <div>
-          <h1 className="dash-page-title">Ngân hàng bài tập</h1>
-          <p className="dash-page-description">Quản lý kho bài tập thuật toán của hệ thống.</p>
+          <h1 className="dash-page-title">{t('adminProblems.title')}</h1>
+          <p className="dash-page-description">{t('adminProblems.subtitle')}</p>
         </div>
         <div className="flex gap-3">
           <input
@@ -80,7 +82,7 @@ export default function ProblemList({ onCreateNew, onEdit }) {
             className="dash-card hover:brightness-95 px-5 py-2.5 rounded-xl font-medium flex items-center gap-2 transition-all cursor-pointer disabled:opacity-50"
           >
             {importLoading ? <Clock className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-            {importLoading ? 'Đang import...' : 'Import JSON'}
+            {importLoading ? t('adminProblems.importing') : t('adminProblems.importJson')}
           </button>
           <button
             type="button"
@@ -88,7 +90,7 @@ export default function ProblemList({ onCreateNew, onEdit }) {
             className="dash-primary-button px-5 py-2.5 rounded-xl font-medium flex items-center gap-2 transition-all cursor-pointer"
           >
             <Plus className="w-5 h-5" />
-            Bài tập mới
+            {t('adminProblems.newProblem')}
           </button>
         </div>
       </header>
@@ -101,7 +103,7 @@ export default function ProblemList({ onCreateNew, onEdit }) {
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Tìm kiếm bài tập..."
+              placeholder={t('adminProblems.searchPlaceholder')}
               className="dash-input w-full rounded-lg pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:border-cta"
             />
           </div>
@@ -111,10 +113,10 @@ export default function ProblemList({ onCreateNew, onEdit }) {
               onChange={(e) => setDifficultyFilter(e.target.value)}
               className="dash-input rounded-lg px-4 py-2.5 text-sm"
             >
-              <option value="">Tất cả độ khó</option>
-              <option value="EASY">EASY</option>
-              <option value="MEDIUM">MEDIUM</option>
-              <option value="HARD">HARD</option>
+              <option value="">{t('adminProblems.allDifficulties')}</option>
+              <option value="EASY">{t('adminProblems.difficulty.EASY')}</option>
+              <option value="MEDIUM">{t('adminProblems.difficulty.MEDIUM')}</option>
+              <option value="HARD">{t('adminProblems.difficulty.HARD')}</option>
             </select>
           </div>
         </div>
@@ -128,11 +130,11 @@ export default function ProblemList({ onCreateNew, onEdit }) {
           <table className={`w-full text-left text-sm whitespace-nowrap min-w-[700px] transition-opacity duration-300 ${loading && problems.length > 0 ? 'opacity-50' : 'opacity-100'}`}>
             <thead className="dash-muted-panel dash-border border-b">
               <tr>
-                <th className="px-6 py-4 font-semibold dash-subtle w-24">ID</th>
-                <th className="px-6 py-4 font-semibold dash-subtle w-1/3">Tiêu đề</th>
-                <th className="px-6 py-4 font-semibold dash-subtle">Độ khó</th>
-                <th className="px-6 py-4 font-semibold dash-subtle">Trạng thái</th>
-                <th className="px-6 py-4 font-semibold dash-subtle text-right">Thao tác</th>
+                <th className="px-6 py-4 font-semibold dash-subtle w-24">{t('adminProblems.columns.id')}</th>
+                <th className="px-6 py-4 font-semibold dash-subtle w-1/3">{t('adminProblems.columns.title')}</th>
+                <th className="px-6 py-4 font-semibold dash-subtle">{t('adminProblems.columns.difficulty')}</th>
+                <th className="px-6 py-4 font-semibold dash-subtle">{t('adminProblems.columns.status')}</th>
+                <th className="px-6 py-4 font-semibold dash-subtle text-right">{t('adminProblems.columns.actions')}</th>
               </tr>
             </thead>
             <tbody className="dash-border divide-y">
@@ -167,19 +169,19 @@ export default function ProblemList({ onCreateNew, onEdit }) {
                         type="button"
                         onClick={() => handleEditClick(p.id)}
                         className="p-2 dash-subtle hover:text-cta hover:bg-cta/15 rounded-lg transition-colors cursor-pointer"
-                        title="Chỉnh sửa"
+                        title={t('adminProblems.edit')}
                       >
                         <Edit2 className="w-4 h-4" />
                       </button>
                       <button
                         type="button"
                         onClick={() => {
-                          if (window.confirm('Bạn có chắc muốn xóa?')) {
+                          if (window.confirm(t('adminProblems.confirmDelete'))) {
                             dispatch(deleteProblemStart(p.id));
                           }
                         }}
                         className="p-2 dash-subtle hover:text-red-500 hover:bg-red-500/15 rounded-lg transition-colors cursor-pointer"
-                        title="Xóa"
+                        title={t('adminProblems.delete')}
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -189,7 +191,7 @@ export default function ProblemList({ onCreateNew, onEdit }) {
               ))}
               {problems.length === 0 && !loading && (
                 <tr>
-                  <td colSpan="5" className="text-center py-8 dash-subtle italic">Chưa có bài tập nào. Hãy tạo mới.</td>
+                  <td colSpan="5" className="text-center py-8 dash-subtle italic">{t('adminProblems.empty')}</td>
                 </tr>
               )}
             </tbody>
@@ -197,7 +199,7 @@ export default function ProblemList({ onCreateNew, onEdit }) {
         </div>
 
         <div className="dash-border p-4 border-t flex flex-col sm:flex-row items-center justify-between text-sm dash-subtle">
-          <span>Trang {page} / {Math.ceil(total / limit) || 1} ({total} bài tập)</span>
+          <span>{t('adminProblems.pagination', { page, totalPages: Math.ceil(total / limit) || 1, total })}</span>
           <div className="flex gap-2 items-center mt-3 sm:mt-0">
             <button
               type="button"

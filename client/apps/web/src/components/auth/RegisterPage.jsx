@@ -32,7 +32,7 @@ export default function RegisterPage() {
           className="flex items-center gap-2 mb-8 text-slate-400 hover:text-white transition-colors cursor-pointer"
         >
           <ChevronLeft size={16} />
-          <span className="text-sm">{t('navbar.backToHome') || 'Về trang chủ'}</span>
+          <span className="text-sm">{t('navbar.backToHome')}</span>
         </button>
 
         <div className="flex justify-center mb-6">
@@ -41,7 +41,7 @@ export default function RegisterPage() {
           </span>
         </div>
         <h2 className="mt-2 text-center text-3xl font-heading font-extrabold text-white">
-          {t('auth.registerTitle') || 'Đăng ký tài khoản'}
+          {t('auth.registerTitle')}
         </h2>
       </div>
 
@@ -56,7 +56,7 @@ export default function RegisterPage() {
             
             <div>
               <label className="block text-sm font-medium text-slate-300">
-                {t('auth.name') || 'Họ và tên'}
+                {t('auth.name')}
               </label>
               <div className="mt-1">
                 <input
@@ -72,7 +72,7 @@ export default function RegisterPage() {
 
             <div>
               <label className="block text-sm font-medium text-slate-300">
-                {t('auth.email') || 'Email'}
+                {t('auth.email')}
               </label>
               <div className="mt-1">
                 <input
@@ -88,7 +88,7 @@ export default function RegisterPage() {
 
             <div>
               <label className="block text-sm font-medium text-slate-300">
-                {t('auth.password') || 'Mật khẩu'}
+                {t('auth.password')}
               </label>
               <div className="mt-1">
                 <input
@@ -108,7 +108,7 @@ export default function RegisterPage() {
                 disabled={loading}
                 className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cta text-white bg-cta hover:bg-cta/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? '...' : (t('auth.registerSubmit') || 'Tạo tài khoản')}
+                {loading ? '...' : t('auth.registerSubmit')}
               </button>
             </div>
           </form>
@@ -120,7 +120,7 @@ export default function RegisterPage() {
               </div>
               <div className="relative flex justify-center text-sm">
                 <span className="px-2 bg-slate-800/50 text-slate-400 backdrop-blur-xl">
-                  {t('auth.haveAccount') || 'Đã có tài khoản?'}
+                  {t('auth.haveAccount')}
                 </span>
               </div>
             </div>
@@ -130,7 +130,7 @@ export default function RegisterPage() {
                 onClick={() => navigate(ROUTES.LOGIN)}
                 className="w-full flex justify-center py-2.5 px-4 border border-slate-600 rounded-lg shadow-sm text-sm font-medium text-slate-300 bg-slate-800/50 hover:bg-slate-700/50 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cta"
               >
-                {t('auth.loginTitle') || 'Đăng nhập ngay'}
+                {t('auth.loginTitle')}
               </button>
             </div>
           </div>

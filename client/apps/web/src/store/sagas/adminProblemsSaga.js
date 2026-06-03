@@ -1,5 +1,6 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
 import axiosClient from '../../api/axiosClient';
+import i18n from '../../i18n/config';
 import {
   fetchProblemsStart,
   fetchProblemsSuccess,
@@ -95,10 +96,14 @@ function* importProblemsSaga(action) {
     yield put(importProblemsSuccess(response));
     yield put(fetchProblemsStart({ page: 1, limit: 10 }));
     // We can handle the toast alert in the UI component, or here
-    alert(`Import hoàn tất! Thành công: ${response.successful}, Thất bại: ${response.failed}\n${response.failed > 0 ? JSON.stringify(response.errors) : ''}`);
+    alert(i18n.t('adminProblems.importDone', {
+      successful: response.successful,
+      failed: response.failed,
+      errors: response.failed > 0 ? JSON.stringify(response.errors) : ''
+    }));
   } catch (error) {
     yield put(importProblemsFailure(error.response?.data?.message || error.message));
-    alert(`Lỗi import: ${error.message}`);
+    alert(i18n.t('adminProblems.importError', { message: error.message }));
   }
 }
 

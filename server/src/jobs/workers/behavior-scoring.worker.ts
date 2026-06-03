@@ -9,6 +9,7 @@ import {
 } from '../jobs.constants';
 import { SessionSynthesisService } from '../../behavior-session/session-synthesis.service';
 import { RoundOrchestratorService } from '../../interview/round-orchestrator.service';
+import { AnalyticsService } from '../../interview/analytics.service';
 import { MultimodalScoringService } from '../../combat/multimodal-scoring.service';
 import { IntegrityCalculatorService } from '../../combat/integrity-calculator.service';
 import { BehavioralSession } from '../../behavioral/entities/behavioral-session.entity';
@@ -34,6 +35,7 @@ export class BehaviorScoringWorker extends WorkerHost {
     private readonly sessionPlanRepo: Repository<SessionPlan>,
     private readonly synthesisService: SessionSynthesisService,
     private readonly roundOrchestrator: RoundOrchestratorService,
+    private readonly analyticsService: AnalyticsService,
     private readonly multimodalScoring: MultimodalScoringService,
     private readonly integrityCalculator: IntegrityCalculatorService,
   ) {
@@ -131,6 +133,12 @@ export class BehaviorScoringWorker extends WorkerHost {
     }
 
     await this.interviewSessionRepo.save(interviewSession);
+
+    try {
+      await this.analyticsService.refreshCache(interviewSession.userId);
+    } catch (err: unknown) {
+      this.logger.warn(`Analytics cache refresh failed for user ${interviewSession.userId}: ${String(err)}`);
+    }
   }
 
   /**

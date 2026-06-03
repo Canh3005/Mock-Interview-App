@@ -58,7 +58,7 @@ function CreditBadge() {
 function TopBar({ darkMode, onToggleDark, focusMode = false, focusLabel, onNavigate }) {
   const { t } = useTranslation()
   const { user } = useSelector((s) => s.auth)
-  const userName = user?.name || 'User'
+  const userName = user?.name || t('shared.user')
   const initial = userName.trim().charAt(0).toUpperCase() || 'U'
 
   if (focusMode) {
@@ -76,7 +76,7 @@ function TopBar({ darkMode, onToggleDark, focusMode = false, focusLabel, onNavig
             <LanguageSwitcher variant="light" />
             <button
               onClick={onToggleDark}
-              aria-label={darkMode ? 'Light mode' : 'Dark mode'}
+              aria-label={darkMode ? t('shared.lightMode') : t('shared.darkMode')}
               className="dash-icon-button"
             >
               {darkMode ? <Sun size={19} /> : <Moon size={19} />}
@@ -87,7 +87,7 @@ function TopBar({ darkMode, onToggleDark, focusMode = false, focusLabel, onNavig
               title={userName}
             >
               {user?.avatarUrl
-                ? <img src={user.avatarUrl} alt="Avatar" className="h-full w-full object-cover" />
+                ? <img src={user.avatarUrl} alt={t('shared.avatarAlt')} className="h-full w-full object-cover" />
                 : initial}
             </button>
           </div>
@@ -103,7 +103,7 @@ function TopBar({ darkMode, onToggleDark, focusMode = false, focusLabel, onNavig
           <Search size={19} className="dash-muted shrink-0" />
           <input
             type="search"
-            placeholder="Search task..."
+            placeholder={t('shared.searchPlaceholder')}
             className="dash-text w-full border-0 bg-transparent p-0 text-sm placeholder:text-[var(--dash-subtle)] focus:ring-0"
           />
           <span className="dash-muted-panel dash-subtle hidden shrink-0 whitespace-nowrap rounded-lg border px-2 py-1 font-mono text-[11px] sm:inline-flex">
@@ -119,14 +119,14 @@ function TopBar({ darkMode, onToggleDark, focusMode = false, focusLabel, onNavig
 
           <button
             onClick={onToggleDark}
-            aria-label={darkMode ? 'Light mode' : 'Dark mode'}
+            aria-label={darkMode ? t('shared.lightMode') : t('shared.darkMode')}
             className="dash-icon-button"
           >
             {darkMode ? <Sun size={19} /> : <Moon size={19} />}
           </button>
 
           <button
-            aria-label="Thông báo"
+            aria-label={t('shared.notifications')}
             className="dash-icon-button relative"
           >
             <Bell size={19} />
@@ -134,7 +134,7 @@ function TopBar({ darkMode, onToggleDark, focusMode = false, focusLabel, onNavig
           </button>
 
           <button
-            aria-label="Cài đặt"
+            aria-label={t('shared.settings')}
             className="dash-icon-button hidden sm:flex"
           >
             <Settings size={19} />
@@ -149,11 +149,11 @@ function TopBar({ darkMode, onToggleDark, focusMode = false, focusLabel, onNavig
               <span className="dash-text max-w-[140px] truncate text-sm font-semibold group-hover:text-[var(--dash-accent-text)]">
                 {userName}
               </span>
-              <span className="dash-subtle text-xs">Học viên</span>
+              <span className="dash-subtle text-xs">{t('shared.student')}</span>
             </span>
             <span className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-cta text-sm font-bold text-[var(--dash-accent-contrast)] ring-2 ring-[var(--dash-accent-soft)]">
               {user?.avatarUrl
-                ? <img src={user.avatarUrl} alt="Avatar" className="h-full w-full object-cover" />
+                ? <img src={user.avatarUrl} alt={t('shared.avatarAlt')} className="h-full w-full object-cover" />
                 : initial}
             </span>
           </button>
@@ -263,7 +263,7 @@ function Sidebar({ collapsed, collapseLocked = false, onToggleCollapsed, onNavig
   const { t } = useTranslation()
   const { user } = useSelector((s) => s.auth)
   const requestNavigate = onNavigate ?? useContext(NavigationRequestContext)
-  const sidebarToggleLabel = collapsed ? 'Mo rong thanh dieu huong' : 'Thu gon thanh dieu huong'
+  const sidebarToggleLabel = collapsed ? t('shared.expandSidebar') : t('shared.collapseSidebar')
 
   return (
     <SidebarCollapsedContext.Provider value={collapsed}>
@@ -291,7 +291,7 @@ function Sidebar({ collapsed, collapseLocked = false, onToggleCollapsed, onNavig
             {!collapsed && (
               <span className="min-w-0">
                 <span className="block truncate text-xl font-extrabold leading-tight text-cta">MockInterview</span>
-                <span className="dash-subtle block truncate text-xs font-medium">AI Interview Practice</span>
+                <span className="dash-subtle block truncate text-xs font-medium">{t('shared.appSubtitle')}</span>
               </span>
             )}
           </button>
@@ -301,27 +301,27 @@ function Sidebar({ collapsed, collapseLocked = false, onToggleCollapsed, onNavig
       <nav
         id="dashboard-sidebar-nav"
         className={collapsed ? 'flex-1 space-y-2 overflow-y-auto pb-4' : 'flex-1 space-y-1 overflow-y-auto pb-4'}
-        aria-label="Sidebar navigation"
+        aria-label={t('shared.sidebarNavigation')}
       >
         <NavItem to={ROUTES.DASHBOARD} icon={LayoutDashboard} label={t('navbar.dashboard')} exact collapsed={collapsed} onRequestNavigate={onNavigate} />
-        <NavItem to={ROUTES.QUESTION_BANK} icon={BookOpenCheck} label={t('navbar.questionBank') || 'Ngân hàng câu hỏi'} />
-        <NavItem to={ROUTES.DASHBOARD_PROFILE} icon={User} label="Skill Passport" collapsed={collapsed} onRequestNavigate={onNavigate} />
-        <NavItem to={ROUTES.PRACTICE_PROBLEMS} icon={BookOpen} label="Luyện tập thuật toán" />
+        <NavItem to={ROUTES.QUESTION_BANK} icon={BookOpenCheck} label={t('navbar.questionBank')} />
+        <NavItem to={ROUTES.DASHBOARD_PROFILE} icon={User} label={t('profile.page.title')} collapsed={collapsed} onRequestNavigate={onNavigate} />
+        <NavItem to={ROUTES.PRACTICE_PROBLEMS} icon={BookOpen} label={t('practiceBank.title')} />
         <NavItem
           to={ROUTES.INTERVIEW_SETUP}
           icon={Play}
-          label={t('dashboard.startInterview') || 'Bat dau phong van'}
+          label={t('dashboard.startInterview')}
           collapsed={collapsed}
           onRequestNavigate={onNavigate}
         />
-        <NavItem to={ROUTES.BUY_CREDITS} icon={CreditCard} label="Mua Credit" />
+        <NavItem to={ROUTES.BUY_CREDITS} icon={CreditCard} label={t('payment.title')} />
 
         {user?.role === 'admin' && (
-          <NavItemGroup icon={Shield} label="Quản trị" matchPrefix="/admin">
-            <NavSubItem to={ROUTES.ADMIN} label="Bài tập kỹ thuật" exact />
-            <NavSubItem to={ROUTES.ADMIN_TESTCASES} label="Test Cases" />
-            <NavSubItem to={ROUTES.ADMIN_SD_PROBLEMS} label="System Design" />
-            <NavSubItem to={ROUTES.ADMIN_QUESTION_BANK} label="Ngân hàng câu hỏi" />
+          <NavItemGroup icon={Shield} label={t('adminLayout.title')} matchPrefix="/admin">
+            <NavSubItem to={ROUTES.ADMIN} label={t('adminLayout.problemManagement')} exact />
+            <NavSubItem to={ROUTES.ADMIN_TESTCASES} label={t('adminLayout.uploadTestCases')} />
+            <NavSubItem to={ROUTES.ADMIN_SD_PROBLEMS} label={t('adminLayout.systemDesign')} />
+            <NavSubItem to={ROUTES.ADMIN_QUESTION_BANK} label={t('adminLayout.questionBank')} />
           </NavItemGroup>
         )}
       </nav>
@@ -329,27 +329,27 @@ function Sidebar({ collapsed, collapseLocked = false, onToggleCollapsed, onNavig
       <div className="dash-border border-t px-3 py-4">
         <button
           disabled
-          title={collapsed ? 'Settings' : undefined}
-          aria-label={collapsed ? 'Settings' : undefined}
+          title={collapsed ? t('shared.settings') : undefined}
+          aria-label={collapsed ? t('shared.settings') : undefined}
           className={[
             'dash-subtle flex min-h-10 items-center rounded-[14px] text-sm font-semibold',
             collapsed ? 'mx-auto w-10 justify-center px-0 py-0 [&>span]:hidden' : 'w-full gap-3 px-3 py-2',
           ].join(' ')}
         >
           <Settings size={18} className="shrink-0" />
-          <span>Settings</span>
+          <span>{t('shared.settings')}</span>
         </button>
         <button
           disabled
-          title={collapsed ? 'Help' : undefined}
-          aria-label={collapsed ? 'Help' : undefined}
+          title={collapsed ? t('shared.help') : undefined}
+          aria-label={collapsed ? t('shared.help') : undefined}
           className={[
             'dash-subtle flex min-h-10 items-center rounded-[14px] text-sm font-semibold',
             collapsed ? 'mx-auto w-10 justify-center px-0 py-0 [&>span]:hidden' : 'w-full gap-3 px-3 py-2',
           ].join(' ')}
         >
           <CircleHelp size={18} className="shrink-0" />
-          <span>Help</span>
+          <span>{t('shared.help')}</span>
         </button>
       </div>
 
@@ -357,16 +357,16 @@ function Sidebar({ collapsed, collapseLocked = false, onToggleCollapsed, onNavig
         <div className={collapsed ? 'flex flex-col items-center gap-2' : 'flex items-center gap-3 rounded-[18px] bg-[var(--dash-surface-muted)] p-2.5'}>
           <span className="dash-chip flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full border">
             {user?.avatarUrl
-              ? <img src={user.avatarUrl} alt="Avatar" className="h-full w-full object-cover" />
+              ? <img src={user.avatarUrl} alt={t('shared.avatarAlt')} className="h-full w-full object-cover" />
               : <User size={16} />}
           </span>
           <div className={collapsed ? 'hidden' : 'min-w-0 flex-1'}>
-            <p className="dash-text truncate text-sm font-semibold">{user?.name || 'User'}</p>
+            <p className="dash-text truncate text-sm font-semibold">{user?.name || t('shared.user')}</p>
             <p className="dash-subtle truncate text-xs">{user?.email || ''}</p>
           </div>
           <button
             onClick={onLogout}
-            aria-label="Đăng xuất"
+            aria-label={t('adminLayout.logout')}
             className={[
               'flex shrink-0 items-center justify-center text-[var(--dash-subtle)] transition-colors hover:bg-red-500/10 hover:text-red-500',
               collapsed ? 'h-10 w-10 rounded-[14px]' : 'h-9 w-9 rounded-xl',
@@ -463,9 +463,10 @@ export default function DashboardShell() {
   const [pendingNavigation, setPendingNavigation] = useState(null)
   const isBehaviorFocusRoute = location.pathname === ROUTES.BEHAVIORAL_ROOM
   const isDsaFocusRoute = location.pathname === ROUTES.DSA_ROOM
+  const isDsaSoloRoute = location.pathname === ROUTES.DSA_ROOM_SOLO
   const isSDFocusRoute = location.pathname === ROUTES.SD_ROOM
   const isScoringFocusRoute = location.pathname === ROUTES.SCORING
-  const focusMode = isBehaviorFocusRoute || isDsaFocusRoute || isSDFocusRoute || isScoringFocusRoute
+  const focusMode = isBehaviorFocusRoute || isDsaFocusRoute || isDsaSoloRoute || isSDFocusRoute || isScoringFocusRoute
   const hasUnsubmittedDsaProblems =
     dsaMode !== 'solo' &&
     !!dsaSessionId &&
@@ -483,7 +484,7 @@ export default function DashboardShell() {
   const shouldGuardNavigation = shouldGuardBehaviorNavigation || shouldGuardDsaNavigation || shouldGuardSDNavigation
   const focusLabel = isScoringFocusRoute
     ? t('dashboard.focus.labels.scoring')
-    : isDsaFocusRoute
+    : isDsaFocusRoute || isDsaSoloRoute
       ? t('dashboard.focus.labels.dsa')
       : isSDFocusRoute
         ? t('dashboard.focus.labels.systemDesign')
@@ -578,7 +579,7 @@ export default function DashboardShell() {
           <main
             className={[
               'dash-page-shell min-h-0 flex-1 transition-colors duration-200',
-              isBehaviorFocusRoute || isDsaFocusRoute || isSDFocusRoute ? 'overflow-hidden' : 'overflow-y-auto',
+              isBehaviorFocusRoute || isDsaFocusRoute || isDsaSoloRoute || isSDFocusRoute ? 'overflow-hidden' : 'overflow-y-auto',
             ].join(' ')}
           >
             <Outlet />

@@ -339,7 +339,9 @@ export default function CombatPermissionGate() {
 
       <aside className="dash-card flex flex-col rounded-[22px] p-5 sm:p-6">
         <div className="mb-4">
-          <p className="dash-subtle text-xs font-semibold uppercase tracking-[0.08em]">Readiness checklist</p>
+          <p className="dash-subtle text-xs font-semibold uppercase tracking-[0.08em]">
+            {t('interviewSetup.combat.readinessChecklist')}
+          </p>
           <h3 className="dash-text mt-1 text-lg font-bold">
             {readinessReady
               ? t('interviewSetup.combat.checklistReadyTitle')

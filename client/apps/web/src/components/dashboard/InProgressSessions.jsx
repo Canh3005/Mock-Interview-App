@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useDispatch } from 'react-redux'
+import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { ROUTES } from '../../router/routes'
 import {
@@ -22,22 +23,21 @@ const LEVEL_COLOR = {
   mid: 'text-amber-600 bg-amber-50 border-amber-200',
   senior: 'text-rose-600 bg-rose-50 border-rose-200',
 }
-const LEVEL_LABEL = { junior: 'Junior', mid: 'Mid-level', senior: 'Senior' }
 const MODE_META = {
-  combat: { label: 'Combat Interview', Icon: Swords },
-  practice: { label: 'Practice Interview', Icon: BookOpen },
+  combat: { labelKey: 'dashboard.sessions.mode.combat', Icon: Swords },
+  practice: { labelKey: 'dashboard.sessions.mode.practice', Icon: BookOpen },
 }
 const MODAL_PAGE_SIZE = 10
 const DASHBOARD_LIMIT = 6
 
-function formatRelativeTime(dateStr) {
+function formatRelativeTime(dateStr, t) {
   const diff = Date.now() - new Date(dateStr).getTime()
-  if (Number.isNaN(diff)) return 'Vừa xong'
+  if (Number.isNaN(diff)) return t('dashboard.sessions.justNow')
   const mins = Math.floor(diff / 60_000)
-  if (mins < 60) return `${Math.max(1, mins)} phút trước`
+  if (mins < 60) return t('dashboard.sessions.minutesAgo', { count: Math.max(1, mins) })
   const hrs = Math.floor(mins / 60)
-  if (hrs < 24) return `${hrs} giờ trước`
-  return `${Math.floor(hrs / 24)} ngày trước`
+  if (hrs < 24) return t('dashboard.sessions.hoursAgo', { count: hrs })
+  return t('dashboard.sessions.daysAgo', { count: Math.floor(hrs / 24) })
 }
 
 function SkeletonRow() {
@@ -63,10 +63,11 @@ function SkeletonList({ count = 6 }) {
 }
 
 function SessionRow({ session, onResume, onViewResult }) {
+  const { t } = useTranslation()
   const isCompleted = session.behavioralSession?.status === 'COMPLETED'
   const stage = session.behavioralSession?.currentStage ?? 1
-  const stageName = session.behavioralSession?.stageName ?? 'Giai đoạn 1'
-  const { label: modeLabel, Icon: ModeIcon } = MODE_META[session.mode] ?? MODE_META.practice
+  const stageName = session.behavioralSession?.stageName ?? t('dashboard.sessions.stageFallback', { stage: 1 })
+  const { labelKey, Icon: ModeIcon } = MODE_META[session.mode] ?? MODE_META.practice
   const levelColor = LEVEL_COLOR[session.candidateLevel] ?? 'text-gray-400 bg-gray-100 border-gray-200'
   const progress = Math.round((stage / 6) * 100)
 
@@ -86,10 +87,10 @@ function SessionRow({ session, onResume, onViewResult }) {
       </div>
 
       <div className="min-w-0 flex-1">
-        <p className="dash-text truncate text-sm font-semibold">{modeLabel}</p>
+        <p className="dash-text truncate text-sm font-semibold">{t(labelKey)}</p>
         <div className="mt-1 flex flex-wrap items-center gap-2">
           <span className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold ${levelColor}`}>
-            {LEVEL_LABEL[session.candidateLevel] ?? session.candidateLevel}
+            {t(`dashboard.sessions.level.${session.candidateLevel}`, session.candidateLevel)}
           </span>
           {!isCompleted && (
             <span className="dash-subtle truncate text-xs">{stageName}</span>
@@ -97,12 +98,12 @@ function SessionRow({ session, onResume, onViewResult }) {
           {isCompleted && (
             <span className="flex items-center gap-1 text-xs font-medium text-cta">
               <CheckCircle size={10} />
-              Đã hoàn thành
+              {t('dashboard.sessions.completed')}
             </span>
           )}
           <span className="dash-subtle flex items-center gap-1 text-xs">
             <Clock size={10} />
-            {formatRelativeTime(session.startedAt)}
+            {formatRelativeTime(session.startedAt, t)}
           </span>
         </div>
       </div>
@@ -127,7 +128,7 @@ function SessionRow({ session, onResume, onViewResult }) {
           className="dash-badge flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors duration-200 hover:bg-[var(--dash-surface-raised)]"
         >
           <BarChart2 size={11} />
-          Kết quả
+          {t('dashboard.sessions.result')}
         </button>
       ) : (
         <button
@@ -135,7 +136,7 @@ function SessionRow({ session, onResume, onViewResult }) {
           className="flex shrink-0 items-center gap-1.5 rounded-full border border-cta/30 bg-cta/10 px-3 py-1.5 text-xs font-semibold text-cta transition-colors duration-200 hover:bg-cta/20"
         >
           <Play size={11} />
-          Tiếp tục
+          {t('dashboard.sessions.resume')}
         </button>
       )}
     </div>
@@ -143,6 +144,7 @@ function SessionRow({ session, onResume, onViewResult }) {
 }
 
 function AllSessionsModal({ onResume, onViewResult, onClose }) {
+  const { t } = useTranslation()
   const [sessions, setSessions] = useState([])
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(true)
@@ -191,9 +193,9 @@ function AllSessionsModal({ onResume, onViewResult, onClose }) {
       <div className="dash-card flex h-[650px] max-h-[92vh] w-full max-w-2xl flex-col rounded-[20px] border shadow-2xl">
         <div className="dash-border flex shrink-0 items-center justify-between border-b px-6 py-4">
           <div>
-            <h2 className="dash-card-title">Lịch sử phỏng vấn</h2>
+            <h2 className="dash-card-title">{t('dashboard.sessions.historyTitle')}</h2>
             <p className="dash-subtle mt-0.5 text-xs">
-              {loading ? '...' : `${total} phiên`}
+              {loading ? '...' : t('dashboard.sessions.sessionCount', { count: total })}
             </p>
           </div>
           <button
@@ -208,7 +210,7 @@ function AllSessionsModal({ onResume, onViewResult, onClose }) {
           {loading ? (
             <SkeletonList count={10} />
           ) : sessions.length === 0 ? (
-            <p className="dash-subtle py-8 text-center text-sm">Chưa có phiên phỏng vấn nào.</p>
+            <p className="dash-subtle py-8 text-center text-sm">{t('dashboard.sessions.empty')}</p>
           ) : (
             <>
               {sessions.map((session) => (
@@ -222,7 +224,7 @@ function AllSessionsModal({ onResume, onViewResult, onClose }) {
               <div ref={sentinelRef} className="flex h-4 items-center justify-center">
                 {loadingMore && <Loader2 size={16} className="dash-subtle animate-spin" />}
                 {!loadingMore && sessions.length >= total && sessions.length > 0 && (
-                  <span className="dash-subtle text-xs">Đã hiển thị tất cả</span>
+                  <span className="dash-subtle text-xs">{t('dashboard.sessions.allShown')}</span>
                 )}
               </div>
             </>
@@ -234,6 +236,7 @@ function AllSessionsModal({ onResume, onViewResult, onClose }) {
 }
 
 export default function InProgressSessions() {
+  const { t } = useTranslation()
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const [sessions, setSessions] = useState([])
@@ -295,9 +298,9 @@ export default function InProgressSessions() {
       <div className="dash-card rounded-[20px] p-5 sm:p-6">
         <div className="mb-5 flex items-center justify-between gap-4">
           <div>
-            <h2 className="dash-card-title">Lịch sử phỏng vấn</h2>
+            <h2 className="dash-card-title">{t('dashboard.sessions.historyTitle')}</h2>
             <p className="dash-subtle mt-1 text-xs font-medium">
-              {total} phiên gần nhất
+              {t('dashboard.sessions.recentCount', { count: total })}
             </p>
           </div>
           {total > DASHBOARD_LIMIT && (
@@ -305,7 +308,7 @@ export default function InProgressSessions() {
               onClick={() => setShowModal(true)}
               className="flex items-center gap-1.5 rounded-full border border-cta/30 bg-cta/10 px-3 py-1.5 text-xs font-semibold text-cta transition-colors duration-200 hover:bg-cta/20"
             >
-              Xem tất cả
+              {t('dashboard.sessions.viewAll')}
               <ChevronRight size={12} />
             </button>
           )}

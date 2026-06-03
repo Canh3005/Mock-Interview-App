@@ -1,5 +1,6 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
 import { walletApi } from '../../api/wallet.api';
+import i18n from '../../i18n/config';
 import {
   fetchBalanceRequest,
   fetchBalanceSuccess,
@@ -13,7 +14,7 @@ function* _handleFetchBalance() {
     const res = yield call(walletApi.getBalance);
     yield put(fetchBalanceSuccess(res.balance));
   } catch (error) {
-    const message = error.response?.data?.message || 'Failed to load balance';
+    const message = error.response?.data?.message || i18n.t('wallet.errors.loadBalance');
     yield put(fetchBalanceFailure(message));
   }
 }

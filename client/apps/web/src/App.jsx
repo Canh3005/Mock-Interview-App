@@ -88,10 +88,8 @@ function AppRoutes() {
               <Route path={ROUTES.ADMIN_SD_PROBLEMS} element={<AdminSDProblemsPage />} />
               <Route path={ROUTES.ADMIN_QUESTION_BANK} element={<AdminQuestionBankPage />} />
             </Route>
+            <Route path={ROUTES.DSA_ROOM_SOLO} element={<DSASessionPage />} />
           </Route>
-
-          {/* Full-screen routes (no sidebar) */}
-          <Route path={ROUTES.DSA_ROOM_SOLO} element={<DSASessionPage />} />
 
           <Route element={<InterviewRoomRoute />}>
             <Route path={ROUTES.INTERVIEW_ROOM} element={<InterviewRoomPage />} />

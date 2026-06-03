@@ -1,6 +1,7 @@
 import { call, put, select, takeLatest } from 'redux-saga/effects'
 import { toast } from 'sonner'
 import { practiceApi } from '../../api/practice.api'
+import i18n from '../../i18n/config'
 import { sessionCreated } from '../slices/dsaSessionSlice'
 import {
   loadProblems,
@@ -26,7 +27,7 @@ function* loadProblemsSaga() {
     })
     yield put(problemsLoaded(data))
   } catch (err) {
-    const msg = err.response?.data?.message || 'Không thể tải danh sách bài tập.'
+    const msg = err.response?.data?.message || i18n.t('practiceBank.errors.loadListFailed')
     yield put(problemsLoadFailed(msg))
     toast.error(msg)
   }
@@ -81,7 +82,7 @@ function* startPracticeSessionSaga(action) {
     }))
     yield put(practiceDSASessionReady({ sessionId: null, problemId }))
   } catch (err) {
-    const msg = err.response?.data?.message || 'Không thể tải bài tập.'
+    const msg = err.response?.data?.message || i18n.t('practiceBank.errors.loadProblemFailed')
     toast.error(msg)
   }
 }

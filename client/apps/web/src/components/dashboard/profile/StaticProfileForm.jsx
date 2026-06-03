@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { updateProfileRequest } from '../../../store/slices/profileSlice';
 import { Loader2, Plus, X } from 'lucide-react';
 
 export default function StaticProfileForm({ profileData }) {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const { loading } = useSelector((state) => state.profile);
   
@@ -74,49 +76,49 @@ export default function StaticProfileForm({ profileData }) {
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-1">
-          <label className="text-sm font-medium text-slate-300">Job Role</label>
+          <label className="text-sm font-medium text-slate-300">{t('profile.form.role')}</label>
           <input 
             type="text" 
             name="role"
             value={formData.role}
             onChange={handleChange}
-            placeholder="e.g. Frontend Engineer"
+            placeholder={t('profile.form.rolePlaceholder')}
             className="w-full bg-slate-900/50 border border-slate-700 rounded-lg px-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-cta focus:ring-1 focus:ring-cta transition-colors"
           />
         </div>
 
         <div className="space-y-1">
-          <label className="text-sm font-medium text-slate-300">Seniority</label>
+          <label className="text-sm font-medium text-slate-300">{t('profile.form.seniority')}</label>
           <select 
             name="seniority"
             value={formData.seniority}
             onChange={handleChange}
             className="w-full bg-slate-900/50 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-cta focus:ring-1 focus:ring-cta transition-colors"
           >
-            <option value="Intern">Intern</option>
-            <option value="Fresher">Fresher</option>
-            <option value="Junior">Junior</option>
-            <option value="Mid-level">Mid-level</option>
-            <option value="Senior">Senior</option>
-            <option value="Lead">Lead</option>
+            <option value="Intern">{t('profile.form.seniorityOptions.intern')}</option>
+            <option value="Fresher">{t('profile.form.seniorityOptions.fresher')}</option>
+            <option value="Junior">{t('profile.form.seniorityOptions.junior')}</option>
+            <option value="Mid-level">{t('profile.form.seniorityOptions.mid')}</option>
+            <option value="Senior">{t('profile.form.seniorityOptions.senior')}</option>
+            <option value="Lead">{t('profile.form.seniorityOptions.lead')}</option>
           </select>
         </div>
       </div>
 
       <div className="space-y-1">
-        <label className="text-sm font-medium text-slate-300">Domain / Industry</label>
+        <label className="text-sm font-medium text-slate-300">{t('profile.form.domain')}</label>
         <input 
           type="text" 
           name="domain"
           value={formData.domain}
           onChange={handleChange}
-          placeholder="e.g. Fintech, E-commerce, Healthcare"
+          placeholder={t('profile.form.domainPlaceholder')}
           className="w-full bg-slate-900/50 border border-slate-700 rounded-lg px-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-cta focus:ring-1 focus:ring-cta transition-colors"
         />
       </div>
 
       <div className="space-y-1">
-        <label className="text-sm font-medium text-slate-300">Tech Stack (Skills)</label>
+        <label className="text-sm font-medium text-slate-300">{t('profile.form.techStack')}</label>
         <div className="flex flex-wrap gap-2 mb-2">
           {formData.techStack.map(tag => (
             <span key={tag} className="inline-flex items-center gap-1 bg-cta/15 text-cta px-3 py-1 rounded-full text-sm font-medium border border-cta/30">
@@ -133,7 +135,7 @@ export default function StaticProfileForm({ profileData }) {
             value={tagInput}
             onChange={(e) => setTagInput(e.target.value)}
             onKeyDown={(e) => { if(e.key === 'Enter') handleAddTag(e); }}
-            placeholder="Type a skill and press Add (e.g. React, Node.js)"
+            placeholder={t('profile.form.skillPlaceholder')}
             className="flex-1 bg-slate-900/50 border border-slate-700 rounded-lg px-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-cta focus:ring-1 focus:ring-cta transition-colors"
           />
           <button 
@@ -142,14 +144,14 @@ export default function StaticProfileForm({ profileData }) {
             className="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2.5 rounded-lg transition-colors flex items-center gap-1"
           >
             <Plus size={18} />
-            Add
+            {t('profile.form.add')}
           </button>
         </div>
       </div>
 
       {education.length > 0 && (
         <div className="space-y-1">
-          <label className="text-sm font-medium text-slate-300">Education</label>
+          <label className="text-sm font-medium text-slate-300">{t('profile.form.education')}</label>
           <div className="space-y-2">
             {education.map((edu, i) => (
               <div key={i} className="bg-slate-900/50 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-slate-300">
@@ -165,7 +167,7 @@ export default function StaticProfileForm({ profileData }) {
 
       {languages.length > 0 && (
         <div className="space-y-1">
-          <label className="text-sm font-medium text-slate-300">Languages</label>
+          <label className="text-sm font-medium text-slate-300">{t('profile.form.languages')}</label>
           <div className="flex flex-wrap gap-2">
             {languages.map((lang, i) => (
               <span key={i} className="inline-flex items-center gap-1.5 bg-slate-900/50 border border-slate-700 px-3 py-1.5 rounded-lg text-sm text-slate-300">
@@ -179,7 +181,7 @@ export default function StaticProfileForm({ profileData }) {
       )}
 
       <div className="space-y-1">
-        <label className="text-sm font-medium text-slate-300">Experience (Raw JSON from CV)</label>
+        <label className="text-sm font-medium text-slate-300">{t('profile.form.experience')}</label>
         <textarea 
           name="experience"
           value={formData.experience}
@@ -196,7 +198,7 @@ export default function StaticProfileForm({ profileData }) {
           disabled={loading}
           className="bg-cta hover:bg-cta/90 text-white font-semibold py-2.5 px-6 rounded-xl transition-all flex items-center gap-2 cursor-pointer shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {loading ? <Loader2 size={18} className="animate-spin" /> : 'Save Profile'}
+          {loading ? <Loader2 size={18} className="animate-spin" /> : t('profile.form.save')}
         </button>
       </div>
 

@@ -11,13 +11,17 @@ import {
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { InterviewService } from './interview.service';
+import { AnalyticsService } from './analytics.service';
 import { InitSessionDto } from './dto/init-session.dto';
 import { UpdateContextDto } from './dto/update-context.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('interview')
 export class InterviewController {
-  constructor(private readonly interviewService: InterviewService) {}
+  constructor(
+    private readonly interviewService: InterviewService,
+    private readonly analyticsService: AnalyticsService,
+  ) {}
 
   @Get('preflight')
   preflight(@Req() req: { user: { id: string } }) {
@@ -51,6 +55,11 @@ export class InterviewController {
       limit ? parseInt(limit, 10) : undefined,
       offset ? parseInt(offset, 10) : undefined,
     );
+  }
+
+  @Get('sessions/analytics')
+  getSessionAnalytics(@Req() req: { user: { id: string } }) {
+    return this.analyticsService.getAnalytics(req.user.id);
   }
 
   @Get('sessions/:interviewSessionId/all-sessions')
