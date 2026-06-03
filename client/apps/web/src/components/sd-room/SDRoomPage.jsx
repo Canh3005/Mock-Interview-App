@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { ROUTES } from '../../router/routes'
@@ -10,6 +10,7 @@ import { evaluationReset } from '../../store/slices/sdEvaluatorSlice'
 import { resetSetup } from '../../store/slices/interviewSetupSlice'
 import { resetBehavioral } from '../../store/slices/behavioralSlice'
 import { resetDSASession } from '../../store/slices/dsaSessionSlice'
+import { useCombatSession } from '../../hooks/useCombatSession'
 import SDCanvas from './SDCanvas'
 import NodeLibrary from './NodeLibrary'
 import RightPanel from './RightPanel'
@@ -125,8 +126,32 @@ export default function SDRoomPage() {
   const sdSessionId = useSelector((s) => s.interviewSetup.session?.sdSessionId)
   const { loading, error, phase, autoSaveStatus } = useSelector((s) => s.sdSession)
   const drawingComplete = useSelector((s) => s.sdInterviewer.drawingComplete)
+  const mode = useSelector((s) => s.interviewSetup.session?.mode)
+  const interviewSessionId = useSelector((s) => s.interviewSetup.session?.sessionId)
+  const language = useSelector((s) => s.interviewSetup.session?.language)
+  const candidateLevel = useSelector((s) => s.interviewSetup.session?.candidateLevel)
+  const chatHistory = useSelector((s) => s.sdInterviewer.chatHistory)
   const [rightWidth, setRightWidth] = useState(RIGHT_PANEL_DEFAULT)
   const [showExitModal, setShowExitModal] = useState(false)
+  const videoRef = useRef(null)
+  const aiConversation = useMemo(
+    () =>
+      chatHistory
+        .filter((m) => m.role !== 'hint')
+        .map((m) => ({ role: m.role === 'user' ? 'user' : 'ai', content: m.content })),
+    [chatHistory],
+  )
+  const ttsOptions = useMemo(
+    () => ({ language: language ?? 'vi', level: candidateLevel }),
+    [language, candidateLevel],
+  )
+  const { mediaStream } = useCombatSession({
+    mode,
+    interviewSessionId,
+    videoRef,
+    aiConversation,
+    ttsOptions,
+  })
 
   const handleResizeStart = useCallback((e) => {
     e.preventDefault()
@@ -215,9 +240,10 @@ export default function SDRoomPage() {
           <SDCanvas isLocked={isCanvasLocked} isViewOnly={isCanvasViewOnly} />
         </div>
         <ResizeDivider onMouseDown={handleResizeStart} />
-        <RightPanel width={rightWidth} />
+        <RightPanel width={rightWidth} mediaStream={mediaStream} />
       </div>
       <EvaluationLoadingOverlay />
+      {mode === 'combat' && <video ref={videoRef} muted playsInline style={{ display: 'none' }} />}
       {showExitModal && (
         <ExitConfirmModal
           onCancel={() => setShowExitModal(false)}

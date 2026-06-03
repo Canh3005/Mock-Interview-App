@@ -14,7 +14,7 @@ import {
 import { resetSetup } from '../../store/slices/interviewSetupSlice'
 import { behavioralApi } from '../../api/behavioral.api'
 import { useCombatSession } from '../../hooks/useCombatSession'
-import CameraPreview from '../dsa/CameraPreview'
+import EmbeddedCameraFeed from '../shared/ui/EmbeddedCameraFeed'
 import StageProgressPanel from './StageProgressPanel'
 import ChatInterface from './ChatInterface'
 
@@ -245,8 +245,11 @@ export default function BehavioralRoomPage() {
       {/* 2-column layout (StarGuidePanel đã bỏ) */}
       <div className="grid min-h-0 flex-1 grid-cols-1 gap-3 overflow-hidden lg:grid-cols-[240px_minmax(0,1fr)]">
         {/* Left: Stage Progress */}
-        <aside className="dash-card hidden min-h-0 overflow-y-auto rounded-[22px] p-2 lg:block">
-          <StageProgressPanel stageProgress={stageProgress} candidateLevel={candidateLevel} />
+        <aside className="dash-card hidden min-h-0 flex-col overflow-hidden rounded-[22px] lg:flex">
+          {mode === 'combat' && <EmbeddedCameraFeed mediaStream={mediaStream} />}
+          <div className="flex-1 overflow-y-auto p-2">
+            <StageProgressPanel stageProgress={stageProgress} candidateLevel={candidateLevel} />
+          </div>
         </aside>
 
         {/* Center: Chat */}
@@ -264,13 +267,7 @@ export default function BehavioralRoomPage() {
         </main>
       </div>
 
-      {/* Combat: hidden video feed cho multimodal engine + camera preview nổi */}
-      {mode === 'combat' && (
-        <>
-          <video ref={videoRef} muted playsInline style={{ display: 'none' }} />
-          <CameraPreview mediaStream={mediaStream} boundsRef={roomRef} contained />
-        </>
-      )}
+      {mode === 'combat' && <video ref={videoRef} muted playsInline style={{ display: 'none' }} />}
 
       <AnimatePresence>
         {showExitModal && (

@@ -38,7 +38,7 @@ import CodeEditor from './CodeEditor'
 import RunResultPanel from './RunResultPanel'
 import AIChat from './AIChat'
 import SessionTimer from './SessionTimer'
-import CameraPreview from './CameraPreview'
+import EmbeddedCameraFeed from '../shared/ui/EmbeddedCameraFeed'
 import { useCombatSession } from '../../hooks/useCombatSession'
 
 const DIFF_COLOR = { EASY: 'text-emerald-400', MEDIUM: 'text-yellow-400', HARD: 'text-red-400' }
@@ -623,6 +623,7 @@ export default function DSASessionPage() {
           ].join(' ')}
           style={isWideLayout ? { width: resolvedLeft } : undefined}
         >
+          {!isSoloMode && <EmbeddedCameraFeed mediaStream={mediaStream} />}
           <div className="flex shrink-0 items-center overflow-hidden border-b border-[var(--dash-border)]">
             {[
               { key: 'problem', label: t('dsaRoom.tabs.problem'), Icon: Code2 },
@@ -836,7 +837,6 @@ export default function DSASessionPage() {
       )}
 
       <video ref={videoRef} muted playsInline style={{ display: 'none' }} />
-      <CameraPreview mediaStream={mediaStream} boundsRef={roomRef} contained={!isSoloMode} />
 
       {mode === 'solo' && practiceSubmitDone && (
         <CenterOverlay>

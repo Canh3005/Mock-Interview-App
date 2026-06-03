@@ -3,18 +3,20 @@ import { MessageSquare, BookOpen } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import AiChatPanel from './AiChatPanel'
 import PhaseGuidePanel from './PhaseGuidePanel'
+import EmbeddedCameraFeed from '../shared/ui/EmbeddedCameraFeed'
 
 const TABS = [
   { key: 'ai', labelKey: 'sdRoom.aiChat.title', Icon: MessageSquare },
   { key: 'guide', labelKey: 'sdRoom.phaseGuide.title', Icon: BookOpen },
 ]
 
-export default function RightPanel({ width }) {
+export default function RightPanel({ width, mediaStream }) {
   const { t } = useTranslation()
   const [activeTab, setActiveTab] = useState('ai')
 
   return (
     <div style={{ width }} className="flex-shrink-0 flex flex-col rounded-xl overflow-hidden bg-slate-900 border border-slate-800/60">
+      <EmbeddedCameraFeed mediaStream={mediaStream} />
       <div className="flex items-center border-b border-slate-800 bg-slate-900 flex-shrink-0">
         {TABS.map(({ key, labelKey, Icon }) => (
           <button
