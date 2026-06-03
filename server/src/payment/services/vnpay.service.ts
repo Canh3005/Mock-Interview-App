@@ -85,13 +85,15 @@ export class VnpayService {
 
   private _formatDate(date: Date): string {
     const pad = (n: number): string => String(n).padStart(2, '0');
+    // VNPay yêu cầu giờ Việt Nam (UTC+7)
+    const vn = new Date(date.getTime() + 7 * 60 * 60 * 1000);
     return (
-      `${date.getFullYear()}` +
-      `${pad(date.getMonth() + 1)}` +
-      `${pad(date.getDate())}` +
-      `${pad(date.getHours())}` +
-      `${pad(date.getMinutes())}` +
-      `${pad(date.getSeconds())}`
+      `${vn.getUTCFullYear()}` +
+      `${pad(vn.getUTCMonth() + 1)}` +
+      `${pad(vn.getUTCDate())}` +
+      `${pad(vn.getUTCHours())}` +
+      `${pad(vn.getUTCMinutes())}` +
+      `${pad(vn.getUTCSeconds())}`
     );
   }
 }
