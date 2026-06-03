@@ -28,6 +28,8 @@ import AdminTestCasesPage from './components/admin/AdminTestCasesPage'
 import AdminSDProblemsPage from './components/admin/AdminSDProblemsPage'
 import AdminQuestionBankPage from './components/admin/AdminQuestionBankPage'
 import DashboardShell from './components/shared/DashboardShell'
+import BuyCreditsPage from './components/payment/BuyCreditsPage'
+import PaymentResultPage from './components/payment/PaymentResultPage'
 
 function PublicDarkTheme() {
   useLayoutEffect(() => {
@@ -70,6 +72,8 @@ function AppRoutes() {
             <Route path={ROUTES.PRACTICE_PROBLEMS} element={<ProblemBankPage />} />
             <Route path={ROUTES.QUESTION_BANK} element={<PublicQuestionBankPage />} />
             <Route path={ROUTES.QUESTION_BANK_DETAIL} element={<QuestionProbeDetailPage />} />
+            <Route path={ROUTES.BUY_CREDITS} element={<BuyCreditsPage />} />
+            <Route path={ROUTES.PAYMENT_RESULT} element={<PaymentResultPage />} />
             <Route element={<InterviewRoomRoute />}>
               <Route path={ROUTES.BEHAVIORAL_ROOM} element={<BehavioralRoomPage />} />
               <Route path={ROUTES.DSA_ROOM} element={<DSASessionPage />} />

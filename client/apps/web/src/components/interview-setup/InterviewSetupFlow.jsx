@@ -492,8 +492,9 @@ export default function InterviewSetupFlow() {
   }
 
   const handleTopUp = () => {
+    const deficit = creditError?.deficit ?? 0
     dispatch(resetSetup())
-    navigate(ROUTES.DASHBOARD)
+    navigate(`${ROUTES.BUY_CREDITS}${deficit > 0 ? `?deficit=${deficit}` : ''}`)
   }
 
   const handleStartSession = () => {

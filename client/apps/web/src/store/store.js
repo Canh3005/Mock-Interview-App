@@ -12,6 +12,7 @@ import sdSessionReducer from './slices/sdSessionSlice';
 import sdInterviewerReducer from './slices/sdInterviewerSlice';
 import sdEvaluatorReducer from './slices/sdEvaluatorSlice';
 import walletReducer from './slices/walletSlice';
+import paymentReducer from './slices/paymentSlice';
 import questionBankAdminReducer from './slices/questionBankAdminSlice';
 import questionBankReducer from './slices/questionBankSlice';
 
@@ -31,6 +32,7 @@ export const store = configureStore({
     sdInterviewer: sdInterviewerReducer,
     sdEvaluator: sdEvaluatorReducer,
     wallet: walletReducer,
+    payment: paymentReducer,
     questionBankAdmin: questionBankAdminReducer,
     questionBank: questionBankReducer,
   },

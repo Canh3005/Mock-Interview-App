@@ -1,248 +1,719 @@
-# MockInterview — AI-Powered Technical Interview Platform
+<div align="center">
 
-> Nền tảng luyện tập phỏng vấn kỹ thuật toàn diện với AI, hỗ trợ đa ngôn ngữ (Tiếng Việt · English · 日本語)
+# 🎯 MockMentor — AI-Powered Mock Interview Platform
 
----
+**Nền tảng luyện phỏng vấn kỹ thuật toàn diện với AI, hỗ trợ DSA · System Design · Behavioral**
 
-## Tổng quan
+[![NestJS](https://img.shields.io/badge/NestJS-v11-E0234E?logo=nestjs&logoColor=white)](https://nestjs.com/)
+[![React](https://img.shields.io/badge/React-v18-61DAFB?logo=react&logoColor=black)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-v5.7-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![Redis](https://img.shields.io/badge/Redis-DC382D?logo=redis&logoColor=white)](https://redis.io/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-**MockInterview** là nền tảng luyện phỏng vấn kỹ thuật được hỗ trợ bởi AI, giúp lập trình viên chuẩn bị cho các vòng phỏng vấn thực tế — từ giải thuật DSA, phỏng vấn hành vi (behavioral), chế độ thi đấu (combat), đến thiết kế hệ thống (system design). Hệ thống tích hợp chấm code tự động, AI phản hồi thời gian thực, và bảng vẽ kiến trúc tương tác.
+<br/>
 
----
+> Luyện tập phỏng vấn với AI interviewer thực sự — phản hồi theo thời gian thực, chấm điểm tự động, hỗ trợ 3 ngôn ngữ.
 
-## Tính năng chính
-
-### Các vòng phỏng vấn
-
-| Vòng | Mô tả | Trạng thái |
-|------|-------|------------|
-| **DSA Coding** | Giải bài thuật toán với code editor, chấm điểm tự động qua Judge0-compatible runner | ✅ Hoàn thiện |
-| **Behavioral** | Phỏng vấn hành vi với AI interviewer, hỗ trợ giọng nói, phản hồi và chấm điểm theo STAR | ✅ Hoàn thiện |
-| **Combat Mode** | Chế độ thi đấu nhiều người, real-time sync, text-to-speech | ✅ Hoàn thiện |
-| **System Design** | Thiết kế hệ thống với bảng vẽ tương tác, AI interviewer phase-aware | 🚧 Đang phát triển |
-
-### Tính năng khác
-
-| Tính năng | Mô tả | Trạng thái |
-|-----------|-------|------------|
-| **Practice Problem Bank** | Thư viện bài DSA tự luyện, phân loại theo mức độ | ✅ Hoàn thiện |
-| **Dashboard & Skill Passport** | Tổng quan tiến độ, radar kỹ năng, lộ trình học tập | ✅ Hoàn thiện |
-| **CV & JD Analysis** | Upload CV/JD, AI phân tích và gợi ý lộ trình phỏng vấn | ✅ Hoàn thiện |
-| **Admin Problem Bank** | Quản lý bài DSA và System Design (CRUD) | ✅ Hoàn thiện |
-| **Multi-language UI** | Giao diện tiếng Việt, English, 日本語 | ✅ Hoàn thiện |
-| **GitHub OAuth** | Đăng nhập nhanh bằng GitHub | ✅ Hoàn thiện |
-| **SD Problem Bank** | Ngân hàng đề System Design với metadata đầy đủ | ✅ Hoàn thiện |
-| **SD Whiteboard Canvas** | Bảng vẽ kiến trúc React Flow, 11 loại node, drag-drop | 🚧 Đang phát triển |
-| **SD AI Interviewer** | AI dẫn dắt phỏng vấn System Design theo từng phase | 🚧 Đang phát triển |
+</div>
 
 ---
 
-## Kiến trúc hệ thống
+## 📋 Mục lục
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                        Client (Browser)                      │
-│   React + Redux Toolkit + Redux-Saga + Tailwind CSS          │
-│   React Flow (SD Canvas) · i18n (en/vi/ja) · Web Speech API │
-└────────────────────────┬────────────────────────────────────┘
-                         │ HTTP / SSE
-┌────────────────────────▼────────────────────────────────────┐
-│                     NestJS Backend (REST + SSE)              │
-│   TypeORM · Passport JWT · BullMQ · Swagger                  │
-│   Google GenAI · Groq SDK · PDF/DOCX Parsing                 │
-└──────┬───────────────────┬──────────────────┬───────────────┘
-       │                   │                  │
-┌──────▼──────┐  ┌─────────▼──────┐  ┌───────▼───────┐
-│ PostgreSQL  │  │   Redis 7.2    │  │  Code Runner  │
-│  (Primary   │  │  (Cache +      │  │  (Express.js  │
-│   Storage)  │  │   BullMQ)      │  │   Judge0-like)│
-└─────────────┘  └────────────────┘  └───────────────┘
-```
+- [Tổng quan](#-tổng-quan)
+- [Tính năng nổi bật](#-tính-năng-nổi-bật)
+- [Tech Stack](#-tech-stack)
+- [Kiến trúc hệ thống](#-kiến-trúc-hệ-thống)
+- [Cấu trúc project](#-cấu-trúc-project)
+- [Bắt đầu nhanh](#-bắt-đầu-nhanh)
+- [Cấu hình môi trường](#-cấu-hình-môi-trường)
+- [Chạy từng service](#-chạy-từng-service)
+- [API Reference](#-api-reference)
+- [Frontend Routes](#-frontend-routes)
+- [Quốc tế hóa (i18n)](#-quốc-tế-hóa-i18n)
+- [Testing](#-testing)
+- [Tài liệu kỹ thuật](#-tài-liệu-kỹ-thuật)
 
 ---
 
-## Tech Stack
+## 🌟 Tổng quan
+
+**MockMentor** là nền tảng luyện phỏng vấn kỹ thuật toàn diện được hỗ trợ bởi AI (Google Gemini & Groq). Ứng viên có thể thực hành qua 3 loại phỏng vấn chính:
+
+| Loại phỏng vấn | Mô tả |
+|---|---|
+| **DSA / LeetCode** | Giải bài coding với judge thực thi code, AI Socratic interviewer gợi ý theo phong cách thầy hỏi trò |
+| **System Design** | Thiết kế hệ thống trên whiteboard tương tác, AI đặt câu hỏi follow-up và đánh giá kiến trúc |
+| **Behavioral** | Trả lời câu hỏi phỏng vấn hành vi (STAR method), AI đánh giá và cho điểm chi tiết |
+
+Ngoài phỏng vấn thông thường, platform còn có **Combat Mode** — chế độ thi đấu có tính giờ, log sự kiện proctoring, và tính điểm integrity.
+
+---
+
+## ✨ Tính năng nổi bật
+
+### 🤖 AI Interviewer
+- **Real-time feedback** qua WebSocket — AI phản hồi ngay khi ứng viên trả lời
+- **Socratic questioning** cho DSA — AI không cho đáp án thẳng, dẫn dắt ứng viên tự khám phá
+- **Multi-LLM support** — Google Gemini (primary) + Groq (fallback)
+- **Curveball scenarios** — SD interviewer tự động inject tình huống bất ngờ (scale-up, failure, new constraint)
+
+### 💻 System Design Room
+- **Interactive whiteboard** với React Flow — vẽ diagram kiến trúc trực tiếp trên trình duyệt
+- **Timed design phases** — chia session thành các phase có deadline
+- **Reference walkthrough** — sau phỏng vấn, so sánh bài làm với architecture chuẩn
+- **Evaluation engine** — AI chấm điểm theo các rubric: scalability, reliability, consistency, trade-offs
+
+### 🏆 Combat Mode
+- **Thi có đồng hồ đếm ngược** cho DSA và System Design
+- **Proctoring** — log các sự kiện bất thường (blur tab, tắt mic, nhìn ra ngoài)
+- **Integrity score** — điểm trung thực dựa trên hành vi trong khi làm bài
+
+### 🎯 Question Bank
+- **500+ behavioral questions** phân loại theo role, level, và competency
+- **Semantic search (RAG)** — tìm câu hỏi liên quan bằng ngôn ngữ tự nhiên với Gemini embeddings
+- **CV-based autofill** — upload CV, hệ thống tự chọn câu hỏi phù hợp với kinh nghiệm
+- **Admin curator** — quản trị viên có thể thêm, sửa, duyệt câu hỏi
+
+### 💳 Credit System
+- **Credit wallet** — mỗi tài khoản có ví tín dụng
+- **Thanh toán qua MoMo & VNPay** — tích hợp cổng thanh toán Việt Nam
+- **Auto refund** — hoàn tín dụng tự động nếu session không hoàn thành
+- **Transaction history** — lịch sử toàn bộ giao dịch
+
+### 🌐 Đa ngôn ngữ
+- **Tiếng Việt** (mặc định), **English**, **日本語**
+- i18next với lazy loading, fallback language
+
+---
+
+## 🛠 Tech Stack
 
 ### Backend
 
-| Công nghệ | Phiên bản | Vai trò |
-|-----------|-----------|---------|
-| NestJS | 11.x | Web framework chính |
-| TypeORM | 0.3.x | ORM + migrations |
-| PostgreSQL | 15 | Database chính |
-| Redis | 7.2 | Cache + job queue |
-| BullMQ | 5.x | Background jobs |
-| Passport.js + JWT | — | Authentication |
-| Google GenAI | latest | AI interviewer (SD) |
-| Groq SDK | latest | AI responses (Behavioral) |
-| Axios | — | External HTTP calls |
+| Thành phần | Công nghệ | Version |
+|---|---|---|
+| Framework | NestJS | v11 |
+| Language | TypeScript | v5.7 |
+| ORM | TypeORM | v0.3 |
+| Database | PostgreSQL | — |
+| Cache / Queue | Redis + BullMQ | v5 |
+| Authentication | Passport (JWT + GitHub OAuth) | — |
+| AI | Google Gemini + Groq SDK | — |
+| Document parsing | pdf-parse + mammoth | — |
+| Validation | class-validator + Zod | — |
+| API Docs | Swagger / OpenAPI | v11 |
+| Testing | Jest + Supertest | v30 |
 
 ### Frontend
 
-| Công nghệ | Vai trò |
-|-----------|---------|
-| React (SPA) | UI framework |
-| Redux Toolkit | State management |
-| Redux-Saga | Side effects / async |
-| Tailwind CSS | Styling |
-| React Flow (@xyflow/react) | SD Whiteboard canvas |
-| Lucide React | Icon library |
-| react-i18next | Multi-language support |
-| Web Speech API | Voice input |
+| Thành phần | Công nghệ | Version |
+|---|---|---|
+| Framework | React | v18 |
+| Build tool | Vite | v6 |
+| Routing | React Router | v7 |
+| State | Redux Toolkit + Redux-Saga | v2 / v1.4 |
+| Styling | Tailwind CSS | v3 |
+| Icons | Lucide React | v0.474 |
+| Animation | Framer Motion | v12 |
+| Code editor | Monaco Editor | v4.7 |
+| Whiteboard | React Flow (@xyflow) | v12 |
+| Charts | Recharts | v3 |
+| Markdown | react-markdown + remark-gfm | — |
+| i18n | i18next + react-i18next | v25 |
+| E2E Testing | Playwright | v1.59 |
 
-### Infrastructure
+### Code Runner (Sandbox)
 
-| Thành phần | Vai trò |
-|------------|---------|
-| Docker Compose | Orchestration (PG, Redis, code-runner, pgAdmin) |
-| Code Runner | Express.js — sandbox thực thi code (Judge0-compatible) |
-| GitHub OAuth | Social login |
+| Thành phần | Công nghệ |
+|---|---|
+| Framework | Express |
+| Runtime isolation | Node.js child_process spawn |
+| API style | Judge0-compatible REST |
 
----
-
-## Modules Backend (NestJS)
-
-```
-server/src/
-├── users/            # Quản lý user, profile, CV upload
-├── auth/             # JWT + GitHub OAuth
-├── problems/         # DSA problem bank (admin + public)
-├── test-cases/       # Test case quản lý cho DSA
-├── judge/            # Chấm code qua code-runner
-├── ai/               # Wrapper thống nhất AI (Groq + Google GenAI)
-├── interview/        # Interview session lifecycle
-├── behavioral/       # Phỏng vấn hành vi (SSE streaming, scoring)
-├── combat/           # Combat mode (multi-player, real-time)
-├── dsa/              # DSA session
-├── live-coding/      # Live coding support
-├── practice-dsa/     # Tự luyện DSA
-├── documents/        # Xử lý PDF/DOCX, JD analysis
-├── jobs/             # BullMQ async jobs
-├── tts/              # Text-to-Speech (combat mode)
-├── sd-problem/       # ✅ System Design problem bank
-├── sd-session/       # ✅ SD session + phase management
-└── sd-interviewer/   # 🚧 AI Interviewer engine (in progress)
-```
+**Ngôn ngữ hỗ trợ:** Python 2/3 · Node.js · C · C++ · Java · Bash
 
 ---
 
-## Luồng phỏng vấn System Design *(đang phát triển)*
+## 🏗 Kiến trúc hệ thống
 
 ```
-Interview Setup
-     │
-     ▼
-[SDConfigPanel]  ←─ chọn problem, thời gian, bật/tắt curveball
-     │ POST /sd-sessions
-     ▼
-[SDRoomPage]
-     │
-     ├── [SDCanvas]          ← React Flow whiteboard, 11 node types
-     │       └── auto-save architecture JSON mỗi 30s
-     │
-     ├── [WalkthroughPanel]  ← voice + text input cho candidate
-     │
-     └── [AiChatPanel] 🚧    ← SSE stream từ AI interviewer
-             │
-             ▼
-     Phase progression (AI-driven):
-     CLARIFICATION → DESIGN → DEEP_DIVE → WRAP_UP
-             │
-             └── Curveball injection khi coverage ≥ 80%
+┌─────────────────────────────────────────────────────────────┐
+│                        Browser Client                        │
+│         React 18 · Vite · Redux-Saga · Tailwind CSS         │
+└──────────────────────────┬──────────────────────────────────┘
+                           │ HTTP / WebSocket
+┌──────────────────────────▼──────────────────────────────────┐
+│                      NestJS Backend                          │
+│                                                              │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐   │
+│  │   Auth   │  │Interview │  │   SD     │  │Behavioral│   │
+│  │  Module  │  │  Module  │  │  Module  │  │  Module  │   │
+│  └──────────┘  └──────────┘  └──────────┘  └──────────┘   │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐   │
+│  │ Combat   │  │Question  │  │  Wallet  │  │ Payment  │   │
+│  │  Module  │  │  Bank    │  │  Module  │  │  Module  │   │
+│  └──────────┘  └──────────┘  └──────────┘  └──────────┘   │
+│                                                              │
+│  ┌──────────────────────────────────────────────────────┐   │
+│  │              AI Service Layer                         │   │
+│  │    Google Gemini API   ·   Groq API                  │   │
+│  └──────────────────────────────────────────────────────┘   │
+└──────────┬─────────────────────┬───────────────────────────┘
+           │                     │
+┌──────────▼──────┐   ┌──────────▼──────────────────────────┐
+│   PostgreSQL    │   │         Redis                         │
+│  (Primary DB)   │   │  Cache · BullMQ Queues · Sessions    │
+└─────────────────┘   └─────────────────────────────────────┘
+                                 │
+┌────────────────────────────────▼────────────────────────────┐
+│                    Code Runner (Sandbox)                      │
+│         Express · Judge0-compatible · Multi-language         │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Luồng xử lý chính
+
+```
+User Request
+    │
+    ▼
+React Component
+    │  dispatch(action)
+    ▼
+Redux-Saga (side effect)
+    │  axios call
+    ▼
+NestJS Controller
+    │  @UseGuards(JwtAuthGuard)
+    ▼
+Service Layer
+    │  TypeORM / BullMQ / AI SDK
+    ▼
+PostgreSQL / Redis / Gemini API
 ```
 
 ---
 
-## Cấu trúc dự án
+## 📁 Cấu trúc project
 
 ```
 Final Project/
-├── server/                  # NestJS backend
+│
+├── server/                          # NestJS backend
 │   ├── src/
-│   │   ├── migrations/      # TypeORM migrations
-│   │   ├── prompt/          # AI prompt templates
-│   │   └── scripts/         # Seed scripts
+│   │   ├── app.module.ts            # Root module
+│   │   ├── main.ts                  # Bootstrap entry point
+│   │   │
+│   │   ├── ai/                      # Gemini & Groq AI wrappers
+│   │   ├── auth/                    # JWT auth, GitHub OAuth
+│   │   ├── users/                   # User profile & identity linking
+│   │   │
+│   │   ├── interview/               # Interview session orchestration
+│   │   ├── live-coding/             # DSA live coding session
+│   │   ├── practice-dsa/            # DSA practice tracking
+│   │   ├── combat/                  # Combat Mode (timed DSA/SD)
+│   │   │
+│   │   ├── sd-problem/              # System Design problem bank
+│   │   ├── sd-session/              # SD session management
+│   │   ├── sd-interviewer/          # AI SD interviewer
+│   │   ├── sd-evaluator/            # SD evaluation engine
+│   │   ├── sd-orchestrator/         # SD flow orchestration
+│   │   │
+│   │   ├── behavioral/              # Behavioral interview entities
+│   │   ├── behavior-session/        # Behavioral session management
+│   │   ├── session-planning/        # Question sequence planning
+│   │   ├── question-bank/           # Behavioral question bank
+│   │   │
+│   │   ├── problems/                # DSA problem bank
+│   │   ├── test-cases/              # Test case management
+│   │   ├── judge/                   # Code submission judge
+│   │   │
+│   │   ├── wallet/                  # Credit wallet
+│   │   ├── payment/                 # MoMo & VNPay integration
+│   │   ├── documents/               # CV/resume upload & parsing
+│   │   ├── tts/                     # Text-to-speech
+│   │   ├── jobs/                    # BullMQ async jobs
+│   │   ├── common/                  # Guards, decorators, utilities
+│   │   ├── scripts/                 # Seed scripts
+│   │   └── migrations/              # Database migrations
+│   │
+│   ├── tests/
+│   │   ├── unit/                    # Jest unit tests
+│   │   └── integration/             # Supertest integration tests
 │   └── package.json
+│
 ├── client/
-│   └── apps/web/            # React SPA
-│       └── src/
-│           ├── components/  # UI components theo feature
-│           ├── store/       # Redux slices + sagas
-│           ├── api/         # API client modules
-│           ├── hooks/       # Custom React hooks
-│           └── i18n/        # Locale files (en/vi/ja)
-├── code-runner/             # Express.js code execution sandbox
+│   └── apps/web/                    # React frontend (Vite)
+│       ├── src/
+│       │   ├── App.jsx              # Router setup
+│       │   ├── router/              # Route constants & guards
+│       │   ├── components/          # Feature components
+│       │   │   ├── landing/
+│       │   │   ├── auth/
+│       │   │   ├── dashboard/
+│       │   │   ├── interview-setup/
+│       │   │   ├── interview-room/  # DSA interview room
+│       │   │   ├── behavioral-room/ # Behavioral room
+│       │   │   ├── sd-room/         # System Design room
+│       │   │   ├── combat-room/     # Combat mode room
+│       │   │   ├── question-bank/   # Public question browser
+│       │   │   ├── practice/        # DSA practice bank
+│       │   │   ├── payment/         # Credit purchase UI
+│       │   │   ├── admin/           # Admin pages
+│       │   │   └── shared/          # DashboardShell, Navigation
+│       │   ├── store/
+│       │   │   ├── store.js         # Redux store
+│       │   │   ├── slices/          # RTK slices
+│       │   │   └── sagas/           # Redux-Saga workers
+│       │   ├── api/                 # Axios API clients
+│       │   ├── hooks/               # Custom React hooks
+│       │   └── i18n/                # i18next config + locales
+│       └── package.json
+│
+├── code-runner/                     # Code execution sandbox
+│   ├── server.js                    # Express Judge0-compatible API
+│   └── package.json
+│
 ├── docs/
-│   ├── features/            # BA.md + HOW.md theo từng epic
-│   └── agent-guide/         # Convention + review checklist
-├── docker-compose.yml
-└── CLAUDE.md                # Agent workflow guide
+│   ├── features/                    # 35+ feature specs (BA.md, HOW.md)
+│   ├── agent-guide/                 # Development conventions & guides
+│   └── agent-audits/                # Process audit records
+│
+└── CLAUDE.md                        # Agent workflow entrypoint
 ```
 
 ---
 
-## Quick Start
+## 🚀 Bắt đầu nhanh
 
 ### Yêu cầu
 
-- Node.js 20+
-- Docker & Docker Compose
-- pnpm (hoặc npm)
+- **Node.js** >= 20
+- **PostgreSQL** >= 14
+- **Redis** >= 7
+- **Git**
 
-### 1. Khởi động services (DB, Redis, code-runner)
+### 1. Clone repository
 
 ```bash
-docker-compose up -d
+git clone <repo-url>
+cd "Final Project"
 ```
 
-### 2. Backend
+### 2. Cài đặt dependencies
 
 ```bash
+# Backend
 cd server
 npm install
-npm run migration:run   # chạy TypeORM migrations
-npm run seed            # seed dữ liệu mẫu (SD problems, v.v.)
-npm run start:dev
+
+# Frontend
+cd ../client/apps/web
+npm install
+
+# Code runner
+cd ../../../code-runner
+npm install
 ```
 
-### 3. Frontend
+### 3. Cấu hình environment
 
 ```bash
+# Tạo file .env từ template
+cp server/.env.example server/.env
+# Điền các giá trị cần thiết (xem phần Cấu hình môi trường bên dưới)
+```
+
+### 4. Khởi động
+
+```bash
+# Terminal 1 — Backend
+cd server
+npm run start:dev
+
+# Terminal 2 — Frontend
 cd client/apps/web
-npm install
+npm run dev
+
+# Terminal 3 — Code Runner
+cd code-runner
 npm run dev
 ```
 
-Truy cập: `http://localhost:5173`  
-API Docs (Swagger): `http://localhost:3000/api`
+Truy cập: [http://localhost:5173](http://localhost:5173)
 
 ---
 
-## Roadmap — System Design Round
+## ⚙️ Cấu hình môi trường
 
-| Epic | Tên | Trạng thái |
-|------|-----|------------|
-| 001 | SD Problem Bank | ✅ Hoàn thiện |
-| 002 | SD Personalization Setup | 🔄 Backend xong, Frontend đang làm |
-| 003 | SD Whiteboard Canvas | 🔄 Backend xong, Canvas UI đang làm |
-| 004 | SD AI Interviewer | 🔄 Backend engine đang làm, Frontend chưa bắt đầu |
+### Backend (`server/.env`)
+
+```env
+# ─── Database ────────────────────────────────────────────
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=your_password
+POSTGRES_DB=mock_interview_db
+
+# ─── Redis ───────────────────────────────────────────────
+REDIS_HOST=localhost
+REDIS_PORT=6379
+
+# ─── JWT ─────────────────────────────────────────────────
+JWT_SECRET=your_jwt_secret_key
+JWT_REFRESH_SECRET=your_refresh_secret_key
+JWT_ACCESS_EXPIRES=15m
+JWT_REFRESH_EXPIRES=7d
+
+# ─── AI Services ─────────────────────────────────────────
+GEMINI_API_KEY=your_gemini_api_key
+GROQ_API_KEY=your_groq_api_key
+
+# ─── GitHub OAuth ────────────────────────────────────────
+GITHUB_CLIENT_ID=your_github_client_id
+GITHUB_CLIENT_SECRET=your_github_client_secret
+GITHUB_CALLBACK_URL=http://localhost:3001/auth/github/callback
+
+# ─── Payment ─────────────────────────────────────────────
+MOMO_PARTNER_CODE=your_momo_partner_code
+MOMO_ACCESS_KEY=your_momo_access_key
+MOMO_SECRET_KEY=your_momo_secret_key
+VNPAY_TMN_CODE=your_vnpay_tmn_code
+VNPAY_HASH_SECRET=your_vnpay_hash_secret
+
+# ─── App ─────────────────────────────────────────────────
+NODE_ENV=development
+PORT=3001
+FRONTEND_URL=http://localhost:5173
+```
+
+### Frontend (`client/apps/web/.env`)
+
+```env
+VITE_API_URL=http://localhost:3001
+VITE_WS_URL=ws://localhost:3001
+```
 
 ---
 
-## Đóng góp
+## 🏃 Chạy từng service
 
-Dự án được phát triển theo quy trình agent-driven với CLAUDE.md:
+### Backend
+
+```bash
+cd server
+
+# Development (hot-reload)
+npm run start:dev
+
+# Production build
+npm run build
+npm run start:prod
+
+# Debug mode
+npm run start:debug
+```
+
+### Seed data
+
+```bash
+cd server
+
+# Seed System Design problems
+npm run seed:sd
+
+# Seed behavioral question probes
+npm run seed:probes
+
+# Import questions từ JSON file
+npm run import:probes
+```
+
+### Frontend
+
+```bash
+cd client/apps/web
+
+# Development server (port 5173)
+npm run dev
+
+# Production build
+npm run build
+
+# Preview production build
+npm run preview
+```
+
+### Code Runner
+
+```bash
+cd code-runner
+
+# Production
+npm start
+
+# Development (nodemon)
+npm run dev
+```
+
+---
+
+## 📡 API Reference
+
+### Authentication
+
+| Method | Endpoint | Mô tả | Auth |
+|---|---|---|---|
+| `POST` | `/auth/register` | Đăng ký tài khoản | — |
+| `POST` | `/auth/login` | Đăng nhập, trả access token | — |
+| `POST` | `/auth/refresh` | Refresh access token | Cookie |
+| `POST` | `/auth/logout` | Đăng xuất | JWT |
+| `GET` | `/auth/me` | Thông tin user hiện tại | JWT |
+| `GET` | `/auth/github` | Khởi tạo GitHub OAuth | — |
+| `GET` | `/auth/github/link` | Liên kết GitHub với account có sẵn | JWT |
+
+### Interview Sessions
+
+| Method | Endpoint | Mô tả |
+|---|---|---|
+| `GET` | `/interview/preflight` | Kiểm tra điều kiện trước phỏng vấn |
+| `PUT` | `/interview/context` | Cập nhật context (role, level, type) |
+| `POST` | `/interview/sessions/init` | Khởi tạo session phỏng vấn |
+| `GET` | `/interview/sessions/in-progress` | Danh sách session đang chạy |
+
+### Live Coding (DSA)
+
+| Method | Endpoint | Mô tả |
+|---|---|---|
+| `POST` | `/live-coding/sessions` | Tạo coding session |
+| `POST` | `/live-coding/sessions/:id/run` | Chạy code thử |
+| `POST` | `/live-coding/sessions/:id/submit` | Nộp bài |
+| `GET` | `/live-coding/sessions/:id/score` | Xem điểm |
+
+### System Design
+
+| Method | Endpoint | Mô tả |
+|---|---|---|
+| `GET` | `/sd-problems` | Danh sách bài SD công khai |
+| `POST` | `/sd-sessions` | Tạo SD session |
+| `POST` | `/sd-sessions/:id/start` | Bắt đầu phỏng vấn |
+| `POST` | `/sd-sessions/:id/message` | Gửi quyết định kiến trúc |
+| `POST` | `/sd-sessions/:id/done-drawing` | Hoàn thành vẽ diagram |
+| `POST` | `/sd-sessions/:id/hint` | Yêu cầu gợi ý |
+| `POST` | `/sd-sessions/:id/evaluate` | Đánh giá solution |
+
+### Behavioral
+
+| Method | Endpoint | Mô tả |
+|---|---|---|
+| `POST` | `/api/behavior-sessions` | Tạo behavioral session |
+| `POST` | `/api/behavior-sessions/:id/answer` | Nộp câu trả lời |
+| `POST` | `/api/behavior-sessions/:id/complete` | Hoàn thành session |
+
+### Question Bank
+
+| Method | Endpoint | Mô tả |
+|---|---|---|
+| `GET` | `/question-bank` | Danh sách câu hỏi công khai |
+| `GET` | `/question-bank/:id` | Chi tiết câu hỏi |
+| `POST` | `/question-bank/:id/evaluate` | AI đánh giá câu trả lời |
+
+### Credit & Payment
+
+| Method | Endpoint | Mô tả |
+|---|---|---|
+| `GET` | `/wallet/balance` | Số dư tín dụng |
+| `GET` | `/wallet/transactions` | Lịch sử giao dịch |
+| `POST` | `/payment/orders` | Tạo đơn thanh toán |
+| `GET` | `/payment/orders/:orderId/status` | Kiểm tra trạng thái |
+| `POST` | `/payment/webhook/momo` | MoMo IPN webhook |
+| `GET` | `/payment/webhook/vnpay` | VNPay return URL |
+
+### Code Runner (Judge0-compatible)
+
+| Method | Endpoint | Mô tả |
+|---|---|---|
+| `POST` | `/submissions` | Nộp code để chạy |
+| `GET` | `/submissions/:token` | Lấy kết quả |
+| `POST` | `/submissions/batch` | Nộp nhiều test case |
+| `GET` | `/submissions/batch` | Lấy kết quả batch |
+| `GET` | `/languages` | Danh sách ngôn ngữ hỗ trợ |
+
+---
+
+## 🗺 Frontend Routes
+
+| Route | Trang | Bảo vệ |
+|---|---|---|
+| `/` | Landing Page | Public |
+| `/login` | Đăng nhập | Guest only |
+| `/register` | Đăng ký | Guest only |
+| `/dashboard` | Dashboard chính | JWT |
+| `/dashboard/profile` | Skill Passport | JWT |
+| `/interview-setup` | Chọn loại phỏng vấn | JWT |
+| `/interview-room` | Phòng phỏng vấn DSA | JWT + Session |
+| `/behavioral-room` | Phòng phỏng vấn Behavioral | JWT + Session |
+| `/sd-room` | Phòng phỏng vấn System Design | JWT + Session |
+| `/dsa-room` | Combat Mode DSA | JWT |
+| `/dsa-room-solo` | DSA Solo (full-screen) | JWT |
+| `/scoring` | Kết quả & điểm số | JWT |
+| `/practice-problems` | Kho bài tập DSA | JWT |
+| `/question-bank` | Kho câu hỏi behavioral | JWT |
+| `/question-bank/:probeId` | Chi tiết câu hỏi | JWT |
+| `/buy-credits` | Mua tín dụng | JWT |
+| `/payment/result` | Kết quả thanh toán | JWT |
+| `/admin` | Admin — DSA Problems | Admin |
+| `/admin/testcases` | Admin — Test Cases | Admin |
+| `/admin/sd-problems` | Admin — SD Problems | Admin |
+| `/admin/question-bank` | Admin — Question Bank | Admin |
+
+---
+
+## 🌐 Quốc tế hóa (i18n)
+
+Platform hỗ trợ 3 ngôn ngữ:
+
+| Ngôn ngữ | Code | File | Mặc định |
+|---|---|---|---|
+| Tiếng Việt | `vi` | `src/i18n/locales/vi.json` | ✅ |
+| English | `en` | `src/i18n/locales/en.json` | — |
+| 日本語 | `ja` | `src/i18n/locales/ja.json` | — |
+
+**Sử dụng trong component:**
+
+```jsx
+import { useTranslation } from 'react-i18next'
+
+function MyComponent() {
+  const { t } = useTranslation()
+  return <button>{t('common.submit')}</button>
+}
+```
+
+**Đổi ngôn ngữ:**
+
+```jsx
+import { useTranslation } from 'react-i18next'
+
+const { i18n } = useTranslation()
+i18n.changeLanguage('en')  // hoặc 'vi', 'ja'
+```
+
+---
+
+## 🧪 Testing
+
+### Backend — Unit & Integration
+
+```bash
+cd server
+
+# Chạy unit tests
+npm test
+
+# Chạy với coverage report
+npm run test:cov
+
+# Chạy integration tests (Supertest)
+npm run test:e2e
+
+# Watch mode
+npm run test:watch
+```
+
+### Frontend — E2E (Playwright)
+
+```bash
+cd client/apps/web
+
+# Chạy E2E với mock API
+npm run test:e2e
+
+# Chạy E2E với real API
+npm run test:e2e:real
+
+# Mở Playwright UI
+npm run test:e2e:ui
+
+# Headed mode (hiện browser)
+npm run test:e2e:headed
+
+# Xem báo cáo test
+npm run test:e2e:report
+```
+
+---
+
+## 📚 Tài liệu kỹ thuật
+
+### Feature Specs
+
+Mỗi tính năng có bộ tài liệu riêng trong `docs/features/<NNN>-<feature>/`:
+
+| File | Nội dung |
+|---|---|
+| `BA.md` | Business Analysis — WHAT/WHY/SCOPE/Acceptance Criteria |
+| `HOW.md` | Solution Architecture — decisions, API contracts, quality guardrails |
+| `REVIEW-BE.md` / `REVIEW-FE.md` | Kết quả code review |
+| `TEST.md` | Test case matrix + kết quả thực thi |
+
+### Development Guides
+
+Tất cả convention và hướng dẫn trong `docs/agent-guide/`:
+
+| File | Nội dung |
+|---|---|
+| [convention-be.md](docs/agent-guide/convention-be.md) | Backend coding conventions |
+| [convention-fe.md](docs/agent-guide/convention-fe.md) | Frontend coding conventions |
+| [dev-guide.md](docs/agent-guide/dev-guide.md) | Development workflow |
+| [review-be.md](docs/agent-guide/review-be.md) | Backend review checklist |
+| [review-fe.md](docs/agent-guide/review-fe.md) | Frontend review checklist |
+| [test-guide.md](docs/agent-guide/test-guide.md) | Testing guidelines |
+
+### Agent Workflow
+
+Project sử dụng agent-driven development với các lệnh:
 
 ```
-ba <feature>  →  BA.md (spec)
-sa <feature>  →  HOW.md (technical design)
-be <feature>  →  Backend code
-fe <feature>  →  Frontend code
-review be/fe  →  Code review
+ba <feature>         →  Business Analysis
+sa <feature>         →  Solution Architecture
+be <feature>         →  Backend development
+fe <feature>         →  Frontend development
+review be <feature>  →  Backend code review
+review fe <feature>  →  Frontend code review
+test <feature>       →  Test automation
+fix <mô tả>          →  Quick fix (1-2 files)
+pa <mô tả lỗi>       →  Process audit
 ```
-
-Convention và checklist: [`docs/agent-guide/`](docs/agent-guide/)
 
 ---
 
-*MockInterview — Luyện tập thực chiến, phỏng vấn tự tin.*
+## 🔐 Bảo mật
+
+- **HttpOnly Cookies** — refresh token không bị XSS truy cập
+- **JWT short-lived** — access token hết hạn sau 15 phút
+- **bcrypt** — mật khẩu hash với salt rounds = 10
+- **CORS** — chỉ cho phép origin từ frontend URL đã cấu hình
+- **GitHub OAuth** — đăng nhập không cần lưu mật khẩu
+- **Proctoring** — phát hiện hành vi gian lận trong Combat Mode
+
+---
+
+## 👥 Đóng góp
+
+1. Fork repository
+2. Tạo feature branch: `git checkout -b feature/ten-tinh-nang`
+3. Commit: `git commit -m "feat: mô tả thay đổi"`
+4. Push: `git push origin feature/ten-tinh-nang`
+5. Tạo Pull Request
+
+---
+
+<div align="center">
+
+Made with ❤️ by the MockMentor Team
+
+</div>

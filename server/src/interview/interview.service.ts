@@ -17,6 +17,7 @@ import { BehaviorCalibrationService } from '../documents/behavior-calibration.se
 import { SessionPlanningService } from '../session-planning/session-planning.service';
 import {
   LOW_BALANCE_THRESHOLD,
+  ROUND_CREDIT_COST,
   ROUND_DURATIONS,
   STAGE_NAMES,
 } from './constants/interview.constants';
@@ -158,20 +159,19 @@ export class InterviewService {
       0,
     );
 
-    // TODO: re-enable credit gate after wallet migration for existing accounts
-    // const totalCost: number = dto.rounds.reduce(
-    //   (sum, r) => sum + (ROUND_CREDIT_COST[r] ?? 0),
-    //   0,
-    // );
-    // if (totalCost > 0) {
-    //   const roundNames: string = dto.rounds.join(', ');
-    //   newBalance = await this.walletService.deductCredit({
-    //     userId,
-    //     amount: totalCost,
-    //     description: `Interview session: ${roundNames}`,
-    //   });
-    // }
-    const newBalance: number | null = null;
+    const totalCost: number = dto.rounds.reduce(
+      (sum, r) => sum + (ROUND_CREDIT_COST[r] ?? 0),
+      0,
+    );
+    let newBalance: number | null = null;
+    if (totalCost > 0) {
+      const roundNames: string = dto.rounds.join(', ');
+      newBalance = await this.walletService.deductCredit({
+        userId,
+        amount: totalCost,
+        description: `Interview session: ${roundNames}`,
+      });
+    }
 
     const session = this.sessionRepo.create({
       userId,

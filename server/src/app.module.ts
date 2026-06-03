@@ -23,6 +23,7 @@ import { SDSessionModule } from './sd-session/sd-session.module';
 import { SDInterviewerModule } from './sd-interviewer/sd-interviewer.module';
 import { SDEvaluatorModule } from './sd-evaluator/sd-evaluator.module';
 import { WalletModule } from './wallet/wallet.module';
+import { PaymentModule } from './payment/payment.module';
 import { QuestionBankModule } from './question-bank/question-bank.module';
 import { SessionPlanningModule } from './session-planning/session-planning.module';
 import { BehaviorSessionModule } from './behavior-session/behavior-session.module';
@@ -82,6 +83,7 @@ import { SDOrchestratorModule } from './sd-orchestrator/sd-orchestrator.module';
     SDInterviewerModule,
     SDEvaluatorModule,
     WalletModule,
+    PaymentModule,
     QuestionBankModule,
     SessionPlanningModule,
     BehaviorSessionModule,

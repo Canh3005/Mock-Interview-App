@@ -14,12 +14,11 @@ export const ROUND_DURATIONS: Record<string, number> = {
   system_design: 30,
 };
 
-// TODO: re-enable when credit gate is active
-// const ROUND_CREDIT_COST: Record<string, number> = {
-//   hr_behavioral: 4,
-//   dsa: 3,
-//   system_design: 8,
-//   ai_prompting: 2,
-// };
+export const ROUND_CREDIT_COST: Record<string, number> = {
+  hr_behavioral: 4,
+  dsa: 3,
+  system_design: 8,
+  ai_prompting: 2,
+};
 
 export const LOW_BALANCE_THRESHOLD = 5;

@@ -11,6 +11,7 @@ import { Wallet } from './wallet.entity';
 export enum TransactionType {
   BONUS = 'BONUS',
   DEBIT = 'DEBIT',
+  CREDIT = 'CREDIT',
   REFUND = 'REFUND',
 }
 

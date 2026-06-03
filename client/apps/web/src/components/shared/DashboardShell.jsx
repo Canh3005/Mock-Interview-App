@@ -16,6 +16,7 @@ import {
   Moon,
   Bell,
   Coins,
+  CreditCard,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
@@ -39,13 +40,18 @@ const NavigationRequestContext = createContext(null)
 function CreditBadge() {
   const { t } = useTranslation()
   const { balance } = useSelector((s) => s.wallet)
+  const navigate = useNavigate()
   if (balance === null) return null
 
   return (
-    <div className="dash-chip hidden h-10 items-center gap-1.5 rounded-full border px-3 text-sm font-semibold lg:flex">
+    <button
+      type="button"
+      onClick={() => navigate(ROUTES.BUY_CREDITS)}
+      className="dash-chip hidden h-10 items-center gap-1.5 rounded-full border px-3 text-sm font-semibold transition-opacity hover:opacity-75 lg:flex"
+    >
       <Coins size={15} />
       <span>{balance} {t('wallet.credits')}</span>
-    </div>
+    </button>
   )
 }
 
@@ -308,6 +314,7 @@ function Sidebar({ collapsed, collapseLocked = false, onToggleCollapsed, onNavig
           collapsed={collapsed}
           onRequestNavigate={onNavigate}
         />
+        <NavItem to={ROUTES.BUY_CREDITS} icon={CreditCard} label="Mua Credit" />
 
         {user?.role === 'admin' && (
           <NavItemGroup icon={Shield} label="Quản trị" matchPrefix="/admin">

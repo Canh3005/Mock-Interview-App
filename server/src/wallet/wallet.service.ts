@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, QueryFailedError, Repository } from 'typeorm';
 import { Wallet } from './entities/wallet.entity';
@@ -18,10 +18,6 @@ export class WalletService {
 
   constructor(
     @InjectRepository(Wallet) private walletRepo: Repository<Wallet>,
-    @InjectRepository(WalletTransaction)
-    private txRepo: Repository<WalletTransaction>,
-    @InjectRepository(WalletBonusClaim)
-    private claimRepo: Repository<WalletBonusClaim>,
     private dataSource: DataSource,
   ) {}
 
@@ -38,63 +34,113 @@ export class WalletService {
     await this._claimSignupBonus({ wallet: savedWallet, email });
   }
 
-  // async deductCredit({
-  //   userId,
-  //   amount,
-  //   description,
-  // }: {
-  //   userId: string;
-  //   amount: number;
-  //   description: string;
-  // }): Promise<number> {
-  //   const queryRunner = this.dataSource.createQueryRunner();
-  //   await queryRunner.connect();
-  //   await queryRunner.startTransaction();
+  async deductCredit({
+    userId,
+    amount,
+    description,
+  }: {
+    userId: string;
+    amount: number;
+    description: string;
+  }): Promise<number> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-  //   try {
-  //     const wallet: Wallet | null = await queryRunner.manager.findOne(Wallet, {
-  //       where: { userId },
-  //       lock: { mode: 'pessimistic_write' },
-  //     });
+    try {
+      const wallet: Wallet | null = await queryRunner.manager.findOne(Wallet, {
+        where: { userId },
+        lock: { mode: 'pessimistic_write' },
+      });
 
-  //     // if (!wallet) throw new NotFoundException('Wallet not found');
+      if (!wallet || wallet.balance < amount) {
+        throw new BadRequestException({
+          code: 'INSUFFICIENT_CREDITS',
+          required: amount,
+          current: wallet?.balance ?? 0,
+          deficit: amount - (wallet?.balance ?? 0),
+        });
+      }
 
-  //     if (wallet.balance < amount) {
-  //       throw new BadRequestException({
-  //         code: 'INSUFFICIENT_CREDITS',
-  //         required: amount,
-  //         current: wallet.balance,
-  //         deficit: amount - wallet.balance,
-  //       });
-  //     }
+      wallet.balance -= amount;
+      await queryRunner.manager.save(wallet);
 
-  //     wallet.balance -= amount;
-  //     await queryRunner.manager.save(wallet);
+      const tx: WalletTransaction = queryRunner.manager.create(
+        WalletTransaction,
+        {
+          walletId: wallet.id,
+          type: TransactionType.DEBIT,
+          amount,
+          description,
+        },
+      );
+      await queryRunner.manager.save(tx);
 
-  //     const tx: WalletTransaction = queryRunner.manager.create(
-  //       WalletTransaction,
-  //       {
-  //         walletId: wallet.id,
-  //         type: TransactionType.DEBIT,
-  //         amount,
-  //         description,
-  //       },
-  //     );
-  //     await queryRunner.manager.save(tx);
+      await queryRunner.commitTransaction();
+      this.logger.log(
+        `Deducted ${amount} credits from user ${userId}. New balance: ${wallet.balance}`,
+      );
 
-  //     await queryRunner.commitTransaction();
-  //     this.logger.log(
-  //       `Deducted ${amount} credits from user ${userId}. New balance: ${wallet.balance}`,
-  //     );
+      return wallet.balance;
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
+  }
 
-  //     return wallet.balance;
-  //   } catch (error) {
-  //     await queryRunner.rollbackTransaction();
-  //     throw error;
-  //   } finally {
-  //     await queryRunner.release();
-  //   }
-  // }
+  async addCredit({
+    userId,
+    amount,
+    description,
+  }: {
+    userId: string;
+    amount: number;
+    description: string;
+  }): Promise<number> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      let wallet: Wallet | null = await queryRunner.manager.findOne(Wallet, {
+        where: { userId },
+        lock: { mode: 'pessimistic_write' },
+      });
+
+      if (!wallet) {
+        wallet = queryRunner.manager.create(Wallet, { userId, balance: 0 });
+        await queryRunner.manager.save(wallet);
+      }
+
+      wallet.balance += amount;
+      await queryRunner.manager.save(wallet);
+
+      const tx: WalletTransaction = queryRunner.manager.create(
+        WalletTransaction,
+        {
+          walletId: wallet.id,
+          type: TransactionType.CREDIT,
+          amount,
+          description,
+        },
+      );
+      await queryRunner.manager.save(tx);
+
+      await queryRunner.commitTransaction();
+      this.logger.log(
+        `Added ${amount} credits to user ${userId}. New balance: ${wallet.balance}`,
+      );
+
+      return wallet.balance;
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
+  }
 
   async getBalance(userId: string, email?: string): Promise<number> {
     const wallet: Wallet | null = await this.walletRepo.findOne({

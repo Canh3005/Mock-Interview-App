@@ -11,6 +11,7 @@ import { watchSDSessionSaga } from './sdSessionSaga';
 import { watchSDInterviewerSaga } from './sdInterviewerSaga';
 import { watchSDEvaluatorSaga } from './sdEvaluatorSaga';
 import { watchWalletSaga } from './walletSaga';
+import { watchPaymentSaga } from './paymentSaga';
 import { watchQuestionBankAdminSaga } from './questionBankAdminSaga';
 import { watchQuestionBankSaga } from './questionBankSaga';
 
@@ -28,6 +29,7 @@ export default function* rootSaga() {
     fork(watchSDInterviewerSaga),
     fork(watchSDEvaluatorSaga),
     fork(watchWalletSaga),
+    fork(watchPaymentSaga),
     fork(watchQuestionBankAdminSaga),
     fork(watchQuestionBankSaga),
   ]);
