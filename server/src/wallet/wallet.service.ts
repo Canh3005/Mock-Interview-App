@@ -1,4 +1,4 @@
-import { Injectable, Logger, BadRequestException } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, QueryFailedError, Repository } from 'typeorm';
 import { Wallet } from './entities/wallet.entity';
@@ -7,9 +7,10 @@ import {
   TransactionType,
 } from './entities/wallet-transaction.entity';
 import { WalletBonusClaim } from './entities/wallet-bonus-claim.entity';
-
-const SIGNUP_BONUS = 5;
-const PG_UNIQUE_VIOLATION = '23505';
+import {
+  PG_UNIQUE_VIOLATION,
+  SIGNUP_BONUS,
+} from './constants/wallet.constants';
 
 @Injectable()
 export class WalletService {

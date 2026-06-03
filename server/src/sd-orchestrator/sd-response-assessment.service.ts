@@ -14,8 +14,7 @@ import type {
   SDWrapUpAssessment,
   SDCurveball,
 } from './types/sd-orchestrator.types';
-
-const GROQ_MODEL = 'llama-3.3-70b-versatile';
+import { SD_RESPONSE_ASSESSMENT_GROQ_MODEL } from './constants/sd-assessment.constants';
 
 @Injectable()
 export class SDResponseAssessmentService {
@@ -26,13 +25,18 @@ export class SDResponseAssessmentService {
   // ─── Stage 1 — Clarification ────────────────────────────────────────────────
   // Implemented in Phase 1
 
-  async assessClarification(
-    _candidateText: string,
-    _data: SDClarificationData,
-    _tracker: SDClarificationTracker,
-    _coverageSignals: Record<string, string[]>,
-    _context: { language: string; level: string },
+  assessClarification(
+    candidateText: string,
+    data: SDClarificationData,
+    tracker: SDClarificationTracker,
+    coverageSignals: Record<string, string[]>,
+    context: { language: string; level: string },
   ): Promise<SDClarificationAssessment> {
+    void candidateText;
+    void data;
+    void tracker;
+    void coverageSignals;
+    void context;
     throw new Error(
       'SDResponseAssessmentService.assessClarification not yet implemented',
     );
@@ -41,14 +45,20 @@ export class SDResponseAssessmentService {
   // ─── Stage 2 — Walkthrough ──────────────────────────────────────────────────
   // Implemented in Phase 3
 
-  async assessWalkthrough(
-    _candidateText: string,
-    _graph: SDGraphState,
-    _flowPaths: SDFlowPath[],
-    _tracker: SDWalkthroughTracker,
-    _clarificationLeftover: SDClarificationLeftoverJson,
-    _isFirstTurn: boolean,
+  assessWalkthrough(
+    candidateText: string,
+    graph: SDGraphState,
+    flowPaths: SDFlowPath[],
+    tracker: SDWalkthroughTracker,
+    clarificationLeftover: SDClarificationLeftoverJson,
+    isFirstTurn: boolean,
   ): Promise<SDWalkthroughAssessment> {
+    void candidateText;
+    void graph;
+    void flowPaths;
+    void tracker;
+    void clarificationLeftover;
+    void isFirstTurn;
     throw new Error(
       'SDResponseAssessmentService.assessWalkthrough not yet implemented',
     );
@@ -57,13 +67,18 @@ export class SDResponseAssessmentService {
   // ─── Stage 3 — Deep Dive ────────────────────────────────────────────────────
   // Implemented in Phase 4
 
-  async assessDeepDive(
-    _candidateText: string,
-    _graph: SDGraphState,
-    _activeProbe: SDProbe,
-    _cumulativeCoveredSignals: string[],
-    _clarificationLeftover: SDClarificationLeftoverJson,
+  assessDeepDive(
+    candidateText: string,
+    graph: SDGraphState,
+    activeProbe: SDProbe,
+    cumulativeCoveredSignals: string[],
+    clarificationLeftover: SDClarificationLeftoverJson,
   ): Promise<SDDeepDiveAssessment> {
+    void candidateText;
+    void graph;
+    void activeProbe;
+    void cumulativeCoveredSignals;
+    void clarificationLeftover;
     throw new Error(
       'SDResponseAssessmentService.assessDeepDive not yet implemented',
     );
@@ -72,13 +87,18 @@ export class SDResponseAssessmentService {
   // ─── Stage 4 — Wrap-Up ──────────────────────────────────────────────────────
   // Implemented in Phase 5
 
-  async assessWrapUp(
-    _candidateText: string,
-    _activeScenario: SDCurveball | SDProbe,
-    _currentGraph: SDGraphState,
-    _baseGraph: SDGraphState,
-    _clarificationLeftover: SDClarificationLeftoverJson,
+  assessWrapUp(
+    candidateText: string,
+    activeScenario: SDCurveball | SDProbe,
+    currentGraph: SDGraphState,
+    baseGraph: SDGraphState,
+    clarificationLeftover: SDClarificationLeftoverJson,
   ): Promise<SDWrapUpAssessment> {
+    void candidateText;
+    void activeScenario;
+    void currentGraph;
+    void baseGraph;
+    void clarificationLeftover;
     throw new Error(
       'SDResponseAssessmentService.assessWrapUp not yet implemented',
     );
@@ -91,7 +111,7 @@ export class SDResponseAssessmentService {
     userPrompt: string,
   ): Promise<T> {
     const raw = await this.groq.generateJsonContent({
-      model: GROQ_MODEL,
+      model: SD_RESPONSE_ASSESSMENT_GROQ_MODEL,
       contents: [{ role: 'user', parts: [{ text: userPrompt }] }],
       config: { systemInstruction: systemPrompt, maxOutputTokens: 800 },
     });

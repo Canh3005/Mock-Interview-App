@@ -5,24 +5,10 @@ import type {
   SDGraphState,
   SDProbe,
   SDClarificationLeftoverJson,
+  SDCandidateIntent,
 } from '../types/sd-orchestrator.types';
-
-const GROQ_MODEL = 'llama-3.3-70b-versatile';
-
-interface LLMDeepDiveOutput {
-  candidateIntent: string;
-  expectedSignalsCovered: string[];
-  tradeoffMentioned: boolean;
-  metricsMentioned: boolean;
-  redFlagTriggered: boolean;
-  constraintLinked: boolean;
-  technicalDepth: number;
-  tradeoffArticulation: number;
-  bottleneckReasoning: number;
-  componentOwnership: number;
-  operationalAwareness: number;
-  redFlags: string[];
-}
+import { SD_ASSESSOR_GROQ_MODEL } from '../constants/sd-assessment.constants';
+import type { LLMDeepDiveOutput } from '../types/sd-assessment-llm.types';
 
 @Injectable()
 export class SDDeepDiveAssessorService {
@@ -47,7 +33,7 @@ export class SDDeepDiveAssessorService {
 
     try {
       const raw = await this.groq.generateJsonContent({
-        model: GROQ_MODEL,
+        model: SD_ASSESSOR_GROQ_MODEL,
         contents: [{ role: 'user', parts: [{ text: userPrompt }] }],
         config: { systemInstruction: systemPrompt, maxOutputTokens: 700 },
       });
@@ -110,8 +96,12 @@ Respond with raw JSON only. No markdown.`;
   }
 
   private _mapToAssessment(parsed: LLMDeepDiveOutput): SDDeepDiveAssessment {
+    const candidateIntent = this._toCandidateIntent(
+      parsed.candidateIntent,
+      'direct_answer',
+    );
     return {
-      candidateIntent: (parsed.candidateIntent as any) ?? 'direct_answer',
+      candidateIntent,
       signals: {
         expectedSignalsCovered: Array.isArray(parsed.expectedSignalsCovered)
           ? parsed.expectedSignalsCovered
@@ -142,6 +132,25 @@ Respond with raw JSON only. No markdown.`;
       },
       redFlags: Array.isArray(parsed.redFlags) ? parsed.redFlags : [],
     };
+  }
+
+  private _toCandidateIntent(
+    value: string,
+    fallback: SDCandidateIntent,
+  ): SDCandidateIntent {
+    const validIntents: SDCandidateIntent[] = [
+      'clarification_question',
+      'requirement_summary',
+      'architecture_walkthrough',
+      'direct_answer',
+      'dont_know',
+      'off_topic',
+      'ready_to_continue',
+      'solution_leap',
+    ];
+    return validIntents.includes(value as SDCandidateIntent)
+      ? (value as SDCandidateIntent)
+      : fallback;
   }
 
   private _fallbackAssessment(): SDDeepDiveAssessment {

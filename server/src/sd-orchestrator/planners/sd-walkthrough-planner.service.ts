@@ -2,23 +2,13 @@ import { Injectable } from '@nestjs/common';
 import type {
   SDWalkthroughIntent,
   SDWalkthroughPlannerInput,
-  SDWalkthroughTransitionCriteria,
   SDGraphNode,
   SDGraphEdge,
 } from '../types/sd-orchestrator.types';
-
-export const WALKTHROUGH_CRITERIA: SDWalkthroughTransitionCriteria = {
-  minTurns: 2,
-  maxTurns: 8,
-  mustCoverCriticalPath: true,
-  maxUnexplainedAllowed: 2,
-  contradictionMustBeResolved: true,
-  maxContradictionChallenges: 2,
-};
-
-// Entry-point infrastructure types — probe before source actors
-const ENTRY_POINT_TYPES = ['lb', 'gateway', 'service'];
-const SOURCE_ACTOR_TYPES = ['client', 'browser', 'mobile', 'user'];
+import {
+  ENTRY_POINT_TYPES,
+  SOURCE_ACTOR_TYPES,
+} from '../constants/sd-walkthrough.constants';
 
 @Injectable()
 export class SDWalkthroughPlannerService {
@@ -233,8 +223,10 @@ export class SDWalkthroughPlannerService {
   private _findCriticalGap(
     graph: { nodes: SDGraphNode[] },
     graphMetrics: { componentCoverage: number },
-    _leftover: unknown,
+    leftover: unknown,
   ): { componentType: string; description: string } {
+    void graphMetrics;
+    void leftover;
     const hasDatabase = graph.nodes.some((n) =>
       ['database', 'cache', 'storage'].some(
         (t) =>

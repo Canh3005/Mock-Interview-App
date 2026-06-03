@@ -17,8 +17,7 @@ import {
   QuestionPracticeAttemptFeedbackResponse,
   QuestionPracticeFailureCode,
 } from '../../types/question-practice-scoring.types';
-
-const PROCESSING_STALE_MS = 10 * 60 * 1000;
+import { PROCESSING_STALE_MS } from '../../constants/question-practice.constants';
 
 @Injectable()
 export class QuestionPracticeFeedbackService {

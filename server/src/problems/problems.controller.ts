@@ -52,7 +52,7 @@ export class ProblemsController {
   }
 
   @Post('import')
-  importBulk(@Body() items: any[]) {
+  importBulk(@Body() items: unknown) {
     // Basic validation: ensure it's an array
     if (!Array.isArray(items)) {
       return {
@@ -63,7 +63,7 @@ export class ProblemsController {
         ],
       };
     }
-    return this.problemsService.importBulk(items);
+    return this.problemsService.importBulk(items as CreateProblemDto[]);
   }
 
   @Get()

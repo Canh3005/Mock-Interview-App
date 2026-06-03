@@ -6,7 +6,7 @@ import type {
 import type { QuestionProbeStage } from '../../question-bank/constants/question-bank-taxonomy.constants';
 import type { OverallBand } from '../../question-bank/types/question-practice-scoring.types';
 import type { ProbeCloseReason } from './behavior-session.types';
-import type { MultimodalScore } from '../../combat/multimodal-scoring.service';
+import type { MultimodalScore } from '../../combat/types/multimodal.types';
 
 export type ReadinessBand =
   | 'ready'

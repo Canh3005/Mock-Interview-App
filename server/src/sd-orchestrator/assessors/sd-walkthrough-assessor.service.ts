@@ -6,30 +6,10 @@ import type {
   SDFlowPath,
   SDWalkthroughTracker,
   SDClarificationLeftoverJson,
+  SDCandidateIntent,
 } from '../types/sd-orchestrator.types';
-
-const GROQ_MODEL = 'llama-3.3-70b-versatile';
-
-interface LLMWalkthroughOutput {
-  candidateIntent: string;
-  explainedNodeIds: string[];
-  explainedEdgeIds: string[];
-  coveredPathIds: string[];
-  dataOwnershipMentioned: boolean;
-  syncAsyncBoundaryMentioned: boolean;
-  constraintLinked: boolean;
-  scopeViolation: boolean;
-  contradictionDetected: boolean;
-  contradictionDetail?: string;
-  requirementSynthesis?: boolean;
-  scaleReasoning?: boolean;
-  scopeControl?: boolean;
-  walkthroughCompleteness: number;
-  flowClarity: number;
-  graphVerbalAlignment: number;
-  communicationStructure: number;
-  redFlags: string[];
-}
+import { SD_ASSESSOR_GROQ_MODEL } from '../constants/sd-assessment.constants';
+import type { LLMWalkthroughOutput } from '../types/sd-assessment-llm.types';
 
 @Injectable()
 export class SDWalkthroughAssessorService {
@@ -56,7 +36,7 @@ export class SDWalkthroughAssessorService {
 
     try {
       const raw = await this.groq.generateJsonContent({
-        model: GROQ_MODEL,
+        model: SD_ASSESSOR_GROQ_MODEL,
         contents: [{ role: 'user', parts: [{ text: userPrompt }] }],
         config: { systemInstruction: systemPrompt, maxOutputTokens: 800 },
       });
@@ -160,8 +140,10 @@ Respond with raw JSON only. No markdown.`;
     );
 
     const assessment: SDWalkthroughAssessment = {
-      candidateIntent:
-        (parsed.candidateIntent as any) ?? 'architecture_walkthrough',
+      candidateIntent: this._toCandidateIntent(
+        parsed.candidateIntent,
+        'architecture_walkthrough',
+      ),
       signals: {
         coveredPathIds: Array.isArray(parsed.coveredPathIds)
           ? parsed.coveredPathIds
@@ -212,6 +194,25 @@ Respond with raw JSON only. No markdown.`;
     };
 
     return assessment;
+  }
+
+  private _toCandidateIntent(
+    value: string,
+    fallback: SDCandidateIntent,
+  ): SDCandidateIntent {
+    const validIntents: SDCandidateIntent[] = [
+      'clarification_question',
+      'requirement_summary',
+      'architecture_walkthrough',
+      'direct_answer',
+      'dont_know',
+      'off_topic',
+      'ready_to_continue',
+      'solution_leap',
+    ];
+    return validIntents.includes(value as SDCandidateIntent)
+      ? (value as SDCandidateIntent)
+      : fallback;
   }
 
   private _fallbackAssessment(isFirstTurn: boolean): SDWalkthroughAssessment {

@@ -1,11 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Groq from 'groq-sdk';
-
-export interface GroqMessage {
-  role: 'user' | 'model' | 'system';
-  parts: { text: string }[];
-}
+import type { GroqMessage } from './types/groq.types';
 
 function toOpenAIMessages(
   contents: GroqMessage[],

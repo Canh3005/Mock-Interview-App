@@ -10,14 +10,7 @@ import {
 import type { Response } from 'express';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { TtsService } from './tts.service';
-
-class SynthesizeDto {
-  text: string;
-  voice?: string;
-  speed?: number;
-  level?: string;
-  language?: 'vi' | 'en' | 'ja';
-}
+import { SynthesizeDto } from './dto/synthesize.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('tts')

@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
+import type {
+  JwtAccessPayload,
+  JwtAuthUser,
+} from '../types/auth-request.types.js';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
@@ -17,7 +21,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     });
   }
 
-  async validate(payload: any) {
+  validate(payload: JwtAccessPayload): JwtAuthUser {
     // This payload is the decoded JWT.
     // What we return here gets attached to request.user
     return { id: payload.sub, email: payload.email, role: payload.role };

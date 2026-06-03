@@ -12,36 +12,15 @@ import { LiveCodingSessionProblem } from '../live-coding/entities/live-coding-se
 import { SDSession } from '../sd-session/entities/sd-session.entity';
 import { InitSessionDto } from './dto/init-session.dto';
 import { UpdateContextDto } from './dto/update-context.dto';
-import { CvJson, JdJson } from '../documents/documents.ai.service';
 import { DocumentContextService } from '../documents/document-context.service';
 import { BehaviorCalibrationService } from '../documents/behavior-calibration.service';
 import { SessionPlanningService } from '../session-planning/session-planning.service';
-
-const STAGE_NAMES: Record<number, string> = {
-  1: 'Culture Fit',
-  2: 'Tech Stack Deep-Dive',
-  3: 'Domain Knowledge',
-  4: 'CV-based Q&A',
-  5: 'Soft Skills',
-  6: 'Reverse Interview',
-};
-
-const ROUND_DURATIONS: Record<string, number> = {
-  hr_behavioral: 20,
-  dsa: 30,
-  ai_prompting: 20,
-  system_design: 30,
-};
-
-// TODO: re-enable when credit gate is active
-// const ROUND_CREDIT_COST: Record<string, number> = {
-//   hr_behavioral: 4,
-//   dsa: 3,
-//   system_design: 8,
-//   ai_prompting: 2,
-// };
-
-const LOW_BALANCE_THRESHOLD = 5;
+import {
+  LOW_BALANCE_THRESHOLD,
+  ROUND_DURATIONS,
+  STAGE_NAMES,
+} from './constants/interview.constants';
+import type { CvJson, JdJson } from '../documents/types/document-ai.types';
 
 @Injectable()
 export class InterviewService {
@@ -377,20 +356,21 @@ export class InterviewService {
   }
 
   private buildCvSnippet(cv: CvJson): string {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const legacy = cv as any;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const legacy = cv as unknown as {
+      experiences?: CvJson['experience'];
+      skills?: string[] | { languages?: unknown; frameworks?: unknown };
+    };
     const firstExp = cv.experience?.[0] ?? legacy.experiences?.[0];
     const roleText = firstExp
       ? // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         `${String((firstExp as any).title ?? (firstExp as any).role ?? '')} tại ${String((firstExp as any).company ?? '')}`
       : '';
-    const skills: string[] = Array.isArray(cv.skills)
-      ? cv.skills
+    const rawSkills = legacy.skills ?? cv.skills;
+    const skills: string[] = Array.isArray(rawSkills)
+      ? this.stringArray(rawSkills)
       : [
-          ...(legacy.skills?.languages ?? []),
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-          ...(legacy.skills?.frameworks ?? []),
+          ...this.stringArray(rawSkills.languages),
+          ...this.stringArray(rawSkills.frameworks),
         ];
     const skillsText = skills.slice(0, 5).join(', ');
     return (
@@ -403,5 +383,11 @@ export class InterviewService {
     return (
       [jd.role, skills].filter(Boolean).join(' – ') || 'JD đã được tải lên'
     );
+  }
+
+  private stringArray(value: unknown): string[] {
+    return Array.isArray(value)
+      ? value.filter((item): item is string => typeof item === 'string')
+      : [];
   }
 }

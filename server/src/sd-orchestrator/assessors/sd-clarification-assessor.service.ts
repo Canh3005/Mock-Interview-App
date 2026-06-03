@@ -4,21 +4,11 @@ import type {
   SDClarificationAssessment,
   SDClarificationData,
   SDClarificationTracker,
+  SDCandidateIntent,
 } from '../types/sd-orchestrator.types';
-import { DIMENSION_COVERAGE_SIGNALS } from '../planners/sd-clarification-planner.service';
-
-const GROQ_MODEL = 'llama-3.3-70b-versatile';
-
-interface LLMClarificationOutput {
-  candidateIntent: string;
-  dimensionCovered: string[];
-  matchedFactKey: string | null;
-  solutionLeapDetected: boolean;
-  requirementCoverage: number;
-  questionSpecificity: number;
-  assumptionDiscipline: number;
-  prioritization: number;
-}
+import { SD_ASSESSOR_GROQ_MODEL } from '../constants/sd-assessment.constants';
+import { DIMENSION_COVERAGE_SIGNALS } from '../constants/sd-clarification.constants';
+import type { LLMClarificationOutput } from '../types/sd-assessment-llm.types';
 
 @Injectable()
 export class SDClarificationAssessorService {
@@ -36,7 +26,7 @@ export class SDClarificationAssessorService {
     const userPrompt = `Candidate said: "${candidateText}"\n\nRespond with JSON only.`;
     try {
       const raw = await this.groq.generateJsonContent({
-        model: GROQ_MODEL,
+        model: SD_ASSESSOR_GROQ_MODEL,
         contents: [{ role: 'user', parts: [{ text: userPrompt }] }],
         config: { systemInstruction: systemPrompt, maxOutputTokens: 600 },
       });
@@ -102,7 +92,7 @@ Respond with raw JSON only. No markdown, no explanation.`;
   private _mapToAssessment(
     parsed: LLMClarificationOutput,
   ): SDClarificationAssessment {
-    const validIntents = [
+    const validIntents: SDCandidateIntent[] = [
       'clarification_question',
       'requirement_summary',
       'direct_answer',
@@ -111,8 +101,10 @@ Respond with raw JSON only. No markdown, no explanation.`;
       'off_topic',
       'dont_know',
     ];
-    const candidateIntent = validIntents.includes(parsed.candidateIntent)
-      ? (parsed.candidateIntent as any)
+    const candidateIntent: SDCandidateIntent = validIntents.includes(
+      parsed.candidateIntent as SDCandidateIntent,
+    )
+      ? (parsed.candidateIntent as SDCandidateIntent)
       : 'clarification_question';
 
     return {

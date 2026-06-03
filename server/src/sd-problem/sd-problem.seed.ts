@@ -1877,10 +1877,10 @@ export async function seedSDProblems(dataSource: DataSource): Promise<void> {
 
     const existing = await repo.findOne({ where: { title: seed.title } });
     if (existing) {
-      await repo.update(existing.id, merged as any);
+      await repo.save(repo.merge(existing, merged));
       updated++;
     } else {
-      await repo.save(repo.create(merged as SDProblem));
+      await repo.save(repo.create(merged));
       created++;
     }
   }

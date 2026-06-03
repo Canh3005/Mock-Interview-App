@@ -4,11 +4,23 @@ export interface JwtAuthUser {
   role?: string;
 }
 
+export interface JwtAccessPayload {
+  sub: string;
+  email: string;
+  role?: string;
+}
+
 export interface JwtRefreshUser {
   sub: string;
   email: string;
   role?: string;
   refreshToken: string;
+}
+
+export interface JwtRefreshPayload {
+  sub: string;
+  email: string;
+  role?: string;
 }
 
 export interface GithubProfile {

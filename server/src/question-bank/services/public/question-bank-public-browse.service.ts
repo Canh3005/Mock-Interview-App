@@ -19,8 +19,7 @@ import {
   PublicQuestionProbeCard,
   PublicQuestionProbeListResponse,
 } from '../../types/question-bank-public.types';
-
-const PUBLIC_QUESTION_BANK_PAGE_SIZE = 12;
+import { PUBLIC_QUESTION_BANK_PAGE_SIZE } from '../../constants/question-bank-public.constants';
 
 @Injectable()
 export class QuestionBankPublicBrowseService {

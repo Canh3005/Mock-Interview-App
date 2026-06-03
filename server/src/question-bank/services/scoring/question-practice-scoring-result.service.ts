@@ -12,13 +12,8 @@ import {
   ProbeSignalResult,
   ScoringConfidence,
 } from '../../types/question-practice-scoring.types';
-
-export const QUESTION_PRACTICE_SCORING_VERSION = 'probe-aware-v1';
-
-export interface CatalogItem {
-  key: string;
-  label: string;
-}
+import { QUESTION_PRACTICE_SCORING_VERSION } from '../../constants/question-practice-scoring.constants';
+import type { CatalogItem } from '../../types/question-practice-scoring.types';
 
 @Injectable()
 export class QuestionPracticeScoringResultService {

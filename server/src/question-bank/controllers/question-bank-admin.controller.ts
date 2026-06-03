@@ -27,15 +27,13 @@ import {
 import { InterviewSet } from '../entities/interview-set.entity';
 import { QuestionProbeAuditLog } from '../entities/question-probe-audit-log.entity';
 import { QuestionProbe } from '../entities/question-probe.entity';
-import {
+import { QuestionProbeCurationService } from '../services/curation/question-probe-curation.service';
+import type {
   ImportQuestionProbesResult,
   ProbeListQuery,
-  QuestionProbeCurationService,
-} from '../services/curation/question-probe-curation.service';
-import {
-  InterviewSetCurationService,
-  InterviewSetListQuery,
-} from '../services/curation/interview-set-curation.service';
+} from '../types/question-bank-curation.types';
+import { InterviewSetCurationService } from '../services/curation/interview-set-curation.service';
+import type { InterviewSetListQuery } from '../types/question-bank-curation.types';
 
 @ApiTags('admin/question-bank')
 @Controller('admin/question-bank')

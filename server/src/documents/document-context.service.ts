@@ -1,30 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import type { CvJson, JdJson } from './documents.ai.service';
 import { DocumentUploadType } from './enums/document-upload-type.enum';
 import { DocumentContextOverride } from './entities/document-context-override.entity';
 import { JdAnalysis } from '../users/entities/jd-analysis.entity';
 import { UserCv } from '../users/entities/user-cv.entity';
 import { RedisService } from '../common/redis.service';
-
-const CONTEXT_TTL_SECONDS = 86400 * 7;
-
-interface ActiveContext<T> {
-  json: T | null;
-  source: 'override' | 'db' | 'missing';
-  recordId?: string;
-}
-
-export interface InterviewDocumentContext {
-  cv: CvJson | null;
-  jd: JdJson | null;
-  missing: string[];
-  sources: {
-    cv: ActiveContext<CvJson>['source'];
-    jd: ActiveContext<JdJson>['source'];
-  };
-}
+import { CONTEXT_TTL_SECONDS } from './constants/document-context.constants';
+import type {
+  ActiveContext,
+  InterviewDocumentContext,
+} from './types/document-context.types';
+import type { CvJson, JdJson } from './types/document-ai.types';
 
 @Injectable()
 export class DocumentContextService {

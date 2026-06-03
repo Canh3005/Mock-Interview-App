@@ -51,9 +51,7 @@ export class SDPolicyEngineService {
     const allRequiredCovered = criteria.requiredDimensions.every((d) =>
       tracker.progress.coveredDimensions.includes(d),
     );
-    const meetsMinCriteria =
-      tracker.turnCount >= criteria.minCandidateTurns &&
-      elapsedSeconds >= criteria.minDurationSeconds;
+    const meetsMinCriteria = tracker.turnCount >= criteria.minCandidateTurns;
     const maxTimeReached = elapsedSeconds >= criteria.maxDurationSeconds;
 
     const candidateReady = candidateIntent === 'ready_to_continue';
@@ -70,19 +68,6 @@ export class SDPolicyEngineService {
       };
     }
 
-    // 4. ASK_NUDGE — candidate is ready_to_continue or dont_know but missing required dims
-    if (
-      candidateReady ||
-      candidateIntent === 'dont_know' ||
-      candidateIntent === 'off_topic'
-    ) {
-      return {
-        action: 'ASK_NUDGE',
-        reason: `candidateIntent=${candidateIntent}, missing required dimensions`,
-      };
-    }
-
-    // 5. Default — no action needed (candidate is asking normally)
     return {
       action: 'ASK_NUDGE',
       reason: 'Awaiting candidate clarification questions',
@@ -96,7 +81,7 @@ export class SDPolicyEngineService {
     tracker: SDWalkthroughTracker,
     criteria: SDWalkthroughTransitionCriteria,
   ): SDWalkthroughDecision {
-    const { signals, extra } = assessment;
+    const { signals } = assessment;
     const { progress, turnCount } = tracker;
 
     // Contradiction challenge (before transition check)

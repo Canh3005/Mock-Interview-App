@@ -15,6 +15,11 @@ export type QuestionPracticeFailureCode =
   | 'queue_failed'
   | 'system_error';
 
+export interface CatalogItem {
+  key: string;
+  label: string;
+}
+
 export interface ProbeSignalResult {
   key: string;
   label: string;

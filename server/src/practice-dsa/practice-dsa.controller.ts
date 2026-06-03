@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { PracticeDSAService } from './practice-dsa.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import type { JwtAuthRequest } from '../auth/types/auth-request.types.js';
 
 @Controller('practice')
 @UseGuards(JwtAuthGuard)
@@ -31,7 +32,7 @@ export class PracticeDSAController {
 
   @Post('submit')
   submitProblem(
-    @Request() req: any,
+    @Request() req: JwtAuthRequest,
     @Body()
     body: {
       problemId: string;
@@ -50,12 +51,15 @@ export class PracticeDSAController {
   }
 
   @Post('solved')
-  markSolved(@Request() req: any, @Body() body: { problemId: string }) {
+  markSolved(
+    @Request() req: JwtAuthRequest,
+    @Body() body: { problemId: string },
+  ) {
     return this.practiceDSAService.markSolved(req.user.id, body.problemId);
   }
 
   @Get('solved')
-  getSolvedProblemIds(@Request() req: any) {
+  getSolvedProblemIds(@Request() req: JwtAuthRequest) {
     return this.practiceDSAService.getSolvedProblemIds(req.user.id);
   }
 }

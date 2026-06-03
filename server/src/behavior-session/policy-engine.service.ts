@@ -10,20 +10,11 @@ import type {
   ActiveProbeSession,
   PolicyDecision,
 } from './types/behavior-session.types';
-
-const MAX_REDIRECTS_PER_PROBE = 1;
-
-const MAX_FOLLOW_UPS_PER_LEVEL: Record<QuestionProbeLevel, number> = {
-  junior: 1,
-  mid: 2,
-  senior: 3,
-};
-
-const MAX_TURNS_PER_PROBE: Record<QuestionProbeLevel, number> = {
-  junior: 2,
-  mid: 3,
-  senior: 4,
-};
+import {
+  MAX_FOLLOW_UPS_PER_LEVEL,
+  MAX_REDIRECTS_PER_PROBE,
+  MAX_TURNS_PER_PROBE,
+} from './constants/policy-engine.constants';
 
 @Injectable()
 export class PolicyEngineService {

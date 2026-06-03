@@ -4,15 +4,25 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, ILike, In } from 'typeorm';
+import { Repository, ILike, FindOptionsWhere } from 'typeorm';
 import { CreateProblemDto } from './dto/create-problem.dto';
 import { UpdateProblemDto } from './dto/update-problem.dto';
 import { VerifyProblemDto } from './dto/verify-problem.dto';
-import { Problem, ProblemStatus } from './entities/problem.entity';
+import {
+  Problem,
+  ProblemDifficulty,
+  ProblemStatus,
+} from './entities/problem.entity';
 import { ProblemTemplate } from './entities/problem-template.entity';
 import { TestCase } from '../test-cases/entities/test-case.entity';
-import { JudgeService, JudgeSubmissionResult } from '../judge/judge.service';
+import { JudgeService } from '../judge/judge.service';
 import { v4 as uuidv4 } from 'uuid';
+import type {
+  ImportBulkError,
+  ImportBulkItemResult,
+  ProblemVerificationResult,
+} from './types/problem-verification.types';
+import type { JudgeSubmissionResult } from '../judge/types/judge.types';
 
 @Injectable()
 export class ProblemsService {
@@ -25,7 +35,7 @@ export class ProblemsService {
     private judgeService: JudgeService,
   ) {}
 
-  async create(createProblemDto: any) {
+  async create(createProblemDto: CreateProblemDto) {
     const id = uuidv4();
     const title = createProblemDto.title || 'untitled';
     const baseSlug = title
@@ -34,21 +44,14 @@ export class ProblemsService {
       .replace(/(^-|-$)/g, '');
     const slug = `${baseSlug}-${id.substring(0, 8)}`;
 
-    const templates =
-      createProblemDto.templates?.map((t: any) => ({
-        ...t,
-        id: t.id && String(t.id).length > 20 ? t.id : uuidv4(),
-      })) || [];
+    const templates = (createProblemDto.templates ?? []).map((template) =>
+      this.withStableId(template),
+    );
 
     // Strip temporary numeric UI IDs from testcases and assign valid UUIDs
-    const testCases =
-      createProblemDto.testCases?.map((tc: any) => {
-        const { id: tcId, ...rest } = tc;
-        return {
-          ...rest,
-          id: tcId && String(tcId).length > 20 ? tcId : uuidv4(),
-        };
-      }) || [];
+    const testCases = (createProblemDto.testCases ?? []).map((testCase) =>
+      this.withStableId(testCase),
+    );
 
     const createdProblem = this.problemRepository.create({
       id,
@@ -61,11 +64,11 @@ export class ProblemsService {
   }
 
   async findAll(page = 1, limit = 10, search = '', difficulty = '') {
-    const where: any = {};
+    const where: FindOptionsWhere<Problem> = {};
     if (search) {
       where.title = ILike(`%${search}%`);
     }
-    if (difficulty) {
+    if (this.isProblemDifficulty(difficulty)) {
       where.difficulty = difficulty;
     }
 
@@ -110,29 +113,32 @@ export class ProblemsService {
     return { data, total, page, limit };
   }
 
-  async importBulk(items: any[]) {
+  async importBulk(items: CreateProblemDto[]) {
     let successful = 0;
     let failed = 0;
-    const errors: any[] = [];
+    const errors: ImportBulkError[] = [];
 
     // Process each item independently
-    const results = await Promise.allSettled(
-      items.map(async (item, index) => {
+    const results = await Promise.all(
+      items.map(async (item, index): Promise<ImportBulkItemResult> => {
         try {
           // Force status to DRAFT regardless of input for safety
           const createDto: CreateProblemDto = {
             ...item,
-            status: 'DRAFT',
+            status: ProblemStatus.DRAFT,
             // Default to empty array if testCases is missing to prevent validation crash
             testCases: Array.isArray(item.testCases) ? item.testCases : [],
           };
 
           await this.create(createDto);
-          return index;
-        } catch (error) {
-          throw {
-            index,
-            error: error.message || 'Unknown error during creation',
+          return { ok: true };
+        } catch (error: unknown) {
+          return {
+            ok: false,
+            error: {
+              index,
+              error: this.formatErrorMessage(error),
+            },
           };
         }
       }),
@@ -140,11 +146,16 @@ export class ProblemsService {
 
     // Analyze results
     results.forEach((result) => {
-      if (result.status === 'fulfilled') {
+      if (result.ok) {
         successful++;
       } else {
         failed++;
-        errors.push(result.reason);
+        errors.push(
+          result.error ?? {
+            index: -1,
+            error: 'Unknown error during creation',
+          },
+        );
       }
     });
 
@@ -166,23 +177,20 @@ export class ProblemsService {
     return problem;
   }
 
-  async update(id: string, updateProblemDto: any) {
+  async update(id: string, updateProblemDto: UpdateProblemDto) {
     const problem = await this.problemRepository.findOne({
       where: { id },
       relations: ['templates', 'testCases'],
     });
     if (!problem) throw new NotFoundException(`Problem #${id} not found`);
 
-    const dto = updateProblemDto as Record<string, unknown>;
-    const rawTemplates = dto['templates'] as
-      | Record<string, unknown>[]
-      | undefined;
-    const rawTestCases = dto['testCases'] as
-      | Record<string, unknown>[]
-      | undefined;
-    const { templates: _t, testCases: _tc, ...scalarFields } = dto;
-    void _t;
-    void _tc;
+    const rawTemplates = Array.isArray(updateProblemDto.templates)
+      ? updateProblemDto.templates
+      : undefined;
+    const rawTestCases = Array.isArray(updateProblemDto.testCases)
+      ? updateProblemDto.testCases
+      : undefined;
+    const scalarFields = this.toProblemScalarFields(updateProblemDto);
     Object.assign(problem, scalarFields);
 
     // Explicit upsert — bypasses preload cascade unreliability with @PrimaryColumn relations
@@ -191,8 +199,8 @@ export class ProblemsService {
         problem.templates.map((t) => [t.languageId, t]),
       );
       const incoming = rawTemplates.map((t) => {
-        const existingId = t['id'] as string | undefined;
-        const langId = t['languageId'] as string;
+        const existingId = t.id;
+        const langId = t.languageId;
         const resolvedId =
           existingId && existingId.length > 20
             ? existingId
@@ -208,7 +216,7 @@ export class ProblemsService {
 
     if (rawTestCases) {
       const incoming = rawTestCases.map((tc) => {
-        const existingId = tc['id'] as string | undefined;
+        const existingId = tc.id;
         const { id: _, ...rest } = tc;
         void _;
         return {
@@ -266,7 +274,10 @@ export class ProblemsService {
     }
 
     let allLanguagesPassed = true;
-    const resultObj: any = { languages: {}, details: [] };
+    const resultObj: ProblemVerificationResult = {
+      languages: {},
+      details: [],
+    };
 
     for (const template of dto.templates.filter((t) => t.isEnabled)) {
       const language = template.languageId;
@@ -317,12 +328,9 @@ export class ProblemsService {
 
         resultObj.languages[language] = { passed, total };
         if (passed < total) allLanguagesPassed = false;
-      } catch (err) {
+      } catch (err: unknown) {
         allLanguagesPassed = false;
-        const errorMessage =
-          err.response?.data?.message ||
-          err.response?.data?.error ||
-          err.message;
+        const errorMessage = this.extractServiceErrorMessage(err);
         resultObj.languages[language] = {
           passed: 0,
           total: dto.testCases.length,
@@ -390,5 +398,70 @@ export class ProblemsService {
     }
 
     return resultObj;
+  }
+
+  private withStableId<T extends { id?: string }>(
+    value: T,
+  ): T & { id: string } {
+    return {
+      ...value,
+      id: value.id && value.id.length > 20 ? value.id : uuidv4(),
+    };
+  }
+
+  private isProblemDifficulty(value: string): value is ProblemDifficulty {
+    return Object.values(ProblemDifficulty).includes(
+      value as ProblemDifficulty,
+    );
+  }
+
+  private toProblemScalarFields(
+    dto: UpdateProblemDto,
+  ): Partial<Omit<Problem, 'templates' | 'testCases'>> {
+    const fields: Partial<Omit<Problem, 'templates' | 'testCases'>> = {};
+
+    if (dto.title !== undefined) fields.title = dto.title;
+    if (dto.difficulty !== undefined) fields.difficulty = dto.difficulty;
+    if (dto.description !== undefined) fields.description = dto.description;
+    if (dto.constraints !== undefined) fields.constraints = dto.constraints;
+    if (dto.timeLimitMultiplier !== undefined) {
+      fields.timeLimitMultiplier = dto.timeLimitMultiplier;
+    }
+    if (dto.status !== undefined) fields.status = dto.status;
+    if (dto.tags !== undefined) fields.tags = dto.tags;
+    if (dto.hints !== undefined) fields.hints = dto.hints;
+    if (dto.optimalTimeComplexity !== undefined) {
+      fields.optimalTimeComplexity = dto.optimalTimeComplexity;
+    }
+    if (dto.optimalSpaceComplexity !== undefined) {
+      fields.optimalSpaceComplexity = dto.optimalSpaceComplexity;
+    }
+
+    return fields;
+  }
+
+  private extractServiceErrorMessage(error: unknown): string {
+    if (this.isRecord(error)) {
+      const response = error['response'];
+      if (this.isRecord(response)) {
+        const data = response['data'];
+        if (this.isRecord(data)) {
+          const message = data['message'];
+          if (typeof message === 'string') return message;
+          const responseError = data['error'];
+          if (typeof responseError === 'string') return responseError;
+        }
+      }
+    }
+
+    return this.formatErrorMessage(error);
+  }
+
+  private formatErrorMessage(error: unknown): string {
+    return error instanceof Error ? error.message : String(error);
+  }
+
+  private isRecord(value: unknown): value is Record<string, unknown> {
+    return typeof value === 'object' && value !== null;
   }
 }

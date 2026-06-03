@@ -16,24 +16,10 @@ import { QuestionProbe } from '../../entities/question-probe.entity';
 import { QuestionProbeAuditService } from './question-probe-audit.service';
 import { QuestionProbeValidationService } from './question-probe-validation.service';
 import { ProbeValidationResult } from '../../types/question-probe-validation.types';
-
-export interface ProbeListQuery {
-  page: number;
-  limit: number;
-  status?: string;
-  roleFamily?: string;
-  level?: string;
-  type?: string;
-  competency?: string;
-  search?: string;
-}
-
-export interface ImportQuestionProbesResult {
-  successful: number;
-  failed: number;
-  errors: Array<{ index: number; error: string }>;
-  data: QuestionProbe[];
-}
+import type {
+  ImportQuestionProbesResult,
+  ProbeListQuery,
+} from '../../types/question-bank-curation.types';
 
 @Injectable()
 export class QuestionProbeCurationService {

@@ -1,13 +1,5 @@
 import { Injectable } from '@nestjs/common';
-
-export interface MultimodalContext {
-  dominantExpression: 'stressed' | 'confident' | 'neutral' | 'uncertain';
-  expressionConfidence: number;
-  gazeOnScreenPercent: number;
-  fillerRate: number;
-  speakingPaceWpm: number;
-  turnDurationMs: number;
-}
+import type { MultimodalContext } from './types/multimodal.types';
 
 @Injectable()
 export class MultimodalHintService {

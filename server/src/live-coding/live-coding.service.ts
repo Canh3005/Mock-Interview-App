@@ -21,7 +21,8 @@ import {
 } from '../problems/entities/problem.entity';
 import { ProblemTemplate } from '../problems/entities/problem-template.entity';
 import { TestCase } from '../test-cases/entities/test-case.entity';
-import { JudgeService, JudgeSubmissionResult } from '../judge/judge.service';
+import { JudgeService } from '../judge/judge.service';
+import type { JudgeSubmissionResult } from '../judge/types/judge.types';
 import { LiveCodingAiService } from './live-coding-ai.service';
 import { LiveCodingScoringService } from './live-coding-scoring.service';
 import { RoundOrchestratorService } from '../interview/round-orchestrator.service';

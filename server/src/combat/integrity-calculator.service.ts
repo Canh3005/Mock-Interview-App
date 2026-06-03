@@ -4,14 +4,7 @@ import { Repository } from 'typeorm';
 import { ProctoringSession } from './entities/proctoring-session.entity';
 import { ProctoringEvent } from './entities/proctoring-event.entity';
 import { CorrelationQueryService } from './correlation-query.service';
-
-type AdjustmentType = 'mitigation' | 'aggravation';
-
-interface CorrelationAdjustment {
-  type: AdjustmentType;
-  points: number;
-  reason: string;
-}
+import type { CorrelationAdjustment } from './types/integrity-calculator.types';
 
 @Injectable()
 export class IntegrityCalculatorService {

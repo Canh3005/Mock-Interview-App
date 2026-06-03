@@ -10,15 +10,7 @@ import { QuestionProbeStatus } from '../../constants/question-bank-taxonomy.cons
 import { InterviewSetDraftDto } from '../../dto/interview-set-curation.dto';
 import { InterviewSet } from '../../entities/interview-set.entity';
 import { QuestionProbe } from '../../entities/question-probe.entity';
-
-export interface InterviewSetListQuery {
-  page: number;
-  limit: number;
-  status?: string;
-  roleFamily?: string;
-  level?: string;
-  search?: string;
-}
+import type { InterviewSetListQuery } from '../../types/question-bank-curation.types';
 
 @Injectable()
 export class InterviewSetCurationService {

@@ -13,7 +13,9 @@ describe('QuestionBankDetailService', () => {
   beforeEach(() => {
     probeRepository = { findOne: jest.fn() };
     projectionService = new QuestionBankPublicProjectionService();
-    relatedService = { findRelatedQuestions: jest.fn(async () => []) };
+    relatedService = {
+      findRelatedQuestions: jest.fn(() => Promise.resolve([])),
+    };
     service = new QuestionBankDetailService(
       probeRepository as unknown as Repository<QuestionProbe>,
       projectionService,

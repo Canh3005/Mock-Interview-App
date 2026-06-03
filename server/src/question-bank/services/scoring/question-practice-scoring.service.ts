@@ -8,27 +8,22 @@ import {
   QuestionPracticeAttempt,
   QuestionPracticeProbeSnapshot,
 } from '../../entities/question-practice-attempt.entity';
-import {
-  CatalogItem,
-  QuestionPracticeScoringResultService,
-} from './question-practice-scoring-result.service';
+import { QuestionPracticeScoringResultService } from './question-practice-scoring-result.service';
 import {
   CandidateIntent,
   LlmScoringExtraction,
   LlmScoringExtractionSchema,
   ProbeScoringResult,
+  CatalogItem,
 } from '../../types/question-practice-scoring.types';
 import type { QuestionProbe } from '../../entities/question-probe.entity';
 import type { QuestionProbeLanguage } from '../../constants/question-bank-taxonomy.constants';
-
-const MIN_EVALUABLE_CHARS = 80;
-const LONG_ANSWER_CHARS = 8000;
-const MAX_CONTEXT_CHARS = 16000;
-
-const NarrativeSchema = z.object({
-  summary: z.string().min(1),
-  improvementSuggestions: z.array(z.string().min(1)).min(1).max(5),
-});
+import {
+  LONG_ANSWER_CHARS,
+  MAX_CONTEXT_CHARS,
+  MIN_EVALUABLE_CHARS,
+  NarrativeSchema,
+} from '../../constants/question-practice-scoring.constants';
 
 @Injectable()
 export class QuestionPracticeScoringService {

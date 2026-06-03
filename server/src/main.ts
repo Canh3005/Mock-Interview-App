@@ -2,9 +2,10 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import cookieParser from 'cookie-parser';
+import type { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   // Disable ETag to prevent 304 responses on dynamic API data
   app.getHttpAdapter().getInstance().set('etag', false);
@@ -31,4 +32,4 @@ async function bootstrap() {
   // Change default port to 3001 to avoid conflicting with Vite
   await app.listen(process.env.PORT ?? 3001);
 }
-bootstrap();
+void bootstrap();

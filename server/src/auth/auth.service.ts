@@ -9,15 +9,10 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
-
-interface IdentityProfileJson {
-  avatar_url?: string;
-  name?: string;
-}
-
-interface IdentityProfileData {
-  _json?: IdentityProfileJson;
-}
+import type {
+  IdentityProfileData,
+  IdentityProfileJson,
+} from './types/identity-profile.types';
 
 @Injectable()
 export class AuthService {

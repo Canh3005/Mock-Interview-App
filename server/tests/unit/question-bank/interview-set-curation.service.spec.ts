@@ -24,7 +24,7 @@ describe('InterviewSetCurationService', () => {
       create: jest.fn((input: Partial<InterviewSet>) =>
         createMockInterviewSet(input),
       ),
-      save: jest.fn(async (input: InterviewSet) => input),
+      save: jest.fn((input: InterviewSet) => Promise.resolve(input)),
       findOne: jest.fn(),
     };
     probeRepository = {

@@ -7,14 +7,8 @@ import type {
   SDDeepDiveIntent,
   SDWrapUpIntent,
 } from './types/sd-orchestrator.types';
-
-const GROQ_MODEL = 'llama-3.1-8b-instant';
-
-const LANGUAGE_NAMES: Record<string, string> = {
-  vi: 'Vietnamese',
-  en: 'English',
-  ja: 'Japanese',
-};
+import { LANGUAGE_NAMES } from './constants/sd-renderer.constants';
+import { SD_QUESTION_RENDERER_GROQ_MODEL } from './constants/sd-renderer-model.constants';
 
 @Injectable()
 export class SDQuestionRendererService {
@@ -57,7 +51,7 @@ export class SDQuestionRendererService {
   ): Promise<string> {
     try {
       const rendered = await this.groq.generateContent({
-        model: GROQ_MODEL,
+        model: SD_QUESTION_RENDERER_GROQ_MODEL,
         contents: [{ role: 'user', parts: [{ text: promptTemplate }] }],
         config: {
           systemInstruction,

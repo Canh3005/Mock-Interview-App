@@ -4,20 +4,11 @@ import { Repository } from 'typeorm';
 import { SDSession, SDPhase } from '../sd-session/entities/sd-session.entity';
 import { GroqService } from '../ai/groq.service';
 import { buildHintPrompt } from './prompts/sd-phase-prompts';
-
-interface TranscriptEntry {
-  role: 'user' | 'ai' | 'summary' | 'system-trigger';
-  content: string;
-  timestamp: string;
-  phase: SDPhase;
-}
-
-interface ArchitectureJSON {
-  nodes: { type: string }[];
-  edges: unknown[];
-}
-
-const FAST_MODEL = 'llama-3.1-8b-instant';
+import { FAST_MODEL } from './constants/sd-interviewer.constants';
+import type {
+  ArchitectureJSON,
+  TranscriptEntry,
+} from './types/sd-interviewer.types';
 
 @Injectable()
 export class SDInterviewerService {

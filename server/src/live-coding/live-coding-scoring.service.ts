@@ -1,46 +1,9 @@
 import { Injectable } from '@nestjs/common';
-
-const COMPLEXITY_RANK: Record<string, number> = {
-  'O(1)': 0,
-  'O(log n)': 1,
-  'O(n)': 2,
-  'O(n log n)': 3,
-  'O(n^2)': 4,
-  'O(n²)': 4,
-  'O(n^3)': 5,
-  'O(n³)': 5,
-  'O(2^n)': 6,
-  'O(2ⁿ)': 6,
-  'O(n!)': 7,
-};
-
-export interface ScoringInput {
-  testResults: {
-    visible: { passed: number; total: number };
-    hidden: { passed: number; total: number };
-  };
-  timeUsedMs: number | null;
-  timeLimitMs: number;
-  runsUsed: number;
-  hintsUsed: number;
-  timedOut: boolean;
-  approachVerdict: 'STRONG' | 'ADEQUATE' | 'WEAK' | 'FAILED' | null;
-  actualTimeComplexity: string | null;
-  actualSpaceComplexity: string | null;
-  optimalTimeComplexity: string | null;
-  optimalSpaceComplexity: string | null;
-}
-
-export interface ScoringResult {
-  correctness: number;
-  complexity: number;
-  thinkAloud: number;
-  timeEfficiency: number;
-  runEfficiency: number;
-  hintPenalty: number;
-  total: number;
-  gradeBand: 'Exceptional' | 'Strong' | 'Good' | 'Developing' | 'Needs Work';
-}
+import { COMPLEXITY_RANK } from './constants/live-coding-scoring.constants';
+import type {
+  ScoringInput,
+  ScoringResult,
+} from './types/live-coding-scoring.types';
 
 @Injectable()
 export class LiveCodingScoringService {

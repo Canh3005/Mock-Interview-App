@@ -6,45 +6,14 @@ import type {
   SDGraphState,
   SDGraphMetrics,
   SDDrawingTransitionCriteria,
+  SDStage,
 } from './types/sd-orchestrator.types';
 import type { SDProblem } from '../sd-problem/entities/sd-problem.entity';
 import type { SDSession } from '../sd-session/entities/sd-session.entity';
-
-// Aliases accepted for each canonical component type
-const COMPONENT_ALIASES: Record<string, string[]> = {
-  client: ['client', 'browser', 'mobile', 'user', 'app'],
-  lb: ['load balancer', 'lb', 'nginx', 'haproxy', 'elb', 'alb'],
-  gateway: ['api gateway', 'gateway', 'kong', 'api gw'],
-  service: [
-    'service',
-    'app server',
-    'appserver',
-    'server',
-    'backend',
-    'worker',
-  ],
-  database: [
-    'database',
-    'db',
-    'postgres',
-    'postgresql',
-    'mysql',
-    'mongodb',
-    'rds',
-    'sql',
-    'nosql',
-  ],
-  cache: ['cache', 'redis', 'memcached', 'elasticache'],
-  queue: ['queue', 'kafka', 'rabbitmq', 'sqs', 'pubsub', 'message queue', 'mq'],
-  cdn: ['cdn', 'cloudfront', 'cloudflare', 'akamai'],
-  storage: ['storage', 's3', 'blob', 'gcs', 'object storage', 'file storage'],
-};
-
-const DEFAULT_CRITERIA: SDDrawingTransitionCriteria = {
-  emptyThreshold: 0,
-  sparseThreshold: 3,
-  requiredNodeTypes: ['client', 'database'],
-};
+import {
+  COMPONENT_ALIASES,
+  DEFAULT_CRITERIA,
+} from './constants/sd-drawing-transition.constants';
 
 @Injectable()
 export class SDDrawingTransitionService {
@@ -215,10 +184,10 @@ export class SDDrawingTransitionService {
 
   async findSnapshot(
     sessionId: string,
-    stage: string,
+    stage: SDStage,
   ): Promise<SDGraphSnapshotEntity | null> {
     return this.snapshotRepo.findOne({
-      where: { sessionId, stage: stage as any },
+      where: { sessionId, stage },
     });
   }
 }

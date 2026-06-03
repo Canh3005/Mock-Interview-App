@@ -17,7 +17,6 @@ import { QuestionProbe } from '../question-bank/entities/question-probe.entity';
 import {
   QuestionProbeLevel,
   QuestionProbeRoleFamily,
-  QuestionProbeStage,
 } from '../question-bank/constants/question-bank-taxonomy.constants';
 import type {
   InterviewDepth,
@@ -26,85 +25,17 @@ import type {
   PressureProfile,
   StageProbeAllocation,
 } from './types/session-plan.types';
-
-const OPENING_OVERHEAD_MINUTES = 2;
-const RECENT_SESSION_LOOKBACK = 3;
-const CLOSING_OVERHEAD_MINUTES = 3;
-const MIN_PROBE_MINUTES = 4;
-const MAX_PROBE_MINUTES = 12;
-
-const STAGE_WEIGHTS: Record<
-  QuestionProbeStage,
-  Record<InterviewDepth, number>
-> = {
-  stage_1_culture_fit: { broad: 0.15, deep: 0.1 },
-  stage_2_tech_stack: { broad: 0.25, deep: 0.3 },
-  stage_3_domain_knowledge: { broad: 0.2, deep: 0.3 },
-  stage_4_cv_deep_dive: { broad: 0.15, deep: 0.1 },
-  stage_5_soft_skills: { broad: 0.15, deep: 0.1 },
-  stage_6_reverse_interview: { broad: 0.1, deep: 0.1 },
-};
-
-const MUST_INCLUDE_STAGES: QuestionProbeStage[] = [
-  'stage_1_culture_fit',
-  'stage_2_tech_stack',
-  'stage_3_domain_knowledge',
-  'stage_5_soft_skills',
-];
-
-const PERSONA_PRESETS: Record<string, PersonaPolicy> = {
-  junior: {
-    name: 'Supportive Interviewer',
-    tone: 'friendly',
-    challengeStyle: 'supportive',
-    verbosity: 'moderate',
-    silenceBehavior: 'prompt_immediately',
-    challengeThreshold: 'low',
-  },
-  mid: {
-    name: 'Balanced Interviewer',
-    tone: 'neutral',
-    challengeStyle: 'direct',
-    verbosity: 'moderate',
-    silenceBehavior: 'wait_briefly',
-    challengeThreshold: 'medium',
-  },
-  senior: {
-    name: 'Skeptical Interviewer',
-    tone: 'skeptical',
-    challengeStyle: 'direct',
-    verbosity: 'brief',
-    silenceBehavior: 'rephrase_question',
-    challengeThreshold: 'high',
-  },
-};
-
-const PRESSURE_PRESETS: Record<string, PressureProfile> = {
-  junior: {
-    level: 'low',
-    challengeOnGenericAnswer: true,
-    challengeOnWeLanguage: false,
-    challengeOnNoMetric: true,
-    challengeOnNoConsequence: false,
-    maxChallengesPerProbe: 1,
-  },
-  mid: {
-    level: 'medium',
-    challengeOnGenericAnswer: true,
-    challengeOnWeLanguage: true,
-    challengeOnNoMetric: true,
-    challengeOnNoConsequence: false,
-    maxChallengesPerProbe: 2,
-  },
-  senior: {
-    level: 'high',
-    challengeOnGenericAnswer: true,
-    challengeOnWeLanguage: true,
-    challengeOnNoMetric: true,
-    challengeOnNoConsequence: true,
-    maxChallengesPerProbe: 3,
-  },
-};
+import {
+  CLOSING_OVERHEAD_MINUTES,
+  MAX_PROBE_MINUTES,
+  MIN_PROBE_MINUTES,
+  MUST_INCLUDE_STAGES,
+  OPENING_OVERHEAD_MINUTES,
+  PERSONA_PRESETS,
+  PRESSURE_PRESETS,
+  RECENT_SESSION_LOOKBACK,
+  STAGE_WEIGHTS,
+} from './constants/session-planning.constants';
 
 @Injectable()
 export class SessionPlanningService {

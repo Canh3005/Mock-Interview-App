@@ -2,34 +2,12 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as crypto from 'crypto';
 import WebSocket from 'ws';
-
-// Vietnamese voices
-const VOICE_MAP: Record<string, string> = {
-  junior: 'x2_ViVn_ThuHien',
-  mid: 'x2_ViVn_ThuHien',
-  senior: 'x2_ViVn_ThuHien',
-};
-
-// English voices
-const VOICE_MAP_EN: Record<string, string> = {
-  junior: 'x4_EnUs_Gavin_assist',
-  mid: 'x4_EnUs_Gavin_assist',
-  senior: 'x4_EnUk_Ashleigh_assist',
-};
-
-// Japanese voices
-const VOICE_MAP_JA: Record<string, string> = {
-  junior: 'x2_JaJp_ZhongCun',
-  mid: 'x2_JaJp_ZhongCun',
-  senior: 'x2_JaJp_Otoya',
-};
-
-export interface SynthesizeOptions {
-  voice?: string;
-  speed?: number;
-  level?: string;
-  language?: 'vi' | 'en' | 'ja';
-}
+import {
+  VOICE_MAP,
+  VOICE_MAP_EN,
+  VOICE_MAP_JA,
+} from './constants/tts.constants';
+import type { SynthesizeOptions } from './types/tts.types';
 
 @Injectable()
 export class TtsService {

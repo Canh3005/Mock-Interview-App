@@ -1,27 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
-
-/**
- * Interface mapping standard languages to Judge0 language IDs
- */
-export const JUDGE0_LANGUAGE_MAP: Record<string, number> = {
-  javascript: 93, // Node.js 18.15.0
-  python: 71, // Python 3.11.2
-  java: 91, // Java (JDK 17)
-  cpp: 54, // C++ (GCC 9.2.0)
-};
-
-export interface JudgeSubmissionResult {
-  stdout: string | null; // user print statements (cout/print)
-  output: string | null; // driver-formatted return value (from stderr)
-  time: string;
-  memory: number;
-  stderr: string | null;
-  compile_output: string | null;
-  message: string | null;
-  status: { id: number; description: string };
-}
+import { JUDGE0_LANGUAGE_MAP } from './constants/judge.constants';
+import type {
+  JudgeBatchResultResponse,
+  JudgeCreateSubmissionResponse,
+  JudgeSubmissionResult,
+} from './types/judge.types';
 
 @Injectable()
 export class JudgeService {
@@ -49,23 +34,28 @@ export class JudgeService {
     try {
       // 1. Create a submission
       const createRes = await firstValueFrom(
-        this.httpService.post<any>(`${this.judge0Url}/submissions`, {
-          source_code: sourceCode,
-          language_id: languageId,
-          stdin: input,
-          expected_output: expectedOutput,
-          cpu_time_limit: 2.0 * timeLimitMultiplier, // Base 2s timeout
-          memory_limit: 128000, // 128MB
-        }),
+        this.httpService.post<JudgeCreateSubmissionResponse>(
+          `${this.judge0Url}/submissions`,
+          {
+            source_code: sourceCode,
+            language_id: languageId,
+            stdin: input,
+            expected_output: expectedOutput,
+            cpu_time_limit: 2.0 * timeLimitMultiplier, // Base 2s timeout
+            memory_limit: 128000, // 128MB
+          },
+        ),
       );
 
       const token = createRes.data.token;
 
       // 2. Poll for the result
       return this.pollSubmissionResult(token);
-    } catch (error) {
-      this.logger.error(`Error running code on Judge0: ${error.message}`);
-      throw error;
+    } catch (error: unknown) {
+      this.logger.error(
+        `Error running code on Judge0: ${this.formatErrorMessage(error)}`,
+      );
+      throw this.toError(error);
     }
   }
 
@@ -96,18 +86,20 @@ export class JudgeService {
     try {
       // 1. Batch Create
       const createRes = await firstValueFrom(
-        this.httpService.post<any>(
+        this.httpService.post<JudgeCreateSubmissionResponse[]>(
           `${this.judge0Url}/submissions/batch`,
           payload,
         ),
       );
-      const tokens = createRes.data.map((item: any) => item.token);
+      const tokens = createRes.data.map((item) => item.token);
 
       // 2. Poll Batch Result
       return this.pollBatchResults(tokens);
-    } catch (error) {
-      this.logger.error(`Error running batch code on Judge0: ${error.message}`);
-      throw error;
+    } catch (error: unknown) {
+      this.logger.error(
+        `Error running batch code on Judge0: ${this.formatErrorMessage(error)}`,
+      );
+      throw this.toError(error);
     }
   }
 
@@ -117,7 +109,7 @@ export class JudgeService {
   ): Promise<JudgeSubmissionResult> {
     for (let i = 0; i < maxRetries; i++) {
       const res = await firstValueFrom(
-        this.httpService.get<any>(
+        this.httpService.get<JudgeSubmissionResult>(
           `${this.judge0Url}/submissions/${token}?base64_encoded=false`,
         ),
       );
@@ -141,17 +133,17 @@ export class JudgeService {
 
     for (let i = 0; i < maxRetries; i++) {
       const res = await firstValueFrom(
-        this.httpService.get<any>(
+        this.httpService.get<JudgeBatchResultResponse>(
           `${this.judge0Url}/submissions/batch?tokens=${tokensStr}&base64_encoded=false`,
         ),
       );
 
       const submissions = res.data.submissions;
-      const isAllFinished = submissions.every((sub: any) => sub.status.id >= 3);
+      const isAllFinished = submissions.every((sub) => sub.status.id >= 3);
 
       if (isAllFinished) {
         console.log('Batch results received:', submissions);
-        return submissions.map((d: any) => ({
+        return submissions.map((d) => ({
           ...d,
           output: d.stderr ?? null,
           stdout: d.stdout ?? null,
@@ -162,5 +154,13 @@ export class JudgeService {
       await new Promise((resolve) => setTimeout(resolve, 1000));
     }
     throw new Error('Judge0 batch polling timed out');
+  }
+
+  private formatErrorMessage(error: unknown): string {
+    return error instanceof Error ? error.message : String(error);
+  }
+
+  private toError(error: unknown): Error {
+    return error instanceof Error ? error : new Error(String(error));
   }
 }

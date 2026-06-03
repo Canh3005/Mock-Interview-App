@@ -25,33 +25,16 @@ import {
   buildAnnotationPrompt,
   buildSuggestionsPrompt,
 } from './prompts/evaluation-prompts';
-
-const FAST_MODEL = 'llama-3.1-8b-instant';
-const AI_TIMEOUT_MS = 30_000;
-
-interface DimensionResult {
-  dimension: string;
-  score: number;
-  maxScore: number;
-  data: Record<string, unknown>;
-}
-
-interface EvaluationProgress {
-  completedDimensions: DimensionResult[];
-}
-
-export interface EvaluationStatusResponse {
-  status: 'idle' | 'processing' | 'completed' | 'failed';
-  progress: EvaluationProgress | null;
-  result?: Record<string, unknown>;
-}
-
-const NO_CURVEBALL_MAX: Record<string, number> = {
-  componentCoverage: 31,
-  scalabilityFit: 25,
-  tradeoffArticulation: 25,
-  communicationClarity: 19,
-};
+import {
+  AI_TIMEOUT_MS,
+  FAST_MODEL,
+  NO_CURVEBALL_MAX,
+} from './constants/sd-evaluator.constants';
+import type {
+  DimensionResult,
+  EvaluationProgress,
+  EvaluationStatusResponse,
+} from './types/sd-evaluator.types';
 
 @Injectable()
 export class SDEvaluatorService {
@@ -484,8 +467,10 @@ export class SDEvaluatorService {
         where: { sessionId, stage: 'WRAP_UP' },
       });
       if (!wrapUpSummary?.leftoverJson) return null;
-      const leftover = wrapUpSummary.leftoverJson as any;
-      return leftover.graphDeltaAfterCurveball ?? null;
+      const leftover = wrapUpSummary.leftoverJson;
+      return 'graphDeltaAfterCurveball' in leftover
+        ? leftover.graphDeltaAfterCurveball
+        : null;
     } catch {
       return null;
     }

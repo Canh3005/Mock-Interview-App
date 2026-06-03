@@ -6,20 +6,15 @@ import type {
   SDCurveball,
   SDProbe,
 } from '../types/sd-orchestrator.types';
-
-export const WRAP_UP_CRITERIA: SDWrapUpTransitionCriteria = {
-  minScenarios: 1,
-  maxScenarios: 2,
-  maxStageSeconds: 600,
-  maxFollowUpsPerScenario: 2,
-};
+import { WRAP_UP_CRITERIA } from '../constants/sd-wrap-up.constants';
+import type { SDWrapUpIntentTarget } from '../types/sd-wrap-up-planner.types';
 
 @Injectable()
 export class SDWrapUpPlannerService {
   selectNextScenario(
     input: SDWrapUpPlannerInput,
   ): SDCurveball | SDProbe | null {
-    const { curveballs, tracker, deepDiveLeftover, deepDiveScores } = input;
+    const { curveballs, tracker } = input;
     const completedIds = new Set(tracker.progress.completedItemIds);
 
     // Rule 1: curveballs from problem definition in order
@@ -46,7 +41,7 @@ export class SDWrapUpPlannerService {
     const forbiddenHints = expectedMitigations.filter(
       (m) => !cumulativeMentionedMitigations.includes(m),
     );
-    const target: any = isCurveball
+    const target: SDWrapUpIntentTarget = isCurveball
       ? { source: 'curveball' as const, scenarioId: scenario.id }
       : { source: 'probe_fallback' as const, probeId: scenario.id };
 
@@ -84,7 +79,7 @@ export class SDWrapUpPlannerService {
       mitigation:
         'Ask the candidate to propose a concrete mitigation or adaptation strategy for this scenario.',
     };
-    const target: any = isCurveball
+    const target: SDWrapUpIntentTarget = isCurveball
       ? { source: 'curveball' as const, scenarioId: scenario.id }
       : { source: 'probe_fallback' as const, probeId: scenario.id };
 
@@ -112,7 +107,7 @@ export class SDWrapUpPlannerService {
     const forbiddenHints = expectedMitigations.filter(
       (m) => !cumulativeMentionedMitigations.includes(m),
     );
-    const target: any = isCurveball
+    const target: SDWrapUpIntentTarget = isCurveball
       ? { source: 'curveball' as const, scenarioId: scenario.id }
       : { source: 'probe_fallback' as const, probeId: scenario.id };
 

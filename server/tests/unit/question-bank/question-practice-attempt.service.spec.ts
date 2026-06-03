@@ -8,26 +8,42 @@ import { QuestionBankPublicProjectionService } from '../../../src/question-bank/
 describe('QuestionPracticeAttemptService', () => {
   let service: QuestionPracticeAttemptService;
   let probeRepository: { findOne: jest.Mock };
+  type AttemptInput = Partial<QuestionPracticeAttempt>;
   let attemptRepository: {
     findOne: jest.Mock;
-    create: jest.Mock;
-    save: jest.Mock;
+    create: jest.Mock<QuestionPracticeAttempt, [AttemptInput]>;
+    save: jest.Mock<Promise<QuestionPracticeAttempt>, [AttemptInput]>;
   };
-  let feedbackService: { enqueueScoring: jest.Mock };
+  let feedbackService: {
+    enqueueScoring: jest.Mock<Promise<void>, [QuestionPracticeAttempt]>;
+  };
 
   beforeEach(() => {
     probeRepository = { findOne: jest.fn() };
     attemptRepository = {
       findOne: jest.fn(),
-      create: jest.fn((attempt) => attempt),
-      save: jest.fn(async (attempt) => ({
-        id: 'attempt-1',
-        createdAt: new Date('2026-05-10T00:00:00.000Z'),
-        updatedAt: new Date('2026-05-10T00:00:00.000Z'),
-        ...attempt,
-      })),
+      create: jest.fn(
+        (attempt: AttemptInput): QuestionPracticeAttempt =>
+          attempt as QuestionPracticeAttempt,
+      ),
+      save: jest.fn(
+        (attempt: AttemptInput): Promise<QuestionPracticeAttempt> =>
+          Promise.resolve({
+            id: 'attempt-1',
+            createdAt: new Date('2026-05-10T00:00:00.000Z'),
+            updatedAt: new Date('2026-05-10T00:00:00.000Z'),
+            ...attempt,
+          } as QuestionPracticeAttempt),
+      ),
     };
-    feedbackService = { enqueueScoring: jest.fn(async () => undefined) };
+    feedbackService = {
+      enqueueScoring: jest.fn(
+        (attempt: QuestionPracticeAttempt): Promise<void> => {
+          void attempt;
+          return Promise.resolve();
+        },
+      ),
+    };
     service = new QuestionPracticeAttemptService(
       probeRepository as unknown as Repository<QuestionProbe>,
       attemptRepository as unknown as Repository<QuestionPracticeAttempt>,

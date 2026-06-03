@@ -3,27 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CombatSessionAggregate } from './entities/combat-session-aggregate.entity';
 import { GroqService } from '../ai/groq.service';
-
-export interface MultimodalScore {
-  eye_tracking: {
-    score: number;
-    screen_gaze_percent: number;
-    feedback: string;
-  };
-  filler_words: {
-    score: number;
-    avg_filler_rate: number;
-    top_fillers: string[];
-    feedback: string;
-  };
-  expression: {
-    score: number;
-    dominant_expression: string;
-    stress_peak_minutes: number[];
-    feedback: string;
-  };
-  overall_soft_skill_score: number;
-}
+import type { MultimodalScore } from './types/multimodal.types';
 
 @Injectable()
 export class MultimodalScoringService {

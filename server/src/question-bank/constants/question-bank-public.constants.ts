@@ -1,0 +1,1 @@
+export const PUBLIC_QUESTION_BANK_PAGE_SIZE = 12;

@@ -11,13 +11,7 @@ import * as mammoth from 'mammoth';
 import { DocumentUploadType } from './enums/document-upload-type.enum.js';
 import { DocumentJobName } from './enums/document-job-name.enum';
 import { DOCUMENT_PARSING_QUEUE } from '../jobs/jobs.constants';
-import {
-  CvJson,
-  DOCUMENT_FIT_ASSESSMENT_MODEL,
-  DocumentValidationResult,
-  DocumentsAiService,
-  JdJson,
-} from './documents.ai.service';
+import { DocumentsAiService } from './documents.ai.service';
 import { DocumentContextService } from './document-context.service';
 import { FitAssessmentService } from './fit-assessment.service';
 import { BehaviorCalibrationService } from './behavior-calibration.service';
@@ -25,19 +19,15 @@ import { CV_SIGNALS, JD_SIGNALS } from './constants/document-signals.constants';
 import { UserCv } from '../users/entities/user-cv.entity';
 import { JdAnalysis } from '../users/entities/jd-analysis.entity';
 import { UserProfile } from '../users/entities/user-profile.entity';
-import { FitAssessmentV2 } from './types/fit-assessment.types';
-
-const DOCX_MIME =
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-
-interface DocumentJobPayload {
-  userId: string;
-  recordId: string;
-  filePath: string;
-  originalName: string;
-  mimeType: string;
-  type: DocumentUploadType;
-}
+import type { FitAssessmentV2 } from './types/fit-assessment.types';
+import { DOCX_MIME } from './constants/document-file.constants';
+import { DOCUMENT_FIT_ASSESSMENT_MODEL } from './constants/document-ai.constants';
+import type { DocumentJobPayload } from './types/document-job.types';
+import type {
+  CvJson,
+  DocumentValidationResult,
+  JdJson,
+} from './types/document-ai.types';
 
 @Injectable()
 export class DocumentsService {

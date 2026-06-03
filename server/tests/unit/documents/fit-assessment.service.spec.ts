@@ -1,5 +1,8 @@
 import { FitAssessmentService } from '../../../src/documents/fit-assessment.service';
-import { CvJson, JdJson } from '../../../src/documents/documents.ai.service';
+import type {
+  CvJson,
+  JdJson,
+} from '../../../src/documents/types/document-ai.types';
 import { FitRubricEvaluation } from '../../../src/documents/types/fit-assessment.types';
 
 describe('FitAssessmentService', () => {

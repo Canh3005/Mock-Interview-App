@@ -36,6 +36,7 @@ export type SDDecisionAction =
   | 'COMPLETE_SESSION';
 
 export type SDIntentType =
+  | 'TRANSITION_STAGE'
   | 'OPENING'
   | 'ANSWER_FACT'
   | 'NUDGE'
@@ -53,11 +54,12 @@ export type SDIntentType =
   | 'SCENARIO_PRESENT'
   | 'SCENARIO_FOLLOW_UP'
   | 'SCENARIO_CHALLENGE'
-  | 'SCENARIO_REDIRECT';
+  | 'SCENARIO_REDIRECT'
+  | 'SCENARIO_CLOSE';
 
 // ─── Graph Types ─────────────────────────────────────────────────────────────
 
-export type SDGraphNodeType =
+export type SDKnownGraphNodeType =
   | 'service'
   | 'database'
   | 'queue'
@@ -67,8 +69,9 @@ export type SDGraphNodeType =
   | 'lb'
   | 'gateway'
   | 'worker'
-  | 'storage'
-  | string;
+  | 'storage';
+
+export type SDGraphNodeType = SDKnownGraphNodeType | (string & {});
 
 export interface SDGraphNode {
   id: string;

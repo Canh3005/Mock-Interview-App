@@ -18,6 +18,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { Role } from '../users/entities/user.entity';
+import type { CreateTestCaseWithProblemId } from './types/test-case-controller.types';
 
 @Controller('admin')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -31,10 +32,11 @@ export class TestCasesController {
     @Body() createTestCaseDto: CreateTestCaseDto,
   ) {
     // Override problemId from path
-    return this.testCasesService.create({
+    const payload: CreateTestCaseWithProblemId = {
       ...createTestCaseDto,
       problemId,
-    } as any);
+    };
+    return this.testCasesService.create(payload);
   }
 
   @Get('problems/:problemId/testcases')

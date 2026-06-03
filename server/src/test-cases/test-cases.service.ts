@@ -55,7 +55,7 @@ export class TestCasesService {
     return testCase;
   }
 
-  async uploadBulk(problemId: string, file: Express.Multer.File) {
+  uploadBulk(problemId: string, file: Express.Multer.File) {
     // Placeholder logic for ZIP extraction and parsing
     // In production, this would use a library like yauzl to read the zip,
     // match 1.in with 1.out, and bulk insert into DB/S3.

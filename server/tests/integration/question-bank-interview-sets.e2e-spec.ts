@@ -1,4 +1,5 @@
 import { INestApplication } from '@nestjs/common';
+import type { Server } from 'http';
 import request from 'supertest';
 import { Role } from '../../src/users/entities/user.entity';
 import {
@@ -15,6 +16,7 @@ import {
 describe('Question Bank Interview Sets (e2e)', () => {
   let context: QuestionBankE2eContext;
   let app: INestApplication;
+  let httpServer: Server;
   let interviewSetRepository: QuestionBankE2eContext['interviewSetRepository'];
   let probeRepository: QuestionBankE2eContext['probeRepository'];
   let adminToken: string;
@@ -23,6 +25,7 @@ describe('Question Bank Interview Sets (e2e)', () => {
   beforeAll(async () => {
     context = await createQuestionBankE2eContext();
     app = context.app;
+    httpServer = app.getHttpServer() as Server;
     interviewSetRepository = context.interviewSetRepository;
     probeRepository = context.probeRepository;
     adminToken = signRoleToken({
@@ -49,23 +52,24 @@ describe('Question Bank Interview Sets (e2e)', () => {
   });
 
   it('blocks unauthenticated and non-admin access', async () => {
-    await request(app.getHttpServer())
+    await request(httpServer)
       .get('/admin/question-bank/interview-sets')
       .expect(401);
 
-    await request(app.getHttpServer())
+    await request(httpServer)
       .get('/admin/question-bank/interview-sets')
       .set('Authorization', `Bearer ${userToken}`)
       .expect(403);
   });
 
   it('creates, updates, lists, publishes, and retires an interview set with persisted data', async () => {
-    const createResponse = await request(app.getHttpServer())
+    const createResponse = await request(httpServer)
       .post('/admin/question-bank/interview-sets')
       .set('Authorization', `Bearer ${adminToken}`)
       .send(createInterviewSetPayload({ code: 'e2e-backend-mid' }))
       .expect(201);
 
+    const createBody = createResponse.body as { id: string };
     expect(createResponse.body).toMatchObject({
       code: 'e2e-backend-mid',
       title: 'E2E Backend Mid Set',
@@ -74,14 +78,14 @@ describe('Question Bank Interview Sets (e2e)', () => {
       level: 'mid',
     });
 
-    const setId = createResponse.body.id as string;
+    const setId = createBody.id;
     const persistedDraft = await interviewSetRepository.findOneByOrFail({
       id: setId,
     });
     expect(persistedDraft.status).toBe('draft');
     expect(persistedDraft.createdBy).toBe('e2e-admin');
 
-    const updateResponse = await request(app.getHttpServer())
+    const updateResponse = await request(httpServer)
       .patch(`/admin/question-bank/interview-sets/${setId}`)
       .set('Authorization', `Bearer ${adminToken}`)
       .send(
@@ -98,7 +102,7 @@ describe('Question Bank Interview Sets (e2e)', () => {
       revision: 2,
     });
 
-    const listResponse = await request(app.getHttpServer())
+    const listResponse = await request(httpServer)
       .get('/admin/question-bank/interview-sets')
       .query({
         status: 'draft',
@@ -114,12 +118,13 @@ describe('Question Bank Interview Sets (e2e)', () => {
       page: 1,
       limit: 10,
     });
-    expect(listResponse.body.data[0]).toMatchObject({
+    const listBody = listResponse.body as { data: Array<{ id: string }> };
+    expect(listBody.data[0]).toMatchObject({
       id: setId,
       title: 'E2E Backend Mid Revised',
     });
 
-    const publishResponse = await request(app.getHttpServer())
+    const publishResponse = await request(httpServer)
       .post(`/admin/question-bank/interview-sets/${setId}/publish`)
       .set('Authorization', `Bearer ${adminToken}`)
       .send({ reason: 'Ready for e2e' })
@@ -132,19 +137,19 @@ describe('Question Bank Interview Sets (e2e)', () => {
       revision: 3,
     });
 
-    await request(app.getHttpServer())
+    await request(httpServer)
       .patch(`/admin/question-bank/interview-sets/${setId}`)
       .set('Authorization', `Bearer ${adminToken}`)
       .send(createInterviewSetPayload({ code: 'e2e-backend-mid' }))
       .expect(400);
 
-    await request(app.getHttpServer())
+    await request(httpServer)
       .post(`/admin/question-bank/interview-sets/${setId}/retire`)
       .set('Authorization', `Bearer ${adminToken}`)
       .send({})
       .expect(400);
 
-    const retireResponse = await request(app.getHttpServer())
+    const retireResponse = await request(httpServer)
       .post(`/admin/question-bank/interview-sets/${setId}/retire`)
       .set('Authorization', `Bearer ${adminToken}`)
       .send({ reason: 'No longer suitable' })
@@ -167,7 +172,7 @@ describe('Question Bank Interview Sets (e2e)', () => {
       ),
     );
 
-    const createResponse = await request(app.getHttpServer())
+    const createResponse = await request(httpServer)
       .post('/admin/question-bank/interview-sets')
       .set('Authorization', `Bearer ${adminToken}`)
       .send(
@@ -179,10 +184,9 @@ describe('Question Bank Interview Sets (e2e)', () => {
       )
       .expect(201);
 
-    await request(app.getHttpServer())
-      .post(
-        `/admin/question-bank/interview-sets/${createResponse.body.id}/publish`,
-      )
+    const createBody = createResponse.body as { id: string };
+    await request(httpServer)
+      .post(`/admin/question-bank/interview-sets/${createBody.id}/publish`)
       .set('Authorization', `Bearer ${adminToken}`)
       .send({})
       .expect(400);
@@ -190,15 +194,14 @@ describe('Question Bank Interview Sets (e2e)', () => {
     inactiveProbe.status = 'active';
     await probeRepository.save(inactiveProbe);
 
-    await request(app.getHttpServer())
-      .post(
-        `/admin/question-bank/interview-sets/${createResponse.body.id}/publish`,
-      )
+    await request(httpServer)
+      .post(`/admin/question-bank/interview-sets/${createBody.id}/publish`)
       .set('Authorization', `Bearer ${adminToken}`)
       .send({})
       .expect(201)
       .expect(({ body }) => {
-        expect(body.status).toBe('active');
+        const responseBody = body as { status: string };
+        expect(responseBody.status).toBe('active');
       });
   });
 });

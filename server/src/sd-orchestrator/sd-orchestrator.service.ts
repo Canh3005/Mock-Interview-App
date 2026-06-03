@@ -1,6 +1,7 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { Response } from 'express';
 import { SDTurnRecord } from './entities/sd-turn-record.entity';
 import { SDStageSummary } from './entities/sd-stage-summary.entity';
@@ -9,15 +10,10 @@ import { SDPolicyEngineService } from './sd-policy-engine.service';
 import { SDResponseAssessmentService } from './sd-response-assessment.service';
 import { SDQuestionRendererService } from './sd-question-renderer.service';
 import { SDDrawingTransitionService } from './sd-drawing-transition.service';
-import {
-  SDClarificationPlannerService,
-  CLARIFICATION_CRITERIA,
-} from './planners/sd-clarification-planner.service';
+import { SDClarificationPlannerService } from './planners/sd-clarification-planner.service';
 import { SDClarificationAssessorService } from './assessors/sd-clarification-assessor.service';
-import {
-  SDWalkthroughPlannerService,
-  WALKTHROUGH_CRITERIA,
-} from './planners/sd-walkthrough-planner.service';
+import { SDWalkthroughPlannerService } from './planners/sd-walkthrough-planner.service';
+import { WALKTHROUGH_CRITERIA } from './constants/sd-walkthrough.constants';
 import { SDWalkthroughAssessorService } from './assessors/sd-walkthrough-assessor.service';
 import { SDDeepDivePlannerService } from './planners/sd-deep-dive-planner.service';
 import { SDDeepDiveAssessorService } from './assessors/sd-deep-dive-assessor.service';
@@ -27,6 +23,10 @@ import { SDSession } from '../sd-session/entities/sd-session.entity';
 import { SDProblem } from '../sd-problem/entities/sd-problem.entity';
 import type {
   SDStage,
+  SDScoredStage,
+  SDIntentType,
+  SDCandidateIntent,
+  SDDecisionAction,
   SDSessionStageState,
   SDClarificationTracker,
   SDClarificationLeftoverJson,
@@ -42,8 +42,17 @@ import type {
   SDWrapUpLeftoverJson,
   SDActiveScenarioState,
   SDGraphState,
+  SDGraphNode,
+  SDGraphEdge,
   SDGraphMetrics,
+  SDStageLeftoverJson,
 } from './types/sd-orchestrator.types';
+import { SUPPORTED_SD_LANGUAGES } from './constants/sd-orchestrator.constants';
+import { CLARIFICATION_CRITERIA } from './constants/sd-clarification.constants';
+import type {
+  SDLanguage,
+  SDTargetLevel,
+} from './types/sd-orchestrator-internal.types';
 
 @Injectable()
 export class SDOrchestratorService {
@@ -72,7 +81,7 @@ export class SDOrchestratorService {
     private readonly deepDiveAssessor: SDDeepDiveAssessorService,
     private readonly wrapUpPlanner: SDWrapUpPlannerService,
     private readonly wrapUpAssessor: SDWrapUpAssessorService,
-  ) { }
+  ) {}
 
   // ─── Main turn handler ───────────────────────────────────────────────────────
 
@@ -120,11 +129,10 @@ export class SDOrchestratorService {
       (await this.problemRepo.findOneOrFail({
         where: { id: session.problemId },
       }));
-    const stageState = (session.stageState ??
-      {}) as unknown as SDSessionStageState;
+    const stageState = this.getStageState(session);
     const tracker = this.getClarificationTracker(session);
-    const lang = session.language as 'vi' | 'en' | 'ja';
-    const level = (session as any).targetLevel ?? 'mid';
+    const lang = this.getSessionLanguage(session);
+    const level = this.getSessionLevel(session);
     const criteria =
       CLARIFICATION_CRITERIA[level] ?? CLARIFICATION_CRITERIA['senior'];
     const elapsedSeconds = this.computeStageElapsedSeconds(session);
@@ -156,11 +164,11 @@ export class SDOrchestratorService {
     ];
     const newDisclosedKeys = assessment.signals.matchedFactKey
       ? [
-        ...new Set([
-          ...tracker.progress.disclosedFactKeys,
-          assessment.signals.matchedFactKey,
-        ]),
-      ]
+          ...new Set([
+            ...tracker.progress.disclosedFactKeys,
+            assessment.signals.matchedFactKey,
+          ]),
+        ]
       : tracker.progress.disclosedFactKeys;
 
     const updatedTracker: SDClarificationTracker = {
@@ -202,7 +210,7 @@ export class SDOrchestratorService {
         promptRendered: transitionText,
         candidateAnswer,
         candidateIntent: assessment.candidateIntent,
-        signalsJson: assessment.signals as any,
+        signalsJson: this.toJsonRecord(assessment.signals),
         scoreDeltas: assessment.scoreDelta,
         action: 'TRANSITION_STAGE',
         decisionReason: decision.reason,
@@ -215,15 +223,10 @@ export class SDOrchestratorService {
     }
 
     if (decision.action === 'REDIRECT') {
-      const intent = this.clarificationPlanner.planNextIntent({
-        data,
-        tracker: updatedTracker,
-        lastCandidateIntent: 'solution_leap',
-        context: { language: lang, level },
-        elapsedSeconds,
-      });
+      const redirectIntent =
+        this.clarificationPlanner.buildRedirectIntent(lang);
       const redirectText = await this.renderer.renderClarification(
-        intent.nextIntent!,
+        redirectIntent,
         undefined,
         candidateAnswer,
       );
@@ -237,7 +240,7 @@ export class SDOrchestratorService {
         promptRendered: redirectText,
         candidateAnswer,
         candidateIntent: assessment.candidateIntent,
-        signalsJson: assessment.signals as any,
+        signalsJson: this.toJsonRecord(assessment.signals),
         scoreDeltas: assessment.scoreDelta,
         action: 'REDIRECT',
         decisionReason: decision.reason,
@@ -246,7 +249,7 @@ export class SDOrchestratorService {
       await this.updateStageState(session, {
         ...stageState,
         stage: 'CLARIFICATION',
-        trackerJson: updatedTracker as any,
+        trackerJson: this.toJsonRecord(updatedTracker),
         runningScores: this._aggregateScores(session, assessment.scoreDelta),
       });
 
@@ -288,7 +291,7 @@ export class SDOrchestratorService {
           promptRendered: answerText,
           candidateAnswer,
           candidateIntent: assessment.candidateIntent,
-          signalsJson: assessment.signals as any,
+          signalsJson: this.toJsonRecord(assessment.signals),
           scoreDeltas: assessment.scoreDelta,
           action: 'ANSWER_FACT',
           decisionReason: decision.reason,
@@ -299,8 +302,7 @@ export class SDOrchestratorService {
           newCoveredDims.includes(d),
         );
         const meetsMinCriteria =
-          updatedTracker.turnCount >= criteria.minCandidateTurns &&
-          elapsedSeconds >= criteria.minDurationSeconds;
+          updatedTracker.turnCount >= criteria.minCandidateTurns;
 
         if (allCoveredAfterFact && meetsMinCriteria) {
           const { transitionText } = await this._commitClarificationTransition(
@@ -326,7 +328,7 @@ export class SDOrchestratorService {
             promptRendered: `${answerText}\n\n${transitionText}`,
             candidateAnswer,
             candidateIntent: assessment.candidateIntent,
-            signalsJson: assessment.signals as any,
+            signalsJson: this.toJsonRecord(assessment.signals),
             scoreDeltas: assessment.scoreDelta,
             action: 'TRANSITION_STAGE',
             decisionReason: 'All dimensions covered after fact answer',
@@ -341,23 +343,49 @@ export class SDOrchestratorService {
         await this.updateStageState(session, {
           ...stageState,
           stage: 'CLARIFICATION',
-          trackerJson: updatedTracker as any,
+          trackerJson: this.toJsonRecord(updatedTracker),
           runningScores: this._aggregateScores(session, assessment.scoreDelta),
         });
 
-        if (factDecision.chainedAction) {
-          const nudgeIntent = factDecision.chainedAction.intent;
-          const nudgeText = await this.renderer.renderClarification(nudgeIntent);
-          this.streamText(res, `${answerText}\n\n${nudgeText}`, null);
-        } else {
-          this.streamText(res, answerText, null);
-        }
+        this.streamText(res, answerText, null);
         return;
       }
-      // fact not found — LLM returned a key not in data.facts; fall through to ASK_NUDGE
+
+      // fact not found — LLM returned a factKey not present in data.facts
+      const outOfScopeFallback =
+        (
+          {
+            vi: 'Hãy đặt câu hỏi nằm trong phạm vi của hệ thống.',
+            en: 'Please ask questions within the scope of the system.',
+            ja: 'システムの範囲内で質問してください。',
+          } as Record<string, string>
+        )[lang] ?? 'Please ask questions within the scope of the system.';
+
+      await this.persistTurnRecord({
+        sessionId: session.id,
+        stage: 'CLARIFICATION',
+        turnIndex: updatedTracker.turnCount,
+        intentType: 'REDIRECT',
+        intentTargetJson: {},
+        promptRendered: outOfScopeFallback,
+        candidateAnswer,
+        candidateIntent: assessment.candidateIntent,
+        signalsJson: this.toJsonRecord(assessment.signals),
+        scoreDeltas: assessment.scoreDelta,
+        action: 'REDIRECT',
+        decisionReason: 'ANSWER_FACT: factKey not found in data.facts',
+      });
+      await this.updateStageState(session, {
+        ...stageState,
+        stage: 'CLARIFICATION',
+        trackerJson: this.toJsonRecord(updatedTracker),
+        runningScores: this._aggregateScores(session, assessment.scoreDelta),
+      });
+      this.streamText(res, outOfScopeFallback, null);
+      return;
     }
 
-    // ASK_NUDGE or default
+    // ASK_NUDGE
     const nudgePlan = this.clarificationPlanner.planNextIntent({
       data,
       tracker: updatedTracker,
@@ -365,54 +393,25 @@ export class SDOrchestratorService {
       context: { language: lang, level },
       elapsedSeconds,
     });
-    console.log('Clarification turn nudge plan:', nudgePlan);
-    if (nudgePlan.action === 'TRANSITION_STAGE') {
-      const { transitionText } = await this._commitClarificationTransition(
-        session,
-        updatedTracker,
-        elapsedSeconds,
-        assessment,
-        data,
-        newDisclosedKeys,
-        newCoveredDims,
-        criteria,
-        lang,
-      );
-      await this.persistTurnRecord({
-        sessionId: session.id,
-        stage: 'CLARIFICATION',
-        turnIndex: updatedTracker.turnCount,
-        intentType: 'OPENING',
-        intentTargetJson: {},
-        promptRendered: transitionText,
-        candidateAnswer,
-        candidateIntent: assessment.candidateIntent,
-        signalsJson: assessment.signals as any,
-        scoreDeltas: assessment.scoreDelta,
-        action: 'TRANSITION_STAGE',
-        decisionReason: nudgePlan.reason,
-      });
-      this.streamText(res, transitionText, {
-        stageChanged: true,
-        stage: 'DESIGN_DRAWING',
-      });
-      return;
-    }
 
+    const nudgeFallbacks: Record<string, string> = {
+      vi: 'Bạn có điều gì muốn làm rõ thêm không?',
+      en: "Is there anything else you'd like to clarify?",
+      ja: '他に確認したいことはありますか？',
+    };
     const nudgeText = nudgePlan.nextIntent
       ? await this.renderer.renderClarification(nudgePlan.nextIntent)
-      : '';
+      : (nudgeFallbacks[lang] ??
+        "Is there anything else you'd like to clarify?");
 
     await this.updateStageState(session, {
       ...stageState,
       stage: 'CLARIFICATION',
-      trackerJson: updatedTracker as any,
+      trackerJson: this.toJsonRecord(updatedTracker),
       runningScores: this._aggregateScores(session, assessment.scoreDelta),
     });
 
-    if (nudgeText) {
-      this.streamText(res, nudgeText, null);
-    }
+    this.streamText(res, nudgeText, null);
   }
 
   private async handleWalkthroughTurn(
@@ -425,12 +424,9 @@ export class SDOrchestratorService {
       (await this.problemRepo.findOneOrFail({
         where: { id: session.problemId },
       }));
-    const stageState = (session.stageState ??
-      {}) as unknown as SDSessionStageState;
-    const lang = session.language as 'vi' | 'en' | 'ja';
-    // TODO: add targetLevel to SDSession entity
-    const level: string =
-      (session as { targetLevel?: string }).targetLevel ?? 'mid';
+    const stageState = this.getStageState(session);
+    const lang = this.getSessionLanguage(session);
+    const level = this.getSessionLevel(session);
     const elapsedSeconds = this.computeStageElapsedSeconds(session);
     const graph = this.extractGraph(session);
     const flowPaths = problem.flowPaths ?? [];
@@ -439,22 +435,29 @@ export class SDOrchestratorService {
     const rawTracker = stageState.trackerJson as
       | Partial<SDWalkthroughTracker>
       | undefined;
+    const rawProgress = this.toJsonRecord(rawTracker?.progress);
+    const unexplainedNodeIds = this.stringArray(rawProgress.unexplainedNodeIds);
+    const unexplainedEdgeIds = this.stringArray(rawProgress.unexplainedEdgeIds);
     const isFirstTurn = !rawTracker || (rawTracker.turnCount ?? 0) === 0;
     const tracker: SDWalkthroughTracker = {
       turnCount: rawTracker?.turnCount ?? 0,
       elapsedSeconds,
       progress: {
-        unexplainedNodeIds:
-          (rawTracker?.progress as any)?.unexplainedNodeIds ??
-          graph.nodes.map((n) => n.id),
-        unexplainedEdgeIds:
-          (rawTracker?.progress as any)?.unexplainedEdgeIds ??
-          graph.edges.map((e) => e.id),
-        coveredPathIds: (rawTracker?.progress as any)?.coveredPathIds ?? [],
-        criticalPathsCovered:
-          (rawTracker?.progress as any)?.criticalPathsCovered ?? false,
-        contradictionChallengesUsed:
-          (rawTracker?.progress as any)?.contradictionChallengesUsed ?? 0,
+        unexplainedNodeIds: unexplainedNodeIds.length
+          ? unexplainedNodeIds
+          : graph.nodes.map((n) => n.id),
+        unexplainedEdgeIds: unexplainedEdgeIds.length
+          ? unexplainedEdgeIds
+          : graph.edges.map((e) => e.id),
+        coveredPathIds: this.stringArray(rawProgress.coveredPathIds),
+        criticalPathsCovered: this.booleanValue(
+          rawProgress.criticalPathsCovered,
+          false,
+        ),
+        contradictionChallengesUsed: this.numberValue(
+          rawProgress.contradictionChallengesUsed,
+          0,
+        ),
       },
     };
 
@@ -571,9 +574,9 @@ export class SDOrchestratorService {
         promptRendered: transitionText,
         candidateAnswer,
         candidateIntent: assessment.candidateIntent,
-        signalsJson: assessment.signals as any,
+        signalsJson: this.toJsonRecord(assessment.signals),
         scoreDeltas: assessment.scoreDelta,
-        extraJson: extra as any,
+        extraJson: this.toJsonRecord(extra),
         action: 'TRANSITION_STAGE',
         decisionReason: decision.reason,
       });
@@ -585,7 +588,7 @@ export class SDOrchestratorService {
         elapsedSeconds,
         scores: this._aggregateScores(session, assessment.scoreDelta),
         redFlags: assessment.redFlags,
-        leftoverJson: leftover as any,
+        leftoverJson: leftover,
       });
 
       const probeBank = problem.probeBank ?? [];
@@ -644,7 +647,7 @@ export class SDOrchestratorService {
 
       await this.updateSessionPhase(session, 'DEEP_DIVE', {
         stage: 'DEEP_DIVE',
-        trackerJson: ddTrackerJson as any,
+        trackerJson: ddTrackerJson,
         runningScores: {},
       });
 
@@ -657,7 +660,7 @@ export class SDOrchestratorService {
 
     // Plan next intent (CHALLENGE, REDIRECT, or FOLLOW_UP)
     let intentText: string;
-    let recordIntentType: string;
+    let recordIntentType: SDIntentType;
     if (
       decision.action === 'ASK_CHALLENGE' &&
       assessment.extra?.contradictionDetail
@@ -708,9 +711,9 @@ export class SDOrchestratorService {
       promptRendered: intentText,
       candidateAnswer,
       candidateIntent: assessment.candidateIntent,
-      signalsJson: assessment.signals as any,
+      signalsJson: this.toJsonRecord(assessment.signals),
       scoreDeltas: assessment.scoreDelta,
-      extraJson: extra as any,
+      extraJson: this.toJsonRecord(extra),
       action: decision.action,
       decisionReason: decision.reason,
     });
@@ -718,7 +721,7 @@ export class SDOrchestratorService {
     await this.updateStageState(session, {
       ...stageState,
       stage: 'DESIGN_WALKTHROUGH',
-      trackerJson: updatedTracker as any,
+      trackerJson: this.toJsonRecord(updatedTracker),
       runningScores: this._aggregateScores(session, assessment.scoreDelta),
     });
 
@@ -735,11 +738,9 @@ export class SDOrchestratorService {
       (await this.problemRepo.findOneOrFail({
         where: { id: session.problemId },
       }));
-    const stageState = (session.stageState ??
-      {}) as unknown as SDSessionStageState;
-    const lang = session.language as 'vi' | 'en' | 'ja';
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const level = (session as any).targetLevel ?? 'mid';
+    const stageState = this.getStageState(session);
+    const lang = this.getSessionLanguage(session);
+    const level = this.getSessionLevel(session);
     const elapsedSeconds = this.computeStageElapsedSeconds(session);
     const graph = this.extractGraph(session);
     const probeBank = problem.probeBank ?? [];
@@ -750,16 +751,17 @@ export class SDOrchestratorService {
       | Partial<SDDeepDiveTracker>
       | undefined;
     const criteria = this.deepDivePlanner.getCriteriaForLevel(level);
+    const rawProgress = this.toJsonRecord(rawTracker?.progress);
     const tracker: SDDeepDiveTracker = {
       turnCount: rawTracker?.turnCount ?? 0,
       elapsedSeconds,
       progress: {
-        completedProbeIds:
-          (rawTracker?.progress as any)?.completedProbeIds ?? [],
-        activeProbe: (rawTracker?.progress as any)?.activeProbe ?? null,
-        probeBudgetRemaining:
-          (rawTracker?.progress as any)?.probeBudgetRemaining ??
+        completedProbeIds: this.stringArray(rawProgress.completedProbeIds),
+        activeProbe: this.toActiveProbeState(rawProgress.activeProbe),
+        probeBudgetRemaining: this.numberValue(
+          rawProgress.probeBudgetRemaining,
           criteria.maxProbes,
+        ),
       },
     };
 
@@ -851,7 +853,9 @@ export class SDOrchestratorService {
         promptRendered: primaryText,
         candidateAnswer,
         candidateIntent: firstAssessment?.candidateIntent,
-        signalsJson: firstAssessment?.signals as any,
+        signalsJson: firstAssessment
+          ? this.toJsonRecord(firstAssessment.signals)
+          : undefined,
         scoreDeltas: firstAssessment?.scoreDelta,
         action: 'ASK_FOLLOW_UP',
         decisionReason: 'New probe started',
@@ -860,7 +864,7 @@ export class SDOrchestratorService {
       await this.updateStageState(session, {
         ...stageState,
         stage: 'DEEP_DIVE',
-        trackerJson: updatedTracker as any,
+        trackerJson: this.toJsonRecord(updatedTracker),
         runningScores: firstAssessment
           ? this._aggregateScores(session, firstAssessment.scoreDelta)
           : (stageState.runningScores ?? {}),
@@ -950,7 +954,7 @@ export class SDOrchestratorService {
         promptRendered: '',
         candidateAnswer,
         candidateIntent: assessment.candidateIntent,
-        signalsJson: assessment.signals as any,
+        signalsJson: this.toJsonRecord(assessment.signals),
         scoreDeltas: assessment.scoreDelta,
         action: decision.action,
         decisionReason: decision.reason,
@@ -1011,7 +1015,7 @@ export class SDOrchestratorService {
         await this.updateStageState(session, {
           ...stageState,
           stage: 'DEEP_DIVE',
-          trackerJson: finalTracker as any,
+          trackerJson: this.toJsonRecord(finalTracker),
           runningScores: this._aggregateScores(session, assessment.scoreDelta),
         });
 
@@ -1079,7 +1083,7 @@ export class SDOrchestratorService {
       promptRendered: intentText,
       candidateAnswer,
       candidateIntent: assessment.candidateIntent,
-      signalsJson: assessment.signals as any,
+      signalsJson: this.toJsonRecord(assessment.signals),
       scoreDeltas: assessment.scoreDelta,
       action: decision.action,
       decisionReason: decision.reason,
@@ -1088,7 +1092,7 @@ export class SDOrchestratorService {
     await this.updateStageState(session, {
       ...stageState,
       stage: 'DEEP_DIVE',
-      trackerJson: updatedTracker as any,
+      trackerJson: this.toJsonRecord(updatedTracker),
       runningScores: this._aggregateScores(session, assessment.scoreDelta),
     });
 
@@ -1104,8 +1108,7 @@ export class SDOrchestratorService {
     res: Response,
     lang: 'vi' | 'en' | 'ja',
   ): Promise<void> {
-    const stageState = (session.stageState ??
-      {}) as unknown as SDSessionStageState;
+    const stageState = this.getStageState(session);
     const leftover: SDDeepDiveLeftoverJson = {
       completedProbeIds: tracker.progress.completedProbeIds,
       perProbeSignals: {},
@@ -1124,7 +1127,7 @@ export class SDOrchestratorService {
       elapsedSeconds,
       scores: stageState.runningScores ?? {},
       redFlags: [],
-      leftoverJson: leftover as any,
+      leftoverJson: leftover,
     });
 
     const problem =
@@ -1148,8 +1151,7 @@ export class SDOrchestratorService {
       where: { sessionId: session.id, stage: 'DEEP_DIVE' },
     });
     const graph = this.extractGraph(session);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-    const level: string = (session as any).targetLevel ?? 'mid';
+    const level = this.getSessionLevel(session);
     const initialWUProgress = {
       completedItemIds: [] as string[],
       baseGraphSnapshotId: '',
@@ -1231,9 +1233,8 @@ export class SDOrchestratorService {
       (await this.problemRepo.findOneOrFail({
         where: { id: session.problemId },
       }));
-    const stageState = (session.stageState ??
-      {}) as unknown as SDSessionStageState;
-    const lang = session.language as 'vi' | 'en' | 'ja';
+    const stageState = this.getStageState(session);
+    const lang = this.getSessionLanguage(session);
     const elapsedSeconds = this.computeStageElapsedSeconds(session);
     const curveballs = problem.curveballs ?? [];
     const probeBank = problem.probeBank ?? [];
@@ -1244,17 +1245,19 @@ export class SDOrchestratorService {
     const rawTracker = stageState.trackerJson as
       | Partial<SDWrapUpTracker>
       | undefined;
+    const rawProgress = this.toJsonRecord(rawTracker?.progress);
     const tracker: SDWrapUpTracker = {
       turnCount: rawTracker?.turnCount ?? 0,
       elapsedSeconds,
       progress: {
-        completedItemIds: (rawTracker?.progress as any)?.completedItemIds ?? [],
+        completedItemIds: this.stringArray(rawProgress.completedItemIds),
         baseGraphSnapshotId:
-          (rawTracker?.progress as any)?.baseGraphSnapshotId ?? '',
-        activeScenario: (rawTracker?.progress as any)?.activeScenario ?? null,
-        scenarioBudgetRemaining:
-          (rawTracker?.progress as any)?.scenarioBudgetRemaining ??
+          this.stringValue(rawProgress.baseGraphSnapshotId) ?? '',
+        activeScenario: this.toActiveScenarioState(rawProgress.activeScenario),
+        scenarioBudgetRemaining: this.numberValue(
+          rawProgress.scenarioBudgetRemaining,
           criteria.maxScenarios,
+        ),
       },
     };
 
@@ -1307,7 +1310,7 @@ export class SDOrchestratorService {
     const deepDiveScores =
       (deepDiveSummary?.scores as Record<string, number>) ?? {};
 
-    const level = (session as { targetLevel?: string }).targetLevel ?? 'mid';
+    const level = this.getSessionLevel(session);
 
     // If no active scenario, select one
     if (!tracker.progress.activeScenario) {
@@ -1412,7 +1415,7 @@ export class SDOrchestratorService {
       await this.updateStageState(session, {
         ...stageState,
         stage: 'WRAP_UP',
-        trackerJson: updatedTracker as any,
+        trackerJson: this.toJsonRecord(updatedTracker),
         runningScores: stageState.runningScores ?? {},
       });
 
@@ -1507,7 +1510,7 @@ export class SDOrchestratorService {
         promptRendered: '',
         candidateAnswer,
         candidateIntent: assessment.candidateIntent,
-        signalsJson: assessment.signals as any,
+        signalsJson: this.toJsonRecord(assessment.signals),
         scoreDeltas: assessment.scoreDelta,
         action: decision.action,
         decisionReason: decision.reason,
@@ -1520,7 +1523,7 @@ export class SDOrchestratorService {
           assessment.scoreDelta,
         );
         session.stageState = {
-          ...(session.stageState ?? {}),
+          ...this.getStageState(session),
           runningScores: aggregatedScores,
         };
         await this._completeSession(
@@ -1558,7 +1561,7 @@ export class SDOrchestratorService {
           assessment.scoreDelta,
         );
         session.stageState = {
-          ...(session.stageState ?? {}),
+          ...this.getStageState(session),
           runningScores: aggregatedScores,
         };
         await this._completeSession(
@@ -1611,7 +1614,7 @@ export class SDOrchestratorService {
       await this.updateStageState(session, {
         ...stageState,
         stage: 'WRAP_UP',
-        trackerJson: finalTracker as any,
+        trackerJson: this.toJsonRecord(finalTracker),
         runningScores: this._aggregateScores(session, assessment.scoreDelta),
       });
       this.streamText(res, presentText, null);
@@ -1667,7 +1670,7 @@ export class SDOrchestratorService {
       promptRendered: intentText,
       candidateAnswer,
       candidateIntent: assessment.candidateIntent,
-      signalsJson: assessment.signals as any,
+      signalsJson: this.toJsonRecord(assessment.signals),
       scoreDeltas: assessment.scoreDelta,
       action: decision.action,
       decisionReason: decision.reason,
@@ -1676,7 +1679,7 @@ export class SDOrchestratorService {
     await this.updateStageState(session, {
       ...stageState,
       stage: 'WRAP_UP',
-      trackerJson: updatedTracker as any,
+      trackerJson: this.toJsonRecord(updatedTracker),
       runningScores: this._aggregateScores(session, assessment.scoreDelta),
     });
     this.streamText(res, intentText, null);
@@ -1691,8 +1694,7 @@ export class SDOrchestratorService {
     res: Response,
     lang: 'vi' | 'en' | 'ja',
   ): Promise<void> {
-    const stageState = (session.stageState ??
-      {}) as unknown as SDSessionStageState;
+    const stageState = this.getStageState(session);
     const delta = this.wrapUpAssessor.detectGraphDelta(currentGraph, baseGraph);
     const leftover: SDWrapUpLeftoverJson = {
       completedItemIds: tracker.progress.completedItemIds,
@@ -1706,7 +1708,7 @@ export class SDOrchestratorService {
       elapsedSeconds,
       scores: stageState.runningScores ?? {},
       redFlags: [],
-      leftoverJson: leftover as any,
+      leftoverJson: leftover,
     });
 
     await this.updateSessionPhase(session, 'EVALUATING', {
@@ -1736,7 +1738,7 @@ export class SDOrchestratorService {
       if (stage === 'CLARIFICATION') {
         await this.openClarification(session, res);
       } else {
-        const lang = session.language as 'vi' | 'en' | 'ja';
+        const lang = this.getSessionLanguage(session);
         const statusText = this.renderer.buildStageStatusText(stage, lang);
         this.streamText(res, statusText, null);
       }
@@ -1754,7 +1756,7 @@ export class SDOrchestratorService {
       (await this.problemRepo.findOneOrFail({
         where: { id: session.problemId },
       }));
-    const lang = session.language as 'vi' | 'en' | 'ja';
+    const lang = this.getSessionLanguage(session);
     const durationMinutes = session.durationMinutes;
 
     const openingIntent = this.clarificationPlanner.buildOpeningIntent(
@@ -1806,8 +1808,7 @@ export class SDOrchestratorService {
     const problem = await this.problemRepo.findOneOrFail({
       where: { id: session.problemId },
     });
-    const stageState = (session.stageState ??
-      {}) as unknown as SDSessionStageState;
+    const stageState = this.getStageState(session);
     const hasNudged = stageState.hasNudgedEmptyCanvas ?? false;
 
     const graph: SDGraphState = this.extractGraph(session);
@@ -1824,7 +1825,7 @@ export class SDOrchestratorService {
       if (!result.shouldTransition) {
         // Empty canvas — send nudge once
         const nudgeText = this.renderer.buildEmptyCanvasNudge(
-          session.language as any,
+          this.getSessionLanguage(session),
         );
         this.streamText(res, nudgeText, null);
         await this.updateStageState(session, {
@@ -1835,7 +1836,7 @@ export class SDOrchestratorService {
       }
 
       // Transition to DESIGN_WALKTHROUGH
-      const lang = session.language as 'vi' | 'en' | 'ja';
+      const lang = this.getSessionLanguage(session);
       const transitionText = this.renderer.buildTransitionText(
         'DESIGN_DRAWING',
         'DESIGN_WALKTHROUGH',
@@ -1866,30 +1867,30 @@ export class SDOrchestratorService {
     sessionId: string;
     stage: SDStage;
     turnIndex: number;
-    intentType: string;
+    intentType: SDIntentType;
     intentTargetJson: Record<string, unknown>;
     promptRendered: string;
     candidateAnswer: string;
-    candidateIntent?: string;
+    candidateIntent?: SDCandidateIntent | null;
     signalsJson?: Record<string, unknown>;
     scoreDeltas?: Record<string, number>;
     extraJson?: Record<string, unknown>;
-    action?: string;
+    action?: SDDecisionAction | null;
     decisionReason?: string;
   }): Promise<SDTurnRecord> {
     const record = this.turnRepo.create({
       sessionId: params.sessionId,
       stage: params.stage,
       turnIndex: params.turnIndex,
-      intentType: params.intentType as any,
+      intentType: params.intentType,
       intentTargetJson: params.intentTargetJson,
       promptRendered: params.promptRendered,
       candidateAnswer: params.candidateAnswer,
-      candidateIntent: (params.candidateIntent as any) ?? null,
+      candidateIntent: params.candidateIntent ?? null,
       signalsJson: params.signalsJson ?? {},
       scoreDeltas: params.scoreDeltas ?? {},
       extraJson: params.extraJson ?? null,
-      action: (params.action as any) ?? null,
+      action: params.action ?? null,
       decisionReason: params.decisionReason ?? null,
     });
     return this.turnRepo.save(record);
@@ -1897,27 +1898,27 @@ export class SDOrchestratorService {
 
   async persistStageSummary(params: {
     sessionId: string;
-    stage: string;
+    stage: SDScoredStage;
     totalTurns: number;
     elapsedSeconds: number;
     scores: Record<string, number>;
     redFlags: string[];
-    leftoverJson: Record<string, unknown>;
+    leftoverJson: SDStageLeftoverJson;
   }): Promise<SDStageSummary> {
     const existing = await this.summaryRepo.findOne({
-      where: { sessionId: params.sessionId, stage: params.stage as any },
+      where: { sessionId: params.sessionId, stage: params.stage },
     });
     const summary =
       existing ??
       this.summaryRepo.create({
         sessionId: params.sessionId,
-        stage: params.stage as any,
+        stage: params.stage,
       });
     summary.totalTurns = params.totalTurns;
     summary.elapsedSeconds = params.elapsedSeconds;
     summary.scores = params.scores;
     summary.redFlags = params.redFlags;
-    summary.leftoverJson = params.leftoverJson as any;
+    summary.leftoverJson = params.leftoverJson;
     return this.summaryRepo.save(summary);
   }
 
@@ -1926,41 +1927,163 @@ export class SDOrchestratorService {
     stageState: Partial<SDSessionStageState>,
   ): Promise<void> {
     await this.sessionRepo.update(session.id, {
-      stageState: stageState as any,
+      stageState: this.toStageStateColumn(stageState),
     });
   }
 
   async updateSessionPhase(
     session: SDSession,
-    phase: string,
+    phase: SDStage,
     stageState: SDSessionStageState,
   ): Promise<void> {
     await this.sessionRepo.update(session.id, {
-      phase: phase as any,
-      stageState: stageState as any,
+      phase: phase as SDSession['phase'],
+      stageState: this.toStageStateColumn(stageState),
       stageStartedAt: new Date(),
     });
   }
 
   // ─── Tracker helpers ─────────────────────────────────────────────────────────
 
+  private getSessionLanguage(session: SDSession): SDLanguage {
+    return this.isSupportedLanguage(session.language) ? session.language : 'vi';
+  }
+
+  private getSessionLevel(session: SDSession): SDTargetLevel {
+    return this.isTargetLevel(session.targetLevel)
+      ? session.targetLevel
+      : 'mid';
+  }
+
+  private isSupportedLanguage(value: string): value is SDLanguage {
+    return SUPPORTED_SD_LANGUAGES.includes(value as SDLanguage);
+  }
+
+  private isTargetLevel(
+    value: string | null | undefined,
+  ): value is SDTargetLevel {
+    return (
+      value === 'junior' ||
+      value === 'mid' ||
+      value === 'senior' ||
+      value === 'staff'
+    );
+  }
+
+  private getStageState(session: SDSession): Partial<SDSessionStageState> {
+    return this.toJsonRecord(
+      session.stageState,
+    ) as Partial<SDSessionStageState>;
+  }
+
+  private toStageStateColumn(
+    stageState: unknown,
+  ): QueryDeepPartialEntity<SDSession>['stageState'] {
+    return this.toJsonRecord(
+      stageState,
+    ) as QueryDeepPartialEntity<SDSession>['stageState'];
+  }
+
+  private toJsonRecord(value: unknown): Record<string, unknown> {
+    return this.isRecord(value) ? value : {};
+  }
+
+  private isRecord(value: unknown): value is Record<string, unknown> {
+    return typeof value === 'object' && value !== null && !Array.isArray(value);
+  }
+
+  private stringValue(value: unknown): string | undefined {
+    return typeof value === 'string' ? value : undefined;
+  }
+
+  private numberValue(value: unknown, fallback: number): number {
+    return typeof value === 'number' && Number.isFinite(value)
+      ? value
+      : fallback;
+  }
+
+  private booleanValue(value: unknown, fallback: boolean): boolean {
+    return typeof value === 'boolean' ? value : fallback;
+  }
+
+  private stringArray(value: unknown): string[] {
+    return Array.isArray(value)
+      ? value.filter((item): item is string => typeof item === 'string')
+      : [];
+  }
+
+  private isPresent<T>(value: T | null | undefined): value is T {
+    return value !== null && value !== undefined;
+  }
+
+  private toActiveProbeState(value: unknown): SDActiveProbeState | null {
+    const raw = this.toJsonRecord(value);
+    const probeId = this.stringValue(raw.probeId);
+    if (!probeId) return null;
+
+    const closeReason = this.stringValue(raw.closeReason);
+    return {
+      probeId,
+      turnCount: this.numberValue(raw.turnCount, 0),
+      followUpCount: this.numberValue(raw.followUpCount, 0),
+      challengeCount: this.numberValue(raw.challengeCount, 0),
+      coveredSignals: this.stringArray(raw.coveredSignals),
+      ...(closeReason === 'signals_covered' ||
+      closeReason === 'turn_limit' ||
+      closeReason === 'timebox'
+        ? { closeReason }
+        : {}),
+    };
+  }
+
+  private toActiveScenarioState(value: unknown): SDActiveScenarioState | null {
+    const raw = this.toJsonRecord(value);
+    const scenarioId = this.stringValue(raw.scenarioId);
+    const source = this.stringValue(raw.source);
+    if (
+      !scenarioId ||
+      (source !== 'curveball' && source !== 'probe_fallback')
+    ) {
+      return null;
+    }
+
+    const closeReason = this.stringValue(raw.closeReason);
+    const perScenarioBaseSnapshotId = this.stringValue(
+      raw.perScenarioBaseSnapshotId,
+    );
+    return {
+      source,
+      scenarioId,
+      turnCount: this.numberValue(raw.turnCount, 0),
+      followUpCount: this.numberValue(raw.followUpCount, 0),
+      challengeCount: this.numberValue(raw.challengeCount, 0),
+      ...(closeReason === 'signals_covered' ||
+      closeReason === 'turn_limit' ||
+      closeReason === 'timebox'
+        ? { closeReason }
+        : {}),
+      ...(perScenarioBaseSnapshotId ? { perScenarioBaseSnapshotId } : {}),
+    };
+  }
+
   getClarificationTracker(session: SDSession): SDClarificationTracker {
-    const state = (session.stageState ?? {}) as unknown as SDSessionStageState;
+    const state = this.getStageState(session);
     const tracker = state.trackerJson as
       | Partial<SDClarificationTracker>
       | undefined;
+    const progress = this.toJsonRecord(tracker?.progress);
     return {
       turnCount: tracker?.turnCount ?? 0,
       elapsedSeconds: tracker?.elapsedSeconds ?? 0,
       progress: {
-        coveredDimensions: (tracker?.progress as any)?.coveredDimensions ?? [],
-        disclosedFactKeys: (tracker?.progress as any)?.disclosedFactKeys ?? [],
+        coveredDimensions: this.stringArray(progress.coveredDimensions),
+        disclosedFactKeys: this.stringArray(progress.disclosedFactKeys),
       },
     };
   }
 
   computeStageElapsedSeconds(session: SDSession): number {
-    const stageStartedAt = session.stageStartedAt as Date | null;
+    const stageStartedAt = session.stageStartedAt;
     const refMs = stageStartedAt
       ? stageStartedAt.getTime()
       : session.createdAt.getTime();
@@ -1989,15 +2112,24 @@ export class SDOrchestratorService {
     newCoveredDims: string[],
     criteria: SDClarificationTransitionCriteria,
     lang: 'vi' | 'en' | 'ja',
-  ): Promise<{ transitionText: string; leftover: SDClarificationLeftoverJson }> {
-    const transitionIntent = this.clarificationPlanner.buildTransitionIntent(lang);
-    const transitionText = await this.renderer.renderClarification(transitionIntent);
+  ): Promise<{
+    transitionText: string;
+    leftover: SDClarificationLeftoverJson;
+  }> {
+    const transitionIntent =
+      this.clarificationPlanner.buildTransitionIntent(lang);
+    const transitionText =
+      await this.renderer.renderClarification(transitionIntent);
 
     const leftover: SDClarificationLeftoverJson = {
       requirementContract: {
         disclosedFacts: data.facts
           .filter((f) => newDisclosedKeys.includes(f.key))
-          .map((f) => ({ dimension: f.dimension, key: f.key, value: f.answer })),
+          .map((f) => ({
+            dimension: f.dimension,
+            key: f.key,
+            value: f.answer,
+          })),
         coveredDimensions: newCoveredDims,
       },
       uncoveredDimensions: criteria.requiredDimensions.filter(
@@ -2013,7 +2145,7 @@ export class SDOrchestratorService {
       elapsedSeconds,
       scores: this._aggregateScores(session, assessment.scoreDelta),
       redFlags: assessment.redFlags,
-      leftoverJson: leftover as any,
+      leftoverJson: leftover,
     });
 
     await this.updateSessionPhase(session, 'DESIGN_DRAWING', {
@@ -2032,8 +2164,7 @@ export class SDOrchestratorService {
     session: SDSession,
     newDelta: Record<string, number>,
   ): Record<string, number> {
-    const stageState = (session.stageState ??
-      {}) as unknown as SDSessionStageState;
+    const stageState = this.getStageState(session);
     const existing = stageState.runningScores ?? {};
     const result: Record<string, number> = { ...existing };
     for (const [key, val] of Object.entries(newDelta)) {
@@ -2101,21 +2232,67 @@ export class SDOrchestratorService {
   }
 
   private extractGraph(session: SDSession): SDGraphState {
-    const arch = session.architectureJSON as any;
+    const arch = this.toJsonRecord(session.architectureJSON);
+    const rawNodes = Array.isArray(arch.nodes) ? arch.nodes : [];
+    const rawEdges = Array.isArray(arch.edges) ? arch.edges : [];
+
     return {
-      nodes: (arch?.nodes ?? []).map((n: any) => ({
-        id: n.id,
-        type: n.type,
-        label: n.data?.label ?? n.label ?? n.type,
-        metadata: n.data?.metadata,
-      })),
-      edges: (arch?.edges ?? []).map((e: any) => ({
-        id: e.id,
-        sourceId: e.source ?? e.sourceId,
-        targetId: e.target ?? e.targetId,
-        label: e.label,
-        direction: 'unidirectional' as const,
-      })),
+      nodes: rawNodes
+        .map((node) => this.toGraphNode(node))
+        .filter((node): node is SDGraphNode => this.isPresent(node)),
+      edges: rawEdges
+        .map((edge) => this.toGraphEdge(edge))
+        .filter((edge): edge is SDGraphEdge => this.isPresent(edge)),
+    };
+  }
+
+  private toGraphNode(value: unknown): SDGraphNode | null {
+    const node = this.toJsonRecord(value);
+    const data = this.toJsonRecord(node.data);
+    const id = this.stringValue(node.id);
+    const type = this.stringValue(node.type);
+
+    if (!id || !type) {
+      return null;
+    }
+
+    const metadata = this.toGraphNodeMetadata(data.metadata);
+    return {
+      id,
+      type,
+      label:
+        this.stringValue(data.label) ?? this.stringValue(node.label) ?? type,
+      ...(metadata ? { metadata } : {}),
+    };
+  }
+
+  private toGraphNodeMetadata(
+    value: unknown,
+  ): SDGraphNode['metadata'] | undefined {
+    const metadata = this.toJsonRecord(value);
+    const technology = this.stringValue(metadata.technology);
+    const notes = this.stringValue(metadata.notes);
+    return technology || notes ? { technology, notes } : undefined;
+  }
+
+  private toGraphEdge(value: unknown): SDGraphEdge | null {
+    const edge = this.toJsonRecord(value);
+    const id = this.stringValue(edge.id);
+    const sourceId =
+      this.stringValue(edge.source) ?? this.stringValue(edge.sourceId);
+    const targetId =
+      this.stringValue(edge.target) ?? this.stringValue(edge.targetId);
+
+    if (!id || !sourceId || !targetId) {
+      return null;
+    }
+
+    return {
+      id,
+      sourceId,
+      targetId,
+      label: this.stringValue(edge.label),
+      direction: 'unidirectional',
     };
   }
 }

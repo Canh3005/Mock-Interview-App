@@ -6,134 +6,10 @@ import type {
   SDClarificationTransitionCriteria,
   SDClarificationTracker,
 } from '../types/sd-orchestrator.types';
-
-// Architecture/implementation terms forbidden in all Clarification responses
-const FORBIDDEN_ARCHITECTURE_TERMS = [
-  'cache',
-  'sharding',
-  'load balancer',
-  'database design',
-  'database partition',
-  'consistent hashing',
-  'replication',
-  'microservice',
-  'monolith',
-  'api gateway design',
-  'cdn',
-  'queue',
-  'kafka',
-  'redis',
-  'elasticsearch',
-  'index',
-  'horizontal scaling',
-  'vertical scaling',
-  'leader election',
-  'raft',
-  'paxos',
-  'two-phase commit',
-];
-
-// Per-dimension coverage signals (hints for assessor, also used for nudge selection)
-export const DIMENSION_COVERAGE_SIGNALS: Record<string, string[]> = {
-  scope: [
-    'use case',
-    'feature',
-    'functionality',
-    'what',
-    'user can',
-    'support',
-    'include',
-    'exclude',
-    'out of scope',
-    'core',
-  ],
-  scale: [
-    'user',
-    'dau',
-    'mau',
-    'qps',
-    'rps',
-    'traffic',
-    'request per',
-    'million',
-    'billion',
-    'how many',
-    'volume',
-    'throughput',
-  ],
-  nfr: [
-    'latency',
-    'availability',
-    'sla',
-    'slo',
-    'p99',
-    'uptime',
-    'reliability',
-    'consistency',
-    'durability',
-    'performance',
-  ],
-  data: [
-    'data size',
-    'storage',
-    'retention',
-    'how long',
-    'data model',
-    'schema',
-    'type of data',
-    'format',
-  ],
-  constraints: [
-    'budget',
-    'team size',
-    'timeline',
-    'technology constraint',
-    'existing infrastructure',
-    'compliance',
-    'regulation',
-  ],
-  non_goal: [
-    'out of scope',
-    'not building',
-    'exclude',
-    'skip',
-    'ignore',
-    'no need',
-    'not required',
-    "won't",
-  ],
-};
-
-// Transition criteria per candidate level
-export const CLARIFICATION_CRITERIA: Record<
-  string,
-  SDClarificationTransitionCriteria
-> = {
-  junior: {
-    requiredDimensions: ['scope', 'scale'],
-    minCandidateTurns: 2,
-    minDurationSeconds: 60,
-    maxDurationSeconds: 600,
-  },
-  mid: {
-    requiredDimensions: ['scope', 'scale', 'nfr'],
-    minCandidateTurns: 2,
-    minDurationSeconds: 90,
-    maxDurationSeconds: 600,
-  },
-  senior: {
-    requiredDimensions: ['scope', 'scale', 'nfr'],
-    minCandidateTurns: 3,
-    minDurationSeconds: 120,
-    maxDurationSeconds: 720,
-  },
-  staff: {
-    requiredDimensions: ['scope', 'scale', 'nfr', 'data'],
-    minCandidateTurns: 3,
-    minDurationSeconds: 120,
-    maxDurationSeconds: 720,
-  },
-};
+import {
+  CLARIFICATION_CRITERIA,
+  FORBIDDEN_ARCHITECTURE_TERMS,
+} from '../constants/sd-clarification.constants';
 
 @Injectable()
 export class SDClarificationPlannerService {
@@ -158,59 +34,22 @@ export class SDClarificationPlannerService {
   }
 
   planNextIntent(input: SDClarificationPlannerInput): SDClarificationDecision {
-    const { tracker, lastCandidateIntent, data, context, elapsedSeconds } =
-      input;
+    const { tracker, context } = input;
     const { language, level } = context;
     const criteria =
       CLARIFICATION_CRITERIA[level] ?? CLARIFICATION_CRITERIA['senior'];
 
-    // 1. REDIRECT — highest priority: candidate jumped to solution
-    if (lastCandidateIntent === 'solution_leap') {
-      return {
-        action: 'REDIRECT',
-        reason: 'Candidate jumped to solution before requirements gathered',
-        nextIntent: this._buildRedirectIntent(language),
-      };
-    }
-
-    // 2. Check TRANSITION_STAGE
-    const canTransition = this._canTransition(
-      tracker,
-      criteria,
-      elapsedSeconds,
-    );
-    if (canTransition) {
-      return {
-        action: 'TRANSITION_STAGE',
-        reason: 'All required dimensions covered and min criteria met',
-      };
-    }
-
-    // 3. Max time → force transition
-    if (elapsedSeconds >= criteria.maxDurationSeconds) {
-      return {
-        action: 'TRANSITION_STAGE',
-        reason: 'Max clarification time reached',
-      };
-    }
-
-    // 4. ANSWER_FACT — if planner is called after an ANSWER_FACT, we need to check if nudge is chained
-    // (This is handled by the orchestrator calling this method with the assessment result)
-
-    // 5. ASK_NUDGE — missing required dims
     const missingDimensions = criteria.requiredDimensions.filter(
       (d) => !tracker.progress.coveredDimensions.includes(d),
     );
     if (missingDimensions.length > 0) {
-      const nudgeDimension = missingDimensions[0];
       return {
         action: 'ASK_NUDGE',
-        reason: `Missing required dimension: ${nudgeDimension}`,
-        nextIntent: this._buildNudgeIntent(nudgeDimension, language),
+        reason: `Missing required dimension: ${missingDimensions[0]}`,
+        nextIntent: this._buildNudgeIntent(missingDimensions[0], language),
       };
     }
 
-    // All required dimensions are covered but min criteria not met yet
     const holdingTemplates: Record<string, string> = {
       vi: 'Bạn đã hỏi về những điểm chính. Có điều gì khác bạn muốn làm rõ trước khi bắt đầu thiết kế không?',
       en: "You've covered the main areas. Is there anything else you'd like to clarify before moving to the design?",
@@ -219,7 +58,7 @@ export class SDClarificationPlannerService {
     return {
       action: 'ASK_NUDGE',
       reason:
-        'All required dimensions covered — prompting candidate to continue or confirm readiness',
+        'All required dimensions covered — prompting candidate to confirm readiness',
       nextIntent: {
         stage: 'CLARIFICATION',
         type: 'NUDGE',
@@ -250,33 +89,6 @@ export class SDClarificationPlannerService {
       target: { factKey, dimension },
     };
 
-    // Check if a nudge should be chained (required dimensions still missing after this answer)
-    // const willCoverDimensions = [
-    //   ...tracker.progress.coveredDimensions,
-    //   dimension,
-    // ];
-    // const stillMissing = criteria.requiredDimensions.filter(
-    //   (d) => !willCoverDimensions.includes(d),
-    // );
-
-    // const canTransitionAfter =
-    //   stillMissing.length === 0 &&
-    //   tracker.turnCount + 1 >= criteria.minCandidateTurns &&
-    //   elapsedSeconds >= criteria.minDurationSeconds;
-
-    // if (stillMissing.length > 0 && !canTransitionAfter) {
-    //   const chainDimension = stillMissing[0];
-    //   return {
-    //     action: 'ANSWER_FACT',
-    //     reason: `matchedFactKey=${factKey}; dimension ${chainDimension} still missing`,
-    //     nextIntent: intent,
-    //     chainedAction: {
-    //       action: 'ASK_NUDGE',
-    //       intent: this._buildNudgeIntent(chainDimension, language),
-    //     },
-    //   };
-    // }
-
     return {
       action: 'ANSWER_FACT',
       reason: `matchedFactKey=${factKey}`,
@@ -284,24 +96,7 @@ export class SDClarificationPlannerService {
     };
   }
 
-  private _canTransition(
-    tracker: SDClarificationTracker,
-    criteria: SDClarificationTransitionCriteria,
-    elapsedSeconds: number,
-  ): boolean {
-    const allRequired = criteria.requiredDimensions.every((d) =>
-      tracker.progress.coveredDimensions.includes(d),
-    );
-    return (
-      allRequired &&
-      tracker.turnCount >= criteria.minCandidateTurns &&
-      elapsedSeconds >= criteria.minDurationSeconds
-    );
-  }
-
-  private _buildRedirectIntent(
-    language: 'vi' | 'en' | 'ja',
-  ): SDClarificationIntent {
+  buildRedirectIntent(language: 'vi' | 'en' | 'ja'): SDClarificationIntent {
     const templates: Record<string, string> = {
       vi: 'Ứng viên đang nhảy vào giải pháp. Hãy đưa họ trở lại giai đoạn làm rõ yêu cầu. Đừng gợi ý những yêu cầu còn thiếu.',
       en: 'Candidate jumped to solution. Redirect them back to requirements gathering. Do not hint at what requirements are missing.',
