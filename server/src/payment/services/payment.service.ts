@@ -262,6 +262,7 @@ export class PaymentService {
           type: TransactionType.CREDIT,
           amount: order.credits,
           description: `Purchase: ${order.credits} credits (order ${order.id})`,
+          balanceAfter: wallet.balance,
         },
       );
       await queryRunner.manager.save(tx);

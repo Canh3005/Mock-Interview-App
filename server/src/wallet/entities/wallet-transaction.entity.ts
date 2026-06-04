@@ -18,24 +18,27 @@ export enum TransactionType {
 @Entity('wallet_transaction')
 export class WalletTransaction {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column()
-  walletId: string;
+  walletId!: string;
 
   @ManyToOne(() => Wallet, (wallet) => wallet.transactions)
   @JoinColumn({ name: 'walletId' })
-  wallet: Wallet;
+  wallet!: Wallet;
 
   @Column({ type: 'enum', enum: TransactionType })
-  type: TransactionType;
+  type!: TransactionType;
 
   @Column({ type: 'int' })
-  amount: number;
+  amount!: number;
 
   @Column({ nullable: true })
   description?: string;
 
+  @Column({ type: 'int', nullable: true })
+  balanceAfter!: number | null;
+
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 }

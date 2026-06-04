@@ -20,4 +20,5 @@ export const ROUTES = {
   ADMIN_QUESTION_BANK: '/admin/question-bank',
   BUY_CREDITS: '/buy-credits',
   PAYMENT_RESULT: '/payment/result',
+  WALLET_HISTORY: '/wallet/history',
 }

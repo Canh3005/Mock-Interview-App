@@ -1,6 +1,6 @@
 import { Injectable, Logger, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, QueryFailedError, Repository } from 'typeorm';
+import { DataSource, In, QueryFailedError, Repository } from 'typeorm';
 import { Wallet } from './entities/wallet.entity';
 import {
   WalletTransaction,
@@ -11,6 +11,20 @@ import {
   PG_UNIQUE_VIOLATION,
   SIGNUP_BONUS,
 } from './constants/wallet.constants';
+import {
+  TransactionItemDto,
+  TransactionListResponseDto,
+} from './dto/transaction-list-response.dto';
+
+const TX_FILTER_MAP: Record<string, TransactionType[]> = {
+  income: [
+    TransactionType.CREDIT,
+    TransactionType.BONUS,
+    TransactionType.REFUND,
+  ],
+  expense: [TransactionType.DEBIT],
+  refund: [TransactionType.REFUND],
+};
 
 @Injectable()
 export class WalletService {
@@ -72,6 +86,7 @@ export class WalletService {
           type: TransactionType.DEBIT,
           amount,
           description,
+          balanceAfter: wallet.balance,
         },
       );
       await queryRunner.manager.save(tx);
@@ -124,6 +139,7 @@ export class WalletService {
           type: TransactionType.CREDIT,
           amount,
           description,
+          balanceAfter: wallet.balance,
         },
       );
       await queryRunner.manager.save(tx);
@@ -156,6 +172,46 @@ export class WalletService {
     return wallet.balance;
   }
 
+  async getTransactions(
+    userId: string,
+    page: number,
+    limit: number,
+    type: string,
+  ): Promise<TransactionListResponseDto> {
+    const wallet: Wallet | null = await this.walletRepo.findOne({
+      where: { userId },
+    });
+
+    if (!wallet) {
+      return { data: [], total: 0, page, limit };
+    }
+
+    const typeFilter = TX_FILTER_MAP[type];
+    const where: Record<string, unknown> = { walletId: wallet.id };
+    if (typeFilter) {
+      where['type'] = In(typeFilter);
+    }
+
+    const txRepo = this.dataSource.getRepository(WalletTransaction);
+    const [rows, total] = await txRepo.findAndCount({
+      where,
+      order: { createdAt: 'DESC' },
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+
+    const data: TransactionItemDto[] = rows.map((tx) => ({
+      id: tx.id,
+      type: tx.type,
+      amount: tx.amount,
+      balanceAfter: tx.balanceAfter,
+      description: tx.description ?? null,
+      createdAt: tx.createdAt,
+    }));
+
+    return { data, total, page, limit };
+  }
+
   private async _claimSignupBonus({
     wallet,
     email,
@@ -184,6 +240,7 @@ export class WalletService {
           type: TransactionType.BONUS,
           amount: SIGNUP_BONUS,
           description: 'Signup bonus',
+          balanceAfter: SIGNUP_BONUS,
         },
       );
       await queryRunner.manager.save(tx);

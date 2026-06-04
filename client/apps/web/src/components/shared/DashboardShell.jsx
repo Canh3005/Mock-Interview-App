@@ -16,7 +16,7 @@ import {
   Moon,
   Bell,
   Coins,
-  CreditCard,
+  Wallet,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
@@ -46,7 +46,7 @@ function CreditBadge() {
   return (
     <button
       type="button"
-      onClick={() => navigate(ROUTES.BUY_CREDITS)}
+      onClick={() => navigate(ROUTES.WALLET_HISTORY)}
       className="dash-chip hidden h-10 items-center gap-1.5 rounded-full border px-3 text-sm font-semibold transition-opacity hover:opacity-75 lg:flex"
     >
       <Coins size={15} />
@@ -314,7 +314,10 @@ function Sidebar({ collapsed, collapseLocked = false, onToggleCollapsed, onNavig
           collapsed={collapsed}
           onRequestNavigate={onNavigate}
         />
-        <NavItem to={ROUTES.BUY_CREDITS} icon={CreditCard} label={t('payment.title')} />
+        <NavItemGroup icon={Wallet} label="Credit" matchPrefix="/wallet">
+          <NavSubItem to={ROUTES.WALLET_HISTORY} label={t('wallet.history.navLabel')} />
+          <NavSubItem to={ROUTES.BUY_CREDITS} label={t('payment.title')} />
+        </NavItemGroup>
 
         {user?.role === 'admin' && (
           <NavItemGroup icon={Shield} label={t('adminLayout.title')} matchPrefix="/admin">
