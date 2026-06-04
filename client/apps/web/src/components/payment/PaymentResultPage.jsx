@@ -3,18 +3,9 @@ import { useDispatch } from 'react-redux'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { CheckCircle, XCircle, Loader2 } from 'lucide-react'
-import { fetchBalanceRequest } from '../../store/slices/walletSlice'
+import { setBalance } from '../../store/slices/walletSlice'
+import { paymentApi } from '../../api/payment.api'
 import { ROUTES } from '../../router/routes'
-
-function _resolveSuccess(params) {
-  if (params.get('resultCode') !== null) {
-    return params.get('resultCode') === '0'
-  }
-  if (params.get('vnp_ResponseCode') !== null) {
-    return params.get('vnp_ResponseCode') === '00'
-  }
-  return null
-}
 
 export default function PaymentResultPage() {
   const dispatch = useDispatch()
@@ -22,24 +13,37 @@ export default function PaymentResultPage() {
   const { t } = useTranslation()
   const [searchParams] = useSearchParams()
   const [resolved, setResolved] = useState(false)
+  const [success, setSuccess] = useState(null)
 
-  const success = _resolveSuccess(searchParams)
+  const isVnpay = searchParams.get('vnp_ResponseCode') !== null
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      dispatch(fetchBalanceRequest())
+    if (isVnpay) {
+      // Forward VNPay return URL params to backend for verification + credit
+      const params = Object.fromEntries(searchParams.entries())
+      paymentApi
+        .processReturn(params)
+        .then((res) => {
+          if (res.newBalance !== undefined) {
+            dispatch(setBalance(res.newBalance))
+          }
+          setSuccess(res.status === 'PAID')
+        })
+        .catch(() => setSuccess(false))
+        .finally(() => setResolved(true))
+    } else {
+      // MoMo hoặc không xác định — rely on IPN, chỉ đọc resultCode từ URL
+      const momoSuccess = searchParams.get('resultCode') === '0'
+      setSuccess(searchParams.get('resultCode') !== null ? momoSuccess : null)
       setResolved(true)
-    }, 2000)
-    return () => clearTimeout(timer)
-  }, [dispatch])
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (!resolved) return
-    const timer = setTimeout(() => {
-      navigate(ROUTES.DASHBOARD)
-    }, 3000)
+    if (!resolved || success === false || success === null) return
+    const timer = setTimeout(() => navigate(ROUTES.DASHBOARD), 3000)
     return () => clearTimeout(timer)
-  }, [resolved, navigate])
+  }, [resolved, success, navigate])
 
   return (
     <div className="dash-page-shell flex min-h-full items-center justify-center">

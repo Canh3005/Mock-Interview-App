@@ -90,10 +90,11 @@ export class MomoService {
     };
 
     const response = await firstValueFrom(
-      this.httpService.post<{ resultCode: number; payUrl?: string; message: string }>(
-        this.endpoint,
-        body,
-      ),
+      this.httpService.post<{
+        resultCode: number;
+        payUrl?: string;
+        message: string;
+      }>(this.endpoint, body),
     );
 
     if (response.data.resultCode !== 0 || !response.data.payUrl) {

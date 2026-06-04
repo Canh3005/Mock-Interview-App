@@ -52,6 +52,16 @@ export class PaymentController {
     return this.paymentService.getOrderStatus(orderId, req.user.id);
   }
 
+  @Get('process-return')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Process VNPay return URL (called by FE on redirect)',
+  })
+  processVnpayReturn(@Query() query: Record<string, string>) {
+    return this.paymentService.processVnpayReturn(query);
+  }
+
   @Post('webhook/momo')
   @ApiOperation({ summary: 'MoMo IPN webhook (internal)' })
   async momoWebhook(@Body() payload: MomoWebhookPayload) {

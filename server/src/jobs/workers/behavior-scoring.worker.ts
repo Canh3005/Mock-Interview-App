@@ -137,7 +137,9 @@ export class BehaviorScoringWorker extends WorkerHost {
     try {
       await this.analyticsService.refreshCache(interviewSession.userId);
     } catch (err: unknown) {
-      this.logger.warn(`Analytics cache refresh failed for user ${interviewSession.userId}: ${String(err)}`);
+      this.logger.warn(
+        `Analytics cache refresh failed for user ${interviewSession.userId}: ${String(err)}`,
+      );
     }
   }
 

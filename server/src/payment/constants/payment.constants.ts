@@ -40,11 +40,12 @@ export const CREDIT_PACKAGES: Record<PackageId, CreditPackage> = {
   },
 };
 
-export const PACKAGE_IDS: PackageId[] = [
-  'starter',
-  'standard',
-  'pro',
-  'elite',
-];
+export const PACKAGE_IDS: PackageId[] = ['starter', 'standard', 'pro', 'elite'];
 export const PAYMENT_METHODS: PaymentMethod[] = ['momo', 'vnpay'];
 export const ORDER_EXPIRY_MINUTES = 15;
+
+export const PAYMENT_RECOVERY_QUEUE = 'payment-recovery';
+
+export const PaymentRecoveryJobName = {
+  SCAN: 'scan-stale-orders',
+} as const;

@@ -1,6 +1,11 @@
 import { IsIn, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { PACKAGE_IDS, PAYMENT_METHODS, PackageId, PaymentMethod } from '../constants/payment.constants';
+import {
+  PACKAGE_IDS,
+  PAYMENT_METHODS,
+  PackageId,
+  PaymentMethod,
+} from '../constants/payment.constants';
 
 export class CreateOrderDto {
   @ApiProperty({ enum: PACKAGE_IDS })

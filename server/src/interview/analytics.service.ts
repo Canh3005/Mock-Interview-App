@@ -67,7 +67,9 @@ export class AnalyticsService {
       const cached = await this.redis.get(key);
       if (cached) return JSON.parse(cached) as AnalyticsResponse;
     } catch (err: unknown) {
-      this.logger.warn(`Analytics cache read failed for ${userId}: ${String(err)}`);
+      this.logger.warn(
+        `Analytics cache read failed for ${userId}: ${String(err)}`,
+      );
     }
 
     const result = await this._computeAnalytics(userId);
@@ -75,7 +77,9 @@ export class AnalyticsService {
     try {
       await this.redis.set(key, JSON.stringify(result), 'EX', this.CACHE_TTL);
     } catch (err: unknown) {
-      this.logger.warn(`Analytics cache write failed for ${userId}: ${String(err)}`);
+      this.logger.warn(
+        `Analytics cache write failed for ${userId}: ${String(err)}`,
+      );
     }
 
     return result;
@@ -94,19 +98,26 @@ export class AnalyticsService {
       order: { finishedAt: 'DESC' },
     });
 
-    const [overview, scoreTrend, competencyBreakdown, roundBreakdown] = await Promise.all([
-      Promise.resolve(this._computeOverview(sessions)),
-      Promise.resolve(this._computeScoreTrend(sessions)),
-      Promise.resolve(this._computeCompetencyBreakdown(sessions)),
-      this._computeRoundBreakdown(sessions),
-    ]);
+    const [overview, scoreTrend, competencyBreakdown, roundBreakdown] =
+      await Promise.all([
+        Promise.resolve(this._computeOverview(sessions)),
+        Promise.resolve(this._computeScoreTrend(sessions)),
+        Promise.resolve(this._computeCompetencyBreakdown(sessions)),
+        this._computeRoundBreakdown(sessions),
+      ]);
 
     const weaknesses = competencyBreakdown
       .slice()
       .sort((a, b) => a.averageScore - b.averageScore)
       .slice(0, 3);
 
-    return { overview, scoreTrend, competencyBreakdown, roundBreakdown, weaknesses };
+    return {
+      overview,
+      scoreTrend,
+      competencyBreakdown,
+      roundBreakdown,
+      weaknesses,
+    };
   }
 
   private _getBehavioralScore(session: InterviewSession): number | null {
@@ -124,7 +135,11 @@ export class AnalyticsService {
 
     const averageScore =
       behavioralScores.length > 0
-        ? Math.round((behavioralScores.reduce((a, b) => a + b, 0) / behavioralScores.length) * 10) / 10
+        ? Math.round(
+            (behavioralScores.reduce((a, b) => a + b, 0) /
+              behavioralScores.length) *
+              10,
+          ) / 10
         : null;
 
     return {
@@ -161,7 +176,9 @@ export class AnalyticsService {
     return streak;
   }
 
-  private _computeImprovementDelta(sessions: InterviewSession[]): number | null {
+  private _computeImprovementDelta(
+    sessions: InterviewSession[],
+  ): number | null {
     const now = Date.now();
     const thirtyDaysMs = 30 * 24 * 60 * 60 * 1000;
     const cutoff30 = new Date(now - thirtyDaysMs);
@@ -193,7 +210,9 @@ export class AnalyticsService {
       .filter((s) => this._getBehavioralScore(s) !== null)
       .slice(0, 30)
       .map((s) => {
-        const behavioral = s.finalScorecard!['behavioral'] as BehaviorScorecardData;
+        const behavioral = s.finalScorecard[
+          'behavioral'
+        ] as BehaviorScorecardData;
         return {
           date: new Date(s.finishedAt).toISOString().split('T')[0],
           score: behavioral.readiness.finalScore,
@@ -204,29 +223,44 @@ export class AnalyticsService {
       .reverse();
   }
 
-  private _computeCompetencyBreakdown(sessions: InterviewSession[]): CompetencyBreakdownEntry[] {
+  private _computeCompetencyBreakdown(
+    sessions: InterviewSession[],
+  ): CompetencyBreakdownEntry[] {
     const map = new Map<string, { label: string; scores: number[] }>();
 
-    for (const session of sessions.filter((s) => this._getBehavioralScore(s) !== null).slice(0, 10)) {
-      const behavioral = session.finalScorecard!['behavioral'] as BehaviorScorecardData;
+    for (const session of sessions
+      .filter((s) => this._getBehavioralScore(s) !== null)
+      .slice(0, 10)) {
+      const behavioral = session.finalScorecard[
+        'behavioral'
+      ] as BehaviorScorecardData;
       for (const entry of behavioral.competencyScores ?? []) {
         const existing = map.get(entry.competencyKey);
         if (existing) {
           existing.scores.push(entry.score);
         } else {
-          map.set(entry.competencyKey, { label: entry.label, scores: [entry.score] });
+          map.set(entry.competencyKey, {
+            label: entry.label,
+            scores: [entry.score],
+          });
         }
       }
     }
 
-    return Array.from(map.entries()).map(([competencyKey, { label, scores }]) => ({
-      competencyKey,
-      label,
-      averageScore: Math.round((scores.reduce((a, b) => a + b, 0) / scores.length) * 10) / 10,
-    }));
+    return Array.from(map.entries()).map(
+      ([competencyKey, { label, scores }]) => ({
+        competencyKey,
+        label,
+        averageScore:
+          Math.round((scores.reduce((a, b) => a + b, 0) / scores.length) * 10) /
+          10,
+      }),
+    );
   }
 
-  private async _computeRoundBreakdown(sessions: InterviewSession[]): Promise<RoundBreakdown> {
+  private async _computeRoundBreakdown(
+    sessions: InterviewSession[],
+  ): Promise<RoundBreakdown> {
     if (sessions.length === 0) {
       return { behavioral: null, liveCoding: null, systemDesign: null };
     }
@@ -239,7 +273,11 @@ export class AnalyticsService {
       behavioralScores.length > 0
         ? {
             averageScore:
-              Math.round((behavioralScores.reduce((a, b) => a + b, 0) / behavioralScores.length) * 10) / 10,
+              Math.round(
+                (behavioralScores.reduce((a, b) => a + b, 0) /
+                  behavioralScores.length) *
+                  10,
+              ) / 10,
             sessionCount: behavioralScores.length,
           }
         : null;
@@ -247,8 +285,12 @@ export class AnalyticsService {
     const sessionIds = sessions.map((s) => s.id);
 
     const [lcSessions, sdSessions] = await Promise.all([
-      this.lcSessionRepo.find({ where: { interviewSessionId: In(sessionIds) } }),
-      this.sdSessionRepo.find({ where: { interviewSessionId: In(sessionIds) } }),
+      this.lcSessionRepo.find({
+        where: { interviewSessionId: In(sessionIds) },
+      }),
+      this.sdSessionRepo.find({
+        where: { interviewSessionId: In(sessionIds) },
+      }),
     ]);
 
     const lcScores = lcSessions
@@ -260,7 +302,9 @@ export class AnalyticsService {
         const totals = entries
           .map((e) => e?.score?.total)
           .filter((n): n is number => typeof n === 'number');
-        return totals.length > 0 ? totals.reduce((a, b) => a + b, 0) / totals.length : null;
+        return totals.length > 0
+          ? totals.reduce((a, b) => a + b, 0) / totals.length
+          : null;
       })
       .filter((n): n is number => n !== null);
 
@@ -268,7 +312,9 @@ export class AnalyticsService {
       lcScores.length > 0
         ? {
             averageScore:
-              Math.round((lcScores.reduce((a, b) => a + b, 0) / lcScores.length) * 10) / 10,
+              Math.round(
+                (lcScores.reduce((a, b) => a + b, 0) / lcScores.length) * 10,
+              ) / 10,
             sessionCount: lcScores.length,
           }
         : null;
@@ -276,7 +322,7 @@ export class AnalyticsService {
     const sdScores = sdSessions
       .map((sd) => {
         if (!sd.evaluationResult) return null;
-        const finalScore = (sd.evaluationResult as Record<string, unknown>)['finalScore'];
+        const finalScore = sd.evaluationResult['finalScore'];
         return typeof finalScore === 'number' ? finalScore : null;
       })
       .filter((n): n is number => n !== null);
@@ -285,7 +331,9 @@ export class AnalyticsService {
       sdScores.length > 0
         ? {
             averageScore:
-              Math.round((sdScores.reduce((a, b) => a + b, 0) / sdScores.length) * 10) / 10,
+              Math.round(
+                (sdScores.reduce((a, b) => a + b, 0) / sdScores.length) * 10,
+              ) / 10,
             sessionCount: sdScores.length,
           }
         : null;
