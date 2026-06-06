@@ -10,10 +10,26 @@ const initialState = {
   },
   loading: false,
   error: null,
+  // Upload state (file POST)
   uploadingDoc: false,
-  pollingJobId: null,
-  pollingStatus: null, // 'waiting', 'active', 'completed', 'failed'
-  pollingResult: null, // JSON result from parsing
+  lastJobId: null,           // jobId từ upload response — dùng để mở SSE parse
+  // Parse state (SSE)
+  parsingDoc: false,
+  parseResult: null,         // { type, cvData/jdData, missingSources, ... }
+  parseError: null,
+  // Compatibility assessment (SSE)
+  compatibilityLoading: false,
+  compatibilityResult: null, // { fitScore, fitAssessment, fitAssessmentSummary }
+  compatibilityError: null,
+  // Document context (CV + JD from DB, persists across sessions)
+  documentContext: { cv: null, jd: null },
+  contextLoading: false,
+  // CV/JD manual edit save
+  cvSaving: false,
+  cvSaveError: null,
+  jdSaving: false,
+  jdSaveError: null,
+  // Assessment history
   assessmentHistory: [],
   historyLoading: false,
 };
@@ -37,7 +53,7 @@ const profileSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
-    updateProfileRequest: (state, action) => {
+    updateProfileRequest: (state) => {
       state.loading = true;
       state.error = null;
     },
@@ -52,45 +68,94 @@ const profileSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
-    uploadDocumentRequest: (state, action) => {
+    uploadDocumentRequest: (state) => {
       state.uploadingDoc = true;
       state.error = null;
-      state.pollingJobId = null;
-      state.pollingStatus = null;
-      state.pollingResult = null;
+      state.lastJobId = null;
+      state.parseResult = null;
+      state.parseError = null;
+      state.compatibilityResult = null;
+      state.compatibilityError = null;
     },
     uploadDocumentSuccess: (state, action) => {
-      // API returns { jobId }
-      state.pollingJobId = action.payload.jobId;
-      state.pollingStatus = 'waiting';
+      // API returns { jobId, recordId }
+      state.uploadingDoc = false;
+      state.lastJobId = action.payload.jobId;
     },
     uploadDocumentFailure: (state, action) => {
       state.uploadingDoc = false;
       state.error = action.payload;
     },
-    pollJobStatusRequest: (state, action) => {
-      // action.payload is jobId
+    startDocumentParse: (state) => {
+      state.parsingDoc = true;
+      state.parseResult = null;
+      state.parseError = null;
     },
-    pollJobStatusSuccess: (state, action) => {
-      const { status, result } = action.payload;
-      state.pollingStatus = status;
-      if (status === 'completed' || status === 'failed') {
-        state.uploadingDoc = false;
-        state.pollingJobId = null; // Stop polling
-        if (status === 'completed') {
-            state.pollingResult = result;
-        }
+    documentParseSuccess: (state, action) => {
+      state.parsingDoc = false;
+      state.parseResult = action.payload;
+      if (action.payload?.type === 'CV' && action.payload.cvData) {
+        state.documentContext.cv = action.payload.cvData;
+      }
+      if (action.payload?.type === 'JD' && action.payload.jdData) {
+        state.documentContext.jd = action.payload.jdData;
       }
     },
-    pollJobStatusFailure: (state, action) => {
-      state.uploadingDoc = false;
-      state.pollingJobId = null;
-      state.error = action.payload;
+    documentParseFailure: (state, action) => {
+      state.parsingDoc = false;
+      state.parseError = action.payload;
     },
-    resetPollingState: (state) => {
-      state.pollingJobId = null;
-      state.pollingStatus = null;
-      state.pollingResult = null;
+    resetParseState: (state) => {
+      state.lastJobId = null;
+      state.parseResult = null;
+      state.parseError = null;
+      state.compatibilityResult = null;
+      state.compatibilityError = null;
+    },
+    runCompatibilityStart: (state) => {
+      state.compatibilityLoading = true;
+      state.compatibilityResult = null;
+      state.compatibilityError = null;
+    },
+    runCompatibilitySuccess: (state, action) => {
+      state.compatibilityLoading = false;
+      state.compatibilityResult = action.payload;
+    },
+    runCompatibilityFailure: (state, action) => {
+      state.compatibilityLoading = false;
+      state.compatibilityError = action.payload;
+    },
+    updateCvJsonRequest: (state) => {
+      state.cvSaving = true;
+      state.cvSaveError = null;
+    },
+    updateCvJsonSuccess: (state) => {
+      state.cvSaving = false;
+    },
+    updateCvJsonFailure: (state, action) => {
+      state.cvSaving = false;
+      state.cvSaveError = action.payload;
+    },
+    updateJdJsonRequest: (state) => {
+      state.jdSaving = true;
+      state.jdSaveError = null;
+    },
+    updateJdJsonSuccess: (state) => {
+      state.jdSaving = false;
+    },
+    updateJdJsonFailure: (state, action) => {
+      state.jdSaving = false;
+      state.jdSaveError = action.payload;
+    },
+    fetchDocumentContextRequest: (state) => {
+      state.contextLoading = true;
+    },
+    fetchDocumentContextSuccess: (state, action) => {
+      state.contextLoading = false;
+      state.documentContext = action.payload;
+    },
+    fetchDocumentContextFailure: (state) => {
+      state.contextLoading = false;
     },
     fetchAssessmentHistoryRequest: (state) => {
       state.historyLoading = true;
@@ -118,8 +183,12 @@ export const {
   fetchProfileRequest, fetchProfileSuccess, fetchProfileFailure,
   updateProfileRequest, updateProfileSuccess, updateProfileFailure,
   uploadDocumentRequest, uploadDocumentSuccess, uploadDocumentFailure,
-  pollJobStatusRequest, pollJobStatusSuccess, pollJobStatusFailure,
-  resetPollingState,
+  startDocumentParse, documentParseSuccess, documentParseFailure,
+  resetParseState,
+  runCompatibilityStart, runCompatibilitySuccess, runCompatibilityFailure,
+  updateCvJsonRequest, updateCvJsonSuccess, updateCvJsonFailure,
+  updateJdJsonRequest, updateJdJsonSuccess, updateJdJsonFailure,
+  fetchDocumentContextRequest, fetchDocumentContextSuccess, fetchDocumentContextFailure,
   fetchAssessmentHistoryRequest, fetchAssessmentHistorySuccess, fetchAssessmentHistoryFailure,
   deleteAssessmentRequest, deleteAssessmentFailure,
 } = profileSlice.actions;

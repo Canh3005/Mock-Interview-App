@@ -144,6 +144,7 @@ export class ProbeSelectorService {
         recentlyUsedProbeIds: context.recentlyUsedProbeIds,
       });
     }
+    // For stage 5, override priority competencies with risk-related ones if there are active risk hypotheses, to increase chances of uncovering relevant risks through soft skill questions.
     const effectivePriorities: QuestionProbeCompetency[] =
       stage === 'stage_5_soft_skills'
         ? this._resolveStage5Priorities(riskHypotheses)

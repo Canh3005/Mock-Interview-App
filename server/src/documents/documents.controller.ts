@@ -2,6 +2,7 @@ import {
   Controller,
   Post,
   Get,
+  Patch,
   Delete,
   Param,
   UseInterceptors,
@@ -9,14 +10,17 @@ import {
   Body,
   UseGuards,
   Req,
+  Res,
   BadRequestException,
   ParseFilePipe,
   MaxFileSizeValidator,
 } from '@nestjs/common';
+import type { Response } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { DocumentsService } from './documents.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { DocumentUploadType } from './enums/document-upload-type.enum.js';
+import type { CvJson, JdJson } from './types/document-ai.types';
 import {
   ApiTags,
   ApiOperation,
@@ -98,6 +102,36 @@ export class DocumentsController {
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update parsed JSON of the latest completed CV record' })
+  @Patch('cv/current')
+  async updateCvJson(
+    @Req() req: { user: { id: string } },
+    @Body() body: CvJson,
+  ): Promise<void> {
+    await this.documentsService.updateCvJson(req.user.id, body);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update parsed JSON of the latest completed JD record' })
+  @Patch('jd/current')
+  async updateJdJson(
+    @Req() req: { user: { id: string } },
+    @Body() body: JdJson,
+  ): Promise<void> {
+    await this.documentsService.updateJdJson(req.user.id, body);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get latest CV and JD context for the current user' })
+  @Get('context')
+  async getDocumentContext(@Req() req: { user: { id: string } }) {
+    return this.documentsService.getDocumentContext(req.user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Get JD assessment history for the current user' })
   @ApiResponse({
     status: 200,
@@ -122,14 +156,28 @@ export class DocumentsController {
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Check status of document parsing job' })
-  @ApiResponse({
-    status: 200,
-    description: 'Return current status of the background task.',
-  })
-  @Get('status/:jobId')
-  async getStatus(@Param('jobId') jobId: string) {
-    return this.documentsService.getJobStatus(jobId);
+  @ApiOperation({ summary: 'SSE stream for document parse result by jobId' })
+  @Get('jobs/:jobId/stream')
+  async streamParseResult(
+    @Param('jobId') jobId: string,
+    @Req() req: { user: { id: string } },
+    @Res() res: Response,
+  ): Promise<void> {
+    await this.documentsService.streamParseResult(jobId, req.user.id, res);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'SSE stream for CV/JD compatibility assessment' })
+  @Get('compatibility-assessment/stream')
+  async streamCompatibilityAssessment(
+    @Req() req: { user: { id: string } },
+    @Res() res: Response,
+  ): Promise<void> {
+    await this.documentsService.streamCompatibilityAssessment(
+      req.user.id,
+      res,
+    );
   }
 
   @UseGuards(JwtAuthGuard)

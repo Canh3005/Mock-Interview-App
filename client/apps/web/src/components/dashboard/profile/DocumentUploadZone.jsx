@@ -1,35 +1,70 @@
-import { useState, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { uploadDocumentRequest, resetPollingState } from '../../../store/slices/profileSlice';
-import { UploadCloud, FileText, CheckCircle, XCircle, Loader2 } from 'lucide-react';
+import {
+  uploadDocumentRequest,
+  documentParseSuccess,
+  documentParseFailure,
+} from '../../../store/slices/profileSlice';
+import { UploadCloud, Loader2, CheckCircle2, XCircle } from 'lucide-react';
 import { toast } from 'sonner';
-import FitAssessmentSummary from './FitAssessmentSummary';
-import BehaviorCalibrationSummary from './BehaviorCalibrationSummary';
 
-export default function DocumentUploadZone() {
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+const ALLOWED_TYPES = [
+  'application/pdf',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+];
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
+
+export default function DocumentUploadZone({ uploadType, onTypeChange }) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const { uploadingDoc, pollingStatus, pollingResult } = useSelector(state => state.profile);
-  
-  const [dragActive, setDragActive] = useState(false);
-  const [uploadType, setUploadType] = useState('CV'); // 'CV' or 'JD'
+  const { uploadingDoc, lastJobId, parsingDoc, parseResult, parseError } =
+    useSelector((state) => state.profile);
+  const accessToken = useSelector((state) => state.auth.accessToken);
+
   const inputRef = useRef(null);
-  const hasFitScore =
-    pollingResult?.fitScore !== null && pollingResult?.fitScore !== undefined;
 
-  const handleDrag = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === 'dragenter' || e.type === 'dragover') {
-      setDragActive(true);
-    } else if (e.type === 'dragleave') {
-      setDragActive(false);
-    }
-  };
+  // SSE: open parse stream when a new jobId arrives
+  useEffect(() => {
+    if (!lastJobId || !accessToken) return;
 
-  const ALLOWED_TYPES = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-  const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+    let done = false;
+    const es = new EventSource(
+      `${API_BASE_URL}/documents/jobs/${lastJobId}/stream?t=${accessToken}`,
+    );
+
+    es.onmessage = (e) => {
+      if (done) return;
+      done = true;
+      es.close();
+      try {
+        const data = JSON.parse(e.data);
+        if (data.type !== 'error') {
+          dispatch(documentParseSuccess(data));
+          toast.success(t('profile.toast.processingComplete'));
+        } else {
+          dispatch(documentParseFailure(data.message || t('profile.toast.unknownError')));
+          toast.error(data.message || t('profile.toast.unknownError'));
+        }
+      } catch {
+        dispatch(documentParseFailure(t('profile.toast.unknownError')));
+      }
+    };
+
+    es.onerror = () => {
+      if (done) return;
+      done = true;
+      es.close();
+      dispatch(documentParseFailure(t('profile.toast.jobStatusFailed')));
+      toast.error(t('profile.toast.jobStatusFailed'));
+    };
+
+    return () => {
+      done = true;
+      es.close();
+    };
+  }, [lastJobId, accessToken, dispatch, t]);
 
   const validateAndUpload = (file) => {
     if (!file) return;
@@ -41,152 +76,95 @@ export default function DocumentUploadZone() {
       toast.error(t('profile.upload.errors.tooLarge'));
       return;
     }
-
     dispatch(uploadDocumentRequest({ file, type: uploadType }));
   };
 
   const handleDrop = (e) => {
     e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-    
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      validateAndUpload(e.dataTransfer.files[0]);
-    }
+    if (e.dataTransfer.files?.[0]) validateAndUpload(e.dataTransfer.files[0]);
   };
 
-  const handleChange = (e) => {
+  const handleDrag = (e) => {
     e.preventDefault();
-    if (e.target.files && e.target.files[0]) {
-      validateAndUpload(e.target.files[0]);
-    }
   };
+
+  const isLoading = uploadingDoc || parsingDoc;
 
   return (
-    <div className="space-y-4">
-      
+    <div className="space-y-2">
       {/* Type Selector */}
-      <div className="flex gap-4 mb-2">
-        <label className="flex items-center gap-2 cursor-pointer text-slate-300">
-          <input 
-            type="radio" 
-            name="docType" 
-            value="CV" 
-            checked={uploadType === 'CV'}
-            onChange={() => setUploadType('CV')}
-            className="text-cta focus:ring-cta bg-slate-800 border-slate-600"
-          />
-          {t('profile.upload.cv')}
-        </label>
-        <label className="flex items-center gap-2 cursor-pointer text-slate-300">
-          <input 
-            type="radio" 
-            name="docType" 
-            value="JD" 
-            checked={uploadType === 'JD'}
-            onChange={() => setUploadType('JD')}
-            className="text-cta focus:ring-cta bg-slate-800 border-slate-600"
-          />
-          {t('profile.upload.jd')}
-        </label>
+      <div className="inline-flex rounded-lg border border-slate-700 bg-slate-900/40 p-1">
+        {['CV', 'JD'].map((type) => (
+          <button
+            key={type}
+            type="button"
+            onClick={() => onTypeChange(type)}
+            className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+              uploadType === type
+                ? 'bg-cta text-white'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            {type === 'CV' ? t('profile.upload.cv') : t('profile.upload.jd')}
+          </button>
+        ))}
       </div>
 
-      {/* Drag & Drop Area */}
-      <div 
-        className={`relative flex flex-col items-center justify-center w-full h-48 border-2 border-dashed rounded-xl transition-all duration-200 ${
-          dragActive ? 'border-cta bg-cta/10' : 'border-slate-600 bg-slate-800/50 hover:border-slate-500 hover:bg-slate-800'
-        } ${uploadingDoc ? 'opacity-50 pointer-events-none' : 'cursor-pointer'}`}
+      {/* Drop Zone */}
+      <div
+        className={`flex items-center justify-center w-full min-h-20 border border-dashed rounded-xl px-4 py-3 transition-all duration-200 ${
+          isLoading
+            ? 'opacity-60 pointer-events-none border-slate-600 bg-slate-800/50'
+            : 'cursor-pointer border-slate-600 bg-slate-800/50 hover:border-cta/50 hover:bg-slate-800'
+        }`}
         onDragEnter={handleDrag}
         onDragLeave={handleDrag}
         onDragOver={handleDrag}
         onDrop={handleDrop}
-        onClick={() => inputRef.current.click()}
+        onClick={() => !isLoading && inputRef.current?.click()}
       >
-        <input 
+        <input
           ref={inputRef}
-          type="file" 
-          accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-          className="hidden" 
-          onChange={handleChange}
+          type="file"
+          accept=".pdf,.docx"
+          className="hidden"
+          onChange={(e) => e.target.files?.[0] && validateAndUpload(e.target.files[0])}
         />
-        
-        {uploadingDoc ? (
-          <div className="flex flex-col items-center text-cta">
-            <Loader2 size={40} className="animate-spin mb-3" />
-            <p className="font-semibold">
-              {pollingStatus === 'waiting' ? t('profile.upload.queueing') : t('profile.upload.analyzing')}
+        {isLoading ? (
+          <div className="flex items-center gap-3 text-cta">
+            <Loader2 size={24} className="animate-spin shrink-0" />
+            <p className="text-sm font-medium">
+              {uploadingDoc ? t('profile.upload.queueing') : t('profile.upload.analyzing')}
             </p>
           </div>
         ) : (
-          <div className="flex flex-col items-center text-slate-400">
-            <UploadCloud size={40} className="mb-3 text-slate-500 group-hover:text-cta transition-colors" />
-            <p className="font-medium text-slate-300">{t('profile.upload.dropTitle')}</p>
-            <p className="text-sm mt-1">{t('profile.upload.maxSize')}</p>
+          <div className="flex items-center gap-3 text-slate-400 text-left">
+            <UploadCloud size={24} className="text-slate-500 shrink-0" />
+            <div>
+              <p className="text-sm font-medium text-slate-300">{t('profile.upload.dropTitle')}</p>
+              <p className="text-xs mt-0.5">{t('profile.upload.maxSize')}</p>
+            </div>
           </div>
         )}
       </div>
 
-      {/* Result Area */}
-      {pollingStatus === 'completed' && pollingResult && (
-        <div className="mt-4 p-4 bg-green-900/20 border border-green-800/50 rounded-xl relative">
-           <button 
-             onClick={() => dispatch(resetPollingState())}
-             className="absolute top-3 right-3 text-slate-400 hover:text-white"
-           >
-             <XCircle size={20} />
-           </button>
-           <div className="flex items-center gap-3 mb-3 text-green-400">
-             <CheckCircle size={24} />
-              <h3 className="font-semibold text-lg">{t('profile.upload.analysisComplete')}</h3>
-           </div>
-           
-           {pollingResult.type === 'CV' && (
-             <p className="text-slate-300 text-sm">
-                {t('profile.upload.cvProcessed')}
-             </p>
-           )}
-
-           {pollingResult.type === 'JD' && hasFitScore && (
-             <div className="mt-4 space-y-4">
-               <div>
-                   <h4 className="text-white font-medium mb-1">{t('profile.upload.fitScoreTitle')}</h4>
-                  <div className="w-full bg-slate-800 rounded-full h-4 relative overflow-hidden">
-                    <div 
-                      className="bg-gradient-to-r from-blue-500 to-cta h-4 rounded-full"
-                      style={{ width: `${pollingResult.fitScore}%` }}
-                    />
-                  </div>
-                   <p className="text-end text-sm text-cta font-bold mt-1">
-                     {t('profile.upload.matchPercent', { score: pollingResult.fitScore })}
-                   </p>
-               </div>
-               
-               <FitAssessmentSummary summary={pollingResult.fitAssessmentSummary} />
-             </div>
-           )}
-
-           {pollingResult.type === 'JD' && !hasFitScore && (
-             <p className="text-slate-300 text-sm">
-               {pollingResult.missingSources?.includes('cv_context')
-                  ? t('profile.upload.jdNeedsCv')
-                  : t('profile.upload.jdFitUnavailable')}
-             </p>
-           )}
-
-           {pollingResult.calibrationStatus && pollingResult.calibrationStatus !== 'not_started' && (
-             <BehaviorCalibrationSummary
-               summary={pollingResult.behaviorSummary}
-               status={pollingResult.calibrationStatus}
-               missingSources={pollingResult.missingSources ?? []}
-               levelMismatch={pollingResult.behaviorSummary?.levelMismatch ?? false}
-             />
-           )}
-
-           {pollingResult.type === 'CV' && pollingResult.missingSources?.includes('jd_context') && (
-             <p className="text-slate-400 text-xs mt-1">
-                {t('profile.upload.cvNeedsJd')}
-             </p>
-           )}
+      {/* Status */}
+      {parseResult && !isLoading && (
+        <div className="flex items-center gap-2 text-sm text-green-400 px-1">
+          <CheckCircle2 size={15} />
+          <span>
+            {t('profile.upload.analysisComplete')}
+            {' · '}
+            <span className="text-slate-400">
+              {parseResult.type === 'CV' ? parseResult.cvData?.name || 'CV' : parseResult.jdData?.role || 'JD'}
+            </span>
+          </span>
+        </div>
+      )}
+      {parseError && !isLoading && (
+        <div className="flex items-center gap-2 text-sm text-red-400 px-1">
+          <XCircle size={15} />
+          <span>{parseError}</span>
         </div>
       )}
     </div>

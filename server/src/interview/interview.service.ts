@@ -115,6 +115,15 @@ export class InterviewService {
       context.missing,
     );
 
+    const latestCvRecord =
+      await this.documentContextService.getLatestCompletedCvRecord(userId);
+    const latestJdRecord =
+      await this.documentContextService.getLatestCompletedJdRecord(userId);
+    const calibrationStale =
+      calibrationProfile != null &&
+      (calibrationProfile.cvId !== latestCvRecord?.id ||
+        calibrationProfile.jdAnalysisId !== latestJdRecord?.id);
+
     return {
       ready: true,
       missing: [],
@@ -123,6 +132,7 @@ export class InterviewService {
       jd: context.jd,
       behaviorCalibration,
       calibrationProfileId: calibrationProfile?.id ?? null,
+      calibrationStale,
     };
   }
 

@@ -15,7 +15,7 @@ async function bootstrap() {
 
   // Enable CORS for React frontend (which uses credentials for cookies)
   app.enableCors({
-    origin: 'http://localhost:5173', // Vite default port
+    origin: (process.env.CORS_ORIGIN ?? 'http://localhost:5173').split(','),
     credentials: true,
   });
 

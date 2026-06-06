@@ -48,16 +48,19 @@ function GapList({ title, gaps }) {
   );
 }
 
-export default function FitAssessmentSummary({ summary }) {
+export default function FitAssessmentSummary({ summary, surface = true }) {
   const { t } = useTranslation();
 
   if (!summary) return null;
 
   const groupedGaps = summary.groupedGaps ?? {};
   const hasAnyGap = GAP_GROUPS.some(([key]) => groupedGaps[key]?.length > 0);
+  const containerClassName = surface
+    ? 'bg-slate-900/50 rounded-lg p-3 border border-slate-700 space-y-3'
+    : 'space-y-3';
 
   return (
-    <div className="bg-slate-900/50 rounded-lg p-3 border border-slate-700 space-y-3">
+    <div className={containerClassName}>
       <div className="flex items-center justify-between gap-3">
         <h4 className="text-sm font-semibold text-slate-200">{t('profile.fit.title')}</h4>
         {summary.confidence && (

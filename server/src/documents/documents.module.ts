@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { BullModule } from '@nestjs/bullmq';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigService } from '@nestjs/config';
+import { QueueEvents } from 'bullmq';
 import { DocumentsController } from './documents.controller';
 import { DocumentsService } from './documents.service';
 import { DocumentsAiService } from './documents.ai.service';
@@ -36,6 +38,17 @@ import { UserProfile } from '../users/entities/user-profile.entity';
   ],
   controllers: [DocumentsController],
   providers: [
+    {
+      provide: 'DOCUMENT_QUEUE_EVENTS',
+      useFactory: (configService: ConfigService) =>
+        new QueueEvents(DOCUMENT_PARSING_QUEUE, {
+          connection: {
+            host: configService.get('REDIS_HOST') || '127.0.0.1',
+            port: configService.get('REDIS_PORT') || 6379,
+          },
+        }),
+      inject: [ConfigService],
+    },
     DocumentsService,
     DocumentsAiService,
     DocumentContextService,

@@ -1,8 +1,9 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bullmq';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Queue } from 'bullmq';
+import { Queue, QueueEvents } from 'bullmq';
 import { Repository } from 'typeorm';
+import type { Response } from 'express';
 import * as fs from 'fs';
 import * as path from 'path';
 import { createHash } from 'crypto';
@@ -42,6 +43,7 @@ export class DocumentsService {
     private contextService: DocumentContextService,
     private fitAssessmentService: FitAssessmentService,
     private calibrationService: BehaviorCalibrationService,
+    @Inject('DOCUMENT_QUEUE_EVENTS') private queueEvents: QueueEvents,
   ) {}
 
   async queueDocumentForParsing(
@@ -101,25 +103,6 @@ export class DocumentsService {
     }
   }
 
-  async getJobStatus(jobId: string) {
-    const job = await this.documentQueue.getJob(jobId);
-    if (!job) {
-      return { status: 'not_found' };
-    }
-
-    const state = await job.getState();
-    const progress = job.progress;
-    const result: unknown = job.returnvalue;
-
-    return {
-      id: job.id,
-      status: state,
-      progress,
-      result,
-      failedReason: job.failedReason,
-    };
-  }
-
   async cleanupUploadedFile(filePath: string): Promise<void> {
     const target = path.resolve(filePath);
     const uploadRoot = path.resolve(process.cwd(), 'uploads');
@@ -173,8 +156,18 @@ export class DocumentsService {
     type: string;
     recordId: string;
     missingSources: string[];
-    calibrationStatus: 'not_started';
-    behaviorSummary: null;
+    cvData: {
+      name?: string;
+      currentTitle?: string;
+      seniority?: string;
+      totalYearsExperience?: number;
+      skills: string[];
+      experience: object[];
+      education: object[];
+      certifications: string[];
+      languages: object[];
+      domain: string[];
+    };
   }> {
     let parsedTextHash: string | null = null;
 
@@ -208,21 +201,6 @@ export class DocumentsService {
       await this.contextService.refreshRedisContext(userId);
       await this.syncCvToUserProfile(userId, cvJson);
 
-      const latestJdForBc =
-        await this.contextService.getLatestCompletedJdRecord(userId);
-      const jdJsonForBc = latestJdForBc?.parsedJson as JdJson | undefined;
-      const fitAssessmentForBc = latestJdForBc?.fitAssessment as
-        | FitAssessmentV2
-        | undefined;
-      void this.calibrationService.run({
-        userId,
-        cvId: cvRecord.id,
-        jdAnalysisId: latestJdForBc?.id ?? null,
-        cvJson,
-        jdJson: jdJsonForBc ?? null,
-        fitAssessment: fitAssessmentForBc ?? null,
-      });
-
       const hasLatestJd =
         await this.contextService.getLatestCompletedJdRecord(userId);
       const missingSources: string[] = hasLatestJd ? [] : ['jd_context'];
@@ -235,8 +213,18 @@ export class DocumentsService {
         type: 'CV',
         recordId: cvRecord.id,
         missingSources,
-        calibrationStatus: 'not_started' as const,
-        behaviorSummary: null,
+        cvData: {
+          name: cvJson.name,
+          currentTitle: cvJson.currentTitle,
+          seniority: cvJson.seniority,
+          totalYearsExperience: cvJson.totalYearsExperience,
+          skills: cvJson.skills ?? [],
+          experience: cvJson.experience ?? [],
+          education: cvJson.education ?? [],
+          certifications: cvJson.certifications ?? [],
+          languages: cvJson.languages ?? [],
+          domain: cvJson.domain ?? [],
+        },
       };
     } catch (error) {
       await this.markRecordFailed(
@@ -271,6 +259,13 @@ export class DocumentsService {
           createdAt: record.createdAt,
         };
       });
+  }
+
+  async getDocumentContext(
+    userId: string,
+  ): Promise<{ cv: CvJson | null; jd: JdJson | null }> {
+    const context = await this.contextService.getInterviewContext(userId);
+    return { cv: context.cv, jd: context.jd };
   }
 
   async getCalibrationLatest(userId: string) {
@@ -310,15 +305,9 @@ export class DocumentsService {
     status: string;
     type: string;
     recordId: string;
-    fitScore?: number | null;
-    gapAnalysis: unknown;
-    fitAssessment?: FitAssessmentV2;
-    fitAssessmentSummary?: unknown;
-    assessmentStatus: 'not_ready' | 'completed' | 'failed';
-    assessmentError?: string | null;
-    calibrationStatus: 'not_started';
-    behaviorSummary: null;
+    assessmentStatus: 'not_ready';
     missingSources: string[];
+    jdData: JdJson;
   }> {
     let parsedTextHash: string | null = null;
 
@@ -349,13 +338,7 @@ export class DocumentsService {
 
       const latestCv =
         await this.contextService.getLatestCompletedCvRecord(userId);
-      const missingSources: string[] = [];
-
-      if (latestCv?.parsedJson) {
-        await this.assessJdFit(jdRecord, latestCv, jdJson);
-      } else {
-        missingSources.push('cv_context');
-      }
+      const missingSources: string[] = latestCv?.parsedJson ? [] : ['cv_context'];
 
       await this.jdRepository.save(jdRecord);
       await this.contextService.clearOverrideForType(
@@ -364,41 +347,16 @@ export class DocumentsService {
       );
       await this.contextService.refreshRedisContext(userId);
 
-      const cvJsonForBc = latestCv?.parsedJson as CvJson | undefined;
-      const fitAssessmentForBc = jdRecord.fitAssessment as
-        | FitAssessmentV2
-        | undefined;
-      void this.calibrationService.run({
-        userId,
-        cvId: latestCv?.id ?? null,
-        jdAnalysisId: jdRecord.id,
-        cvJson: cvJsonForBc ?? null,
-        jdJson,
-        fitAssessment: fitAssessmentForBc ?? null,
-      });
-
-      const fitAssessment = jdRecord.fitAssessment as
-        | FitAssessmentV2
-        | undefined;
-      const fitAssessmentSummary =
-        this.fitAssessmentService.buildSummary(fitAssessment);
-
       this.logger.log(
-        `JD parsed successfully userId=${userId} recordId=${recordId} textHash=${parsedTextHash} assessmentStatus=${jdRecord.assessmentStatus}`,
+        `JD parsed successfully userId=${userId} recordId=${recordId} textHash=${parsedTextHash}`,
       );
       return {
         status: 'success',
         type: 'JD',
         recordId: jdRecord.id,
-        fitScore: jdRecord.fitScore,
-        gapAnalysis: jdRecord.matchReport,
-        fitAssessment,
-        fitAssessmentSummary: fitAssessmentSummary ?? undefined,
-        assessmentStatus: jdRecord.assessmentStatus,
-        assessmentError: jdRecord.assessmentError,
-        calibrationStatus: 'not_started',
-        behaviorSummary: null,
+        assessmentStatus: 'not_ready',
         missingSources,
+        jdData: jdJson,
       };
     } catch (error) {
       await this.markRecordFailed(
@@ -649,6 +607,105 @@ export class DocumentsService {
         syncErr instanceof Error ? syncErr.message : 'Unknown sync error';
       this.logger.error(`Failed to auto-sync profile: ${msg}`);
     }
+  }
+
+  async updateCvJson(userId: string, cvJson: CvJson): Promise<void> {
+    const record = await this.contextService.getLatestCompletedCvRecord(userId);
+    if (!record) {
+      throw new BadRequestException('No completed CV record found to update.');
+    }
+    record.parsedJson = cvJson;
+    await this.cvRepository.save(record);
+    await this.contextService.refreshRedisContext(userId);
+    await this.syncCvToUserProfile(userId, cvJson);
+  }
+
+  async updateJdJson(userId: string, jdJson: JdJson): Promise<void> {
+    const record = await this.contextService.getLatestCompletedJdRecord(userId);
+    if (!record) {
+      throw new BadRequestException('No completed JD record found to update.');
+    }
+    record.parsedJson = jdJson;
+    await this.jdRepository.save(record);
+    await this.contextService.refreshRedisContext(userId);
+  }
+
+  async streamParseResult(
+    jobId: string,
+    _userId: string,
+    res: Response,
+  ): Promise<void> {
+    this._openSseStream(res);
+    try {
+      const job = await this.documentQueue.getJob(jobId);
+      if (!job) {
+        this._emitSse(res, { type: 'error', message: 'Job not found' });
+        return;
+      }
+      const result = await job.waitUntilFinished(this.queueEvents, 5 * 60 * 1000);
+      this._emitSse(res, result as object);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Parse failed';
+      this._emitSse(res, { type: 'error', message });
+    } finally {
+      res.end();
+    }
+  }
+
+  async streamCompatibilityAssessment(
+    userId: string,
+    res: Response,
+  ): Promise<void> {
+    this._openSseStream(res);
+    try {
+      const cvRecord =
+        await this.contextService.getLatestCompletedCvRecord(userId);
+      const jdRecord =
+        await this.contextService.getLatestCompletedJdRecord(userId);
+      if (!cvRecord || !jdRecord) {
+        throw new BadRequestException('CV và JD là bắt buộc để đánh giá.');
+      }
+
+      const jdJson = jdRecord.parsedJson as JdJson;
+      await this.assessJdFit(jdRecord, cvRecord, jdJson);
+      await this.jdRepository.save(jdRecord);
+
+      const fitAssessment = jdRecord.fitAssessment as FitAssessmentV2;
+      const fitAssessmentSummary =
+        this.fitAssessmentService.buildSummary(fitAssessment);
+
+      this._emitSse(res, {
+        type: 'fit_assessment',
+        fitScore: jdRecord.fitScore,
+        fitAssessment,
+        fitAssessmentSummary,
+      });
+
+      void this.calibrationService.run({
+        userId,
+        cvId: cvRecord.id,
+        jdAnalysisId: jdRecord.id,
+        cvJson: cvRecord.parsedJson as CvJson,
+        jdJson,
+        fitAssessment,
+      });
+    } catch (error) {
+      this._emitSse(res, { type: 'error', message: this.toSafeErrorMessage(error) });
+    } finally {
+      res.end();
+    }
+  }
+
+  private _openSseStream(res: Response): void {
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    res.setHeader('X-Accel-Buffering', 'no');
+    res.flushHeaders();
+  }
+
+  private _emitSse(res: Response, event: object): void {
+    res.write(`data: ${JSON.stringify(event)}\n\n`);
   }
 
   private toSafeErrorMessage(error: unknown): string {

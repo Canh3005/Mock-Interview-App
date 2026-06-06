@@ -55,6 +55,8 @@ const initialState = {
   // scoring page initial tab (set before navigate('scoring'))
   scoringInitialTab: 'behavioral',
 
+  calibrationStale: false,
+
   loading: false,
   error: null,
   creditError: null, // { code, required, current, deficit } | null
@@ -73,11 +75,12 @@ const interviewSetupSlice = createSlice({
     },
     preflightSuccess(state, action) {
       state.loading = false;
-      const { ready, missing, summary, cv, jd } = action.payload;
+      const { ready, missing, summary, cv, jd, calibrationStale } = action.payload;
       if (ready) {
         state.summary = summary;
         state.cv = cv;
         state.jd = jd;
+        state.calibrationStale = calibrationStale ?? false;
         state.step = 'context_confirm';
       } else {
         state.missing = missing;

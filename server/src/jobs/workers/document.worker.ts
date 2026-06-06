@@ -19,7 +19,9 @@ interface DocumentJobData {
 export class DocumentWorker extends WorkerHost {
   private readonly logger = new Logger(DocumentWorker.name);
 
-  constructor(private readonly documentsService: DocumentsService) {
+  constructor(
+    private readonly documentsService: DocumentsService,
+  ) {
     super();
     this.logger.log(
       `DocumentWorker listening to queue: ${DOCUMENT_PARSING_QUEUE}`,
@@ -34,26 +36,32 @@ export class DocumentWorker extends WorkerHost {
     const { userId, recordId, filePath, originalName, mimeType } = job.data;
 
     try {
+      let result: unknown;
       switch (job.name as DocumentJobName) {
         case DocumentJobName.PARSE_CV:
-          return await this.documentsService.parseCv(
+          result = await this.documentsService.parseCv(
             userId,
             recordId,
             filePath,
             originalName,
             mimeType,
           );
+          break;
         case DocumentJobName.PARSE_JD:
-          return await this.documentsService.parseJd(
+          result = await this.documentsService.parseJd(
             userId,
             recordId,
             filePath,
             originalName,
             mimeType,
           );
+          break;
         default:
           throw new Error(`Unknown job name: ${job.name}`);
       }
+      return result;
+    } catch (error) {
+      throw error;
     } finally {
       await this.documentsService.cleanupUploadedFile(filePath);
     }

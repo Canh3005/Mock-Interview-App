@@ -1,11 +1,13 @@
-import { call, put, takeLatest, delay } from 'redux-saga/effects';
+import { call, put, takeLatest } from 'redux-saga/effects';
 import { profileApi } from '../../api/profile.api';
 import i18n from '../../i18n/config';
 import {
   fetchProfileRequest, fetchProfileSuccess, fetchProfileFailure,
   updateProfileRequest, updateProfileSuccess, updateProfileFailure,
-  uploadDocumentRequest, uploadDocumentSuccess, uploadDocumentFailure,
-  pollJobStatusRequest, pollJobStatusSuccess, pollJobStatusFailure,
+  uploadDocumentRequest, uploadDocumentSuccess, uploadDocumentFailure, startDocumentParse,
+  updateCvJsonRequest, updateCvJsonSuccess, updateCvJsonFailure,
+  updateJdJsonRequest, updateJdJsonSuccess, updateJdJsonFailure,
+  fetchDocumentContextRequest, fetchDocumentContextSuccess, fetchDocumentContextFailure,
   fetchAssessmentHistoryRequest, fetchAssessmentHistorySuccess, fetchAssessmentHistoryFailure,
   deleteAssessmentRequest, deleteAssessmentFailure,
 } from '../slices/profileSlice';
@@ -37,9 +39,8 @@ function* uploadDocumentSaga(action) {
     const { file, type } = action.payload;
     const response = yield call(profileApi.uploadDocument, file, type);
     yield put(uploadDocumentSuccess(response));
-    
-    // Auto-start polling after a successful upload
-    yield put(pollJobStatusRequest(response.jobId));
+    // Signal component to open SSE parse stream — jobId is now in store.lastJobId
+    yield put(startDocumentParse());
   } catch (error) {
     const message = error.response?.data?.message || i18n.t('profile.toast.unknownError');
     yield put(uploadDocumentFailure(error.response?.data?.message || i18n.t('profile.toast.uploadFailed')));
@@ -47,39 +48,36 @@ function* uploadDocumentSaga(action) {
   }
 }
 
-function* pollJobStatusSaga(action) {
-  const jobId = action.payload;
-  let isPolling = true;
+function* fetchDocumentContextSaga() {
+  try {
+    const response = yield call(profileApi.getDocumentContext);
+    yield put(fetchDocumentContextSuccess(response));
+  } catch {
+    yield put(fetchDocumentContextFailure());
+  }
+}
 
-  while (isPolling) {
-    try {
-      const response = yield call(profileApi.getJobStatus, jobId);
-      const { status, result, failedReason } = response;
-      
-      yield put(pollJobStatusSuccess({ status, result }));
+function* updateCvJsonSaga(action) {
+  try {
+    yield call(profileApi.updateCvJson, action.payload);
+    yield put(updateCvJsonSuccess());
+    yield put(fetchDocumentContextRequest());
+    toast.success(i18n.t('profile.toast.updated'));
+  } catch (error) {
+    yield put(updateCvJsonFailure(error.response?.data?.message || i18n.t('profile.toast.updateFailed')));
+    toast.error(i18n.t('profile.toast.updateFailed'));
+  }
+}
 
-      if (status === 'completed') {
-        isPolling = false;
-        toast.success(i18n.t('profile.toast.processingComplete'));
-        // After parsing is done, refresh the entire profile to reflect new DB state
-        yield put(fetchProfileRequest());
-      } else if (status === 'failed') {
-        isPolling = false;
-        const message = failedReason || i18n.t('profile.toast.unknownError');
-        yield put(pollJobStatusFailure(failedReason || i18n.t('profile.toast.jobFailed')));
-        toast.error(i18n.t('profile.toast.processingFailedWithMessage', { message }));
-      } else if (status === 'not_found' || !status) {
-        isPolling = false;
-        yield put(pollJobStatusFailure(i18n.t('profile.toast.jobNotFound')));
-      } else {
-        // waiting, active, delayed => wait and poll again
-        yield delay(2000); // 2 seconds between polls
-      }
-    } catch (error) {
-      isPolling = false;
-      yield put(pollJobStatusFailure(error.message));
-      toast.error(i18n.t('profile.toast.jobStatusFailed'));
-    }
+function* updateJdJsonSaga(action) {
+  try {
+    yield call(profileApi.updateJdJson, action.payload);
+    yield put(updateJdJsonSuccess());
+    yield put(fetchDocumentContextRequest());
+    toast.success(i18n.t('profile.toast.updated'));
+  } catch (error) {
+    yield put(updateJdJsonFailure(error.response?.data?.message || i18n.t('profile.toast.updateFailed')));
+    toast.error(i18n.t('profile.toast.updateFailed'));
   }
 }
 
@@ -109,7 +107,9 @@ export function* watchProfileSaga() {
   yield takeLatest(fetchProfileRequest.type, fetchProfileSaga);
   yield takeLatest(updateProfileRequest.type, updateProfileSaga);
   yield takeLatest(uploadDocumentRequest.type, uploadDocumentSaga);
-  yield takeLatest(pollJobStatusRequest.type, pollJobStatusSaga);
+  yield takeLatest(fetchDocumentContextRequest.type, fetchDocumentContextSaga);
+  yield takeLatest(updateCvJsonRequest.type, updateCvJsonSaga);
+  yield takeLatest(updateJdJsonRequest.type, updateJdJsonSaga);
   yield takeLatest(fetchAssessmentHistoryRequest.type, fetchAssessmentHistorySaga);
   yield takeLatest(deleteAssessmentRequest.type, deleteAssessmentSaga);
 }

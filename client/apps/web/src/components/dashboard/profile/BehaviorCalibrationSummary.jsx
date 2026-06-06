@@ -1,5 +1,6 @@
 import { AlertTriangle, BookOpen, CheckCircle, Info } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { getQuestionProbeCompetencyLabel } from '../../../constants/questionProbeTaxonomy';
 
 const STATUS_BADGE = {
   ready: { labelKey: 'profile.behaviorCalibration.status.ready', icon: CheckCircle, color: 'text-green-400 border-green-800' },
@@ -95,7 +96,7 @@ export default function BehaviorCalibrationSummary({ summary, status, missingSou
                 key={comp}
                 className="text-[11px] px-2 py-0.5 rounded-full bg-cta/10 text-cta border border-cta/30"
               >
-                {comp.replace(/_/g, ' ')}
+                {getQuestionProbeCompetencyLabel(t, comp)}
               </span>
             ))}
           </div>

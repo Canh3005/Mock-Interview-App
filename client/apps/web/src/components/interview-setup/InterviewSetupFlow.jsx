@@ -440,6 +440,7 @@ export default function InterviewSetupFlow() {
     selectedRounds,
     selectedMode,
     creditError,
+    calibrationStale,
   } = useSelector((state) => state.interviewSetup)
 
   useEffect(() => {
@@ -544,12 +545,22 @@ export default function InterviewSetupFlow() {
 
       case 'context_confirm':
         return (
-          <ContextConfirmPanel
-            cv={cv}
-            jd={jd}
-            onConfirm={handleSaveContext}
-            onGoUpload={handleGoUpload}
-          />
+          <div className="space-y-4">
+            {calibrationStale && (
+              <div className="flex items-start gap-3 rounded-[16px] border border-amber-500/30 bg-amber-500/10 p-4">
+                <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-400" />
+                <p className="text-sm text-amber-300">
+                  {t('interviewSetup.calibrationStale.warning')}
+                </p>
+              </div>
+            )}
+            <ContextConfirmPanel
+              cv={cv}
+              jd={jd}
+              onConfirm={handleSaveContext}
+              onGoUpload={handleGoUpload}
+            />
+          </div>
         )
 
       case 'mode_select':

@@ -13,7 +13,9 @@ export const profileApi = {
       },
     });
   },
-  getJobStatus: (jobId) => axiosClient.get(`/documents/status/${jobId}`),
+  getDocumentContext: () => axiosClient.get('/documents/context'),
+  updateCvJson: (data) => axiosClient.patch('/documents/cv/current', data),
+  updateJdJson: (data) => axiosClient.patch('/documents/jd/current', data),
   getAssessmentHistory: () => axiosClient.get('/documents/history'),
   deleteAssessment: (id) => axiosClient.delete(`/documents/history/${id}`),
 };
