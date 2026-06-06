@@ -276,7 +276,11 @@ You are interviewing a candidate. Do NOT give feedback. Ask exactly one question
 Rephrase this question naturally for your persona:
 "${displayQuestion}"
 
-Stage context: ${stageName}`;
+Stage context: ${stageName}
+
+ABSOLUTE RULES:
+- Output only the question itself — no preamble, no lead-in sentence, no "I understand...", no recap of what you are about to ask.
+- Start directly with the question.`;
   }
 
   private _followUpRenderPrompt({
@@ -301,7 +305,11 @@ You are continuing an interview. Do NOT give feedback or hints. Ask exactly one 
 Rephrase this follow-up naturally for your persona, referencing the candidate's answer if relevant:
 "${followUpText}"
 
-Context: candidate just answered a question about ${stageName}.`;
+Context: candidate just answered a question about ${stageName}.
+
+ABSOLUTE RULES:
+- Output only the question itself — no preamble, no lead-in sentence, no "I understand...", no recap of what you are about to ask.
+- Start directly with the question.`;
   }
 
   private _redirectRenderPrompt({

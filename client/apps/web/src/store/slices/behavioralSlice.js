@@ -75,6 +75,7 @@ const behavioralSlice = createSlice({
     evaluatingStarted(state) {
       state.isEvaluating = true;
       state.isStreaming = false;
+      state.streamingText = '';
     },
     turnStreamStart(state) {
       state.isEvaluating = false;

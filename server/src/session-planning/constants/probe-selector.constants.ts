@@ -36,8 +36,8 @@ export const STAGE_PRIORITIES: Record<QuestionProbeStage, StagePriority> = {
   stage_1_culture_fit: 'must_include',
   stage_2_tech_stack: 'must_include',
   stage_3_domain_knowledge: 'must_include',
-  stage_4_cv_deep_dive: 'nice_to_include',
-  stage_5_soft_skills: 'must_include',
+  stage_4_cv_deep_dive: 'must_include',
+  stage_5_soft_skills: 'nice_to_include',
   stage_6_reverse_interview: 'nice_to_include',
 };
 
@@ -46,9 +46,9 @@ export const PROBE_COUNTS: Record<
   Record<InterviewDepth, number>
 > = {
   stage_1_culture_fit: { broad: 1, deep: 1 },
-  stage_2_tech_stack: { broad: 8, deep: 10 },
-  stage_3_domain_knowledge: { broad: 6, deep: 8 },
-  stage_4_cv_deep_dive: { broad: 2, deep: 3 },
+  stage_2_tech_stack: { broad: 5, deep: 6 },
+  stage_3_domain_knowledge: { broad: 4, deep: 6 },
+  stage_4_cv_deep_dive: { broad: 2, deep: 2 },
   stage_5_soft_skills: { broad: 2, deep: 1 },
   stage_6_reverse_interview: { broad: 1, deep: 1 },
 };
@@ -80,7 +80,7 @@ export const ORDERED_STAGES: QuestionProbeStage[] = [
   'stage_6_reverse_interview',
 ];
 
-export const TOP_K_MULTIPLIER = 2;
+export const TOP_K_MULTIPLIER = 3;
 
 export const RECENT_PROBE_SCORE_PENALTY = 0.3;
 

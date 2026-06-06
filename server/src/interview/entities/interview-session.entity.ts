@@ -10,45 +10,46 @@ export type CandidateLevel = 'junior' | 'mid' | 'senior';
 export type InterviewMode = 'practice' | 'combat';
 export type SessionStatus = 'IN_PROGRESS' | 'COMPLETED' | 'ABANDONED';
 export type InterviewLanguage = 'vi' | 'en' | 'ja';
+export type InterviewRound = 'hr_behavioral' | 'dsa' | 'system_design';
 
 @Entity('interview_sessions')
 export class InterviewSession {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column()
-  userId: string;
+  userId!: string;
 
   @Column({ type: 'varchar', length: 10 })
-  mode: InterviewMode;
+  mode!: InterviewMode;
 
   @Column({ type: 'jsonb', default: [] })
-  rounds: string[];
+  rounds!: InterviewRound[];
 
   @Column({ type: 'varchar', length: 10, nullable: true })
-  candidateLevel: CandidateLevel;
+  candidateLevel!: CandidateLevel;
 
   @Column({ type: 'varchar', length: 20, default: 'IN_PROGRESS' })
-  status: SessionStatus;
+  status!: SessionStatus;
 
   @Column({ type: 'text', nullable: true })
-  cvContextSnapshot: string;
+  cvContextSnapshot!: string;
 
   @Column({ type: 'text', nullable: true })
-  jdContextSnapshot: string;
+  jdContextSnapshot!: string;
 
   @Column({ type: 'jsonb', nullable: true })
-  finalScorecard: Record<string, unknown>;
+  finalScorecard!: Record<string, unknown>;
 
   @CreateDateColumn()
-  startedAt: Date;
+  startedAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 
   @Column({ type: 'varchar', length: 5, default: 'vi' })
-  language: InterviewLanguage = 'vi';
+  language!: InterviewLanguage;
 
   @Column({ type: 'timestamptz', nullable: true })
-  finishedAt: Date;
+  finishedAt!: Date;
 }

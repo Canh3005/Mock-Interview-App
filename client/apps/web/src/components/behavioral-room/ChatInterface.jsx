@@ -165,30 +165,25 @@ export default function ChatInterface({ combat = false }) {
   const inputDisabled = isStreaming || isEvaluating
   const sendDisabled = inputDisabled || !text.trim() || charCount > MAX_CHARS
 
-  // Turn cuối cùng của interviewer đang được stream
-  const lastTurn = turns[turns.length - 1]
-  const isLastTurnStreaming = isStreaming && lastTurn?.role === 'interviewer'
+  // Streaming turns are appended to history only after turn_complete.
+  const shouldShowStreamingBubble = isStreaming
 
   return (
     <div className="flex flex-col h-full">
       {/* Messages */}
       <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-4 py-4">
-        {turns.map((turn, idx) => {
-          const isLast = idx === turns.length - 1
-          const isStreamTarget = isLast && isLastTurnStreaming
-          return (
-            <_ChatBubble
-              key={turn.id}
-              turn={turn}
-              isStreamingTarget={isStreamTarget}
-              streamingText={streamingText}
-              userAvatar={user?.avatarUrl}
-            />
-          )
-        })}
+        {turns.map((turn) => (
+          <_ChatBubble
+            key={turn.id}
+            turn={turn}
+            isStreamingTarget={false}
+            streamingText={streamingText}
+            userAvatar={user?.avatarUrl}
+          />
+        ))}
 
         {/* Streaming bubble khi AI đang stream nhưng turn chưa push vào turns */}
-        {isStreaming && lastTurn?.role === 'candidate' && (
+        {shouldShowStreamingBubble && (
           <div className="flex gap-3 justify-start">
             <div className="dash-chip mt-1 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border">
               <Bot className="w-4 h-4 text-cta" />

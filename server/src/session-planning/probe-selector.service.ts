@@ -35,10 +35,13 @@ import {
   STAGE_PRIORITIES,
   TOP_K_MULTIPLIER,
 } from './constants/probe-selector.constants';
-import type {
-  ConversationDepthBucket,
-  ScoredProbe,
-} from './types/probe-selector.types';
+import {
+  CLOSING_OVERHEAD_MINUTES,
+  MIN_PROBE_MINUTES,
+  OPENING_OVERHEAD_MINUTES,
+  STAGE_WEIGHTS,
+} from './constants/session-planning.constants';
+import type { ScoredProbe } from './types/probe-selector.types';
 
 @Injectable()
 export class ProbeSelectorService {
@@ -51,8 +54,21 @@ export class ProbeSelectorService {
   buildStageAllocations(
     context: ProbeSelectionContext,
   ): StageProbeAllocation[] {
+    const usableMinutes: number =
+      context.durationMinutes -
+      OPENING_OVERHEAD_MINUTES -
+      CLOSING_OVERHEAD_MINUTES;
     return ORDERED_STAGES.map((stage) => {
-      const count: number = PROBE_COUNTS[stage][context.depth];
+      const stageMinutes: number =
+        usableMinutes * (STAGE_WEIGHTS[stage]?.[context.depth] ?? 0);
+      const budgetCount: number = Math.max(
+        1,
+        Math.floor(stageMinutes / MIN_PROBE_MINUTES),
+      );
+      const count: number = Math.min(
+        PROBE_COUNTS[stage][context.depth],
+        budgetCount,
+      );
       const priority: StagePriority = STAGE_PRIORITIES[stage];
       const filteredProbes: QuestionProbe[] = this._hardFilter({
         probes: context.probes,
@@ -169,11 +185,7 @@ export class ProbeSelectorService {
       selectedRaw,
       fallbackCount: selectedRaw.length,
     });
-    const orderedRaw =
-      stage === 'stage_1_culture_fit'
-        ? this._sortIntroFirst(selectedRaw)
-        : selectedRaw;
-    const selected: PlannedProbe[] = orderedRaw.map((s, i) =>
+    const selected: PlannedProbe[] = selectedRaw.map((s, i) =>
       this._buildPlannedProbe({ probe: s.probe, order: i + 1, score: s.score }),
     );
     const fallbacks: PlannedProbe[] = fallbackRaw.map((s, i) =>
@@ -215,7 +227,7 @@ export class ProbeSelectorService {
       });
     }
     if (stage === 'stage_1_culture_fit' || stage === 'stage_5_soft_skills') {
-      return this._selectMMR({
+      const selected = this._selectMMR({
         scored,
         count,
         seed: context.selectionSeed,
@@ -223,6 +235,9 @@ export class ProbeSelectorService {
         similarityFn: (a, b) => this._competencySimilarity(a, b),
         lambda: stage === 'stage_1_culture_fit' ? 0.7 : 0.6,
       });
+      return stage === 'stage_1_culture_fit'
+        ? this._sortIntroFirst(selected)
+        : selected;
     }
     if (stage === 'stage_4_cv_deep_dive') {
       return this._selectStage4ClaimCoverage({
@@ -278,6 +293,17 @@ export class ProbeSelectorService {
     return result;
   }
 
+  /**
+   * Chọn probe cho stage 2 (tech stack) với mục tiêu phủ tối đa jdTechStack.
+   *
+   * - count >= số tech có probe: phủ hết, chia slot đều cho từng tech
+   *   (base = floor(count/techs), (count % techs) tech đầu được thêm 1 slot)
+   * - count < số tech có probe: chọn ngẫu nhiên deterministic `count` tech
+   *   bằng selectionSeed, mỗi tech 1 probe
+   *
+   * Trong mỗi tech, probe intro được ưu tiên hơn mid/deep.
+   * Fallback về _selectTopKSeeded nếu không có tech nào trong JD có probe.
+   */
   private _selectStage2TechCoverage({
     scored,
     count,
@@ -289,150 +315,84 @@ export class ProbeSelectorService {
     jdTechStack: string[];
     selectionSeed: string;
   }): ScoredProbe[] {
-    const targetTechs = this._targetStage2Techs({ scored, jdTechStack, count });
+    const availableTechs = jdTechStack.filter((tech) =>
+      scored.some((s) => s.probe.techTags.includes(tech)),
+    );
+    if (availableTechs.length === 0) {
+      return this._selectTopKSeeded({
+        candidates: scored,
+        count,
+        seed: selectionSeed,
+        scope: 'stage_2_tech_stack',
+      });
+    }
+
+    const techRankCache = new Map(
+      availableTechs.map((t) => [
+        t,
+        this._seededRank({
+          seed: selectionSeed,
+          scope: 'stage_2_tech_stack',
+          id: t,
+        }),
+      ]),
+    );
+    const selectedTechs: string[] =
+      count >= availableTechs.length
+        ? availableTechs
+        : [...availableTechs]
+            .sort((a, b) => techRankCache.get(a)! - techRankCache.get(b)!)
+            .slice(0, count);
+
+    const techCount = selectedTechs.length;
+    const base = Math.floor(count / techCount);
+    const extra = count % techCount;
+    const slotsPerTech = selectedTechs.map(
+      (_, i) => base + (i < extra ? 1 : 0),
+    );
+
     const selected: ScoredProbe[] = [];
     const selectedIds = new Set<string>();
 
-    // Phase 1: guarantee ≥1 intro + ≥1 mid/deep per target tech
-    for (const tech of targetTechs) {
-      const notYetSelected = (s: ScoredProbe): boolean =>
-        s.probe.techTags.includes(tech) && !selectedIds.has(s.probe.id);
-
-      const introPool = scored.filter(
-        (s) => notYetSelected(s) && s.probe.conversationDepth === 'intro',
+    for (let i = 0; i < selectedTechs.length; i++) {
+      const tech = selectedTechs[i];
+      const slots = slotsPerTech[i];
+      const available = scored.filter(
+        (s) => s.probe.techTags.includes(tech) && !selectedIds.has(s.probe.id),
       );
-      if (introPool.length > 0) {
-        const intro = this._pickOneFromTopK({
-          candidates: introPool,
-          count: 1,
-          seed: selectionSeed,
-          scope: `stage_2_tech_stack:${selected.length}`,
-          score: (c) => c.score,
-          id: (c) => c.probe.id,
-        });
-        selectedIds.add(intro.probe.id);
-        selected.push(intro);
-      }
 
-      const deepPool = scored.filter(
-        (s) =>
-          s.probe.techTags.includes(tech) &&
-          !selectedIds.has(s.probe.id) &&
-          (s.probe.conversationDepth === 'mid' ||
-            s.probe.conversationDepth === 'deep'),
-      );
-      if (deepPool.length > 0) {
-        const deep = this._pickOneFromTopK({
-          candidates: deepPool,
-          count: 1,
-          seed: selectionSeed,
-          scope: `stage_2_tech_stack:${selected.length}`,
-          score: (c) => c.score,
-          id: (c) => c.probe.id,
-        });
-        selectedIds.add(deep.probe.id);
-        selected.push(deep);
-      }
-    }
-
-    // Phase 2: fill remaining slots using depth-bucket deduplication + non-target-tech cap.
-    // Use bucket ('intro' | 'mid_deep') instead of exact depth strings so that
-    // Phase 1's intro+deep coverage blocks all same-bucket duplicates in Phase 2.
-    const coveredBuckets = new Set<string>();
-    for (const s of selected) {
-      for (const tech of targetTechs) {
-        if (s.probe.techTags.includes(tech)) {
-          coveredBuckets.add(
-            `${tech}:${this._conversationDepthBucket(s.probe.conversationDepth)}`,
-          );
-        }
-      }
-    }
-    const remaining = count - selected.length;
-    if (remaining > 0) {
-      // For non-target techs: allow at most 1 probe per tech in Phase 2 to prevent
-      // a single dominant tech (e.g. 'javascript') from filling all remaining slots.
-      // Must iterate one-by-one so the tracking set is updated between selections.
-      const nonTargetTechsUsed = new Set<string>();
-      const phase2Sorted = scored
-        .filter((s) => {
-          if (selectedIds.has(s.probe.id)) return false;
-          // Exclude probes that duplicate a covered tech+bucket for any target tech
-          return !targetTechs.some(
-            (tech) =>
-              s.probe.techTags.includes(tech) &&
-              coveredBuckets.has(
-                `${tech}:${this._conversationDepthBucket(s.probe.conversationDepth)}`,
-              ),
-          );
-        })
+      // Pick at most 1 intro (highest score), then fill remaining slots with non-intro
+      const intro = available
+        .filter((s) => s.probe.conversationDepth === 'intro')
+        .sort((a, b) => b.score - a.score)[0];
+      const nonIntro = available
+        .filter(
+          (s) =>
+            s.probe.conversationDepth !== 'intro' &&
+            s.probe.id !== intro?.probe.id,
+        )
         .sort((a, b) => b.score - a.score);
 
-      for (const s of phase2Sorted) {
-        if (selected.length >= count) break;
-        // Cap non-target techs at 1 probe each: skip if all tech tags belong to
-        // non-target techs and at least one is already represented
-        const hasTargetTag = s.probe.techTags.some((t) =>
-          targetTechs.includes(t),
-        );
-        if (
-          !hasTargetTag &&
-          s.probe.techTags.some((t) => nonTargetTechsUsed.has(t))
-        ) {
-          continue;
-        }
-        s.probe.techTags
-          .filter((t) => !targetTechs.includes(t))
-          .forEach((t) => nonTargetTechsUsed.add(t));
-        selected.push(s);
+      const picks: ScoredProbe[] = [];
+      if (intro) picks.push(intro);
+      for (const s of nonIntro) {
+        if (picks.length >= slots) break;
+        picks.push(s);
+      }
+
+      for (const pick of picks) {
+        selectedIds.add(pick.probe.id);
+        selected.push(pick);
       }
     }
 
-    // Phase 3: group by tech (JD order), intro before mid/deep within each group
-    return this._orderStage2Probes({ selected, targetTechs });
+    return this._orderStage2Probes({ selected, targetTechs: selectedTechs });
   }
 
-  private _targetStage2Techs({
-    scored,
-    jdTechStack,
-    count,
-  }: {
-    scored: ScoredProbe[];
-    jdTechStack: string[];
-    count: number;
-  }): string[] {
-    const maxCoveredTechs = Math.min(Math.floor(count / 2), jdTechStack.length);
-    return jdTechStack
-      .filter((tech) => scored.some((s) => s.probe.techTags.includes(tech)))
-      .sort((a, b) => {
-        const aCoverage = this._availableStage2CoverageScore({
-          scored,
-          tech: a,
-        });
-        const bCoverage = this._availableStage2CoverageScore({
-          scored,
-          tech: b,
-        });
-        return bCoverage - aCoverage;
-      })
-      .slice(0, maxCoveredTechs);
-  }
-
-  private _availableStage2CoverageScore({
-    scored,
-    tech,
-  }: {
-    scored: ScoredProbe[];
-    tech: string;
-  }): number {
-    const buckets = new Set(
-      scored
-        .filter((s) => s.probe.techTags.includes(tech))
-        .map((s) => this._conversationDepthBucket(s.probe.conversationDepth)),
-    );
-    return (buckets.has('intro') ? 1 : 0) + (buckets.has('mid_deep') ? 1 : 0);
-  }
-
+  /**
+   * Sắp xếp probe stage 2 theo thứ tự tech trong JD, intro trước mid/deep trong mỗi nhóm.
+   * Probe không thuộc tech nào trong JD được đặt cuối.
+   */
   private _orderStage2Probes({
     selected,
     targetTechs,
@@ -489,6 +449,9 @@ export class ProbeSelectorService {
     );
     const coveredThemes = new Set<string>();
     const coveredTechs = new Set<string>();
+    const themesCache = new Map(
+      remaining.map((s) => [s.probe.id, this._stage3Themes(s.probe)]),
+    );
 
     while (selected.length < count && remaining.length > 0) {
       const remainingSlots = count - selected.length;
@@ -497,6 +460,7 @@ export class ProbeSelectorService {
           candidate,
           coveredThemes,
           coveredTechs,
+          themesCache,
         });
         return { ...candidate, adjustedScore: adjusted, originalIndex: index };
       });
@@ -513,9 +477,9 @@ export class ProbeSelectorService {
         probe: picked.probe,
         score: picked.adjustedScore,
       });
-      this._stage3Themes(picked.probe).forEach((theme) =>
-        coveredThemes.add(theme),
-      );
+      (
+        themesCache.get(picked.probe.id) ?? this._stage3Themes(picked.probe)
+      ).forEach((theme) => coveredThemes.add(theme));
       picked.probe.techTags.forEach((tag) => coveredTechs.add(tag));
     }
 
@@ -607,13 +571,15 @@ export class ProbeSelectorService {
     candidate,
     coveredThemes,
     coveredTechs,
+    themesCache,
   }: {
     candidate: ScoredProbe;
     coveredThemes: Set<string>;
     coveredTechs: Set<string>;
+    themesCache?: Map<string, string[]>;
   }): number {
     const probe = candidate.probe;
-    const themes = this._stage3Themes(probe);
+    const themes = themesCache?.get(probe.id) ?? this._stage3Themes(probe);
     const newThemeCount = themes.filter(
       (theme) => !coveredThemes.has(theme),
     ).length;
@@ -683,15 +649,21 @@ export class ProbeSelectorService {
     seed: string;
     scope: string;
   }): ScoredProbe[] {
-    return this._topK({
+    const topK = this._topK({
       candidates,
       count,
       score: (candidate) => candidate.score,
-    })
+    });
+    const rankCache = new Map(
+      topK.map((c) => [
+        c.probe.id,
+        this._seededRank({ seed, scope, id: c.probe.id }),
+      ]),
+    );
+    return topK
       .sort(
         (a, b) =>
-          this._seededRank({ seed, scope, id: a.probe.id }) -
-            this._seededRank({ seed, scope, id: b.probe.id }) ||
+          rankCache.get(a.probe.id)! - rankCache.get(b.probe.id)! ||
           b.score - a.score ||
           a.probe.id.localeCompare(b.probe.id),
       )
@@ -699,8 +671,7 @@ export class ProbeSelectorService {
       .sort(
         (a, b) =>
           b.score - a.score ||
-          this._seededRank({ seed, scope, id: a.probe.id }) -
-            this._seededRank({ seed, scope, id: b.probe.id }),
+          rankCache.get(a.probe.id)! - rankCache.get(b.probe.id)!,
       );
   }
 
@@ -720,10 +691,12 @@ export class ProbeSelectorService {
     id: (candidate: T) => string;
   }): T {
     const pool = this._topK({ candidates, count, score });
+    const rankCache = new Map(
+      pool.map((c) => [id(c), this._seededRank({ seed, scope, id: id(c) })]),
+    );
     return [...pool].sort(
       (a, b) =>
-        this._seededRank({ seed, scope, id: id(a) }) -
-          this._seededRank({ seed, scope, id: id(b) }) ||
+        rankCache.get(id(a))! - rankCache.get(id(b))! ||
         score(b) - score(a) ||
         id(a).localeCompare(id(b)),
     )[0];
@@ -763,12 +736,6 @@ export class ProbeSelectorService {
       hash = Math.imul(hash, 16777619);
     }
     return hash >>> 0;
-  }
-
-  private _conversationDepthBucket(
-    depth: QuestionProbe['conversationDepth'],
-  ): ConversationDepthBucket {
-    return depth === 'intro' ? 'intro' : 'mid_deep';
   }
 
   private _bonusFromMap<T extends string>({

@@ -121,6 +121,7 @@ export class SessionPlanningService {
       this.probeSelectorService.buildStageAllocations({
         probes,
         depth: dto.depth,
+        durationMinutes: dto.durationMinutes,
         targetLevel: profile.targetLevel,
         roleFamily: profile.roleFamily,
         language: dto.language,
@@ -196,7 +197,6 @@ export class SessionPlanningService {
     for (const plan of recentPlans) {
       for (const alloc of plan.stageAllocations) {
         alloc.selectedProbes.forEach((p) => ids.add(p.questionProbeId));
-        alloc.fallbackProbes.forEach((p) => ids.add(p.questionProbeId));
       }
     }
     return [...ids];

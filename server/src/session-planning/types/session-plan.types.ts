@@ -22,24 +22,13 @@ export type PersonaTone =
   | 'skeptical'
   | 'silent'
   | 'detail_oriented';
-export type ChallengeStyle = 'supportive' | 'direct' | 'adversarial';
-export type VerbosityLevel = 'brief' | 'moderate' | 'verbose';
-
 export interface PersonaPolicy {
   name: string;
   tone: PersonaTone;
-  challengeStyle: ChallengeStyle;
-  verbosity: VerbosityLevel;
-  silenceBehavior: 'prompt_immediately' | 'wait_briefly' | 'rephrase_question';
-  challengeThreshold: 'low' | 'medium' | 'high';
 }
 
 export interface PressureProfile {
   level: 'low' | 'medium' | 'high';
-  challengeOnGenericAnswer: boolean;
-  challengeOnWeLanguage: boolean;
-  challengeOnNoMetric: boolean;
-  challengeOnNoConsequence: boolean;
   maxChallengesPerProbe: number;
 }
 
@@ -65,6 +54,7 @@ export interface StageProbeAllocation {
 export interface ProbeSelectionContext {
   probes: QuestionProbe[];
   depth: InterviewDepth;
+  durationMinutes: number;
   targetLevel: QuestionProbeLevel;
   roleFamily: QuestionProbeRoleFamily;
   language: QuestionProbeLanguage;

@@ -498,6 +498,7 @@ export class BehaviorSessionService {
 
   private _emitSse(res: Response, event: SseEvent): void {
     res.write(`data: ${JSON.stringify(event)}\n\n`);
+    (res as Response & { flush?: () => void }).flush?.();
   }
 
   private _streamTurn(

@@ -1,10 +1,16 @@
-import { InterviewLanguage } from '../entities/interview-session.entity';
+import {
+  CandidateLevel,
+  InterviewLanguage,
+  InterviewRound,
+} from '../entities/interview-session.entity';
 
 export class InitSessionDto {
-  mode: 'practice' | 'combat';
-  rounds: string[];
-  candidateLevel?: 'junior' | 'mid' | 'senior';
+  mode!: 'practice' | 'combat';
+  rounds!: InterviewRound[];
+  candidateLevel?: CandidateLevel;
   language?: InterviewLanguage;
+  dsaProblemCount?: number;
+  systemDesignDurationMinutes?: number;
   behavioralDepth?: 'broad' | 'deep';
   behavioralDurationMinutes?: number;
 }

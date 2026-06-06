@@ -46,7 +46,7 @@ const initialState = {
   },
 
   // session result
-  session: null, // { sessionId, candidateLevel, estimatedDuration }
+  session: null, // { sessionId, candidateLevel }
 
   // round transition (behavioral → dsa)
   roundTransitionPending: false,
@@ -187,7 +187,7 @@ const interviewSetupSlice = createSlice({
     // ─── Resume (direct re-entry for in-progress sessions) ────────────────
     resumeSession(state, action) {
       // action.payload: { sessionId, candidateLevel }
-      state.session = { ...action.payload, estimatedDuration: 0 };
+      state.session = { ...action.payload };
       state.step = 'done';
     },
 

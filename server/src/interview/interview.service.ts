@@ -18,7 +18,6 @@ import { SessionPlanningService } from '../session-planning/session-planning.ser
 import {
   LOW_BALANCE_THRESHOLD,
   ROUND_CREDIT_COST,
-  ROUND_DURATIONS,
   STAGE_NAMES,
 } from './constants/interview.constants';
 import type { CvJson, JdJson } from '../documents/types/document-ai.types';
@@ -142,7 +141,6 @@ export class InterviewService {
   ): Promise<{
     sessionId: string;
     candidateLevel: CandidateLevel;
-    estimatedDuration: number;
     newBalance: number | null;
     lowBalance: boolean;
   }> {
@@ -164,23 +162,16 @@ export class InterviewService {
     const candidateLevel: CandidateLevel =
       dto.candidateLevel ?? this.classifyCandidateLevel(cvJson, jdJson);
 
-    const estimatedDuration = dto.rounds.reduce(
-      (sum, r) => sum + (ROUND_DURATIONS[r] ?? 20),
-      0,
-    );
-
-    const totalCost: number = dto.rounds.reduce(
-      (sum, r) => sum + (ROUND_CREDIT_COST[r] ?? 0),
-      0,
-    );
-    let newBalance: number | null = null;
-    if (totalCost > 0) {
-      const roundNames: string = dto.rounds.join(', ');
-      newBalance = await this.walletService.deductCredit({
-        userId,
-        amount: totalCost,
-        description: `Interview session: ${roundNames}`,
-      });
+    let calibrationProfileId: string | undefined;
+    if (dto.rounds.includes('hr_behavioral')) {
+      const calibration =
+        await this.calibrationService.getLatestForUser(userId);
+      if (!calibration) {
+        throw new BadRequestException(
+          'Calibration profile required for behavioral round',
+        );
+      }
+      calibrationProfileId = calibration.id;
     }
 
     const session = this.sessionRepo.create({
@@ -199,67 +190,39 @@ export class InterviewService {
       `Session ${session.id} created for user ${userId} [${candidateLevel} / ${dto.mode}]`,
     );
 
-    if (dto.rounds.includes('hr_behavioral')) {
-      await this._tryCreateSessionPlan(
+    if (calibrationProfileId) {
+      await this.sessionPlanningService.createPlan({
+        dto: {
+          sessionId: session.id,
+          calibrationProfileId,
+          depth: dto.behavioralDepth ?? 'broad',
+          durationMinutes: dto.behavioralDurationMinutes ?? 60,
+          language: (dto.language ?? 'vi') as 'vi' | 'en' | 'ja',
+        },
         userId,
-        session,
-        dto.language ?? 'vi',
-        dto.behavioralDepth ?? 'broad',
-        dto.behavioralDurationMinutes ?? 60,
-      );
+      });
+    }
+
+    const totalCost: number = dto.rounds.reduce(
+      (sum, r) => sum + (ROUND_CREDIT_COST[r] ?? 0),
+      0,
+    );
+    let newBalance: number | null = null;
+    if (totalCost > 0) {
+      const roundNames: string = dto.rounds.join(', ');
+      newBalance = await this.walletService.deductCredit({
+        userId,
+        amount: totalCost,
+        description: `Interview session: ${roundNames}`,
+      });
     }
 
     return {
       sessionId: session.id,
       candidateLevel,
-      estimatedDuration,
       newBalance,
       lowBalance: newBalance !== null && newBalance < LOW_BALANCE_THRESHOLD,
     };
-  }
-
-  private async _tryCreateSessionPlan(
-    userId: string,
-    session: InterviewSession,
-    language: string,
-    depth: 'broad' | 'deep',
-    durationMinutes: number,
-  ): Promise<void> {
-    const calibrationProfile =
-      await this.calibrationService.getLatestForUser(userId);
-    if (!calibrationProfile) {
-      this.logger.warn(
-        `No calibration profile for user ${userId} — skipping session plan`,
-      );
-      return;
-    }
-    if (
-      calibrationProfile.status !== 'ready' &&
-      calibrationProfile.status !== 'partial'
-    ) {
-      this.logger.warn(
-        `Calibration profile not ready for user ${userId} — skipping session plan`,
-      );
-      return;
-    }
-    try {
-      await this.sessionPlanningService.createPlan({
-        dto: {
-          sessionId: session.id,
-          calibrationProfileId: calibrationProfile.id,
-          depth,
-          durationMinutes,
-          language: language as 'vi' | 'en' | 'ja',
-        },
-        userId,
-      });
-      this.logger.log(`SessionPlan created for session ${session.id}`);
-    } catch (error: unknown) {
-      this.logger.error(
-        `Failed to create SessionPlan for session ${session.id}`,
-        error,
-      );
-    }
   }
 
   async updateContext(

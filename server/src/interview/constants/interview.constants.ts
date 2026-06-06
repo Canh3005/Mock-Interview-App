@@ -8,10 +8,10 @@ export const STAGE_NAMES: Record<number, string> = {
 };
 
 export const ROUND_DURATIONS: Record<string, number> = {
-  hr_behavioral: 20,
+  hr_behavioral: 60,
   dsa: 30,
   ai_prompting: 20,
-  system_design: 30,
+  system_design: 45,
 };
 
 export const ROUND_CREDIT_COST: Record<string, number> = {

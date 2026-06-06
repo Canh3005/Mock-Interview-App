@@ -7,7 +7,7 @@ import {
   cancelled,
   delay,
 } from 'redux-saga/effects';
-import { eventChannel, END } from 'redux-saga';
+import { eventChannel, END, buffers } from 'redux-saga';
 import { behavioralApi } from '../../api/behavioral.api';
 import { interviewApi } from '../../api/interview.api';
 import i18n from '../../i18n/config';
@@ -25,6 +25,8 @@ import {
   sessionCompleted,
   SUBMIT_ANSWER,
 } from '../slices/behavioralSlice';
+
+const STREAM_CHUNK_DELAY_MS = 24;
 
 // ─── SSE channel factory ──────────────────────────────────────────────────────
 function _createSseChannel(sessionId, content) {
@@ -78,7 +80,7 @@ function _createSseChannel(sessionId, content) {
     return () => {
       if (reader) reader.cancel().catch(() => {});
     };
-  });
+  }, buffers.expanding());
 }
 
 // ─── Create session saga ──────────────────────────────────────────────────────
@@ -97,6 +99,7 @@ function* _createSession(action) {
 function* _submitAnswer(action) {
   const sessionId = yield select((s) => s.behavioral.sessionId);
   yield put(addCandidateTurn(action.payload));
+  yield put(evaluatingStarted());
 
   const channel = yield call(_createSseChannel, sessionId, action.payload);
 
@@ -115,7 +118,10 @@ function* _submitAnswer(action) {
           break;
 
         case 'chunk':
-          yield put(streamChunk(event.token));
+          if (event.token) {
+            yield put(streamChunk(event.token));
+            yield delay(STREAM_CHUNK_DELAY_MS);
+          }
           break;
 
         case 'turn_complete':

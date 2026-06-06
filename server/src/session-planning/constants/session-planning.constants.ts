@@ -5,11 +5,11 @@ import type {
   PressureProfile,
 } from '../types/session-plan.types';
 
-export const OPENING_OVERHEAD_MINUTES = 2;
+export const OPENING_OVERHEAD_MINUTES = 1;
 
-export const RECENT_SESSION_LOOKBACK = 3;
+export const RECENT_SESSION_LOOKBACK = 5;
 
-export const CLOSING_OVERHEAD_MINUTES = 3;
+export const CLOSING_OVERHEAD_MINUTES = 2;
 
 export const MIN_PROBE_MINUTES = 4;
 
@@ -35,55 +35,13 @@ export const MUST_INCLUDE_STAGES: QuestionProbeStage[] = [
 ];
 
 export const PERSONA_PRESETS: Record<string, PersonaPolicy> = {
-  junior: {
-    name: 'Supportive Interviewer',
-    tone: 'friendly',
-    challengeStyle: 'supportive',
-    verbosity: 'moderate',
-    silenceBehavior: 'prompt_immediately',
-    challengeThreshold: 'low',
-  },
-  mid: {
-    name: 'Balanced Interviewer',
-    tone: 'neutral',
-    challengeStyle: 'direct',
-    verbosity: 'moderate',
-    silenceBehavior: 'wait_briefly',
-    challengeThreshold: 'medium',
-  },
-  senior: {
-    name: 'Skeptical Interviewer',
-    tone: 'skeptical',
-    challengeStyle: 'direct',
-    verbosity: 'brief',
-    silenceBehavior: 'rephrase_question',
-    challengeThreshold: 'high',
-  },
+  junior: { name: 'Supportive Interviewer', tone: 'friendly' },
+  mid: { name: 'Balanced Interviewer', tone: 'neutral' },
+  senior: { name: 'Skeptical Interviewer', tone: 'skeptical' },
 };
 
 export const PRESSURE_PRESETS: Record<string, PressureProfile> = {
-  junior: {
-    level: 'low',
-    challengeOnGenericAnswer: true,
-    challengeOnWeLanguage: false,
-    challengeOnNoMetric: true,
-    challengeOnNoConsequence: false,
-    maxChallengesPerProbe: 1,
-  },
-  mid: {
-    level: 'medium',
-    challengeOnGenericAnswer: true,
-    challengeOnWeLanguage: true,
-    challengeOnNoMetric: true,
-    challengeOnNoConsequence: false,
-    maxChallengesPerProbe: 2,
-  },
-  senior: {
-    level: 'high',
-    challengeOnGenericAnswer: true,
-    challengeOnWeLanguage: true,
-    challengeOnNoMetric: true,
-    challengeOnNoConsequence: true,
-    maxChallengesPerProbe: 3,
-  },
+  junior: { level: 'low', maxChallengesPerProbe: 1 },
+  mid: { level: 'medium', maxChallengesPerProbe: 2 },
+  senior: { level: 'high', maxChallengesPerProbe: 3 },
 };

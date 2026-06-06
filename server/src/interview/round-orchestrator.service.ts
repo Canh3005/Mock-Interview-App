@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { InterviewSession } from './entities/interview-session.entity';
+import {
+  InterviewRound,
+  InterviewSession,
+} from './entities/interview-session.entity';
 
 @Injectable()
 export class RoundOrchestratorService {
@@ -12,8 +15,8 @@ export class RoundOrchestratorService {
 
   async getNextRound(
     interviewSessionId: string,
-    currentRound: string,
-  ): Promise<string | null> {
+    currentRound: InterviewRound,
+  ): Promise<InterviewRound | null> {
     const session = await this.interviewSessionRepo.findOne({
       where: { id: interviewSessionId },
     });
