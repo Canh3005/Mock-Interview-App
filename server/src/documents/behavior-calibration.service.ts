@@ -1,8 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { BehaviorCalibrationAiService } from './behavior-calibration.ai.service';
-import { DocumentContextService } from './document-context.service';
 import { BehaviorCalibrationProfile } from './entities/behavior-calibration-profile.entity';
 import { CandidateClaim } from './entities/candidate-claim.entity';
 import { RiskHypothesis } from './entities/risk-hypothesis.entity';
@@ -10,12 +9,13 @@ import { FitAssessmentService } from './fit-assessment.service';
 import type { FitAssessmentV2 } from './types/fit-assessment.types';
 import type {
   CalibrationPath,
-  ClaimMiningOutput,
+  CalibrationStatus,
+  StructuredClaim,
+  RawCandidateClaim,
   SeededRisk,
-  BehavioralRiskOutput,
+  RiskEnrichmentOutput,
   BehaviorCalibrationProfileData,
   BehaviorCalibrationSummary,
-  RawCandidateClaim,
   HiringRiskType,
   RiskSeverity,
   LevelExpectation,
@@ -26,11 +26,16 @@ import {
   ALL_TECH_TAGS,
   BEHAVIORAL_RISK_DEFAULT_SEVERITY,
   LEVEL_EXPECTATION_MAP,
-  RISK_TAG_TO_TYPE,
+  RISK_TYPE_TO_COMPETENCIES,
   VALID_COMPETENCIES,
+  CLAIM_COUNT_READY_THRESHOLD,
+  COVERAGE_SCORE_READY_THRESHOLD,
+  MIN_PRIORITY_COMPETENCIES,
 } from './constants/behavior-calibration.constants';
 import type { LevelKey } from './types/behavior-calibration-internal.types';
 import type { CvJson, JdJson } from './types/document-ai.types';
+
+type RiskEntityDraft = Partial<RiskHypothesis> & { _claimLocalId?: string };
 
 @Injectable()
 export class BehaviorCalibrationService {
@@ -46,8 +51,8 @@ export class BehaviorCalibrationService {
     @InjectRepository(UserProfile)
     private readonly userProfileRepo: Repository<UserProfile>,
     private readonly aiService: BehaviorCalibrationAiService,
-    private readonly contextService: DocumentContextService,
     private readonly fitAssessmentService: FitAssessmentService,
+    private readonly dataSource: DataSource,
   ) {}
 
   // ─── BC-1: Collect inputs ──────────────────────────────────────────────────
@@ -75,17 +80,22 @@ export class BehaviorCalibrationService {
       return;
     }
 
-    const profile: UserProfile | null = await this.userProfileRepo.findOne({
-      where: { user: { id: userId } },
-    });
+    let profile: UserProfile | null = null;
+    try {
+      profile = await this.userProfileRepo.findOne({
+        where: { user: { id: userId } },
+      });
+    } catch (error) {
+      this.logger.warn(
+        `BC: failed to fetch user profile userId=${userId}: ${String(error)}`,
+      );
+    }
     const hasProfile = !!profile;
     const hasWeaknessHistory = !!(
       profile as { weaknessHistory?: unknown } | null
     )?.weaknessHistory;
 
     const sourceCompleteness = { hasCv, hasJd, hasProfile, hasWeaknessHistory };
-
-    // BC-2: determine path
     const path = this._determinePath({ hasCv, hasJd });
 
     try {
@@ -163,105 +173,88 @@ export class BehaviorCalibrationService {
       path,
     } = params;
 
-    let claimOutput: ClaimMiningOutput = {
-      miningConfidence: 'low',
-      claims: [],
-      unmappedSignals: [],
-    };
-    let seededRisks: SeededRisk[] = [];
-    let behavioralOutput: BehavioralRiskOutput = {
-      hypotheses: [],
-      priorityCompetencies: [],
-      calibrationNotes: [],
-      userFacingSummary: { focusAreas: [], evidenceToPrep: [] },
-    };
-
-    if (path === 'jd_only') {
-      await this._persistProfile(userId, cvId, jdAnalysisId, {
-        path,
-        claimOutput,
-        seededRisks,
-        behavioralOutput,
-        cvJson,
-        jdJson,
-        fitAssessment,
-        profile,
-        sourceCompleteness,
-      });
-      return;
-    }
-
-    // BC-3 + BC-4a run in parallel
-    const fitHints = fitAssessment
-      ? this.aiService.buildFitEvidenceHints(fitAssessment)
+    // Step 1: Deterministic claim extraction from CvJson structure
+    const structuredClaims: StructuredClaim[] = cvJson
+      ? this._extractStructuredClaims(cvJson)
       : [];
-    const [miningResult, seeded] = await Promise.allSettled([
-      this.aiService.extractCandidateClaims({
-        cvJson: cvJson!,
-        jdJson: jdJson ?? undefined,
-        fitEvidenceHints: fitHints,
-      }),
-      Promise.resolve(
-        fitAssessment ? this._seedRisksFromFitAssessment(fitAssessment) : [],
-      ),
-    ]);
 
-    if (miningResult.status === 'fulfilled') {
-      claimOutput = miningResult.value;
-    } else {
-      this.logger.warn(`BC-3 failed: ${String(miningResult.reason)}`);
-    }
-    if (seeded.status === 'fulfilled') {
-      seededRisks = seeded.value;
-    }
-
-    // Seed additional risks from claim-level riskTags to prevent BC-4b from duplicating them
-    const claimTagTypes = new Set(
-      claimOutput.claims
-        .flatMap((c) => c.riskTags)
-        .map((tag) => RISK_TAG_TO_TYPE[tag])
-        .filter((t): t is HiringRiskType => !!t),
-    );
-    const claimTagSeeds: SeededRisk[] = [...claimTagTypes].map((riskType) => ({
-      riskType,
-      severity: 'low' as const,
-      sourceRef: {
-        fitAssessmentField: 'claim_tags' as const,
-        originalCategory: riskType,
-      },
-      rationale: 'Detected from claim-level risk tags during CV mining',
+    // Step 2: LLM claim enrichment (claimType, impliedCompetencies, riskTags)
+    // Initialise merged claims with fallback values — enrichment updates them
+    let mergedClaims: RawCandidateClaim[] = structuredClaims.map((c) => ({
+      sourceType: c.sourceType,
+      sourceRef: { localId: c.localId, section: c.sourceRef.section },
+      claimType: c.claimType,
+      claimText: c.claimText,
+      impliedCompetencies: [],
+      techContext: c.techContext,
+      riskTags: [],
     }));
-    seededRisks = [...seededRisks, ...claimTagSeeds];
 
-    if (claimOutput.claims.length === 0 && cvJson) {
-      this.logger.warn(
-        `BC-3 returned no claims for userId=${userId}, skipping persist`,
-      );
-      return;
-    }
-
-    // BC-4b: behavioral risks (only for full path)
-    if (path === 'full') {
+    if (structuredClaims.length > 0) {
       try {
-        behavioralOutput = await this.aiService.generateBehavioralRisks({
-          claims: claimOutput.claims,
-          seededRisks,
-          jdJson: jdJson ?? undefined,
+        const enrichmentOutput = await this.aiService.enrichCandidateClaims(
+          structuredClaims,
+          jdJson ?? undefined,
+        );
+        const enrichmentMap = new Map(
+          enrichmentOutput.enrichments.map((e) => [e.localId, e]),
+        );
+        mergedClaims = mergedClaims.map((c) => {
+          const enrichment = enrichmentMap.get(c.sourceRef.localId);
+          if (!enrichment) return c;
+          return {
+            ...c,
+            claimType: enrichment.claimType,
+            impliedCompetencies: enrichment.impliedCompetencies as string[],
+            riskTags: enrichment.riskTags,
+          };
         });
       } catch (error) {
-        const msg = error instanceof Error ? error.message : String(error);
-        this.logger.warn(`BC-4b failed: ${msg}`);
-        behavioralOutput.calibrationNotes = [
-          'behavioral_risk_generation_failed',
-        ];
+        this.logger.warn(`BC-2: Claim enrichment failed: ${String(error)}`);
       }
     }
 
+    // Step 3a: Seed risks from FitAssessment (deterministic)
+    const faSeededRisks: SeededRisk[] = fitAssessment
+      ? this._seedRisksFromFitAssessment(fitAssessment)
+      : [];
+
+    // Step 3b: Coverage gap detection (deterministic, full path only)
+    const coverageGapRisks: SeededRisk[] =
+      path === 'full' ? this._detectCoverageGapRisks(mergedClaims, jdJson) : [];
+
+    const seededRisks: SeededRisk[] = [...faSeededRisks, ...coverageGapRisks];
+
+    // Step 4: LLM risk enrichment + additional behavioral risks (full path only)
+    let riskEnrichmentOutput: RiskEnrichmentOutput = {
+      seededRiskEnrichments: [],
+      additionalRisks: [],
+      userFacingSummary: { focusAreas: [], evidenceToPrep: [] },
+    };
+
+    if (path === 'full') {
+      try {
+        const step4Claims = mergedClaims.map((c) => ({
+          localId: c.sourceRef.localId,
+          claimText: c.claimText,
+          impliedCompetencies: c.impliedCompetencies,
+        }));
+        riskEnrichmentOutput = await this.aiService.enrichAndExtendRisks(
+          seededRisks,
+          step4Claims,
+          jdJson ?? undefined,
+        );
+      } catch (error) {
+        this.logger.warn(`BC-4: Risk enrichment failed: ${String(error)}`);
+      }
+    }
+
+    // Step 5: Build + persist (always persists, even with empty claims)
     await this._persistProfile(userId, cvId, jdAnalysisId, {
       path,
-      claimOutput,
+      mergedClaims,
       seededRisks,
-      behavioralOutput,
+      riskEnrichmentOutput,
       cvJson,
       jdJson,
       fitAssessment,
@@ -270,26 +263,66 @@ export class BehaviorCalibrationService {
     });
   }
 
-  // ─── BC-4a: seed risks from FA deterministic ───────────────────────────────
+  // ─── Step 1: Deterministic claim extraction ────────────────────────────────
+
+  private _extractStructuredClaims(cvJson: CvJson): StructuredClaim[] {
+    const claims: StructuredClaim[] = [];
+    let idx = 0;
+
+    for (let i = 0; i < (cvJson.experience ?? []).length && idx < 20; i++) {
+      const exp = cvJson.experience[i];
+      const datePart = [exp.startDate, exp.endDate].filter(Boolean).join('–');
+      const parts: string[] = [
+        `${exp.title} at ${exp.company}${datePart ? ` (${datePart})` : ''}`,
+      ];
+      const top3 = (exp.responsibilities ?? []).slice(0, 3);
+      if (top3.length) parts.push(`Responsibilities: ${top3.join('; ')}`);
+      const achs = exp.achievements ?? [];
+      if (achs.length) parts.push(`Achievements: ${achs.join('; ')}`);
+
+      claims.push({
+        localId: `claim_${idx++}`,
+        sourceType: 'cv',
+        sourceRef: { section: `experience[${i}]` },
+        claimType: 'unknown',
+        claimText: parts.join('. '),
+        techContext: this._canonicalizeTechStack(exp.techStack ?? []),
+      });
+
+      for (let j = 0; j < achs.length && idx < 20; j++) {
+        claims.push({
+          localId: `claim_${idx++}`,
+          sourceType: 'cv',
+          sourceRef: { section: `experience[${i}].achievements[${j}]` },
+          claimType: 'improved_metric',
+          claimText: achs[j],
+          techContext: this._canonicalizeTechStack(exp.techStack ?? []),
+        });
+      }
+    }
+
+    return claims;
+  }
+
+  // ─── Step 3a: Seed risks from FA ──────────────────────────────────────────
 
   private _seedRisksFromFitAssessment(fa: FitAssessmentV2): SeededRisk[] {
-    const FIT_GAP_TO_RISK: Record<string, SeededRisk['riskType']> = {
+    const FIT_GAP_TO_RISK: Record<string, HiringRiskType> = {
       level_mismatch: 'level_mismatch',
       weak_evidence: 'claim_without_evidence',
     };
-    const FIT_FLAG_TO_RISK: Record<string, SeededRisk['riskType']> = {
+    const FIT_FLAG_TO_RISK: Record<string, HiringRiskType> = {
       seniority_mismatch: 'level_mismatch',
       missing_core_stack: 'weak_technical_depth',
       ambiguous_timeline: 'unclear_scope',
     };
 
     const seeded: SeededRisk[] = [];
-    const seenTypes = new Set<string>();
+    let seq = 0;
 
     for (const gap of fa.gaps ?? []) {
       const riskType = FIT_GAP_TO_RISK[gap.category];
       if (!riskType) continue;
-      const key = riskType;
       const existing = seeded.find((s) => s.riskType === riskType);
       if (existing) {
         if (
@@ -300,9 +333,8 @@ export class BehaviorCalibrationService {
         }
         continue;
       }
-      if (seenTypes.has(key)) continue;
-      seenTypes.add(key);
       seeded.push({
+        localRiskId: `fa_gap_${seq++}`,
         riskType,
         severity: gap.severity,
         sourceRef: {
@@ -328,6 +360,7 @@ export class BehaviorCalibrationService {
         continue;
       }
       seeded.push({
+        localRiskId: `fa_flag_${seq++}`,
         riskType,
         severity: flag.severity,
         sourceRef: {
@@ -341,7 +374,38 @@ export class BehaviorCalibrationService {
     return seeded;
   }
 
-  // ─── BC-5: build + persist calibration profile ────────────────────────────
+  // ─── Step 3b: Coverage gap detection ──────────────────────────────────────
+
+  private _detectCoverageGapRisks(
+    mergedClaims: RawCandidateClaim[],
+    jdJson: JdJson | null,
+  ): SeededRisk[] {
+    const requiredComps = (jdJson?.requiredCompetencies ?? []).filter((c) =>
+      VALID_COMPETENCIES.has(c),
+    );
+    if (requiredComps.length === 0) return [];
+
+    const covered = new Set<string>(
+      mergedClaims
+        .flatMap((c) => c.impliedCompetencies)
+        .filter((c) => VALID_COMPETENCIES.has(c)),
+    );
+
+    return requiredComps
+      .filter((comp) => !covered.has(comp))
+      .map((comp) => ({
+        localRiskId: `cov_gap_${comp}`,
+        riskType: 'claim_without_evidence' as HiringRiskType,
+        severity: 'medium' as const,
+        sourceRef: {
+          fitAssessmentField: 'coverage_gap' as const,
+          originalCategory: comp,
+        },
+        rationale: `JD requires competency '${comp}' but CV provides no evidence of it.`,
+      }));
+  }
+
+  // ─── Step 5: Build + persist (always persists) ────────────────────────────
 
   private async _persistProfile(
     userId: string,
@@ -349,9 +413,9 @@ export class BehaviorCalibrationService {
     jdAnalysisId: string | null,
     ctx: {
       path: CalibrationPath;
-      claimOutput: ClaimMiningOutput;
+      mergedClaims: RawCandidateClaim[];
       seededRisks: SeededRisk[];
-      behavioralOutput: BehavioralRiskOutput;
+      riskEnrichmentOutput: RiskEnrichmentOutput;
       cvJson: CvJson | null;
       jdJson: JdJson | null;
       fitAssessment: FitAssessmentV2 | null;
@@ -389,32 +453,77 @@ export class BehaviorCalibrationService {
       internalVersion: data.internalVersion,
     });
 
-    const saved = await this.profileRepo.save(profileEntity);
-    this.logger.log(
-      `BC-5: persisted calibration profile ${saved.id} userId=${userId} status=${data.status}`,
-    );
+    const qr = this.dataSource.createQueryRunner();
+    await qr.connect();
+    await qr.startTransaction();
+    try {
+      const savedProfile = await qr.manager.save(
+        BehaviorCalibrationProfile,
+        profileEntity,
+      );
 
-    const claims = this._buildClaimEntities(
-      userId,
-      saved.id,
-      cvId,
-      jdAnalysisId,
-      ctx.claimOutput.claims,
-      ctx.jdJson,
-    );
-    if (claims.length > 0) {
-      await this.claimRepo.save(claims);
-    }
+      const claimEntities = this._buildClaimEntities(
+        userId,
+        savedProfile.id,
+        cvId,
+        jdAnalysisId,
+        ctx.mergedClaims,
+        ctx.jdJson,
+      );
 
-    const risks = this._buildRiskEntities(
-      userId,
-      saved.id,
-      ctx.seededRisks,
-      ctx.behavioralOutput,
-      data.levelMismatch,
-    );
-    if (risks.length > 0) {
-      await this.riskRepo.save(risks);
+      const riskDrafts = this._buildRiskEntities(
+        userId,
+        ctx.seededRisks,
+        ctx.riskEnrichmentOutput,
+        data.levelMismatch,
+      );
+
+      // Risk-aware claim priority boost: claims whose competencies overlap with any
+      // risk's relatedCompetencies are bumped to 'high' so Stage 4 probes them deeply
+      const allRiskCompetencies = new Set<string>(
+        riskDrafts.flatMap((r) => (r.relatedCompetencies ?? []) as string[]),
+      );
+      for (const claim of claimEntities) {
+        const overlap = (claim.impliedCompetencies ?? []).some((c) =>
+          allRiskCompetencies.has(c as string),
+        );
+        if (overlap) claim.verificationPriority = 'high';
+      }
+
+      let claimIdMap = new Map<string, string>();
+      if (claimEntities.length > 0) {
+        const savedClaims = await qr.manager.save(
+          CandidateClaim,
+          claimEntities,
+        );
+        claimIdMap = new Map(
+          (savedClaims as CandidateClaim[]).map((c) => [
+            (c.sourceRef as { localId: string }).localId,
+            c.id,
+          ]),
+        );
+      }
+
+      if (riskDrafts.length > 0) {
+        const riskEntities = riskDrafts.map(({ _claimLocalId, ...r }) => ({
+          ...r,
+          calibrationProfileId: savedProfile.id,
+          candidateClaimId: _claimLocalId
+            ? (claimIdMap.get(_claimLocalId) ?? null)
+            : null,
+        }));
+        await qr.manager.save(RiskHypothesis, riskEntities);
+      }
+
+      await qr.commitTransaction();
+      this.logger.log(
+        `BC-5: persisted calibration profile ${savedProfile.id} userId=${userId} status=${data.status}`,
+      );
+    } catch (e) {
+      await qr.rollbackTransaction();
+      throw e;
+    } finally {
+      await qr.release();
     }
   }
 
@@ -422,9 +531,9 @@ export class BehaviorCalibrationService {
     userId: string,
     ctx: {
       path: CalibrationPath;
-      claimOutput: ClaimMiningOutput;
+      mergedClaims: RawCandidateClaim[];
       seededRisks: SeededRisk[];
-      behavioralOutput: BehavioralRiskOutput;
+      riskEnrichmentOutput: RiskEnrichmentOutput;
       cvJson: CvJson | null;
       jdJson: JdJson | null;
       fitAssessment: FitAssessmentV2 | null;
@@ -439,9 +548,9 @@ export class BehaviorCalibrationService {
   ): BehaviorCalibrationProfileData {
     const {
       path,
-      claimOutput,
+      mergedClaims,
       seededRisks,
-      behavioralOutput,
+      riskEnrichmentOutput,
       cvJson,
       jdJson,
       profile,
@@ -457,15 +566,51 @@ export class BehaviorCalibrationService {
       jdJson?.required_skills ?? [],
     );
 
+    const priorityCompetencies = this._computePriorityCompetencies(
+      mergedClaims,
+      jdJson,
+    );
+
+    // Quality-based status
+    const covered = new Set<string>(
+      mergedClaims
+        .flatMap((c) => c.impliedCompetencies)
+        .filter((c) => VALID_COMPETENCIES.has(c)),
+    );
+    const jdRequired = (jdJson?.requiredCompetencies ?? []).filter((c) =>
+      VALID_COMPETENCIES.has(c),
+    );
+    let coverageScore: number;
+    if (jdRequired.length === 0) {
+      coverageScore = Math.min(priorityCompetencies.length / 3, 1.0);
+    } else {
+      const overlap = jdRequired.filter((c) => covered.has(c)).length;
+      coverageScore = overlap / jdRequired.length;
+    }
+    const selectorReady = seededRisks.some(
+      (r) => (RISK_TYPE_TO_COMPETENCIES[r.riskType] ?? []).length > 0,
+    );
+
+    let status: CalibrationStatus;
+    if (
+      path === 'full' &&
+      mergedClaims.length >= CLAIM_COUNT_READY_THRESHOLD &&
+      coverageScore >= COVERAGE_SCORE_READY_THRESHOLD &&
+      priorityCompetencies.length >= MIN_PRIORITY_COMPETENCIES &&
+      selectorReady
+    ) {
+      status = 'ready';
+    } else {
+      status = 'partial';
+    }
+
     const highSeverityCount = [
       ...seededRisks.filter((r) => r.severity === 'high'),
-      ...behavioralOutput.hypotheses.filter(
+      ...riskEnrichmentOutput.additionalRisks.filter(
         (h) =>
           (BEHAVIORAL_RISK_DEFAULT_SEVERITY[h.riskType] ?? 'low') === 'high',
       ),
     ].length;
-
-    const status = path === 'full' ? 'ready' : 'partial';
     const evidenceStrictness =
       highSeverityCount === 0
         ? 'standard'
@@ -473,18 +618,21 @@ export class BehaviorCalibrationService {
           ? 'strict'
           : 'very_strict';
 
-    const priorityCompetencies = this._computePriorityCompetencies(
-      claimOutput.claims,
-      behavioralOutput.priorityCompetencies,
-      jdJson,
-    );
     const competencyWeights = this._computeCompetencyWeights(
       priorityCompetencies,
       seededRisks,
-      behavioralOutput,
+      riskEnrichmentOutput,
     );
     const previousWeakCompetencies = this._getPreviousWeakCompetencies(profile);
-    const calibrationNotes = [...(behavioralOutput.calibrationNotes ?? [])];
+
+    const calibrationNotes: string[] = [];
+    if (mergedClaims.length === 0) calibrationNotes.push('no_claims_extracted');
+    if (
+      coverageScore < COVERAGE_SCORE_READY_THRESHOLD &&
+      jdRequired.length > 0
+    ) {
+      calibrationNotes.push('low_coverage_score');
+    }
 
     const cvTechStack = this._canonicalizeTechStack(cvJson?.skills ?? []);
     const jdTechRequirements = this._canonicalizeTechStack(
@@ -500,7 +648,7 @@ export class BehaviorCalibrationService {
       ? 'Your experience level may not match the JD requirements. Prepare to address this in the interview.'
       : undefined;
 
-    const summary = behavioralOutput.userFacingSummary;
+    const summary = riskEnrichmentOutput.userFacingSummary;
 
     return {
       status,
@@ -521,7 +669,7 @@ export class BehaviorCalibrationService {
       userFacingSummary: {
         focusAreas: summary.focusAreas,
         evidenceToPrep: summary.evidenceToPrep,
-        missingDataWarning: missingDataWarning ?? summary.missingDataWarning,
+        missingDataWarning,
         levelMismatchWarning,
       },
       internalVersion: 'behavior-calibration-v1',
@@ -562,11 +710,9 @@ export class BehaviorCalibrationService {
         sourceRef: c.sourceRef,
         claimType: c.claimType,
         claimText: c.claimText,
-        normalizedClaim: c.normalizedClaim,
         impliedCompetencies: validImplied,
         verificationPriority,
         techContext: c.techContext.filter((t) => ALL_TECH_TAGS.has(t)),
-        evidenceHints: c.evidenceHints,
         riskTags: c.riskTags,
       };
     });
@@ -574,63 +720,83 @@ export class BehaviorCalibrationService {
 
   private _buildRiskEntities(
     userId: string,
-    profileId: string,
     seededRisks: SeededRisk[],
-    behavioralOutput: BehavioralRiskOutput,
+    riskEnrichmentOutput: RiskEnrichmentOutput,
     levelMismatch: boolean,
-  ): Partial<RiskHypothesis>[] {
-    const seededTypes = new Set(seededRisks.map((r) => r.riskType));
-    const entities: Partial<RiskHypothesis>[] = [];
+  ): RiskEntityDraft[] {
+    const enrichmentMap = new Map(
+      riskEnrichmentOutput.seededRiskEnrichments.map((e) => [e.localRiskId, e]),
+    );
+    const seededTypeClaimPairs = new Set<string>(
+      seededRisks.map((r) => `${r.riskType}::`),
+    );
+    const entities: RiskEntityDraft[] = [];
 
     for (const seeded of seededRisks) {
+      const enrichment = enrichmentMap.get(seeded.localRiskId);
+      const relatedCompetencies =
+        RISK_TYPE_TO_COMPETENCIES[seeded.riskType] ?? [];
       entities.push({
         userId,
-        calibrationProfileId: profileId,
         riskType: seeded.riskType,
         severity: seeded.severity,
         rationale: seeded.rationale,
-        relatedCompetencies: [],
-        suggestedProbeFocus: [],
+        relatedCompetencies,
+        suggestedProbeFocus: enrichment?.suggestedProbeFocus ?? [],
         sourceRefs: seeded.sourceRef,
         source: 'system_inference',
         evidenceNeededToReject: [],
-        probeSelectionHints: null,
+        probeSelectionHints:
+          relatedCompetencies.length > 0
+            ? { preferredCompetencies: relatedCompetencies }
+            : null,
+        candidateClaimId: null,
       });
     }
 
-    for (const h of behavioralOutput.hypotheses) {
-      if (seededTypes.has(h.riskType as SeededRisk['riskType'])) continue;
+    // Additional risks: composite dedup (riskType + claimLocalId)
+    for (const h of riskEnrichmentOutput.additionalRisks) {
+      const compositeKey = `${h.riskType}::${h.candidateClaimLocalId}`;
+      if (seededTypeClaimPairs.has(compositeKey)) continue;
+
       const severity: RiskSeverity =
         BEHAVIORAL_RISK_DEFAULT_SEVERITY[h.riskType] ?? 'low';
-      const validCompetencies = (h.relatedCompetencies ?? []).filter((c) =>
-        VALID_COMPETENCIES.has(c),
-      ) as QuestionProbeCompetency[];
+      const relatedCompetencies = RISK_TYPE_TO_COMPETENCIES[h.riskType] ?? [];
       entities.push({
         userId,
-        calibrationProfileId: profileId,
         riskType: h.riskType,
         severity,
         rationale: h.rationale,
-        relatedCompetencies: validCompetencies,
-        suggestedProbeFocus: h.suggestedProbeFocus ?? [],
+        relatedCompetencies,
+        suggestedProbeFocus: h.suggestedProbeFocus,
         source: 'cv',
-        evidenceNeededToReject: h.suggestedProbeFocus ?? [],
-        probeSelectionHints: { preferredCompetencies: validCompetencies },
-        sourceRefs: h.candidateClaimRef
-          ? { claimRef: h.candidateClaimRef }
+        evidenceNeededToReject: h.suggestedProbeFocus,
+        probeSelectionHints:
+          relatedCompetencies.length > 0
+            ? { preferredCompetencies: relatedCompetencies }
+            : null,
+        sourceRefs: h.candidateClaimLocalId
+          ? { claimLocalId: h.candidateClaimLocalId }
           : null,
+        _claimLocalId: h.candidateClaimLocalId || undefined,
+        candidateClaimId: null,
       });
     }
 
-    if (levelMismatch && !seededTypes.has('level_mismatch')) {
+    // Level mismatch fallback (only if not already in seeded)
+    const hasLevelMismatch = seededRisks.some(
+      (r) => r.riskType === 'level_mismatch',
+    );
+    if (levelMismatch && !hasLevelMismatch) {
+      const relatedCompetencies =
+        RISK_TYPE_TO_COMPETENCIES['level_mismatch'] ?? [];
       entities.push({
         userId,
-        calibrationProfileId: profileId,
         riskType: 'level_mismatch',
         severity: 'medium',
         rationale:
           'Experience level or seniority does not match JD requirements.',
-        relatedCompetencies: [],
+        relatedCompetencies,
         suggestedProbeFocus: [
           'Describe a project where you operated at the required level of ownership.',
         ],
@@ -638,8 +804,9 @@ export class BehaviorCalibrationService {
         evidenceNeededToReject: [
           'Candidate demonstrates scope and ownership consistent with JD level',
         ],
-        probeSelectionHints: null,
+        probeSelectionHints: { preferredCompetencies: relatedCompetencies },
         sourceRefs: null,
+        candidateClaimId: null,
       });
     }
 
@@ -721,12 +888,11 @@ export class BehaviorCalibrationService {
     if (hasFe && hasBe) return 'fullstack';
     if (hasFe) return 'frontend';
     if (hasBe) return 'backend';
-    return 'backend';
+    return 'general';
   }
 
   private _computePriorityCompetencies(
     claims: RawCandidateClaim[],
-    aiPriority: string[],
     jdJson: JdJson | null,
   ): QuestionProbeCompetency[] {
     const jdSignals = new Set<string>(
@@ -734,22 +900,19 @@ export class BehaviorCalibrationService {
         VALID_COMPETENCIES.has(c),
       ),
     );
-    const claimSignals = claims.flatMap((c) => c.impliedCompetencies);
-    const allValidSignals = [...claimSignals, ...aiPriority].filter((c) =>
-      VALID_COMPETENCIES.has(c),
-    );
+    const claimSignals = claims
+      .flatMap((c) => c.impliedCompetencies)
+      .filter((c) => VALID_COMPETENCIES.has(c));
 
-    // Prefer intersection with LLM-extracted JD competencies; fall back to all claim signals
     const candidates =
       jdSignals.size > 0
-        ? allValidSignals.filter((c) => jdSignals.has(c))
-        : allValidSignals;
+        ? claimSignals.filter((c) => jdSignals.has(c))
+        : claimSignals;
 
-    const source = candidates.length > 0 ? candidates : allValidSignals;
+    const source = candidates.length > 0 ? candidates : claimSignals;
 
     const counted = new Map<string, number>();
     for (const c of source) counted.set(c, (counted.get(c) ?? 0) + 1);
-    // Merge in JD signals not yet in source to ensure JD-required competencies appear
     for (const c of jdSignals) {
       if (!counted.has(c)) counted.set(c, 1);
     }
@@ -789,20 +952,20 @@ export class BehaviorCalibrationService {
   private _computeCompetencyWeights(
     competencies: QuestionProbeCompetency[],
     seededRisks: SeededRisk[],
-    behavioralOutput: BehavioralRiskOutput,
+    riskEnrichmentOutput: RiskEnrichmentOutput,
   ): Partial<Record<QuestionProbeCompetency, number>> {
+    const allRiskCompetencies = new Set<string>([
+      ...seededRisks.flatMap(
+        (r) => (RISK_TYPE_TO_COMPETENCIES[r.riskType] ?? []) as string[],
+      ),
+      ...riskEnrichmentOutput.additionalRisks.flatMap(
+        (r) => (RISK_TYPE_TO_COMPETENCIES[r.riskType] ?? []) as string[],
+      ),
+    ]);
+
     const weights: Partial<Record<QuestionProbeCompetency, number>> = {};
     for (const comp of competencies) {
-      let weight = 1;
-      const inSeeded = seededRisks.some(
-        (r) => r.riskType === 'level_mismatch' && comp === 'ownership',
-      );
-      const inBehavioral = behavioralOutput.hypotheses.some((h) =>
-        h.relatedCompetencies?.includes(comp),
-      );
-      if (inSeeded) weight += 1;
-      if (inBehavioral) weight += 1;
-      weights[comp] = weight;
+      weights[comp] = allRiskCompetencies.has(comp) ? 2 : 1;
     }
     return weights;
   }
@@ -819,7 +982,6 @@ export class BehaviorCalibrationService {
 
   private _canonicalizeTechStack(skills: string[]): string[] {
     return skills
-
       .map((s) => this.fitAssessmentService.canonicalizeSkill(s))
       .filter((s) => ALL_TECH_TAGS.has(s));
   }

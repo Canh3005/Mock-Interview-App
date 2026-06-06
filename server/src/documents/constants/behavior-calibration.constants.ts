@@ -1,4 +1,5 @@
 import { QUESTION_BANK_TAXONOMY } from '../../question-bank/constants/question-bank-taxonomy.constants';
+import type { QuestionProbeCompetency } from '../../question-bank/constants/question-bank-taxonomy.constants';
 import type {
   HiringRiskType,
   RiskSeverity,
@@ -34,6 +35,27 @@ export const RISK_TAG_TO_TYPE: Record<string, HiringRiskType> = {
   generic: 'generic_answering',
   no_impact: 'missing_business_impact',
 };
+
+export const RISK_TYPE_TO_COMPETENCIES: Record<
+  HiringRiskType,
+  QuestionProbeCompetency[]
+> = {
+  level_mismatch: ['ownership', 'system_thinking', 'trade_off_analysis'],
+  claim_without_evidence: ['impact_measurement', 'ownership'],
+  weak_technical_depth: ['technical_fundamentals', 'trade_off_analysis'],
+  unclear_scope: ['ownership', 'problem_solving'],
+  overstated_ownership: ['ownership', 'collaboration'],
+  missing_business_impact: ['impact_measurement', 'problem_solving'],
+  weak_conflict_handling: ['conflict_handling', 'communication'],
+  generic_answering: ['communication', 'problem_solving'],
+  poor_tradeoff_reasoning: ['trade_off_analysis', 'system_thinking'],
+  low_learning_agility: ['learning_agility'],
+  communication_gap: ['communication'],
+};
+
+export const CLAIM_COUNT_READY_THRESHOLD = 3;
+export const COVERAGE_SCORE_READY_THRESHOLD = 0.5;
+export const MIN_PRIORITY_COMPETENCIES = 2;
 
 export const LEVEL_EXPECTATION_MAP: Record<LevelKey, LevelExpectationEntry> = {
   junior: {

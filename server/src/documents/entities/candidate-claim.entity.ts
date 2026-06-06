@@ -40,16 +40,13 @@ export class CandidateClaim {
   sourceType: ClaimSourceType;
 
   @Column({ type: 'jsonb' })
-  sourceRef: { section: string; textHash?: string };
+  sourceRef: { localId: string; section: string; textHash?: string };
 
   @Column({ type: 'varchar', length: 30 })
   claimType: ClaimType;
 
   @Column({ type: 'text' })
   claimText: string;
-
-  @Column({ type: 'text' })
-  normalizedClaim: string;
 
   @Column({ type: 'jsonb', default: [] })
   impliedCompetencies: QuestionProbeCompetency[];
@@ -59,9 +56,6 @@ export class CandidateClaim {
 
   @Column({ type: 'jsonb', default: [] })
   techContext: string[];
-
-  @Column({ type: 'jsonb', default: [] })
-  evidenceHints: string[];
 
   @Column({ type: 'jsonb', default: [] })
   riskTags: string[];

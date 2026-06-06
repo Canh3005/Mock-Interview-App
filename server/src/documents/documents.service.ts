@@ -1,4 +1,9 @@
-import { BadRequestException, Inject, Injectable, Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bullmq';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Queue, QueueEvents } from 'bullmq';
@@ -338,7 +343,9 @@ export class DocumentsService {
 
       const latestCv =
         await this.contextService.getLatestCompletedCvRecord(userId);
-      const missingSources: string[] = latestCv?.parsedJson ? [] : ['cv_context'];
+      const missingSources: string[] = latestCv?.parsedJson
+        ? []
+        : ['cv_context'];
 
       await this.jdRepository.save(jdRecord);
       await this.contextService.clearOverrideForType(
@@ -642,7 +649,11 @@ export class DocumentsService {
         this._emitSse(res, { type: 'error', message: 'Job not found' });
         return;
       }
-      const result = await job.waitUntilFinished(this.queueEvents, 5 * 60 * 1000);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const result = await job.waitUntilFinished(
+        this.queueEvents,
+        5 * 60 * 1000,
+      );
       this._emitSse(res, result as object);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Parse failed';
@@ -677,7 +688,6 @@ export class DocumentsService {
       this._emitSse(res, {
         type: 'fit_assessment',
         fitScore: jdRecord.fitScore,
-        fitAssessment,
         fitAssessmentSummary,
       });
 
@@ -690,7 +700,10 @@ export class DocumentsService {
         fitAssessment,
       });
     } catch (error) {
-      this._emitSse(res, { type: 'error', message: this.toSafeErrorMessage(error) });
+      this._emitSse(res, {
+        type: 'error',
+        message: this.toSafeErrorMessage(error),
+      });
     } finally {
       res.end();
     }

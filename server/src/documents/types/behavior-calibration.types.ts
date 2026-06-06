@@ -17,7 +17,7 @@ export interface SourceCompleteness {
   hasWeaknessHistory: boolean;
 }
 
-// ─── BC-3 output — claim mining (LLM) ────────────────────────────────────────
+// ─── Step 1 — structured claim (deterministic extraction) ────────────────────
 
 export type ClaimType =
   | 'led_team'
@@ -28,34 +28,52 @@ export type ClaimType =
   | 'mentored'
   | 'conflict'
   | 'failure'
-  | 'domain_experience';
+  | 'domain_experience'
+  | 'unknown';
 
 export type ClaimSourceType = 'cv' | 'jd' | 'profile' | 'history';
 
 export type VerificationPriority = 'low' | 'medium' | 'high';
 
+export interface StructuredClaim {
+  localId: string;
+  sourceType: ClaimSourceType;
+  sourceRef: { section: string };
+  claimType: ClaimType;
+  claimText: string;
+  techContext: string[];
+}
+
+// ─── Step 2 — claim enrichment (LLM) ─────────────────────────────────────────
+
+export interface ClaimEnrichment {
+  localId: string;
+  claimType: ClaimType;
+  impliedCompetencies: QuestionProbeCompetency[];
+  riskTags: string[];
+}
+
+export interface EnrichedClaimOutput {
+  enrichments: ClaimEnrichment[];
+}
+
+// ─── Merged claim (StructuredClaim + ClaimEnrichment) ────────────────────────
+
 export interface RawCandidateClaim {
   sourceType: ClaimSourceType;
   sourceRef: {
+    localId: string;
     section: string;
     textHash?: string;
   };
   claimType: ClaimType;
   claimText: string;
-  normalizedClaim: string;
   impliedCompetencies: string[];
-  evidenceHints: string[];
   techContext: string[];
   riskTags: string[];
 }
 
-export interface ClaimMiningOutput {
-  miningConfidence: 'high' | 'medium' | 'low';
-  claims: RawCandidateClaim[];
-  unmappedSignals: string[];
-}
-
-// ─── BC-4a output — seeded risks (deterministic) ─────────────────────────────
+// ─── Step 3 — seeded risks (deterministic) ───────────────────────────────────
 
 export type HiringRiskType =
   | 'level_mismatch'
@@ -73,47 +91,41 @@ export type HiringRiskType =
 export type RiskSeverity = 'low' | 'medium' | 'high';
 
 export interface SeededRisk {
+  localRiskId: string;
   riskType: HiringRiskType;
   severity: RiskSeverity;
   sourceRef: {
-    fitAssessmentField: 'gaps' | 'riskFlags' | 'claim_tags';
+    fitAssessmentField: 'gaps' | 'riskFlags' | 'claim_tags' | 'coverage_gap';
     originalCategory: string;
   };
   rationale: string;
   relatedRequirement?: string;
 }
 
-// ─── BC-4b output — behavioral risks (LLM) ───────────────────────────────────
+// ─── Step 4 — risk enrichment (LLM) ──────────────────────────────────────────
 
-export type BehavioralRiskType =
-  | 'overstated_ownership'
-  | 'missing_business_impact'
-  | 'weak_conflict_handling'
-  | 'generic_answering'
-  | 'poor_tradeoff_reasoning'
-  | 'low_learning_agility'
-  | 'communication_gap';
-
-export interface RawBehavioralRisk {
-  riskType: BehavioralRiskType;
-  candidateClaimRef?: string;
-  rationale: string;
-  relatedCompetencies: string[];
+export interface SeededRiskEnrichment {
+  localRiskId: string;
   suggestedProbeFocus: string[];
 }
 
-export interface BehavioralRiskOutput {
-  hypotheses: RawBehavioralRisk[];
-  priorityCompetencies: string[];
-  calibrationNotes: string[];
+export interface AdditionalRisk {
+  riskType: HiringRiskType;
+  candidateClaimLocalId: string;
+  rationale: string;
+  suggestedProbeFocus: string[];
+}
+
+export interface RiskEnrichmentOutput {
+  seededRiskEnrichments: SeededRiskEnrichment[];
+  additionalRisks: AdditionalRisk[];
   userFacingSummary: {
     focusAreas: string[];
     evidenceToPrep: string[];
-    missingDataWarning?: string;
   };
 }
 
-// ─── BC-5 output — calibration profile (deterministic) ───────────────────────
+// ─── Step 5 — calibration profile (deterministic) ────────────────────────────
 
 export interface LevelExpectation {
   level: string;
