@@ -46,10 +46,10 @@ export const PROBE_COUNTS: Record<
   Record<InterviewDepth, number>
 > = {
   stage_1_culture_fit: { broad: 1, deep: 1 },
-  stage_2_tech_stack: { broad: 1, deep: 10 },
-  stage_3_domain_knowledge: { broad: 1, deep: 8 },
-  stage_4_cv_deep_dive: { broad: 1, deep: 3 },
-  stage_5_soft_skills: { broad: 1, deep: 1 },
+  stage_2_tech_stack: { broad: 8, deep: 10 },
+  stage_3_domain_knowledge: { broad: 6, deep: 8 },
+  stage_4_cv_deep_dive: { broad: 2, deep: 3 },
+  stage_5_soft_skills: { broad: 2, deep: 1 },
   stage_6_reverse_interview: { broad: 1, deep: 1 },
 };
 
