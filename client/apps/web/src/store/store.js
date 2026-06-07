@@ -15,6 +15,9 @@ import walletReducer from './slices/walletSlice';
 import paymentReducer from './slices/paymentSlice';
 import questionBankAdminReducer from './slices/questionBankAdminSlice';
 import questionBankReducer from './slices/questionBankSlice';
+import notificationsReducer from './slices/notificationsSlice';
+import adminUsersReducer from './slices/adminUsersSlice';
+import adminAnalyticsReducer from './slices/adminAnalyticsSlice';
 
 export const sagaMiddleware = createSagaMiddleware();
 
@@ -35,6 +38,9 @@ export const store = configureStore({
     payment: paymentReducer,
     questionBankAdmin: questionBankAdminReducer,
     questionBank: questionBankReducer,
+    notifications: notificationsReducer,
+    adminUsers: adminUsersReducer,
+    adminAnalytics: adminAnalyticsReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ 

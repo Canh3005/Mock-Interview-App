@@ -39,6 +39,7 @@ export interface PlannedProbe {
   selectionScore: number;
   selectionReason: string;
   estimatedMinutes: number;
+  personalizedQuestion?: string;
   isFallbackFor?: string;
   fallbackTrigger?: FallbackTrigger;
 }

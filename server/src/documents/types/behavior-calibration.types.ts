@@ -51,6 +51,7 @@ export interface ClaimEnrichment {
   claimType: ClaimType;
   impliedCompetencies: QuestionProbeCompetency[];
   riskTags: string[];
+  suggestedQuestions: string[];
 }
 
 export interface EnrichedClaimOutput {
@@ -71,6 +72,7 @@ export interface RawCandidateClaim {
   impliedCompetencies: string[];
   techContext: string[];
   riskTags: string[];
+  suggestedQuestions: string[];
 }
 
 // ─── Step 3 — seeded risks (deterministic) ───────────────────────────────────

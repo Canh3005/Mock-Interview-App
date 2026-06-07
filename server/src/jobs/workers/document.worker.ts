@@ -19,9 +19,7 @@ interface DocumentJobData {
 export class DocumentWorker extends WorkerHost {
   private readonly logger = new Logger(DocumentWorker.name);
 
-  constructor(
-    private readonly documentsService: DocumentsService,
-  ) {
+  constructor(private readonly documentsService: DocumentsService) {
     super();
     this.logger.log(
       `DocumentWorker listening to queue: ${DOCUMENT_PARSING_QUEUE}`,
@@ -60,8 +58,6 @@ export class DocumentWorker extends WorkerHost {
           throw new Error(`Unknown job name: ${job.name}`);
       }
       return result;
-    } catch (error) {
-      throw error;
     } finally {
       await this.documentsService.cleanupUploadedFile(filePath);
     }

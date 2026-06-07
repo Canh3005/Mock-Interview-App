@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowLeft, BookOpenCheck, Database, FileCode2, LogOut, Network } from 'lucide-react';
+import { ArrowLeft, BarChart3, BookOpenCheck, Database, FileCode2, LogOut, Network, Users } from 'lucide-react';
 import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -21,7 +21,11 @@ export default function AdminLayout({ children }) {
           ? t('adminLayout.systemDesign')
           : pathname === ROUTES.ADMIN_QUESTION_BANK
             ? t('adminLayout.questionBank')
-            : t('adminLayout.dashboardAdmin');
+            : pathname === ROUTES.ADMIN_USERS
+              ? t('adminLayout.userManagement')
+              : pathname === ROUTES.ADMIN_ANALYTICS
+                ? t('adminLayout.analytics')
+                : t('adminLayout.dashboardAdmin');
 
   const handleLogout = () => {
     dispatch(logoutRequest());
@@ -96,6 +100,32 @@ export default function AdminLayout({ children }) {
           >
             <BookOpenCheck className="w-5 h-5" />
             {t('adminLayout.questionBank')}
+          </button>
+
+          <div className="h-px bg-slate-700/60 my-4 mx-2" />
+
+          <button
+            onClick={() => navigate(ROUTES.ADMIN_USERS)}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium cursor-pointer ${
+              pathname === ROUTES.ADMIN_USERS
+                ? 'bg-cta/15 text-cta border border-cta/30'
+                : 'text-slate-400 hover:bg-slate-800 hover:text-white border border-transparent'
+            }`}
+          >
+            <Users className="w-5 h-5" />
+            {t('adminLayout.userManagement')}
+          </button>
+
+          <button
+            onClick={() => navigate(ROUTES.ADMIN_ANALYTICS)}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium cursor-pointer ${
+              pathname === ROUTES.ADMIN_ANALYTICS
+                ? 'bg-cta/15 text-cta border border-cta/30'
+                : 'text-slate-400 hover:bg-slate-800 hover:text-white border border-transparent'
+            }`}
+          >
+            <BarChart3 className="w-5 h-5" />
+            {t('adminLayout.analytics')}
           </button>
         </nav>
 

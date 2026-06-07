@@ -186,7 +186,12 @@ export class ProbeSelectorService {
       fallbackCount: selectedRaw.length,
     });
     const selected: PlannedProbe[] = selectedRaw.map((s, i) =>
-      this._buildPlannedProbe({ probe: s.probe, order: i + 1, score: s.score }),
+      this._buildPlannedProbe({
+        probe: s.probe,
+        order: i + 1,
+        score: s.score,
+        personalizedQuestion: s.personalizedQuestion,
+      }),
     );
     const fallbacks: PlannedProbe[] = fallbackRaw.map((s, i) =>
       this._buildPlannedProbe({
@@ -552,10 +557,14 @@ export class ProbeSelectorService {
       });
 
       selectedIds.add(picked.probe.id);
-      selected.push(picked);
+      selected.push({
+        probe: picked.probe,
+        score: picked.score,
+        personalizedQuestion: claim.suggestedQuestions[0],
+      });
     }
 
-    // Phase 2: fill remaining slots with highest aggregate-scored probes
+    // Phase 2: fill remaining slots with highest aggregate-scored probes (no claim anchor)
     if (selected.length < count) {
       scored
         .filter((s) => !selectedIds.has(s.probe.id))
@@ -1276,12 +1285,14 @@ export class ProbeSelectorService {
     probe,
     order,
     score,
+    personalizedQuestion,
     isFallbackFor,
     fallbackTrigger,
   }: {
     probe: QuestionProbe;
     order: number;
     score: number;
+    personalizedQuestion?: string;
     isFallbackFor?: string;
     fallbackTrigger?: FallbackTrigger;
   }): PlannedProbe {
@@ -1289,17 +1300,22 @@ export class ProbeSelectorService {
       probe.techTags.length > 0
         ? `Tech: ${probe.techTags.slice(0, 3).join(', ')}`
         : `Competency: ${probe.competencies.slice(0, 2).join(', ')}`;
-    return {
+    const planned: PlannedProbe = {
       questionProbeId: probe.id,
       questionProbeRevision: probe.revision,
       plannedOrder: order,
       selectionScore: Math.round(score * 1000) / 1000,
       selectionReason: tagLabel,
       estimatedMinutes: 0,
-      ...(isFallbackFor !== undefined
-        ? { isFallbackFor, fallbackTrigger }
-        : {}),
     };
+    if (personalizedQuestion !== undefined) {
+      planned.personalizedQuestion = personalizedQuestion;
+    }
+    if (isFallbackFor !== undefined) {
+      planned.isFallbackFor = isFallbackFor;
+      planned.fallbackTrigger = fallbackTrigger;
+    }
+    return planned;
   }
 
   private _scoreDomainProbe({

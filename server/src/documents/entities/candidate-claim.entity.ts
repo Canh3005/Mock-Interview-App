@@ -60,6 +60,9 @@ export class CandidateClaim {
   @Column({ type: 'jsonb', default: [] })
   riskTags: string[];
 
+  @Column({ type: 'jsonb', default: [] })
+  suggestedQuestions: string[];
+
   @CreateDateColumn()
   createdAt: Date;
 

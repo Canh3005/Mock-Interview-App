@@ -126,6 +126,9 @@ export class QuestionProbe {
   @Column({ type: 'timestamptz', nullable: true })
   retiredAt!: Date | null;
 
+  @Column({ type: 'int', default: 0 })
+  viewCount!: number;
+
   @CreateDateColumn()
   createdAt!: Date;
 

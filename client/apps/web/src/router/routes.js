@@ -18,6 +18,8 @@ export const ROUTES = {
   ADMIN_TESTCASES: '/admin/testcases',
   ADMIN_SD_PROBLEMS: '/admin/sd-problems',
   ADMIN_QUESTION_BANK: '/admin/question-bank',
+  ADMIN_USERS: '/admin/users',
+  ADMIN_ANALYTICS: '/admin/analytics',
   BUY_CREDITS: '/buy-credits',
   PAYMENT_RESULT: '/payment/result',
   WALLET_HISTORY: '/wallet/history',

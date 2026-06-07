@@ -1,7 +1,8 @@
 import { useEffect, useLayoutEffect } from 'react'
-import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, Outlet, useLocation } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { checkAuthRequest } from './store/slices/authSlice'
+import { fetchUnreadRequest } from './store/slices/notificationsSlice'
 import { ROUTES } from './router/routes'
 import ProtectedRoute from './router/ProtectedRoute'
 import GuestRoute from './router/GuestRoute'
@@ -27,6 +28,8 @@ import AdminProblemsPage from './components/admin/AdminProblemsPage'
 import AdminTestCasesPage from './components/admin/AdminTestCasesPage'
 import AdminSDProblemsPage from './components/admin/AdminSDProblemsPage'
 import AdminQuestionBankPage from './components/admin/AdminQuestionBankPage'
+import AdminUsersPage from './components/admin/AdminUsersPage'
+import AdminAnalyticsPage from './components/admin/AdminAnalyticsPage'
 import DashboardShell from './components/shared/DashboardShell'
 import BuyCreditsPage from './components/payment/BuyCreditsPage'
 import PaymentResultPage from './components/payment/PaymentResultPage'
@@ -44,13 +47,45 @@ function PublicDarkTheme() {
   )
 }
 
+function ScrollToTop() {
+  const { pathname } = useLocation()
+
+  useLayoutEffect(() => {
+    if (!('scrollRestoration' in window.history)) return undefined
+
+    const previousScrollRestoration = window.history.scrollRestoration
+    window.history.scrollRestoration = 'manual'
+
+    return () => {
+      window.history.scrollRestoration = previousScrollRestoration
+    }
+  }, [])
+
+  useLayoutEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
+    document.documentElement.scrollTop = 0
+    document.documentElement.scrollLeft = 0
+    document.body.scrollTop = 0
+    document.body.scrollLeft = 0
+  }, [pathname])
+
+  return null
+}
+
 function AppRoutes() {
   const dispatch = useDispatch()
   const roundTransitionPending = useSelector((s) => s.interviewSetup.roundTransitionPending)
+  const isAuthenticated = useSelector((s) => s.auth.isAuthenticated)
 
   useEffect(() => {
     dispatch(checkAuthRequest())
   }, [dispatch])
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      dispatch(fetchUnreadRequest())
+    }
+  }, [isAuthenticated, dispatch])
 
   return (
     <>
@@ -89,6 +124,8 @@ function AppRoutes() {
               <Route path={ROUTES.ADMIN_TESTCASES} element={<AdminTestCasesPage />} />
               <Route path={ROUTES.ADMIN_SD_PROBLEMS} element={<AdminSDProblemsPage />} />
               <Route path={ROUTES.ADMIN_QUESTION_BANK} element={<AdminQuestionBankPage />} />
+              <Route path={ROUTES.ADMIN_USERS} element={<AdminUsersPage />} />
+              <Route path={ROUTES.ADMIN_ANALYTICS} element={<AdminAnalyticsPage />} />
             </Route>
             <Route path={ROUTES.DSA_ROOM_SOLO} element={<DSASessionPage />} />
           </Route>
@@ -109,6 +146,7 @@ function AppRoutes() {
 export default function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <AppRoutes />
     </BrowserRouter>
   )

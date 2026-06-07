@@ -53,6 +53,10 @@ export class QuestionBankDetailService {
     });
     if (!probe) throw new NotFoundException('Question probe not found');
 
+    this.probeRepository
+      .increment({ id: probeId }, 'viewCount', 1)
+      .catch(() => {});
+
     const card: PublicQuestionProbeCard = this.projectionService.toPublicCard({
       probe,
       locale,

@@ -14,6 +14,9 @@ import { watchWalletSaga } from './walletSaga';
 import { watchPaymentSaga } from './paymentSaga';
 import { watchQuestionBankAdminSaga } from './questionBankAdminSaga';
 import { watchQuestionBankSaga } from './questionBankSaga';
+import { watchNotificationsSaga } from './notificationsSaga';
+import { watchAdminUsersSaga } from './adminUsersSaga';
+import { watchAdminAnalyticsSaga } from './adminAnalyticsSaga';
 
 export default function* rootSaga() {
   yield all([
@@ -32,5 +35,8 @@ export default function* rootSaga() {
     fork(watchPaymentSaga),
     fork(watchQuestionBankAdminSaga),
     fork(watchQuestionBankSaga),
+    fork(watchNotificationsSaga),
+    fork(watchAdminUsersSaga),
+    fork(watchAdminAnalyticsSaga),
   ]);
 }

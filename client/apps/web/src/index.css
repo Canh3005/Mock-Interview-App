@@ -694,6 +694,62 @@ h1, h2, h3, h4, h5, h6 {
 ::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #1B4332; }
 
+html.overlay-scrollbars-enabled,
+html.overlay-scrollbars-enabled * {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+html.overlay-scrollbars-enabled::-webkit-scrollbar,
+html.overlay-scrollbars-enabled *::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+}
+
+html.overlay-scrollbar-dragging {
+  cursor: grabbing;
+}
+
+.overlay-scrollbar-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483647;
+  pointer-events: none;
+}
+
+.overlay-scrollbar-thumb {
+  position: fixed;
+  display: none;
+  border-radius: 999px;
+  background-color: var(--dash-scroll-thumb, #D1D5DB);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.24);
+  opacity: 0;
+  pointer-events: auto;
+  transition: background-color 150ms ease, opacity 150ms ease;
+}
+
+.overlay-scrollbar-thumb.is-vertical {
+  cursor: ns-resize;
+}
+
+.overlay-scrollbar-thumb.is-horizontal {
+  cursor: ew-resize;
+}
+
+.overlay-scrollbar-thumb.is-visible {
+  opacity: 0.64;
+}
+
+.overlay-scrollbar-thumb:hover,
+.overlay-scrollbar-thumb.is-dragging {
+  background-color: var(--dash-scroll-thumb-hover, #1B4332);
+  opacity: 0.96;
+}
+
+.dark .overlay-scrollbar-thumb {
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.18);
+}
+
 /* =========================================================
    INTERVIEW ROOM — Syntax Highlight Tokens
    High-contrast for dark editor background #0D1628

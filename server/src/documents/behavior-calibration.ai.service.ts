@@ -165,6 +165,11 @@ export class BehaviorCalibrationAiService {
             ? (e.impliedCompetencies as ClaimEnrichment['impliedCompetencies'])
             : [],
           riskTags: Array.isArray(e.riskTags) ? (e.riskTags as string[]) : [],
+          suggestedQuestions: Array.isArray(e.suggestedQuestions)
+            ? (e.suggestedQuestions as string[]).filter(
+                (q) => typeof q === 'string' && q.trim().length > 0,
+              )
+            : [],
         }));
       return { enrichments };
     } catch {

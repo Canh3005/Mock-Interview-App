@@ -102,7 +102,9 @@ export class DocumentsController {
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Update parsed JSON of the latest completed CV record' })
+  @ApiOperation({
+    summary: 'Update parsed JSON of the latest completed CV record',
+  })
   @Patch('cv/current')
   async updateCvJson(
     @Req() req: { user: { id: string } },
@@ -113,7 +115,9 @@ export class DocumentsController {
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Update parsed JSON of the latest completed JD record' })
+  @ApiOperation({
+    summary: 'Update parsed JSON of the latest completed JD record',
+  })
   @Patch('jd/current')
   async updateJdJson(
     @Req() req: { user: { id: string } },
@@ -124,7 +128,9 @@ export class DocumentsController {
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get latest CV and JD context for the current user' })
+  @ApiOperation({
+    summary: 'Get latest CV and JD context for the current user',
+  })
   @Get('context')
   async getDocumentContext(@Req() req: { user: { id: string } }) {
     return this.documentsService.getDocumentContext(req.user.id);
@@ -174,10 +180,7 @@ export class DocumentsController {
     @Req() req: { user: { id: string } },
     @Res() res: Response,
   ): Promise<void> {
-    await this.documentsService.streamCompatibilityAssessment(
-      req.user.id,
-      res,
-    );
+    await this.documentsService.streamCompatibilityAssessment(req.user.id, res);
   }
 
   @UseGuards(JwtAuthGuard)

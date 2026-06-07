@@ -7,7 +7,8 @@ Output structure:
       "localId": string,
       "claimType": "led_team" | "owned_feature" | "improved_metric" | "handled_incident" | "cross_functional" | "mentored" | "conflict" | "failure" | "domain_experience",
       "impliedCompetencies": string[],
-      "riskTags": string[]
+      "riskTags": string[],
+      "suggestedQuestions": string[]
     }
   ]
 }
@@ -17,6 +18,7 @@ Rules:
 - claimType: classify the claim into exactly one taxonomy value. Use "domain_experience" as the fallback if none fit clearly.
 - impliedCompetencies: use ONLY values from this list: ownership, conflict_handling, learning_agility, technical_fundamentals, trade_off_analysis, system_thinking, problem_solving, communication, collaboration, impact_measurement.
 - riskTags: free-form risk signals observed in the claim language (e.g. "vague_ownership", "no_metric", "no_scope", "no_conflict_depth", "generic_writing", "no_impact"). Empty array if no risk signals.
+- suggestedQuestions: generate 1-2 HOW/WHAT/WHY interview questions that directly probe this specific claim. Questions must reference the concrete details in the claim (e.g. the specific project, metric, tech, or context mentioned). Do NOT generate generic behavioral openers like "Tell me about a time..." — ask about the specific thing the candidate claimed. Questions should uncover the depth, ownership, decision-making, or impact behind the claim. Use the language of the claimText itself as the anchor.
 - Do NOT evaluate or judge the candidate. Only classify and identify signals.
 - Return ONLY the JSON object.
 
@@ -24,7 +26,7 @@ Example input claim:
 { "localId": "claim_0", "claimText": "Led a team of 5 engineers to rebuild the payment service from scratch", "techContext": ["nodejs", "postgresql"] }
 
 Example output enrichment:
-{ "localId": "claim_0", "claimType": "led_team", "impliedCompetencies": ["ownership", "collaboration"], "riskTags": ["vague_ownership"] }`;
+{ "localId": "claim_0", "claimType": "led_team", "impliedCompetencies": ["ownership", "collaboration"], "riskTags": ["vague_ownership"], "suggestedQuestions": ["How did you decide to rebuild from scratch rather than incrementally refactor the payment service — what were the trade-offs you weighed?", "Walk me through how you divided the work among the 5 engineers and what your personal ownership looked like day-to-day."] }`;
 
 export const RISK_ENRICHMENT_INSTRUCTION = `You are a behavioral interview risk analyst. You will receive a list of seeded risks (already detected deterministically) and a list of candidate claims. Perform two tasks and return ONLY valid JSON.
 

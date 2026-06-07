@@ -4,7 +4,6 @@ import {
   ChevronLeft,
   Sun,
   Moon,
-  Bell,
   Settings,
   User,
   Home,
@@ -12,6 +11,7 @@ import {
   Coins,
   BookOpenCheck,
 } from 'lucide-react'
+import NotificationDropdown from './NotificationDropdown'
 import { useTranslation } from 'react-i18next'
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
@@ -174,7 +174,7 @@ function DashboardBar({ darkMode, onToggleDark }) {
             label={darkMode ? t('shared.lightMode') : t('shared.darkMode')}
             onClick={onToggleDark}
           />
-          <IconBtn icon={Bell} label={t('shared.notifications')} badge />
+          <NotificationDropdown />
           <IconBtn icon={Settings} label={t('shared.settings')} />
           <DashboardUserMenu />
         </div>

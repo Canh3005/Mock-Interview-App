@@ -1,4 +1,4 @@
-import { useState, useEffect, createContext, useContext } from 'react'
+import { useState, useEffect, useLayoutEffect, useRef, createContext, useContext } from 'react'
 import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
@@ -14,7 +14,6 @@ import {
   LogOut,
   Sun,
   Moon,
-  Bell,
   Coins,
   Wallet,
   ChevronDown,
@@ -33,6 +32,7 @@ import { resetInterviewer } from '../../store/slices/sdInterviewerSlice'
 import { evaluationReset } from '../../store/slices/sdEvaluatorSlice'
 import { resetSetup } from '../../store/slices/interviewSetupSlice'
 import LanguageSwitcher from './LanguageSwitcher'
+import NotificationDropdown from './NotificationDropdown'
 
 const SidebarCollapsedContext = createContext(false)
 const NavigationRequestContext = createContext(null)
@@ -125,13 +125,7 @@ function TopBar({ darkMode, onToggleDark, focusMode = false, focusLabel, onNavig
             {darkMode ? <Sun size={19} /> : <Moon size={19} />}
           </button>
 
-          <button
-            aria-label={t('shared.notifications')}
-            className="dash-icon-button relative"
-          >
-            <Bell size={19} />
-            <span className="absolute right-2.5 top-2.5 h-2 w-2 rounded-full bg-cta ring-2 ring-[var(--dash-shell)]" />
-          </button>
+          <NotificationDropdown dashTheme />
 
           <button
             aria-label={t('shared.settings')}
@@ -300,7 +294,7 @@ function Sidebar({ collapsed, collapseLocked = false, onToggleCollapsed, onNavig
 
       <nav
         id="dashboard-sidebar-nav"
-        className={collapsed ? 'flex-1 space-y-2 overflow-y-auto pb-4' : 'flex-1 space-y-1 overflow-y-auto pb-4'}
+        className={collapsed ? 'min-h-0 flex-1 space-y-2 overflow-y-auto pb-4' : 'min-h-0 flex-1 space-y-1 overflow-y-auto pb-4'}
         aria-label={t('shared.sidebarNavigation')}
       >
         <NavItem to={ROUTES.DASHBOARD} icon={LayoutDashboard} label={t('navbar.dashboard')} exact collapsed={collapsed} onRequestNavigate={onNavigate} />
@@ -325,6 +319,8 @@ function Sidebar({ collapsed, collapseLocked = false, onToggleCollapsed, onNavig
             <NavSubItem to={ROUTES.ADMIN_TESTCASES} label={t('adminLayout.uploadTestCases')} />
             <NavSubItem to={ROUTES.ADMIN_SD_PROBLEMS} label={t('adminLayout.systemDesign')} />
             <NavSubItem to={ROUTES.ADMIN_QUESTION_BANK} label={t('adminLayout.questionBank')} />
+            <NavSubItem to={ROUTES.ADMIN_USERS} label={t('adminLayout.userManagement')} />
+            <NavSubItem to={ROUTES.ADMIN_ANALYTICS} label={t('adminLayout.analytics')} />
           </NavItemGroup>
         )}
       </nav>
@@ -446,6 +442,7 @@ export default function DashboardShell() {
   const navigate = useNavigate()
   const location = useLocation()
   const dispatch = useDispatch()
+  const mainRef = useRef(null)
   const { t } = useTranslation()
   const { status: behavioralStatus, isStreaming, isEvaluating } = useSelector((s) => s.behavioral)
   const {
@@ -517,6 +514,10 @@ export default function DashboardShell() {
     window.localStorage.setItem('dashboard-sidebar-collapsed', sidebarCollapsed ? 'true' : 'false')
   }, [sidebarCollapsed])
 
+  useLayoutEffect(() => {
+    mainRef.current?.scrollTo({ top: 0, left: 0, behavior: 'auto' })
+  }, [location.pathname])
+
   const runNavigationIntent = (intent) => {
     if (!intent) return
     if (intent.resetInterview) {
@@ -580,6 +581,7 @@ export default function DashboardShell() {
             onToggleDark={() => setDarkMode((value) => !value)}
           />
           <main
+            ref={mainRef}
             className={[
               'dash-page-shell min-h-0 flex-1 transition-colors duration-200',
               isBehaviorFocusRoute || isDsaFocusRoute || isDsaSoloRoute || isSDFocusRoute ? 'overflow-hidden' : 'overflow-y-auto',

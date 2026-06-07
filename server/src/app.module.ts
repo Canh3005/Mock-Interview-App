@@ -1,9 +1,13 @@
 import { Module } from '@nestjs/common';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { ClsContextInterceptor } from './common/cls-context.interceptor';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CommonModule } from './common/common.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ClsModule } from 'nestjs-cls';
+import { RedisModule } from './redis/redis.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { ProblemsModule } from './problems/problems.module';
@@ -28,12 +32,19 @@ import { QuestionBankModule } from './question-bank/question-bank.module';
 import { SessionPlanningModule } from './session-planning/session-planning.module';
 import { BehaviorSessionModule } from './behavior-session/behavior-session.module';
 import { SDOrchestratorModule } from './sd-orchestrator/sd-orchestrator.module';
+import { NotificationsModule } from './notifications/notifications.module';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    ClsModule.forRoot({
+      global: true,
+      middleware: { mount: true, generateId: true },
+    }),
+    RedisModule,
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
@@ -88,8 +99,13 @@ import { SDOrchestratorModule } from './sd-orchestrator/sd-orchestrator.module';
     SessionPlanningModule,
     BehaviorSessionModule,
     SDOrchestratorModule,
+    NotificationsModule,
+    AdminModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    { provide: APP_INTERCEPTOR, useClass: ClsContextInterceptor },
+  ],
 })
 export class AppModule {}
