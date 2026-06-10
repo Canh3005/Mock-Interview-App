@@ -5,10 +5,7 @@ import type {
   SDGraphNode,
   SDGraphEdge,
 } from '../types/sd-orchestrator.types';
-import {
-  ENTRY_POINT_TYPES,
-  SOURCE_ACTOR_TYPES,
-} from '../constants/sd-walkthrough.constants';
+import { SOURCE_ACTOR_TYPES } from '../constants/sd-walkthrough.constants';
 
 @Injectable()
 export class SDWalkthroughPlannerService {
@@ -17,99 +14,41 @@ export class SDWalkthroughPlannerService {
     const { language } = context;
     const { progress } = tracker;
 
-    // Rule 1: required paths not covered — check exception first
+    // 1. Cover required paths first.
     const uncoveredRequiredPath = flowPaths
       .filter((p) => p.required && !progress.coveredPathIds.includes(p.id))
       .sort((a, b) => a.priority - b.priority)[0];
-
     if (uncoveredRequiredPath) {
-      // Exception: if path has unexplained nodes, probe those first
-      const blockingNodeId = uncoveredRequiredPath.expectedNodeSequence.find(
-        (nid) => progress.unexplainedNodeIds.includes(nid),
-      );
-      if (blockingNodeId) {
-        return this._buildComponentProbe(
-          graph,
-          blockingNodeId,
-          uncoveredRequiredPath.id,
-          language,
-          progress.unexplainedNodeIds,
-        );
-      }
-      // No blocking node — probe the path itself
-      const nodeChain = uncoveredRequiredPath.expectedNodeSequence
-        .map((id) => graph.nodes.find((n) => n.id === id)?.label ?? id)
-        .join(' → ');
-      return {
-        stage: 'DESIGN_WALKTHROUGH',
-        type: 'FLOW_PROBE',
-        promptTemplate: `Path "${uncoveredRequiredPath.name}" has not been explained. Ask candidate to walk through: ${uncoveredRequiredPath.description}. Known nodes: ${nodeChain}.`,
-        forbiddenHints: this._buildForbiddenHints(
-          graph,
-          progress.unexplainedNodeIds,
-          uncoveredRequiredPath.id,
-          uncoveredRequiredPath.expectedNodeSequence,
-        ),
-        maxSentences: 2,
-        language,
-        target: { targetPathId: uncoveredRequiredPath.id },
-      };
-    }
-
-    // Rule 2: database/queue node unexplained
-    const dbOrQueueNode = progress.unexplainedNodeIds
-      .map((id) => graph.nodes.find((n) => n.id === id))
-      .filter(
-        (n): n is SDGraphNode =>
-          n !== undefined &&
-          ['database', 'queue', 'cache', 'storage'].includes(n.type ?? ''),
-      )[0];
-    if (dbOrQueueNode) {
-      return this._buildComponentProbe(
+      return this._buildFlowProbe(
         graph,
-        dbOrQueueNode.id,
-        undefined,
+        uncoveredRequiredPath,
         language,
         progress.unexplainedNodeIds,
       );
     }
 
-    // Rule 3: async/pub-sub edge unexplained
-    const asyncEdge = progress.unexplainedEdgeIds
-      .map((id) => graph.edges.find((e) => e.id === id))
-      .filter((e): e is SDGraphEdge => e !== undefined)[0];
-    if (asyncEdge) {
-      const src =
-        graph.nodes.find((n) => n.id === asyncEdge.sourceId)?.label ??
-        asyncEdge.sourceId;
-      const tgt =
-        graph.nodes.find((n) => n.id === asyncEdge.targetId)?.label ??
-        asyncEdge.targetId;
-      return {
-        stage: 'DESIGN_WALKTHROUGH',
-        type: 'EDGE_PROBE',
-        promptTemplate: `The connection between "${src}" and "${tgt}" has not been explained. Ask about protocol, sync/async, data format.`,
-        forbiddenHints: this._buildForbiddenHints(
-          graph,
-          progress.unexplainedNodeIds,
-          null,
-        ),
-        maxSentences: 2,
-        language,
-        target: { targetEdgeId: asyncEdge.id },
-      };
-    }
-
-    // Rule 4: any remaining unexplained node
-    const nextNodeId = this._pickNextNodeByPriority(
-      graph,
-      progress.unexplainedNodeIds,
+    // 2. Then cover remaining unexplained nodes tracked from the candidate graph.
+    const nextNodeId = progress.unexplainedNodeIds.find((id) =>
+      graph.nodes.some((n) => n.id === id),
     );
     if (nextNodeId) {
       return this._buildComponentProbe(
         graph,
         nextNodeId,
         undefined,
+        language,
+        progress.unexplainedNodeIds,
+      );
+    }
+
+    // 3. Finally cover remaining unexplained edges tracked from the candidate graph.
+    const nextEdge = progress.unexplainedEdgeIds
+      .map((id) => graph.edges.find((e) => e.id === id))
+      .find((edge): edge is SDGraphEdge => edge !== undefined);
+    if (nextEdge) {
+      return this._buildEdgeProbe(
+        graph,
+        nextEdge,
         language,
         progress.unexplainedNodeIds,
       );
@@ -170,6 +109,23 @@ export class SDWalkthroughPlannerService {
       .join(' → ');
   }
 
+  private _buildFlowProbe(
+    graph: { nodes: SDGraphNode[] },
+    path: { id: string; name: string; description: string },
+    language: 'vi' | 'en' | 'ja',
+    unexplainedNodeIds: string[],
+  ): SDWalkthroughIntent {
+    return {
+      stage: 'DESIGN_WALKTHROUGH',
+      type: 'FLOW_PROBE',
+      promptTemplate: `The "${path.name}" flow has not been explained yet. Ask the candidate to walk through it step by step: ${path.description}.`,
+      forbiddenHints: this._buildForbiddenHints(graph, unexplainedNodeIds),
+      maxSentences: 2,
+      language,
+      target: { targetPathId: path.id },
+    };
+  }
+
   private _buildComponentProbe(
     graph: { nodes: SDGraphNode[]; edges: SDGraphEdge[] },
     targetNodeId: string,
@@ -187,8 +143,6 @@ export class SDWalkthroughPlannerService {
       forbiddenHints: this._buildForbiddenHints(
         graph,
         unexplainedNodeIds,
-        null,
-        undefined,
         targetNodeId,
       ),
       maxSentences: 2,
@@ -197,66 +151,36 @@ export class SDWalkthroughPlannerService {
     };
   }
 
+  private _buildEdgeProbe(
+    graph: { nodes: SDGraphNode[] },
+    edge: SDGraphEdge,
+    language: 'vi' | 'en' | 'ja',
+    unexplainedNodeIds: string[],
+  ): SDWalkthroughIntent {
+    const src =
+      graph.nodes.find((n) => n.id === edge.sourceId)?.label ?? edge.sourceId;
+    const tgt =
+      graph.nodes.find((n) => n.id === edge.targetId)?.label ?? edge.targetId;
+    return {
+      stage: 'DESIGN_WALKTHROUGH',
+      type: 'EDGE_PROBE',
+      promptTemplate: `The connection between "${src}" and "${tgt}" has not been explained. Ask about protocol, sync/async, data format.`,
+      forbiddenHints: this._buildForbiddenHints(graph, unexplainedNodeIds),
+      maxSentences: 2,
+      language,
+      target: { targetEdgeId: edge.id },
+    };
+  }
+
   private _buildForbiddenHints(
     graph: { nodes: SDGraphNode[] },
     unexplainedNodeIds: string[],
-    _targetPathId: string | null,
-    excludeSequence?: string[],
     excludeNodeId?: string,
   ): string[] {
-    // forbiddenHints = labels of unexplained nodes, excluding targetNodeId and path sequence nodes
+    // forbiddenHints = labels of unexplained nodes, excluding the current target.
     return unexplainedNodeIds
-      .filter(
-        (id) => id !== excludeNodeId && !(excludeSequence ?? []).includes(id),
-      )
+      .filter((id) => id !== excludeNodeId)
       .map((id) => graph.nodes.find((n) => n.id === id)?.label ?? '')
       .filter((label) => label.length > 0);
-  }
-
-  private _pickNextNodeByPriority(
-    graph: { nodes: SDGraphNode[] },
-    unexplainedNodeIds: string[],
-  ): string | undefined {
-    // Entry-point infrastructure first, then source actors last
-    const nodes = unexplainedNodeIds
-      .map((id) => graph.nodes.find((n) => n.id === id))
-      .filter((n): n is SDGraphNode => n !== undefined);
-
-    const entryPoint = nodes.find((n) =>
-      ENTRY_POINT_TYPES.some((t) => (n.type ?? '').toLowerCase().includes(t)),
-    );
-    if (entryPoint) return entryPoint.id;
-
-    const nonActor = nodes.find(
-      (n) =>
-        !SOURCE_ACTOR_TYPES.some(
-          (t) =>
-            (n.type ?? '').toLowerCase().includes(t) ||
-            n.label.toLowerCase().includes(t),
-        ),
-    );
-    if (nonActor) return nonActor.id;
-
-    return nodes[0]?.id;
-  }
-
-  buildRedirectIntent(
-    lang: 'vi' | 'en' | 'ja',
-    reason: 'scope_violation' | 'dont_know',
-  ): SDWalkthroughIntent {
-    const templates: Record<'scope_violation' | 'dont_know', string> = {
-      scope_violation:
-        'Candidate mentioned components outside the agreed scope. Redirect them to stay within clarified requirements without naming missing components.',
-      dont_know:
-        "Candidate said they don't know or went off-topic. Acknowledge briefly and redirect to another part of the diagram they haven't explained yet.",
-    };
-    return {
-      stage: 'DESIGN_WALKTHROUGH',
-      type: 'WALKTHROUGH_REDIRECT',
-      promptTemplate: templates[reason],
-      forbiddenHints: [],
-      maxSentences: 2,
-      language: lang,
-    };
   }
 }

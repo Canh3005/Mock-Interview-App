@@ -20,7 +20,10 @@ function BaseNode({ data, borderColor, Icon }) {
 
   return (
     <div className={`bg-card border-2 ${borderColor} rounded-lg px-3 py-2 min-w-[100px] shadow-sm`}>
-      <Handle type="target" position={Position.Top} className="!bg-slate-400" />
+      <Handle type="source" id="top" position={Position.Top} className="!bg-slate-400 !w-2 !h-2" />
+      <Handle type="source" id="right" position={Position.Right} className="!bg-slate-400 !w-2 !h-2" />
+      <Handle type="source" id="bottom" position={Position.Bottom} className="!bg-slate-400 !w-2 !h-2" />
+      <Handle type="source" id="left" position={Position.Left} className="!bg-slate-400 !w-2 !h-2" />
       <div className="flex flex-col items-center gap-1">
         <Icon className="w-5 h-5 text-slate-400" />
         {data.editing ? (
@@ -40,7 +43,6 @@ function BaseNode({ data, borderColor, Icon }) {
           </span>
         )}
       </div>
-      <Handle type="source" position={Position.Bottom} className="!bg-slate-400" />
     </div>
   )
 }

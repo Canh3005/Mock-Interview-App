@@ -113,6 +113,7 @@ export interface SDFlowPath {
   name: string;
   description: string;
   expectedNodeSequence: string[];
+  expectedEdges?: Array<{ from: string; to: string }>;
   required: boolean;
   priority: number;
 }
@@ -140,7 +141,7 @@ export interface SDClarificationData {
 export interface SDProbe {
   id: string;
   stage: 'DEEP_DIVE' | 'WRAP_UP';
-  dimension:
+  dimension?:
     | 'data_model'
     | 'scalability'
     | 'consistency'
@@ -149,32 +150,21 @@ export interface SDProbe {
     | 'cost'
     | 'security'
     | 'operability';
-  appliesToNodeTypes: string[];
+  appliesToNodeTypes?: string[];
   primaryQuestionTemplate: string;
+  structuralGapQuestion?: string;
   expectedSignals: string[];
   redFlags: string[];
-  followUps: Array<{
-    trigger:
-      | 'missing_tradeoff'
-      | 'missing_metric'
-      | 'vague_answer'
-      | 'red_flag';
+  followUps?: Array<{
+    trigger: string;
     questionTemplate: string;
   }>;
-}
-
-export interface SDCurveball {
-  id: string;
-  type:
+  curveballType?:
     | 'failure'
     | 'scale_spike'
     | 'constraint_change'
     | 'dependency_outage'
     | 'cost_pressure';
-  targetNodeType?: string;
-  scenarioTemplate: string;
-  expectedMitigations: string[];
-  redFlags: string[];
 }
 
 // ─── Graph Snapshot ───────────────────────────────────────────────────────────
@@ -204,11 +194,7 @@ export interface SDDeepDiveLeftoverJson {
 }
 
 export interface SDWrapUpLeftoverJson {
-  graphDeltaAfterCurveball: {
-    nodesAdded: number;
-    edgesAdded: number;
-    changedLabels: number;
-  };
+  completedScenarioIds: string[];
 }
 
 export type SDStageLeftoverJson =
@@ -257,6 +243,21 @@ export interface SDStageDecision<TIntent> {
   };
 }
 
+export interface SDDeepDiveIntentContext {
+  intentType:
+    | 'PROBE_PRIMARY'
+    | 'PROBE_FOLLOW_UP'
+    | 'PROBE_CHALLENGE'
+    | 'PROBE_REDIRECT';
+  followUpTrigger?: string;
+}
+
+export interface SDWrapUpIntentContext {
+  intentType: 'SCENARIO_PRESENT' | 'SCENARIO_FOLLOW_UP' | 'SCENARIO_CHALLENGE';
+  followUpReason?: 'blastRadius' | 'consistency' | 'mitigation';
+  challengeDetail?: string;
+}
+
 // ─── Session Stage State (persisted to sd_sessions.stageState) ───────────────
 
 export interface SDSessionStageState {
@@ -266,6 +267,7 @@ export interface SDSessionStageState {
   activeIntentJson?: Record<string, unknown>;
   graphSnapshotId?: string;
   hasNudgedEmptyCanvas?: boolean;
+  graphAnalysisJson?: Record<string, unknown>;
 }
 
 // ─── Stage 1 — Clarification ──────────────────────────────────────────────────
@@ -278,13 +280,13 @@ export type SDClarificationIntentType =
 
 export type SDClarificationIntent = SDQuestionIntent<
   SDClarificationIntentType,
-  { factKey?: string; dimension?: string }
+  { factKeys?: string[]; dimension?: string }
 >;
 
 export interface SDClarificationSignals {
   dimensionCovered: string[];
   factDisclosed: boolean;
-  matchedFactKey: string | null;
+  matchedFactKeys: string[];
   solutionLeapDetected: boolean;
 }
 
@@ -342,12 +344,9 @@ export type SDWalkthroughIntent = SDQuestionIntent<
 
 export interface SDWalkthroughSignals {
   coveredPathIds: string[];
-  dataOwnershipMentioned: boolean;
-  syncAsyncBoundaryMentioned: boolean;
   constraintLinked: boolean;
   scopeViolation: boolean;
   contradictionDetected: boolean;
-  persistenceMissing: boolean;
 }
 
 export interface SDWalkthroughExtra {
@@ -428,7 +427,7 @@ export interface SDDeepDiveSignals {
   expectedSignalsCovered: string[];
   tradeoffMentioned: boolean;
   metricsMentioned: boolean;
-  redFlagTriggered: boolean;
+  failureModeMentioned: boolean;
   constraintLinked: boolean;
 }
 
@@ -467,12 +466,22 @@ export interface SDDeepDiveTransitionCriteria {
   minProbes: number;
   maxProbes: number;
   maxStageSeconds: number;
-  requiredDimensions: SDProbe['dimension'][];
+  requiredDimensions: NonNullable<SDProbe['dimension']>[];
 }
 
 export interface SDDeepDivePlannerInput {
   graph: SDGraphState;
   graphMetrics: SDGraphMetrics;
+  graphAnalysis?: {
+    flowCoverage: Array<{
+      pathId: string;
+      covered: boolean;
+      missingRoles: string[];
+    }>;
+    componentGaps: string[];
+    structuralGapNodeTypes: string[];
+    probePriorities: string[];
+  };
   clarificationLeftover: SDClarificationLeftoverJson;
   walkthroughLeftover: SDWalkthroughLeftoverJson;
   walkthroughScores: Record<string, number>;
@@ -493,17 +502,14 @@ export type SDWrapUpIntentType =
 
 export type SDWrapUpIntent = SDQuestionIntent<
   SDWrapUpIntentType,
-  | { source: 'curveball'; scenarioId: string; targetNodeId?: string }
-  | { source: 'probe_fallback'; probeId: string; targetNodeId?: string }
+  { scenarioId: string }
 >;
 
 export interface SDWrapUpSignals {
   blastRadiusRecognized: boolean;
   mitigationProposed: boolean;
-  tradeoffMentioned: boolean;
-  costOrLatencyImpactMentioned: boolean;
   consistencyWithOriginalDesign: boolean;
-  graphAdaptationMade: boolean;
+  mentionedMitigations: string[];
 }
 
 export type SDWrapUpScoreDim =
@@ -519,18 +525,16 @@ export type SDWrapUpAssessment = SDResponseAssessment<
 >;
 
 export interface SDActiveScenarioState {
-  source: 'curveball' | 'probe_fallback';
   scenarioId: string;
   turnCount: number;
   followUpCount: number;
   challengeCount: number;
+  mentionedMitigations: string[];
   closeReason?: 'signals_covered' | 'turn_limit' | 'timebox';
-  perScenarioBaseSnapshotId?: string;
 }
 
 export interface SDWrapUpProgress {
   completedItemIds: string[];
-  baseGraphSnapshotId: string;
   activeScenario: SDActiveScenarioState | null;
   scenarioBudgetRemaining: number;
 }
@@ -547,7 +551,7 @@ export interface SDWrapUpTransitionCriteria {
 
 export interface SDWrapUpPlannerInput {
   graph: SDGraphState;
-  curveballs: SDCurveball[];
+  probeBank: SDProbe[];
   clarificationLeftover: SDClarificationLeftoverJson;
   deepDiveLeftover: SDDeepDiveLeftoverJson;
   deepDiveScores: Record<string, number>;

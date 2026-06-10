@@ -39,11 +39,13 @@ export class SDPolicyEngineService {
       };
     }
 
-    // 2. ANSWER_FACT — matched a fact key
-    if (signals.matchedFactKey) {
+    // 2. ANSWER_FACT — matched at least one fact key
+
+    if (signals.matchedFactKeys.length > 0) {
       return {
         action: 'ANSWER_FACT',
-        reason: `matchedFactKey=${signals.matchedFactKey}`,
+
+        reason: `matchedFactKeys=${signals.matchedFactKeys.join(',')}`,
       };
     }
 
@@ -153,10 +155,10 @@ export class SDPolicyEngineService {
     tracker: SDDeepDiveTracker,
     criteria: SDDeepDiveTransitionCriteria,
     activeProbeExpectedSignals: string[],
+    newCoveredSignals: string[],
     maxFollowUpsPerProbe = 3,
     maxTurnsPerProbe = 4,
   ): SDDeepDiveDecision {
-    const { signals } = assessment;
     const { progress } = tracker;
     const activeProbe = progress.activeProbe;
 
@@ -177,15 +179,8 @@ export class SDPolicyEngineService {
       };
     }
 
-    // Check all signals covered (cumulative)
-    const cumulativeCovered = [
-      ...new Set([
-        ...activeProbe.coveredSignals,
-        ...signals.expectedSignalsCovered,
-      ]),
-    ];
     const allSignalsCovered = activeProbeExpectedSignals.every((s) =>
-      cumulativeCovered.includes(s),
+      newCoveredSignals.includes(s),
     );
 
     if (allSignalsCovered) {
@@ -203,7 +198,7 @@ export class SDPolicyEngineService {
     }
 
     // Red flag challenge
-    if (signals.redFlagTriggered && activeProbe.challengeCount < 1) {
+    if (assessment.redFlags.length > 0 && activeProbe.challengeCount < 1) {
       return { action: 'ASK_CHALLENGE', reason: 'Red flag triggered' };
     }
 
@@ -263,8 +258,7 @@ export class SDPolicyEngineService {
     const isClosed =
       signals.mitigationProposed &&
       signals.blastRadiusRecognized &&
-      signals.consistencyWithOriginalDesign &&
-      (signals.graphAdaptationMade || followUpBudgetExhausted);
+      signals.consistencyWithOriginalDesign;
 
     if (isClosed || tracker.elapsedSeconds >= criteria.maxStageSeconds) {
       const newBudget = progress.scenarioBudgetRemaining - 1;
@@ -299,14 +293,6 @@ export class SDPolicyEngineService {
     // Follow-up: missing blast radius
     if (!signals.blastRadiusRecognized) {
       return { action: 'ASK_FOLLOW_UP', reason: 'blastRadiusRecognized=false' };
-    }
-
-    // Follow-up: missing graph adaptation
-    if (!signals.graphAdaptationMade && !followUpBudgetExhausted) {
-      return {
-        action: 'ASK_FOLLOW_UP',
-        reason: 'graphAdaptationMade=false — asking to update diagram',
-      };
     }
 
     return {

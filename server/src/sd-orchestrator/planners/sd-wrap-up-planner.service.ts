@@ -3,85 +3,95 @@ import type {
   SDWrapUpIntent,
   SDWrapUpPlannerInput,
   SDWrapUpTransitionCriteria,
-  SDCurveball,
   SDProbe,
 } from '../types/sd-orchestrator.types';
 import { WRAP_UP_CRITERIA } from '../constants/sd-wrap-up.constants';
-import type { SDWrapUpIntentTarget } from '../types/sd-wrap-up-planner.types';
+import { PROBE_DIMENSION_TO_CURVEBALL_TYPE } from '../constants/sd-deep-dive.constants';
 
 @Injectable()
 export class SDWrapUpPlannerService {
-  selectNextScenario(
-    input: SDWrapUpPlannerInput,
-  ): SDCurveball | SDProbe | null {
-    const { curveballs, tracker } = input;
+  selectNextScenario(input: SDWrapUpPlannerInput): SDProbe | null {
+    const { probeBank, tracker, deepDiveScores, deepDiveLeftover } = input;
     const completedIds = new Set(tracker.progress.completedItemIds);
 
-    // Rule 1: curveballs from problem definition in order
-    const nextCurveball = curveballs.find((c) => !completedIds.has(c.id));
-    if (nextCurveball) return nextCurveball;
+    const available = probeBank.filter((p) => !completedIds.has(p.id));
+    if (available.length === 0) return null;
 
-    // Rule 2: SDProbe fallback (stage: 'WRAP_UP') — pick weakest deep-dive dimension
-    // (probeBank is not directly available in WrapUpPlannerInput — handled by orchestrator)
-    return null;
+    // Rule 1: target probe matching weakest deep-dive dimension
+    const weakestDimension = this._findWeakestDimension(deepDiveScores);
+    if (weakestDimension) {
+      const targetTypes =
+        PROBE_DIMENSION_TO_CURVEBALL_TYPE[weakestDimension] ?? [];
+      const targeted = available.find(
+        (p) => p.curveballType && targetTypes.includes(p.curveballType),
+      );
+      if (targeted) return targeted;
+    }
+
+    // Rule 2: unresolved red flags → prefer failure or dependency_outage probe
+    if (deepDiveLeftover.unresolvedRedFlags.length > 0) {
+      const failureProbe = available.find(
+        (p) =>
+          p.curveballType === 'failure' ||
+          p.curveballType === 'dependency_outage',
+      );
+      if (failureProbe) return failureProbe;
+    }
+
+    // Rule 3: first available
+    return available[0] ?? null;
+  }
+
+  private _findWeakestDimension(scores: Record<string, number>): string | null {
+    const WEAK_THRESHOLD = 0.5;
+    let weakest: string | null = null;
+    let lowestScore = WEAK_THRESHOLD;
+    for (const [dimension, score] of Object.entries(scores)) {
+      if (score < lowestScore) {
+        lowestScore = score;
+        weakest = dimension;
+      }
+    }
+    return weakest;
   }
 
   buildPresentIntent(
-    scenario: SDCurveball | SDProbe,
+    scenario: SDProbe,
     language: 'vi' | 'en' | 'ja',
     cumulativeMentionedMitigations: string[],
   ): SDWrapUpIntent {
-    const isCurveball = 'scenarioTemplate' in scenario;
-    const template = isCurveball
-      ? scenario.scenarioTemplate
-      : scenario.primaryQuestionTemplate;
-    const expectedMitigations = isCurveball
-      ? scenario.expectedMitigations
-      : scenario.expectedSignals;
-    const forbiddenHints = expectedMitigations.filter(
+    const forbiddenHints = scenario.expectedSignals.filter(
       (m) => !cumulativeMentionedMitigations.includes(m),
     );
-    const target: SDWrapUpIntentTarget = isCurveball
-      ? { source: 'curveball' as const, scenarioId: scenario.id }
-      : { source: 'probe_fallback' as const, probeId: scenario.id };
 
     return {
       stage: 'WRAP_UP',
       type: 'SCENARIO_PRESENT',
-      promptTemplate: template,
+      promptTemplate: scenario.primaryQuestionTemplate,
       forbiddenHints,
       maxSentences: 3,
       language,
-      target,
+      target: { scenarioId: scenario.id },
     };
   }
 
   buildFollowUpIntent(
-    scenario: SDCurveball | SDProbe,
+    scenario: SDProbe,
     language: 'vi' | 'en' | 'ja',
     cumulativeMentionedMitigations: string[],
-    reason: 'blastRadius' | 'graphAdaptation' | 'consistency' | 'mitigation',
+    reason: 'blastRadius' | 'consistency' | 'mitigation',
   ): SDWrapUpIntent {
-    const isCurveball = 'scenarioTemplate' in scenario;
-    const expectedMitigations = isCurveball
-      ? scenario.expectedMitigations
-      : scenario.expectedSignals;
-    const forbiddenHints = expectedMitigations.filter(
+    const forbiddenHints = scenario.expectedSignals.filter(
       (m) => !cumulativeMentionedMitigations.includes(m),
     );
     const templates: Record<string, string> = {
       blastRadius:
         'Ask the candidate to elaborate on the impact and blast radius of this scenario.',
-      graphAdaptation:
-        'Ask candidate to update the diagram to reflect how their design handles this scenario.',
       consistency:
         'Ask how this scenario affects the consistency or correctness guarantees of their original design.',
       mitigation:
         'Ask the candidate to propose a concrete mitigation or adaptation strategy for this scenario.',
     };
-    const target: SDWrapUpIntentTarget = isCurveball
-      ? { source: 'curveball' as const, scenarioId: scenario.id }
-      : { source: 'probe_fallback' as const, probeId: scenario.id };
 
     return {
       stage: 'WRAP_UP',
@@ -90,26 +100,19 @@ export class SDWrapUpPlannerService {
       forbiddenHints,
       maxSentences: 2,
       language,
-      target,
+      target: { scenarioId: scenario.id },
     };
   }
 
   buildChallengeIntent(
-    scenario: SDCurveball | SDProbe,
+    scenario: SDProbe,
     language: 'vi' | 'en' | 'ja',
     cumulativeMentionedMitigations: string[],
     challengeDetail: string,
   ): SDWrapUpIntent {
-    const isCurveball = 'scenarioTemplate' in scenario;
-    const expectedMitigations = isCurveball
-      ? scenario.expectedMitigations
-      : scenario.expectedSignals;
-    const forbiddenHints = expectedMitigations.filter(
+    const forbiddenHints = scenario.expectedSignals.filter(
       (m) => !cumulativeMentionedMitigations.includes(m),
     );
-    const target: SDWrapUpIntentTarget = isCurveball
-      ? { source: 'curveball' as const, scenarioId: scenario.id }
-      : { source: 'probe_fallback' as const, probeId: scenario.id };
 
     return {
       stage: 'WRAP_UP',
@@ -118,24 +121,19 @@ export class SDWrapUpPlannerService {
       forbiddenHints,
       maxSentences: 2,
       language,
-      target,
+      target: { scenarioId: scenario.id },
     };
   }
 
-  isScenarioClosed(
-    signals: {
-      mitigationProposed: boolean;
-      blastRadiusRecognized: boolean;
-      consistencyWithOriginalDesign: boolean;
-      graphAdaptationMade: boolean;
-    },
-    followUpBudgetExhausted: boolean,
-  ): boolean {
+  isScenarioClosed(signals: {
+    mitigationProposed: boolean;
+    blastRadiusRecognized: boolean;
+    consistencyWithOriginalDesign: boolean;
+  }): boolean {
     return (
       signals.mitigationProposed &&
       signals.blastRadiusRecognized &&
-      signals.consistencyWithOriginalDesign &&
-      (signals.graphAdaptationMade || followUpBudgetExhausted)
+      signals.consistencyWithOriginalDesign
     );
   }
 

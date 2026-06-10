@@ -57,6 +57,7 @@ const MIN_LEFT = 240
 const MIN_RIGHT = 320
 const MIN_CONSOLE = 36
 const MAX_CONSOLE = 480
+const DEFAULT_LEFT = 420
 
 function useIsWideLayout() {
   const [isWide, setIsWide] = useState(() => {
@@ -285,7 +286,7 @@ export default function DSASessionPage() {
   const [showExitModal, setShowExitModal] = useState(false)
 
   const containerRef = useRef(null)
-  const [leftWidth, setLeftWidth] = useState(null)
+  const [leftWidth, setLeftWidth] = useState(DEFAULT_LEFT)
   const [consoleHeight, setConsoleHeight] = useState(180)
 
   const draggingH = useRef(false)
@@ -307,12 +308,6 @@ export default function DSASessionPage() {
   const total = visibleResults.length
   const aiCount = aiConversation.filter((message) => message.problemId === activeProblemId).length
   const isSoloMode = mode === 'solo' || location.pathname === ROUTES.DSA_ROOM_SOLO
-
-  useEffect(() => {
-    if (containerRef.current && leftWidth === null) {
-      setLeftWidth(Math.round(containerRef.current.offsetWidth * 0.42))
-    }
-  }, [leftWidth])
 
   useEffect(() => {
     if (activePhase === 'CODE' || activePhase === 'DONE') setMobilePanel('workspace')
@@ -385,7 +380,7 @@ export default function DSASessionPage() {
     event.preventDefault()
     draggingH.current = true
     dragStartX.current = event.clientX
-    dragStartLeft.current = leftWidth ?? MIN_LEFT
+    dragStartLeft.current = leftWidth
     document.body.style.cursor = 'col-resize'
     document.body.style.userSelect = 'none'
   }
@@ -474,7 +469,7 @@ export default function DSASessionPage() {
 
   const rootClassName = [
     'relative flex flex-col overflow-hidden',
-    isSoloMode ? 'h-screen bg-[#0d0f14] p-1.5 text-white dsa-code-theme' : 'h-full min-h-0 gap-2 p-2 text-[var(--dash-text)] sm:gap-3 sm:p-3',
+    'h-full min-h-0 gap-2 p-2 text-[var(--dash-text)] sm:gap-3 sm:p-3',
   ].join(' ')
 
   if ((mode !== 'solo' && !sessionId) || !activeProblemId || !problems.length) {
@@ -490,27 +485,13 @@ export default function DSASessionPage() {
     )
   }
 
-  const resolvedLeft = leftWidth ?? 420
-  const headerClassName = isSoloMode
-    ? 'flex min-h-11 shrink-0 flex-wrap items-center gap-2 border-b border-slate-800/60 bg-[#0d0f14] px-3 py-1.5'
-    : 'dash-card flex min-h-12 shrink-0 flex-wrap items-center gap-2 rounded-[18px] px-3 py-2 shadow-shell'
-  const panelClassName = isSoloMode
-    ? 'flex flex-col overflow-hidden rounded-xl border border-slate-800/60 bg-slate-900'
-    : 'dash-card flex flex-col overflow-hidden rounded-[18px]'
+  const resolvedLeft = leftWidth
+  const headerClassName = 'dash-card flex min-h-12 shrink-0 flex-wrap items-center gap-2 rounded-[18px] px-3 py-2 shadow-shell'
+  const panelClassName = 'dash-card flex flex-col overflow-hidden rounded-[18px]'
 
   return (
     <div ref={roomRef} className={rootClassName}>
       <nav className={headerClassName}>
-        {isSoloMode && (
-          <button
-            onClick={() => navigate(ROUTES.PRACTICE_PROBLEMS)}
-            className="dash-control flex h-8 shrink-0 items-center gap-1.5 rounded-[12px] border px-2.5 text-xs font-semibold"
-          >
-            <ArrowLeft className="h-3.5 w-3.5" />
-            {t('dsaRoom.header.backToList')}
-          </button>
-        )}
-
         <div className="order-3 flex w-full min-w-0 flex-1 items-center gap-1 overflow-x-auto sm:order-none sm:w-auto">
           {problems.map((problem, index) => {
             const isDone = !!problemProgress[problem.id]?.submittedAt
@@ -582,6 +563,16 @@ export default function DSASessionPage() {
           {!isSoloMode && (
             <button
               onClick={() => setShowExitModal(true)}
+              className="dash-control flex h-8 items-center gap-1.5 rounded-[12px] border px-3 text-xs font-semibold transition-colors hover:text-red-500"
+            >
+              <LogOut className="h-3.5 w-3.5" />
+              {t('dsaRoom.header.exit')}
+            </button>
+          )}
+
+          {isSoloMode && (
+            <button
+              onClick={() => navigate(ROUTES.PRACTICE_PROBLEMS)}
               className="dash-control flex h-8 items-center gap-1.5 rounded-[12px] border px-3 text-xs font-semibold transition-colors hover:text-red-500"
             >
               <LogOut className="h-3.5 w-3.5" />

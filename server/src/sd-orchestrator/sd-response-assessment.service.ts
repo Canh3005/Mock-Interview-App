@@ -12,7 +12,6 @@ import type {
   SDDeepDiveAssessment,
   SDProbe,
   SDWrapUpAssessment,
-  SDCurveball,
 } from './types/sd-orchestrator.types';
 import { SD_RESPONSE_ASSESSMENT_GROQ_MODEL } from './constants/sd-assessment.constants';
 
@@ -89,15 +88,11 @@ export class SDResponseAssessmentService {
 
   assessWrapUp(
     candidateText: string,
-    activeScenario: SDCurveball | SDProbe,
-    currentGraph: SDGraphState,
-    baseGraph: SDGraphState,
+    activeScenario: SDProbe,
     clarificationLeftover: SDClarificationLeftoverJson,
   ): Promise<SDWrapUpAssessment> {
     void candidateText;
     void activeScenario;
-    void currentGraph;
-    void baseGraph;
     void clarificationLeftover;
     throw new Error(
       'SDResponseAssessmentService.assessWrapUp not yet implemented',

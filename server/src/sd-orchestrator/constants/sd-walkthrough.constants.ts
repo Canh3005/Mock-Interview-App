@@ -1,7 +1,7 @@
 import type { SDWalkthroughTransitionCriteria } from '../types/sd-orchestrator.types';
 
 export const WALKTHROUGH_CRITERIA: SDWalkthroughTransitionCriteria = {
-  minTurns: 2,
+  minTurns: 8,
   maxTurns: 8,
   mustCoverCriticalPath: true,
   maxUnexplainedAllowed: 2,

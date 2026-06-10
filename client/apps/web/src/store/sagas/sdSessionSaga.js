@@ -1,5 +1,4 @@
-import { call, put, select, take, fork, takeLatest, delay } from 'redux-saga/effects'
-import { eventChannel } from 'redux-saga'
+import { call, put, select, takeLatest, delay } from 'redux-saga/effects'
 import { sdSessionApi } from '../../api/sdSession'
 import i18n from '../../i18n/config'
 import {
@@ -8,67 +7,35 @@ import {
   loadFailure,
   canvasChanged,
   setArchitectureJSON,
-  setDirty,
   autoSaveStart,
   autoSaveSuccess,
   autoSaveFailure,
-  phaseUpdated,
 } from '../slices/sdSessionSlice'
+
+const AUTO_SAVE_DEBOUNCE_MS = 8000
 
 function* _handleLoad(action) {
   try {
     const data = yield call(sdSessionApi.getById, action.payload)
     yield put(loadSuccess(data))
-    yield fork(_pollPhase)
-    yield fork(_autoSaveLoop)
   } catch (err) {
     yield put(loadFailure(err.response?.data?.message || i18n.t('sdRoom.errors.loadSessionFailed')))
   }
 }
 
 function* _handleCanvasChanged(action) {
-  yield delay(2000)
+  yield delay(AUTO_SAVE_DEBOUNCE_MS)
   const { nodes, edges } = action.payload
   yield put(setArchitectureJSON({ nodes, edges }))
-  yield put(setDirty(true))
-}
 
-function* _autoSaveLoop() {
-  const chan = eventChannel((emit) => {
-    const id = setInterval(() => emit('TICK'), 30000)
-    return () => clearInterval(id)
-  })
+  const { sessionId } = yield select((s) => s.sdSession)
+  if (!sessionId) return
   try {
-    while (true) {
-      yield take(chan)
-      const { sessionId, architectureJSON, isDirty } = yield select((s) => s.sdSession)
-      if (!sessionId || !isDirty || !architectureJSON) continue
-      try {
-        yield put(autoSaveStart())
-        yield call(sdSessionApi.updateArchitecture, sessionId, architectureJSON)
-        yield put(autoSaveSuccess())
-      } catch {
-        yield put(autoSaveFailure())
-      }
-    }
-  } finally {
-    chan.close()
-  }
-}
-
-function* _pollPhase() {
-  while (true) {
-    yield delay(5000)
-    const { sessionId, phase } = yield select((s) => s.sdSession)
-    if (!sessionId || phase === 'COMPLETED') break
-    try {
-      const data = yield call(sdSessionApi.getById, sessionId)
-      if (data.phase !== phase) {
-        yield put(phaseUpdated(data.phase))
-      }
-    } catch {
-      // non-critical, retry next tick
-    }
+    yield put(autoSaveStart())
+    yield call(sdSessionApi.updateArchitecture, sessionId, { nodes, edges })
+    yield put(autoSaveSuccess())
+  } catch {
+    yield put(autoSaveFailure())
   }
 }
 

@@ -208,7 +208,7 @@ export class BehaviorCalibrationService {
             claimType: enrichment.claimType,
             impliedCompetencies: enrichment.impliedCompetencies as string[],
             riskTags: enrichment.riskTags,
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
             suggestedQuestions: enrichment.suggestedQuestions,
           };
         });
@@ -717,7 +717,7 @@ export class BehaviorCalibrationService {
         verificationPriority,
         techContext: c.techContext.filter((t) => ALL_TECH_TAGS.has(t)),
         riskTags: c.riskTags,
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
         suggestedQuestions: c.suggestedQuestions,
       };
     });

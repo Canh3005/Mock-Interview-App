@@ -19,6 +19,7 @@ import { SDDeepDivePlannerService } from './planners/sd-deep-dive-planner.servic
 import { SDDeepDiveAssessorService } from './assessors/sd-deep-dive-assessor.service';
 import { SDWrapUpPlannerService } from './planners/sd-wrap-up-planner.service';
 import { SDWrapUpAssessorService } from './assessors/sd-wrap-up-assessor.service';
+import { SDGraphAnalysisService } from './assessors/sd-graph-analysis.service';
 import { SDSession } from '../sd-session/entities/sd-session.entity';
 import { SDProblem } from '../sd-problem/entities/sd-problem.entity';
 import type {
@@ -36,6 +37,7 @@ import type {
   SDWalkthroughTracker,
   SDWalkthroughLeftoverJson,
   SDDeepDiveTracker,
+  SDDeepDivePlannerInput,
   SDDeepDiveLeftoverJson,
   SDActiveProbeState,
   SDProbe,
@@ -47,6 +49,8 @@ import type {
   SDGraphEdge,
   SDGraphMetrics,
   SDStageLeftoverJson,
+  SDDeepDiveIntentContext,
+  SDWrapUpIntentContext,
 } from './types/sd-orchestrator.types';
 import { SUPPORTED_SD_LANGUAGES } from './constants/sd-orchestrator.constants';
 import { CLARIFICATION_CRITERIA } from './constants/sd-clarification.constants';
@@ -82,6 +86,7 @@ export class SDOrchestratorService {
     private readonly deepDiveAssessor: SDDeepDiveAssessorService,
     private readonly wrapUpPlanner: SDWrapUpPlannerService,
     private readonly wrapUpAssessor: SDWrapUpAssessorService,
+    private readonly graphAnalysis: SDGraphAnalysisService,
   ) {}
 
   // ─── Main turn handler ───────────────────────────────────────────────────────
@@ -163,20 +168,20 @@ export class SDOrchestratorService {
         ...assessment.signals.dimensionCovered,
       ]),
     ];
-    const newDisclosedKeys = assessment.signals.matchedFactKey
-      ? [
-          ...new Set([
-            ...tracker.progress.disclosedFactKeys,
-            assessment.signals.matchedFactKey,
-          ]),
-        ]
-      : tracker.progress.disclosedFactKeys;
+    const newDisclosedKeys = [
+      ...new Set([
+        ...tracker.progress.disclosedFactKeys,
+
+        ...assessment.signals.matchedFactKeys,
+      ]),
+    ];
 
     const updatedTracker: SDClarificationTracker = {
       turnCount: tracker.turnCount + 1,
       elapsedSeconds,
       progress: {
         coveredDimensions: newCoveredDims,
+
         disclosedFactKeys: newDisclosedKeys,
       },
     };
@@ -259,14 +264,13 @@ export class SDOrchestratorService {
     }
 
     if (decision.action === 'ANSWER_FACT') {
-      const fact = data.facts.find(
-        (f) => f.key === assessment.signals.matchedFactKey,
+      const matchedFacts = data.facts.filter((f) =>
+        assessment.signals.matchedFactKeys.includes(f.key),
       );
-      if (fact) {
+      console.log('Facts to answer:', matchedFacts);
+      if (matchedFacts.length > 0) {
         const factDecision = this.clarificationPlanner.buildAnswerFactDecision(
-          assessment.signals.matchedFactKey!,
-          fact.dimension,
-          fact.answer,
+          matchedFacts,
           updatedTracker,
           criteria,
           elapsedSeconds,
@@ -275,19 +279,24 @@ export class SDOrchestratorService {
         console.log('Answer fact decision:', factDecision);
         const answerIntent = factDecision.nextIntent!;
         console.log('Answer fact intent:', answerIntent);
+        const combinedAnswer = matchedFacts.map((f) => f.answer).join(' ');
         const answerText = await this.renderer.renderClarification(
           answerIntent,
-          fact.answer,
+          combinedAnswer,
         );
         console.log('Answer fact text:', answerText);
+        const matchedKeys = matchedFacts.map((f) => f.key);
+        const matchedDimensions = [
+          ...new Set(matchedFacts.map((f) => f.dimension)),
+        ];
         await this.persistTurnRecord({
           sessionId: session.id,
           stage: 'CLARIFICATION',
           turnIndex: updatedTracker.turnCount,
           intentType: 'ANSWER_FACT',
           intentTargetJson: {
-            factKey: assessment.signals.matchedFactKey,
-            dimension: fact.dimension,
+            factKeys: matchedKeys,
+            dimensions: matchedDimensions,
           },
           promptRendered: answerText,
           candidateAnswer,
@@ -298,7 +307,7 @@ export class SDOrchestratorService {
           decisionReason: decision.reason,
         });
 
-        // Check if answering this fact completes the transition criteria
+        // Check if answering these facts completes the transition criteria
         const allCoveredAfterFact = criteria.requiredDimensions.every((d) =>
           newCoveredDims.includes(d),
         );
@@ -323,8 +332,8 @@ export class SDOrchestratorService {
             turnIndex: updatedTracker.turnCount,
             intentType: 'ANSWER_FACT',
             intentTargetJson: {
-              factKey: assessment.signals.matchedFactKey,
-              dimension: fact.dimension,
+              factKeys: matchedKeys,
+              dimensions: matchedDimensions,
             },
             promptRendered: `${answerText}\n\n${transitionText}`,
             candidateAnswer,
@@ -352,7 +361,7 @@ export class SDOrchestratorService {
         return;
       }
 
-      // fact not found — LLM returned a factKey not present in data.facts
+      // no matched facts found in data.facts — LLM returned key(s) not present
       const outOfScopeFallback =
         (
           {
@@ -394,7 +403,7 @@ export class SDOrchestratorService {
       context: { language: lang, level },
       elapsedSeconds,
     });
-
+    console.log('Nudge plan:', nudgePlan);
     const nudgeFallbacks: Record<string, string> = {
       vi: 'Bạn có điều gì muốn làm rõ thêm không?',
       en: "Is there anything else you'd like to clarify?",
@@ -402,9 +411,8 @@ export class SDOrchestratorService {
     };
     const nudgeText = nudgePlan.nextIntent
       ? await this.renderer.renderClarification(nudgePlan.nextIntent)
-      : (nudgeFallbacks[lang] ??
-        "Is there anything else you'd like to clarify?");
-
+      : nudgeFallbacks[lang];
+    console.log('Nudge plan:', nudgeText);
     await this.updateStageState(session, {
       ...stageState,
       stage: 'CLARIFICATION',
@@ -461,7 +469,7 @@ export class SDOrchestratorService {
         ),
       },
     };
-
+    console.log('graph:', graph);
     // Load clarification leftover
     const clarificationSummary = await this.summaryRepo.findOne({
       where: { sessionId: session.id, stage: 'CLARIFICATION' },
@@ -491,11 +499,7 @@ export class SDOrchestratorService {
       clarificationLeftover,
       isFirstTurn,
     );
-    console.log('Walkthrough turn assessment output:', {
-      signals: assessment.signals,
-      scoreDelta: assessment.scoreDelta,
-      redFlags: assessment.redFlags,
-    });
+    console.log('Walkthrough turn assessment output:', assessment);
     // Update tracker (merge per-turn IDs into cumulative)
     const extra = assessment.extra ?? {
       explainedNodeIds: [],
@@ -533,7 +537,10 @@ export class SDOrchestratorService {
           tracker.progress.contradictionChallengesUsed,
       },
     };
-
+    console.log(
+      'Updated walkthrough tracker for policy input:',
+      trackerForPolicy,
+    );
     const decision = this.policyEngine.decideWalkthrough(
       assessment,
       trackerForPolicy,
@@ -564,6 +571,10 @@ export class SDOrchestratorService {
         'DEEP_DIVE',
         lang,
       );
+      const walkthroughScores = this._aggregateScores(
+        session,
+        assessment.scoreDelta,
+      );
 
       await this.persistTurnRecord({
         sessionId: session.id,
@@ -586,70 +597,22 @@ export class SDOrchestratorService {
         stage: 'DESIGN_WALKTHROUGH',
         totalTurns: updatedTracker.turnCount,
         elapsedSeconds,
-        scores: this._aggregateScores(session, assessment.scoreDelta),
+        scores: walkthroughScores,
         redFlags: assessment.redFlags,
         leftoverJson: leftover,
       });
 
-      const probeBank = problem.probeBank ?? [];
-      const ddCriteria = this.deepDivePlanner.getCriteriaForLevel(level);
-      const initialDDProgress = {
-        completedProbeIds: [],
-        activeProbe: null,
-        probeBudgetRemaining: ddCriteria.maxProbes,
-        perProbeSignals: {} as Record<string, string[]>,
-      };
-      const firstProbe = this.deepDivePlanner.selectNextProbe({
+      const ddOpeningText = await this._openDeepDiveFromWalkthrough({
+        session,
+        problem,
         graph,
-        graphMetrics: this._resolveGraphMetrics(graphMetrics, graph),
+        graphMetrics,
         clarificationLeftover,
         walkthroughLeftover: leftover,
-        walkthroughScores: this._aggregateScores(
-          session,
-          assessment.scoreDelta,
-        ),
-        tracker: {
-          turnCount: 0,
-          elapsedSeconds: 0,
-          progress: initialDDProgress,
-        },
-        probeBank,
-        context: { language: lang, level },
-        elapsedSeconds: 0,
-      });
-
-      let ddOpeningText = transitionText;
-      let ddTrackerJson: Record<string, unknown> = {
-        turnCount: 0,
-        elapsedSeconds: 0,
-        progress: initialDDProgress,
-      };
-      if (firstProbe) {
-        const firstActive: SDActiveProbeState = {
-          probeId: firstProbe.id,
-          turnCount: 0,
-          followUpCount: 0,
-          challengeCount: 0,
-          coveredSignals: [],
-        };
-        const probeIntent = this.deepDivePlanner.buildPrimaryIntent(
-          firstProbe,
-          lang,
-          [],
-        );
-        const probeText = await this.renderer.renderDeepDive(probeIntent);
-        ddOpeningText = `${transitionText}\n\n${probeText}`;
-        ddTrackerJson = {
-          turnCount: 0,
-          elapsedSeconds: 0,
-          progress: { ...initialDDProgress, activeProbe: firstActive },
-        };
-      }
-
-      await this.updateSessionPhase(session, 'DEEP_DIVE', {
-        stage: 'DEEP_DIVE',
-        trackerJson: ddTrackerJson,
-        runningScores: {},
+        walkthroughScores,
+        transitionText,
+        lang,
+        level,
       });
 
       this.streamText(res, ddOpeningText, {
@@ -662,14 +625,14 @@ export class SDOrchestratorService {
     // Plan next intent (CHALLENGE, REDIRECT, or FOLLOW_UP)
     let intentText: string;
     let recordIntentType: SDIntentType;
-    if (
-      decision.action === 'ASK_CHALLENGE' &&
-      assessment.extra?.contradictionDetail
-    ) {
+    if (decision.action === 'ASK_CHALLENGE') {
+      const contradictionDetail =
+        assessment.extra?.contradictionDetail ??
+        'What you described does not match the structure shown in your diagram';
       const challengeIntent = {
         stage: 'DESIGN_WALKTHROUGH' as const,
         type: 'CONTRADICTION_CHALLENGE' as const,
-        promptTemplate: `${assessment.extra.contradictionDetail}. Ask candidate to reconcile this with their graph.`,
+        promptTemplate: `${contradictionDetail}. Ask candidate to reconcile this with their graph.`,
         forbiddenHints: newUnexplainedNodes
           .map((id) => graph.nodes.find((n) => n.id === id)?.label ?? '')
           .filter(Boolean),
@@ -677,59 +640,56 @@ export class SDOrchestratorService {
         language: lang,
         target: {},
       };
+      console.log('Challenge intent:', challengeIntent);
       intentText = await this.renderer.renderWalkthrough(challengeIntent);
       recordIntentType = 'CONTRADICTION_CHALLENGE';
     } else if (decision.action === 'REDIRECT') {
-      const redirectReason =
-        assessment.candidateIntent === 'dont_know' ||
-        assessment.candidateIntent === 'off_topic'
-          ? ('dont_know' as const)
-          : ('scope_violation' as const);
-      const redirectIntent = this.walkthroughPlanner.buildRedirectIntent(
-        lang,
-        redirectReason,
-      );
-      intentText = await this.renderer.renderWalkthrough(redirectIntent);
+      const redirectPrefix: Record<'vi' | 'en' | 'ja', string> = {
+        vi: 'Hãy tập trung vào mục tiêu làm rõ thiết kế của bạn.',
+        en: "Let's refocus on clarifying your design.",
+        ja: '設計の説明に集中しましょう。',
+      };
+      const nextIntent = this.walkthroughPlanner.planNextIntent({
+        graph,
+        flowPaths,
+        tracker: updatedTracker,
+        clarificationLeftover,
+        graphMetrics: graphMetrics ?? {
+          componentCoverage: 0.5,
+          topologyCoverage: 0.5,
+          dataFlowCompleteness: 0.5,
+          requirementAlignment: 0.5,
+          architectureSimplicity: 1,
+          nodeCount: graph.nodes.length,
+          edgeCount: graph.edges.length,
+        },
+        context: { language: lang, level },
+        elapsedSeconds,
+      });
+      const rendered = await this.renderer.renderWalkthrough(nextIntent);
+      intentText = `${redirectPrefix[lang]} ${rendered}`;
       recordIntentType = 'REDIRECT';
     } else {
-      if (
-        assessment.signals.persistenceMissing &&
-        updatedTracker.turnCount >= 2
-      ) {
-        const persistenceIntent = {
-          stage: 'DESIGN_WALKTHROUGH' as const,
-          type: 'PERSISTENCE_GAP_PROBE' as const,
-          promptTemplate:
-            'Candidate has not mentioned how or where data is stored. Ask them to explain the persistence strategy in their design.',
-          forbiddenHints: newUnexplainedNodes
-            .map((id) => graph.nodes.find((n) => n.id === id)?.label ?? '')
-            .filter(Boolean),
-          maxSentences: 2,
-          language: lang,
-        };
-        intentText = await this.renderer.renderWalkthrough(persistenceIntent);
-        recordIntentType = 'PERSISTENCE_GAP_PROBE';
-      } else {
-        const nextIntent = this.walkthroughPlanner.planNextIntent({
-          graph,
-          flowPaths,
-          tracker: updatedTracker,
-          clarificationLeftover,
-          graphMetrics: graphMetrics ?? {
-            componentCoverage: 0.5,
-            topologyCoverage: 0.5,
-            dataFlowCompleteness: 0.5,
-            requirementAlignment: 0.5,
-            architectureSimplicity: 1,
-            nodeCount: graph.nodes.length,
-            edgeCount: graph.edges.length,
-          },
-          context: { language: lang, level },
-          elapsedSeconds,
-        });
-        intentText = await this.renderer.renderWalkthrough(nextIntent);
-        recordIntentType = nextIntent.type;
-      }
+      const nextIntent = this.walkthroughPlanner.planNextIntent({
+        graph,
+        flowPaths,
+        tracker: updatedTracker,
+        clarificationLeftover,
+        graphMetrics: graphMetrics ?? {
+          componentCoverage: 0.5,
+          topologyCoverage: 0.5,
+          dataFlowCompleteness: 0.5,
+          requirementAlignment: 0.5,
+          architectureSimplicity: 1,
+          nodeCount: graph.nodes.length,
+          edgeCount: graph.edges.length,
+        },
+        context: { language: lang, level },
+        elapsedSeconds,
+      });
+      console.log('Next intent plan:', nextIntent);
+      intentText = await this.renderer.renderWalkthrough(nextIntent);
+      recordIntentType = nextIntent.type;
     }
 
     // TODO: wrap persistTurnRecord + updateStageState in a DB transaction to prevent inconsistent state on partial failure
@@ -757,6 +717,106 @@ export class SDOrchestratorService {
     });
 
     this.streamText(res, intentText, null);
+  }
+
+  private async _openDeepDiveFromWalkthrough(input: {
+    session: SDSession;
+    problem: SDProblem;
+    graph: SDGraphState;
+    graphMetrics: SDGraphMetrics | null | undefined;
+    clarificationLeftover: SDClarificationLeftoverJson;
+    walkthroughLeftover: SDWalkthroughLeftoverJson;
+    walkthroughScores: Record<string, number>;
+    transitionText: string;
+    lang: SDLanguage;
+    level: SDTargetLevel;
+  }): Promise<string> {
+    const {
+      session,
+      problem,
+      graph,
+      graphMetrics,
+      clarificationLeftover,
+      walkthroughLeftover,
+      walkthroughScores,
+      transitionText,
+      lang,
+      level,
+    } = input;
+
+    const probeBank = problem.probeBank ?? [];
+    const ddCriteria = this.deepDivePlanner.getCriteriaForLevel(level);
+    const initialDDProgress = {
+      completedProbeIds: [],
+      activeProbe: null,
+      probeBudgetRemaining: ddCriteria.maxProbes,
+      perProbeSignals: {} as Record<string, string[]>,
+    };
+    const initialTracker: SDDeepDiveTracker = {
+      turnCount: 0,
+      elapsedSeconds: 0,
+      progress: initialDDProgress,
+    };
+
+    const graphAnalysisResult = await this.graphAnalysis
+      .analyze(
+        graph,
+        problem.flowPaths ?? [],
+        problem.expectedComponents ?? [],
+        clarificationLeftover,
+      )
+      .catch(() => undefined);
+
+    const { probe: firstProbe, isStructuralGap } =
+      this.deepDivePlanner.selectNextProbe({
+        graph,
+        graphMetrics: this._resolveGraphMetrics(graphMetrics, graph),
+        graphAnalysis: graphAnalysisResult,
+        clarificationLeftover,
+        walkthroughLeftover,
+        walkthroughScores,
+        tracker: initialTracker,
+        probeBank,
+        context: { language: lang, level },
+        elapsedSeconds: 0,
+      });
+
+    let openingText = transitionText;
+    let trackerJson: Record<string, unknown> =
+      this.toJsonRecord(initialTracker);
+
+    if (firstProbe) {
+      const firstActive: SDActiveProbeState = {
+        probeId: firstProbe.id,
+        turnCount: 0,
+        followUpCount: 0,
+        challengeCount: 0,
+        coveredSignals: [],
+      };
+      const probeIntent = this.deepDivePlanner.buildPrimaryIntent(
+        firstProbe,
+        lang,
+        [],
+        isStructuralGap,
+      );
+      const probeText = await this.renderer.renderDeepDive(probeIntent);
+      openingText = `${transitionText}\n\n${probeText}`;
+      trackerJson = this.toJsonRecord({
+        ...initialTracker,
+        progress: { ...initialDDProgress, activeProbe: firstActive },
+      });
+    }
+
+    await this.updateSessionPhase(session, 'DEEP_DIVE', {
+      stage: 'DEEP_DIVE',
+      trackerJson,
+      runningScores: {},
+      graphAnalysisJson: graphAnalysisResult
+        ? this.toJsonRecord(graphAnalysisResult)
+        : undefined,
+    });
+
+    return openingText;
   }
 
   private async handleDeepDiveTurn(
@@ -822,25 +882,8 @@ export class SDOrchestratorService {
       walkthroughLeftover,
       graphMetrics,
     });
-    // If no active probe, select one
+    // If no active probe, start the next one or close the stage.
     if (!tracker.progress.activeProbe) {
-      const nextProbe = this.deepDivePlanner.selectNextProbe({
-        graph,
-        graphMetrics: this._resolveGraphMetrics(graphMetrics, graph),
-        clarificationLeftover,
-        walkthroughLeftover,
-        walkthroughScores: walkthroughSummary?.scores ?? {},
-        tracker,
-        probeBank,
-        context: { language: lang, level },
-        elapsedSeconds,
-      });
-
-      if (!nextProbe || tracker.progress.probeBudgetRemaining === 0) {
-        await this._closeDeepDive(session, tracker, elapsedSeconds, res, lang);
-        return;
-      }
-
       await this._startNextProbeOrClose(
         session,
         tracker,
@@ -868,12 +911,19 @@ export class SDOrchestratorService {
       return;
     }
 
+    const rawDeepDiveIntent = stageState.activeIntentJson;
+    const deepDiveIntentContext: SDDeepDiveIntentContext | undefined =
+      rawDeepDiveIntent && typeof rawDeepDiveIntent['intentType'] === 'string'
+        ? (rawDeepDiveIntent as unknown as SDDeepDiveIntentContext)
+        : undefined;
+
     const assessment = await this.deepDiveAssessor.assess(
       candidateAnswer,
       graph,
       probeObj,
       activeProbe.coveredSignals,
       clarificationLeftover,
+      deepDiveIntentContext,
     );
     console.log('Deep Dive turn assessment output:', {
       signals: assessment.signals,
@@ -893,6 +943,7 @@ export class SDOrchestratorService {
       tracker,
       criteria,
       probeObj.expectedSignals,
+      newCoveredSignals,
     );
     console.log('Deep Dive turn policy decision:', decision);
     // Update active probe state
@@ -982,15 +1033,17 @@ export class SDOrchestratorService {
     const trigger = this.deepDivePlanner.pickFollowUpTrigger(
       newCoveredSignals,
       probeObj.expectedSignals,
-      assessment.signals.redFlagTriggered,
-      assessment.signals.tradeoffMentioned,
-      assessment.signals.metricsMentioned,
+      assessment.redFlags,
+      Boolean(assessment.signals.tradeoffMentioned),
+      Boolean(assessment.signals.metricsMentioned),
+      Boolean(assessment.signals.failureModeMentioned),
     );
 
     let intentText: string;
     let intentType: 'PROBE_FOLLOW_UP' | 'PROBE_CHALLENGE' | 'PROBE_REDIRECT' =
       'PROBE_FOLLOW_UP';
 
+    let nextDeepDiveIntentContext: SDDeepDiveIntentContext;
     if (decision.action === 'ASK_CHALLENGE') {
       const challengeIntent = this.deepDivePlanner.buildChallengeIntent(
         probeObj,
@@ -1000,6 +1053,10 @@ export class SDOrchestratorService {
       );
       intentText = await this.renderer.renderDeepDive(challengeIntent);
       intentType = 'PROBE_CHALLENGE';
+      nextDeepDiveIntentContext = {
+        intentType: 'PROBE_CHALLENGE',
+        followUpTrigger: assessment.redFlags[0],
+      };
     } else if (decision.action === 'REDIRECT') {
       const redirectIntent = this.deepDivePlanner.buildRedirectIntent(
         probeObj,
@@ -1008,6 +1065,7 @@ export class SDOrchestratorService {
       );
       intentText = await this.renderer.renderDeepDive(redirectIntent);
       intentType = 'PROBE_REDIRECT';
+      nextDeepDiveIntentContext = { intentType: 'PROBE_REDIRECT' };
     } else {
       const followUpIntent = trigger
         ? this.deepDivePlanner.buildFollowUpIntent(
@@ -1020,6 +1078,10 @@ export class SDOrchestratorService {
       intentText = followUpIntent
         ? await this.renderer.renderDeepDive(followUpIntent)
         : '';
+      nextDeepDiveIntentContext = {
+        intentType: 'PROBE_FOLLOW_UP',
+        followUpTrigger: trigger ?? undefined,
+      };
     }
 
     // No intent text: planner has no trigger or probe is missing followUp definition.
@@ -1113,6 +1175,7 @@ export class SDOrchestratorService {
       stage: 'DEEP_DIVE',
       trackerJson: this.toJsonRecord(updatedTracker),
       runningScores: this._aggregateScores(session, assessment.scoreDelta),
+      activeIntentJson: this.toJsonRecord(nextDeepDiveIntentContext),
     });
 
     this.streamText(res, intentText, null);
@@ -1134,17 +1197,27 @@ export class SDOrchestratorService {
     walkthroughScores: Record<string, number>,
     runningScores: Record<string, number>,
   ): Promise<void> {
-    const nextProbe = this.deepDivePlanner.selectNextProbe({
-      graph,
-      graphMetrics: this._resolveGraphMetrics(graphMetrics, graph),
-      clarificationLeftover,
-      walkthroughLeftover,
-      walkthroughScores,
-      tracker,
-      probeBank,
-      context: { language: lang, level },
-      elapsedSeconds,
-    });
+    if (tracker.progress.probeBudgetRemaining <= 0) {
+      await this._closeDeepDive(session, tracker, elapsedSeconds, res, lang);
+      return;
+    }
+
+    const savedAnalysis =
+      stageState.graphAnalysisJson as SDDeepDivePlannerInput['graphAnalysis'];
+
+    const { probe: nextProbe, isStructuralGap } =
+      this.deepDivePlanner.selectNextProbe({
+        graph,
+        graphMetrics: this._resolveGraphMetrics(graphMetrics, graph),
+        graphAnalysis: savedAnalysis,
+        clarificationLeftover,
+        walkthroughLeftover,
+        walkthroughScores,
+        tracker,
+        probeBank,
+        context: { language: lang, level },
+        elapsedSeconds,
+      });
 
     if (!nextProbe) {
       await this._closeDeepDive(session, tracker, elapsedSeconds, res, lang);
@@ -1162,6 +1235,7 @@ export class SDOrchestratorService {
       nextProbe,
       lang,
       [],
+      isStructuralGap,
     );
     const primaryText = await this.renderer.renderDeepDive(primaryIntent);
 
@@ -1185,11 +1259,15 @@ export class SDOrchestratorService {
       decisionReason: 'New probe started',
     });
 
+    const primaryIntentContext: SDDeepDiveIntentContext = {
+      intentType: 'PROBE_PRIMARY',
+    };
     await this.updateStageState(session, {
       ...stageState,
       stage: 'DEEP_DIVE',
       trackerJson: this.toJsonRecord(finalTracker),
       runningScores,
+      activeIntentJson: this.toJsonRecord(primaryIntentContext),
     });
 
     this.streamText(res, primaryText, null);
@@ -1203,16 +1281,35 @@ export class SDOrchestratorService {
     lang: 'vi' | 'en' | 'ja',
   ): Promise<void> {
     const stageState = this.getStageState(session);
-    const leftover: SDDeepDiveLeftoverJson = {
-      completedProbeIds: tracker.progress.completedProbeIds,
-      perProbeSignals: tracker.progress.perProbeSignals,
-      unresolvedRedFlags: [],
-    };
     const transitionText = this.renderer.buildTransitionText(
       'DEEP_DIVE',
       'WRAP_UP',
       lang,
     );
+
+    const problem =
+      session.problem ??
+      (await this.problemRepo.findOneOrFail({
+        where: { id: session.problemId },
+      }));
+    const probeBank = problem.probeBank ?? [];
+
+    const unresolvedRedFlags = tracker.progress.completedProbeIds
+      .filter((probeId) => {
+        const covered = tracker.progress.perProbeSignals[probeId] ?? [];
+        const probe = probeBank.find((p) => p.id === probeId);
+        return probe && probe.expectedSignals.some((s) => !covered.includes(s));
+      })
+      .map((probeId) => {
+        const probe = probeBank.find((p) => p.id === probeId);
+        return `Incomplete signal coverage on dimension: ${probe?.dimension ?? probeId}`;
+      });
+
+    const leftover: SDDeepDiveLeftoverJson = {
+      completedProbeIds: tracker.progress.completedProbeIds,
+      perProbeSignals: tracker.progress.perProbeSignals,
+      unresolvedRedFlags,
+    };
 
     await this.persistStageSummary({
       sessionId: session.id,
@@ -1224,13 +1321,48 @@ export class SDOrchestratorService {
       leftoverJson: leftover,
     });
 
-    const problem =
-      session.problem ??
-      (await this.problemRepo.findOneOrFail({
-        where: { id: session.problemId },
-      }));
-    const curveballs = problem.curveballs ?? [];
-    const probeBank = problem.probeBank ?? [];
+    // Skip WRAP_UP entirely when curveball is disabled
+    if (!session.enableCurveball) {
+      await this.updateSessionPhase(session, 'EVALUATING', {
+        stage: 'EVALUATING',
+        trackerJson: {},
+        runningScores: {},
+      });
+      const endText =
+        lang === 'vi'
+          ? 'Cảm ơn. Phiên phỏng vấn đã kết thúc. Chúng tôi đang đánh giá kết quả của bạn.'
+          : lang === 'ja'
+            ? 'ありがとうございました。面接が終了しました。結果を評価しています。'
+            : "Thank you. The interview session is complete. We're evaluating your performance.";
+      this.streamText(res, endText, {
+        stageChanged: true,
+        stage: 'EVALUATING',
+      });
+      return;
+    }
+
+    const wuOpeningText = await this._openWrapUpFromDeepDive({
+      session,
+      tracker,
+      probeBank,
+      transitionText,
+      lang,
+    });
+
+    this.streamText(res, wuOpeningText, {
+      stageChanged: true,
+      stage: 'WRAP_UP',
+    });
+  }
+
+  private async _openWrapUpFromDeepDive(input: {
+    session: SDSession;
+    tracker: SDDeepDiveTracker;
+    probeBank: SDProbe[];
+    transitionText: string;
+    lang: SDLanguage;
+  }): Promise<string> {
+    const { session, tracker, probeBank, transitionText, lang } = input;
     const wuCriteria = this.wrapUpPlanner.getCriteria();
     const clarificationSummary = await this.summaryRepo.findOne({
       where: { sessionId: session.id, stage: 'CLARIFICATION' },
@@ -1245,9 +1377,9 @@ export class SDOrchestratorService {
     });
     const graph = this.extractGraph(session);
     const level = this.getSessionLevel(session);
+    const wuProbeBank = probeBank.filter((p) => p.stage === 'WRAP_UP');
     const initialWUProgress = {
       completedItemIds: [] as string[],
-      baseGraphSnapshotId: '',
       activeScenario: null,
       scenarioBudgetRemaining: wuCriteria.maxScenarios,
     };
@@ -1259,7 +1391,7 @@ export class SDOrchestratorService {
     const firstScenario =
       this.wrapUpPlanner.selectNextScenario({
         graph,
-        curveballs,
+        probeBank: wuProbeBank,
         clarificationLeftover,
         deepDiveLeftover: {
           completedProbeIds: tracker.progress.completedProbeIds,
@@ -1271,24 +1403,17 @@ export class SDOrchestratorService {
         tracker: initialWUTracker,
         context: { language: lang, level },
         timeRemainingSeconds: wuCriteria.maxStageSeconds,
-      }) ??
-      probeBank.find(
-        (p) =>
-          p.stage === 'WRAP_UP' &&
-          !initialWUProgress.completedItemIds.includes(p.id),
-      ) ??
-      null;
+      }) ?? null;
 
-    let wuOpeningText = transitionText;
-    let wuTrackerJson: Record<string, unknown> = initialWUProgress;
+    let openingText = transitionText;
+    let trackerJson: Record<string, unknown> = initialWUProgress;
     if (firstScenario) {
       const firstActiveScenario: SDActiveScenarioState = {
-        source:
-          'scenarioTemplate' in firstScenario ? 'curveball' : 'probe_fallback',
         scenarioId: firstScenario.id,
         turnCount: 0,
         followUpCount: 0,
         challengeCount: 0,
+        mentionedMitigations: [],
       };
       const presentIntent = this.wrapUpPlanner.buildPresentIntent(
         firstScenario,
@@ -1296,8 +1421,8 @@ export class SDOrchestratorService {
         [],
       );
       const presentText = await this.renderer.renderWrapUp(presentIntent);
-      wuOpeningText = `${transitionText}\n\n${presentText}`;
-      wuTrackerJson = {
+      openingText = `${transitionText}\n\n${presentText}`;
+      trackerJson = {
         turnCount: 0,
         elapsedSeconds: 0,
         progress: { ...initialWUProgress, activeScenario: firstActiveScenario },
@@ -1306,14 +1431,11 @@ export class SDOrchestratorService {
 
     await this.updateSessionPhase(session, 'WRAP_UP', {
       stage: 'WRAP_UP',
-      trackerJson: wuTrackerJson,
+      trackerJson,
       runningScores: {},
     });
 
-    this.streamText(res, wuOpeningText, {
-      stageChanged: true,
-      stage: 'WRAP_UP',
-    });
+    return openingText;
   }
 
   private async handleWrapUpTurn(
@@ -1329,8 +1451,8 @@ export class SDOrchestratorService {
     const stageState = this.getStageState(session);
     const lang = this.getSessionLanguage(session);
     const elapsedSeconds = this.computeStageElapsedSeconds(session);
-    const curveballs = problem.curveballs ?? [];
     const probeBank = problem.probeBank ?? [];
+    const wuProbeBank = probeBank.filter((p) => p.stage === 'WRAP_UP');
     const criteria = this.wrapUpPlanner.getCriteria();
     const graph = this.extractGraph(session);
 
@@ -1344,8 +1466,6 @@ export class SDOrchestratorService {
       elapsedSeconds,
       progress: {
         completedItemIds: this.stringArray(rawProgress.completedItemIds),
-        baseGraphSnapshotId:
-          this.stringValue(rawProgress.baseGraphSnapshotId) ?? '',
         activeScenario: this.toActiveScenarioState(rawProgress.activeScenario),
         scenarioBudgetRemaining: this.numberValue(
           rawProgress.scenarioBudgetRemaining,
@@ -1353,31 +1473,6 @@ export class SDOrchestratorService {
         ),
       },
     };
-
-    // Get or capture base graph snapshot for delta tracking
-    let baseGraph = graph;
-    if (!tracker.progress.baseGraphSnapshotId) {
-      const snapshot = await this.drawingTransition.saveGraphSnapshot(
-        session.id,
-        'WRAP_UP',
-        graph,
-        {
-          componentCoverage: 0,
-          topologyCoverage: 0,
-          dataFlowCompleteness: 0,
-          requirementAlignment: 0,
-          architectureSimplicity: 1,
-          nodeCount: graph.nodes.length,
-          edgeCount: graph.edges.length,
-        },
-      );
-      tracker.progress.baseGraphSnapshotId = snapshot.id;
-    } else {
-      const baseSnapshot = await this.snapshotRepo.findOne({
-        where: { id: tracker.progress.baseGraphSnapshotId },
-      });
-      if (baseSnapshot) baseGraph = baseSnapshot.graph;
-    }
 
     // Load clarification leftover
     const clarificationSummary = await this.summaryRepo.findOne({
@@ -1414,8 +1509,6 @@ export class SDOrchestratorService {
           session,
           tracker,
           elapsedSeconds,
-          graph,
-          baseGraph,
           res,
           lang,
         );
@@ -1425,58 +1518,32 @@ export class SDOrchestratorService {
       const nextScenario =
         this.wrapUpPlanner.selectNextScenario({
           graph,
-          curveballs,
+          probeBank: wuProbeBank,
           clarificationLeftover,
           deepDiveLeftover,
           deepDiveScores,
           tracker,
           context: { language: lang, level },
           timeRemainingSeconds: criteria.maxStageSeconds - elapsedSeconds,
-        }) ??
-        probeBank.find(
-          (p) =>
-            p.stage === 'WRAP_UP' &&
-            !tracker.progress.completedItemIds.includes(p.id),
-        ) ??
-        null;
+        }) ?? null;
 
       if (!nextScenario) {
         await this._completeSession(
           session,
           tracker,
           elapsedSeconds,
-          graph,
-          baseGraph,
           res,
           lang,
         );
         return;
       }
 
-      // Save per-scenario baseline so graphAdaptation tracks only changes within this scenario
-      const scenarioSnap = await this.drawingTransition.saveGraphSnapshot(
-        session.id,
-        'WRAP_UP',
-        graph,
-        {
-          componentCoverage: 0,
-          topologyCoverage: 0,
-          dataFlowCompleteness: 0,
-          requirementAlignment: 0,
-          architectureSimplicity: 1,
-          nodeCount: graph.nodes.length,
-          edgeCount: graph.edges.length,
-        },
-      );
-
       const newActiveScenario: SDActiveScenarioState = {
-        source:
-          'scenarioTemplate' in nextScenario ? 'curveball' : 'probe_fallback',
         scenarioId: nextScenario.id,
         turnCount: 1,
         followUpCount: 0,
         challengeCount: 0,
-        perScenarioBaseSnapshotId: scenarioSnap.id,
+        mentionedMitigations: [],
       };
 
       const presentIntent = this.wrapUpPlanner.buildPresentIntent(
@@ -1509,6 +1576,7 @@ export class SDOrchestratorService {
         stage: 'WRAP_UP',
         trackerJson: this.toJsonRecord(updatedTracker),
         runningScores: stageState.runningScores ?? {},
+        activeIntentJson: { intentType: 'SCENARIO_PRESENT' },
       });
 
       this.streamText(res, presentText, null);
@@ -1517,40 +1585,25 @@ export class SDOrchestratorService {
 
     // Active scenario — assess
     const activeScenario = tracker.progress.activeScenario;
-    const scenarioObj =
-      curveballs.find((c) => c.id === activeScenario.scenarioId) ??
-      probeBank.find((p) => p.id === activeScenario.scenarioId);
+    const rawWrapUpIntent = stageState.activeIntentJson;
+    const wrapUpIntentContext: SDWrapUpIntentContext | undefined =
+      rawWrapUpIntent && typeof rawWrapUpIntent['intentType'] === 'string'
+        ? (rawWrapUpIntent as unknown as SDWrapUpIntentContext)
+        : undefined;
+    const scenarioObj = probeBank.find(
+      (p) => p.id === activeScenario.scenarioId,
+    );
 
     if (!scenarioObj) {
-      await this._completeSession(
-        session,
-        tracker,
-        elapsedSeconds,
-        graph,
-        baseGraph,
-        res,
-        lang,
-      );
+      await this._completeSession(session, tracker, elapsedSeconds, res, lang);
       return;
-    }
-
-    // Use per-scenario baseline for accurate graphAdaptation detection
-    let assessmentBaseGraph = baseGraph;
-    if (activeScenario.perScenarioBaseSnapshotId) {
-      const perScenarioSnap = await this.snapshotRepo.findOne({
-        where: { id: activeScenario.perScenarioBaseSnapshotId },
-      });
-      if (perScenarioSnap) {
-        assessmentBaseGraph = perScenarioSnap.graph as unknown as SDGraphState;
-      }
     }
 
     const assessment = await this.wrapUpAssessor.assess(
       candidateAnswer,
       scenarioObj,
-      graph,
-      assessmentBaseGraph,
       clarificationLeftover,
+      wrapUpIntentContext,
     );
 
     const decision = this.policyEngine.decideWrapUp(
@@ -1570,6 +1623,12 @@ export class SDOrchestratorService {
         decision.action === 'ASK_CHALLENGE'
           ? activeScenario.challengeCount + 1
           : activeScenario.challengeCount,
+      mentionedMitigations: [
+        ...new Set([
+          ...activeScenario.mentionedMitigations,
+          ...assessment.signals.mentionedMitigations,
+        ]),
+      ],
     };
 
     if (
@@ -1622,8 +1681,6 @@ export class SDOrchestratorService {
           session,
           updatedTracker,
           elapsedSeconds,
-          graph,
-          baseGraph,
           res,
           lang,
         );
@@ -1634,18 +1691,14 @@ export class SDOrchestratorService {
       const nextScenario =
         this.wrapUpPlanner.selectNextScenario({
           graph,
-          curveballs,
+          probeBank: wuProbeBank,
           clarificationLeftover,
           deepDiveLeftover,
           deepDiveScores,
           tracker: updatedTracker,
           context: { language: lang, level },
           timeRemainingSeconds: criteria.maxStageSeconds - elapsedSeconds,
-        }) ??
-        probeBank.find(
-          (p) => p.stage === 'WRAP_UP' && !newCompleted.includes(p.id),
-        ) ??
-        null;
+        }) ?? null;
 
       if (!nextScenario) {
         const aggregatedScores = this._aggregateScores(
@@ -1660,37 +1713,18 @@ export class SDOrchestratorService {
           session,
           updatedTracker,
           elapsedSeconds,
-          graph,
-          baseGraph,
           res,
           lang,
         );
         return;
       }
 
-      // Save per-scenario baseline for the next scenario
-      const nextScenarioSnap = await this.drawingTransition.saveGraphSnapshot(
-        session.id,
-        'WRAP_UP',
-        graph,
-        {
-          componentCoverage: 0,
-          topologyCoverage: 0,
-          dataFlowCompleteness: 0,
-          requirementAlignment: 0,
-          architectureSimplicity: 1,
-          nodeCount: graph.nodes.length,
-          edgeCount: graph.edges.length,
-        },
-      );
       const newActive: SDActiveScenarioState = {
-        source:
-          'scenarioTemplate' in nextScenario ? 'curveball' : 'probe_fallback',
         scenarioId: nextScenario.id,
         turnCount: 1,
         followUpCount: 0,
         challengeCount: 0,
-        perScenarioBaseSnapshotId: nextScenarioSnap.id,
+        mentionedMitigations: [],
       };
       const presentIntent = this.wrapUpPlanner.buildPresentIntent(
         nextScenario,
@@ -1708,6 +1742,7 @@ export class SDOrchestratorService {
         stage: 'WRAP_UP',
         trackerJson: this.toJsonRecord(finalTracker),
         runningScores: this._aggregateScores(session, assessment.scoreDelta),
+        activeIntentJson: { intentType: 'SCENARIO_PRESENT' },
       });
       this.streamText(res, presentText, null);
       return;
@@ -1715,6 +1750,8 @@ export class SDOrchestratorService {
 
     // Follow-up or challenge
     let intentText: string;
+    let nextWrapUpIntentContext: SDWrapUpIntentContext;
+    const cumulativeMitigations = updatedActive.mentionedMitigations;
     if (decision.action === 'ASK_CHALLENGE') {
       const challengeDetail =
         assessment.redFlags.length > 0
@@ -1723,25 +1760,31 @@ export class SDOrchestratorService {
       const challengeIntent = this.wrapUpPlanner.buildChallengeIntent(
         scenarioObj,
         lang,
-        [],
+        cumulativeMitigations,
         challengeDetail,
       );
       intentText = await this.renderer.renderWrapUp(challengeIntent);
+      nextWrapUpIntentContext = {
+        intentType: 'SCENARIO_CHALLENGE',
+        challengeDetail,
+      };
     } else {
       const followUpReason = !assessment.signals.blastRadiusRecognized
         ? 'blastRadius'
         : !assessment.signals.mitigationProposed
           ? 'mitigation'
-          : !assessment.signals.graphAdaptationMade
-            ? 'graphAdaptation'
-            : 'consistency';
+          : 'consistency';
       const followUpIntent = this.wrapUpPlanner.buildFollowUpIntent(
         scenarioObj,
         lang,
-        [],
+        cumulativeMitigations,
         followUpReason,
       );
       intentText = await this.renderer.renderWrapUp(followUpIntent);
+      nextWrapUpIntentContext = {
+        intentType: 'SCENARIO_FOLLOW_UP',
+        followUpReason,
+      };
     }
 
     const updatedTracker: SDWrapUpTracker = {
@@ -1773,6 +1816,7 @@ export class SDOrchestratorService {
       stage: 'WRAP_UP',
       trackerJson: this.toJsonRecord(updatedTracker),
       runningScores: this._aggregateScores(session, assessment.scoreDelta),
+      activeIntentJson: this.toJsonRecord(nextWrapUpIntentContext),
     });
     this.streamText(res, intentText, null);
   }
@@ -1781,15 +1825,12 @@ export class SDOrchestratorService {
     session: SDSession,
     tracker: SDWrapUpTracker,
     elapsedSeconds: number,
-    currentGraph: SDGraphState,
-    baseGraph: SDGraphState,
     res: Response,
     lang: 'vi' | 'en' | 'ja',
   ): Promise<void> {
     const stageState = this.getStageState(session);
-    const delta = this.wrapUpAssessor.detectGraphDelta(currentGraph, baseGraph);
     const leftover: SDWrapUpLeftoverJson = {
-      graphDeltaAfterCurveball: delta,
+      completedScenarioIds: tracker.progress.completedItemIds,
     };
 
     await this.persistStageSummary({
@@ -2139,30 +2180,20 @@ export class SDOrchestratorService {
   private toActiveScenarioState(value: unknown): SDActiveScenarioState | null {
     const raw = this.toJsonRecord(value);
     const scenarioId = this.stringValue(raw.scenarioId);
-    const source = this.stringValue(raw.source);
-    if (
-      !scenarioId ||
-      (source !== 'curveball' && source !== 'probe_fallback')
-    ) {
-      return null;
-    }
+    if (!scenarioId) return null;
 
     const closeReason = this.stringValue(raw.closeReason);
-    const perScenarioBaseSnapshotId = this.stringValue(
-      raw.perScenarioBaseSnapshotId,
-    );
     return {
-      source,
       scenarioId,
       turnCount: this.numberValue(raw.turnCount, 0),
       followUpCount: this.numberValue(raw.followUpCount, 0),
       challengeCount: this.numberValue(raw.challengeCount, 0),
+      mentionedMitigations: this.stringArray(raw.mentionedMitigations),
       ...(closeReason === 'signals_covered' ||
       closeReason === 'turn_limit' ||
       closeReason === 'timebox'
         ? { closeReason }
         : {}),
-      ...(perScenarioBaseSnapshotId ? { perScenarioBaseSnapshotId } : {}),
     };
   }
 
@@ -2298,6 +2329,8 @@ export class SDOrchestratorService {
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
+    res.setHeader('X-Accel-Buffering', 'no');
+    res.flushHeaders();
   }
 
   streamText(
@@ -2305,13 +2338,16 @@ export class SDOrchestratorService {
     text: string,
     meta: Record<string, unknown> | null,
   ): void {
+    const flush = (res as Response & { flush?: () => void }).flush?.bind(res);
     const chunks = text.split(' ');
     for (const chunk of chunks) {
       res.write(
         `data: ${JSON.stringify({ token: chunk + ' ', done: false })}\n\n`,
       );
+      flush?.();
     }
     res.write(`data: ${JSON.stringify({ done: true, meta: meta ?? {} })}\n\n`);
+    flush?.();
   }
 
   endSSE(res: Response): void {

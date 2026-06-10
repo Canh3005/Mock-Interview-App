@@ -49,13 +49,13 @@ function AutoSaveIndicator({ status }) {
   return null
 }
 
-function PhaseProgressBar({ phase }) {
+function PhaseProgressBar({ phase, phases }) {
   const { t } = useTranslation()
-  const activeIdx = PHASES.indexOf(phase)
+  const activeIdx = phases.indexOf(phase)
 
   return (
     <div className="flex items-center gap-1">
-      {PHASES.map((p, i) => (
+      {phases.map((p, i) => (
         <div key={p} className="flex items-center gap-1">
           <div
             className={`px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap ${
@@ -68,7 +68,7 @@ function PhaseProgressBar({ phase }) {
           >
             {t(`sdRoom.phase.${p}`)}
           </div>
-          {i < PHASES.length - 1 && <div className="w-3 h-px bg-slate-700" />}
+          {i < phases.length - 1 && <div className="w-3 h-px bg-slate-700" />}
         </div>
       ))}
     </div>
@@ -124,7 +124,8 @@ export default function SDRoomPage() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const sdSessionId = useSelector((s) => s.interviewSetup.session?.sdSessionId)
-  const { loading, error, phase, autoSaveStatus } = useSelector((s) => s.sdSession)
+  const { loading, error, phase, autoSaveStatus, enableCurveball } = useSelector((s) => s.sdSession)
+  const sessionPhases = enableCurveball ? PHASES : PHASES.filter((p) => p !== 'WRAP_UP')
   const drawingComplete = useSelector((s) => s.sdInterviewer.drawingComplete)
   const mode = useSelector((s) => s.interviewSetup.session?.mode)
   const interviewSessionId = useSelector((s) => s.interviewSetup.session?.sessionId)
@@ -221,7 +222,7 @@ export default function SDRoomPage() {
   return (
     <div className="relative flex h-full min-h-0 flex-col gap-2 overflow-hidden p-2 text-[var(--dash-text)] sm:gap-3 sm:p-3">
       <nav className="flex min-h-11 shrink-0 flex-wrap items-center justify-between gap-2 rounded-[18px] border border-slate-800/60 bg-slate-900 px-3 py-2 shadow-shell">
-        <PhaseProgressBar phase={phase} />
+        <PhaseProgressBar phase={phase} phases={sessionPhases} />
         <div className="flex shrink-0 items-center gap-4">
           <AutoSaveIndicator status={autoSaveStatus} />
           <button

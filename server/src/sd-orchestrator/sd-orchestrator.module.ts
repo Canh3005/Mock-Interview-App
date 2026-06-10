@@ -16,6 +16,7 @@ import { SDDeepDivePlannerService } from './planners/sd-deep-dive-planner.servic
 import { SDDeepDiveAssessorService } from './assessors/sd-deep-dive-assessor.service';
 import { SDWrapUpPlannerService } from './planners/sd-wrap-up-planner.service';
 import { SDWrapUpAssessorService } from './assessors/sd-wrap-up-assessor.service';
+import { SDGraphAnalysisService } from './assessors/sd-graph-analysis.service';
 import { SDSession } from '../sd-session/entities/sd-session.entity';
 import { SDProblem } from '../sd-problem/entities/sd-problem.entity';
 import { AiModule } from '../ai/ai.module';
@@ -45,6 +46,7 @@ import { AiModule } from '../ai/ai.module';
     SDDeepDiveAssessorService,
     SDWrapUpPlannerService,
     SDWrapUpAssessorService,
+    SDGraphAnalysisService,
   ],
   exports: [SDOrchestratorService],
 })

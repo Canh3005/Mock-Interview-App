@@ -1,7 +1,7 @@
 export interface LLMClarificationOutput {
   candidateIntent: string;
   dimensionCovered: string[];
-  matchedFactKey: string | null;
+  matchedFactKeys: string[];
   solutionLeapDetected: boolean;
   requirementCoverage: number;
   questionSpecificity: number;
@@ -14,7 +14,7 @@ export interface LLMDeepDiveOutput {
   expectedSignalsCovered: string[];
   tradeoffMentioned: boolean;
   metricsMentioned: boolean;
-  redFlagTriggered: boolean;
+  failureModeMentioned: boolean;
   constraintLinked: boolean;
   technicalDepth: number;
   tradeoffArticulation: number;
@@ -29,8 +29,6 @@ export interface LLMWalkthroughOutput {
   explainedNodeIds: string[];
   explainedEdgeIds: string[];
   coveredPathIds: string[];
-  dataOwnershipMentioned: boolean;
-  syncAsyncBoundaryMentioned: boolean;
   constraintLinked: boolean;
   scopeViolation: boolean;
   contradictionDetected: boolean;
@@ -38,7 +36,6 @@ export interface LLMWalkthroughOutput {
   requirementSynthesis?: boolean;
   scaleReasoning?: boolean;
   scopeControl?: boolean;
-  persistenceMissing?: boolean;
   walkthroughCompleteness: number;
   flowClarity: number;
   graphVerbalAlignment: number;
@@ -46,14 +43,25 @@ export interface LLMWalkthroughOutput {
   redFlags: string[];
 }
 
+export interface LLMGraphAnalysisFlowCoverage {
+  pathId: string;
+  covered: boolean;
+  missingRoles: string[];
+}
+
+export interface LLMGraphAnalysisOutput {
+  flowCoverage: LLMGraphAnalysisFlowCoverage[];
+  componentGaps: string[];
+  structuralGapNodeTypes: string[];
+  probePriorities: string[];
+}
+
 export interface LLMWrapUpOutput {
   candidateIntent: string;
   blastRadiusRecognized: boolean;
   mitigationProposed: boolean;
-  tradeoffMentioned: boolean;
-  costOrLatencyImpactMentioned: boolean;
   consistencyWithOriginalDesign: boolean;
-  graphAdaptationMade: boolean;
+  mentionedMitigations: string[];
   failureReasoning: number;
   adaptationQuality: number;
   curveballHandling: number;

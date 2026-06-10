@@ -100,14 +100,11 @@ Analyze the candidate text and output JSON:
 - candidateIntent: one of ['architecture_walkthrough', 'direct_answer', 'clarification_question', 'dont_know', 'off_topic']
 - explainedNodeIds: array of graph node IDs the candidate mentioned or explained IN THIS TURN (per-turn, not cumulative). Only include IDs that exist in the graph.
 - explainedEdgeIds: array of graph edge IDs explained in this turn. Only include IDs that exist in the graph.
-- coveredPathIds: paths that become fully covered when merging cumulative state with this turn's explainedNodeIds. Check: does the union of cumulative explained nodes + this turn's explainedNodeIds contain all expectedNodeSequence nodes for a path?
-- dataOwnershipMentioned: candidate discussed who owns/stores what data.
-- syncAsyncBoundaryMentioned: candidate discussed sync vs async, eventual consistency, etc.
+- coveredPathIds: paths where the candidate has verbally traced a flow matching the path's semantic purpose. For each path, check two things: (1) did the candidate describe a directional flow with an entry point and an outcome? (2) does the description capture the defining characteristic of this path — i.e., the key condition or action that makes this path distinct (e.g., for "throttled_request": a limit being exceeded causes a rejection/429, and that rejection is logged). The expectedNodeSequence IDs are reference hints for component types only — the candidate is NOT required to match them. Accept coverage when the candidate uses different node names, adds extra intermediate nodes (e.g., a load balancer or a rules cache not in the reference sequence), or omits lower-priority intermediates — none of these disqualify coverage. Only reject coverage if the candidate's explanation directly inverts the path's meaning (e.g., says the limit-exceeded case still forwards to the backend normally). Include a path ID here only when coverage is confirmed cumulatively (merging prior turns with this turn).
 - constraintLinked: candidate referenced a clarified requirement fact (e.g., mentioned the DAU figure, p99 latency from requirements).
 - scopeViolation: candidate mentioned components outside the clarified scope/requirements.
 - contradictionDetected: candidate said something that contradicts the graph structure.
 - contradictionDetail: if contradictionDetected=true, describe the specific contradiction.
-- persistenceMissing: candidate walked through a read or write flow but never mentioned how or where data is stored (no database, cache, file, or storage mentioned) — true/false.
 ${
   isFirstTurn
     ? `- requirementSynthesis: candidate's opening statement shows they synthesized the requirements (mentions scope, functional goal) — true/false
@@ -149,12 +146,9 @@ Respond with raw JSON only. No markdown.`;
         coveredPathIds: Array.isArray(parsed.coveredPathIds)
           ? parsed.coveredPathIds
           : [],
-        dataOwnershipMentioned: Boolean(parsed.dataOwnershipMentioned),
-        syncAsyncBoundaryMentioned: Boolean(parsed.syncAsyncBoundaryMentioned),
         constraintLinked: Boolean(parsed.constraintLinked),
         scopeViolation: Boolean(parsed.scopeViolation),
         contradictionDetected: Boolean(parsed.contradictionDetected),
-        persistenceMissing: Boolean(parsed.persistenceMissing),
       },
       scoreDelta: {
         walkthroughCompleteness: Math.max(
@@ -222,12 +216,9 @@ Respond with raw JSON only. No markdown.`;
       candidateIntent: 'architecture_walkthrough',
       signals: {
         coveredPathIds: [],
-        dataOwnershipMentioned: false,
-        syncAsyncBoundaryMentioned: false,
         constraintLinked: false,
         scopeViolation: false,
         contradictionDetected: false,
-        persistenceMissing: false,
       },
       scoreDelta: {
         walkthroughCompleteness: 0.3,

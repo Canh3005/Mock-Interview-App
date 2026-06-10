@@ -1,15 +1,14 @@
 import type {
   SDClarificationData,
   SDFlowPath,
-  SDCurveball,
   SDProbe,
 } from '../sd-orchestrator/types/sd-orchestrator.types';
 
 export interface SDProblemOrchestratorData {
   clarificationData: SDClarificationData;
   flowPaths: SDFlowPath[];
-  curveballs: SDCurveball[];
   probeBank: SDProbe[];
+  [key: string]: unknown;
 }
 
 // Keyed by problem title — merged into seed at runtime
@@ -394,128 +393,6 @@ export const SD_PROBLEM_ORCHESTRATOR_DATA: Record<
         expectedNodeSequence: ['read_api', 'mapreduce', 'analytics_db'],
         required: false,
         priority: 7,
-      },
-    ],
-    curveballs: [
-      {
-        id: 'curve_thundering_herd',
-        type: 'scale_spike',
-        targetNodeType: 'cache',
-        scenarioTemplate:
-          'A paste goes viral — shared 500,000 times in 10 minutes. Cache hit ratio drops to 20%. How does your design handle this thundering herd?',
-        expectedMitigations: [
-          'cache warming',
-          'request coalescing',
-          'distributed lock',
-        ],
-        redFlags: [
-          'no cache fallback',
-          'stampede ignored',
-          'single cache node',
-        ],
-      },
-      {
-        id: 'curve_custom_alias',
-        type: 'constraint_change',
-        scenarioTemplate:
-          'New requirement: users can choose their own short slug. How does your collision handling change?',
-        expectedMitigations: [
-          'unique constraint',
-          'retry on collision',
-          'rate limit custom aliases',
-        ],
-        redFlags: ['no collision detection', 'no namespace protection'],
-      },
-      {
-        id: 'curve_stale_redirect_cache',
-        type: 'failure',
-        targetNodeType: 'cache',
-        scenarioTemplate:
-          'A customer deletes or expires a short link, but a hot cache entry keeps redirecting users for another hour. How do you prevent stale or unsafe redirects?',
-        expectedMitigations: [
-          'short TTL with active invalidation',
-          'status/version field checked on cache fill',
-          'delete writes invalidate cache before acknowledging',
-          'use 410 for known deleted links',
-        ],
-        redFlags: [
-          'cache never expires',
-          'delete only updates database',
-          'no tombstone or status field',
-        ],
-      },
-      {
-        id: 'curve_slug_enumeration',
-        type: 'scale_spike',
-        targetNodeType: 'service',
-        scenarioTemplate:
-          'Attackers enumerate sequential short codes and scrape private-looking pastes. What changes in key generation and access policy reduce this risk?',
-        expectedMitigations: [
-          'non-sequential public slug or random suffix',
-          'unguessable paste IDs for unlisted content',
-          'rate limit enumeration by IP or API key',
-          'abuse monitoring and takedown workflow',
-        ],
-        redFlags: [
-          'sequential IDs exposed directly',
-          'assumes unlisted means private',
-          'no abuse detection',
-        ],
-      },
-      {
-        id: 'curve_id_generator_collision',
-        type: 'failure',
-        targetNodeType: 'service',
-        scenarioTemplate:
-          'Two ID generator workers produce the same short code during a deployment or clock rollback. Where is the final collision guard?',
-        expectedMitigations: [
-          'database unique constraint',
-          'retry on duplicate key',
-          'worker ID lease or sequence allocation',
-          'clock rollback detection for time-based IDs',
-        ],
-        redFlags: [
-          'trusts generator without DB constraint',
-          'no retry path',
-          'no clock rollback handling',
-        ],
-      },
-      {
-        id: 'curve_replica_lag_after_create',
-        type: 'dependency_outage',
-        targetNodeType: 'database',
-        scenarioTemplate:
-          'A user creates a link and immediately shares it, but read replicas are 3 seconds behind and followers see 404. How do you provide read-your-writes?',
-        expectedMitigations: [
-          'write-through cache on create',
-          'read from primary for fresh links',
-          'sticky routing or freshness token',
-          'short negative-cache TTL',
-        ],
-        redFlags: [
-          'negative-caches 404 for long TTL',
-          'ignores replica lag',
-          'requires synchronous replication for every read',
-        ],
-      },
-      {
-        id: 'curve_large_paste_cost',
-        type: 'cost_pressure',
-        targetNodeType: 'storage',
-        scenarioTemplate:
-          'Users start uploading maximum-size pastes and storage cost grows 10x. Which limits or storage-tier choices do you add without hurting normal short-link redirects?',
-        expectedMitigations: [
-          'hard max paste size',
-          'compress text bodies',
-          'store large bodies in object storage',
-          'separate URL metadata from paste content',
-          'retention or expiry policy for anonymous pastes',
-        ],
-        redFlags: [
-          'stores large paste bodies inline in SQL rows',
-          'no quota or expiry',
-          'redirect path depends on object storage',
-        ],
       },
     ],
     probeBank: [
@@ -1182,130 +1059,6 @@ export const SD_PROBLEM_ORCHESTRATOR_DATA: Record<
         priority: 8,
       },
     ],
-    curveballs: [
-      {
-        id: 'curve_celebrity_fanout',
-        type: 'scale_spike',
-        targetNodeType: 'queue',
-        scenarioTemplate:
-          'A celebrity with 50 million followers just posted a tweet. Your fan-out service needs to write 50 million timeline entries. How long will this take, and how do you handle it?',
-        expectedMitigations: [
-          'hybrid fanout',
-          'push for active users pull for others',
-          'skip celebrity in fan-out',
-        ],
-        redFlags: [
-          'synchronous fan-out to all followers',
-          'no hotkey handling',
-        ],
-      },
-      {
-        id: 'curve_trending',
-        type: 'constraint_change',
-        scenarioTemplate:
-          'New requirement: trending topics must update in real time (under 30 seconds). Your current batch processing has a 5-minute delay. What changes?',
-        expectedMitigations: [
-          'stream processing',
-          'sliding window aggregate',
-          'separate trending service',
-        ],
-        redFlags: ['batch-only approach', 'no stream layer'],
-      },
-      {
-        id: 'curve_fanout_queue_backlog',
-        type: 'failure',
-        targetNodeType: 'queue',
-        scenarioTemplate:
-          'A major sports final causes 20x normal posting volume. Fanout queues are 15 minutes behind, but users still expect fresh timelines. What degrades and what stays correct?',
-        expectedMitigations: [
-          'persist tweet before fanout',
-          'monitor fanout lag',
-          'priority lanes for active users',
-          'fallback pull/merge on read',
-          'backpressure and autoscaling workers',
-        ],
-        redFlags: [
-          'post API waits for all fanout writes',
-          'no queue lag metric',
-          'drops tweets silently',
-        ],
-      },
-      {
-        id: 'curve_delete_still_visible',
-        type: 'constraint_change',
-        targetNodeType: 'cache',
-        scenarioTemplate:
-          'A user deletes a tweet, but it remains in millions of cached home timelines and search results. How do you make deletion visible quickly without rewriting every timeline synchronously?',
-        expectedMitigations: [
-          'tweet tombstone checked during hydration',
-          'async cache cleanup',
-          'search index delete/update event',
-          'short TTL for hydrated tweet cache',
-        ],
-        redFlags: [
-          'synchronously scans every follower timeline',
-          'no tombstone',
-          'search index never receives deletes',
-        ],
-      },
-      {
-        id: 'curve_search_index_lag',
-        type: 'dependency_outage',
-        targetNodeType: 'service',
-        scenarioTemplate:
-          'Search indexing is delayed by 2 minutes during breaking news. Timeline still works, but search freshness is bad. What is your recovery and user-facing behavior?',
-        expectedMitigations: [
-          'indexing lag SLO',
-          'separate real-time indexing lane',
-          'replayable queue',
-          'partial results with freshness indicator',
-          'backfill from durable tweet store',
-        ],
-        redFlags: [
-          'search depends only on in-memory events',
-          'no replay/backfill',
-          'no freshness metric',
-        ],
-      },
-      {
-        id: 'curve_timeline_cache_memory',
-        type: 'cost_pressure',
-        targetNodeType: 'cache',
-        scenarioTemplate:
-          'Timeline cache memory cannot hold every inactive user timeline. Which timelines do you cache, evict, or rebuild on demand?',
-        expectedMitigations: [
-          'cache active users first',
-          'store bounded recent tweet IDs',
-          'rebuild inactive timelines lazily',
-          'use TTL/LRU by activity',
-          'separate tweet hydration cache',
-        ],
-        redFlags: [
-          'stores full tweet bodies in every timeline',
-          'keeps inactive timelines forever',
-          'no rebuild path on cache miss',
-        ],
-      },
-      {
-        id: 'curve_hot_search_query',
-        type: 'scale_spike',
-        targetNodeType: 'service',
-        scenarioTemplate:
-          'A breaking hashtag receives 100x normal search traffic and all queries hit the same shard range. How do you avoid search hot spots?',
-        expectedMitigations: [
-          'query result caching for hot queries',
-          'partition index by time and term',
-          'replicate hot shards',
-          'scatter-gather with timeout and partial merge',
-          'rate limit abusive clients',
-        ],
-        redFlags: [
-          'single shard owns every hot term',
-          'no query cache',
-          'search API blocks indefinitely waiting for all shards',
-        ],
-      },
-    ],
     probeBank: [
       {
         id: 'probe_twitter_fanout',
@@ -1959,146 +1712,6 @@ export const SD_PROBLEM_ORCHESTRATOR_DATA: Record<
         expectedNodeSequence: ['crawler', 'nosql'],
         required: false,
         priority: 7,
-      },
-    ],
-    curveballs: [
-      {
-        id: 'curve_crawler_trap',
-        type: 'failure',
-        scenarioTemplate:
-          'Website A keeps generating infinite unique URLs (crawler trap). Your crawler is stuck fetching the same domain infinitely. How do you detect and handle this?',
-        expectedMitigations: [
-          'URL normalization',
-          'max depth per domain',
-          'page signature deduplication',
-          'robots.txt',
-        ],
-        redFlags: ['no duplicate detection', 'no domain rate limiting'],
-      },
-      {
-        id: 'curve_breaking_news',
-        type: 'constraint_change',
-        scenarioTemplate:
-          'Breaking news just appeared — the team wants it indexed within 5 minutes instead of the weekly crawl schedule. What changes to your architecture?',
-        expectedMitigations: [
-          'priority queue',
-          'trusted sitemap lastmod signal',
-          'high priority crawl lane',
-        ],
-        redFlags: ['single FIFO queue only', 'no priority mechanism'],
-      },
-      {
-        id: 'curve_slow_host_backpressure',
-        type: 'dependency_outage',
-        targetNodeType: 'service',
-        scenarioTemplate:
-          'A large host becomes very slow: connections hang for 30 seconds and crawler workers pile up. How do you protect worker capacity and stay polite?',
-        expectedMitigations: [
-          'per-host timeout and circuit breaker',
-          'one outstanding request per host',
-          'adaptive crawl delay/backoff',
-          'worker pool isolation',
-          'retry with capped attempts',
-        ],
-        redFlags: [
-          'unbounded concurrent fetches to same host',
-          'no timeout',
-          'global worker starvation',
-        ],
-      },
-      {
-        id: 'curve_robots_disallow_after_crawl',
-        type: 'constraint_change',
-        targetNodeType: 'service',
-        scenarioTemplate:
-          'A site changes robots.txt to disallow a path you crawled yesterday. What happens to scheduled recrawls and already indexed content?',
-        expectedMitigations: [
-          'refresh robots cache within policy window',
-          'stop future fetches for disallowed paths',
-          'mark URL blocked in metadata',
-          'separate crawl permission from index removal policy',
-        ],
-        redFlags: [
-          'robots rules cached forever',
-          'continues crawling disallowed paths',
-          'confuses robots.txt with access control',
-        ],
-      },
-      {
-        id: 'curve_faceted_url_explosion',
-        type: 'scale_spike',
-        targetNodeType: 'queue',
-        scenarioTemplate:
-          'An e-commerce site generates millions of filter/sort URL combinations with near-identical content. How do you avoid wasting crawl budget?',
-        expectedMitigations: [
-          'URL normalization and parameter rules',
-          'per-host crawl budget',
-          'near-duplicate detection',
-          'canonical link handling',
-          'depth and pattern limits',
-        ],
-        redFlags: [
-          'URL-only dedupe after fetch',
-          'no per-host budget',
-          'keeps every parameter combination',
-        ],
-      },
-      {
-        id: 'curve_priority_starvation',
-        type: 'cost_pressure',
-        targetNodeType: 'queue',
-        scenarioTemplate:
-          'Popular news domains constantly refill the high-priority queue and smaller sites never get crawled. How do you keep freshness without starvation?',
-        expectedMitigations: [
-          'fair scheduling by host/domain tier',
-          'priority aging',
-          'per-domain quota',
-          'separate discovery and recrawl lanes',
-          'crawl budget accounting',
-        ],
-        redFlags: [
-          'single global priority queue only',
-          'no fairness policy',
-          'popular domains consume all capacity',
-        ],
-      },
-      {
-        id: 'curve_indexer_backlog',
-        type: 'failure',
-        targetNodeType: 'queue',
-        scenarioTemplate:
-          'Crawler fetches pages faster than the indexing pipeline can process them. The reverse index is hours behind. What do you slow down, buffer, or drop?',
-        expectedMitigations: [
-          'durable indexing queue',
-          'backpressure from index lag to crawler frontier',
-          'priority for changed/high-value pages',
-          'DLQ for poison documents',
-          'replay from raw document store',
-        ],
-        redFlags: [
-          'crawler ignores index lag',
-          'drops fetched content with no replay',
-          'no poison document isolation',
-        ],
-      },
-      {
-        id: 'curve_duplicate_storage_cost',
-        type: 'cost_pressure',
-        targetNodeType: 'database',
-        scenarioTemplate:
-          'Raw crawled storage reaches 72 PB faster than expected because mirror sites and tracking parameters create duplicates. What do you dedupe before storing, after storing, and in the index?',
-        expectedMitigations: [
-          'normalize URL before frontier insert',
-          'exact content hash',
-          'SimHash or shingling for near-duplicates',
-          'store canonical document once',
-          'cold storage/lifecycle policy',
-        ],
-        redFlags: [
-          'stores every fetched copy forever',
-          'URL-only deduplication',
-          'no canonical document mapping',
-        ],
       },
     ],
     probeBank: [
@@ -2777,144 +2390,6 @@ export const SD_PROBLEM_ORCHESTRATOR_DATA: Record<
         ],
         required: false,
         priority: 7,
-      },
-    ],
-    curveballs: [
-      {
-        id: 'curve_duplicate_transactions',
-        type: 'dependency_outage',
-        targetNodeType: 'service',
-        scenarioTemplate:
-          'A bank partner API sends duplicate transactions for 2 hours due to their bug. Users see negative balances on their dashboard. Where is your idempotency?',
-        expectedMitigations: [
-          'idempotency key',
-          'unique constraint on transaction id',
-          'deduplication window',
-        ],
-        redFlags: ['no idempotency', 'insert without checking'],
-      },
-      {
-        id: 'curve_realtime_alert',
-        type: 'constraint_change',
-        scenarioTemplate:
-          'New requirement: real-time spending alerts — if spending in the last hour exceeds 20% of monthly budget, notify immediately. Your batch processing has a 5-minute delay. What changes?',
-        expectedMitigations: [
-          'stream processing',
-          'sliding window',
-          'Redis counter',
-        ],
-        redFlags: ['batch-only', 'no real-time layer'],
-      },
-      {
-        id: 'curve_bank_provider_outage',
-        type: 'dependency_outage',
-        targetNodeType: 'service',
-        scenarioTemplate:
-          'A major bank aggregator is down for 6 hours. Users keep opening dashboards and some manually refresh accounts. What degrades, what keeps working, and how do you prevent retry storms?',
-        expectedMitigations: [
-          'serve last-known-good dashboard data',
-          'show data freshness timestamp',
-          'queue retries with exponential backoff and jitter',
-          'circuit breaker per provider',
-          'do not block dashboard reads on live bank calls',
-        ],
-        redFlags: [
-          'dashboard synchronously calls bank API',
-          'unbounded retries',
-          'no freshness indicator',
-        ],
-      },
-      {
-        id: 'curve_cursor_replay',
-        type: 'failure',
-        targetNodeType: 'queue',
-        scenarioTemplate:
-          'A worker commits transaction rows but crashes before saving the new sync cursor. The same cursor is replayed. How do you avoid duplicate transactions and corrupted budget rollups?',
-        expectedMitigations: [
-          'transactional cursor update after applying changes',
-          'unique transaction key',
-          'idempotent rollup updates',
-          'replay-safe queue processing',
-        ],
-        redFlags: [
-          'cursor saved before writes commit',
-          'budget increments blindly',
-          'no duplicate guard',
-        ],
-      },
-      {
-        id: 'curve_pending_double_count',
-        type: 'constraint_change',
-        targetNodeType: 'database',
-        scenarioTemplate:
-          'A $200 pending restaurant charge posts as $176 two days later. The dashboard now shows both charges and budget alerts fire twice. How do you model pending-to-posted replacement?',
-        expectedMitigations: [
-          'pending transaction linkage',
-          'reverse or adjust old rollup',
-          'final posted transaction wins',
-          'alert deduplication by budget window',
-        ],
-        redFlags: [
-          'pending and posted treated as unrelated forever',
-          'no rollup correction',
-          'alerts not idempotent',
-        ],
-      },
-      {
-        id: 'curve_category_model_drift',
-        type: 'constraint_change',
-        targetNodeType: 'service',
-        scenarioTemplate:
-          'A merchant changes descriptors and grocery purchases are suddenly categorized as entertainment for thousands of users. How do user overrides, rule rollbacks, and aggregate repair work?',
-        expectedMitigations: [
-          'user category overrides',
-          'versioned categorization rules',
-          'backfill affected transactions',
-          'repair monthly rollups',
-          'monitor category anomaly rate',
-        ],
-        redFlags: [
-          'category is immutable forever',
-          'no rule versioning',
-          'no aggregate repair path',
-        ],
-      },
-      {
-        id: 'curve_token_leak',
-        type: 'failure',
-        targetNodeType: 'database',
-        scenarioTemplate:
-          'A log pipeline accidentally captures bank access tokens. What controls should have prevented this, and what is your incident response?',
-        expectedMitigations: [
-          'never log tokens or raw secrets',
-          'token encryption and secret scanning',
-          'least-privilege access',
-          'token rotation/revocation',
-          'audit affected access',
-        ],
-        redFlags: [
-          'tokens stored plaintext',
-          'tokens appear in application logs',
-          'no revocation or audit process',
-        ],
-      },
-      {
-        id: 'curve_dashboard_stale_cache',
-        type: 'failure',
-        targetNodeType: 'cache',
-        scenarioTemplate:
-          'A user edits a transaction category, but the dashboard still shows the old budget totals for 30 minutes. How do cache invalidation and rollup recomputation work?',
-        expectedMitigations: [
-          'write-through or event-driven cache invalidation',
-          'rollup adjustment for changed category',
-          'versioned dashboard cache keys',
-          'short TTL for user-visible aggregates',
-        ],
-        redFlags: [
-          'dashboard cache only expires by long TTL',
-          'category edit does not update rollups',
-          'no versioning for aggregate cache',
-        ],
       },
     ],
     probeBank: [
@@ -3598,163 +3073,6 @@ export const SD_PROBLEM_ORCHESTRATOR_DATA: Record<
         ],
         required: false,
         priority: 8,
-      },
-    ],
-    curveballs: [
-      {
-        id: 'curve_node_failure',
-        type: 'failure',
-        targetNodeType: 'cache',
-        scenarioTemplate:
-          'One of your three cache shards crashes. How does consistent hashing redistribute traffic, and what is the user impact during the transition?',
-        expectedMitigations: [
-          'consistent hashing',
-          'virtual nodes',
-          'graceful miss handling',
-        ],
-        redFlags: ['full cache flush on node failure', 'no virtual nodes'],
-      },
-      {
-        id: 'curve_invalidation',
-        type: 'constraint_change',
-        scenarioTemplate:
-          'When the search index updates a page that was crawled, you need to invalidate the specific cache entries for that page — not flush the entire cache. How?',
-        expectedMitigations: [
-          'event-driven invalidation',
-          'versioned keys',
-          'TTL-based expiry',
-        ],
-        redFlags: ['flush entire cache', 'no targeted invalidation'],
-      },
-      {
-        id: 'curve_cache_stampede',
-        type: 'scale_spike',
-        targetNodeType: 'cache',
-        scenarioTemplate:
-          'A hot key expires and 20,000 clients request it in the same second. Every request misses and hits the backend. How do you stop the stampede?',
-        expectedMitigations: [
-          'request coalescing/single-flight',
-          'stale-while-revalidate',
-          'TTL jitter',
-          'distributed lock with timeout',
-          'negative caching when backend says not found',
-        ],
-        redFlags: [
-          'every miss independently calls backend',
-          'same TTL for all hot keys',
-          'lock can deadlock indefinitely',
-        ],
-      },
-      {
-        id: 'curve_hot_key_skew',
-        type: 'scale_spike',
-        targetNodeType: 'cache',
-        scenarioTemplate:
-          'One key receives 35% of all traffic and its owner shard saturates while other shards are idle. How do you detect and mitigate the hot key?',
-        expectedMitigations: [
-          'hot key metrics',
-          'client-side/local cache',
-          'replicate read-heavy hot key',
-          'request coalescing',
-          'split key for write-heavy counters',
-        ],
-        redFlags: [
-          'consistent hashing alone fixes hot key',
-          'no per-key metrics',
-          'adds shards but hot key remains single-owner',
-        ],
-      },
-      {
-        id: 'curve_eviction_storm',
-        type: 'cost_pressure',
-        targetNodeType: 'cache',
-        scenarioTemplate:
-          'Traffic shifts and write volume spikes. Cache nodes start evicting 100K keys/minute and hit rate collapses. What policy and admission controls do you add?',
-        expectedMitigations: [
-          'eviction/admission metrics',
-          'LRU/LFU trade-off',
-          'max value size',
-          'write admission or sampling',
-          'memory headroom before OOM',
-        ],
-        redFlags: [
-          'reject all writes when full',
-          'no admission policy',
-          'no visibility into evicted key classes',
-        ],
-      },
-      {
-        id: 'curve_stale_overwrite',
-        type: 'failure',
-        targetNodeType: 'cache',
-        scenarioTemplate:
-          'A slow backend read returns an old value after a newer invalidation already happened, and writes stale data back into cache. How do versioned keys or CAS prevent this?',
-        expectedMitigations: [
-          'versioned cache keys',
-          'compare-and-set/generation check',
-          'write after read validates current version',
-          'short TTL bounds stale exposure',
-        ],
-        redFlags: [
-          'blind write-back after slow miss',
-          'no version/generation',
-          'long TTL for mutable records',
-        ],
-      },
-      {
-        id: 'curve_counter_lost_update',
-        type: 'constraint_change',
-        targetNodeType: 'cache',
-        scenarioTemplate:
-          'Product now wants atomic counters in the cache. Two clients increment the same key concurrently. What API/locking semantics are needed to avoid lost updates?',
-        expectedMitigations: [
-          'atomic increment operation',
-          'CAS token for read-modify-write',
-          'single owner shard serializes updates',
-          'clear non-durable counter caveat',
-        ],
-        redFlags: [
-          'client read-modify-write with plain SET',
-          'cross-shard counter update',
-          'claims durable counter without persistence',
-        ],
-      },
-      {
-        id: 'curve_reshard_latency',
-        type: 'constraint_change',
-        targetNodeType: 'cache',
-        scenarioTemplate:
-          'You add three cache nodes during traffic peak. Rebalancing causes elevated latency and misses. How do clients route, migrate, and warm keys safely?',
-        expectedMitigations: [
-          'virtual nodes or hash slots',
-          'gradual key migration',
-          'client routing metadata version',
-          'dual read/write during migration when needed',
-          'monitor hit rate and migration progress',
-        ],
-        redFlags: [
-          'full cluster flush',
-          'all clients update routing manually',
-          'moves every key at once',
-        ],
-      },
-      {
-        id: 'curve_split_brain_routing',
-        type: 'failure',
-        targetNodeType: 'service',
-        scenarioTemplate:
-          'Half of your query API instances use the old hash ring and half use the new one. Reads and writes for the same key go to different shards. How do you make routing metadata safe?',
-        expectedMitigations: [
-          'versioned routing map',
-          'central metadata/config service',
-          'graceful rollout with compatibility window',
-          'forwarding/proxy for moved keys',
-        ],
-        redFlags: [
-          'unversioned local config',
-          'no moved-key forwarding',
-          'accepts silent split-brain cache state',
-        ],
       },
     ],
     probeBank: [
@@ -4469,162 +3787,6 @@ export const SD_PROBLEM_ORCHESTRATOR_DATA: Record<
         ],
         required: false,
         priority: 8,
-      },
-    ],
-    curveballs: [
-      {
-        id: 'curve_prime_day',
-        type: 'scale_spike',
-        scenarioTemplate:
-          'Prime Day: transaction volume spikes 100× in 2 hours. Hourly batch rankings become 2 hours stale. What do you change?',
-        expectedMitigations: [
-          'stream processing',
-          'near-real-time ranking',
-          'Kafka plus Flink',
-        ],
-        redFlags: ['batch-only stays', 'no stream processing layer'],
-      },
-      {
-        id: 'curve_hot_partition',
-        type: 'constraint_change',
-        targetNodeType: 'database',
-        scenarioTemplate:
-          'One category has a single product with 90% of sales. Your sharding by category creates a hot partition. How do you fix this?',
-        expectedMitigations: [
-          'shard by product id',
-          'local aggregation then merge',
-          'Redis sorted set per category',
-        ],
-        redFlags: ['single shard for category', 'no hot key handling'],
-      },
-      {
-        id: 'curve_late_returns',
-        type: 'constraint_change',
-        targetNodeType: 'database',
-        scenarioTemplate:
-          'A batch of returns and cancellations arrives 3 days late for products that were top sellers. How do you correct historical windows and republish affected ranks?',
-        expectedMitigations: [
-          'model returns as correction events',
-          'recompute affected time windows/categories',
-          'versioned snapshot republish',
-          'raw event replay from object storage',
-        ],
-        redFlags: [
-          'sales events immutable with no correction path',
-          'manual rank edits',
-          'does not republish impacted categories',
-        ],
-      },
-      {
-        id: 'curve_category_reparenting',
-        type: 'constraint_change',
-        targetNodeType: 'database',
-        scenarioTemplate:
-          'The category taxonomy changes and thousands of products move from one category subtree to another. How do you recompute ranks without breaking reads?',
-        expectedMitigations: [
-          'versioned product-category membership',
-          'snapshot rebuild for affected categories',
-          'atomic publish of new taxonomy/rank version',
-          'old snapshot served until new one completes',
-        ],
-        redFlags: [
-          'category membership overwritten with no history',
-          'partial taxonomy visible to reads',
-          'no backfill/recompute plan',
-        ],
-      },
-      {
-        id: 'curve_partial_snapshot_publish',
-        type: 'failure',
-        targetNodeType: 'database',
-        scenarioTemplate:
-          'Hourly MapReduce succeeds for 80% of categories and fails for the rest, but cache refresh starts anyway. How do you avoid serving mixed or partial rank snapshots?',
-        expectedMitigations: [
-          'batch run manifest',
-          'snapshot versioning',
-          'atomic publish after validation',
-          'serve last good snapshot on failure',
-        ],
-        redFlags: [
-          'cache updated category by category before validation',
-          'no batch run status',
-          'partial snapshot visible to users',
-        ],
-      },
-      {
-        id: 'curve_rank_cache_stampede',
-        type: 'scale_spike',
-        targetNodeType: 'cache',
-        scenarioTemplate:
-          'After the hourly rank publish, TTLs for popular category caches expire together and 40K reads/sec hit SQL replicas. How do you publish without a cache stampede?',
-        expectedMitigations: [
-          'versioned cache keys with atomic pointer swap',
-          'prewarm hot category caches',
-          'TTL jitter',
-          'request coalescing',
-          'do not flush all keys globally',
-        ],
-        redFlags: [
-          'full cache flush every hour',
-          'same TTL for every category',
-          'read API falls through to SQL for all hot categories',
-        ],
-      },
-      {
-        id: 'curve_rank_gaming',
-        type: 'failure',
-        targetNodeType: 'service',
-        scenarioTemplate:
-          'A seller appears to buy thousands of their own product to manipulate rank. Fraud detection is out of scope, but how should ranking ingestion stay replayable and allow downstream correction?',
-        expectedMitigations: [
-          'raw immutable event log',
-          'event_type/correction support',
-          'exclude flagged events through correction feed',
-          'rank jobs replay from clean event set',
-        ],
-        redFlags: [
-          'rank uses only mutable counters',
-          'no audit trail for sales events',
-          'cannot remove invalid events later',
-        ],
-      },
-      {
-        id: 'curve_hot_category_reads',
-        type: 'scale_spike',
-        targetNodeType: 'cache',
-        scenarioTemplate:
-          'Electronics best-seller pages receive 100x normal traffic during a sale, while long-tail categories are quiet. How do cache/CDN and top-K storage handle this skew?',
-        expectedMitigations: [
-          'cache hot top-K category lists',
-          'CDN cache public category pages when possible',
-          'replicate hot cache keys',
-          'precompute top-K snapshots',
-          'rate limit abusive scraping',
-        ],
-        redFlags: [
-          'database read for every category page',
-          'no hot category detection',
-          'same cache policy for hot and cold categories',
-        ],
-      },
-      {
-        id: 'curve_batch_cost_explosion',
-        type: 'cost_pressure',
-        targetNodeType: 'worker',
-        scenarioTemplate:
-          'Hourly batch recomputes every category from all historical sales and costs keep rising. How do you make computation incremental?',
-        expectedMitigations: [
-          'windowed aggregates',
-          'incremental deltas by hour/category',
-          'local top-K then merge',
-          'only recompute affected categories',
-          'cold raw event storage with compacted aggregates',
-        ],
-        redFlags: [
-          'full historical scan every hour',
-          'global sort of all products',
-          'no aggregate checkpoints',
-        ],
       },
     ],
     probeBank: [
@@ -5358,167 +4520,6 @@ export const SD_PROBLEM_ORCHESTRATOR_DATA: Record<
         priority: 10,
       },
     ],
-    curveballs: [
-      {
-        id: 'curve_rds_io',
-        type: 'failure',
-        targetNodeType: 'database',
-        scenarioTemplate:
-          'RDS Master disk I/O reaches 90% capacity. Read replicas do not help because write load is too high. What is your next step?',
-        expectedMitigations: [
-          'vertical scaling',
-          'sharding by user id',
-          'CQRS',
-          'connection pooling',
-        ],
-        redFlags: ['add more read replicas only', 'no write scaling strategy'],
-      },
-      {
-        id: 'curve_zero_downtime',
-        type: 'constraint_change',
-        scenarioTemplate:
-          'You need a zero-downtime deploy with 10 million active users. Blue-green or rolling deploy — which, and what are the trade-offs?',
-        expectedMitigations: [
-          'blue-green instant rollback',
-          'rolling saves cost',
-          'backward compatible API',
-        ],
-        redFlags: ['downtime accepted', 'no rollback plan'],
-      },
-      {
-        id: 'curve_single_az_outage',
-        type: 'failure',
-        targetNodeType: 'service',
-        scenarioTemplate:
-          'One Availability Zone goes down during peak traffic. Which components fail over automatically, what capacity remains, and what user impact do you expect?',
-        expectedMitigations: [
-          'app servers distributed across AZs',
-          'load balancer removes unhealthy targets',
-          'RDS Multi-AZ failover',
-          'N+1 capacity planning',
-          'connection retry with backoff',
-        ],
-        redFlags: [
-          'all app servers in one AZ',
-          'RDS single-AZ primary only',
-          'no capacity headroom after AZ loss',
-        ],
-      },
-      {
-        id: 'curve_cache_stampede_aws',
-        type: 'scale_spike',
-        targetNodeType: 'cache',
-        scenarioTemplate:
-          'A deploy clears a hot ElastiCache namespace and 40K QPS suddenly hits RDS. How do you prevent cache stampede and database collapse?',
-        expectedMitigations: [
-          'avoid global cache flush',
-          'request coalescing/single-flight',
-          'TTL jitter and prewarming',
-          'serve stale data briefly',
-          'rate limit or shed low-priority traffic',
-        ],
-        redFlags: [
-          'flush all cache on every deploy',
-          'every miss queries RDS',
-          'no backend protection',
-        ],
-      },
-      {
-        id: 'curve_connection_storm',
-        type: 'failure',
-        targetNodeType: 'database',
-        scenarioTemplate:
-          'Autoscaling adds 200 app instances in 3 minutes, and each opens 100 database connections. RDS hits max_connections. What changes?',
-        expectedMitigations: [
-          'connection pooling/RDS Proxy',
-          'cap per-instance DB connections',
-          'scale out gradually with warmup',
-          'backpressure and queue writes',
-          'separate read and write pools',
-        ],
-        redFlags: [
-          'unbounded connection pools',
-          'autoscaling ignores database capacity',
-          'retry storm on connection failure',
-        ],
-      },
-      {
-        id: 'curve_sqs_backlog',
-        type: 'scale_spike',
-        targetNodeType: 'queue',
-        scenarioTemplate:
-          'SQS queue age grows to 45 minutes because workers cannot keep up with image processing and report jobs. What do you scale, prioritize, or shed?',
-        expectedMitigations: [
-          'scale workers by queue age',
-          'separate queues by priority',
-          'DLQ for poison jobs',
-          'idempotent worker retries',
-          'user-facing async status',
-        ],
-        redFlags: [
-          'single queue for all workloads',
-          'no DLQ',
-          'user request blocks waiting for job completion',
-        ],
-      },
-      {
-        id: 'curve_bad_db_migration',
-        type: 'constraint_change',
-        targetNodeType: 'database',
-        scenarioTemplate:
-          'A zero-downtime deploy includes a blocking ALTER TABLE on a hot table and locks writes for minutes. How should schema migrations be designed?',
-        expectedMitigations: [
-          'expand-and-contract migrations',
-          'backfill in batches',
-          'online index creation',
-          'backward-compatible code',
-          'separate migration rollout and app deploy',
-        ],
-        redFlags: [
-          'blocking migration in request path',
-          'app requires old and new schema switch atomically',
-          'no rollback/forward plan',
-        ],
-      },
-      {
-        id: 'curve_restore_drill_fails',
-        type: 'failure',
-        targetNodeType: 'database',
-        scenarioTemplate:
-          'A production table is accidentally truncated. Backups exist, but the restore drill has never been tested. What are your RPO/RTO and recovery steps?',
-        expectedMitigations: [
-          'PITR backups',
-          'tested restore runbook',
-          'restore to new instance and validate',
-          'audit and limit destructive privileges',
-          'clear RPO/RTO',
-        ],
-        redFlags: [
-          'backups assumed without restore test',
-          'restore directly over production blindly',
-          'no RPO/RTO defined',
-        ],
-      },
-      {
-        id: 'curve_cloud_cost_spike',
-        type: 'cost_pressure',
-        targetNodeType: 'service',
-        scenarioTemplate:
-          'AWS bill doubles after launch: oversized EC2, low cache hit rate, huge NAT/data transfer, and always-on workers. Where do you look first?',
-        expectedMitigations: [
-          'cost dashboards by service',
-          'rightsizing and autoscaling policies',
-          'CDN/cache hit rate tuning',
-          'S3 lifecycle policies',
-          'worker scale-to-zero or scheduled scaling',
-        ],
-        redFlags: [
-          'no cost allocation tags',
-          'only reduces instance count blindly',
-          'ignores data transfer/NAT costs',
-        ],
-      },
-    ],
     probeBank: [
       {
         id: 'probe_aws_rds_scaling',
@@ -6173,169 +5174,6 @@ export const SD_PROBLEM_ORCHESTRATOR_DATA: Record<
         priority: 7,
       },
     ],
-    curveballs: [
-      {
-        id: 'curve_bfs_depth',
-        type: 'scale_spike',
-        scenarioTemplate:
-          'A BFS at depth 6 on 100M users could traverse billions of nodes. In practice, what is your actual latency, and how do you keep it under 1 second?',
-        expectedMitigations: [
-          'bidirectional BFS',
-          'depth limit',
-          'precomputed popular pairs',
-          'cached results',
-        ],
-        redFlags: [
-          'unbounded BFS',
-          'no depth limit',
-          'no bidirectional optimization',
-        ],
-      },
-      {
-        id: 'curve_celebrity_node',
-        type: 'constraint_change',
-        targetNodeType: 'database',
-        scenarioTemplate:
-          'A user with 50 million followers appears in your BFS traversal. Fetching their full friend list creates a fan-out of 50M nodes. How does your architecture handle this super-node?',
-        expectedMitigations: [
-          'skip celebrity nodes',
-          'truncated friend list',
-          'separate celebrity graph',
-        ],
-        redFlags: ['full fan-out on celebrity', 'no super-node handling'],
-      },
-      {
-        id: 'curve_privacy_blocked_path',
-        type: 'constraint_change',
-        targetNodeType: 'service',
-        scenarioTemplate:
-          'BFS finds A -> B -> C -> Target, but B has blocked the requester and C has a private profile. How do you prevent leaking hidden relationships?',
-        expectedMitigations: [
-          'privacy filter before returning path',
-          'block/private metadata lookup',
-          'cache path keyed by viewer/version',
-          'fast invalidation on privacy changes',
-        ],
-        redFlags: [
-          'returns structural path without ACL checks',
-          'global path cache ignores viewer',
-          'privacy changes wait for long TTL',
-        ],
-      },
-      {
-        id: 'curve_shard_hotspot',
-        type: 'scale_spike',
-        targetNodeType: 'database',
-        scenarioTemplate:
-          'A shard owns many high-degree users and receives 10x more neighbor fetches than other shards during BFS. How do you rebalance or protect it?',
-        expectedMitigations: [
-          'virtual shards/consistent hashing',
-          'replicate hot adjacency lists',
-          'degree-aware partitioning',
-          'frontier caps and timeout budget',
-          'per-shard circuit breaker',
-        ],
-        redFlags: [
-          'uniform user_id sharding assumed enough',
-          'no per-shard metrics',
-          'one slow shard blocks entire query',
-        ],
-      },
-      {
-        id: 'curve_cache_stale_after_unfriend',
-        type: 'failure',
-        targetNodeType: 'cache',
-        scenarioTemplate:
-          'Two users unfriend, but a cached path still shows them connected for an hour. How do you bound stale paths and invalidate affected cache entries?',
-        expectedMitigations: [
-          'edge version in path cache key',
-          'short TTL for path caches',
-          'invalidate adjacency cache on edge update',
-          'privacy/delete checks at response time',
-        ],
-        redFlags: [
-          'path cache has no version/TTL',
-          'edge update does not invalidate cache',
-          'stale private path is returned',
-        ],
-      },
-      {
-        id: 'curve_frontier_memory_blowup',
-        type: 'scale_spike',
-        targetNodeType: 'service',
-        scenarioTemplate:
-          'A query between two distant users creates a BFS frontier with tens of millions of candidates and the graph service runs out of memory. What limits do you enforce?',
-        expectedMitigations: [
-          'bidirectional BFS',
-          'expand smaller frontier',
-          'frontier size cap',
-          'depth/time budget',
-          'visited set memory limit',
-          'return timeout/no path safely',
-        ],
-        redFlags: [
-          'unbounded visited set',
-          'keeps searching past latency budget',
-          'no partial failure behavior',
-        ],
-      },
-      {
-        id: 'curve_disconnected_components',
-        type: 'constraint_change',
-        targetNodeType: 'database',
-        scenarioTemplate:
-          'Most queries are between users in disconnected graph components. Can you answer no-path quickly without doing BFS every time?',
-        expectedMitigations: [
-          'connected component IDs',
-          'negative cache with TTL/version',
-          'offline component recomputation',
-          'component check before BFS',
-        ],
-        redFlags: [
-          'runs full BFS for obvious no-path',
-          'negative cache never invalidated',
-          'no component metadata',
-        ],
-      },
-      {
-        id: 'curve_edge_update_race',
-        type: 'failure',
-        targetNodeType: 'database',
-        scenarioTemplate:
-          'A mutual friend edge is stored on two endpoint shards. One shard update succeeds and the other fails. How do you avoid asymmetric graph state?',
-        expectedMitigations: [
-          'idempotent edge update workflow',
-          'outbox/retry for second direction',
-          'edge status/version',
-          'repair job for asymmetric edges',
-          'read-time consistency check when needed',
-        ],
-        redFlags: [
-          'two-shard write assumed atomic',
-          'no repair for half-written edges',
-          'BFS sees asymmetric friendships forever',
-        ],
-      },
-      {
-        id: 'curve_graph_query_abuse',
-        type: 'cost_pressure',
-        targetNodeType: 'service',
-        scenarioTemplate:
-          'A scraper issues expensive path queries to random high-degree users and consumes graph shard capacity. How do you protect the service?',
-        expectedMitigations: [
-          'per-user/IP rate limits',
-          'query cost budget',
-          'frontier expansion limits',
-          'cache negative/hot results',
-          'abuse detection and throttling',
-        ],
-        redFlags: [
-          'every query gets unlimited BFS',
-          'no cost-based throttling',
-          'no abuse visibility',
-        ],
-      },
-    ],
     probeBank: [
       {
         id: 'probe_graph_bfs',
@@ -6978,6 +5816,14 @@ export const SD_PROBLEM_ORCHESTRATOR_DATA: Record<
           'redis_cluster',
           'api_servers',
         ],
+        expectedEdges: [
+          { from: 'client', to: 'api_gateway' },
+          { from: 'api_gateway', to: 'rate_limiter' },
+          { from: 'rate_limiter', to: 'rules_cache' },
+          { from: 'rate_limiter', to: 'redis_cluster' },
+          { from: 'redis_cluster', to: 'rate_limiter' },
+          { from: 'rate_limiter', to: 'api_servers' },
+        ],
         required: true,
         priority: 1,
       },
@@ -6993,6 +5839,13 @@ export const SD_PROBLEM_ORCHESTRATOR_DATA: Record<
           'redis_cluster',
           'mq',
         ],
+        expectedEdges: [
+          { from: 'client', to: 'api_gateway' },
+          { from: 'api_gateway', to: 'rate_limiter' },
+          { from: 'rate_limiter', to: 'redis_cluster' },
+          { from: 'rate_limiter', to: 'client' },
+          { from: 'rate_limiter', to: 'mq' },
+        ],
         required: true,
         priority: 2,
       },
@@ -7006,6 +5859,11 @@ export const SD_PROBLEM_ORCHESTRATOR_DATA: Record<
           'rules_db',
           'rules_cache',
           'rate_limiter',
+        ],
+        expectedEdges: [
+          { from: 'rules_service', to: 'rules_db' },
+          { from: 'rules_service', to: 'rules_cache' },
+          { from: 'rules_cache', to: 'rate_limiter' },
         ],
         required: false,
         priority: 3,
@@ -7021,18 +5879,24 @@ export const SD_PROBLEM_ORCHESTRATOR_DATA: Record<
           'api_servers',
           'mq',
         ],
+        expectedEdges: [
+          { from: 'rate_limiter', to: 'redis_cluster' },
+          { from: 'rate_limiter', to: 'api_servers' },
+          { from: 'rate_limiter', to: 'mq' },
+        ],
         required: false,
         priority: 4,
       },
     ],
-    curveballs: [
+    probeBank: [
       {
         id: 'curve_redis_down',
-        type: 'failure',
-        targetNodeType: 'cache',
-        scenarioTemplate:
+        stage: 'WRAP_UP' as const,
+        curveballType: 'failure' as const,
+        appliesToNodeTypes: ['cache'],
+        primaryQuestionTemplate:
           'Your Redis cluster crashes mid-traffic. Your rate limiter cannot check counters. Do you fail-open (allow all) or fail-closed (block all)? Why?',
-        expectedMitigations: [
+        expectedSignals: [
           'fail-open for availability',
           'alert monitoring',
           'local fallback counter',
@@ -7044,11 +5908,12 @@ export const SD_PROBLEM_ORCHESTRATOR_DATA: Record<
       },
       {
         id: 'curve_hot_key_customer',
-        type: 'scale_spike',
-        targetNodeType: 'cache',
-        scenarioTemplate:
+        stage: 'WRAP_UP' as const,
+        curveballType: 'scale_spike' as const,
+        appliesToNodeTypes: ['cache'],
+        primaryQuestionTemplate:
           'One large customer suddenly sends 40% of all traffic through a single API key. How does your Redis key design and sharding strategy avoid a hot key bottleneck?',
-        expectedMitigations: [
+        expectedSignals: [
           'split hot counters by time bucket or sub-key',
           'detect hot API keys and apply stricter local pre-limit',
           'isolate large customers to dedicated shards when needed',
@@ -7061,10 +5926,11 @@ export const SD_PROBLEM_ORCHESTRATOR_DATA: Record<
       },
       {
         id: 'curve_memory_footprint',
-        type: 'constraint_change',
-        scenarioTemplate:
+        stage: 'WRAP_UP' as const,
+        curveballType: 'constraint_change' as const,
+        primaryQuestionTemplate:
           'You decide to switch from fixed window to sliding window counter for accuracy. With 10M users × 100 endpoints, what is the memory footprint and can Redis handle it?',
-        expectedMitigations: [
+        expectedSignals: [
           '2 counters per user per window',
           'TTL auto-expire',
           'calculated memory estimate',
@@ -7073,11 +5939,12 @@ export const SD_PROBLEM_ORCHESTRATOR_DATA: Record<
       },
       {
         id: 'curve_multi_region_limit',
-        type: 'constraint_change',
-        targetNodeType: 'cache',
-        scenarioTemplate:
+        stage: 'WRAP_UP' as const,
+        curveballType: 'constraint_change' as const,
+        appliesToNodeTypes: ['cache'],
+        primaryQuestionTemplate:
           'Product now asks for one global limit across three regions. A customer sends traffic to all regions at once. How do you keep limits reasonably accurate without adding high cross-region latency?',
-        expectedMitigations: [
+        expectedSignals: [
           'regional quota allocation',
           'eventual global reconciliation',
           'accept bounded over-allowing',
@@ -7091,11 +5958,12 @@ export const SD_PROBLEM_ORCHESTRATOR_DATA: Record<
       },
       {
         id: 'curve_rules_cache_stale',
-        type: 'dependency_outage',
-        targetNodeType: 'service',
-        scenarioTemplate:
+        stage: 'WRAP_UP' as const,
+        curveballType: 'dependency_outage' as const,
+        appliesToNodeTypes: ['service'],
+        primaryQuestionTemplate:
           'The rules service is down for 10 minutes, but API traffic continues. Existing limits must keep working and emergency blocks must still be possible. What does your control-plane/data-plane design do?',
-        expectedMitigations: [
+        expectedSignals: [
           'local rules cache with TTL and last-known-good config',
           'separate control plane from request path',
           'emergency static deny/allow list',
@@ -7109,11 +5977,12 @@ export const SD_PROBLEM_ORCHESTRATOR_DATA: Record<
       },
       {
         id: 'curve_redis_cost_pressure',
-        type: 'cost_pressure',
-        targetNodeType: 'cache',
-        scenarioTemplate:
+        stage: 'WRAP_UP' as const,
+        curveballType: 'cost_pressure' as const,
+        appliesToNodeTypes: ['cache'],
+        primaryQuestionTemplate:
           'Redis cost doubles because counter cardinality is much higher than expected. Which counters can you approximate, aggregate, or evict without weakening important limits?',
-        expectedMitigations: [
+        expectedSignals: [
           'TTL every counter aggressively',
           'avoid per-endpoint counters for low-risk endpoints',
           'use approximate or local pre-limit for noisy low-value traffic',
@@ -7125,8 +5994,6 @@ export const SD_PROBLEM_ORCHESTRATOR_DATA: Record<
           'no memory cardinality estimate',
         ],
       },
-    ],
-    probeBank: [
       {
         id: 'probe_rate_algorithm',
         stage: 'DEEP_DIVE',
@@ -7145,9 +6012,29 @@ export const SD_PROBLEM_ORCHESTRATOR_DATA: Record<
         ],
         followUps: [
           {
+            trigger: 'missing_tradeoff',
+            questionTemplate:
+              'When would you choose fixed window over sliding window despite the boundary burst risk?',
+          },
+          {
+            trigger: 'missing_metric',
+            questionTemplate:
+              'How much more memory does a sliding window log use compared to a fixed window counter per user?',
+          },
+          {
             trigger: 'vague_answer',
             questionTemplate:
               'If limit is 10 req/min and user sends 10 at 00:59 and 10 at 01:01, what does fixed window allow?',
+          },
+          {
+            trigger: 'no mention of boundary burst',
+            questionTemplate:
+              'Walk me through what happens at a minute boundary — does fixed window allow more requests than the configured limit, and by how much?',
+          },
+          {
+            trigger: 'fixed window presented as accurate',
+            questionTemplate:
+              'Walk me through what happens at a minute boundary — does fixed window allow more requests than the configured limit, and by how much?',
           },
         ],
       },
@@ -7171,9 +6058,34 @@ export const SD_PROBLEM_ORCHESTRATOR_DATA: Record<
         ],
         followUps: [
           {
+            trigger: 'missing_tradeoff',
+            questionTemplate:
+              'Token bucket requires tracking refill timestamps per user — how does that compare to a sliding window counter in terms of Redis storage and complexity?',
+          },
+          {
             trigger: 'missing_metric',
             questionTemplate:
               'What two numbers would you configure for a token bucket to express average rate and max burst?',
+          },
+          {
+            trigger: 'vague_answer',
+            questionTemplate:
+              'Walk me through a concrete example: a bucket with capacity 20 and refill rate 5/sec — what happens when the user fires 25 requests instantly?',
+          },
+          {
+            trigger: 'unbounded bursts',
+            questionTemplate:
+              'What limits how many requests can be sent in a single spike, and what mechanism in your design enforces that limit?',
+          },
+          {
+            trigger: 'confuses refill rate with total quota',
+            questionTemplate:
+              'What is the difference between the refill rate and the total bucket capacity in a token bucket?',
+          },
+          {
+            trigger: 'no explanation of burst capacity',
+            questionTemplate:
+              'Walk me through a concrete example: a bucket with capacity 20 and refill rate 5/sec — what happens when the user fires 25 requests instantly?',
           },
         ],
       },
@@ -7199,6 +6111,26 @@ export const SD_PROBLEM_ORCHESTRATOR_DATA: Record<
             questionTemplate:
               'Trade-off between a single Redis node (accurate) and a Redis cluster (scalable but eventually consistent)?',
           },
+          {
+            trigger: 'missing_metric',
+            questionTemplate:
+              'At 100K req/s across 10 nodes, how many Redis INCR operations per second does each node issue, and can a single Redis primary handle that write throughput?',
+          },
+          {
+            trigger: 'vague_answer',
+            questionTemplate:
+              'Walk me through the exact sequence when two rate limiter nodes receive requests for the same user at the exact same millisecond — what does each node read and write?',
+          },
+          {
+            trigger: 'counters inconsistent without atomic ops',
+            questionTemplate:
+              'How does counter inconsistency across nodes lead to over-allowing or over-blocking, and which failure mode is worse for your use case?',
+          },
+          {
+            trigger: 'no distributed counter strategy',
+            questionTemplate:
+              'How do 10 rate limiter nodes coordinate counter writes without creating race conditions?',
+          },
         ],
       },
       {
@@ -7221,9 +6153,34 @@ export const SD_PROBLEM_ORCHESTRATOR_DATA: Record<
         ],
         followUps: [
           {
-            trigger: 'red_flag',
+            trigger: 'missing_tradeoff',
+            questionTemplate:
+              'Compare using a Lua script versus a Redis transaction (MULTI/EXEC) for atomicity — what is the difference in failure semantics and rollback behavior?',
+          },
+          {
+            trigger: 'missing_metric',
+            questionTemplate:
+              'What is the latency overhead of a Lua script round-trip versus a plain INCR at p99, and is it acceptable given your 5ms budget?',
+          },
+          {
+            trigger: 'vague_answer',
+            questionTemplate:
+              'Write out the exact Redis commands in order for creating a new counter window — which command sets the TTL and when exactly is it called?',
+          },
+          {
+            trigger: 'INCR then EXPIRE with crash gap',
             questionTemplate:
               'What happens if the process crashes after INCR but before EXPIRE?',
+          },
+          {
+            trigger: 'counter can live forever',
+            questionTemplate:
+              'What happens to counters for inactive users if TTL is never set, and how does that affect Redis memory over time?',
+          },
+          {
+            trigger: 'no atomicity story',
+            questionTemplate:
+              'How do you ensure INCR and EXPIRE are treated as a single atomic operation in Redis?',
           },
         ],
       },
@@ -7234,6 +6191,8 @@ export const SD_PROBLEM_ORCHESTRATOR_DATA: Record<
         appliesToNodeTypes: ['service', 'database', 'cache'],
         primaryQuestionTemplate:
           'Rules can change while traffic is flowing. How do you separate the rules control plane from the hot request path?',
+        structuralGapQuestion:
+          "I don't see a dedicated rules cache or control-plane service in your design. Rules need to change without redeploying — where would rate limiter nodes read the current rules from, and how would updates propagate?",
         expectedSignals: [
           'local rules cache on rate limiter nodes',
           'rules service/database outside critical request path',
@@ -7251,6 +6210,31 @@ export const SD_PROBLEM_ORCHESTRATOR_DATA: Record<
             questionTemplate:
               'How stale can rules be before it becomes unsafe, and how would you alert on that?',
           },
+          {
+            trigger: 'missing_metric',
+            questionTemplate:
+              'What TTL would you set on the local rules cache, and how does that bound the maximum propagation delay after an admin changes a limit?',
+          },
+          {
+            trigger: 'vague_answer',
+            questionTemplate:
+              'Describe exactly what data lives in the local rules cache on each rate limiter node and how it gets refreshed — push, poll, or both?',
+          },
+          {
+            trigger: 'database lookup for every request',
+            questionTemplate:
+              'If the rules database is hit synchronously on every request at 100K QPS, what is the load on that database and what happens to your 5ms latency budget?',
+          },
+          {
+            trigger: 'no rule versioning',
+            questionTemplate:
+              'What happens when two rate limiter nodes read different versions of the same rule simultaneously?',
+          },
+          {
+            trigger: 'no behavior when rules service is down',
+            questionTemplate:
+              'What does your rate limiter do if the rules service is unreachable for 10 minutes while traffic continues flowing?',
+          },
         ],
       },
       {
@@ -7260,6 +6244,8 @@ export const SD_PROBLEM_ORCHESTRATOR_DATA: Record<
         appliesToNodeTypes: ['service', 'cache'],
         primaryQuestionTemplate:
           'When Redis is unavailable, which endpoints should fail-open and which should fail-closed? What is the user and security impact?',
+        structuralGapQuestion:
+          "I don't see a counter store like Redis in your design. Where does the rate limiter persist the request counts, and what happens to that component if it goes down?",
         expectedSignals: [
           'general APIs usually fail-open to preserve availability',
           'security-sensitive endpoints may fail-closed or use strict local limits',
@@ -7277,6 +6263,31 @@ export const SD_PROBLEM_ORCHESTRATOR_DATA: Record<
             questionTemplate:
               'How would your answer change for login attempts versus read-only product catalog APIs?',
           },
+          {
+            trigger: 'missing_metric',
+            questionTemplate:
+              'What would you set as the local emergency limit during Redis outage — and how did you arrive at that number?',
+          },
+          {
+            trigger: 'vague_answer',
+            questionTemplate:
+              'Describe the state transitions: what triggers the switch from normal mode to degraded mode, and what switches it back?',
+          },
+          {
+            trigger: 'same behavior for every endpoint',
+            questionTemplate:
+              'How would your answer change for login attempts versus read-only product catalog APIs?',
+          },
+          {
+            trigger: 'blocks all traffic during cache outage',
+            questionTemplate:
+              'If you block all traffic during a Redis outage, what is the business impact and how long would customers see 429s before Redis recovers?',
+          },
+          {
+            trigger: 'no degraded-mode monitoring',
+            questionTemplate:
+              'How would you know your system entered degraded mode before a customer reports it?',
+          },
         ],
       },
       {
@@ -7286,6 +6297,8 @@ export const SD_PROBLEM_ORCHESTRATOR_DATA: Record<
         appliesToNodeTypes: ['service', 'cache', 'queue'],
         primaryQuestionTemplate:
           'What metrics and logs would you expose to know the rate limiter is protecting the backend without harming good clients?',
+        structuralGapQuestion:
+          "I don't see a place in your design where rejected requests are logged or where alerts would be emitted. When a customer gets throttled, how does your system record it, and how would you know if the rate limiter is misbehaving?",
         expectedSignals: [
           'allowed vs rejected request rate by key and endpoint',
           'Redis latency/error rate',
@@ -7300,9 +6313,34 @@ export const SD_PROBLEM_ORCHESTRATOR_DATA: Record<
         ],
         followUps: [
           {
+            trigger: 'missing_tradeoff',
+            questionTemplate:
+              'Logging every rejected request at 100K QPS has a cost — how would you balance full fidelity versus sampling or counter aggregation?',
+          },
+          {
             trigger: 'missing_metric',
             questionTemplate:
               'Which single dashboard would you check first if a major customer reports unexpected 429s?',
+          },
+          {
+            trigger: 'vague_answer',
+            questionTemplate:
+              'List the top 5 metrics you would alert on, in priority order, and what threshold would trigger each alert?',
+          },
+          {
+            trigger: 'only logs rejected requests',
+            questionTemplate:
+              'If you only log rejected requests, how would you detect a misconfigured rule that silently throttles good traffic before any customer reports it?',
+          },
+          {
+            trigger: 'no per-customer visibility',
+            questionTemplate:
+              'How would you identify which specific customer is being impacted if multiple customers report 429s simultaneously?',
+          },
+          {
+            trigger: 'no dependency latency metrics',
+            questionTemplate:
+              'How would you detect if Redis latency is the root cause of your rate limiter exceeding the 5ms budget?',
           },
         ],
       },
@@ -7329,6 +6367,31 @@ export const SD_PROBLEM_ORCHESTRATOR_DATA: Record<
             trigger: 'missing_tradeoff',
             questionTemplate:
               'What is the maximum over-allowing you would tolerate before tightening regional quotas?',
+          },
+          {
+            trigger: 'missing_metric',
+            questionTemplate:
+              'With 3 regions each holding one-third of the quota, what is the worst-case over-allowing percentage if all traffic suddenly concentrates in one region?',
+          },
+          {
+            trigger: 'vague_answer',
+            questionTemplate:
+              'Walk me through the quota allocation strategy step by step — how does a region claim quota, when does it refresh, and what happens when it runs out?',
+          },
+          {
+            trigger: 'global synchronous counter for every request',
+            questionTemplate:
+              'If every request triggers a synchronous cross-region counter write, what is the added latency per request and how does that compare to your 5ms overhead budget?',
+          },
+          {
+            trigger: 'ignores cross-region latency',
+            questionTemplate:
+              'What is the typical cross-region round-trip latency and how does that factor into your design decision?',
+          },
+          {
+            trigger: 'claims exact global enforcement with no tradeoff',
+            questionTemplate:
+              'What tradeoff do you make between global accuracy and per-request latency when enforcing a cross-region limit?',
           },
         ],
       },
@@ -7825,185 +6888,6 @@ export const SD_PROBLEM_ORCHESTRATOR_DATA: Record<
         ],
         required: false,
         priority: 10,
-      },
-    ],
-    curveballs: [
-      {
-        id: 'curve_group_fanout',
-        type: 'scale_spike',
-        scenarioTemplate:
-          'A group chat has 1,000 members. When one person sends a message, you must deliver it to 999 recipients. What is your fan-out strategy — push or pull?',
-        expectedMitigations: [
-          'push to online members',
-          'pull inbox pattern for offline',
-          'group message pointer not copy',
-        ],
-        redFlags: [
-          '999 writes per message',
-          'no distinction online vs offline',
-        ],
-      },
-      {
-        id: 'curve_offline_sync',
-        type: 'failure',
-        scenarioTemplate:
-          'User A sends a message, goes offline, reconnects 2 hours later. How do you guarantee no messages are lost and no duplicates appear when syncing?',
-        expectedMitigations: [
-          'sequence id per conversation',
-          'client sends last seen seq',
-          'delta sync on reconnect',
-        ],
-        redFlags: ['no sequence tracking', 'no idempotency on sync'],
-      },
-      {
-        id: 'curve_reconnect_storm',
-        type: 'scale_spike',
-        targetNodeType: 'service',
-        scenarioTemplate:
-          'A mobile carrier outage ends and 50 million clients reconnect within minutes. How do WebSocket servers, connection manager, and sync APIs avoid collapse?',
-        expectedMitigations: [
-          'exponential reconnect backoff with jitter',
-          'connection admission control',
-          'autoscale WebSocket servers',
-          'throttle delta sync',
-          'presence updates sampled/rate-limited',
-        ],
-        redFlags: [
-          'clients reconnect in tight loop',
-          'sync all history on reconnect',
-          'presence broadcast to all contacts immediately',
-        ],
-      },
-      {
-        id: 'curve_kafka_lag',
-        type: 'failure',
-        targetNodeType: 'queue',
-        scenarioTemplate:
-          'Kafka consumer lag grows to 10 minutes. Online users see delayed messages even though writes are persisted. What degrades and what must remain correct?',
-        expectedMitigations: [
-          'partition by conversation/user key',
-          'consumer autoscaling',
-          'lag-based alerting',
-          'replay from durable log',
-          'clients can sync from message store',
-        ],
-        redFlags: [
-          'message only exists in queue',
-          'no consumer lag metric',
-          'drops messages to catch up',
-        ],
-      },
-      {
-        id: 'curve_slow_consumer',
-        type: 'failure',
-        targetNodeType: 'service',
-        scenarioTemplate:
-          'A recipient has a weak connection and cannot drain the WebSocket send buffer. How do you prevent one slow client from consuming server memory?',
-        expectedMitigations: [
-          'bounded per-connection send buffer',
-          'drop ephemeral events first',
-          'close/reconnect slow clients',
-          'durable message sync on reconnect',
-        ],
-        redFlags: [
-          'unbounded WebSocket buffer',
-          'drops durable messages without sync path',
-          'one client blocks event loop/thread',
-        ],
-      },
-      {
-        id: 'curve_hot_group_chat',
-        type: 'scale_spike',
-        targetNodeType: 'database',
-        scenarioTemplate:
-          'A 1,000-member group receives hundreds of messages per second and becomes a hot conversation partition. How do you preserve order and reduce hot-spot pressure?',
-        expectedMitigations: [
-          'partition by conversation with hot group mitigation',
-          'append one group message pointer',
-          'sub-partition or bucket hot groups carefully',
-          'batch fanout events',
-          'preserve per-conversation sequence order',
-        ],
-        redFlags: [
-          '999 full message copies per send',
-          'breaks ordering across sub-partitions',
-          'no hot conversation detection',
-        ],
-      },
-      {
-        id: 'curve_out_of_order_duplicates',
-        type: 'failure',
-        targetNodeType: 'service',
-        scenarioTemplate:
-          'A client retries a send after timeout. The server already persisted it, and now the user sees duplicate/out-of-order messages. What is the idempotency and ordering design?',
-        expectedMitigations: [
-          'client-generated idempotency key',
-          'server message_id mapping',
-          'monotonic per-conversation sequence',
-          'client dedupe by message_id',
-          'retry returns existing message result',
-        ],
-        redFlags: [
-          'new message on every retry',
-          'timestamp ordering only',
-          'client cannot dedupe',
-        ],
-      },
-      {
-        id: 'curve_cassandra_hot_partition',
-        type: 'scale_spike',
-        targetNodeType: 'database',
-        scenarioTemplate:
-          'One conversation has years of history and massive traffic. Cassandra partition by conversation_id becomes huge and hot. How do you model message storage?',
-        expectedMitigations: [
-          'bucket partition by conversation_id and time/range',
-          'sequence index for pagination',
-          'compaction/TTL by retention policy',
-          'hot conversation detection',
-        ],
-        redFlags: [
-          'one unbounded partition per conversation',
-          'scan full conversation for recent sync',
-          'no retention/compaction plan',
-        ],
-      },
-      {
-        id: 'curve_media_abuse_cost',
-        type: 'cost_pressure',
-        targetNodeType: 'storage',
-        scenarioTemplate:
-          'Users start uploading large media files and CDN/storage costs spike. How do you control cost without slowing text message delivery?',
-        expectedMitigations: [
-          'direct media upload path separate from text path',
-          'file size/type limits',
-          'async malware/thumbnail processing',
-          'CDN caching and lifecycle tiers',
-          'quota/rate limits',
-        ],
-        redFlags: [
-          'media uploaded through chat service hot path',
-          'no file size limit',
-          'text delivery waits for media processing',
-        ],
-      },
-      {
-        id: 'curve_push_provider_outage',
-        type: 'dependency_outage',
-        targetNodeType: 'service',
-        scenarioTemplate:
-          'APNs/FCM is unavailable for 30 minutes. Offline users cannot receive push notifications. What remains durable and how do users catch up?',
-        expectedMitigations: [
-          'message store remains source of truth',
-          'retry push with backoff',
-          'sync missed messages on reconnect',
-          'push failure metrics',
-          'do not mark delivered based on push accept alone',
-        ],
-        redFlags: [
-          'push notification is the only delivery record',
-          'message lost if push fails',
-          'marks delivered before client ack',
-        ],
       },
     ],
     probeBank: [
@@ -8745,170 +7629,6 @@ export const SD_PROBLEM_ORCHESTRATOR_DATA: Record<
         priority: 9,
       },
     ],
-    curveballs: [
-      {
-        id: 'curve_event_spike',
-        type: 'scale_spike',
-        scenarioTemplate:
-          'A major event just ended — 100,000 riders simultaneously request rides from the same location in 60 seconds. Where does your matching service bottleneck?',
-        expectedMitigations: [
-          'Redis GEOSEARCH sharding by geohash',
-          'horizontal Kafka consumer scaling',
-          'exponential backoff on lock contention',
-        ],
-        redFlags: [
-          'single Redis node for geospatial',
-          'no lock contention handling',
-        ],
-      },
-      {
-        id: 'curve_driver_crash',
-        type: 'failure',
-        targetNodeType: 'service',
-        scenarioTemplate:
-          'Driver A is locked for a ride request but their app crashes before accepting or declining. The TTL lock expires in 10 seconds. Rider waits — is this acceptable, and how do you improve it?',
-        expectedMitigations: [
-          'delay queue to advance to next driver on TTL expiry',
-          'durable workflow for state persistence',
-        ],
-        redFlags: [
-          'rider waits indefinitely',
-          'no automatic advancement on timeout',
-        ],
-      },
-      {
-        id: 'curve_geo_cell_hotspot',
-        type: 'scale_spike',
-        targetNodeType: 'cache',
-        scenarioTemplate:
-          'After a stadium event, one geospatial cell receives 100,000 rider requests and 20,000 driver updates in minutes. How do you avoid a single Redis GEO key becoming the bottleneck?',
-        expectedMitigations: [
-          'shard by geohash/H3 cell and city',
-          'search neighboring cells progressively',
-          'replicate hot read-only candidate sets',
-          'bounded radius expansion',
-          'admission control per cell',
-        ],
-        redFlags: [
-          'single global Redis GEO index',
-          'unbounded radius search',
-          'no per-cell metrics',
-        ],
-      },
-      {
-        id: 'curve_double_assignment',
-        type: 'failure',
-        targetNodeType: 'cache',
-        scenarioTemplate:
-          'Two matching workers reserve the same driver for two riders because lock expiry and retries overlap. How do leases, fencing tokens, and ride state transitions prevent double assignment?',
-        expectedMitigations: [
-          'SETNX/lease with TTL',
-          'fencing token checked on accept',
-          'conditional SQL state update',
-          'idempotent driver accept',
-          'release/repair stale reservations',
-        ],
-        redFlags: [
-          'plain cache flag without fencing',
-          'driver accept updates ride blindly',
-          'lock TTL shorter than workflow without compensation',
-        ],
-      },
-      {
-        id: 'curve_stale_gps',
-        type: 'failure',
-        targetNodeType: 'cache',
-        scenarioTemplate:
-          'A driver loses network but remains in Redis GEO for 2 minutes. Riders keep getting matched to a driver who is no longer nearby. How do freshness and TTL work?',
-        expectedMitigations: [
-          'location heartbeat TTL',
-          'filter candidates by last_update timestamp',
-          'remove unavailable drivers on missed heartbeat',
-          'driver status separate from raw location',
-        ],
-        redFlags: [
-          'location never expires',
-          'matches by distance only',
-          'no driver availability status',
-        ],
-      },
-      {
-        id: 'curve_driver_accept_race',
-        type: 'constraint_change',
-        targetNodeType: 'database',
-        scenarioTemplate:
-          'The rider cancels exactly when the driver accepts. Both requests arrive at different app servers. What state transition wins and why?',
-        expectedMitigations: [
-          'explicit ride state machine',
-          'conditional compare-and-set update',
-          'idempotency keys',
-          'deterministic state transition rules',
-          'notify both parties of final state',
-        ],
-        redFlags: [
-          'last write wins blindly',
-          'no terminal state protection',
-          'rider and driver see different ride states',
-        ],
-      },
-      {
-        id: 'curve_push_provider_outage_ride',
-        type: 'dependency_outage',
-        targetNodeType: 'service',
-        scenarioTemplate:
-          'APNs/FCM is down for several minutes. Drivers do not receive push notifications for ride requests. How does matching recover without losing riders?',
-        expectedMitigations: [
-          'push failure detection',
-          'in-app/WebSocket notification when connected',
-          'timeout and advance to next driver',
-          'do not treat push accepted as driver accepted',
-          'rider wait status',
-        ],
-        redFlags: [
-          'ride request depends only on push delivery',
-          'driver stays locked indefinitely',
-          'no fallback/timeout path',
-        ],
-      },
-      {
-        id: 'curve_location_write_overload',
-        type: 'cost_pressure',
-        targetNodeType: 'cache',
-        scenarioTemplate:
-          '2 million driver location updates/sec are too expensive for Redis writes and downstream analytics. Which updates can you sample, aggregate, or drop?',
-        expectedMitigations: [
-          'only active/available drivers in hot geo index',
-          'coalesce small movements',
-          'adaptive update frequency',
-          'separate hot matching state from cold history',
-          'sample analytics pings',
-        ],
-        redFlags: [
-          'store every GPS ping forever in hot DB',
-          'same update rate for idle and active drivers',
-          'matching and analytics share one write path',
-        ],
-      },
-      {
-        id: 'curve_no_supply',
-        type: 'constraint_change',
-        targetNodeType: 'service',
-        scenarioTemplate:
-          'Demand exceeds supply in a zone for 15 minutes. No nearby drivers are available. What does the rider see, and how do you avoid wasting matching capacity?',
-        expectedMitigations: [
-          'bounded search radius/time budget',
-          'waitlist or retry with backoff',
-          'clear no-driver ETA/status',
-          'cell-level supply/demand signal',
-          'do not loop indefinitely',
-        ],
-        redFlags: [
-          'infinite search loop',
-          'keeps sending same drivers requests',
-          'no user-facing degraded state',
-        ],
-      },
-    ],
     probeBank: [
       {
         id: 'probe_uber_matching',
@@ -9628,168 +8348,6 @@ export const SD_PROBLEM_ORCHESTRATOR_DATA: Record<
         expectedNodeSequence: ['metadata_db', 's3'],
         required: false,
         priority: 10,
-      },
-    ],
-    curveballs: [
-      {
-        id: 'curve_conflict',
-        type: 'constraint_change',
-        scenarioTemplate:
-          'User A and User B both edit the same file offline on different devices, then both sync. How does your conflict resolution work?',
-        expectedMitigations: [
-          'last write wins',
-          'conflicted copy creation',
-          'notify user of conflict',
-        ],
-        redFlags: ['silently overwrites', 'no conflict detection'],
-      },
-      {
-        id: 'curve_resumable',
-        type: 'failure',
-        scenarioTemplate:
-          'A 50 GB upload disconnects at 80% completion. How does resumable upload work, and what happens to the partial upload in S3 if it is never completed?',
-        expectedMitigations: [
-          'S3 multipart upload ETags',
-          'client tracks uploaded chunks',
-          'lifecycle rule abort incomplete',
-        ],
-        redFlags: [
-          'restart from zero',
-          'no lifecycle rule on incomplete multipart',
-        ],
-      },
-      {
-        id: 'curve_metadata_commit_failure',
-        type: 'failure',
-        targetNodeType: 'database',
-        scenarioTemplate:
-          'All file chunks upload successfully to S3, but metadata commit fails. The user retries. How do you avoid orphaned blobs and duplicate visible files?',
-        expectedMitigations: [
-          'upload session state',
-          'idempotent metadata commit key',
-          'blob references immutable chunks',
-          'garbage collect unreferenced blobs',
-          'file visible only after metadata commit',
-        ],
-        redFlags: [
-          'file appears before metadata commit',
-          'retry creates duplicate file rows',
-          'orphaned blobs never cleaned',
-        ],
-      },
-      {
-        id: 'curve_sync_storm',
-        type: 'scale_spike',
-        targetNodeType: 'queue',
-        scenarioTemplate:
-          'A shared folder with 100,000 users receives 10,000 file changes. Notification fanout overloads queues and WebSocket servers. How do devices sync within 30 seconds?',
-        expectedMitigations: [
-          'namespace change log with cursors',
-          'coalesced notifications',
-          'pull delta after lightweight push',
-          'rate limit low-value notifications',
-          'pagination for large deltas',
-        ],
-        redFlags: [
-          'one notification per file per device',
-          'full folder rescan on every device',
-          'no cursor/pagination',
-        ],
-      },
-      {
-        id: 'curve_acl_revoke_stale_url',
-        type: 'constraint_change',
-        targetNodeType: 'service',
-        scenarioTemplate:
-          'A collaborator is removed from a shared folder, but they still have a cached download URL for a private file. How does revocation work?',
-        expectedMitigations: [
-          'short-lived scoped download URLs',
-          'ACL check before issuing URL',
-          'metadata permission version',
-          'revoke future access immediately',
-          'avoid permanent public object URLs',
-        ],
-        redFlags: [
-          'long-lived public S3 URL',
-          'CDN bypasses ACL forever',
-          'download URL issued without permission check',
-        ],
-      },
-      {
-        id: 'curve_dedupe_security',
-        type: 'constraint_change',
-        targetNodeType: 'storage',
-        scenarioTemplate:
-          'You add content-hash deduplication. Could users infer whether another user owns a file with the same hash, and how do you avoid cross-tenant privacy leaks?',
-        expectedMitigations: [
-          'dedupe within safe trust boundary',
-          'do not reveal existence by hash lookup',
-          'server-side ownership checks',
-          'encrypted per-tenant keys when needed',
-          'reference counting with ACL separation',
-        ],
-        redFlags: [
-          'client can query arbitrary hashes',
-          'dedupe bypasses permissions',
-          'hash existence leaks private file ownership',
-        ],
-      },
-      {
-        id: 'curve_delete_edit_race',
-        type: 'failure',
-        targetNodeType: 'database',
-        scenarioTemplate:
-          'Device A deletes a file while Device B edits it offline and syncs later. What does the user see and what metadata/version rules apply?',
-        expectedMitigations: [
-          'base revision check',
-          'tombstone version',
-          'conflicted copy or restore flow',
-          'preserve both user intents',
-          'clear sync notification',
-        ],
-        redFlags: [
-          'offline edit silently resurrects deleted file',
-          'delete silently discards edit',
-          'no base revision check',
-        ],
-      },
-      {
-        id: 'curve_hot_metadata_folder',
-        type: 'scale_spike',
-        targetNodeType: 'database',
-        scenarioTemplate:
-          'A folder with millions of files is opened and listed by thousands of clients. Metadata DB becomes hot. How do you paginate, cache, and shard folder metadata?',
-        expectedMitigations: [
-          'paginated listing',
-          'folder namespace sharding',
-          'metadata cache for hot folders',
-          'prefix/range partitioning',
-          'change cursor instead of full listing',
-        ],
-        redFlags: [
-          'loads full folder listing into memory',
-          'single hot metadata partition',
-          'every sync scans entire folder',
-        ],
-      },
-      {
-        id: 'curve_metadata_db_outage',
-        type: 'dependency_outage',
-        targetNodeType: 'database',
-        scenarioTemplate:
-          'S3 is healthy but the metadata DB is unavailable. Can users upload, download, or sync? What degrades safely?',
-        expectedMitigations: [
-          'existing public/cached downloads may continue',
-          'new commits blocked or queued',
-          'uploads can stage blobs but not make visible',
-          'sync serves last-known cursor/cache if safe',
-          'clear degraded state',
-        ],
-        redFlags: [
-          'metadata-less upload becomes visible',
-          'sync returns inconsistent namespace',
-          'claims S3 health means product healthy',
-        ],
       },
     ],
     probeBank: [
@@ -10518,188 +9076,6 @@ export const SD_PROBLEM_ORCHESTRATOR_DATA: Record<
         expectedNodeSequence: ['client', 'api_gateway', 'metadata_db'],
         required: false,
         priority: 11,
-      },
-    ],
-    curveballs: [
-      {
-        id: 'curve_viral_video',
-        type: 'scale_spike',
-        targetNodeType: 'cdn',
-        scenarioTemplate:
-          'A video goes viral — 10 million simultaneous viewers. CDN cache miss rate is 1%, hitting S3 origin with 100K req/sec. Can S3 handle it?',
-        expectedMitigations: [
-          'CDN origin shield',
-          'pre-warm CDN',
-          'S3 auto-scales but cost spikes',
-        ],
-        redFlags: ['no origin shield', 'no pre-warm strategy'],
-      },
-      {
-        id: 'curve_slow_transcode',
-        type: 'constraint_change',
-        scenarioTemplate:
-          'Transcoding a 2-hour 4K video takes 3 hours. Creators want the video playable within 5 minutes. How do you reduce time-to-playable?',
-        expectedMitigations: [
-          'progressive transcoding lower quality first',
-          'parallel segment transcoding',
-          'available after first segment ready',
-        ],
-        redFlags: [
-          'wait for all resolutions before publishing',
-          'single sequential transcode',
-        ],
-      },
-      {
-        id: 'curve_transcode_backlog',
-        type: 'scale_spike',
-        targetNodeType: 'queue',
-        scenarioTemplate:
-          'A creator event causes uploads to spike 20x. Transcode queue lag grows to 6 hours. Which jobs get priority and what user-facing state do creators/viewers see?',
-        expectedMitigations: [
-          'priority queues by video length/creator/popularity',
-          'low resolution first',
-          'autoscale transcode workers',
-          'queue lag SLO',
-          'batch high-cost 4K later',
-        ],
-        redFlags: [
-          'single FIFO transcode queue',
-          'all renditions block initial publish',
-          'no processing status or ETA',
-        ],
-      },
-      {
-        id: 'curve_corrupt_input',
-        type: 'failure',
-        targetNodeType: 'worker',
-        scenarioTemplate:
-          'A malformed video crashes transcoding workers repeatedly and blocks the queue. How do you isolate poison files and keep the pipeline moving?',
-        expectedMitigations: [
-          'bounded retries',
-          'DLQ/poison job quarantine',
-          'worker sandboxing',
-          'mark video failed with reason',
-          'do not block queue partitions',
-        ],
-        redFlags: [
-          'infinite retry loop',
-          'worker process crash takes down fleet',
-          'poison job blocks all uploads',
-        ],
-      },
-      {
-        id: 'curve_partial_manifest_publish',
-        type: 'failure',
-        targetNodeType: 'storage',
-        scenarioTemplate:
-          'Some segments are uploaded but the HLS manifest references segments that are not yet in storage. Viewers get playback 404s. How do you publish manifests atomically?',
-        expectedMitigations: [
-          'manifest generated after segment validation',
-          'versioned manifest keys',
-          'atomic metadata publish',
-          'serve previous playable version',
-          'health check segment availability',
-        ],
-        redFlags: [
-          'manifest visible before segments are complete',
-          'overwrites current manifest in place',
-          'no segment validation',
-        ],
-      },
-      {
-        id: 'curve_cdn_stale_takedown',
-        type: 'constraint_change',
-        targetNodeType: 'cdn',
-        scenarioTemplate:
-          'A copyrighted video must be removed immediately, but CDN edges keep serving cached segments for hours. What is your takedown path?',
-        expectedMitigations: [
-          'metadata blocks playback immediately',
-          'CDN invalidation for manifest/segments',
-          'shorter TTL for manifests than segments',
-          'signed URLs/tokens for private or blocked videos',
-          'audit takedown event',
-        ],
-        redFlags: [
-          'only deletes origin object',
-          'CDN cached content remains playable indefinitely',
-          'no metadata-level block',
-        ],
-      },
-      {
-        id: 'curve_hot_small_video',
-        type: 'scale_spike',
-        targetNodeType: 'cdn',
-        scenarioTemplate:
-          'A 20-second clip goes viral globally with 50 million viewers. Metadata API and manifest requests are now the bottleneck, not segment bandwidth. How do you cache and prewarm?',
-        expectedMitigations: [
-          'CDN cache manifests and thumbnails',
-          'edge cache hot segments',
-          'prewarm/origin shield',
-          'metadata cache',
-          'avoid per-play DB read',
-        ],
-        redFlags: [
-          'metadata DB read on every play',
-          'manifest not cacheable',
-          'no origin shield/prewarm',
-        ],
-      },
-      {
-        id: 'curve_storage_cost_explosion',
-        type: 'cost_pressure',
-        targetNodeType: 'storage',
-        scenarioTemplate:
-          'Storage cost grows faster than views because every upload keeps raw 4K plus all renditions forever. Which assets can be tiered, deleted, or lazily regenerated?',
-        expectedMitigations: [
-          'lifecycle old raw uploads',
-          'drop/regenerate unpopular renditions',
-          'content-aware bitrate ladder',
-          'delete failed/incomplete outputs',
-          'archive cold videos',
-        ],
-        redFlags: [
-          'keeps raw and every rendition forever',
-          'no popularity-based lifecycle',
-          'no cleanup for failed jobs',
-        ],
-      },
-      {
-        id: 'curve_playback_telemetry_overload',
-        type: 'scale_spike',
-        targetNodeType: 'service',
-        scenarioTemplate:
-          'Playback telemetry emits billions of events/day and overloads the metadata database. How do you collect quality metrics without hurting playback?',
-        expectedMitigations: [
-          'asynchronous telemetry pipeline',
-          'sampling/aggregation',
-          'separate analytics store',
-          'client buffering and drop policy',
-          'never block segment requests',
-        ],
-        redFlags: [
-          'telemetry writes to metadata DB synchronously',
-          'playback waits for analytics ack',
-          'no sampling or backpressure',
-        ],
-      },
-      {
-        id: 'curve_region_origin_outage',
-        type: 'dependency_outage',
-        targetNodeType: 'storage',
-        scenarioTemplate:
-          'The processed-video origin in one region has elevated errors. CDN cache still serves some videos, but long-tail playback misses fail. What failover strategy do you use?',
-        expectedMitigations: [
-          'multi-origin failover',
-          'replicate processed assets for popular videos',
-          'CDN origin shield/secondary origin',
-          'serve lower cached rendition if available',
-          'origin error monitoring',
-        ],
-        redFlags: [
-          'single origin for all playback',
-          'no origin error alarms',
-          'CDN miss means playback fails globally',
-        ],
       },
     ],
     probeBank: [
@@ -11448,180 +9824,6 @@ export const SD_PROBLEM_ORCHESTRATOR_DATA: Record<
         ],
         required: false,
         priority: 5,
-      },
-    ],
-    curveballs: [
-      {
-        id: 'curve_trending_term',
-        type: 'scale_spike',
-        scenarioTemplate:
-          '"Covid" appears for the first time — it goes from 0 to 50 million queries in 1 hour. Your batch trie rebuild takes 1 hour. How do you surface trending terms in real time?',
-        expectedMitigations: [
-          'stream processing alongside batch',
-          'Redis sorted set for real-time top-K',
-          'blend real-time and batch results',
-        ],
-        redFlags: [
-          'batch-only no real-time path',
-          'wait for next batch rebuild',
-        ],
-      },
-      {
-        id: 'curve_hotspot_prefix',
-        type: 'constraint_change',
-        targetNodeType: 'service',
-        scenarioTemplate:
-          'Your trie is sharded by prefix range. The prefix "a" serves 26% of all queries, creating a hotspot on shard 1. How do you fix this?',
-        expectedMitigations: [
-          'shard by popularity not alphabet',
-          'replicate hot prefixes',
-          'Redis sorted set for top prefixes',
-        ],
-        redFlags: ['no rebalancing strategy', 'keep alphabetical sharding'],
-      },
-      {
-        id: 'curve_cache_stampede_short_prefix',
-        type: 'scale_spike',
-        targetNodeType: 'cache',
-        scenarioTemplate:
-          'The cached result for prefix "a" expires during peak traffic and 20K requests/second all miss at once. How do you prevent a cache stampede?',
-        expectedMitigations: [
-          'jittered TTLs',
-          'request coalescing or single-flight rebuild',
-          'serve stale while revalidating',
-          'never expire extremely hot prefixes without a warm replacement',
-        ],
-        redFlags: [
-          'let every request rebuild',
-          'same TTL for all hot prefixes',
-          'no stale cache strategy',
-        ],
-      },
-      {
-        id: 'curve_bad_suggestion',
-        type: 'failure',
-        targetNodeType: 'service',
-        scenarioTemplate:
-          'A private phone number or offensive phrase becomes frequent enough to appear in top suggestions. Where do you block it, and how do you remove it quickly?',
-        expectedMitigations: [
-          'moderation pipeline before publish',
-          'deny list and PII detector',
-          'emergency invalidation of cache and snapshot entries',
-          'audit trail for bad-suggestion reports',
-        ],
-        redFlags: [
-          'trust raw popularity only',
-          'manual database edit with no cache purge',
-          'no abuse review path',
-        ],
-      },
-      {
-        id: 'curve_partial_snapshot_publish',
-        type: 'failure',
-        targetNodeType: 'database',
-        scenarioTemplate:
-          'A new trie snapshot is half-written when the builder crashes. Some servers load version N+1 and others still use version N. How do you keep responses coherent?',
-        expectedMitigations: [
-          'write immutable versioned snapshots',
-          'validate manifest/checksum before publish',
-          'atomic pointer flip',
-          'rollback to last known-good snapshot',
-        ],
-        redFlags: [
-          'overwrite live trie in place',
-          'no snapshot versioning',
-          'no validation before readers switch',
-        ],
-      },
-      {
-        id: 'curve_locale_hotspot',
-        type: 'constraint_change',
-        targetNodeType: 'service',
-        scenarioTemplate:
-          'The product expands to Japan and Korea. Normalization, tokenization, and prefix behavior no longer match English assumptions. What changes?',
-        expectedMitigations: [
-          'locale-specific analyzers and dictionaries',
-          'partition cache/trie by locale',
-          'Unicode normalization and case folding',
-          'separate ranking statistics per locale',
-        ],
-        redFlags: [
-          'ASCII-only prefix logic',
-          'single global ranking for all locales',
-          'ignore IME composition behavior',
-        ],
-      },
-      {
-        id: 'curve_query_log_lag',
-        type: 'dependency_outage',
-        targetNodeType: 'queue',
-        scenarioTemplate:
-          'Kafka ingestion is delayed by 45 minutes. Serving traffic is fine, but trending suggestions stop updating. What degrades and what alerts fire?',
-        expectedMitigations: [
-          'serve base trie snapshot while overlay is stale',
-          'alert on stream lag and overlay age',
-          'backfill missed windows',
-          'separate serving SLO from freshness SLO',
-        ],
-        redFlags: [
-          'serving depends synchronously on Kafka',
-          'no freshness metric',
-          'drop delayed logs permanently',
-        ],
-      },
-      {
-        id: 'curve_ranking_gaming',
-        type: 'failure',
-        targetNodeType: 'worker',
-        scenarioTemplate:
-          'A botnet issues millions of searches for a scam phrase to push it into autocomplete. How do you make ranking robust?',
-        expectedMitigations: [
-          'rate-limit or downweight suspicious sources',
-          'unique-user and trust-weighted counts',
-          'abuse classifier before publish',
-          'manual review for fast-moving new terms',
-        ],
-        redFlags: [
-          'rank by raw query count only',
-          'no source-level anomaly detection',
-          'no rollback/removal mechanism',
-        ],
-      },
-      {
-        id: 'curve_trie_memory_pressure',
-        type: 'cost_pressure',
-        targetNodeType: 'cache',
-        scenarioTemplate:
-          'The compressed trie grows from 100GB to 350GB after adding many locales and long-tail queries. How do you reduce memory without hurting latency?',
-        expectedMitigations: [
-          'store only top-K on internal nodes',
-          'prune low-frequency long-tail terms',
-          'separate hot in-memory index from cold snapshot',
-          'use weighted FST/compression and per-locale shards',
-        ],
-        redFlags: [
-          'keep every query forever in RAM',
-          'move whole serving path to disk',
-          'no retention/pruning policy',
-        ],
-      },
-      {
-        id: 'curve_trie_service_down',
-        type: 'dependency_outage',
-        targetNodeType: 'service',
-        scenarioTemplate:
-          'Trie service is down, but Redis still has hot prefixes. What should the Suggestion API do for hot and long-tail prefixes?',
-        expectedMitigations: [
-          'serve cached hot prefixes',
-          'fail gracefully with empty/stale response for long-tail',
-          'circuit breaker around trie service',
-          'warm standby trie readers',
-        ],
-        redFlags: [
-          'block every request on trie service',
-          'return 500 for all prefixes',
-          'no circuit breaker',
-        ],
       },
     ],
     probeBank: [
@@ -12413,200 +10615,6 @@ export const SD_PROBLEM_ORCHESTRATOR_DATA: Record<
         ],
         required: false,
         priority: 4,
-      },
-    ],
-    curveballs: [
-      {
-        id: 'curve_apns_ratelimit',
-        type: 'dependency_outage',
-        targetNodeType: 'service',
-        scenarioTemplate:
-          'APNs returns 429 when you batch-send to 10M iOS users in 5 minutes. How do you retry without getting blacklisted by Apple?',
-        expectedMitigations: [
-          'exponential backoff with jitter',
-          'priority queue for critical notifications',
-          'APNs HTTP/2 connection pooling',
-          'rate limit before hitting APNs',
-        ],
-        redFlags: ['immediate full retry', 'no backoff', 'single connection'],
-      },
-      {
-        id: 'curve_duplicate_notify',
-        type: 'failure',
-        scenarioTemplate:
-          'A user receives the same notification 3 times. Trace the root cause through your pipeline and explain where deduplication must live.',
-        expectedMitigations: [
-          'idempotency key in Redis',
-          'unique constraint on notification_id + device_token',
-          'Kafka at-least-once dedup at consumer',
-        ],
-        redFlags: [
-          'no deduplication layer',
-          'Kafka assumed exactly-once without explicit dedup',
-        ],
-      },
-      {
-        id: 'curve_fcm_outage',
-        type: 'dependency_outage',
-        targetNodeType: 'external_service',
-        scenarioTemplate:
-          'FCM starts returning 5xx for 20 minutes. How does your system protect critical notifications, avoid retry amplification, and recover?',
-        expectedMitigations: [
-          'bounded exponential backoff with jitter',
-          'circuit breaker per provider',
-          'priority-specific retry budgets',
-          'DLQ or delayed retry topic for exhausted attempts',
-          'fallback only when product policy allows',
-        ],
-        redFlags: [
-          'tight retry loop',
-          'global outage blocks APNs/email/SMS',
-          'fallback every failed push to SMS automatically',
-        ],
-      },
-      {
-        id: 'curve_invalid_token_storm',
-        type: 'scale_spike',
-        targetNodeType: 'database',
-        scenarioTemplate:
-          'After a mobile app reinstall wave, 30% of FCM tokens are invalid. What happens to throughput, cost, and the token database?',
-        expectedMitigations: [
-          'detect UNREGISTERED/invalid token responses',
-          'mark tokens invalid asynchronously',
-          'suppress future sends to invalid tokens',
-          'periodic token refresh and stale token pruning',
-        ],
-        redFlags: [
-          'retry invalid tokens',
-          'delete token without checking payload validity',
-          'no stale token cleanup job',
-        ],
-      },
-      {
-        id: 'curve_marketing_starves_otp',
-        type: 'scale_spike',
-        targetNodeType: 'queue',
-        scenarioTemplate:
-          'A 20M-user marketing campaign starts exactly when OTP traffic spikes. OTP p99 delivery jumps from 5s to 90s. How do you isolate critical traffic?',
-        expectedMitigations: [
-          'separate topics/partitions or queues by priority',
-          'reserved worker capacity for critical lane',
-          'rate-limit and smooth campaign fanout',
-          'backpressure low-priority traffic first',
-        ],
-        redFlags: [
-          'single FIFO queue for all notifications',
-          'scale only marketing workers',
-          'no per-priority SLO',
-        ],
-      },
-      {
-        id: 'curve_quiet_hours_violation',
-        type: 'failure',
-        targetNodeType: 'service',
-        scenarioTemplate:
-          'Users in multiple timezones receive a promotional SMS during quiet hours and some had unsubscribed. Where should this have been prevented?',
-        expectedMitigations: [
-          'preference and consent checks in router',
-          'timezone-aware quiet hours',
-          'category-specific rules for marketing vs transactional',
-          'suppression logs for audit',
-        ],
-        redFlags: [
-          'provider handles compliance for us',
-          'client-side unsubscribe only',
-          'no audit record for suppressed sends',
-        ],
-      },
-      {
-        id: 'curve_template_pii_bug',
-        type: 'failure',
-        targetNodeType: 'service',
-        scenarioTemplate:
-          'A template deploy accidentally includes an internal account ID and renders the wrong language for 2M users. How do you prevent, detect, and roll back?',
-        expectedMitigations: [
-          'versioned templates with approval workflow',
-          'variable allow-list and preview tests',
-          'locale fallback tests',
-          'canary rollout and fast rollback',
-        ],
-        redFlags: [
-          'templates edited directly in production',
-          'no render validation',
-          'no template version in logs',
-        ],
-      },
-      {
-        id: 'curve_retry_amplification',
-        type: 'failure',
-        targetNodeType: 'worker',
-        scenarioTemplate:
-          'A provider slowdown causes timeouts; every worker retries immediately and total outbound QPS triples. How do you stop the retry storm?',
-        expectedMitigations: [
-          'exponential backoff with jitter',
-          'central retry scheduler or delayed topics',
-          'provider-level circuit breaker',
-          'retry budget and backpressure',
-        ],
-        redFlags: [
-          'retry immediately on timeout',
-          'unbounded worker concurrency',
-          'no provider-level outbound limiter',
-        ],
-      },
-      {
-        id: 'curve_log_db_down',
-        type: 'dependency_outage',
-        targetNodeType: 'database',
-        scenarioTemplate:
-          'Notification Log DB is unavailable. Do you keep sending notifications, and how do you avoid silent drops or duplicate sends?',
-        expectedMitigations: [
-          'durable queue remains source of truth until acknowledged',
-          'write attempt logs asynchronously with retry',
-          'idempotency store independent from log DB',
-          'pause or degrade channels if audit is mandatory',
-        ],
-        redFlags: [
-          'ack Kafka before durable state exists',
-          'drop logs silently',
-          'use log DB as the only dedup mechanism',
-        ],
-      },
-      {
-        id: 'curve_sms_cost_spike',
-        type: 'cost_pressure',
-        targetNodeType: 'external_service',
-        scenarioTemplate:
-          'Push delivery is flaky and the fallback policy starts sending millions of SMS messages, blowing through the monthly budget. What guardrails exist?',
-        expectedMitigations: [
-          'fallback policy by notification category',
-          'cost budgets and per-tenant caps',
-          'approval gates for bulk SMS fallback',
-          'prefer retry/delay for non-critical notifications',
-        ],
-        redFlags: [
-          'automatic SMS fallback for all push failures',
-          'no cost metrics by channel',
-          'marketing allowed to bypass caps',
-        ],
-      },
-      {
-        id: 'curve_provider_accepted_not_delivered',
-        type: 'constraint_change',
-        targetNodeType: 'external_service',
-        scenarioTemplate:
-          'FCM returns a message ID, but users say they never saw the notification because devices were offline or messages expired. What does your SLA actually guarantee?',
-        expectedMitigations: [
-          'distinguish provider acceptance from device delivery',
-          'track delivery receipts where providers expose them',
-          'set TTL by notification type',
-          'define SLO around accepted/sent and observed delivery separately',
-        ],
-        redFlags: [
-          'treat provider 200 as user-visible delivery',
-          'no TTL policy',
-          'promise exact device delivery for push',
-        ],
       },
     ],
     probeBank: [

@@ -7,6 +7,7 @@ import {
   useEdgesState,
   useReactFlow,
   MarkerType,
+  ConnectionMode,
   Background,
   Controls,
 } from '@xyflow/react'
@@ -125,11 +126,12 @@ function SDCanvasInner({ savedJSON, dispatch, isViewOnly }) {
         ).length
         const newEdge = {
           ...params,
-          id: `edge-${Date.now()}`,
+          id: `edge-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+          type: 'bezier',
           label,
           animated: false,
           markerEnd: { type: MarkerType.ArrowClosed },
-          pathOptions: { curvature: 0.25 + parallelCount * 0.35 },
+          pathOptions: { curvature: 0.25 + parallelCount * 0.4 },
         }
         const newEdges = [...eds, newEdge]
         dispatchChange(nodes, newEdges)
@@ -173,6 +175,7 @@ function SDCanvasInner({ savedJSON, dispatch, isViewOnly }) {
       onNodesChange={isViewOnly ? undefined : handleNodesChange}
       onEdgesChange={isViewOnly ? undefined : handleEdgesChange}
       onConnect={isViewOnly ? undefined : handleConnect}
+      connectionMode={ConnectionMode.Loose}
       onDrop={isViewOnly ? undefined : handleDrop}
       onDragOver={(e) => e.preventDefault()}
       onNodeDoubleClick={isViewOnly ? undefined : handleNodeDoubleClick}

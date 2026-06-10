@@ -32,7 +32,9 @@ export default function SessionTimer({ mode, difficulty, onExpire }) {
   const isCritical = mode === 'combat' && remaining <= 60
   const isWarning = mode === 'combat' && remaining <= 300 && remaining > 60
 
-  const displayTime = mode === 'practice' ? formatTime(elapsed) : formatTime(Math.max(remaining, 0))
+  const displayTime = mode === 'practice' || mode === 'solo'
+    ? formatTime(elapsed)
+    : formatTime(Math.max(remaining, 0))
 
   return (
     <div className={`flex items-center gap-1.5 font-mono text-sm font-semibold tabular-nums ${

@@ -217,7 +217,8 @@ function* _handleSendMessage(action) {
           yield put(phaseUpdated(event.meta.stage));
           if (event.meta.stage === 'EVALUATING' || event.meta.stage === 'COMPLETED') {
             yield put(triggerEvaluation(sessionId));
-          } else {
+          } else if (event.meta.stage !== 'DEEP_DIVE' && event.meta.stage !== 'WRAP_UP') {
+            // DEEP_DIVE and WRAP_UP: opening question already embedded in transition SSE
             yield put(startSessionRequest());
           }
         }

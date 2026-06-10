@@ -11,6 +11,41 @@ import {
   FORBIDDEN_ARCHITECTURE_TERMS,
 } from '../constants/sd-clarification.constants';
 
+// Final nudge texts per dimension — a topical pointer plus an invitation for
+// the candidate to ask, never a request for the candidate to explain.
+const NUDGE_TEXTS: Record<string, Record<'vi' | 'en' | 'ja', string>> = {
+  scope: {
+    vi: 'Trước khi đi sâu vào thiết kế, có lẽ nên thống nhất rõ hơn — hệ thống này sẽ được dùng trong bối cảnh nào, phục vụ nhóm người dùng ra sao? Bạn có muốn hỏi thêm gì về phần đó không?',
+    en: 'Before diving into the design, it might help to align on the bigger picture — what context will this system be used in, and who are the main users? Feel free to ask anything about that.',
+    ja: '設計に入る前に、もう少し全体像を揃えておくと良いかもしれません——このシステムはどんな状況で使われ、主にどんな利用者を想定していますか？その点について質問はありますか？',
+  },
+  scale: {
+    vi: 'Một điều thường ảnh hưởng lớn đến thiết kế là quy mô vận hành — số lượng người dùng, tần suất sử dụng... Bạn có muốn hỏi thêm về khía cạnh này không?',
+    en: "One thing that often shapes the design heavily is the operating scale — user volume, request frequency, and so on. Anything you'd like to ask about that?",
+    ja: '設計に大きく影響する要素の一つに運用規模があります——ユーザー数やアクセス頻度など。その点について質問はありますか？',
+  },
+  nfr: {
+    vi: 'Ngoài chức năng chính, các đặc tính vận hành như độ trễ, độ sẵn sàng hay mức độ nhất quán cũng thường đáng làm rõ ở giai đoạn này. Bạn có câu hỏi nào về phần đó không?',
+    en: "Beyond core functionality, operating characteristics like latency, availability, or consistency are usually worth clarifying at this stage. Anything you'd like to ask there?",
+    ja: '中核機能以外にも、レイテンシ、可用性、整合性といった運用特性をこの段階で確認しておくと良いでしょう。その点について質問はありますか？',
+  },
+  data: {
+    vi: 'Dữ liệu mà hệ thống xử lý — loại dữ liệu, khối lượng, cách lưu trữ — cũng là điều đáng làm rõ trước khi thiết kế. Bạn có muốn hỏi thêm về phần này không?',
+    en: "The kind of data this system handles — its types, volume, how it's stored — is also worth clarifying before designing. Anything you'd like to ask about that?",
+    ja: 'システムが扱うデータ——種類、量、保存方法——も設計前に確認しておく価値があります。その点について質問はありますか？',
+  },
+  constraints: {
+    vi: 'Đôi khi có những ràng buộc về mặt kỹ thuật hay nghiệp vụ ảnh hưởng đến hướng thiết kế. Bạn có muốn hỏi thêm để nắm rõ những giới hạn đó không?',
+    en: 'Sometimes there are technical or business constraints that shape the design direction. Would you like to ask about any limitations to keep in mind?',
+    ja: '設計の方向性に影響する技術面・ビジネス面の制約がある場合もあります。その点について質問はありますか？',
+  },
+  non_goal: {
+    vi: 'Biết rõ những gì KHÔNG nằm trong phạm vi của bài toán cũng quan trọng không kém việc biết phạm vi của nó. Bạn có muốn hỏi thêm để xác định ranh giới đó không?',
+    en: "Knowing what's explicitly out of scope can be just as important as knowing what's in. Would you like to ask anything to pin down those boundaries?",
+    ja: '範囲に含まれるものと同じくらい、含まれないものを把握することも重要です。その境界について質問はありますか？',
+  },
+};
+
 @Injectable()
 export class SDClarificationPlannerService {
   buildOpeningIntent(
@@ -71,27 +106,31 @@ export class SDClarificationPlannerService {
   }
 
   buildAnswerFactDecision(
-    factKey: string,
-    dimension: string,
-    factAnswer: string,
+    matchedFacts: Array<{ key: string; dimension: string; answer: string }>,
     tracker: SDClarificationTracker,
     criteria: SDClarificationTransitionCriteria,
     elapsedSeconds: number,
     language: 'vi' | 'en' | 'ja',
   ): SDClarificationDecision {
+    const isMulti = matchedFacts.length > 1;
     const intent: SDClarificationIntent = {
       stage: 'CLARIFICATION',
       type: 'ANSWER_FACT',
-      promptTemplate: `Answer using this fact: "{answer}". Be concise.`,
+      promptTemplate: isMulti
+        ? `Answer using these facts: "{answer}". Combine them naturally into one cohesive response.`
+        : `Answer using this fact: "{answer}". Be concise.`,
       forbiddenHints: [...FORBIDDEN_ARCHITECTURE_TERMS],
-      maxSentences: 2,
+      maxSentences: isMulti ? 3 : 2,
       language,
-      target: { factKey, dimension },
+      target: {
+        factKeys: matchedFacts.map((f) => f.key),
+        dimension: matchedFacts[0].dimension,
+      },
     };
 
     return {
       action: 'ANSWER_FACT',
-      reason: `matchedFactKey=${factKey}`,
+      reason: `matchedFactKeys=${matchedFacts.map((f) => f.key).join(',')}`,
       nextIntent: intent,
     };
   }
@@ -122,39 +161,7 @@ export class SDClarificationPlannerService {
     dimension: string,
     language: 'vi' | 'en' | 'ja',
   ): SDClarificationIntent {
-    const nudgeTemplates: Record<string, Record<string, string>> = {
-      scope: {
-        vi: 'Ứng viên chưa hỏi về scope. Gợi ý họ làm rõ thêm mà không tiết lộ dimension còn thiếu.',
-        en: 'Candidate has not asked about scope. Nudge them to clarify further without revealing what is missing.',
-        ja: '候補者がスコープについて質問していません。不足している内容を明かさずに、さらに明確化するよう促してください。',
-      },
-      scale: {
-        vi: 'Ứng viên chưa hỏi về scale/số lượng người dùng. Gợi ý họ hỏi về những điều còn chưa rõ.',
-        en: 'Candidate has not asked about scale/user numbers. Nudge them without revealing the missing dimension.',
-        ja: '候補者がスケール/ユーザー数について質問していません。不足している次元を明かさずに促してください。',
-      },
-      nfr: {
-        vi: 'Ứng viên chưa hỏi về non-functional requirements. Gợi ý họ tiếp tục làm rõ.',
-        en: 'Candidate has not asked about non-functional requirements. Nudge them to continue clarifying.',
-        ja: '候補者が非機能要件について質問していません。引き続き明確化するよう促してください。',
-      },
-      data: {
-        vi: 'Ứng viên chưa hỏi về data requirements. Gợi ý họ khám phá thêm.',
-        en: 'Candidate has not asked about data requirements. Nudge them to explore further.',
-        ja: '候補者がデータ要件について質問していません。さらに探求するよう促してください。',
-      },
-      constraints: {
-        vi: 'Ứng viên chưa hỏi về constraints. Gợi ý họ làm rõ thêm.',
-        en: 'Candidate has not asked about constraints. Nudge them to clarify further.',
-        ja: '候補者が制約について質問していません。さらに明確化するよう促してください。',
-      },
-      non_goal: {
-        vi: 'Ứng viên chưa hỏi về những gì nằm ngoài scope. Gợi ý họ suy nghĩ về non-goals.',
-        en: 'Candidate has not asked about non-goals. Nudge them to think about what is out of scope.',
-        ja: '候補者が非目標について質問していません。スコープ外を考えるよう促してください。',
-      },
-    };
-    const dimTemplates = nudgeTemplates[dimension] ?? nudgeTemplates['scope'];
+    const dimTemplates = NUDGE_TEXTS[dimension] ?? NUDGE_TEXTS['scope'];
     return {
       stage: 'CLARIFICATION',
       type: 'NUDGE',

@@ -9,7 +9,6 @@ const initialState = {
   problem: null,
 
   architectureJSON: null,
-  isDirty: false,
   lastSavedAt: null,
   autoSaveStatus: 'idle',
 
@@ -47,16 +46,12 @@ const sdSessionSlice = createSlice({
     setArchitectureJSON(state, action) {
       state.architectureJSON = action.payload
     },
-    setDirty(state, action) {
-      state.isDirty = action.payload
-    },
 
     autoSaveStart(state) {
       state.autoSaveStatus = 'saving'
     },
     autoSaveSuccess(state) {
       state.autoSaveStatus = 'saved'
-      state.isDirty = false
       state.lastSavedAt = Date.now()
     },
     autoSaveFailure(state) {
@@ -79,7 +74,6 @@ export const {
   loadFailure,
   canvasChanged,
   setArchitectureJSON,
-  setDirty,
   autoSaveStart,
   autoSaveSuccess,
   autoSaveFailure,

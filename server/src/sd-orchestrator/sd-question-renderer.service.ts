@@ -30,8 +30,6 @@ export class SDQuestionRendererService {
     for (const hint of intent.forbiddenHints) {
       if (lower.includes(hint.toLowerCase())) return false;
     }
-    const sentences = text.split(/[.!?]+/).filter((s) => s.trim().length > 0);
-    if (sentences.length > intent.maxSentences) return false;
     return true;
   }
 
@@ -78,15 +76,6 @@ export class SDQuestionRendererService {
     return fallbacks[language] ?? fallbacks.en;
   }
 
-  buildClarificationNudgeFallback(language: 'vi' | 'en' | 'ja'): string {
-    const fallbacks: Record<'vi' | 'en' | 'ja', string> = {
-      vi: 'bạn có thể đưa câu hỏi cụ thể hơn để làm rõ yêu cầu trước khi bắt đầu thiết kế không ?',
-      en: 'Could you ask a more specific question to clarify the requirements before starting the design?',
-      ja: '設計を始める前に、要件を明確にするためにもう少し具体的な質問をしていただけますか？',
-    };
-    return fallbacks[language] ?? fallbacks.en;
-  }
-
   // ─── Stage 1 — Clarification ────────────────────────────────────────────────
 
   async renderClarification(
@@ -103,7 +92,7 @@ export class SDQuestionRendererService {
     if (intent.type === 'ANSWER_FACT' && factAnswer) {
       const langName = LANGUAGE_NAMES[intent.language] ?? intent.language;
       const system = `You are an interviewer answering a candidate's clarification question.
-Answer concisely using ONLY the provided fact. Do not add extra requirements, do not mention architecture/implementation details. Return a declarative answer only; do not ask the candidate any question.
+Answer concisely using ONLY the provided fact(s). If multiple facts are given, combine them into one cohesive, natural response. Do not add extra requirements, do not mention architecture/implementation details. Return a declarative answer only; do not ask the candidate any question.
 You MUST respond in ${langName}. Max ${intent.maxSentences} sentences.`;
       const prompt = intent.promptTemplate.replace('{answer}', factAnswer);
       return this.renderWithFallback(prompt, system, intent, factAnswer, {
@@ -111,16 +100,11 @@ You MUST respond in ${langName}. Max ${intent.maxSentences} sentences.`;
       });
     }
     if (intent.type === 'NUDGE') {
-      const langName = LANGUAGE_NAMES[intent.language] ?? intent.language;
-      const system = `You are a system design interviewer. The candidate has not covered all required dimensions yet.
-Give a short, natural open-ended nudge — like a real interviewer would say in conversation.
-Do NOT name or hint at the missing dimension. Do NOT ask two questions at once. Do NOT lead the candidate to a specific topic.
-You MUST respond in ${langName}. Max ${intent.maxSentences} sentences.`;
-      return this.renderWithFallback(
+      // Nudge text is fixed per dimension/language (see sd-clarification-planner)
+      // — no LLM rendering needed, avoids paraphrase drift/role-reversal bugs.
+      return this.enforceSentenceLimit(
         intent.promptTemplate,
-        system,
-        intent,
-        this.buildClarificationNudgeFallback(intent.language),
+        intent.maxSentences,
       );
     }
     if (intent.type === 'REDIRECT') {
@@ -148,8 +132,10 @@ You MUST respond in ${langName}. Max ${intent.maxSentences} sentences.`;
 
   async renderWalkthrough(intent: SDWalkthroughIntent): Promise<string> {
     const langName = LANGUAGE_NAMES[intent.language] ?? intent.language;
-    const system = `You are a system design interviewer asking the candidate to explain their diagram.
-Be concise and direct. Do not reveal answers. You MUST respond in ${langName}. Max ${intent.maxSentences} sentences.`;
+    const system =
+      intent.type === 'CONTRADICTION_CHALLENGE'
+        ? `You are a system design interviewer challenging the candidate on an inconsistency between what they said and their diagram. Point out the contradiction directly and ask them to reconcile it. Be firm but fair. Do not reveal the correct answer or the expected structure. You MUST respond in ${langName}. Max ${intent.maxSentences} sentences.`
+        : `You are a system design interviewer asking the candidate to explain their diagram. Be concise and direct. Do not reveal answers. You MUST respond in ${langName}. Max ${intent.maxSentences} sentences.`;
     return this.renderWithFallback(
       intent.promptTemplate,
       system,

@@ -21,7 +21,7 @@ const LLM_THRESHOLDS: Record<string, number> = {
   documents: 10,
   'question-scoring': 5,
 };
-const DEFAULT_THRESHOLD = 25;
+const DEFAULT_THRESHOLD = 50;
 
 const SESSION_TTL_SECONDS = 4 * 60 * 60;
 

@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { GroqService } from '../../ai/groq.service';
 import type {
   SDDeepDiveAssessment,
+  SDDeepDiveIntentContext,
   SDGraphState,
   SDProbe,
   SDClarificationLeftoverJson,
@@ -22,12 +23,14 @@ export class SDDeepDiveAssessorService {
     activeProbe: SDProbe,
     cumulativeCoveredSignals: string[],
     clarificationLeftover: SDClarificationLeftoverJson,
+    intentContext?: SDDeepDiveIntentContext,
   ): Promise<SDDeepDiveAssessment> {
     const systemPrompt = this._buildSystemPrompt(
       graph,
       activeProbe,
       cumulativeCoveredSignals,
       clarificationLeftover,
+      intentContext,
     );
     const userPrompt = `Candidate said: "${candidateText}"\n\nRespond with JSON only.`;
 
@@ -50,6 +53,7 @@ export class SDDeepDiveAssessorService {
     probe: SDProbe,
     cumulativeCoveredSignals: string[],
     leftover: SDClarificationLeftoverJson,
+    intentContext?: SDDeepDiveIntentContext,
   ): string {
     const nodesContext = graph.nodes
       .map((n) => `  - id="${n.id}" type="${n.type}" label="${n.label}"`)
@@ -61,8 +65,12 @@ export class SDDeepDiveAssessorService {
       .map((f) => `${f.key}: ${f.value}`)
       .join(', ');
 
-    return `You are an AI assessor for a technical deep-dive in a system design interview.
+    const intentContextSection = intentContext
+      ? this._buildIntentContextSection(intentContext)
+      : '';
 
+    return `You are an AI assessor for a technical deep-dive in a system design interview.
+${intentContextSection}
 # Probe being assessed
 - Dimension: ${probe.dimension}
 - Primary question: ${probe.primaryQuestionTemplate}
@@ -83,7 +91,7 @@ Analyze the candidate response and output JSON:
 - expectedSignalsCovered: array of signal strings (from the expectedSignals list) that the candidate demonstrated IN THIS TURN. Use natural phrase matching — "cache strategy" matches text like "using Redis for caching", "add a cache layer", etc.
 - tradeoffMentioned: candidate explicitly discussed a trade-off (e.g., consistency vs availability, latency vs throughput).
 - metricsMentioned: candidate mentioned specific numbers or metrics (e.g., "95% hit rate", "5K reads/sec", "99.9% uptime").
-- redFlagTriggered: candidate said something matching one of the red flags listed above.
+- failureModeMentioned: candidate explicitly discussed what happens when this component fails, error handling, fallback behavior, or recovery strategy.
 - constraintLinked: candidate referenced a specific clarified requirement (e.g., mentioned the exact DAU or latency figure from requirements).
 - technicalDepth: 0.0-1.0 — depth and accuracy of technical explanation.
 - tradeoffArticulation: 0.0-1.0 — quality of trade-off reasoning.
@@ -93,6 +101,39 @@ Analyze the candidate response and output JSON:
 - redFlags: array of specific red flag strings triggered.
 
 Respond with raw JSON only. No markdown.`;
+  }
+
+  private _buildIntentContextSection({
+    intentType,
+    followUpTrigger,
+  }: SDDeepDiveIntentContext): string {
+    if (intentType === 'PROBE_CHALLENGE' && followUpTrigger) {
+      return (
+        `\n# Current turn context\n` +
+        `This turn is a CHALLENGE for red flag: "${followUpTrigger}".\n` +
+        `Focus assessment on whether the candidate adequately addresses this specific concern.\n` +
+        `Set redFlags to empty only if the candidate clearly resolves it.\n`
+      );
+    }
+    if (intentType === 'PROBE_FOLLOW_UP' && followUpTrigger) {
+      let hint: string;
+      if (followUpTrigger === 'missing_tradeoff') {
+        hint = 'Pay particular attention to tradeoffMentioned.';
+      } else if (followUpTrigger === 'missing_metric') {
+        hint = 'Pay particular attention to metricsMentioned.';
+      } else if (followUpTrigger === 'vague_answer') {
+        hint =
+          'Assess whether the candidate gave a concrete, specific answer this turn.';
+      } else {
+        hint = `Follow-up trigger: ${followUpTrigger}.`;
+      }
+      return (
+        `\n# Current turn context\n` +
+        `This turn is a FOLLOW-UP (trigger: ${followUpTrigger}).\n` +
+        `${hint}\n`
+      );
+    }
+    return '';
   }
 
   private _mapToAssessment(parsed: LLMDeepDiveOutput): SDDeepDiveAssessment {
@@ -108,7 +149,7 @@ Respond with raw JSON only. No markdown.`;
           : [],
         tradeoffMentioned: Boolean(parsed.tradeoffMentioned),
         metricsMentioned: Boolean(parsed.metricsMentioned),
-        redFlagTriggered: Boolean(parsed.redFlagTriggered),
+        failureModeMentioned: Boolean(parsed.failureModeMentioned),
         constraintLinked: Boolean(parsed.constraintLinked),
       },
       scoreDelta: {
@@ -160,7 +201,7 @@ Respond with raw JSON only. No markdown.`;
         expectedSignalsCovered: [],
         tradeoffMentioned: false,
         metricsMentioned: false,
-        redFlagTriggered: false,
+        failureModeMentioned: false,
         constraintLinked: false,
       },
       scoreDelta: {

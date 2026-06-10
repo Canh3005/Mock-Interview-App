@@ -11,9 +11,9 @@ export const RECENT_SESSION_LOOKBACK = 5;
 
 export const CLOSING_OVERHEAD_MINUTES = 2;
 
-export const MIN_PROBE_MINUTES = 4;
+export const MIN_PROBE_MINUTES = 2;
 
-export const MAX_PROBE_MINUTES = 12;
+export const MAX_PROBE_MINUTES = 6;
 
 export const STAGE_WEIGHTS: Record<
   QuestionProbeStage,

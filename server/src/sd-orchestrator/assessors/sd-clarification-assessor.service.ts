@@ -79,7 +79,7 @@ ${coverageSignals}
 Analyze the candidate text and produce JSON with:
 - candidateIntent: one of ['clarification_question', 'requirement_summary', 'direct_answer', 'solution_leap', 'ready_to_continue', 'off_topic', 'dont_know']
 - dimensionCovered: array of dimensions this candidate text addresses. Use these only: scope, scale, nfr, data, constraints, non_goal. Conservative — only include if clearly present.
-- matchedFactKey: the factKey (from Available Facts) that matches what the candidate asked about. Use discloseWhen keywords as semantic hints. null if no clear match.
+- matchedFactKeys: array of factKeys (from Available Facts) that match what the candidate asked about, ranked by relevance (most relevant first). Use discloseWhen keywords as semantic hints. A broad question may match multiple facts in the same dimension. Empty array [] if no clear match.
 - solutionLeapDetected: true if candidate starts talking about implementation/architecture before gathering enough requirements.
 - requirementCoverage: 0.0-1.0 — how much this question contributes to requirement coverage.
 - questionSpecificity: 0.0-1.0 — how specific and targeted the question is (vs generic).
@@ -107,14 +107,16 @@ Respond with raw JSON only. No markdown, no explanation.`;
       ? (parsed.candidateIntent as SDCandidateIntent)
       : 'clarification_question';
 
+    const matchedFactKeys = parsed.matchedFactKeys ?? [];
+
     return {
       candidateIntent,
       signals: {
         dimensionCovered: Array.isArray(parsed.dimensionCovered)
           ? parsed.dimensionCovered
           : [],
-        factDisclosed: parsed.matchedFactKey !== null,
-        matchedFactKey: parsed.matchedFactKey ?? null,
+        factDisclosed: matchedFactKeys.length > 0,
+        matchedFactKeys,
         solutionLeapDetected: Boolean(parsed.solutionLeapDetected),
       },
       scoreDelta: {
@@ -142,7 +144,7 @@ Respond with raw JSON only. No markdown, no explanation.`;
       signals: {
         dimensionCovered: [],
         factDisclosed: false,
-        matchedFactKey: null,
+        matchedFactKeys: [],
         solutionLeapDetected: false,
       },
       scoreDelta: {

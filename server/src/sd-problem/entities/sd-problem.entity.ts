@@ -8,7 +8,6 @@ import {
 import type {
   SDClarificationData,
   SDFlowPath,
-  SDCurveball,
   SDProbe,
 } from '../../sd-orchestrator/types/sd-orchestrator.types';
 
@@ -77,9 +76,6 @@ export class SDProblem {
 
   @Column({ type: 'jsonb', default: [] })
   flowPaths!: SDFlowPath[];
-
-  @Column({ type: 'jsonb', default: [] })
-  curveballs!: SDCurveball[];
 
   @Column({ type: 'jsonb', default: [] })
   probeBank!: SDProbe[];

@@ -2,8 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { GroqService } from '../../ai/groq.service';
 import type {
   SDWrapUpAssessment,
-  SDGraphState,
-  SDCurveball,
+  SDWrapUpIntentContext,
   SDProbe,
   SDClarificationLeftoverJson,
   SDCandidateIntent,
@@ -19,22 +18,14 @@ export class SDWrapUpAssessorService {
 
   async assess(
     candidateText: string,
-    activeScenario: SDCurveball | SDProbe,
-    currentGraph: SDGraphState,
-    baseGraph: SDGraphState,
+    activeScenario: SDProbe,
     clarificationLeftover: SDClarificationLeftoverJson,
+    intentContext?: SDWrapUpIntentContext,
   ): Promise<SDWrapUpAssessment> {
-    const isCurveball = 'scenarioTemplate' in activeScenario;
-    const graphAdaptationMade = this._detectGraphAdaptation(
-      currentGraph,
-      baseGraph,
-    );
-
     const systemPrompt = this._buildSystemPrompt(
       activeScenario,
-      isCurveball,
       clarificationLeftover,
-      graphAdaptationMade,
+      intentContext,
     );
     const userPrompt = `Candidate said: "${candidateText}"\n\nRespond with JSON only.`;
 
@@ -45,73 +36,36 @@ export class SDWrapUpAssessorService {
         config: { systemInstruction: systemPrompt, maxOutputTokens: 600 },
       });
       const parsed = JSON.parse(raw) as LLMWrapUpOutput;
-      return this._mapToAssessment(parsed, graphAdaptationMade);
+      return this._mapToAssessment(parsed);
     } catch (err) {
       this.logger.warn(`Wrap-up assessor error: ${(err as Error).message}`);
-      return this._fallbackAssessment(graphAdaptationMade);
+      return this._fallbackAssessment();
     }
   }
 
-  detectGraphDelta(
-    currentGraph: SDGraphState,
-    baseGraph: SDGraphState,
-  ): { nodesAdded: number; edgesAdded: number; changedLabels: number } {
-    const baseNodeIds = new Set(baseGraph.nodes.map((n) => n.id));
-    const baseEdgeIds = new Set(baseGraph.edges.map((e) => e.id));
-    const nodesAdded = currentGraph.nodes.filter(
-      (n) => !baseNodeIds.has(n.id),
-    ).length;
-    const edgesAdded = currentGraph.edges.filter(
-      (e) => !baseEdgeIds.has(e.id),
-    ).length;
-    const changedLabels = currentGraph.nodes.filter((n) => {
-      const base = baseGraph.nodes.find((b) => b.id === n.id);
-      return base && base.label !== n.label;
-    }).length;
-    return { nodesAdded, edgesAdded, changedLabels };
-  }
-
-  private _detectGraphAdaptation(
-    current: SDGraphState,
-    base: SDGraphState,
-  ): boolean {
-    const delta = this.detectGraphDelta(current, base);
-    return (
-      delta.nodesAdded > 0 || delta.edgesAdded > 0 || delta.changedLabels > 0
-    );
-  }
-
   private _buildSystemPrompt(
-    scenario: SDCurveball | SDProbe,
-    isCurveball: boolean,
+    scenario: SDProbe,
     leftover: SDClarificationLeftoverJson,
-    graphAdaptationDetected: boolean,
+    intentContext?: SDWrapUpIntentContext,
   ): string {
-    const expectedMitigations = isCurveball
-      ? (scenario as SDCurveball).expectedMitigations
-      : (scenario as SDProbe).expectedSignals;
-    const redFlagsToWatch = isCurveball
-      ? (scenario as SDCurveball).redFlags
-      : (scenario as SDProbe).redFlags;
-    const scenarioDesc = isCurveball
-      ? (scenario as SDCurveball).scenarioTemplate
-      : (scenario as SDProbe).primaryQuestionTemplate;
     const clarifiedFacts = leftover.requirementContract.disclosedFacts
       .map((f) => `${f.key}: ${f.value}`)
       .join(', ');
 
-    return `You are an AI assessor for a system design wrap-up/curveball interview round.
+    const intentContextSection = intentContext
+      ? this._buildIntentContextSection(intentContext)
+      : '';
 
+    return `You are an AI assessor for a system design wrap-up/scenario interview round.
+${intentContextSection}
 # Scenario being assessed
-${scenarioDesc}
+${scenario.primaryQuestionTemplate}
 
 # Expected mitigations (natural phrases to listen for)
-${expectedMitigations.join(', ')}
+${scenario.expectedSignals.join(', ')}
 
 # Red flags to watch for
-${redFlagsToWatch.join(', ')}
-
-# Graph adaptation: candidate has${graphAdaptationDetected ? '' : ' NOT'} updated the canvas in this turn.
+${scenario.redFlags.join(', ')}
 
 # Clarified requirements (original design constraints)
 ${clarifiedFacts || 'None'}
@@ -121,13 +75,11 @@ Analyze the candidate response and output JSON:
 - candidateIntent: one of ['direct_answer', 'clarification_question', 'dont_know', 'off_topic']
 - blastRadiusRecognized: candidate acknowledged who/what is affected and for how long.
 - mitigationProposed: candidate proposed a concrete mitigation or adaptation.
-- tradeoffMentioned: candidate explicitly discussed trade-offs in their proposed mitigation.
-- costOrLatencyImpactMentioned: candidate discussed cost, latency, or throughput impact.
 - consistencyWithOriginalDesign: candidate's answer is consistent with their clarified requirements and original design decisions (does not introduce contradictions).
-- graphAdaptationMade: set to ${graphAdaptationDetected} (detected from canvas diff — do NOT change this based on text alone).
+- mentionedMitigations: array of mitigation strings from the expected mitigations list that the candidate demonstrated IN THIS TURN. Use natural phrase matching.
 - failureReasoning: 0.0-1.0 — quality of reasoning about failure modes.
 - adaptationQuality: 0.0-1.0 — quality of proposed adaptations.
-- curveballHandling: 0.0-1.0 — overall handling of the curveball.
+- curveballHandling: 0.0-1.0 — overall handling of the scenario.
 - riskPrioritization: 0.0-1.0 — candidate prioritizes the right risks.
 - consistencyScore: 0.0-1.0 — consistency with original design (1.0 = fully consistent).
 - redFlags: array of red flag strings triggered.
@@ -135,10 +87,41 @@ Analyze the candidate response and output JSON:
 Respond with raw JSON only. No markdown.`;
   }
 
-  private _mapToAssessment(
-    parsed: LLMWrapUpOutput,
-    graphAdaptationMade: boolean,
-  ): SDWrapUpAssessment {
+  private _buildIntentContextSection({
+    intentType,
+    followUpReason,
+    challengeDetail,
+  }: SDWrapUpIntentContext): string {
+    if (intentType === 'SCENARIO_CHALLENGE' && challengeDetail) {
+      return (
+        `\n# Current turn context\n` +
+        `This turn is a CHALLENGE: "${challengeDetail}".\n` +
+        `Focus assessment on whether the candidate adequately reconciles this with their original design.\n` +
+        `Set redFlags to empty only if the candidate clearly resolves the contradiction.\n`
+      );
+    }
+    if (intentType === 'SCENARIO_FOLLOW_UP' && followUpReason) {
+      let hint: string;
+      if (followUpReason === 'blastRadius') {
+        hint = 'Pay particular attention to blastRadiusRecognized.';
+      } else if (followUpReason === 'mitigation') {
+        hint = 'Pay particular attention to mitigationProposed.';
+      } else if (followUpReason === 'consistency') {
+        hint = 'Pay particular attention to consistencyWithOriginalDesign.';
+      } else {
+        hint =
+          'Assess whether the candidate gave a concrete, specific answer this turn.';
+      }
+      return (
+        `\n# Current turn context\n` +
+        `This turn is a FOLLOW-UP (reason: ${followUpReason}).\n` +
+        `${hint}\n`
+      );
+    }
+    return '';
+  }
+
+  private _mapToAssessment(parsed: LLMWrapUpOutput): SDWrapUpAssessment {
     const candidateIntent = this._toCandidateIntent(
       parsed.candidateIntent,
       'direct_answer',
@@ -148,14 +131,12 @@ Respond with raw JSON only. No markdown.`;
       signals: {
         blastRadiusRecognized: Boolean(parsed.blastRadiusRecognized),
         mitigationProposed: Boolean(parsed.mitigationProposed),
-        tradeoffMentioned: Boolean(parsed.tradeoffMentioned),
-        costOrLatencyImpactMentioned: Boolean(
-          parsed.costOrLatencyImpactMentioned,
-        ),
         consistencyWithOriginalDesign: Boolean(
           parsed.consistencyWithOriginalDesign,
         ),
-        graphAdaptationMade,
+        mentionedMitigations: Array.isArray(parsed.mentionedMitigations)
+          ? parsed.mentionedMitigations
+          : [],
       },
       scoreDelta: {
         failureReasoning: Math.max(
@@ -202,18 +183,14 @@ Respond with raw JSON only. No markdown.`;
       : fallback;
   }
 
-  private _fallbackAssessment(
-    graphAdaptationMade: boolean,
-  ): SDWrapUpAssessment {
+  private _fallbackAssessment(): SDWrapUpAssessment {
     return {
       candidateIntent: 'direct_answer',
       signals: {
         blastRadiusRecognized: false,
         mitigationProposed: false,
-        tradeoffMentioned: false,
-        costOrLatencyImpactMentioned: false,
         consistencyWithOriginalDesign: true,
-        graphAdaptationMade,
+        mentionedMitigations: [],
       },
       scoreDelta: {
         failureReasoning: 0.3,
