@@ -8,6 +8,10 @@ import type {
 import type { QuestionProbe } from '../../question-bank/entities/question-probe.entity';
 import type { CandidateClaim } from '../../documents/entities/candidate-claim.entity';
 import type { RiskHypothesis } from '../../documents/entities/risk-hypothesis.entity';
+import type {
+  SessionPlanningRagSignal,
+  SessionPlanningRagSource,
+} from '../rag/session-planning-rag.types';
 
 export type InterviewDepth = 'broad' | 'deep';
 export type StagePriority = 'must_include' | 'nice_to_include';
@@ -42,6 +46,9 @@ export interface PlannedProbe {
   personalizedQuestion?: string;
   isFallbackFor?: string;
   fallbackTrigger?: FallbackTrigger;
+  ragSimilarity?: number;
+  ragMatchedSource?: SessionPlanningRagSource;
+  ragReason?: string;
 }
 
 export interface StageProbeAllocation {
@@ -67,6 +74,7 @@ export interface ProbeSelectionContext {
   jdTechStack: string[];
   selectionSeed: string;
   recentlyUsedProbeIds: string[];
+  ragSignals?: Map<string, SessionPlanningRagSignal>;
 }
 
 export interface BehavioralScoringParams {

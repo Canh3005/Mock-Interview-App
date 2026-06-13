@@ -9,6 +9,7 @@ import { Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 import { SessionPlan } from './entities/session-plan.entity';
 import { ProbeSelectorService } from './probe-selector.service';
+import { SessionPlanningRagService } from './rag/session-planning-rag.service';
 import { CreateSessionPlanDto } from './dto/create-session-plan.dto';
 import { BehaviorCalibrationProfile } from '../documents/entities/behavior-calibration-profile.entity';
 import { CandidateClaim } from '../documents/entities/candidate-claim.entity';
@@ -53,6 +54,7 @@ export class SessionPlanningService {
     @InjectRepository(QuestionProbe)
     private readonly probeRepository: Repository<QuestionProbe>,
     private readonly probeSelectorService: ProbeSelectorService,
+    private readonly sessionPlanningRagService: SessionPlanningRagService,
   ) {}
 
   /**
@@ -116,6 +118,15 @@ export class SessionPlanningService {
       roleFamily: profile.roleFamily,
       targetLevel: profile.targetLevel,
     });
+    const ragSignals = await this.sessionPlanningRagService.buildRagSignals({
+      probes,
+      profile,
+      claims,
+      risks,
+      language: dto.language,
+      roleFamily: profile.roleFamily,
+      targetLevel: profile.targetLevel,
+    });
 
     const rawAllocations: StageProbeAllocation[] =
       this.probeSelectorService.buildStageAllocations({
@@ -133,6 +144,7 @@ export class SessionPlanningService {
         jdTechStack,
         selectionSeed: sessionId,
         recentlyUsedProbeIds,
+        ragSignals,
       });
 
     const stageAllocations: StageProbeAllocation[] = this._allocateDuration({

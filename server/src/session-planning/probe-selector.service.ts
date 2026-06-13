@@ -43,6 +43,18 @@ import {
 } from './constants/session-planning.constants';
 import type { ScoredProbe } from './types/probe-selector.types';
 
+const RAG_BLEND_WEIGHTS: Record<
+  QuestionProbeStage,
+  { heuristic: number; rag: number }
+> = {
+  stage_1_culture_fit: { heuristic: 0.7, rag: 0.3 },
+  stage_2_tech_stack: { heuristic: 0.75, rag: 0.25 },
+  stage_3_domain_knowledge: { heuristic: 0.65, rag: 0.35 },
+  stage_4_cv_deep_dive: { heuristic: 0.55, rag: 0.45 },
+  stage_5_soft_skills: { heuristic: 0.7, rag: 0.3 },
+  stage_6_reverse_interview: { heuristic: 1, rag: 0 },
+};
+
 @Injectable()
 export class ProbeSelectorService {
   /**
@@ -191,6 +203,7 @@ export class ProbeSelectorService {
         order: i + 1,
         score: s.score,
         personalizedQuestion: s.personalizedQuestion,
+        ragSignal: s.ragSignal,
       }),
     );
     const fallbacks: PlannedProbe[] = fallbackRaw.map((s, i) =>
@@ -200,6 +213,7 @@ export class ProbeSelectorService {
         score: s.score,
         isFallbackFor: selectedRaw[i]?.probe.id,
         fallbackTrigger: 'no_relevant_story',
+        ragSignal: s.ragSignal,
       }),
     );
     return { selected, fallbacks };
@@ -479,6 +493,7 @@ export class ProbeSelectorService {
       });
       remaining.splice(picked.originalIndex, 1);
       selected.push({
+        ...picked,
         probe: picked.probe,
         score: picked.adjustedScore,
       });
@@ -533,16 +548,25 @@ export class ProbeSelectorService {
 
       const claimScored = scored
         .filter((s) => !selectedIds.has(s.probe.id))
-        .map((s) => ({
-          probe: s.probe,
-          score: this._scoreProbeForClaim({
+        .map((s) => {
+          const claimScore = this._scoreProbeForClaim({
             probe: s.probe,
             claim,
             jdTechStack: context.jdTechStack,
             targetLevel: context.targetLevel,
             roleFamily: context.roleFamily,
-          }),
-        }))
+          });
+          return {
+            probe: s.probe,
+            score: this._blendRagScore({
+              stage: 'stage_4_cv_deep_dive',
+              heuristicScore: claimScore,
+              ragSignal: s.ragSignal,
+              hasRagSignals: Boolean(context.ragSignals?.size),
+            }),
+            ragSignal: s.ragSignal,
+          };
+        })
         .filter((s) => s.score > 0);
 
       if (claimScored.length === 0) continue;
@@ -558,6 +582,7 @@ export class ProbeSelectorService {
 
       selectedIds.add(picked.probe.id);
       selected.push({
+        ...picked,
         probe: picked.probe,
         score: picked.score,
         personalizedQuestion: claim.suggestedQuestions[0],
@@ -838,7 +863,7 @@ export class ProbeSelectorService {
     probes: QuestionProbe[];
     context: ProbeSelectionContext;
     effectivePriorities: QuestionProbeCompetency[];
-  }): Array<{ probe: QuestionProbe; score: number }> {
+  }): ScoredProbe[] {
     const {
       targetLevel,
       roleFamily,
@@ -848,7 +873,7 @@ export class ProbeSelectorService {
       cvTechStack,
       jdTechStack,
     } = context;
-    const results: Array<{ probe: QuestionProbe; score: number }> = [];
+    const results: ScoredProbe[] = [];
     for (const probe of probes) {
       const score: number | null = this._routeScore({
         stage,
@@ -862,9 +887,38 @@ export class ProbeSelectorService {
         jdTechStack,
         effectivePriorities,
       });
-      if (score !== null) results.push({ probe, score });
+      if (score !== null) {
+        const ragSignal = context.ragSignals?.get(probe.id);
+        const blendedScore = this._blendRagScore({
+          stage,
+          heuristicScore: score,
+          ragSignal,
+          hasRagSignals: Boolean(context.ragSignals?.size),
+        });
+        results.push({ probe, score: blendedScore, ragSignal });
+      }
     }
     return results;
+  }
+
+  private _blendRagScore({
+    stage,
+    heuristicScore,
+    ragSignal,
+    hasRagSignals,
+  }: {
+    stage: QuestionProbeStage;
+    heuristicScore: number;
+    ragSignal?: ScoredProbe['ragSignal'];
+    hasRagSignals: boolean;
+  }): number {
+    if (!hasRagSignals) return heuristicScore;
+    const weights = RAG_BLEND_WEIGHTS[stage];
+    if (weights.rag === 0) return heuristicScore;
+    const ragScore = ragSignal ? this._clamp01(ragSignal.similarity) : 0;
+    return (
+      this._clamp01(heuristicScore) * weights.heuristic + ragScore * weights.rag
+    );
   }
 
   private _routeScore({
@@ -1288,6 +1342,7 @@ export class ProbeSelectorService {
     personalizedQuestion,
     isFallbackFor,
     fallbackTrigger,
+    ragSignal,
   }: {
     probe: QuestionProbe;
     order: number;
@@ -1295,6 +1350,7 @@ export class ProbeSelectorService {
     personalizedQuestion?: string;
     isFallbackFor?: string;
     fallbackTrigger?: FallbackTrigger;
+    ragSignal?: ScoredProbe['ragSignal'];
   }): PlannedProbe {
     const tagLabel: string =
       probe.techTags.length > 0
@@ -1314,6 +1370,11 @@ export class ProbeSelectorService {
     if (isFallbackFor !== undefined) {
       planned.isFallbackFor = isFallbackFor;
       planned.fallbackTrigger = fallbackTrigger;
+    }
+    if (ragSignal !== undefined) {
+      planned.ragSimilarity = Math.round(ragSignal.similarity * 1000) / 1000;
+      planned.ragMatchedSource = ragSignal.source;
+      planned.ragReason = ragSignal.reason;
     }
     return planned;
   }
@@ -1413,7 +1474,7 @@ export class ProbeSelectorService {
 
       const idx = remaining.findIndex((r) => r.probe.id === picked.probe.id);
       remaining.splice(idx, 1);
-      selected.push({ probe: picked.probe, score: picked.score });
+      selected.push(picked);
     }
 
     return selected;
@@ -1426,6 +1487,11 @@ export class ProbeSelectorService {
     return (
       overlapCount / Math.max(a.competencies.length, b.competencies.length)
     );
+  }
+
+  private _clamp01(value: number): number {
+    if (!Number.isFinite(value)) return 0;
+    return Math.min(Math.max(value, 0), 1);
   }
 
   private _resolveStage5Priorities(

@@ -6,12 +6,15 @@ import { QuestionBankRelatedService } from '../../../src/question-bank/services/
 
 describe('QuestionBankDetailService', () => {
   let service: QuestionBankDetailService;
-  let probeRepository: { findOne: jest.Mock };
+  let probeRepository: { findOne: jest.Mock; increment: jest.Mock };
   let projectionService: QuestionBankPublicProjectionService;
   let relatedService: { findRelatedQuestions: jest.Mock };
 
   beforeEach(() => {
-    probeRepository = { findOne: jest.fn() };
+    probeRepository = {
+      findOne: jest.fn(),
+      increment: jest.fn(() => Promise.resolve({ affected: 1 })),
+    };
     projectionService = new QuestionBankPublicProjectionService();
     relatedService = {
       findRelatedQuestions: jest.fn(() => Promise.resolve([])),
@@ -70,6 +73,11 @@ describe('QuestionBankDetailService', () => {
       locale: 'en',
       relatedLimit: 4,
     });
+    expect(probeRepository.increment).toHaveBeenCalledWith(
+      { id: 'current-probe' },
+      'viewCount',
+      1,
+    );
     expect(result).not.toHaveProperty('expectedSignals');
   });
 });
@@ -122,5 +130,6 @@ function _createProbe(overrides: Partial<QuestionProbe> = {}): QuestionProbe {
     createdAt: new Date('2026-05-01T00:00:00.000Z'),
     updatedAt: new Date('2026-05-10T00:00:00.000Z'),
     ...overrides,
+    viewCount: overrides.viewCount ?? 0,
   };
 }

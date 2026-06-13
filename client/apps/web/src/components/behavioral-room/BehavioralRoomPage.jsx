@@ -123,7 +123,7 @@ export default function BehavioralRoomPage() {
 
   // Khởi tạo session khi mount
   useEffect(() => {
-    if (!interviewSessionId || status === 'starting' || isHydratingSession) return undefined
+    if (!interviewSessionId || status === 'starting' || status === 'error' || isHydratingSession) return undefined
     if (sessionId && status !== 'idle' && status !== 'error') return undefined
 
     let cancelled = false

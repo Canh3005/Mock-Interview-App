@@ -21,6 +21,7 @@ describe('ProbeSelectorService', () => {
     const allocations = service.buildStageAllocations({
       probes: [universalLevelProbe, mismatchedLevelProbe],
       depth: 'broad',
+      durationMinutes: 60,
       targetLevel: 'senior',
       roleFamily: 'backend',
       language: 'en',
@@ -53,6 +54,7 @@ describe('ProbeSelectorService', () => {
     const allocations = service.buildStageAllocations({
       probes,
       depth: 'broad',
+      durationMinutes: 60,
       targetLevel: 'senior',
       roleFamily: 'backend',
       language: 'en',
@@ -68,7 +70,7 @@ describe('ProbeSelectorService', () => {
 
     expect(_selectedCount(allocations, 'stage_2_tech_stack')).toBe(4);
     expect(_selectedCount(allocations, 'stage_3_domain_knowledge')).toBe(4);
-    expect(_selectedCount(allocations, 'stage_4_cv_deep_dive')).toBe(3);
+    expect(_selectedCount(allocations, 'stage_4_cv_deep_dive')).toBe(2);
   });
 
   it('covers each selected JD tech with intro and mid/deep probes in stage 2', () => {
@@ -108,6 +110,7 @@ describe('ProbeSelectorService', () => {
     const allocations = service.buildStageAllocations({
       probes,
       depth: 'broad',
+      durationMinutes: 60,
       targetLevel: 'mid',
       roleFamily: 'backend',
       language: 'en',
@@ -200,6 +203,7 @@ describe('ProbeSelectorService', () => {
     const allocations = service.buildStageAllocations({
       probes,
       depth: 'broad',
+      durationMinutes: 60,
       targetLevel: 'mid',
       roleFamily: 'backend',
       language: 'en',
@@ -227,13 +231,14 @@ describe('ProbeSelectorService', () => {
   });
 
   it('uses a seeded top-2N pool for generic stage selection', () => {
-    const probes = _createStageProbes('stage_5_soft_skills', 5);
+    const probes = _createStageProbes('stage_5_soft_skills', 7);
 
     const selectedBySeed = Array.from({ length: 10 }, (_, index) =>
       _selectedIds(
         service.buildStageAllocations({
           probes,
           depth: 'broad',
+          durationMinutes: 60,
           targetLevel: 'senior',
           roleFamily: 'backend',
           language: 'en',
@@ -258,6 +263,8 @@ describe('ProbeSelectorService', () => {
             'stage_5_soft_skills-2',
             'stage_5_soft_skills-3',
             'stage_5_soft_skills-4',
+            'stage_5_soft_skills-5',
+            'stage_5_soft_skills-6',
           ].includes(id),
         ),
       ),
@@ -267,6 +274,112 @@ describe('ProbeSelectorService', () => {
         (ids) => ids.join('|') !== selectedBySeed[0].join('|'),
       ),
     ).toBe(true);
+  });
+
+  it('blends RAG similarity into CV deep-dive probe scores', () => {
+    const ragFavored = _createProbe({
+      id: 'rag-favored',
+      stages: ['stage_4_cv_deep_dive'],
+      type: 'technical_depth',
+      conversationDepth: 'mid',
+      competencies: ['technical_fundamentals'],
+      techTags: [],
+    });
+    const heuristicStrong = _createProbe({
+      id: 'heuristic-strong',
+      stages: ['stage_4_cv_deep_dive'],
+      type: 'cv_claim_verification',
+      conversationDepth: 'deep',
+      competencies: ['technical_fundamentals'],
+      techTags: ['nodejs'],
+    });
+
+    const allocations = service.buildStageAllocations({
+      probes: [ragFavored, heuristicStrong],
+      depth: 'broad',
+      durationMinutes: 60,
+      targetLevel: 'mid',
+      roleFamily: 'backend',
+      language: 'en',
+      priorityCompetencies: ['technical_fundamentals'],
+      competencyWeights: { technical_fundamentals: 1 },
+      riskHypotheses: [],
+      candidateClaims: [],
+      cvTechStack: ['nodejs'],
+      jdTechStack: ['nodejs'],
+      selectionSeed: 'test-session-rag-stage-4',
+      recentlyUsedProbeIds: [],
+      ragSignals: new Map([
+        [
+          'rag-favored',
+          {
+            similarity: 0.95,
+            source: 'claim_verification',
+            queryLabel: 'claim_verification',
+            reason: 'Semantic match from claim_verification',
+          },
+        ],
+      ]),
+    });
+
+    const stage = allocations.find(
+      (allocation) => allocation.stage === 'stage_4_cv_deep_dive',
+    );
+    const ragProbe = stage?.selectedProbes.find(
+      (probe) => probe.questionProbeId === 'rag-favored',
+    );
+    const heuristicProbe = stage?.selectedProbes.find(
+      (probe) => probe.questionProbeId === 'heuristic-strong',
+    );
+
+    expect(ragProbe?.ragSimilarity).toBe(0.95);
+    expect(ragProbe?.ragMatchedSource).toBe('claim_verification');
+    expect(ragProbe?.selectionScore).toBeGreaterThan(
+      heuristicProbe?.selectionScore ?? 0,
+    );
+  });
+
+  it('does not apply RAG trace or score blending to reverse interview', () => {
+    const reverseProbe = _createProbe({
+      id: 'reverse-rag',
+      stages: ['stage_6_reverse_interview'],
+      type: 'situational',
+    });
+
+    const allocations = service.buildStageAllocations({
+      probes: [reverseProbe],
+      depth: 'broad',
+      durationMinutes: 60,
+      targetLevel: 'mid',
+      roleFamily: 'backend',
+      language: 'en',
+      priorityCompetencies: ['communication'],
+      competencyWeights: { communication: 1 },
+      riskHypotheses: [],
+      candidateClaims: [],
+      cvTechStack: [],
+      jdTechStack: [],
+      selectionSeed: 'test-session-rag-stage-6',
+      recentlyUsedProbeIds: [],
+      ragSignals: new Map([
+        [
+          'reverse-rag',
+          {
+            similarity: 0.99,
+            source: 'profile_focus',
+            queryLabel: 'profile_focus',
+            reason: 'Semantic match from profile_focus',
+          },
+        ],
+      ]),
+    });
+
+    const stage = allocations.find(
+      (allocation) => allocation.stage === 'stage_6_reverse_interview',
+    );
+
+    expect(stage?.selectedProbes[0]?.selectionScore).toBe(1);
+    expect(stage?.selectedProbes[0]?.ragSimilarity).toBeUndefined();
   });
 });
 
@@ -320,6 +433,7 @@ function _createProbe(overrides: Partial<QuestionProbe> = {}): QuestionProbe {
     createdAt: new Date('2026-05-01T00:00:00.000Z'),
     updatedAt: new Date('2026-05-10T00:00:00.000Z'),
     ...overrides,
+    viewCount: overrides.viewCount ?? 0,
   };
 }
 

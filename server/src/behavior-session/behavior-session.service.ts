@@ -35,6 +35,15 @@ import type {
 import type { ProbeScoringResult } from '../question-bank/types/question-practice-scoring.types';
 import type { StageProbeAllocation } from '../session-planning/types/session-plan.types';
 
+type BehaviorSessionBootstrapResponse = {
+  sessionId: string;
+  openingTurn: InterviewTurn | null;
+  turnHistory: InterviewTurn[];
+  stageProgress: StageProgress[];
+  state: string | null;
+  resumed: boolean;
+};
+
 @Injectable()
 export class BehaviorSessionService {
   private readonly logger = new Logger(BehaviorSessionService.name);
@@ -73,18 +82,12 @@ export class BehaviorSessionService {
     userId: string;
   }): Promise<{
     sessionId: string;
-    openingTurn: InterviewTurn;
-    state: string;
+    openingTurn: InterviewTurn | null;
+    turnHistory: InterviewTurn[];
+    stageProgress: StageProgress[];
+    state: string | null;
+    resumed: boolean;
   }> {
-    const existing: BehavioralSession | null = await this.sessionRepo.findOne({
-      where: { interviewSessionId: dto.interviewSessionId },
-    });
-    if (existing) {
-      throw new BadRequestException(
-        `Behavioral session already exists for interviewSessionId: ${dto.interviewSessionId}`,
-      );
-    }
-
     const plan: SessionPlan | null = await this.planRepo.findOne({
       where: { sessionId: dto.interviewSessionId },
     });
@@ -92,6 +95,16 @@ export class BehaviorSessionService {
       throw new NotFoundException(
         `SessionPlan not found for interviewSessionId: ${dto.interviewSessionId}`,
       );
+    }
+
+    const existing: BehavioralSession | null = await this.sessionRepo.findOne({
+      where: {
+        interviewSessionId: dto.interviewSessionId,
+        sessionMode: 'probe_based',
+      },
+    });
+    if (existing) {
+      return this._buildBootstrapResponse({ session: existing, resumed: true });
     }
 
     const probeMap: Map<string, QuestionProbe> = await this._loadProbeMap(plan);
@@ -139,7 +152,14 @@ export class BehaviorSessionService {
     saved.interviewState = 'OPENING';
     await this.sessionRepo.save(saved);
 
-    return { sessionId: saved.id, openingTurn, state: 'OPENING' };
+    return {
+      sessionId: saved.id,
+      openingTurn,
+      turnHistory: [openingTurn],
+      stageProgress: saved.stageProgress ?? [],
+      state: 'OPENING',
+      resumed: false,
+    };
   }
 
   /**
@@ -359,6 +379,40 @@ export class BehaviorSessionService {
       jobData,
     );
     this.logger.log(`Enqueued scoring job for behavior session ${session.id}`);
+  }
+
+  private async _buildBootstrapResponse({
+    session,
+    resumed,
+  }: {
+    session: BehavioralSession;
+    resumed: boolean;
+  }): Promise<BehaviorSessionBootstrapResponse> {
+    const logs: BehavioralStageLog[] = await this.logRepo.find({
+      where: { behavioralSessionId: session.id },
+      order: { globalTurnIndex: 'ASC' },
+    });
+    const turnHistory: InterviewTurn[] = logs
+      .filter((log) => log.globalTurnIndex !== null)
+      .map((log) =>
+        this._logToTurn(
+          log,
+          session.id,
+          log.stageName as Parameters<typeof this._logToTurn>[2],
+          log.globalTurnIndex!,
+        ),
+      );
+    return {
+      sessionId: session.id,
+      openingTurn:
+        turnHistory.find((turn) => turn.type === 'opening_contract') ??
+        turnHistory[0] ??
+        null,
+      turnHistory,
+      stageProgress: session.stageProgress ?? [],
+      state: session.interviewState,
+      resumed,
+    };
   }
 
   private async _loadSession({

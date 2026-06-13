@@ -201,5 +201,6 @@ function _createProbe(overrides: Partial<QuestionProbe> = {}): QuestionProbe {
     createdAt: new Date('2026-05-01T00:00:00.000Z'),
     updatedAt: new Date('2026-05-10T00:00:00.000Z'),
     ...overrides,
+    viewCount: overrides.viewCount ?? 0,
   };
 }

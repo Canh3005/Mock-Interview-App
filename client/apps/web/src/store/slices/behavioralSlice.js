@@ -32,11 +32,22 @@ const behavioralSlice = createSlice({
       state.error = null;
     },
     createSessionSuccess(state, action) {
-      const { sessionId, openingTurn, state: interviewState } = action.payload;
+      const {
+        sessionId,
+        openingTurn,
+        turnHistory = null,
+        stageProgress = [],
+        state: interviewState,
+      } = action.payload;
       state.sessionId = sessionId;
       state.interviewState = interviewState;
       state.status = 'active';
-      state.turns = [openingTurn];
+      state.turns = Array.isArray(turnHistory)
+        ? turnHistory
+        : openingTurn
+        ? [openingTurn]
+        : [];
+      state.stageProgress = stageProgress;
     },
     hydrateSessionSuccess(state, action) {
       const { sessionId, state: interviewState, turnHistory = [], stageProgress = [] } = action.payload;
