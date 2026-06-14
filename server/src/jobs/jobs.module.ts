@@ -3,13 +3,11 @@ import { BullModule } from '@nestjs/bullmq';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DocumentWorker } from './workers/document.worker';
 import { DsaDebriefWorker } from './workers/dsa-debrief.worker';
-import { SdEvaluationWorker } from './workers/sd-evaluation.worker';
 import { QuestionPracticeScoringWorker } from './workers/question-practice-scoring.worker';
 import { BehaviorScoringWorker } from './workers/behavior-scoring.worker';
 import { NsdEvaluationWorker } from './workers/nsd-evaluation.worker';
 import { DocumentsModule } from '../documents/documents.module';
 import { LiveCodingModule } from '../live-coding/live-coding.module';
-import { SDEvaluatorModule } from '../sd-evaluator/sd-evaluator.module';
 import { QuestionBankModule } from '../question-bank/question-bank.module';
 import { BehaviorSessionModule } from '../behavior-session/behavior-session.module';
 import { InterviewModule } from '../interview/interview.module';
@@ -21,7 +19,6 @@ import { SessionPlan } from '../session-planning/entities/session-plan.entity';
 import {
   DOCUMENT_PARSING_QUEUE,
   DSA_DEBRIEF_QUEUE,
-  SD_EVALUATION_QUEUE,
   QUESTION_PRACTICE_SCORING_QUEUE,
   BEHAVIOR_SCORING_QUEUE,
   NSD_EVALUATION_QUEUE,
@@ -31,7 +28,6 @@ import {
   imports: [
     BullModule.registerQueueAsync({ name: DOCUMENT_PARSING_QUEUE }),
     BullModule.registerQueueAsync({ name: DSA_DEBRIEF_QUEUE }),
-    BullModule.registerQueueAsync({ name: SD_EVALUATION_QUEUE }),
     BullModule.registerQueueAsync({ name: QUESTION_PRACTICE_SCORING_QUEUE }),
     BullModule.registerQueueAsync({ name: BEHAVIOR_SCORING_QUEUE }),
     BullModule.registerQueueAsync({ name: NSD_EVALUATION_QUEUE }),
@@ -42,7 +38,6 @@ import {
     ]),
     DocumentsModule,
     LiveCodingModule,
-    SDEvaluatorModule,
     QuestionBankModule,
     BehaviorSessionModule,
     InterviewModule,
@@ -52,7 +47,6 @@ import {
   providers: [
     DocumentWorker,
     DsaDebriefWorker,
-    SdEvaluationWorker,
     QuestionPracticeScoringWorker,
     BehaviorScoringWorker,
     NsdEvaluationWorker,

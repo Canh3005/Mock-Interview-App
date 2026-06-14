@@ -8,7 +8,7 @@ import { InterviewSession } from './entities/interview-session.entity';
 import { BehavioralSession } from '../behavioral/entities/behavioral-session.entity';
 import { LiveCodingSession } from '../live-coding/entities/live-coding-session.entity';
 import { LiveCodingSessionProblem } from '../live-coding/entities/live-coding-session-problem.entity';
-import { SDSession } from '../sd-session/entities/sd-session.entity';
+import { NSDSession } from '../nsd-session/entities/nsd-session.entity';
 import { WalletModule } from '../wallet/wallet.module';
 import { DocumentsModule } from '../documents/documents.module';
 import { SessionPlanningModule } from '../session-planning/session-planning.module';
@@ -20,7 +20,7 @@ import { SessionPlanningModule } from '../session-planning/session-planning.modu
       BehavioralSession,
       LiveCodingSession,
       LiveCodingSessionProblem,
-      SDSession,
+      NSDSession,
     ]),
     WalletModule,
     DocumentsModule,

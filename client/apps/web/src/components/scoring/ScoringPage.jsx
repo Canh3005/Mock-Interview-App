@@ -7,7 +7,7 @@ import { Loader2 } from 'lucide-react';
 import ScorecardDisplay from './ScorecardDisplay';
 import BehaviorScorecardDisplay from './BehaviorScorecardDisplay';
 import DSAScoringTab from './DSAScoringTab';
-import SDScoringTab from '../sd-debrief/SDScoringTab';
+import NSDScoringTab from './NSDScoringTab';
 import { interviewApi } from '../../api/interview.api';
 
 /**
@@ -28,7 +28,7 @@ export default function ScoringPage() {
   const initialTab = scoringInitialTab;
 
   const { status, scoreData } = useSelector((s) => s.behavioral);
-  const sdEvaluatorStatus = useSelector((s) => s.sdEvaluator.status);
+  const nsdEvaluatorStatus = useSelector((s) => s.nsdEvaluator.status);
   const [allSessions, setAllSessions] = useState(null);
   const [finalScorecard, setFinalScorecard] = useState(null);
   const [selectedSessionType, setSelectedSessionType] = useState(initialTab ?? 'behavioral');
@@ -65,7 +65,7 @@ export default function ScoringPage() {
 
   useEffect(() => {
     if (
-      sdEvaluatorStatus === 'completed' &&
+      nsdEvaluatorStatus === 'completed' &&
       interviewSessionId &&
       allSessions?.systemDesign?.evaluationResult == null
     ) {
@@ -79,7 +79,7 @@ export default function ScoringPage() {
         .catch((err) => console.error(t('scoring.errors.refetchSessions'), err))
         .finally(() => setIsLoadingSessions(false));
     }
-  }, [sdEvaluatorStatus]);
+  }, [nsdEvaluatorStatus]);
 
 
   if (isLoading || isLoadingSessions) {
@@ -141,7 +141,7 @@ export default function ScoringPage() {
 
       {/* Scorecard for selected session */}
       {selectedSessionType === 'systemDesign'
-        ? <SDScoringTab session={currentSessionData} />
+        ? <NSDScoringTab session={currentSessionData} />
         : selectedSessionType === 'liveCoding'
           ? <DSAScoringTab session={currentSessionData} />
           : behavioralFinalScore?.scorecardVersion === '1.0'

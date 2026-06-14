@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { InterviewSession } from './entities/interview-session.entity';
 import { LiveCodingSession } from '../live-coding/entities/live-coding-session.entity';
-import { SDSession } from '../sd-session/entities/sd-session.entity';
+import { NSDSession } from '../nsd-session/entities/nsd-session.entity';
 import { RedisService } from '../common/redis.service';
 import type { BehaviorScorecardData } from '../behavior-session/types/session-synthesis.types';
 
@@ -52,8 +52,8 @@ export class AnalyticsService {
     private readonly sessionRepo: Repository<InterviewSession>,
     @InjectRepository(LiveCodingSession)
     private readonly lcSessionRepo: Repository<LiveCodingSession>,
-    @InjectRepository(SDSession)
-    private readonly sdSessionRepo: Repository<SDSession>,
+    @InjectRepository(NSDSession)
+    private readonly nsdSessionRepo: Repository<NSDSession>,
     private readonly redisService: RedisService,
   ) {}
 
@@ -284,11 +284,11 @@ export class AnalyticsService {
 
     const sessionIds = sessions.map((s) => s.id);
 
-    const [lcSessions, sdSessions] = await Promise.all([
+    const [lcSessions, nsdSessions] = await Promise.all([
       this.lcSessionRepo.find({
         where: { interviewSessionId: In(sessionIds) },
       }),
-      this.sdSessionRepo.find({
+      this.nsdSessionRepo.find({
         where: { interviewSessionId: In(sessionIds) },
       }),
     ]);
@@ -319,25 +319,39 @@ export class AnalyticsService {
           }
         : null;
 
-    const sdScores = sdSessions
-      .map((sd) => {
-        if (!sd.evaluationResult) return null;
-        const finalScore = sd.evaluationResult['finalScore'];
-        return typeof finalScore === 'number' ? finalScore : null;
+    const nsdScores = nsdSessions
+      .map((session) => {
+        if (!session.evaluationResult) return null;
+        return this._mapNSDGradeToScore(session.evaluationResult.overallGrade);
       })
       .filter((n): n is number => n !== null);
 
     const systemDesign =
-      sdScores.length > 0
+      nsdScores.length > 0
         ? {
             averageScore:
               Math.round(
-                (sdScores.reduce((a, b) => a + b, 0) / sdScores.length) * 10,
+                (nsdScores.reduce((a, b) => a + b, 0) / nsdScores.length) * 10,
               ) / 10,
-            sessionCount: sdScores.length,
+            sessionCount: nsdScores.length,
           }
         : null;
 
     return { behavioral, liveCoding, systemDesign };
+  }
+
+  private _mapNSDGradeToScore(grade: string | undefined): number | null {
+    switch (grade) {
+      case 'good':
+        return 90;
+      case 'pass':
+        return 75;
+      case 'needs_improvement':
+        return 50;
+      case 'poor':
+        return 25;
+      default:
+        return null;
+    }
   }
 }

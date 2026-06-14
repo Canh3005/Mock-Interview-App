@@ -17,7 +17,7 @@ export default function AdminLayout({ children }) {
       ? t('adminLayout.problemManagement')
       : pathname === ROUTES.ADMIN_TESTCASES
         ? t('adminLayout.uploadTestCases')
-        : pathname === ROUTES.ADMIN_SD_PROBLEMS
+        : pathname === ROUTES.ADMIN_NSD_PROBLEMS
           ? t('adminLayout.systemDesign')
           : pathname === ROUTES.ADMIN_QUESTION_BANK
             ? t('adminLayout.questionBank')
@@ -79,9 +79,9 @@ export default function AdminLayout({ children }) {
           </button>
 
           <button
-            onClick={() => navigate(ROUTES.ADMIN_SD_PROBLEMS)}
+            onClick={() => navigate(ROUTES.ADMIN_NSD_PROBLEMS)}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium cursor-pointer ${
-              pathname === ROUTES.ADMIN_SD_PROBLEMS
+              pathname === ROUTES.ADMIN_NSD_PROBLEMS
                 ? 'bg-cta/15 text-cta border border-cta/30'
                 : 'text-slate-400 hover:bg-slate-800 hover:text-white border border-transparent'
             }`}

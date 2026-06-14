@@ -19,7 +19,6 @@ import RoundTransitionScreen from './components/interview-setup/RoundTransitionS
 import InterviewRoomPage from './components/interview-room/InterviewRoomPage'
 import BehavioralRoomPage from './components/behavioral-room/BehavioralRoomPage'
 import DSASessionPage from './components/dsa/DSASessionPage'
-import SDRoomPage from './components/sd-room/SDRoomPage'
 import NSDRoomPage from './components/nsd-room/NSDRoomPage'
 import ScoringPage from './components/scoring/ScoringPage'
 import ProblemBankPage from './components/practice/ProblemBankPage'
@@ -27,7 +26,7 @@ import PublicQuestionBankPage from './components/question-bank/PublicQuestionBan
 import QuestionProbeDetailPage from './components/question-bank/QuestionProbeDetailPage'
 import AdminProblemsPage from './components/admin/AdminProblemsPage'
 import AdminTestCasesPage from './components/admin/AdminTestCasesPage'
-import AdminSDProblemsPage from './components/admin/AdminSDProblemsPage'
+import AdminNSDProblemsPage from './components/admin/AdminNSDProblemsPage'
 import AdminQuestionBankPage from './components/admin/AdminQuestionBankPage'
 import AdminUsersPage from './components/admin/AdminUsersPage'
 import AdminAnalyticsPage from './components/admin/AdminAnalyticsPage'
@@ -115,7 +114,6 @@ function AppRoutes() {
             <Route element={<InterviewRoomRoute />}>
               <Route path={ROUTES.BEHAVIORAL_ROOM} element={<BehavioralRoomPage />} />
               <Route path={ROUTES.DSA_ROOM} element={<DSASessionPage />} />
-              <Route path={ROUTES.SD_ROOM} element={<SDRoomPage />} />
               <Route path={ROUTES.NSD_ROOM} element={<NSDRoomPage />} />
               <Route path={ROUTES.SCORING} element={<ScoringPage />} />
             </Route>
@@ -124,7 +122,7 @@ function AppRoutes() {
             <Route element={<AdminRoute />}>
               <Route path={ROUTES.ADMIN} element={<AdminProblemsPage />} />
               <Route path={ROUTES.ADMIN_TESTCASES} element={<AdminTestCasesPage />} />
-              <Route path={ROUTES.ADMIN_SD_PROBLEMS} element={<AdminSDProblemsPage />} />
+              <Route path={ROUTES.ADMIN_NSD_PROBLEMS} element={<AdminNSDProblemsPage />} />
               <Route path={ROUTES.ADMIN_QUESTION_BANK} element={<AdminQuestionBankPage />} />
               <Route path={ROUTES.ADMIN_USERS} element={<AdminUsersPage />} />
               <Route path={ROUTES.ADMIN_ANALYTICS} element={<AdminAnalyticsPage />} />

@@ -33,8 +33,8 @@ const initialState = {
     problemCount: 1,  // 1 | 2 | 3
   },
 
-  // SD config (only relevant when 'system_design' is in selectedRounds)
-  sdConfig: {
+  // System Design config (only relevant when 'system_design' is in selectedRounds)
+  systemDesignConfig: {
     durationMinutes: 45,
     enableCurveball: true,
   },
@@ -122,8 +122,8 @@ const interviewSetupSlice = createSlice({
     setDsaProblemCount(state, action) {
       state.dsaConfig.problemCount = action.payload; // 1 | 2 | 3
     },
-    setSdConfig(state, action) {
-      state.sdConfig = { ...state.sdConfig, ...action.payload };
+    setSystemDesignConfig(state, action) {
+      state.systemDesignConfig = { ...state.systemDesignConfig, ...action.payload };
     },
     toggleRound(state, action) {
       const round = action.payload;
@@ -215,7 +215,7 @@ const interviewSetupSlice = createSlice({
 
 export const {
   setDsaProblemCount,
-  setSdConfig,
+  setSystemDesignConfig,
   requestRoundTransition,
   confirmRoundTransition,
   setScoringInitialTab,

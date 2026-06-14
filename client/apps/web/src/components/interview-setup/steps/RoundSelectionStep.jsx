@@ -22,7 +22,7 @@ import {
   toggleRound,
 } from '../../../store/slices/interviewSetupSlice'
 import DSAConfigPanel from '../dsa/DSAConfigPanel'
-import SDConfigPanel from '../sd/SDConfigPanel'
+import SystemDesignConfigPanel from '../system-design/SystemDesignConfigPanel'
 import BehavioralConfigPanel from '../behavioral/BehavioralConfigPanel'
 
 const LANGUAGES = [
@@ -91,10 +91,10 @@ const ROUNDS = [
   },
 ]
 
-function getRoundDuration(round, dsaConfig, behavioralConfig, sdConfig) {
+function getRoundDuration(round, dsaConfig, behavioralConfig, systemDesignConfig) {
   if (round.key === 'dsa') return dsaConfig.problemCount * round.duration
   if (round.key === 'hr_behavioral') return behavioralConfig.durationMinutes
-  if (round.key === 'system_design') return sdConfig.durationMinutes
+  if (round.key === 'system_design') return systemDesignConfig.durationMinutes
   return round.duration
 }
 
@@ -198,7 +198,7 @@ function RoundCard({ round, selected, disabled, displayDuration, onToggle, t }) 
 
       {round.key === 'hr_behavioral' && selected && <BehavioralConfigPanel />}
       {round.key === 'dsa' && selected && <DSAConfigPanel />}
-      {round.key === 'system_design' && selected && <SDConfigPanel />}
+      {round.key === 'system_design' && selected && <SystemDesignConfigPanel />}
     </div>
   )
 }
@@ -211,7 +211,7 @@ export default function RoundSelectionStep({ onStart }) {
     selectedMode,
     selectedLanguage,
     dsaConfig,
-    sdConfig,
+    systemDesignConfig,
     behavioralConfig,
   } = useSelector((s) => s.interviewSetup)
 
@@ -220,7 +220,7 @@ export default function RoundSelectionStep({ onStart }) {
   const estimatedTotal = selectedRounds.reduce((sum, key) => {
     const round = ROUNDS.find((item) => item.key === key)
     if (!round) return sum
-    return sum + getRoundDuration(round, dsaConfig, behavioralConfig, sdConfig)
+    return sum + getRoundDuration(round, dsaConfig, behavioralConfig, systemDesignConfig)
   }, 0)
   const canStart = selectedRounds.length > 0
 
@@ -307,7 +307,7 @@ export default function RoundSelectionStep({ onStart }) {
           {visibleRounds.map((round) => {
             const selected = selectedRounds.includes(round.key)
             const disabled = !round.available
-            const displayDuration = getRoundDuration(round, dsaConfig, behavioralConfig, sdConfig)
+            const displayDuration = getRoundDuration(round, dsaConfig, behavioralConfig, systemDesignConfig)
 
             return (
               <RoundCard

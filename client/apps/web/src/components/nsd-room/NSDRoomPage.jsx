@@ -8,8 +8,8 @@ import { loadRequest, resetNSDSession, canvasChanged } from '../../store/slices/
 import { resetNSDInterviewer, startSessionRequest, sendMessageRequest } from '../../store/slices/nsdInterviewerSlice';
 import { evaluationReset } from '../../store/slices/nsdEvaluatorSlice';
 import { resetSetup } from '../../store/slices/interviewSetupSlice';
-import SDCanvas from '../sd-room/SDCanvas';
-import NodeLibrary from '../sd-room/NodeLibrary';
+import SystemDesignCanvas from '../system-design-canvas/SystemDesignCanvas';
+import NodeLibrary from '../system-design-canvas/NodeLibrary';
 import ResizeDivider from '../shared/ui/ResizeDivider';
 
 const NSD_PHASES = ['PHASE_1_FR', 'PHASE_2_NFR', 'PHASE_3_SCALE', 'PHASE_4_HLD', 'PHASE_5_DEEP_DIVE'];
@@ -206,7 +206,7 @@ export default function NSDRoomPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const nsdSessionId = useSelector((s) => s.interviewSetup.session?.nsdSessionId);
-  const { loading, error, phase, autoSaveStatus, canvasMode } = useSelector((s) => s.nsdSession);
+  const { loading, error, phase, autoSaveStatus, canvasMode, canvasJSON } = useSelector((s) => s.nsdSession);
   const [rightWidth, setRightWidth] = useState(RIGHT_PANEL_DEFAULT);
   const [showExitModal, setShowExitModal] = useState(false);
 
@@ -303,10 +303,11 @@ export default function NSDRoomPage() {
       <div className="flex min-h-0 flex-1 overflow-hidden gap-0">
         <NodeLibrary />
         <div className="flex-1 flex flex-col rounded-xl overflow-hidden border border-slate-800/60 ml-1.5">
-          <SDCanvas
+          <SystemDesignCanvas
+            value={canvasJSON}
             isLocked={isCanvasLocked}
             isViewOnly={isCanvasViewOnly}
-            onCanvasChange={handleCanvasChange}
+            onChange={handleCanvasChange}
           />
         </div>
         <ResizeDivider onMouseDown={handleResizeStart} />

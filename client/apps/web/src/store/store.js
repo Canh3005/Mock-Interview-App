@@ -7,10 +7,6 @@ import interviewSetupReducer from './slices/interviewSetupSlice';
 import behavioralReducer from './slices/behavioralSlice';
 import dsaSessionReducer from './slices/dsaSessionSlice'
 import practiceDSAReducer from './slices/practiceDSASlice';
-import sdProblemReducer from './slices/sdProblemSlice';
-import sdSessionReducer from './slices/sdSessionSlice';
-import sdInterviewerReducer from './slices/sdInterviewerSlice';
-import sdEvaluatorReducer from './slices/sdEvaluatorSlice';
 import walletReducer from './slices/walletSlice';
 import paymentReducer from './slices/paymentSlice';
 import questionBankAdminReducer from './slices/questionBankAdminSlice';
@@ -18,6 +14,7 @@ import questionBankReducer from './slices/questionBankSlice';
 import notificationsReducer from './slices/notificationsSlice';
 import adminUsersReducer from './slices/adminUsersSlice';
 import adminAnalyticsReducer from './slices/adminAnalyticsSlice';
+import nsdProblemReducer from './slices/nsdProblemSlice';
 import nsdSessionReducer from './slices/nsdSessionSlice';
 import nsdInterviewerReducer from './slices/nsdInterviewerSlice';
 import nsdEvaluatorReducer from './slices/nsdEvaluatorSlice';
@@ -33,10 +30,6 @@ export const store = configureStore({
     behavioral: behavioralReducer,
     dsaSession: dsaSessionReducer,
     practiceDSA: practiceDSAReducer,
-    sdProblem: sdProblemReducer,
-    sdSession: sdSessionReducer,
-    sdInterviewer: sdInterviewerReducer,
-    sdEvaluator: sdEvaluatorReducer,
     wallet: walletReducer,
     payment: paymentReducer,
     questionBankAdmin: questionBankAdminReducer,
@@ -44,6 +37,7 @@ export const store = configureStore({
     notifications: notificationsReducer,
     adminUsers: adminUsersReducer,
     adminAnalytics: adminAnalyticsReducer,
+    nsdProblem: nsdProblemReducer,
     nsdSession: nsdSessionReducer,
     nsdInterviewer: nsdInterviewerReducer,
     nsdEvaluator: nsdEvaluatorReducer,

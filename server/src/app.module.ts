@@ -22,16 +22,11 @@ import { CombatModule } from './combat/combat.module';
 import { TtsModule } from './tts/tts.module';
 import { LiveCodingModule } from './live-coding/live-coding.module';
 import { PracticeDSAModule } from './practice-dsa/practice-dsa.module';
-import { SDProblemModule } from './sd-problem/sd-problem.module';
-import { SDSessionModule } from './sd-session/sd-session.module';
-import { SDInterviewerModule } from './sd-interviewer/sd-interviewer.module';
-import { SDEvaluatorModule } from './sd-evaluator/sd-evaluator.module';
 import { WalletModule } from './wallet/wallet.module';
 import { PaymentModule } from './payment/payment.module';
 import { QuestionBankModule } from './question-bank/question-bank.module';
 import { SessionPlanningModule } from './session-planning/session-planning.module';
 import { BehaviorSessionModule } from './behavior-session/behavior-session.module';
-import { SDOrchestratorModule } from './sd-orchestrator/sd-orchestrator.module';
 import { NSDProblemModule } from './nsd-problem/nsd-problem.module';
 import { NSDSessionModule } from './nsd-session/nsd-session.module';
 import { NSDInterviewerModule } from './nsd-interviewer/nsd-interviewer.module';
@@ -93,16 +88,11 @@ import { AdminModule } from './admin/admin.module';
     TtsModule,
     LiveCodingModule,
     PracticeDSAModule,
-    SDProblemModule,
-    SDSessionModule,
-    SDInterviewerModule,
-    SDEvaluatorModule,
     WalletModule,
     PaymentModule,
     QuestionBankModule,
     SessionPlanningModule,
     BehaviorSessionModule,
-    SDOrchestratorModule,
     NSDProblemModule,
     NSDSessionModule,
     NSDInterviewerModule,

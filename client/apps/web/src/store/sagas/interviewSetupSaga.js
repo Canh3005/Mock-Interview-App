@@ -48,7 +48,7 @@ function* saveContextSaga(action) {
 
 function* initSessionSaga() {
   try {
-    const { selectedMode, selectedRounds, selectedLanguage, dsaConfig, sdConfig, behavioralConfig } =
+    const { selectedMode, selectedRounds, selectedLanguage, dsaConfig, systemDesignConfig, behavioralConfig } =
       yield select((s) => s.interviewSetup);
     const initPayload = {
       mode: selectedMode,
@@ -61,7 +61,7 @@ function* initSessionSaga() {
     }
 
     if (selectedRounds.includes('system_design')) {
-      initPayload.systemDesignDurationMinutes = sdConfig.durationMinutes;
+      initPayload.systemDesignDurationMinutes = systemDesignConfig.durationMinutes;
     }
 
     if (selectedRounds.includes('hr_behavioral')) {

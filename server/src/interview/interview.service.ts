@@ -9,7 +9,7 @@ import {
 import { BehavioralSession } from '../behavioral/entities/behavioral-session.entity';
 import { LiveCodingSession } from '../live-coding/entities/live-coding-session.entity';
 import { LiveCodingSessionProblem } from '../live-coding/entities/live-coding-session-problem.entity';
-import { SDSession } from '../sd-session/entities/sd-session.entity';
+import { NSDSession } from '../nsd-session/entities/nsd-session.entity';
 import { InitSessionDto } from './dto/init-session.dto';
 import { UpdateContextDto } from './dto/update-context.dto';
 import { DocumentContextService } from '../documents/document-context.service';
@@ -35,8 +35,8 @@ export class InterviewService {
     private liveCodingSessionRepo: Repository<LiveCodingSession>,
     @InjectRepository(LiveCodingSessionProblem)
     private liveCodingSessionProblemRepo: Repository<LiveCodingSessionProblem>,
-    @InjectRepository(SDSession)
-    private sdSessionRepo: Repository<SDSession>,
+    @InjectRepository(NSDSession)
+    private nsdSessionRepo: Repository<NSDSession>,
     private walletService: WalletService,
     private documentContextService: DocumentContextService,
     private calibrationService: BehaviorCalibrationService,
@@ -52,11 +52,12 @@ export class InterviewService {
       throw new BadRequestException('Interview session not found');
     }
 
-    const [liveCodingSession, sdSession] = await Promise.all([
+    const [liveCodingSession, nsdSession] = await Promise.all([
       this.liveCodingSessionRepo.findOne({ where: { interviewSessionId } }),
-      this.sdSessionRepo.findOne({
+      this.nsdSessionRepo.findOne({
         where: { interviewSessionId },
         relations: ['problem'],
+        order: { createdAt: 'DESC' },
       }),
     ]);
 
@@ -88,7 +89,7 @@ export class InterviewService {
           : null,
         liveCoding: liveCodingData,
         prompt: null,
-        systemDesign: sdSession ?? null,
+        systemDesign: nsdSession ?? null,
       },
     };
   }

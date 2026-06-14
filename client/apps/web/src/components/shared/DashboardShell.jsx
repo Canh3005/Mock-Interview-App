@@ -27,9 +27,9 @@ import { ROUTES } from '../../router/routes'
 import { logoutRequest } from '../../store/slices/authSlice'
 import { resetBehavioral } from '../../store/slices/behavioralSlice'
 import { resetDSASession } from '../../store/slices/dsaSessionSlice'
-import { resetSDSession } from '../../store/slices/sdSessionSlice'
-import { resetInterviewer } from '../../store/slices/sdInterviewerSlice'
-import { evaluationReset } from '../../store/slices/sdEvaluatorSlice'
+import { resetNSDSession } from '../../store/slices/nsdSessionSlice'
+import { resetNSDInterviewer } from '../../store/slices/nsdInterviewerSlice'
+import { evaluationReset as resetNSDEvaluation } from '../../store/slices/nsdEvaluatorSlice'
 import { resetSetup } from '../../store/slices/interviewSetupSlice'
 import LanguageSwitcher from './LanguageSwitcher'
 import NotificationDropdown from './NotificationDropdown'
@@ -317,7 +317,7 @@ function Sidebar({ collapsed, collapseLocked = false, onToggleCollapsed, onNavig
           <NavItemGroup icon={Shield} label={t('adminLayout.title')} matchPrefix="/admin">
             <NavSubItem to={ROUTES.ADMIN} label={t('adminLayout.problemManagement')} exact />
             <NavSubItem to={ROUTES.ADMIN_TESTCASES} label={t('adminLayout.uploadTestCases')} />
-            <NavSubItem to={ROUTES.ADMIN_SD_PROBLEMS} label={t('adminLayout.systemDesign')} />
+            <NavSubItem to={ROUTES.ADMIN_NSD_PROBLEMS} label={t('adminLayout.systemDesign')} />
             <NavSubItem to={ROUTES.ADMIN_QUESTION_BANK} label={t('adminLayout.questionBank')} />
             <NavSubItem to={ROUTES.ADMIN_USERS} label={t('adminLayout.userManagement')} />
             <NavSubItem to={ROUTES.ADMIN_ANALYTICS} label={t('adminLayout.analytics')} />
@@ -454,12 +454,6 @@ export default function DashboardShell() {
     loading: dsaLoading,
     mode: dsaMode,
   } = useSelector((s) => s.dsaSession)
-  const {
-    sessionId: sdSessionId,
-    phase: sdPhase,
-  } = useSelector((s) => s.sdSession)
-  const setupSDSessionId = useSelector((s) => s.interviewSetup.session?.sdSessionId)
-  const { status: sdEvaluationStatus } = useSelector((s) => s.sdEvaluator)
   const { sessionId: nsdSessionId, phase: nsdPhase } = useSelector((s) => s.nsdSession)
   const setupNSDSessionId = useSelector((s) => s.interviewSetup.session?.nsdSessionId)
   const { status: nsdEvaluationStatus } = useSelector((s) => s.nsdEvaluator)
@@ -467,10 +461,9 @@ export default function DashboardShell() {
   const isBehaviorFocusRoute = location.pathname === ROUTES.BEHAVIORAL_ROOM
   const isDsaFocusRoute = location.pathname === ROUTES.DSA_ROOM
   const isDsaSoloRoute = location.pathname === ROUTES.DSA_ROOM_SOLO
-  const isSDFocusRoute = location.pathname === ROUTES.SD_ROOM
   const isNSDFocusRoute = location.pathname === ROUTES.NSD_ROOM
   const isScoringFocusRoute = location.pathname === ROUTES.SCORING
-  const focusMode = isBehaviorFocusRoute || isDsaFocusRoute || isDsaSoloRoute || isSDFocusRoute || isNSDFocusRoute || isScoringFocusRoute
+  const focusMode = isBehaviorFocusRoute || isDsaFocusRoute || isDsaSoloRoute || isNSDFocusRoute || isScoringFocusRoute
   const hasUnsubmittedDsaProblems =
     dsaMode !== 'solo' &&
     !!dsaSessionId &&
@@ -481,20 +474,16 @@ export default function DashboardShell() {
     isDsaFocusRoute &&
     dsaMode !== 'solo' &&
     (dsaLoading || dsaScoringStatus === 'scoring' || !!pendingNextProblemId || hasUnsubmittedDsaProblems)
-  const shouldGuardSDNavigation =
-    isSDFocusRoute &&
-    !!(sdSessionId || setupSDSessionId) &&
-    (sdPhase !== 'COMPLETED' || sdEvaluationStatus === 'processing')
   const shouldGuardNSDNavigation =
     isNSDFocusRoute &&
     !!(nsdSessionId || setupNSDSessionId) &&
     (nsdPhase !== 'COMPLETED' || nsdEvaluationStatus === 'processing')
-  const shouldGuardNavigation = shouldGuardBehaviorNavigation || shouldGuardDsaNavigation || shouldGuardSDNavigation || shouldGuardNSDNavigation
+  const shouldGuardNavigation = shouldGuardBehaviorNavigation || shouldGuardDsaNavigation || shouldGuardNSDNavigation
   const focusLabel = isScoringFocusRoute
     ? t('dashboard.focus.labels.scoring')
     : isDsaFocusRoute || isDsaSoloRoute
       ? t('dashboard.focus.labels.dsa')
-      : isSDFocusRoute || isNSDFocusRoute
+      : isNSDFocusRoute
         ? t('dashboard.focus.labels.systemDesign')
         : t('dashboard.focus.labels.behavioral')
 
@@ -531,9 +520,9 @@ export default function DashboardShell() {
     if (intent.resetInterview) {
       dispatch(resetBehavioral())
       dispatch(resetDSASession())
-      dispatch(resetSDSession())
-      dispatch(resetInterviewer())
-      dispatch(evaluationReset())
+      dispatch(resetNSDSession())
+      dispatch(resetNSDInterviewer())
+      dispatch(resetNSDEvaluation())
       dispatch(resetSetup())
     }
     if (intent.type === 'logout') {
@@ -592,7 +581,7 @@ export default function DashboardShell() {
             ref={mainRef}
             className={[
               'dash-page-shell min-h-0 flex-1 transition-colors duration-200',
-              isBehaviorFocusRoute || isDsaFocusRoute || isDsaSoloRoute || isSDFocusRoute ? 'overflow-hidden' : 'overflow-y-auto',
+              isBehaviorFocusRoute || isDsaFocusRoute || isDsaSoloRoute || isNSDFocusRoute ? 'overflow-hidden' : 'overflow-y-auto',
             ].join(' ')}
           >
             <Outlet />
