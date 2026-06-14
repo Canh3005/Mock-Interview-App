@@ -1,0 +1,111 @@
+@startuml
+title Activity: NSD Phase Orchestration Flow
+
+skinparam swimlaneBorderColor #5C6BC0
+skinparam activityBackgroundColor #FAFAFA
+skinparam activityBorderColor #455A64
+skinparam arrowColor #455A64
+
+|Ứng viên|
+start
+:Vào phòng System Design\nvới NSD problem đã chọn;
+
+|Hệ thống|
+:Khởi tạo phiên ở PHASE_1_FR\n(NSDSession.phase = PHASE_1_FR);
+:Tìm phase đầu tiên có phaseData\n(resolveNextPhase from null);
+
+if (Problem có phaseData?) then ([không])
+  :Lỗi cấu hình problem — dừng;
+  stop
+else ([có])
+endif
+
+:Vào phase đầu tiên\n(updatePhase · canvasMode: locked);
+:Stream câu hỏi mở đầu qua SSE;
+
+(T)
+
+|Ứng viên|
+:Gửi câu trả lời\n(text · canvas state nếu Phase 4/5);
+
+|Hệ thống|
+:Dispatch turn đến handler phase hiện tại\n(Phase1 FR · Phase2 NFR · Phase3 Scale · Phase4 HLD · Phase5 Deep Dive);
+
+if (Opening turn chưa xong?) then ([có])
+  :Đánh dấu openingDone = true\nStream system facts + câu hỏi item đầu tiên;
+  ->(T)
+endif
+
+if (Phase 4 hoặc Phase 5 — canvas editable?) then ([có])
+  :Phân tích canvas\n(so sánh required nodes với whiteboard · accumulated roles);
+  if (Phát hiện extra node bất ngờ?) then ([có])
+    :Probe extra node\n(hỏi candidate giải thích · state machine: pending → answered);
+    ->(T)
+  endif
+endif
+
+|Dịch vụ AI (Gemini)|
+:Đánh giá câu trả lời item hiện tại\n(holistic eval · level: good / incomplete / weak / irrelevant);
+
+|Hệ thống|
+if (level = good?) then ([có])
+  :Đánh dấu item resolved;
+elseif (Vượt giới hạn followup?) then ([có])
+  :Fill — hệ thống cung cấp đáp án\n(filled = true · mark filled);
+else ([không])
+  :error counter++\nStream câu hỏi follow-up;
+  ->(T)
+endif
+
+if (Còn items chưa resolved trong group?) then ([có])
+  :Stream câu hỏi item tiếp theo;
+  ->(T)
+endif
+
+if (Còn feature / group tiếp theo trong phase?) then ([có])
+  :Chuyển sang feature tiếp theo\nStream câu hỏi feature mới;
+  ->(T)
+endif
+
+if (Phase 4 — cần integration review?) then ([có])
+  |Dịch vụ AI (Gemini)|
+  :Đánh giá cross-feature coherence\n(integration review);
+  |Hệ thống|
+  :Seed Phase 5 progress từ Phase 4\nChuyển vào Phase 5 với canvas hiện tại;
+  ->(T)
+endif
+
+:Ghi phase summary\n(tính dimension scores · phaseScore = worst dimension);
+
+note right
+  Dimensions per phase:
+  Phase1: completeness · synthesis
+  Phase2: nfr_coverage · reasoning · tradeoff
+  Phase3: calculation · architecture_connection
+  Phase4: component_correctness · design_reasoning · coherence
+  Phase5: bottleneck · solution_knowledge · tradeoff_articulation
+end note
+
+:Tìm phase tiếp theo có phaseData\n(resolveNextPhase from current);
+
+if (Còn phase tiếp theo?) then ([có])
+  :Vào phase mới\n(updatePhase · transition text · canvasMode · opening);
+  :Stream transition text + câu hỏi mở đầu phase mới;
+  ->(T)
+else ([không])
+endif
+
+:Chuyển sang EVALUATING\n(updatePhase = EVALUATING · enqueue nsd-evaluation job BullMQ);
+
+|Dịch vụ AI (Gemini)|
+:Worker chấm điểm từng phase\n(dimension scores per phase → phaseScore = worst dim);
+:Tổng hợp scorecard đánh giá toàn phiên;
+
+|Hệ thống|
+:Lưu kết quả evaluation\nCập nhật phase = COMPLETED;
+
+|Ứng viên|
+:Xem debrief + scorecard;
+stop
+
+@enduml

@@ -1,0 +1,121 @@
+@startuml
+title Activity: Combat Mode Session Flow
+
+skinparam swimlaneBorderColor #5C6BC0
+skinparam activityBackgroundColor #FAFAFA
+skinparam activityBorderColor #455A64
+skinparam arrowColor #455A64
+
+|Ứng viên|
+start
+:Truy cập Combat Mode;
+
+|Trình duyệt (Client)|
+:Yêu cầu quyền camera + microphone\n(getUserMedia API);
+
+if (Permission được cấp?) then ([không])
+  :Hiển thị lỗi — không thể vào phòng;
+  stop
+else ([có])
+endif
+
+:Khởi động MediaPipe\n(face detection · eye gaze · expression analysis);
+:Kiểm tra điều kiện vào phòng\n(phát hiện đúng 1 khuôn mặt);
+
+if (Điều kiện hợp lệ?) then ([không])
+  :Yêu cầu điều chỉnh camera — không vào được;
+  stop
+else ([có])
+endif
+
+|Hệ thống|
+:Tạo ProctoringSession\n(integrityScore = 100 · flag counters = 0);
+:Phát đề stage đầu tiên (DSA Problem)\nKhởi động TTS;
+
+fork
+  note right
+    Nhánh A: Luồng phỏng vấn chính
+    (tuần tự qua tối đa 6 stages)
+  end note
+
+  |Ứng viên|
+  repeat : Lặp qua tối đa 6 stages;
+    :Đọc đề · viết giải pháp\n(Monaco editor);
+
+    |Hệ thống|
+    :Chạy test cases (Judge0)\n(AC · WA · TLE · RE);
+
+    |Dịch vụ AI|
+    :Phát sinh câu hỏi Socratic\ntheo trigger\n(FIRST_RUN_AC · FIRST_RUN_WA\nAPPROACH_SUBMITTED · PROBLEM_SUBMITTED);
+
+    |Trình duyệt (Client)|
+    :TTS phát âm câu hỏi AI;
+
+    |Ứng viên|
+    :Trả lời câu hỏi Socratic;
+
+    |Hệ thống|
+    :Đánh giá điều kiện chuyển stage\n(TIME_BUDGET_EXCEEDED · MAX_TURNS_REACHED\nOFF_TOPIC_PERSISTENT ≥ 3 · CANDIDATE_CEILING);
+
+    if (Chuyển stage?) then ([có])
+      if (Còn stage tiếp theo?) then ([có])
+        :Phát đề stage tiếp theo;
+      endif
+    endif
+  repeat while (Còn stage?) is ([có])
+  ->[không];
+
+fork again
+  note right
+    Nhánh B: Proctoring metrics liên tục
+    (song song · batch mỗi ~5 giây)
+  end note
+
+  |Trình duyệt (Client)|
+  :MediaPipe phân tích frame realtime\n(eye gaze · facial expression · filler words);
+  :Batch POST /combat/sessions/:id/metrics\n(eyeTracking · expressions · fillerWords);
+  |Hệ thống|
+  :Tích lũy CombatSessionAggregate\n(eyeScreenFrames · fillerRate\nexprCounts · stressPeakMinutes);
+  note right: Vòng lặp liên tục\nsuốt toàn phiên
+
+fork again
+  note right
+    Nhánh C: Proctoring events
+    (bất đồng bộ · per event)
+  end note
+
+  |Trình duyệt (Client)|
+  :Phát hiện sự kiện bất thường\n(TAB_HIDDEN · NO_FACE · MULTIPLE_FACES\nSECOND_VOICE · DEVTOOLS_OPEN);
+  :POST /combat/sessions/:id/proctoring-event\n(eventType · severity · durationMs · metadata);
+  |Hệ thống|
+  :Lưu ProctoringEvent (idempotent by clientEventId)\nTăng flag counter theo severity\n(HIGH +1 · MEDIUM +1 · LOW +1);
+
+end fork
+
+|Trình duyệt (Client)|
+:Flush metrics batch cuối · Dừng MediaPipe;
+
+|Hệ thống|
+:Tải toàn bộ ProctoringEvent của phiên;
+:Tính base deductions từ events\n(HIGH: -15 · MEDIUM: -7 · LOW: -2 per event);
+
+fork
+  :Tương quan TAB_HIDDEN vs gaze score\n(gaze on-screen ≥ 70% → mitigation +5);
+fork again
+  :Sự kiện đơn lẻ không phải HIGH\n(xuất hiện 1 lần → mitigation +3);
+fork again
+  :SECOND_VOICE + dominant expression = stressed\n(→ aggravation -5);
+fork again
+  :Co-occurring events trong 30s window\n(≥ 3 types → aggravation -10);
+end fork
+
+:Áp dụng cap: total mitigation ≤ +20 · total aggravation ≥ -20;
+:finalScore = 100 - baseDeductions + adjustments\n(clamp 0 ≤ score ≤ 100);
+:Xác định verdict\n(≥ 85: CLEAN · ≥ 70: MINOR_FLAGS · ≥ 50: SUSPICIOUS · < 50: HIGHLY_SUSPICIOUS);
+:Ghi summary + verdict vào ProctoringSession;
+
+|Ứng viên|
+:Xem kết quả phỏng vấn\n+ Integrity Report;
+stop
+
+@enduml

@@ -1,0 +1,83 @@
+@startuml
+title Activity: Chọn câu hỏi phỏng vấn hành vi bằng RAG
+
+|Ứng viên|
+start
+:Chọn cấu hình phỏng vấn hành vi\n(depth · duration · language · persona);
+
+|Hệ thống|
+:Xác thực calibration profile\n(status ready/partial · có CV);
+
+if (Profile hợp lệ?) then ([không])
+  :Trả lỗi;
+  stop
+else ([có])
+endif
+
+fork
+  :Tải candidate claims;
+fork again
+  :Tải risk hypotheses;
+fork again
+  :Tải active question probes\n(pre-filter: level · roleFamily · language);
+end fork
+
+:Lấy danh sách probe đã dùng gần đây\n(N session gần nhất, cùng roleFamily + level);
+
+if (RAG enabled?) then ([không])
+  :ragSignals ← Map rỗng;
+else ([có])
+  :Khởi tạo vector storage\n(pgvector ext · bảng embeddings · HNSW index);
+  if (Storage sẵn sàng?) then ([không])
+    :Ghi log cảnh báo;
+    :ragSignals ← Map rỗng;
+  else ([có])
+    if (Lazy index enabled?) then ([có])
+      |Dịch vụ AI (Gemini)|
+      :Embed canonical text probe chưa index\n(RETRIEVAL_DOCUMENT · dim 768);
+      |Hệ thống|
+      :Upsert probe embeddings · xóa stale;
+    endif
+    :Xây dựng query sources từ profile + claims + risks\n(profile_focus · claim_verification · risk_rejection);
+    if (Có query sources?) then ([có])
+      repeat
+        :Lấy query source tiếp theo;
+        |Dịch vụ AI (Gemini)|
+        :Embed query text\n(RETRIEVAL_QUERY · dim 768);
+        |Hệ thống|
+        :Tìm kiếm vector cosine per stage\n(hard constraints: status · stage · level · roleFamily · language);
+        :Merge vào ragSignals\n(giữ similarity cao nhất per probe);
+      repeat while (Còn query source?) is ([có]) not ([không])
+    else ([không])
+      :ragSignals ← Map rỗng;
+    endif
+  endif
+endif
+
+note right
+  ragSignals: Map<probeId, {similarity, source}>
+  Nếu Map rỗng: blend 100% heuristic
+end note
+
+repeat
+  :Hard filter probe theo stage\n(stage · level · roleFamily · language · status=active);
+  if (Stage_6 reverse interview?) then ([có])
+    :Score = role/level fit;
+    :Chọn top-2 seeded: 1 selected + 1 fallback;
+  else ([không])
+    :Tính heuristic score theo loại stage\n(behavioral · technical · domain · cv-deep-dive);
+    :Blend = heuristic x w_h + RAG x w_r\n(per-stage weights, w_r=0 nếu ragSignals rỗng);
+    :Áp dụng penalty probe đã dùng gần đây;
+    :Chọn probe theo chiến lược stage\n(MMR · JD tech coverage · domain theme · claim coverage);
+    :Chọn fallback probe\n(paired by tech tag overlap + score);
+  endif
+repeat while (Còn stage?) is ([có]) not ([không])
+
+:Phân bổ thời gian cho từng stage\n(STAGE_WEIGHTS · depth · duration budget);
+:Lưu session plan vào DB;
+
+|Ứng viên|
+:Nhận kế hoạch phỏng vấn;
+stop
+
+@enduml
