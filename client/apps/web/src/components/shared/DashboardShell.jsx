@@ -460,13 +460,17 @@ export default function DashboardShell() {
   } = useSelector((s) => s.sdSession)
   const setupSDSessionId = useSelector((s) => s.interviewSetup.session?.sdSessionId)
   const { status: sdEvaluationStatus } = useSelector((s) => s.sdEvaluator)
+  const { sessionId: nsdSessionId, phase: nsdPhase } = useSelector((s) => s.nsdSession)
+  const setupNSDSessionId = useSelector((s) => s.interviewSetup.session?.nsdSessionId)
+  const { status: nsdEvaluationStatus } = useSelector((s) => s.nsdEvaluator)
   const [pendingNavigation, setPendingNavigation] = useState(null)
   const isBehaviorFocusRoute = location.pathname === ROUTES.BEHAVIORAL_ROOM
   const isDsaFocusRoute = location.pathname === ROUTES.DSA_ROOM
   const isDsaSoloRoute = location.pathname === ROUTES.DSA_ROOM_SOLO
   const isSDFocusRoute = location.pathname === ROUTES.SD_ROOM
+  const isNSDFocusRoute = location.pathname === ROUTES.NSD_ROOM
   const isScoringFocusRoute = location.pathname === ROUTES.SCORING
-  const focusMode = isBehaviorFocusRoute || isDsaFocusRoute || isDsaSoloRoute || isSDFocusRoute || isScoringFocusRoute
+  const focusMode = isBehaviorFocusRoute || isDsaFocusRoute || isDsaSoloRoute || isSDFocusRoute || isNSDFocusRoute || isScoringFocusRoute
   const hasUnsubmittedDsaProblems =
     dsaMode !== 'solo' &&
     !!dsaSessionId &&
@@ -481,12 +485,16 @@ export default function DashboardShell() {
     isSDFocusRoute &&
     !!(sdSessionId || setupSDSessionId) &&
     (sdPhase !== 'COMPLETED' || sdEvaluationStatus === 'processing')
-  const shouldGuardNavigation = shouldGuardBehaviorNavigation || shouldGuardDsaNavigation || shouldGuardSDNavigation
+  const shouldGuardNSDNavigation =
+    isNSDFocusRoute &&
+    !!(nsdSessionId || setupNSDSessionId) &&
+    (nsdPhase !== 'COMPLETED' || nsdEvaluationStatus === 'processing')
+  const shouldGuardNavigation = shouldGuardBehaviorNavigation || shouldGuardDsaNavigation || shouldGuardSDNavigation || shouldGuardNSDNavigation
   const focusLabel = isScoringFocusRoute
     ? t('dashboard.focus.labels.scoring')
     : isDsaFocusRoute || isDsaSoloRoute
       ? t('dashboard.focus.labels.dsa')
-      : isSDFocusRoute
+      : isSDFocusRoute || isNSDFocusRoute
         ? t('dashboard.focus.labels.systemDesign')
         : t('dashboard.focus.labels.behavioral')
 

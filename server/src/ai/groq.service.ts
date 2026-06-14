@@ -66,7 +66,11 @@ export class GroqService {
   async generateJsonContent(params: {
     model: string;
     contents: GroqMessage[];
-    config?: { systemInstruction?: string; maxOutputTokens?: number };
+    config?: {
+      systemInstruction?: string;
+      maxOutputTokens?: number;
+      temperature?: number;
+    };
     feature?: string;
   }): Promise<string> {
     const messages: Groq.Chat.ChatCompletionMessageParam[] = toOpenAIMessages(
@@ -78,6 +82,7 @@ export class GroqService {
         model: params.model,
         messages,
         max_tokens: params.config?.maxOutputTokens ?? 1024,
+        temperature: params.config?.temperature,
         response_format: { type: 'json_object' },
       });
 

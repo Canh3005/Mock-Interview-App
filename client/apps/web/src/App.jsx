@@ -20,6 +20,7 @@ import InterviewRoomPage from './components/interview-room/InterviewRoomPage'
 import BehavioralRoomPage from './components/behavioral-room/BehavioralRoomPage'
 import DSASessionPage from './components/dsa/DSASessionPage'
 import SDRoomPage from './components/sd-room/SDRoomPage'
+import NSDRoomPage from './components/nsd-room/NSDRoomPage'
 import ScoringPage from './components/scoring/ScoringPage'
 import ProblemBankPage from './components/practice/ProblemBankPage'
 import PublicQuestionBankPage from './components/question-bank/PublicQuestionBankPage'
@@ -115,6 +116,7 @@ function AppRoutes() {
               <Route path={ROUTES.BEHAVIORAL_ROOM} element={<BehavioralRoomPage />} />
               <Route path={ROUTES.DSA_ROOM} element={<DSASessionPage />} />
               <Route path={ROUTES.SD_ROOM} element={<SDRoomPage />} />
+              <Route path={ROUTES.NSD_ROOM} element={<NSDRoomPage />} />
               <Route path={ROUTES.SCORING} element={<ScoringPage />} />
             </Route>
 

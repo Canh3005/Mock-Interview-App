@@ -27,3 +27,10 @@ export const BEHAVIOR_SCORING_QUEUE =
 export const BehaviorScoringJobName = {
   SCORE_SESSION: 'score-behavior-session',
 } as const;
+
+export const NSD_EVALUATION_QUEUE =
+  process.env.NSD_EVALUATION_QUEUE || 'nsd-evaluation';
+
+export const NsdEvaluationJobName = {
+  EVALUATE: 'evaluate',
+} as const;

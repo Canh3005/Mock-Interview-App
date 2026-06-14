@@ -17,6 +17,9 @@ import { watchQuestionBankSaga } from './questionBankSaga';
 import { watchNotificationsSaga } from './notificationsSaga';
 import { watchAdminUsersSaga } from './adminUsersSaga';
 import { watchAdminAnalyticsSaga } from './adminAnalyticsSaga';
+import { watchNSDSessionSaga } from './nsdSessionSaga';
+import { watchNSDInterviewerSaga } from './nsdInterviewerSaga';
+import { watchNSDEvaluatorSaga } from './nsdEvaluatorSaga';
 
 export default function* rootSaga() {
   yield all([
@@ -38,5 +41,8 @@ export default function* rootSaga() {
     fork(watchNotificationsSaga),
     fork(watchAdminUsersSaga),
     fork(watchAdminAnalyticsSaga),
+    fork(watchNSDSessionSaga),
+    fork(watchNSDInterviewerSaga),
+    fork(watchNSDEvaluatorSaga),
   ]);
 }

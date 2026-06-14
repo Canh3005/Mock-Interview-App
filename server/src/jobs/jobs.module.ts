@@ -6,6 +6,7 @@ import { DsaDebriefWorker } from './workers/dsa-debrief.worker';
 import { SdEvaluationWorker } from './workers/sd-evaluation.worker';
 import { QuestionPracticeScoringWorker } from './workers/question-practice-scoring.worker';
 import { BehaviorScoringWorker } from './workers/behavior-scoring.worker';
+import { NsdEvaluationWorker } from './workers/nsd-evaluation.worker';
 import { DocumentsModule } from '../documents/documents.module';
 import { LiveCodingModule } from '../live-coding/live-coding.module';
 import { SDEvaluatorModule } from '../sd-evaluator/sd-evaluator.module';
@@ -13,6 +14,7 @@ import { QuestionBankModule } from '../question-bank/question-bank.module';
 import { BehaviorSessionModule } from '../behavior-session/behavior-session.module';
 import { InterviewModule } from '../interview/interview.module';
 import { CombatModule } from '../combat/combat.module';
+import { NSDEvaluatorModule } from '../nsd-evaluator/nsd-evaluator.module';
 import { BehavioralSession } from '../behavioral/entities/behavioral-session.entity';
 import { InterviewSession } from '../interview/entities/interview-session.entity';
 import { SessionPlan } from '../session-planning/entities/session-plan.entity';
@@ -22,6 +24,7 @@ import {
   SD_EVALUATION_QUEUE,
   QUESTION_PRACTICE_SCORING_QUEUE,
   BEHAVIOR_SCORING_QUEUE,
+  NSD_EVALUATION_QUEUE,
 } from './jobs.constants';
 
 @Module({
@@ -31,6 +34,7 @@ import {
     BullModule.registerQueueAsync({ name: SD_EVALUATION_QUEUE }),
     BullModule.registerQueueAsync({ name: QUESTION_PRACTICE_SCORING_QUEUE }),
     BullModule.registerQueueAsync({ name: BEHAVIOR_SCORING_QUEUE }),
+    BullModule.registerQueueAsync({ name: NSD_EVALUATION_QUEUE }),
     TypeOrmModule.forFeature([
       BehavioralSession,
       InterviewSession,
@@ -43,6 +47,7 @@ import {
     BehaviorSessionModule,
     InterviewModule,
     CombatModule,
+    NSDEvaluatorModule,
   ],
   providers: [
     DocumentWorker,
@@ -50,6 +55,7 @@ import {
     SdEvaluationWorker,
     QuestionPracticeScoringWorker,
     BehaviorScoringWorker,
+    NsdEvaluationWorker,
   ],
 })
 export class JobsModule {}

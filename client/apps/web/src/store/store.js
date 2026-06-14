@@ -18,6 +18,9 @@ import questionBankReducer from './slices/questionBankSlice';
 import notificationsReducer from './slices/notificationsSlice';
 import adminUsersReducer from './slices/adminUsersSlice';
 import adminAnalyticsReducer from './slices/adminAnalyticsSlice';
+import nsdSessionReducer from './slices/nsdSessionSlice';
+import nsdInterviewerReducer from './slices/nsdInterviewerSlice';
+import nsdEvaluatorReducer from './slices/nsdEvaluatorSlice';
 
 export const sagaMiddleware = createSagaMiddleware();
 
@@ -41,6 +44,9 @@ export const store = configureStore({
     notifications: notificationsReducer,
     adminUsers: adminUsersReducer,
     adminAnalytics: adminAnalyticsReducer,
+    nsdSession: nsdSessionReducer,
+    nsdInterviewer: nsdInterviewerReducer,
+    nsdEvaluator: nsdEvaluatorReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ 

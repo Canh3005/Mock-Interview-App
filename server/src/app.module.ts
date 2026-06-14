@@ -32,6 +32,10 @@ import { QuestionBankModule } from './question-bank/question-bank.module';
 import { SessionPlanningModule } from './session-planning/session-planning.module';
 import { BehaviorSessionModule } from './behavior-session/behavior-session.module';
 import { SDOrchestratorModule } from './sd-orchestrator/sd-orchestrator.module';
+import { NSDProblemModule } from './nsd-problem/nsd-problem.module';
+import { NSDSessionModule } from './nsd-session/nsd-session.module';
+import { NSDInterviewerModule } from './nsd-interviewer/nsd-interviewer.module';
+import { NSDEvaluatorModule } from './nsd-evaluator/nsd-evaluator.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { AdminModule } from './admin/admin.module';
 
@@ -99,6 +103,10 @@ import { AdminModule } from './admin/admin.module';
     SessionPlanningModule,
     BehaviorSessionModule,
     SDOrchestratorModule,
+    NSDProblemModule,
+    NSDSessionModule,
+    NSDInterviewerModule,
+    NSDEvaluatorModule,
     NotificationsModule,
     AdminModule,
   ],

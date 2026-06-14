@@ -24,8 +24,8 @@ import {
 } from '../../store/slices/interviewSetupSlice'
 import { resetBehavioral } from '../../store/slices/behavioralSlice'
 import { resetDSASession, startDSARound } from '../../store/slices/dsaSessionSlice'
-import { resetSDSession } from '../../store/slices/sdSessionSlice'
-import { resetInterviewer } from '../../store/slices/sdInterviewerSlice'
+import { resetNSDSession } from '../../store/slices/nsdSessionSlice'
+import { resetNSDInterviewer } from '../../store/slices/nsdInterviewerSlice'
 import CombatPermissionGate from './steps/CombatPermissionGate'
 import RoundSelectionStep from './steps/RoundSelectionStep'
 import InsufficientCreditModal from './InsufficientCreditModal'
@@ -465,9 +465,9 @@ export default function InterviewSetupFlow() {
     }
 
     if (selectedRounds.includes('system_design')) {
-      dispatch(resetSDSession())
-      dispatch(resetInterviewer())
-      navigate(ROUTES.SD_ROOM)
+      dispatch(resetNSDSession())
+      dispatch(resetNSDInterviewer())
+      navigate(ROUTES.NSD_ROOM)
       return
     }
 

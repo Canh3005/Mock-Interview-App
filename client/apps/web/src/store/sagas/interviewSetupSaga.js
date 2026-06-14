@@ -1,6 +1,6 @@
 import { call, put, select, takeLatest, delay } from 'redux-saga/effects';
 import { interviewApi } from '../../api/interview.api';
-import { sdSessionApi } from '../../api/sdSession';
+import { nsdSessionApi } from '../../api/nsdSession';
 import i18n from '../../i18n/config';
 import {
   preflightRequest,
@@ -80,18 +80,15 @@ function* initSessionSaga() {
       }
     }
 
-    let sdSessionId = null;
+    let nsdSessionId = null;
     if (selectedRounds.includes('system_design')) {
-      const sdData = yield call(sdSessionApi.create, {
+      const nsdData = yield call(nsdSessionApi.create, {
         interviewSessionId: data.sessionId,
-        durationMinutes: sdConfig.durationMinutes,
-        enableCurveball: sdConfig.enableCurveball,
-        language: selectedLanguage ?? 'vi',
       });
-      sdSessionId = sdData.sdSessionId;
+      nsdSessionId = nsdData.nsdSessionId;
     }
 
-    yield put(initSessionSuccess({ ...data, mode: selectedMode, sdSessionId }));
+    yield put(initSessionSuccess({ ...data, mode: selectedMode, nsdSessionId }));
   } catch (err) {
     const errData = err.response?.data;
     if (errData?.code === 'INSUFFICIENT_CREDITS') {
