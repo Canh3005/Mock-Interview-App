@@ -11,7 +11,6 @@ import { FitAssessmentService } from './fit-assessment.service';
 import { BehaviorCalibrationAiService } from './behavior-calibration.ai.service';
 import { BehaviorCalibrationService } from './behavior-calibration.service';
 import { DOCUMENT_PARSING_QUEUE } from '../jobs/jobs.constants';
-import { DocumentContextOverride } from './entities/document-context-override.entity';
 import { BehaviorCalibrationProfile } from './entities/behavior-calibration-profile.entity';
 import { CandidateClaim } from './entities/candidate-claim.entity';
 import { RiskHypothesis } from './entities/risk-hypothesis.entity';
@@ -26,7 +25,6 @@ import { UserProfile } from '../users/entities/user-profile.entity';
     TypeOrmModule.forFeature([
       UserCv,
       JdAnalysis,
-      DocumentContextOverride,
       BehaviorCalibrationProfile,
       CandidateClaim,
       RiskHypothesis,

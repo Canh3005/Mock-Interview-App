@@ -108,6 +108,7 @@ describe('FitAssessmentService', () => {
       jdJson,
       rubric,
       model: 'test-model',
+      requirements: service.buildNormalizedJdRequirements(jdJson),
     });
 
     expect(assessment.scoreBreakdown.riskPenalty).toBe(30);
@@ -121,6 +122,7 @@ describe('FitAssessmentService', () => {
       cvJson,
       jdJson,
       model: 'test-model',
+      requirements: service.buildNormalizedJdRequirements(jdJson),
       rubric: {
         confidence: 'high',
         requirementSignals: [],

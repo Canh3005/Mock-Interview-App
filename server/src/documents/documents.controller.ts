@@ -174,13 +174,10 @@ export class DocumentsController {
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'SSE stream for CV/JD compatibility assessment' })
-  @Get('compatibility-assessment/stream')
-  async streamCompatibilityAssessment(
-    @Req() req: { user: { id: string } },
-    @Res() res: Response,
-  ): Promise<void> {
-    await this.documentsService.streamCompatibilityAssessment(req.user.id, res);
+  @ApiOperation({ summary: 'Run CV/JD compatibility assessment' })
+  @Post('compatibility-assessment')
+  async runCompatibilityAssessment(@Req() req: { user: { id: string } }) {
+    return this.documentsService.runCompatibilityAssessment(req.user.id);
   }
 
   @UseGuards(JwtAuthGuard)

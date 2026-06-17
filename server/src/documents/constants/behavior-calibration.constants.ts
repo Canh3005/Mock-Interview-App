@@ -17,6 +17,17 @@ export const ALL_TECH_TAGS = new Set<string>(
   QUESTION_BANK_TAXONOMY.techTagGroups.flatMap((g) => g.tags),
 );
 
+export const FIT_GAP_TO_RISK: Record<string, HiringRiskType> = {
+  level_mismatch: 'level_mismatch',
+  weak_evidence: 'claim_without_evidence',
+};
+
+export const FIT_FLAG_TO_RISK: Record<string, HiringRiskType> = {
+  seniority_mismatch: 'level_mismatch',
+  missing_core_stack: 'weak_technical_depth',
+  ambiguous_timeline: 'unclear_scope',
+};
+
 export const BEHAVIORAL_RISK_DEFAULT_SEVERITY: Record<string, RiskSeverity> = {
   overstated_ownership: 'medium',
   missing_business_impact: 'medium',

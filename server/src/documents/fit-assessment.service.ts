@@ -28,25 +28,31 @@ import type {
   JdJson,
   Seniority,
 } from './types/document-ai.types';
+import {
+  canonicalize,
+  cleanText,
+  clamp,
+  dedupeStrings,
+} from '../common/utils/string.utils';
 
 @Injectable()
 export class FitAssessmentService {
   normalizeJdJson(jdJson: JdJson): JdJson {
-    const role = this.cleanText(jdJson.role);
-    const requiredSkills = this.dedupeStrings(jdJson.required_skills ?? []).map(
+    const role = cleanText(jdJson.role);
+    const requiredSkills = dedupeStrings(jdJson.required_skills ?? []).map(
       (skill) => this.normalizeSkillAlias(skill),
     );
-    const niceToHaveSkills = this.dedupeStrings(
+    const niceToHaveSkills = dedupeStrings(
       jdJson.nice_to_have_skills ?? [],
     ).map((skill) => this.normalizeSkillAlias(skill));
-    const keyResponsibilities = this.dedupeStrings(
+    const keyResponsibilities = dedupeStrings(
       jdJson.key_responsibilities ?? [],
     );
-    const domain = this.cleanText(jdJson.domain ?? '');
+    const domain = cleanText(jdJson.domain ?? '');
     const seniority = this.normalizeSeniority(jdJson.seniority);
     const minYears = Number(jdJson.minimum_experience_years);
 
-    const requiredCompetencies = this.dedupeStrings(
+    const requiredCompetencies = dedupeStrings(
       jdJson.requiredCompetencies ?? [],
     );
 
@@ -55,7 +61,7 @@ export class FitAssessmentService {
       required_skills: requiredSkills,
       nice_to_have_skills: niceToHaveSkills,
       minimum_experience_years: Number.isFinite(minYears)
-        ? this.clamp(Math.round(minYears), 0, 30)
+        ? clamp(Math.round(minYears), 0, 30)
         : undefined,
       key_responsibilities: keyResponsibilities,
       domain: domain || undefined,
@@ -67,23 +73,23 @@ export class FitAssessmentService {
   }
 
   normalizeCvJson(raw: CvJson): { cvJson: CvJson; parseError?: string } {
-    const skills = this.dedupeStrings(
+    const skills = dedupeStrings(
       (raw.skills ?? []).map((s) => this.normalizeSkillAlias(s)),
     );
 
     const experience = (raw.experience ?? []).map((exp) => {
       const normalized: CvExperience = {
-        company: this.cleanText(exp.company),
-        title: this.cleanText(exp.title),
-        responsibilities: this.dedupeStrings(exp.responsibilities ?? []),
+        company: cleanText(exp.company),
+        title: cleanText(exp.title),
+        responsibilities: dedupeStrings(exp.responsibilities ?? []),
       };
-      if (exp.startDate) normalized.startDate = this.cleanText(exp.startDate);
-      if (exp.endDate) normalized.endDate = this.cleanText(exp.endDate);
+      if (exp.startDate) normalized.startDate = cleanText(exp.startDate);
+      if (exp.endDate) normalized.endDate = cleanText(exp.endDate);
       if (exp.achievements?.length) {
-        normalized.achievements = this.dedupeStrings(exp.achievements);
+        normalized.achievements = dedupeStrings(exp.achievements);
       }
       if (exp.techStack?.length) {
-        normalized.techStack = this.dedupeStrings(
+        normalized.techStack = dedupeStrings(
           exp.techStack.map((s) => this.normalizeSkillAlias(s)),
         );
       }
@@ -92,11 +98,11 @@ export class FitAssessmentService {
 
     const flatTechStack = experience.flatMap((e) => e.techStack ?? []);
     const finalSkills =
-      skills.length > 0 ? skills : this.dedupeStrings(flatTechStack);
+      skills.length > 0 ? skills : dedupeStrings(flatTechStack);
 
     let totalYearsExperience =
       raw.totalYearsExperience != null
-        ? this.clamp(Math.round(Number(raw.totalYearsExperience)), 0, 50)
+        ? clamp(Math.round(Number(raw.totalYearsExperience)), 0, 50)
         : undefined;
     if (totalYearsExperience == null && experience.length > 0) {
       totalYearsExperience = this.inferTotalYearsFromExperience(experience);
@@ -118,33 +124,32 @@ export class FitAssessmentService {
       skills: finalSkills,
       experience,
     };
-    if (raw.name) cvJson.name = this.cleanText(raw.name);
-    if (raw.currentTitle)
-      cvJson.currentTitle = this.cleanText(raw.currentTitle);
+    if (raw.name) cvJson.name = cleanText(raw.name);
+    if (raw.currentTitle) cvJson.currentTitle = cleanText(raw.currentTitle);
     if (totalYearsExperience != null)
       cvJson.totalYearsExperience = totalYearsExperience;
     if (raw.education?.length) {
       cvJson.education = raw.education.map((edu) => ({
-        institution: this.cleanText(edu.institution),
-        ...(edu.degree ? { degree: this.cleanText(edu.degree) } : {}),
-        ...(edu.field ? { field: this.cleanText(edu.field) } : {}),
+        institution: cleanText(edu.institution),
+        ...(edu.degree ? { degree: cleanText(edu.degree) } : {}),
+        ...(edu.field ? { field: cleanText(edu.field) } : {}),
         ...(edu.graduationYear != null
           ? { graduationYear: Number(edu.graduationYear) }
           : {}),
-        ...(edu.gpa ? { gpa: this.cleanText(edu.gpa) } : {}),
+        ...(edu.gpa ? { gpa: cleanText(edu.gpa) } : {}),
       }));
     }
     if (raw.languages?.length) {
       cvJson.languages = raw.languages.map((lang) => ({
-        language: this.cleanText(lang.language),
-        proficiency: this.cleanText(lang.proficiency),
+        language: cleanText(lang.language),
+        proficiency: cleanText(lang.proficiency),
       }));
     }
     if (raw.certifications?.length) {
-      cvJson.certifications = this.dedupeStrings(raw.certifications);
+      cvJson.certifications = dedupeStrings(raw.certifications);
     }
     if (raw.domain?.length) {
-      cvJson.domain = this.dedupeStrings(raw.domain);
+      cvJson.domain = dedupeStrings(raw.domain);
     }
     if (seniority) cvJson.seniority = seniority;
 
@@ -155,14 +160,14 @@ export class FitAssessmentService {
     const jd = this.normalizeJdJson(jdJson);
     const requirements: NormalizedJdRequirement[] = [
       ...jd.required_skills.map((skill) => ({
-        id: `required_skill:${this.canonicalize(skill)}`,
+        id: `required_skill:${canonicalize(skill)}`,
         text: skill,
         source: 'required_skill' as const,
         priority: 'must_have' as const,
         weightHint: 'high' as const,
       })),
       ...(jd.nice_to_have_skills ?? []).map((skill) => ({
-        id: `nice_to_have_skill:${this.canonicalize(skill)}`,
+        id: `nice_to_have_skill:${canonicalize(skill)}`,
         text: skill,
         source: 'nice_to_have_skill' as const,
         priority: 'nice_to_have' as const,
@@ -197,7 +202,7 @@ export class FitAssessmentService {
 
     if (jd.domain) {
       requirements.push({
-        id: `domain:${this.canonicalize(jd.domain)}`,
+        id: `domain:${canonicalize(jd.domain)}`,
         text: jd.domain,
         source: 'domain',
         priority: 'context',
@@ -213,13 +218,12 @@ export class FitAssessmentService {
     jdJson: JdJson;
     rubric: FitRubricEvaluation;
     model: string;
+    requirements: NormalizedJdRequirement[];
   }): FitAssessmentV2 {
-    const normalizedRequirements = this.buildNormalizedJdRequirements(
-      params.jdJson,
-    );
     const rubric = this.normalizeRubricEvaluation(
       params.rubric,
-      normalizedRequirements,
+      params.requirements,
+      params.cvJson,
     );
     const scoreBreakdown = this.computeBreakdown(rubric);
     const weighted =
@@ -230,7 +234,7 @@ export class FitAssessmentService {
       scoreBreakdown.niceToHaveCoverage * 0.08 +
       scoreBreakdown.domainFit * 0.07 +
       scoreBreakdown.transferableExperience * 0.05;
-    const finalScore = this.clamp(
+    const finalScore = clamp(
       Math.round(weighted - scoreBreakdown.riskPenalty),
       0,
       100,
@@ -240,7 +244,7 @@ export class FitAssessmentService {
       scoringVersion: FIT_ASSESSMENT_SCORING_VERSION,
       model: params.model,
       createdAt: new Date().toISOString(),
-      normalizedRequirements,
+      normalizedRequirements: params.requirements,
       confidence: rubric.confidence,
       requirementSignals: rubric.requirementSignals,
       gaps: rubric.gaps,
@@ -294,6 +298,10 @@ export class FitAssessmentService {
     };
   }
 
+  canonicalizeSkill(skill: string): string {
+    return canonicalize(cleanText(skill));
+  }
+
   private computeBreakdown(rubric: FitRubricEvaluation): FitScoreBreakdown {
     const bySource = (source: RequirementSource) =>
       rubric.requirementSignals.filter((signal) => signal.source === source);
@@ -340,31 +348,31 @@ export class FitAssessmentService {
   private normalizeRubricEvaluation(
     rubric: FitRubricEvaluation,
     requirements: NormalizedJdRequirement[],
+    cvJson: CvJson,
   ): FitRubricEvaluation {
     const requirementById = new Map(requirements.map((req) => [req.id, req]));
     const requirementByText = new Map(
-      requirements.map((req) => [this.canonicalize(req.text), req]),
+      requirements.map((req) => [canonicalize(req.text), req]),
     );
 
     const signals = (rubric.requirementSignals ?? []).map((signal) => {
       const matchedRequirement =
         requirementById.get(signal.requirementId) ||
-        requirementByText.get(this.canonicalize(signal.requirement)) ||
+        requirementByText.get(canonicalize(signal.requirement)) ||
         null;
 
       return {
         requirementId:
-          matchedRequirement?.id || this.cleanText(signal.requirementId),
-        requirement:
-          matchedRequirement?.text || this.cleanText(signal.requirement),
+          matchedRequirement?.id || cleanText(signal.requirementId),
+        requirement: matchedRequirement?.text || cleanText(signal.requirement),
         source:
           matchedRequirement?.source || this.normalizeSource(signal.source),
         status: this.normalizeStatus(signal.status),
         evidenceStrength: this.normalizeEvidenceStrength(
           signal.evidenceStrength,
         ),
-        cvEvidence: this.dedupeStrings(signal.cvEvidence ?? []).slice(0, 5),
-        rationale: this.cleanText(signal.rationale),
+        cvEvidence: dedupeStrings(signal.cvEvidence ?? []).slice(0, 5),
+        rationale: cleanText(signal.rationale),
       };
     });
 
@@ -385,29 +393,38 @@ export class FitAssessmentService {
       });
     }
 
+    const { signals: guardedSignals, upgradedIds } =
+      this.applySkillPresenceGuardrail(signals, cvJson);
+
     return {
       confidence: this.normalizeConfidence(rubric.confidence),
-      requirementSignals: signals,
-      gaps: (rubric.gaps ?? []).map((gap) => ({
-        category: this.normalizeGapCategory(gap.category),
-        label: this.cleanText(gap.label),
-        severity: this.normalizeSeverity(gap.severity),
-        relatedRequirement: this.cleanText(gap.relatedRequirement),
-        explanation: this.cleanText(gap.explanation),
-        practiceSuggestion: this.cleanText(gap.practiceSuggestion ?? ''),
-      })),
+      requirementSignals: guardedSignals,
+      gaps: (rubric.gaps ?? [])
+        .map((gap) => ({
+          category: this.normalizeGapCategory(gap.category),
+          label: cleanText(gap.label),
+          severity: this.normalizeSeverity(gap.severity),
+          relatedRequirement: cleanText(gap.relatedRequirement),
+          explanation: cleanText(gap.explanation),
+          practiceSuggestion: cleanText(gap.practiceSuggestion ?? ''),
+        }))
+        .filter(
+          (gap) =>
+            !(
+              gap.category === 'missing_required_skill' &&
+              upgradedIds.has(gap.relatedRequirement)
+            ),
+        ),
       riskFlags: (rubric.riskFlags ?? []).map((flag) => ({
         code: this.normalizeRiskCode(flag.code),
         severity: this.normalizeSeverity(flag.severity),
-        explanation: this.cleanText(flag.explanation),
+        explanation: cleanText(flag.explanation),
       })),
       userSummary: {
-        headline: this.cleanText(rubric.userSummary?.headline ?? ''),
-        strengths: this.dedupeStrings(rubric.userSummary?.strengths ?? []),
-        gapsToImprove: this.dedupeStrings(
-          rubric.userSummary?.gapsToImprove ?? [],
-        ),
-        transferableNotes: this.dedupeStrings(
+        headline: cleanText(rubric.userSummary?.headline ?? ''),
+        strengths: dedupeStrings(rubric.userSummary?.strengths ?? []),
+        gapsToImprove: dedupeStrings(rubric.userSummary?.gapsToImprove ?? []),
+        transferableNotes: dedupeStrings(
           rubric.userSummary?.transferableNotes ?? [],
         ),
       },
@@ -423,7 +440,7 @@ export class FitAssessmentService {
       (sum, signal) => sum + STATUS_SCORE[signal.status],
       0,
     );
-    return this.clamp(Math.round(total / signals.length), 0, 100);
+    return clamp(Math.round(total / signals.length), 0, 100);
   }
 
   private averageEvidence(
@@ -435,7 +452,7 @@ export class FitAssessmentService {
       (sum, signal) => sum + EVIDENCE_SCORE[signal.evidenceStrength],
       0,
     );
-    return this.clamp(Math.round(total / signals.length), 0, 100);
+    return clamp(Math.round(total / signals.length), 0, 100);
   }
 
   private computeTransferableScore(
@@ -453,44 +470,54 @@ export class FitAssessmentService {
       (sum, gap) => sum + severityScore[gap.severity],
       0,
     );
-    return this.clamp(Math.round(total / transferableGaps.length), 0, 100);
+    return clamp(Math.round(total / transferableGaps.length), 0, 100);
   }
 
-  canonicalizeSkill(skill: string): string {
-    return this.canonicalize(this.cleanText(skill));
+  private applySkillPresenceGuardrail(
+    signals: FitRequirementSignal[],
+    cvJson: CvJson,
+  ): { signals: FitRequirementSignal[]; upgradedIds: Set<string> } {
+    const cvSkillSet = new Set<string>();
+    for (const skill of cvJson.skills ?? []) {
+      cvSkillSet.add(canonicalize(skill));
+    }
+    for (const exp of cvJson.experience ?? []) {
+      for (const tech of exp.techStack ?? []) {
+        cvSkillSet.add(canonicalize(tech));
+      }
+    }
+
+    const upgradedIds = new Set<string>();
+    const guardedSignals = signals.map((signal) => {
+      if (
+        signal.status !== 'missing' ||
+        (signal.source !== 'required_skill' &&
+          signal.source !== 'nice_to_have_skill')
+      ) {
+        return signal;
+      }
+      if (!cvSkillSet.has(canonicalize(signal.requirement))) {
+        return signal;
+      }
+      upgradedIds.add(signal.requirementId);
+      return {
+        ...signal,
+        status: 'partial' as CoverageStatus,
+        evidenceStrength: 'weak' as EvidenceStrength,
+        cvEvidence: signal.cvEvidence.length
+          ? signal.cvEvidence
+          : ['Listed in CV skills'],
+        rationale:
+          'Skill found in CV skills list but no project-level evidence confirmed.',
+      };
+    });
+
+    return { signals: guardedSignals, upgradedIds };
   }
 
   private normalizeSkillAlias(skill: string): string {
-    const cleaned = this.cleanText(skill);
-    return CANONICAL_SKILL_ALIASES[this.canonicalize(cleaned)] || cleaned;
-  }
-
-  private dedupeStrings(values: string[]): string[] {
-    const seen = new Set<string>();
-    const result: string[] = [];
-    for (const value of values) {
-      const cleaned = this.cleanText(value);
-      const key = this.canonicalize(cleaned);
-      if (!cleaned || seen.has(key)) continue;
-      seen.add(key);
-      result.push(cleaned);
-    }
-    return result;
-  }
-
-  private cleanText(value: string): string {
-    return typeof value === 'string' ? value.replace(/\s+/g, ' ').trim() : '';
-  }
-
-  private canonicalize(value: string): string {
-    return this.cleanText(value)
-      .toLowerCase()
-      .replace(/[\s-]+/g, '_')
-      .replace(/[^a-z0-9_+#.]+/g, '');
-  }
-
-  private clamp(value: number, min: number, max: number): number {
-    return Math.max(min, Math.min(max, value));
+    const cleaned = cleanText(skill);
+    return CANONICAL_SKILL_ALIASES[canonicalize(cleaned)] || cleaned;
   }
 
   private normalizeSource(source: string): RequirementSource {
@@ -598,7 +625,7 @@ export class FitAssessmentService {
         valid = true;
       }
     }
-    return valid ? this.clamp(Math.round(totalMonths / 12), 0, 50) : undefined;
+    return valid ? clamp(Math.round(totalMonths / 12), 0, 50) : undefined;
   }
 
   private inferSeniorityFromTitle(title: string): Seniority {

@@ -2,7 +2,7 @@ import type { CvJson, JdJson } from './document-ai.types';
 
 export interface ActiveContext<T> {
   json: T | null;
-  source: 'override' | 'db' | 'missing';
+  source: 'db' | 'missing';
   recordId?: string;
 }
 

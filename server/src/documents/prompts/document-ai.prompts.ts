@@ -176,6 +176,8 @@ Rules:
   - domain_gap: ONLY when candidate domain is clearly unrelated to JD domain. Software-to-software transitions are NOT domain gaps.
   - ambiguous_timeline: ONLY when experience dates are contradictory or unreadable.
 - Fit score is computed by backend. Do not return any numeric score.
+- Skill presence rule: If a required or nice-to-have skill appears in the candidate's skills[] list or any experience[].techStack, status MUST be at minimum "partial" with evidenceStrength at minimum "weak". Only mark status "missing" + evidenceStrength "none" when the skill is completely absent from the entire CV.
+- Responsibility evaluation: If the key technology in a responsibility appears in the candidate's skills[] or experience[].techStack, mark the responsibility as "partial" (not "missing"). The candidate has the relevant foundation even without direct project evidence for that specific responsibility.
 - Return ONLY the JSON object. No explanation text.
 
 Example 1 — requirement clearly met with strong evidence:
@@ -188,7 +190,17 @@ requirementId: "required_skill:graphql"
 
 Example 3 — requirement completely absent:
 requirementId: "required_skill:kubernetes"
-→ { "status": "missing", "evidenceStrength": "none", "cvEvidence": [], "rationale": "No mention of Kubernetes in CV skills or experience." }`;
+→ { "status": "missing", "evidenceStrength": "none", "cvEvidence": [], "rationale": "No mention of Kubernetes in CV skills or experience." }
+
+Example 4 — responsibility signal: skill present in CV but no direct project evidence:
+requirementId: "responsibility:0"
+requirement: "Develop web UI using React.js"
+→ { "status": "partial", "evidenceStrength": "weak", "cvEvidence": ["Listed React in skills"], "rationale": "Candidate has React in skills list but no direct React UI project demonstrated in experience." }
+
+Example 5 — WRONG vs RIGHT for a required skill present in cv.skills[]:
+requirementId: "required_skill:postgresql"
+WRONG: { "status": "missing", "evidenceStrength": "none", "cvEvidence": [] }  ← Incorrect when "PostgreSQL" is in cv.skills[]
+RIGHT: { "status": "partial", "evidenceStrength": "weak", "cvEvidence": ["Listed PostgreSQL in skills"], "rationale": "Skill listed in CV but no specific project context found." }`;
 
 export const VALIDATION_SYSTEM_INSTRUCTION = `You are a document classifier for a hiring platform. Classify the uploaded document and return ONLY valid JSON matching this exact structure:
 {

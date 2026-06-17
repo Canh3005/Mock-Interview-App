@@ -8,7 +8,6 @@ import { RiskHypothesis } from './entities/risk-hypothesis.entity';
 import { FitAssessmentService } from './fit-assessment.service';
 import type { FitAssessmentV2 } from './types/fit-assessment.types';
 import type {
-  CalibrationPath,
   CalibrationStatus,
   StructuredClaim,
   RawCandidateClaim,
@@ -25,6 +24,8 @@ import { UserProfile } from '../users/entities/user-profile.entity';
 import {
   ALL_TECH_TAGS,
   BEHAVIORAL_RISK_DEFAULT_SEVERITY,
+  FIT_FLAG_TO_RISK,
+  FIT_GAP_TO_RISK,
   LEVEL_EXPECTATION_MAP,
   RISK_TYPE_TO_COMPETENCIES,
   VALID_COMPETENCIES,
@@ -72,10 +73,7 @@ export class BehaviorCalibrationService {
     jdJson?: JdJson | null;
     fitAssessment?: FitAssessmentV2 | null;
   }): Promise<void> {
-    const hasCv = !!cvJson;
-    const hasJd = !!jdJson;
-
-    if (!hasCv && !hasJd) {
+    if (!cvJson && !jdJson) {
       this.logger.log(`BC skip userId=${userId}: no CV or JD`);
       return;
     }
@@ -90,13 +88,6 @@ export class BehaviorCalibrationService {
         `BC: failed to fetch user profile userId=${userId}: ${String(error)}`,
       );
     }
-    const hasProfile = !!profile;
-    const hasWeaknessHistory = !!(
-      profile as { weaknessHistory?: unknown } | null
-    )?.weaknessHistory;
-
-    const sourceCompleteness = { hasCv, hasJd, hasProfile, hasWeaknessHistory };
-    const path = this._determinePath({ hasCv, hasJd });
 
     try {
       await this._runPipeline({
@@ -107,12 +98,10 @@ export class BehaviorCalibrationService {
         jdJson: jdJson ?? null,
         fitAssessment: fitAssessment ?? null,
         profile,
-        sourceCompleteness,
-        path,
       });
     } catch (error) {
       const msg = error instanceof Error ? error.message : String(error);
-      this.logger.error(`BC failed userId=${userId} path=${path}: ${msg}`);
+      this.logger.error(`BC failed userId=${userId}: ${msg}`);
     }
   }
 
@@ -153,13 +142,6 @@ export class BehaviorCalibrationService {
     jdJson: JdJson | null;
     fitAssessment: FitAssessmentV2 | null;
     profile: UserProfile | null;
-    sourceCompleteness: {
-      hasCv: boolean;
-      hasJd: boolean;
-      hasProfile: boolean;
-      hasWeaknessHistory: boolean;
-    };
-    path: CalibrationPath;
   }): Promise<void> {
     const {
       userId,
@@ -169,8 +151,6 @@ export class BehaviorCalibrationService {
       jdJson,
       fitAssessment,
       profile,
-      sourceCompleteness,
-      path,
     } = params;
 
     // Step 1: Deterministic claim extraction from CvJson structure
@@ -208,7 +188,6 @@ export class BehaviorCalibrationService {
             claimType: enrichment.claimType,
             impliedCompetencies: enrichment.impliedCompetencies as string[],
             riskTags: enrichment.riskTags,
-
             suggestedQuestions: enrichment.suggestedQuestions,
           };
         });
@@ -222,39 +201,38 @@ export class BehaviorCalibrationService {
       ? this._seedRisksFromFitAssessment(fitAssessment)
       : [];
 
-    // Step 3b: Coverage gap detection (deterministic, full path only)
-    const coverageGapRisks: SeededRisk[] =
-      path === 'full' ? this._detectCoverageGapRisks(mergedClaims, jdJson) : [];
+    // Step 3b: Coverage gap detection
+    const coverageGapRisks: SeededRisk[] = this._detectCoverageGapRisks(
+      mergedClaims,
+      jdJson,
+    );
 
     const seededRisks: SeededRisk[] = [...faSeededRisks, ...coverageGapRisks];
 
-    // Step 4: LLM risk enrichment + additional behavioral risks (full path only)
+    // Step 4: LLM risk enrichment + additional behavioral risks
     let riskEnrichmentOutput: RiskEnrichmentOutput = {
       seededRiskEnrichments: [],
       additionalRisks: [],
       userFacingSummary: { focusAreas: [], evidenceToPrep: [] },
     };
 
-    if (path === 'full') {
-      try {
-        const step4Claims = mergedClaims.map((c) => ({
-          localId: c.sourceRef.localId,
-          claimText: c.claimText,
-          impliedCompetencies: c.impliedCompetencies,
-        }));
-        riskEnrichmentOutput = await this.aiService.enrichAndExtendRisks(
-          seededRisks,
-          step4Claims,
-          jdJson ?? undefined,
-        );
-      } catch (error) {
-        this.logger.warn(`BC-4: Risk enrichment failed: ${String(error)}`);
-      }
+    try {
+      const step4Claims = mergedClaims.map((c) => ({
+        localId: c.sourceRef.localId,
+        claimText: c.claimText,
+        impliedCompetencies: c.impliedCompetencies,
+      }));
+      riskEnrichmentOutput = await this.aiService.enrichAndExtendRisks(
+        seededRisks,
+        step4Claims,
+        jdJson ?? undefined,
+      );
+    } catch (error) {
+      this.logger.warn(`BC-4: Risk enrichment failed: ${String(error)}`);
     }
 
     // Step 5: Build + persist (always persists, even with empty claims)
     await this._persistProfile(userId, cvId, jdAnalysisId, {
-      path,
       mergedClaims,
       seededRisks,
       riskEnrichmentOutput,
@@ -262,7 +240,6 @@ export class BehaviorCalibrationService {
       jdJson,
       fitAssessment,
       profile,
-      sourceCompleteness,
     });
   }
 
@@ -310,16 +287,6 @@ export class BehaviorCalibrationService {
   // ─── Step 3a: Seed risks from FA ──────────────────────────────────────────
 
   private _seedRisksFromFitAssessment(fa: FitAssessmentV2): SeededRisk[] {
-    const FIT_GAP_TO_RISK: Record<string, HiringRiskType> = {
-      level_mismatch: 'level_mismatch',
-      weak_evidence: 'claim_without_evidence',
-    };
-    const FIT_FLAG_TO_RISK: Record<string, HiringRiskType> = {
-      seniority_mismatch: 'level_mismatch',
-      missing_core_stack: 'weak_technical_depth',
-      ambiguous_timeline: 'unclear_scope',
-    };
-
     const seeded: SeededRisk[] = [];
     let seq = 0;
 
@@ -415,7 +382,6 @@ export class BehaviorCalibrationService {
     cvId: string | null,
     jdAnalysisId: string | null,
     ctx: {
-      path: CalibrationPath;
       mergedClaims: RawCandidateClaim[];
       seededRisks: SeededRisk[];
       riskEnrichmentOutput: RiskEnrichmentOutput;
@@ -423,44 +389,17 @@ export class BehaviorCalibrationService {
       jdJson: JdJson | null;
       fitAssessment: FitAssessmentV2 | null;
       profile: UserProfile | null;
-      sourceCompleteness: {
-        hasCv: boolean;
-        hasJd: boolean;
-        hasProfile: boolean;
-        hasWeaknessHistory: boolean;
-      };
     },
   ): Promise<void> {
-    const data = this._buildProfileData(userId, ctx);
-
     const profileEntity = Object.assign(new BehaviorCalibrationProfile(), {
       userId,
       cvId,
       jdAnalysisId,
-      status: data.status,
-      sourceCompleteness: data.sourceCompleteness,
-      roleFamily: data.roleFamily,
-      targetRole: data.targetRole,
-      targetLevel: data.targetLevel,
-      profileLevel: data.profileLevel,
-      levelMismatch: data.levelMismatch,
-      levelExpectations: data.levelExpectations,
-      priorityCompetencies: data.priorityCompetencies,
-      competencyWeights: data.competencyWeights as Record<string, number>,
-      previousWeakCompetencies: data.previousWeakCompetencies,
-      evidenceStrictness: data.evidenceStrictness,
-      calibrationNotes: data.calibrationNotes,
-      cvTechStack: data.cvTechStack,
-      jdTechRequirements: data.jdTechRequirements,
-      userFacingSummary: data.userFacingSummary,
-      internalVersion: data.internalVersion,
+      ...this._buildProfileData(ctx),
     });
 
-    const qr = this.dataSource.createQueryRunner();
-    await qr.connect();
-    await qr.startTransaction();
-    try {
-      const savedProfile = await qr.manager.save(
+    await this.dataSource.transaction(async (manager) => {
+      const savedProfile = await manager.save(
         BehaviorCalibrationProfile,
         profileEntity,
       );
@@ -478,7 +417,7 @@ export class BehaviorCalibrationService {
         userId,
         ctx.seededRisks,
         ctx.riskEnrichmentOutput,
-        data.levelMismatch,
+        profileEntity.levelMismatch,
       );
 
       // Risk-aware claim priority boost: claims whose competencies overlap with any
@@ -495,10 +434,7 @@ export class BehaviorCalibrationService {
 
       let claimIdMap = new Map<string, string>();
       if (claimEntities.length > 0) {
-        const savedClaims = await qr.manager.save(
-          CandidateClaim,
-          claimEntities,
-        );
+        const savedClaims = await manager.save(CandidateClaim, claimEntities);
         claimIdMap = new Map(
           (savedClaims as CandidateClaim[]).map((c) => [
             (c.sourceRef as { localId: string }).localId,
@@ -515,49 +451,31 @@ export class BehaviorCalibrationService {
             ? (claimIdMap.get(_claimLocalId) ?? null)
             : null,
         }));
-        await qr.manager.save(RiskHypothesis, riskEntities);
+        await manager.save(RiskHypothesis, riskEntities);
       }
 
-      await qr.commitTransaction();
       this.logger.log(
-        `BC-5: persisted calibration profile ${savedProfile.id} userId=${userId} status=${data.status}`,
+        `BC-5: persisted calibration profile ${savedProfile.id} userId=${userId} status=${profileEntity.status}`,
       );
-    } catch (e) {
-      await qr.rollbackTransaction();
-      throw e;
-    } finally {
-      await qr.release();
-    }
+    });
   }
 
-  private _buildProfileData(
-    userId: string,
-    ctx: {
-      path: CalibrationPath;
-      mergedClaims: RawCandidateClaim[];
-      seededRisks: SeededRisk[];
-      riskEnrichmentOutput: RiskEnrichmentOutput;
-      cvJson: CvJson | null;
-      jdJson: JdJson | null;
-      fitAssessment: FitAssessmentV2 | null;
-      profile: UserProfile | null;
-      sourceCompleteness: {
-        hasCv: boolean;
-        hasJd: boolean;
-        hasProfile: boolean;
-        hasWeaknessHistory: boolean;
-      };
-    },
-  ): BehaviorCalibrationProfileData {
+  private _buildProfileData(ctx: {
+    mergedClaims: RawCandidateClaim[];
+    seededRisks: SeededRisk[];
+    riskEnrichmentOutput: RiskEnrichmentOutput;
+    cvJson: CvJson | null;
+    jdJson: JdJson | null;
+    fitAssessment: FitAssessmentV2 | null;
+    profile: UserProfile | null;
+  }): BehaviorCalibrationProfileData {
     const {
-      path,
       mergedClaims,
       seededRisks,
       riskEnrichmentOutput,
       cvJson,
       jdJson,
       profile,
-      sourceCompleteness,
     } = ctx;
 
     const levelMismatch = this._computeLevelMismatch(cvJson, jdJson);
@@ -596,7 +514,6 @@ export class BehaviorCalibrationService {
 
     let status: CalibrationStatus;
     if (
-      path === 'full' &&
       mergedClaims.length >= CLAIM_COUNT_READY_THRESHOLD &&
       coverageScore >= COVERAGE_SCORE_READY_THRESHOLD &&
       priorityCompetencies.length >= MIN_PRIORITY_COMPETENCIES &&
@@ -642,11 +559,6 @@ export class BehaviorCalibrationService {
       jdJson?.required_skills ?? [],
     );
 
-    const missingDataWarning = !sourceCompleteness.hasJd
-      ? 'JD not provided. Calibration is based on CV only.'
-      : !sourceCompleteness.hasCv
-        ? 'CV not provided. Calibration is based on JD expectations only.'
-        : undefined;
     const levelMismatchWarning = levelMismatch
       ? 'Your experience level may not match the JD requirements. Prepare to address this in the interview.'
       : undefined;
@@ -655,7 +567,13 @@ export class BehaviorCalibrationService {
 
     return {
       status,
-      sourceCompleteness,
+      sourceCompleteness: {
+        hasCv: true,
+        hasJd: true,
+        hasProfile: !!profile,
+        hasWeaknessHistory: !!(profile as { weaknessHistory?: unknown } | null)
+          ?.weaknessHistory,
+      },
       roleFamily,
       targetRole,
       targetLevel: String(targetLevel),
@@ -672,7 +590,6 @@ export class BehaviorCalibrationService {
       userFacingSummary: {
         focusAreas: summary.focusAreas,
         evidenceToPrep: summary.evidenceToPrep,
-        missingDataWarning,
         levelMismatchWarning,
       },
       internalVersion: 'behavior-calibration-v1',
@@ -819,18 +736,6 @@ export class BehaviorCalibrationService {
   }
 
   // ─── Helpers ───────────────────────────────────────────────────────────────
-
-  private _determinePath({
-    hasCv,
-    hasJd,
-  }: {
-    hasCv: boolean;
-    hasJd: boolean;
-  }): CalibrationPath {
-    if (hasCv && hasJd) return 'full';
-    if (hasCv) return 'cv_only';
-    return 'jd_only';
-  }
 
   private _computeLevelMismatch(
     cvJson: CvJson | null,

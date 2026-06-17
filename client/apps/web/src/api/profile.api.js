@@ -16,6 +16,7 @@ export const profileApi = {
   getDocumentContext: () => axiosClient.get('/documents/context'),
   updateCvJson: (data) => axiosClient.patch('/documents/cv/current', data),
   updateJdJson: (data) => axiosClient.patch('/documents/jd/current', data),
+  runCompatibilityAssessment: () => axiosClient.post('/documents/compatibility-assessment'),
   getAssessmentHistory: () => axiosClient.get('/documents/history'),
   deleteAssessment: (id) => axiosClient.delete(`/documents/history/${id}`),
 };

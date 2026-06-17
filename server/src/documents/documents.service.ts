@@ -188,9 +188,25 @@ export class DocumentsService {
         DocumentUploadType.CV,
       );
       parsedTextHash = this.hashExtractedText(documentText);
-      const rawCvJson = await this.aiService.extractCvJson(documentText);
-      const { cvJson, parseError: cvParseError } =
-        this.fitAssessmentService.normalizeCvJson(rawCvJson);
+
+      const cvDuplicate = await this.cvRepository.findOne({
+        where: { userId, parsedTextHash, processingStatus: 'completed' },
+        select: ['id', 'parsedJson'],
+      });
+
+      let cvJson: CvJson;
+      let cvParseError: string | undefined;
+      if (cvDuplicate?.parsedJson) {
+        cvJson = cvDuplicate.parsedJson as unknown as CvJson;
+        this.logger.log(
+          `CV duplicate detected, reusing parsedJson from record ${cvDuplicate.id} userId=${userId}`,
+        );
+      } else {
+        const rawCvJson = await this.aiService.extractCvJson(documentText);
+        ({ cvJson, parseError: cvParseError } =
+          this.fitAssessmentService.normalizeCvJson(rawCvJson));
+      }
+
       cvRecord.fileUrl = filePath;
       cvRecord.originalName = originalName;
       cvRecord.parsedJson = cvJson;
@@ -199,11 +215,6 @@ export class DocumentsService {
       cvRecord.parsedTextHash = parsedTextHash;
       await this.cvRepository.save(cvRecord);
 
-      await this.contextService.clearOverrideForType(
-        userId,
-        DocumentUploadType.CV,
-      );
-      await this.contextService.refreshRedisContext(userId);
       await this.syncCvToUserProfile(userId, cvJson);
 
       const hasLatestJd =
@@ -329,8 +340,21 @@ export class DocumentsService {
       );
       parsedTextHash = this.hashExtractedText(documentText);
 
-      const rawJdJson = await this.aiService.extractJdJson(documentText);
-      const jdJson = this.fitAssessmentService.normalizeJdJson(rawJdJson);
+      const jdDuplicate = await this.jdRepository.findOne({
+        where: { userId, parsedTextHash, processingStatus: 'completed' },
+        select: ['id', 'parsedJson'],
+      });
+
+      let jdJson: JdJson;
+      if (jdDuplicate?.parsedJson) {
+        jdJson = jdDuplicate.parsedJson as unknown as JdJson;
+        this.logger.log(
+          `JD duplicate detected, reusing parsedJson from record ${jdDuplicate.id} userId=${userId}`,
+        );
+      } else {
+        const rawJdJson = await this.aiService.extractJdJson(documentText);
+        jdJson = this.fitAssessmentService.normalizeJdJson(rawJdJson);
+      }
 
       jdRecord.fileUrl = filePath;
       jdRecord.originalName = originalName;
@@ -348,11 +372,6 @@ export class DocumentsService {
         : ['cv_context'];
 
       await this.jdRepository.save(jdRecord);
-      await this.contextService.clearOverrideForType(
-        userId,
-        DocumentUploadType.JD,
-      );
-      await this.contextService.refreshRedisContext(userId);
 
       this.logger.log(
         `JD parsed successfully userId=${userId} recordId=${recordId} textHash=${parsedTextHash}`,
@@ -380,10 +399,10 @@ export class DocumentsService {
   private async assessJdFit(
     jdRecord: JdAnalysis,
     cvRecord: UserCv,
-    jdJson: JdJson,
   ): Promise<void> {
     try {
       const cvJson = cvRecord.parsedJson as CvJson;
+      const jdJson = jdRecord.parsedJson as JdJson;
       const requirements =
         this.fitAssessmentService.buildNormalizedJdRequirements(jdJson);
       const rubric = await this.aiService.assessFitRubric(
@@ -396,6 +415,7 @@ export class DocumentsService {
         jdJson,
         rubric,
         model: DOCUMENT_FIT_ASSESSMENT_MODEL,
+        requirements,
       });
 
       jdRecord.fitAssessment = fitAssessment;
@@ -623,7 +643,6 @@ export class DocumentsService {
     }
     record.parsedJson = cvJson;
     await this.cvRepository.save(record);
-    await this.contextService.refreshRedisContext(userId);
     await this.syncCvToUserProfile(userId, cvJson);
   }
 
@@ -634,7 +653,6 @@ export class DocumentsService {
     }
     record.parsedJson = jdJson;
     await this.jdRepository.save(record);
-    await this.contextService.refreshRedisContext(userId);
   }
 
   async streamParseResult(
@@ -663,50 +681,35 @@ export class DocumentsService {
     }
   }
 
-  async streamCompatibilityAssessment(
-    userId: string,
-    res: Response,
-  ): Promise<void> {
-    this._openSseStream(res);
-    try {
-      const cvRecord =
-        await this.contextService.getLatestCompletedCvRecord(userId);
-      const jdRecord =
-        await this.contextService.getLatestCompletedJdRecord(userId);
-      if (!cvRecord || !jdRecord) {
-        throw new BadRequestException('CV và JD là bắt buộc để đánh giá.');
-      }
-
-      const jdJson = jdRecord.parsedJson as JdJson;
-      await this.assessJdFit(jdRecord, cvRecord, jdJson);
-      await this.jdRepository.save(jdRecord);
-
-      const fitAssessment = jdRecord.fitAssessment as FitAssessmentV2;
-      const fitAssessmentSummary =
-        this.fitAssessmentService.buildSummary(fitAssessment);
-
-      this._emitSse(res, {
-        type: 'fit_assessment',
-        fitScore: jdRecord.fitScore,
-        fitAssessmentSummary,
-      });
-
-      void this.calibrationService.run({
-        userId,
-        cvId: cvRecord.id,
-        jdAnalysisId: jdRecord.id,
-        cvJson: cvRecord.parsedJson as CvJson,
-        jdJson,
-        fitAssessment,
-      });
-    } catch (error) {
-      this._emitSse(res, {
-        type: 'error',
-        message: this.toSafeErrorMessage(error),
-      });
-    } finally {
-      res.end();
+  async runCompatibilityAssessment(userId: string): Promise<{
+    fitScore: number;
+    fitAssessmentSummary: ReturnType<FitAssessmentService['buildSummary']>;
+  }> {
+    const cvRecord =
+      await this.contextService.getLatestCompletedCvRecord(userId);
+    const jdRecord =
+      await this.contextService.getLatestCompletedJdRecord(userId);
+    if (!cvRecord || !jdRecord) {
+      throw new BadRequestException('CV và JD là bắt buộc để đánh giá.');
     }
+
+    await this.assessJdFit(jdRecord, cvRecord);
+    await this.jdRepository.save(jdRecord);
+
+    const fitAssessment = jdRecord.fitAssessment as FitAssessmentV2;
+    const fitAssessmentSummary =
+      this.fitAssessmentService.buildSummary(fitAssessment);
+
+    void this.calibrationService.run({
+      userId,
+      cvId: cvRecord.id,
+      jdAnalysisId: jdRecord.id,
+      cvJson: cvRecord.parsedJson as CvJson,
+      jdJson: jdRecord.parsedJson as JdJson,
+      fitAssessment,
+    });
+
+    return { fitScore: jdRecord.fitScore ?? 0, fitAssessmentSummary };
   }
 
   private _openSseStream(res: Response): void {

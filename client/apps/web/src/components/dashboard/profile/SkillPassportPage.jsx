@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import { AlertCircle, CheckCircle2, Loader2, X, Zap } from 'lucide-react'
@@ -15,8 +15,7 @@ import AssessmentHistory from './AssessmentHistory'
 import JdInfoTab from './JdInfoTab'
 import FitAssessmentSummary from './FitAssessmentSummary'
 import { toast } from 'sonner'
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+import { profileApi } from '../../../api/profile.api'
 
 function CompatibilityAssessmentPanel({
   hasCv,
@@ -159,8 +158,6 @@ export default function SkillPassportPage() {
     compatibilityResult,
     compatibilityError,
   } = useSelector((state) => state.profile)
-  const accessToken = useSelector((state) => state.auth.accessToken)
-  const compatibilityStreamRef = useRef(null)
 
   const [activeTab, setActiveTab] = useState('cv')
   const [uploadType, setUploadType] = useState('CV')
@@ -171,10 +168,6 @@ export default function SkillPassportPage() {
   useEffect(() => {
     dispatch(fetchDocumentContextRequest())
   }, [dispatch])
-
-  useEffect(() => () => {
-    compatibilityStreamRef.current?.close()
-  }, [])
 
   useEffect(() => {
     if (compatibilityResult || compatibilityError) {
@@ -199,48 +192,16 @@ export default function SkillPassportPage() {
     setActiveTab(type === 'CV' ? 'cv' : 'jd')
   }
 
-  const startCompatibilityAssessment = () => {
-    if (!accessToken || !hasCv || !hasJd) return
-
-    compatibilityStreamRef.current?.close()
+  const startCompatibilityAssessment = async () => {
+    if (!hasCv || !hasJd) return
     dispatch(runCompatibilityStart())
-
-    const es = new EventSource(
-      `${API_BASE_URL}/documents/compatibility-assessment/stream?t=${accessToken}`,
-    )
-    compatibilityStreamRef.current = es
-    let done = false
-
-    const closeStream = () => {
-      done = true
-      es.close()
-      if (compatibilityStreamRef.current === es) {
-        compatibilityStreamRef.current = null
-      }
-    }
-
-    es.onmessage = (event) => {
-      if (done) return
-      try {
-        const data = JSON.parse(event.data)
-        if (data.type === 'fit_assessment') {
-          dispatch(runCompatibilitySuccess(data))
-        } else {
-          const message = data.message || t('profile.toast.unknownError')
-          dispatch(runCompatibilityFailure(message))
-          toast.error(message)
-        }
-      } catch {
-        dispatch(runCompatibilityFailure(t('profile.toast.unknownError')))
-      } finally {
-        closeStream()
-      }
-    }
-
-    es.onerror = () => {
-      if (done) return
-      dispatch(runCompatibilityFailure(t('profile.toast.unknownError')))
-      closeStream()
+    try {
+      const data = await profileApi.runCompatibilityAssessment()
+      dispatch(runCompatibilitySuccess(data))
+    } catch (err) {
+      const message = err?.response?.data?.message || t('profile.toast.unknownError')
+      dispatch(runCompatibilityFailure(message))
+      toast.error(message)
     }
   }
 
