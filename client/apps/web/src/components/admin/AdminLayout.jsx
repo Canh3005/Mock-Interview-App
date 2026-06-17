@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowLeft, BarChart3, BookOpenCheck, Database, FileCode2, LogOut, Network, Users } from 'lucide-react';
+import { ArrowLeft, BarChart3, BookOpenCheck, FileCode2, LogOut, Network, Users } from 'lucide-react';
 import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -64,18 +64,6 @@ export default function AdminLayout({ children }) {
           >
             <FileCode2 className="w-5 h-5" />
             {t('adminLayout.problemManagement')}
-          </button>
-
-          <button
-            onClick={() => navigate(ROUTES.ADMIN_TESTCASES)}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium cursor-pointer ${
-              pathname === ROUTES.ADMIN_TESTCASES
-                ? 'bg-cta/15 text-cta border border-cta/30'
-                : 'text-slate-400 hover:bg-slate-800 hover:text-white border border-transparent'
-            }`}
-          >
-            <Database className="w-5 h-5" />
-            {t('adminLayout.uploadTestCases')}
           </button>
 
           <button

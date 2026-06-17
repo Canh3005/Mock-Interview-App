@@ -316,7 +316,6 @@ function Sidebar({ collapsed, collapseLocked = false, onToggleCollapsed, onNavig
         {user?.role === 'admin' && (
           <NavItemGroup icon={Shield} label={t('adminLayout.title')} matchPrefix="/admin">
             <NavSubItem to={ROUTES.ADMIN} label={t('adminLayout.problemManagement')} exact />
-            <NavSubItem to={ROUTES.ADMIN_TESTCASES} label={t('adminLayout.uploadTestCases')} />
             <NavSubItem to={ROUTES.ADMIN_NSD_PROBLEMS} label={t('adminLayout.systemDesign')} />
             <NavSubItem to={ROUTES.ADMIN_QUESTION_BANK} label={t('adminLayout.questionBank')} />
             <NavSubItem to={ROUTES.ADMIN_USERS} label={t('adminLayout.userManagement')} />

@@ -1,10 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { LiveCodingSession } from '../live-coding/entities/live-coding-session.entity';
 import { LiveCodingSessionProblem } from '../live-coding/entities/live-coding-session-problem.entity';
 import { UserSolvedProblem } from './entities/user-solved-problem.entity';
 import { LiveCodingService } from '../live-coding/live-coding.service';
+
+type PracticeRunResult = Awaited<
+  ReturnType<LiveCodingService['runCodeStateless']>
+>;
 
 @Injectable()
 export class PracticeDSAService {
@@ -22,7 +26,7 @@ export class PracticeDSAService {
     return this.liveCodingService.getProblemWithTemplates(problemId);
   }
 
-  runCode(problemId: string, code: string, language: string) {
+  async runCode(problemId: string, code: string, language: string) {
     return this.liveCodingService.runCodeStateless(problemId, code, language);
   }
 
@@ -35,6 +39,21 @@ export class PracticeDSAService {
   ) {
     const { problem } =
       await this.liveCodingService.getProblemWithTemplates(problemId);
+    const runResult = await this.liveCodingService.runCodeStateless(
+      problemId,
+      code,
+      language,
+    );
+
+    if (!this.hasAcceptedAllTests(runResult)) {
+      throw new BadRequestException({
+        message: 'Solution must pass all test cases before submitting.',
+        results: runResult.results,
+        hasTLE: runResult.hasTLE,
+      });
+    }
+
+    const completedAt = new Date();
 
     const session = this.sessionRepo.create({
       interviewSessionId: null,
@@ -42,7 +61,7 @@ export class PracticeDSAService {
       status: 'COMPLETED',
       aiConversation: [],
       idleEvents: [],
-      completedAt: new Date(),
+      completedAt,
     });
     await this.sessionRepo.save(session);
 
@@ -55,17 +74,37 @@ export class PracticeDSAService {
       finalCode: code,
       approachText: null,
       approachSubmittedAt: null,
-      submittedAt: new Date(),
-      hasTLE: false,
-      lastRunAt: null,
-      runHistory: [],
+      submittedAt: completedAt,
+      hasTLE: runResult.hasTLE,
+      lastRunAt: completedAt,
+      runHistory: [
+        {
+          runAt: completedAt.toISOString(),
+          results: runResult.results,
+          hasTLE: runResult.hasTLE,
+        },
+      ],
       unlockedHints,
+      hintsUsed: unlockedHints.length,
+      runsUsed: 1,
     });
     await this.sessionProblemRepo.save(sp);
 
     await this.markSolved(userId, problemId);
 
-    return { status: 'COMPLETED', allSubmitted: true };
+    return {
+      status: 'COMPLETED',
+      allSubmitted: true,
+      results: runResult.results,
+      hasTLE: runResult.hasTLE,
+    };
+  }
+
+  private hasAcceptedAllTests(runResult: PracticeRunResult): boolean {
+    return (
+      runResult.results.length > 0 &&
+      runResult.results.every((result) => result.status === 'AC')
+    );
   }
 
   async markSolved(userId: string, problemId: string): Promise<void> {

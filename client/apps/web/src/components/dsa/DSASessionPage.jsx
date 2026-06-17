@@ -435,19 +435,37 @@ export default function DSASessionPage() {
   }
 
   const handleSubmit = async () => {
-    if (!activeProblemId) return
+    if (!activeProblemId || runLoading) return
     if (isSoloMode) {
+      setRunLoading(true)
       try {
         const code = editorCode[activeProblemId]?.[currentLanguage] ?? ''
-        const runResult = await practiceApi.runCode(activeProblemId, code, currentLanguage)
-        dispatch({ type: 'dsaSession/runCompleted', payload: { problemId: activeProblemId, ...runResult } })
+        const submitResult = await practiceApi.submitProblem(activeProblemId, code, currentLanguage, unlockedHints[activeProblemId] ?? [])
+        dispatch({ type: 'dsaSession/runCompleted', payload: { problemId: activeProblemId, ...submitResult } })
         setShowHiddenResults((prev) => ({ ...prev, [activeProblemId]: true }))
-        await practiceApi.submitProblem(activeProblemId, code, currentLanguage, unlockedHints[activeProblemId] ?? [])
         dispatch(submitProblem({ problemId: activeProblemId }))
         dispatch(markSolved(activeProblemId))
         setPracticeSubmitDone(true)
-      } catch {
-        toast.error(t('dsaRoom.toast.submitFailed'))
+      } catch (error) {
+        const responseData = error?.response?.data
+        if (responseData?.results) {
+          dispatch({
+            type: 'dsaSession/runCompleted',
+            payload: {
+              problemId: activeProblemId,
+              results: responseData.results,
+              hasTLE: responseData.hasTLE,
+            },
+          })
+          setShowHiddenResults((prev) => ({ ...prev, [activeProblemId]: true }))
+        }
+        toast.error(responseData?.results
+          ? t('dsaRoom.toast.practiceSubmitNeedsAccepted', {
+              defaultValue: 'Your solution must pass all test cases before submitting.',
+            })
+          : responseData?.message || t('dsaRoom.toast.submitFailed'))
+      } finally {
+        setRunLoading(false)
       }
     } else {
       dispatch(submitProblem({ problemId: activeProblemId }))
@@ -550,7 +568,7 @@ export default function DSASessionPage() {
                 {runLoading ? t('dsaRoom.actions.running') : t('dsaRoom.actions.run')}
               </button>
               <button
-                disabled={!!problemProgress[activeProblemId]?.submittedAt}
+                disabled={runLoading || !!problemProgress[activeProblemId]?.submittedAt}
                 onClick={handleSubmit}
                 className="dash-primary-button flex h-8 items-center gap-1.5 rounded-[12px] px-3 text-xs font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-45"
               >

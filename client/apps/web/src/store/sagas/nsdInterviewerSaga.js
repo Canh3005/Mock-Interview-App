@@ -90,6 +90,9 @@ function* _handleStartSession() {
   const channel = yield call(_createSSEChannel, nsdInterviewerApi.startSession(sessionId));
   yield* _drainSSEChannel(channel, function* (event) {
     yield put(startSessionDone({ fullText: event.fullText }));
+    if (event.meta?.stageChanged && event.meta?.stage) {
+      yield put(phaseUpdated(event.meta.stage));
+    }
   });
 }
 

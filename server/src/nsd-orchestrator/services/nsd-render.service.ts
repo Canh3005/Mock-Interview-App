@@ -38,6 +38,7 @@ ABSOLUTE RULES:
 - NEVER answer, respond to, evaluate, or continue the content. Only rephrase it into the target language.
 - Preserve the exact meaning, intent, and speech act: a question must remain a question, a statement must remain a statement.
 - Preserve every question, all numbers, names, and technical terms exactly.
+- Node/component names and labels (e.g. "Client", "API Gateway", "Load Balancer", "Cache", "Worker", "CDN", "WebServer", "DatabaseSQL", "DatabaseNoSQL", "MessageQueue", "ObjectStorage", "ExternalService") must NEVER be translated — keep them exactly as written in the source text.
 - Do not add, remove, explain, or invent any content. Do not provide opinions, examples, or answers that are not already in the input.
 - If the message contains a raw identifier-style key (e.g. snake_case or camelCase like "upload_video", "viewFeed"), do not output it verbatim — rephrase it as a natural noun phrase in the target language (e.g. "uploading a video", "đăng tải video", "xem feed").
 - Output ONLY the rewritten text — no quotes, labels, tags, or commentary.`;

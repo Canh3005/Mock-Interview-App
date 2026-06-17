@@ -88,7 +88,6 @@ export class LiveCodingService {
         sessionId: session.id,
         problemId,
         order: idx,
-
         phase: 'READ',
         approachText: null,
         finalCode: null,
@@ -224,11 +223,6 @@ export class LiveCodingService {
     code: string,
     language: string,
   ): Promise<{ results: RunResult[]; hasTLE: boolean }> {
-    console.log('Running code with params:', {
-      sessionId,
-      problemId,
-      language,
-    });
     const session = await this.getSessionOrThrow(sessionId);
     const sp = await this.getSessionProblemOrThrow(sessionId, problemId);
 
@@ -299,7 +293,6 @@ export class LiveCodingService {
           this.logger.warn(`AI TLE trigger failed: ${e.message}`),
         );
     }
-    console.log('Run code results:', { sessionId, problemId, results, hasTLE });
     return { results, hasTLE };
   }
 
@@ -395,7 +388,6 @@ export class LiveCodingService {
         })),
         Number(problem.timeLimitMultiplier),
       );
-    console.log('results', judgeResults);
     const results: RunResult[] = testCases.map((tc, idx) => {
       const jr = judgeResults[idx];
       const statusId = jr.status.id;

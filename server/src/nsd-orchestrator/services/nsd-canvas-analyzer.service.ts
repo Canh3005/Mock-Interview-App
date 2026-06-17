@@ -133,9 +133,22 @@ export class NSDCanvasAnalyzerService {
 
   // ── Core algorithm (Bước 0-3) ────────────────────────────────────────────────
 
+  private _normalizeCanvas(canvas: NSDCanvasState): NSDCanvasState {
+    return {
+      ...canvas,
+      nodes: canvas.nodes.map((n) => ({
+        ...n,
+        label:
+          n.label ??
+          (n as unknown as { data?: { label?: string } }).data?.label ??
+          n.type,
+      })),
+    };
+  }
+
   private _analyze(args: AnalyzeArgs): NSDCanvasAnalysis {
     const {
-      canvas,
+      canvas: rawCanvas,
       requiredNodes,
       ownerKey,
       knownExtraNodes,
@@ -145,6 +158,7 @@ export class NSDCanvasAnalyzerService {
       futureRoleCandidates,
       fallbackKnownTypes,
     } = args;
+    const canvas = this._normalizeCanvas(rawCanvas);
 
     // Bước 0 — drop own review entries whose node no longer exists on canvas.
     const canvasNodeIds = new Set(canvas.nodes.map((n) => n.id));
@@ -356,6 +370,7 @@ export class NSDCanvasAnalyzerService {
   }
 
   private _labelMatches(node: NSDCanvasNode, labels: string[]): boolean {
+    if (!node.label) return false;
     const label = node.label.toLowerCase();
     return labels.some((m) => label.includes(m.toLowerCase()));
   }

@@ -336,15 +336,21 @@ export class NSDPhase4Service {
       ),
     };
 
+    const acknowledgment = this.responder.buildProbeAcknowledgment(
+      evalLevel,
+      language,
+    );
+    const nextQuestion = this._getNextQuestionAfterProbe(progress, feature);
+    const responseText = nextQuestion
+      ? `${acknowledgment}\n\n${nextQuestion}`
+      : acknowledgment;
+
     await this.finalize(
       session,
       progress,
       {
         action: 'CANVAS_PROBE',
-        responseText: this.responder.buildProbeAcknowledgment(
-          evalLevel,
-          language,
-        ),
+        responseText,
         itemKey: pending.nodeId,
         questionKey: feature.feature,
         candidateAnswer,
@@ -367,6 +373,31 @@ export class NSDPhase4Service {
       res,
       language,
     );
+  }
+
+  private _getNextQuestionAfterProbe(
+    progress: NSDPhase4Progress,
+    feature: NSDPhase4FeatureDesign,
+  ): string | null {
+    const activeNode = this.policy.findNextUnresolved(
+      progress.nodeItemCounters,
+    );
+    if (activeNode) {
+      const check = feature.evaluation_checklist.required_nodes.find(
+        (n) => n.key === activeNode.itemKey,
+      );
+      return check?.followup_question ?? null;
+    }
+    const activeExpl = this.policy.findNextUnresolved(
+      progress.explanationItemCounters,
+    );
+    if (activeExpl) {
+      const check = feature.evaluation_checklist.required_explanations.find(
+        (e) => e.key === activeExpl.itemKey,
+      );
+      return check?.followup_question ?? null;
+    }
+    return null;
   }
 
   private async askExtraNodeProbe(
