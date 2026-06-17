@@ -122,16 +122,11 @@ export interface PolicyDecision {
 }
 
 export type SseEventType =
-  | 'evaluating'
   | 'turn_start'
   | 'chunk'
   | 'turn_complete'
   | 'session_completed'
   | 'error';
-
-export interface SseEvaluatingEvent {
-  type: 'evaluating';
-}
 
 export interface SseTurnStartEvent {
   type: 'turn_start';
@@ -162,7 +157,6 @@ export interface SseErrorEvent {
 }
 
 export type SseEvent =
-  | SseEvaluatingEvent
   | SseTurnStartEvent
   | SseChunkEvent
   | SseTurnCompleteEvent

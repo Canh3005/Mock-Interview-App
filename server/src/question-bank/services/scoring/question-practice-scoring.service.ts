@@ -61,10 +61,12 @@ export class QuestionPracticeScoringService {
     questionProbe,
     answerText,
     language,
+    cvClaims = [],
   }: {
     questionProbe: QuestionProbe;
     answerText: string;
     language: QuestionProbeLanguage;
+    cvClaims?: string[];
   }): Promise<ProbeScoringResult> {
     const signalCatalog: CatalogItem[] = questionProbe.expectedSignals.map(
       (label: string, index: number) => ({ key: `signal_${index + 1}`, label }),
@@ -107,6 +109,7 @@ export class QuestionPracticeScoringService {
       signalCatalog,
       redFlagCatalog,
       scoringHints: questionProbe.scoringHints,
+      cvClaims,
     });
     const baseResult: ProbeScoringResult =
       this.resultService.buildResultFromRaw({
@@ -318,6 +321,7 @@ ${retryNote}`;
     signalCatalog,
     redFlagCatalog,
     scoringHints,
+    cvClaims,
   }: {
     intent: string;
     type: string;
@@ -326,6 +330,7 @@ ${retryNote}`;
     signalCatalog: CatalogItem[];
     redFlagCatalog: CatalogItem[];
     scoringHints: { scoreBand: string; description: string }[];
+    cvClaims: string[];
   }): Promise<LlmScoringExtraction> {
     let attempts = 0;
     let lastError = '';
@@ -335,6 +340,10 @@ ${retryNote}`;
         const retryNote: string = lastError
           ? `Previous output was invalid: ${lastError}. Return valid JSON only.`
           : '';
+        const cvClaimCatalog = cvClaims.map((claim, index) => ({
+          key: `cv_claim_${index + 1}`,
+          claim: claim.slice(0, 800),
+        }));
         const prompt: string = `Evaluate a candidate answer against a specific interview probe.
 Return JSON only. Do not invent evidence quotes.
 
@@ -343,6 +352,7 @@ Probe type: ${type}
 Expected signals: ${JSON.stringify(signalCatalog)}
 Red flags: ${JSON.stringify(redFlagCatalog)}
 Scoring hints: ${JSON.stringify(scoringHints)}
+Candidate CV claims to verify: ${JSON.stringify(cvClaimCatalog)}
 Feedback language: ${language}
 
 Candidate answer:
@@ -362,6 +372,12 @@ Rules:
 - covered and unclear require exact evidenceQuotes from the answer.
 - missing uses an empty evidenceQuotes array.
 - similarity or topic mention alone is not enough for covered.
+- cvClaims must only reference claims listed in Candidate CV claims to verify.
+- each cvClaims[].claim must match the provided claim text, not a paraphrase.
+- return cvClaims: [] when no provided CV claim is relevant to the answer.
+- verified requires exact evidenceQuotes from the answer supporting the provided CV claim.
+- not_verified means the provided CV claim is relevant but the answer lacks support.
+- inflated_risk means the answer contradicts, exaggerates, or materially changes the provided CV claim.
 - do not expose raw scoring hints in feedback.
 ${retryNote}`;
         const raw: string = await this.groqService.generateJsonContent({

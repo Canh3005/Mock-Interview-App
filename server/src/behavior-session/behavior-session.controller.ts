@@ -40,7 +40,7 @@ export class BehaviorSessionController {
   @Post(':id/answer')
   @ApiOperation({
     summary:
-      'Submit candidate answer — trả về SSE stream với evaluating → chunks → turn_complete',
+      'Submit candidate answer — trả về SSE stream với chunks → turn_complete',
   })
   async submitAnswer(
     @Param('id') sessionId: string,

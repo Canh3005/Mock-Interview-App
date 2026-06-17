@@ -13,6 +13,7 @@ import { BehavioralSession } from '../behavioral/entities/behavioral-session.ent
 import { BehavioralStageLog } from '../behavioral/entities/behavioral-stage-log.entity';
 import { SessionPlan } from '../session-planning/entities/session-plan.entity';
 import { QuestionProbe } from '../question-bank/entities/question-probe.entity';
+import { CandidateClaim } from '../documents/entities/candidate-claim.entity';
 import { QuestionPracticeScoringService } from '../question-bank/services/scoring/question-practice-scoring.service';
 import { PolicyEngineService } from './policy-engine.service';
 import { ProbeRendererService } from './probe-renderer.service';
@@ -44,6 +45,17 @@ type BehaviorSessionBootstrapResponse = {
   resumed: boolean;
 };
 
+const MAX_RUNTIME_CV_CLAIMS = 8;
+
+const CLAIM_PRIORITY_ORDER: Record<
+  CandidateClaim['verificationPriority'],
+  number
+> = {
+  high: 3,
+  medium: 2,
+  low: 1,
+};
+
 @Injectable()
 export class BehaviorSessionService {
   private readonly logger = new Logger(BehaviorSessionService.name);
@@ -57,6 +69,8 @@ export class BehaviorSessionService {
     private readonly planRepo: Repository<SessionPlan>,
     @InjectRepository(QuestionProbe)
     private readonly probeRepo: Repository<QuestionProbe>,
+    @InjectRepository(CandidateClaim)
+    private readonly claimRepo: Repository<CandidateClaim>,
     private readonly scoringService: QuestionPracticeScoringService,
     private readonly policyEngine: PolicyEngineService,
     private readonly probeRenderer: ProbeRendererService,
@@ -164,7 +178,7 @@ export class BehaviorSessionService {
 
   /**
    * Submit candidate answer và stream interviewer response qua SSE.
-   * Flow: save answer → evaluating → score → policy → emit turn(s) → turn_complete.
+   * Flow: save answer → score → policy → emit turn(s) → turn_complete.
    *
    * @param sessionId - ID của BehavioralSession
    * @param dto - { content: string }
@@ -191,8 +205,6 @@ export class BehaviorSessionService {
       const plan: SessionPlan = await this._loadPlan(session.planId!);
       const probeMap: Map<string, QuestionProbe> =
         await this._loadProbeMap(plan);
-
-      this._emitSse(res, { type: 'evaluating' });
 
       if (session.interviewState === 'OPENING') {
         const turns: InterviewTurn[] = await this.flowService.startStage({
@@ -228,11 +240,17 @@ export class BehaviorSessionService {
       )!;
       const cumulativeAnswer: string =
         activeProbe.candidateAnswerTexts.join('\n');
+      const cvClaims: string[] = await this._loadRelevantCvClaims({
+        plan,
+        probe: currentProbe,
+        personalizedQuestion: activeProbe.plannedProbe.personalizedQuestion,
+      });
       const scoringResult: ProbeScoringResult =
         await this.scoringService.scoreForRuntime({
           questionProbe: currentProbe,
           answerText: cumulativeAnswer,
           language: plan.language,
+          cvClaims,
         });
       console.log('Scoring result:', scoringResult);
       activeProbe.previousBand =
@@ -529,6 +547,79 @@ export class BehaviorSessionService {
       plan.stageAllocations[session.currentStageIndex];
     const fallbackIndex = session.currentProbeIndex;
     return (alloc?.fallbackProbes?.length ?? 0) > fallbackIndex;
+  }
+
+  private async _loadRelevantCvClaims({
+    plan,
+    probe,
+    personalizedQuestion,
+  }: {
+    plan: SessionPlan;
+    probe: QuestionProbe;
+    personalizedQuestion?: string;
+  }): Promise<string[]> {
+    const claims: CandidateClaim[] = await this.claimRepo.find({
+      where: {
+        calibrationProfileId: plan.calibrationProfileId,
+        userId: plan.userId,
+      },
+    });
+    if (claims.length === 0) return [];
+
+    return claims
+      .map((claim: CandidateClaim) => ({
+        claim,
+        relevance: this._claimProbeRelevance({
+          claim,
+          probe,
+          personalizedQuestion,
+        }),
+        priority: CLAIM_PRIORITY_ORDER[claim.verificationPriority] ?? 0,
+      }))
+      .filter(
+        (item) =>
+          item.relevance > 0 || probe.type === 'cv_claim_verification',
+      )
+      .sort(
+        (left, right) =>
+          right.relevance - left.relevance || right.priority - left.priority,
+      )
+      .slice(0, MAX_RUNTIME_CV_CLAIMS)
+      .map((item) => item.claim.claimText.trim())
+      .filter((claimText) => claimText.length > 0);
+  }
+
+  private _claimProbeRelevance({
+    claim,
+    probe,
+    personalizedQuestion,
+  }: {
+    claim: CandidateClaim;
+    probe: QuestionProbe;
+    personalizedQuestion?: string;
+  }): number {
+    let relevance = 0;
+    if (probe.type === 'cv_claim_verification') relevance += 1;
+    if (
+      personalizedQuestion &&
+      claim.suggestedQuestions.includes(personalizedQuestion)
+    ) {
+      relevance += 4;
+    }
+    if (
+      claim.impliedCompetencies.some((competency) =>
+        probe.competencies.includes(competency),
+      )
+    ) {
+      relevance += 2;
+    }
+    if (claim.techContext.some((tech) => probe.techTags.includes(tech))) {
+      relevance += 2;
+    }
+    if (claim.riskTags.length > 0 && probe.type === 'cv_claim_verification') {
+      relevance += 0.5;
+    }
+    return relevance;
   }
 
   private _assertActiveProbe(session: BehavioralSession): void {

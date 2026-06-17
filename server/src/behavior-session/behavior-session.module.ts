@@ -5,6 +5,7 @@ import { BehavioralSession } from '../behavioral/entities/behavioral-session.ent
 import { BehavioralStageLog } from '../behavioral/entities/behavioral-stage-log.entity';
 import { SessionPlan } from '../session-planning/entities/session-plan.entity';
 import { QuestionProbe } from '../question-bank/entities/question-probe.entity';
+import { CandidateClaim } from '../documents/entities/candidate-claim.entity';
 import { AiModule } from '../ai/ai.module';
 import { QuestionBankModule } from '../question-bank/question-bank.module';
 import { BehaviorSessionController } from './behavior-session.controller';
@@ -22,6 +23,7 @@ import { BEHAVIOR_SCORING_QUEUE } from '../jobs/jobs.constants';
       BehavioralStageLog,
       SessionPlan,
       QuestionProbe,
+      CandidateClaim,
     ]),
     BullModule.registerQueueAsync({ name: BEHAVIOR_SCORING_QUEUE }),
     AiModule,
