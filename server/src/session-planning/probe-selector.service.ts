@@ -52,7 +52,6 @@ const RAG_BLEND_WEIGHTS: Record<
   stage_3_domain_knowledge: { heuristic: 0.65, rag: 0.35 },
   stage_4_cv_deep_dive: { heuristic: 0.55, rag: 0.45 },
   stage_5_soft_skills: { heuristic: 0.7, rag: 0.3 },
-  stage_6_reverse_interview: { heuristic: 1, rag: 0 },
 };
 
 @Injectable()
@@ -161,17 +160,7 @@ export class ProbeSelectorService {
     count: number;
     context: ProbeSelectionContext;
   }): { selected: PlannedProbe[]; fallbacks: PlannedProbe[] } {
-    const { targetLevel, roleFamily, priorityCompetencies, riskHypotheses } =
-      context;
-    if (stage === 'stage_6_reverse_interview') {
-      return this._selectStage6({
-        probes,
-        targetLevel,
-        roleFamily,
-        selectionSeed: context.selectionSeed,
-        recentlyUsedProbeIds: context.recentlyUsedProbeIds,
-      });
-    }
+    const { priorityCompetencies, riskHypotheses } = context;
     // For stage 5, override priority competencies with risk-related ones if there are active risk hypotheses, to increase chances of uncovering relevant risks through soft skill questions.
     const effectivePriorities: QuestionProbeCompetency[] =
       stage === 'stage_5_soft_skills'
@@ -796,61 +785,6 @@ export class ProbeSelectorService {
         ? { ...s, score: Math.max(0, s.score - RECENT_PROBE_SCORE_PENALTY) }
         : s,
     );
-  }
-
-  private _selectStage6({
-    probes,
-    targetLevel,
-    roleFamily,
-    selectionSeed,
-    recentlyUsedProbeIds,
-  }: {
-    probes: QuestionProbe[];
-    targetLevel: QuestionProbeLevel;
-    roleFamily: QuestionProbeRoleFamily;
-    selectionSeed: string;
-    recentlyUsedProbeIds: string[];
-  }): { selected: PlannedProbe[]; fallbacks: PlannedProbe[] } {
-    const scored = this._applyRecentUsagePenalty(
-      probes.map((p) => ({
-        probe: p,
-        score: this._roleLevelFit({
-          probeLevels: p.levels,
-          probeFamilies: p.roleFamilies,
-          targetLevel,
-          roleFamily,
-        }),
-      })),
-      recentlyUsedProbeIds,
-    );
-    if (scored.length === 0) return { selected: [], fallbacks: [] };
-    const topTwo = this._selectTopKSeeded({
-      candidates: scored,
-      count: 2,
-      seed: selectionSeed,
-      scope: 'stage_6_reverse_interview',
-    });
-    return {
-      selected: [
-        this._buildPlannedProbe({
-          probe: topTwo[0].probe,
-          order: 1,
-          score: topTwo[0].score,
-        }),
-      ],
-      fallbacks:
-        topTwo.length > 1
-          ? [
-              this._buildPlannedProbe({
-                probe: topTwo[1].probe,
-                order: 1,
-                score: topTwo[1].score,
-                isFallbackFor: topTwo[0].probe.id,
-                fallbackTrigger: 'no_relevant_story',
-              }),
-            ]
-          : [],
-    };
   }
 
   private _scoreProbesForStage({

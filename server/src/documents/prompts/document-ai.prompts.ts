@@ -85,7 +85,7 @@ Rules:
 - Skills embedded in responsibilities (e.g. "build APIs using Go") must be extracted into required_skills.
 - minimum_experience_years: extract numeric value only. If a range is given (3-5 years), use the minimum.
 - requiredCompetencies: list ONLY values from this fixed taxonomy that the JD explicitly or implicitly requires.
-  Allowed values: ownership, conflict_handling, learning_agility, technical_fundamentals, trade_off_analysis, system_thinking, problem_solving, communication, collaboration, impact_measurement.
+  Allowed values: ownership, conflict_handling, learning_agility, technical_fundamentals, trade_off_analysis, system_thinking, problem_solving, communication, collaboration, impact_measurement, leadership.
   Rules: include "ownership" if JD expects leading, driving, or being accountable for outcomes.
   Include "collaboration" if JD mentions cross-functional work, stakeholder management, or teamwork.
   Include "communication" if JD requires writing docs, presenting, or explaining to non-technical audiences.
@@ -96,6 +96,7 @@ Rules:
   Include "technical_fundamentals" if JD requires hands-on engineering, coding, or debugging.
   Include "problem_solving" if JD expects troubleshooting, debugging, or root-cause analysis.
   Include "conflict_handling" if JD mentions negotiation, alignment, or resolving disagreements.
+  Include "leadership" if JD expects mentoring junior engineers, driving technical direction, or influencing cross-team decisions.
   Return an empty array if none clearly apply.
 - Return ONLY the JSON object. No explanation text.
 

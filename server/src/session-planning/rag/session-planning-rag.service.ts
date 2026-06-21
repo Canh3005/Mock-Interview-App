@@ -200,7 +200,6 @@ export class SessionPlanningRagService implements OnModuleInit {
       try {
         const embedding = await this._embedQuery(source.text);
         for (const stage of ORDERED_STAGES) {
-          if (stage === 'stage_6_reverse_interview') continue;
           const rows = await this._search({
             embedding,
             language,

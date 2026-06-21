@@ -32,11 +32,6 @@ export const STAGE_LABELS: Record<
     en: 'Soft Skills',
     ja: 'ソフトスキル',
   },
-  stage_6_reverse_interview: {
-    vi: 'Phỏng vấn ngược',
-    en: 'Reverse Interview',
-    ja: 'リバースインタビュー',
-  },
 };
 
 export const COMPETENCY_LABELS: Record<string, string> = {
@@ -50,4 +45,5 @@ export const COMPETENCY_LABELS: Record<string, string> = {
   communication: 'Communication',
   collaboration: 'Collaboration',
   impact_measurement: 'Impact Measurement',
+  leadership: 'Leadership & Mentorship',
 };

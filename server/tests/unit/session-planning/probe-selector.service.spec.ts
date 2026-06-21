@@ -339,48 +339,6 @@ describe('ProbeSelectorService', () => {
     );
   });
 
-  it('does not apply RAG trace or score blending to reverse interview', () => {
-    const reverseProbe = _createProbe({
-      id: 'reverse-rag',
-      stages: ['stage_6_reverse_interview'],
-      type: 'situational',
-    });
-
-    const allocations = service.buildStageAllocations({
-      probes: [reverseProbe],
-      depth: 'broad',
-      durationMinutes: 60,
-      targetLevel: 'mid',
-      roleFamily: 'backend',
-      language: 'en',
-      priorityCompetencies: ['communication'],
-      competencyWeights: { communication: 1 },
-      riskHypotheses: [],
-      candidateClaims: [],
-      cvTechStack: [],
-      jdTechStack: [],
-      selectionSeed: 'test-session-rag-stage-6',
-      recentlyUsedProbeIds: [],
-      ragSignals: new Map([
-        [
-          'reverse-rag',
-          {
-            similarity: 0.99,
-            source: 'profile_focus',
-            queryLabel: 'profile_focus',
-            reason: 'Semantic match from profile_focus',
-          },
-        ],
-      ]),
-    });
-
-    const stage = allocations.find(
-      (allocation) => allocation.stage === 'stage_6_reverse_interview',
-    );
-
-    expect(stage?.selectedProbes[0]?.selectionScore).toBe(1);
-    expect(stage?.selectedProbes[0]?.ragSimilarity).toBeUndefined();
-  });
 });
 
 function _localized(title: string, displayQuestion: string) {

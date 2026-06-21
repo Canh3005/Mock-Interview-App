@@ -1,10 +1,9 @@
 import { useTranslation } from 'react-i18next'
-import { Check, Lock, Loader2, SkipForward } from 'lucide-react'
+import { Check, Lock, SkipForward } from 'lucide-react'
 
 function _StageIcon({ status }) {
   if (status === 'completed') return <Check className="w-3.5 h-3.5" />
   if (status === 'skipped') return <SkipForward className="w-3 h-3" />
-  if (status === 'active') return <Loader2 className="w-3.5 h-3.5 animate-spin" />
   return <Lock className="w-3 h-3" />
 }
 
@@ -48,13 +47,13 @@ export default function StageProgressPanel({ stageProgress, candidateLevel }) {
         return (
           <div
             key={stage.stage}
-            className={`flex items-start gap-3 px-2 py-2.5 rounded-xl transition-colors ${
+            className={`flex items-center gap-3 px-2 py-2.5 rounded-xl transition-colors ${
               isActive ? 'dash-chip border' : isDone ? 'opacity-80' : 'opacity-50'
             }`}
           >
-            <div className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold border transition-colors ${_stageIndicatorClass(stage.status)}`}>
-              {stage.status === 'pending' ? (
-                <span className="text-slate-500 text-[10px]">{idx + 1}</span>
+            <div className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold border transition-colors ${_stageIndicatorClass(stage.status)}`}>
+              {stage.status === 'pending' || stage.status === 'active' ? (
+                <span className={stage.status === 'pending' ? 'text-slate-500 text-[10px]' : 'text-[10px]'}>{idx + 1}</span>
               ) : (
                 <_StageIcon status={stage.status} />
               )}

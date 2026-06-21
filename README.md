@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🎯 MockMentor — AI-Powered Mock Interview Platform
+# 🎯 MockInterview — AI-Powered Mock Interview Platform
 
 **Nền tảng luyện phỏng vấn kỹ thuật toàn diện với AI, hỗ trợ DSA · System Design · Behavioral**
 
@@ -39,7 +39,7 @@
 
 ## 🌟 Tổng quan
 
-**MockMentor** là nền tảng luyện phỏng vấn kỹ thuật toàn diện được hỗ trợ bởi AI (Google Gemini & Groq). Ứng viên có thể thực hành qua 3 loại phỏng vấn chính:
+**MockInterview** là nền tảng luyện phỏng vấn kỹ thuật toàn diện được hỗ trợ bởi AI (Google Gemini & Groq). Ứng viên có thể thực hành qua 3 loại phỏng vấn chính:
 
 | Loại phỏng vấn | Mô tả |
 |---|---|
@@ -714,6 +714,6 @@ pa <mô tả lỗi>       →  Process audit
 
 <div align="center">
 
-Made with ❤️ by the MockMentor Team
+Made with ❤️ by the MockInterview Team
 
 </div>

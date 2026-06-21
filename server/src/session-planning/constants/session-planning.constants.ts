@@ -20,11 +20,10 @@ export const STAGE_WEIGHTS: Record<
   Record<InterviewDepth, number>
 > = {
   stage_1_culture_fit: { broad: 0.15, deep: 0.1 },
-  stage_2_tech_stack: { broad: 0.25, deep: 0.3 },
-  stage_3_domain_knowledge: { broad: 0.2, deep: 0.3 },
+  stage_2_tech_stack: { broad: 0.3, deep: 0.35 },
+  stage_3_domain_knowledge: { broad: 0.25, deep: 0.35 },
   stage_4_cv_deep_dive: { broad: 0.15, deep: 0.1 },
   stage_5_soft_skills: { broad: 0.15, deep: 0.1 },
-  stage_6_reverse_interview: { broad: 0.1, deep: 0.1 },
 };
 
 export const MUST_INCLUDE_STAGES: QuestionProbeStage[] = [

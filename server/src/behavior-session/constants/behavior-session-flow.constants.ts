@@ -32,9 +32,4 @@ export const STAGE_DISPLAY_NAMES: Record<
     en: 'Soft Skills',
     ja: 'ソフトスキル',
   },
-  stage_6_reverse_interview: {
-    vi: 'Phỏng vấn ngược',
-    en: 'Reverse Interview',
-    ja: 'リバースインタビュー',
-  },
 };

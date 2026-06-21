@@ -4,7 +4,6 @@ export const QUESTION_PROBE_STAGES = [
   'stage_3_domain_knowledge',
   'stage_4_cv_deep_dive',
   'stage_5_soft_skills',
-  'stage_6_reverse_interview',
 ] as const;
 
 export const QUESTION_PROBE_ROLE_FAMILIES = [
@@ -29,16 +28,17 @@ export const QUESTION_PROBE_TYPES = [
 ] as const;
 
 export const QUESTION_PROBE_COMPETENCIES = [
-  'ownership',
-  'conflict_handling',
-  'learning_agility',
-  'technical_fundamentals',
-  'trade_off_analysis',
-  'system_thinking',
-  'problem_solving',
-  'communication',
-  'collaboration',
-  'impact_measurement',
+  'ownership', // Chịu trách nhiệm về kết quả công việc, có khả năng dẫn dắt và chịu trách nhiệm về các quyết định quan trọng.
+  'conflict_handling', // Khả năng xử lý xung đột, giải quyết mâu thuẫn trong nhóm hoặc với các bên liên quan.
+  'learning_agility', // Khả năng học hỏi nhanh chóng, thích nghi với các tình huống mới và áp dụng kiến thức vào thực tế.
+  'technical_fundamentals', // Kiến thức cơ bản về kỹ thuật, hiểu biết về các nguyên tắc và công nghệ cơ bản trong lĩnh vực của mình.
+  'trade_off_analysis', // Khả năng phân tích và đưa ra quyết định dựa trên việc cân nhắc các lựa chọn khác nhau, hiểu rõ các ưu nhược điểm của từng phương án.
+  'system_thinking', // Khả năng nhìn nhận vấn đề một cách tổng thể, hiểu mối quan hệ giữa các thành phần trong hệ thống và tác động của chúng đến nhau.
+  'problem_solving', // Khả năng giải quyết vấn đề một cách hiệu quả, tìm ra nguyên nhân gốc rễ và đưa ra các giải pháp khả thi.
+  'communication', // Khả năng giao tiếp hiệu quả, truyền đạt ý tưởng một cách rõ ràng và lắng nghe phản hồi từ người khác.
+  'collaboration', // Khả năng làm việc nhóm, chia sẻ kiến thức và hỗ trợ lẫn nhau trong quá trình thực hiện công việc.
+  'impact_measurement', // Khả năng xác định và đo lường tác động của các hoạt động hoặc quyết định đối với kết quả mong muốn.
+  'leadership', // Khả năng dẫn dắt, mentor và phát triển người khác; ảnh hưởng kỹ thuật vượt ra ngoài phạm vi cá nhân.
 ] as const;
 
 export const QUESTION_PROBE_LANGUAGES = ['vi', 'en', 'ja'] as const;
@@ -105,7 +105,6 @@ export const QUESTION_BANK_TAXONOMY: QuestionBankTaxonomy = {
     { key: 'stage_3_domain_knowledge', label: 'Domain Knowledge' },
     { key: 'stage_4_cv_deep_dive', label: 'CV Deep-Dive' },
     { key: 'stage_5_soft_skills', label: 'Soft Skills' },
-    { key: 'stage_6_reverse_interview', label: 'Reverse Interview' },
   ],
   roleFamilies: [
     { key: 'backend', label: 'Backend' },
@@ -140,6 +139,7 @@ export const QUESTION_BANK_TAXONOMY: QuestionBankTaxonomy = {
     { key: 'communication', label: 'Communication' },
     { key: 'collaboration', label: 'Collaboration' },
     { key: 'impact_measurement', label: 'Impact Measurement' },
+    { key: 'leadership', label: 'Leadership & Mentorship' },
   ],
   languages: [
     { key: 'vi', label: 'Vietnamese' },

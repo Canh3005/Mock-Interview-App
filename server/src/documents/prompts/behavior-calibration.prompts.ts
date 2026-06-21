@@ -16,7 +16,7 @@ Output structure:
 Rules:
 - Return exactly one enrichment object per input claim, matched by localId.
 - claimType: classify the claim into exactly one taxonomy value. Use "domain_experience" as the fallback if none fit clearly.
-- impliedCompetencies: use ONLY values from this list: ownership, conflict_handling, learning_agility, technical_fundamentals, trade_off_analysis, system_thinking, problem_solving, communication, collaboration, impact_measurement.
+- impliedCompetencies: use ONLY values from this list: ownership, conflict_handling, learning_agility, technical_fundamentals, trade_off_analysis, system_thinking, problem_solving, communication, collaboration, impact_measurement, leadership.
 - riskTags: free-form risk signals observed in the claim language (e.g. "vague_ownership", "no_metric", "no_scope", "no_conflict_depth", "generic_writing", "no_impact"). Empty array if no risk signals.
 - suggestedQuestions: generate 1-2 HOW/WHAT/WHY interview questions that directly probe this specific claim. Questions must reference the concrete details in the claim (e.g. the specific project, metric, tech, or context mentioned). Do NOT generate generic behavioral openers like "Tell me about a time..." — ask about the specific thing the candidate claimed. Questions should uncover the depth, ownership, decision-making, or impact behind the claim. Use the language of the claimText itself as the anchor.
 - Do NOT evaluate or judge the candidate. Only classify and identify signals.

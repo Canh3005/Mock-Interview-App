@@ -51,7 +51,12 @@ export const RISK_TYPE_TO_COMPETENCIES: Record<
   HiringRiskType,
   QuestionProbeCompetency[]
 > = {
-  level_mismatch: ['ownership', 'system_thinking', 'trade_off_analysis'],
+  level_mismatch: [
+    'ownership',
+    'system_thinking',
+    'trade_off_analysis',
+    'leadership',
+  ],
   claim_without_evidence: ['impact_measurement', 'ownership'],
   weak_technical_depth: ['technical_fundamentals', 'trade_off_analysis'],
   unclear_scope: ['ownership', 'problem_solving'],

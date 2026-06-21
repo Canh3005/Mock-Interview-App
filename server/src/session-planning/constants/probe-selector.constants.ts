@@ -22,6 +22,7 @@ export const STAGE_5_SOFT_SKILL_POOL: QuestionProbeCompetency[] = [
   'impact_measurement',
   'ownership',
   'learning_agility',
+  'leadership',
 ];
 
 export const STAGE_3_DOMAIN_COMPETENCIES: QuestionProbeCompetency[] = [
@@ -38,7 +39,6 @@ export const STAGE_PRIORITIES: Record<QuestionProbeStage, StagePriority> = {
   stage_3_domain_knowledge: 'must_include',
   stage_4_cv_deep_dive: 'must_include',
   stage_5_soft_skills: 'nice_to_include',
-  stage_6_reverse_interview: 'nice_to_include',
 };
 
 export const PROBE_COUNTS: Record<
@@ -50,7 +50,6 @@ export const PROBE_COUNTS: Record<
   stage_3_domain_knowledge: { broad: 4, deep: 6 },
   stage_4_cv_deep_dive: { broad: 2, deep: 2 },
   stage_5_soft_skills: { broad: 2, deep: 1 },
-  stage_6_reverse_interview: { broad: 1, deep: 1 },
 };
 
 export const RISK_SEVERITY_SCORES: Record<string, number> = {
@@ -77,7 +76,6 @@ export const ORDERED_STAGES: QuestionProbeStage[] = [
   'stage_3_domain_knowledge',
   'stage_4_cv_deep_dive',
   'stage_5_soft_skills',
-  'stage_6_reverse_interview',
 ];
 
 export const TOP_K_MULTIPLIER = 3;
