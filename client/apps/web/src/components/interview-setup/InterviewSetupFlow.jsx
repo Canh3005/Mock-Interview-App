@@ -2,26 +2,18 @@ import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import {
-  AlertTriangle,
-  ArrowLeft,
-  Briefcase,
-  ChevronDown,
-  ChevronUp,
-  FileText,
-  Loader2,
-  Play,
-  Upload,
-} from 'lucide-react'
+import { AlertTriangle, Loader2 } from 'lucide-react'
 import { ROUTES } from '../../router/routes'
 import {
   clearCreditError,
+  confirmCalibrationReview,
   initSessionRequest,
   preflightRequest,
   proceedFromRoundSelect,
   resetSetup,
   saveContextRequest,
 } from '../../store/slices/interviewSetupSlice'
+import CalibrationReviewPanel from './steps/CalibrationReviewPanel'
 import { resetBehavioral } from '../../store/slices/behavioralSlice'
 import { resetDSASession, startDSARound } from '../../store/slices/dsaSessionSlice'
 import { resetNSDSession } from '../../store/slices/nsdSessionSlice'
@@ -50,71 +42,6 @@ function LoadingScreen({ message }) {
   )
 }
 
-function SkeletonBlock({ className = '' }) {
-  return (
-    <span
-      className={[
-        'block rounded-full bg-[var(--dash-border)]/80 motion-safe:animate-pulse',
-        className,
-      ].join(' ')}
-    />
-  )
-}
-
-function ContextSkeletonCard({ icon: Icon, title, rows = 4 }) {
-  return (
-    <section className="dash-card overflow-hidden rounded-[22px]">
-      <div className="flex items-center justify-between gap-3 px-5 py-4">
-        <span className="flex min-w-0 items-center gap-3">
-          <span className="dash-chip flex h-10 w-10 shrink-0 items-center justify-center rounded-[14px] border">
-            <Icon className="h-5 w-5 text-cta" />
-          </span>
-          <span className="min-w-0">
-            <SkeletonBlock className="mb-2 h-2.5 w-28" />
-            <span className="dash-text block truncate text-base font-bold">{title}</span>
-          </span>
-        </span>
-        <SkeletonBlock className="h-5 w-5 rounded-md" />
-      </div>
-      <div className="dash-border space-y-4 border-t p-5" aria-hidden="true">
-        {Array.from({ length: rows }).map((_, index) => (
-          <div key={index} className="space-y-2">
-            <SkeletonBlock className={index % 2 === 0 ? 'h-2.5 w-24' : 'h-2.5 w-36'} />
-            <SkeletonBlock className="h-10 w-full rounded-[14px]" />
-          </div>
-        ))}
-      </div>
-    </section>
-  )
-}
-
-function PreflightSkeleton({ message }) {
-  const { t } = useTranslation()
-
-  return (
-    <div className="space-y-5" aria-busy="true">
-      <div className="dash-surface rounded-[22px] border p-5 sm:p-6">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-          <div className="min-w-0 flex-1">
-            <h2 className="dash-text text-xl font-bold">{t('interviewSetup.context.title')}</h2>
-            <p className="dash-muted mt-2 max-w-3xl text-sm leading-relaxed">{message}</p>
-          </div>
-          <SkeletonBlock className="h-10 w-32 rounded-[14px]" />
-        </div>
-      </div>
-
-      <div className="grid gap-5 xl:grid-cols-2">
-        <ContextSkeletonCard icon={FileText} title={t('interviewSetup.context.cvTitle')} rows={5} />
-        <ContextSkeletonCard icon={Briefcase} title={t('interviewSetup.context.jdTitle')} rows={4} />
-      </div>
-
-      <div className="dash-surface flex flex-col gap-3 rounded-[22px] border p-4 shadow-shell sm:flex-row sm:items-center sm:justify-between">
-        <SkeletonBlock className="h-3 w-full max-w-lg" />
-        <SkeletonBlock className="h-11 w-32 shrink-0 rounded-[14px]" />
-      </div>
-    </div>
-  )
-}
 
 function ErrorPanel({ message, onRetry }) {
   const { t } = useTranslation()
@@ -441,7 +368,13 @@ export default function InterviewSetupFlow() {
     selectedMode,
     creditError,
     calibrationStale,
+    calibrationData,
+    calibrationProfileId,
   } = useSelector((state) => state.interviewSetup)
+
+  const handleConfirmCalibration = () => {
+    dispatch(confirmCalibrationReview())
+  }
 
   useEffect(() => {
     dispatch(resetSetup())
@@ -528,11 +461,11 @@ export default function InterviewSetupFlow() {
         return error ? (
           <ErrorPanel message={error} onRetry={handleRetryPreflight} />
         ) : (
-          <PreflightSkeleton message={t('interviewSetup.loading.preparingPreflight')} />
+          <LoadingScreen message={t('interviewSetup.loading.preparingPreflight')} />
         )
 
       case 'preflight_loading':
-        return <PreflightSkeleton message={t('interviewSetup.loading.checkingContext')} />
+        return <LoadingScreen message={t('interviewSetup.loading.checkingContext')} />
 
       case 'context_missing':
         return (
@@ -543,24 +476,17 @@ export default function InterviewSetupFlow() {
           />
         )
 
-      case 'context_confirm':
+      case 'calibration_pending':
+        return <LoadingScreen message={t('interviewSetup.loading.analyzingCalibration')} />
+
+      case 'calibration_review':
         return (
-          <div className="space-y-4">
-            {calibrationStale && (
-              <div className="flex items-start gap-3 rounded-[16px] border border-amber-500/30 bg-amber-500/10 p-4">
-                <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-400" />
-                <p className="text-sm text-amber-300">
-                  {t('interviewSetup.calibrationStale.warning')}
-                </p>
-              </div>
-            )}
-            <ContextConfirmPanel
-              cv={cv}
-              jd={jd}
-              onConfirm={handleSaveContext}
-              onGoUpload={handleGoUpload}
-            />
-          </div>
+          <CalibrationReviewPanel
+            data={calibrationData}
+            profileId={calibrationProfileId}
+            onConfirm={handleConfirmCalibration}
+            onGoUpload={handleGoUpload}
+          />
         )
 
       case 'mode_select':
@@ -590,14 +516,6 @@ export default function InterviewSetupFlow() {
               {t('interviewSetup.page.description')}
             </p>
           </div>
-          <button
-            type="button"
-            onClick={handleClose}
-            className="dash-control inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-[14px] border px-4 text-sm font-bold"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            {t('interviewSetup.page.backDashboard')}
-          </button>
         </header>
 
         <section className="relative">

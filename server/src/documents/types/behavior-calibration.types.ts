@@ -4,7 +4,7 @@ import type { QuestionProbeCompetency } from '../../question-bank/constants/ques
 
 export type CalibrationPath = 'cv_only' | 'jd_only' | 'full';
 
-export type CalibrationStatus = 'partial' | 'ready' | 'failed';
+export type CalibrationStatus = 'processing' | 'partial' | 'ready' | 'failed';
 
 export type EvidenceStrictness = 'standard' | 'strict' | 'very_strict';
 

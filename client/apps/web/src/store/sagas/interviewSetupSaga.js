@@ -1,11 +1,13 @@
 import { call, put, select, takeLatest, delay } from 'redux-saga/effects';
 import { interviewApi } from '../../api/interview.api';
 import { nsdSessionApi } from '../../api/nsdSession';
+import { profileApi } from '../../api/profile.api';
 import i18n from '../../i18n/config';
 import {
   preflightRequest,
   preflightSuccess,
   preflightFailure,
+  calibrationStatusUpdated,
   saveContextRequest,
   saveContextSuccess,
   saveContextFailure,
@@ -24,13 +26,60 @@ function* preflightSaga() {
   yield delay(50);
   try {
     const data = yield call(interviewApi.preflight);
-    yield put(preflightSuccess(data));
+
+    let calibrationData = null;
+    if (data.ready && (data.calibrationStatus === 'ready' || data.calibrationStatus === 'partial')) {
+      try {
+        calibrationData = yield call(profileApi.getCalibrationCurrent);
+      } catch {
+        // non-fatal — panel sẽ hiện noData nếu null
+      }
+    }
+
+    yield put(preflightSuccess({ ...data, calibrationData }));
+
+    if (data.ready && data.calibrationStatus === 'processing') {
+      yield call(watchCalibrationSseAndUpdate);
+    }
   } catch (err) {
     const msg = err.response?.data?.message || i18n.t('interviewSetup.toast.preflightFailed');
     yield put(preflightFailure(msg));
     toast.error(msg);
   }
 }
+
+function watchCalibrationSseWithToken(token) {
+  return new Promise((resolve) => {
+    const es = profileApi.openCalibrationStream(
+      token,
+      (event) => {
+        es.close();
+        resolve(event);
+      },
+      () => {
+        es.close();
+        resolve({ status: 'failed' });
+      },
+    );
+  });
+}
+
+function* watchCalibrationSseAndUpdate() {
+  const token = yield select((s) => s.auth.accessToken);
+  const event = yield call(watchCalibrationSseWithToken, token);
+
+  let calibrationData = null;
+  if (event.status === 'ready' || event.status === 'partial') {
+    try {
+      calibrationData = yield call(profileApi.getCalibrationCurrent);
+    } catch {
+      // non-fatal
+    }
+  }
+
+  yield put(calibrationStatusUpdated({ ...event, calibrationData }));
+}
+
 
 function* saveContextSaga(action) {
   try {
@@ -106,3 +155,5 @@ export function* watchInterviewSetupSaga() {
   yield takeLatest(saveContextRequest.type, saveContextSaga);
   yield takeLatest(initSessionRequest.type, initSessionSaga);
 }
+
+export { watchCalibrationSseAndUpdate };

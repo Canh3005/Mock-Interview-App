@@ -1,6 +1,8 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
+import type Redis from 'ioredis';
+import { REDIS_CLIENT } from '../redis/redis.module';
 import { BehaviorCalibrationAiService } from './behavior-calibration.ai.service';
 import { BehaviorCalibrationProfile } from './entities/behavior-calibration-profile.entity';
 import { CandidateClaim } from './entities/candidate-claim.entity';
@@ -54,12 +56,39 @@ export class BehaviorCalibrationService {
     private readonly aiService: BehaviorCalibrationAiService,
     private readonly fitAssessmentService: FitAssessmentService,
     private readonly dataSource: DataSource,
+    @Inject(REDIS_CLIENT) private readonly redis: Redis,
   ) {}
 
   // ─── BC-1: Collect inputs ──────────────────────────────────────────────────
 
+  async createProcessingProfile({
+    userId,
+    cvId,
+    jdAnalysisId,
+  }: {
+    userId: string;
+    cvId: string | null;
+    jdAnalysisId: string | null;
+  }): Promise<string> {
+    const profile = this.profileRepo.create({
+      userId,
+      cvId,
+      jdAnalysisId,
+      status: 'processing',
+      sourceCompleteness: {
+        hasCv: Boolean(cvId),
+        hasJd: Boolean(jdAnalysisId),
+        hasProfile: false,
+        hasWeaknessHistory: false,
+      },
+    });
+    const saved = await this.profileRepo.save(profile);
+    return saved.id;
+  }
+
   async run({
     userId,
+    profileId,
     cvId,
     jdAnalysisId,
     cvJson,
@@ -67,6 +96,7 @@ export class BehaviorCalibrationService {
     fitAssessment,
   }: {
     userId: string;
+    profileId: string;
     cvId?: string | null;
     jdAnalysisId?: string | null;
     cvJson?: CvJson | null;
@@ -75,6 +105,7 @@ export class BehaviorCalibrationService {
   }): Promise<void> {
     if (!cvJson && !jdJson) {
       this.logger.log(`BC skip userId=${userId}: no CV or JD`);
+      await this._markFailed(userId, profileId);
       return;
     }
 
@@ -91,6 +122,7 @@ export class BehaviorCalibrationService {
 
     try {
       await this._runPipeline({
+        profileId,
         userId,
         cvId: cvId ?? null,
         jdAnalysisId: jdAnalysisId ?? null,
@@ -102,6 +134,21 @@ export class BehaviorCalibrationService {
     } catch (error) {
       const msg = error instanceof Error ? error.message : String(error);
       this.logger.error(`BC failed userId=${userId}: ${msg}`);
+      await this._markFailed(userId, profileId);
+    }
+  }
+
+  private async _markFailed(userId: string, profileId: string): Promise<void> {
+    try {
+      await this.profileRepo.update(profileId, { status: 'failed' });
+      await this.redis.publish(
+        `calibration:${userId}`,
+        JSON.stringify({ profileId, status: 'failed' }),
+      );
+    } catch (error) {
+      this.logger.error(
+        `BC: failed to mark profile ${profileId} as failed: ${String(error)}`,
+      );
     }
   }
 
@@ -112,6 +159,118 @@ export class BehaviorCalibrationService {
       where: { userId },
       order: { createdAt: 'DESC' },
     });
+  }
+
+  async getCalibrationCurrent(userId: string): Promise<{
+    profile: BehaviorCalibrationProfile;
+    claims: CandidateClaim[];
+    risks: RiskHypothesis[];
+  } | null> {
+    const profile = await this.getLatestForUser(userId);
+    if (!profile) return null;
+    const [claims, risks] = await Promise.all([
+      this.claimRepo.find({ where: { calibrationProfileId: profile.id } }),
+      this.riskRepo.find({ where: { calibrationProfileId: profile.id } }),
+    ]);
+    return { profile, claims, risks };
+  }
+
+  async updateProfile(
+    userId: string,
+    profileId: string,
+    data: Partial<
+      Pick<
+        BehaviorCalibrationProfile,
+        | 'cvTechStack'
+        | 'jdTechRequirements'
+        | 'priorityCompetencies'
+        | 'competencyWeights'
+        | 'calibrationNotes'
+      >
+    >,
+  ): Promise<void> {
+    await this.profileRepo.update({ id: profileId, userId }, data);
+  }
+
+  async addClaim(
+    userId: string,
+    profileId: string,
+    data: Pick<
+      CandidateClaim,
+      | 'claimText'
+      | 'verificationPriority'
+      | 'impliedCompetencies'
+      | 'techContext'
+    >,
+  ): Promise<CandidateClaim> {
+    const claim = this.claimRepo.create({
+      userId,
+      calibrationProfileId: profileId,
+      sourceType: 'cv',
+      sourceRef: { localId: `manual_${Date.now()}`, section: 'manual' },
+      claimType: 'unknown',
+      riskTags: [],
+      suggestedQuestions: [],
+      ...data,
+    });
+    return this.claimRepo.save(claim);
+  }
+
+  async updateClaim(
+    userId: string,
+    claimId: string,
+    data: Partial<
+      Pick<
+        CandidateClaim,
+        | 'claimText'
+        | 'verificationPriority'
+        | 'impliedCompetencies'
+        | 'techContext'
+      >
+    >,
+  ): Promise<void> {
+    await this.claimRepo.update({ id: claimId, userId }, data);
+  }
+
+  async deleteClaim(userId: string, claimId: string): Promise<void> {
+    await this.claimRepo.delete({ id: claimId, userId });
+  }
+
+  async addRisk(
+    userId: string,
+    profileId: string,
+    data: Pick<
+      RiskHypothesis,
+      'severity' | 'rationale' | 'relatedCompetencies' | 'suggestedProbeFocus'
+    >,
+  ): Promise<RiskHypothesis> {
+    const risk = this.riskRepo.create({
+      userId,
+      calibrationProfileId: profileId,
+      riskType: 'generic_answering',
+      source: 'system_inference',
+      evidenceNeededToReject: [],
+      candidateClaimId: null,
+      ...data,
+    });
+    return this.riskRepo.save(risk);
+  }
+
+  async updateRisk(
+    userId: string,
+    riskId: string,
+    data: Partial<
+      Pick<
+        RiskHypothesis,
+        'severity' | 'rationale' | 'relatedCompetencies' | 'suggestedProbeFocus'
+      >
+    >,
+  ): Promise<void> {
+    await this.riskRepo.update({ id: riskId, userId }, data);
+  }
+
+  async deleteRisk(userId: string, riskId: string): Promise<void> {
+    await this.riskRepo.delete({ id: riskId, userId });
   }
 
   buildSummary(
@@ -135,6 +294,7 @@ export class BehaviorCalibrationService {
   // ─── Private pipeline ──────────────────────────────────────────────────────
 
   private async _runPipeline(params: {
+    profileId: string;
     userId: string;
     cvId: string | null;
     jdAnalysisId: string | null;
@@ -144,6 +304,7 @@ export class BehaviorCalibrationService {
     profile: UserProfile | null;
   }): Promise<void> {
     const {
+      profileId,
       userId,
       cvId,
       jdAnalysisId,
@@ -232,7 +393,7 @@ export class BehaviorCalibrationService {
     }
 
     // Step 5: Build + persist (always persists, even with empty claims)
-    await this._persistProfile(userId, cvId, jdAnalysisId, {
+    await this._persistProfile(profileId, userId, cvId, jdAnalysisId, {
       mergedClaims,
       seededRisks,
       riskEnrichmentOutput,
@@ -378,6 +539,7 @@ export class BehaviorCalibrationService {
   // ─── Step 5: Build + persist (always persists) ────────────────────────────
 
   private async _persistProfile(
+    profileId: string,
     userId: string,
     cvId: string | null,
     jdAnalysisId: string | null,
@@ -391,22 +553,18 @@ export class BehaviorCalibrationService {
       profile: UserProfile | null;
     },
   ): Promise<void> {
-    const profileEntity = Object.assign(new BehaviorCalibrationProfile(), {
-      userId,
-      cvId,
-      jdAnalysisId,
-      ...this._buildProfileData(ctx),
-    });
+    const profileData = this._buildProfileData(ctx);
 
     await this.dataSource.transaction(async (manager) => {
-      const savedProfile = await manager.save(
-        BehaviorCalibrationProfile,
-        profileEntity,
-      );
+      await manager.update(BehaviorCalibrationProfile, profileId, {
+        cvId,
+        jdAnalysisId,
+        ...(profileData as object),
+      } as Parameters<typeof manager.update>[2]);
 
       const claimEntities = this._buildClaimEntities(
         userId,
-        savedProfile.id,
+        profileId,
         cvId,
         jdAnalysisId,
         ctx.mergedClaims,
@@ -417,7 +575,7 @@ export class BehaviorCalibrationService {
         userId,
         ctx.seededRisks,
         ctx.riskEnrichmentOutput,
-        profileEntity.levelMismatch,
+        profileData.levelMismatch,
       );
 
       // Risk-aware claim priority boost: claims whose competencies overlap with any
@@ -446,7 +604,7 @@ export class BehaviorCalibrationService {
       if (riskDrafts.length > 0) {
         const riskEntities = riskDrafts.map(({ _claimLocalId, ...r }) => ({
           ...r,
-          calibrationProfileId: savedProfile.id,
+          calibrationProfileId: profileId,
           candidateClaimId: _claimLocalId
             ? (claimIdMap.get(_claimLocalId) ?? null)
             : null,
@@ -455,9 +613,14 @@ export class BehaviorCalibrationService {
       }
 
       this.logger.log(
-        `BC-5: persisted calibration profile ${savedProfile.id} userId=${userId} status=${profileEntity.status}`,
+        `BC-5: persisted calibration profile ${profileId} userId=${userId} status=${profileData.status}`,
       );
     });
+
+    await this.redis.publish(
+      `calibration:${userId}`,
+      JSON.stringify({ profileId, status: profileData.status }),
+    );
   }
 
   private _buildProfileData(ctx: {

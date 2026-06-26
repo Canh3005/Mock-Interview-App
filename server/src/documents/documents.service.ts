@@ -4,6 +4,8 @@ import {
   Injectable,
   Logger,
 } from '@nestjs/common';
+import type Redis from 'ioredis';
+import { REDIS_CLIENT } from '../redis/redis.module';
 import { InjectQueue } from '@nestjs/bullmq';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Queue, QueueEvents } from 'bullmq';
@@ -49,6 +51,7 @@ export class DocumentsService {
     private fitAssessmentService: FitAssessmentService,
     private calibrationService: BehaviorCalibrationService,
     @Inject('DOCUMENT_QUEUE_EVENTS') private queueEvents: QueueEvents,
+    @Inject(REDIS_CLIENT) private readonly redis: Redis,
   ) {}
 
   async queueDocumentForParsing(
@@ -684,6 +687,7 @@ export class DocumentsService {
   async runCompatibilityAssessment(userId: string): Promise<{
     fitScore: number;
     fitAssessmentSummary: ReturnType<FitAssessmentService['buildSummary']>;
+    profileId: string;
   }> {
     const cvRecord =
       await this.contextService.getLatestCompletedCvRecord(userId);
@@ -700,8 +704,15 @@ export class DocumentsService {
     const fitAssessmentSummary =
       this.fitAssessmentService.buildSummary(fitAssessment);
 
+    const profileId = await this.calibrationService.createProcessingProfile({
+      userId,
+      cvId: cvRecord.id,
+      jdAnalysisId: jdRecord.id,
+    });
+
     void this.calibrationService.run({
       userId,
+      profileId,
       cvId: cvRecord.id,
       jdAnalysisId: jdRecord.id,
       cvJson: cvRecord.parsedJson as CvJson,
@@ -709,7 +720,97 @@ export class DocumentsService {
       fitAssessment,
     });
 
-    return { fitScore: jdRecord.fitScore ?? 0, fitAssessmentSummary };
+    return {
+      fitScore: jdRecord.fitScore ?? 0,
+      fitAssessmentSummary,
+      profileId,
+    };
+  }
+
+  async getCalibrationCurrent(userId: string) {
+    return this.calibrationService.getCalibrationCurrent(userId);
+  }
+
+  async updateCalibrationProfile(
+    userId: string,
+    profileId: string,
+    data: Record<string, unknown>,
+  ): Promise<void> {
+    await this.calibrationService.updateProfile(
+      userId,
+      profileId,
+      data as Parameters<typeof this.calibrationService.updateProfile>[2],
+    );
+  }
+
+  async addClaim(
+    userId: string,
+    profileId: string,
+    data: Record<string, unknown>,
+  ) {
+    return this.calibrationService.addClaim(
+      userId,
+      profileId,
+      data as Parameters<typeof this.calibrationService.addClaim>[2],
+    );
+  }
+
+  async updateClaim(
+    userId: string,
+    claimId: string,
+    data: Record<string, unknown>,
+  ): Promise<void> {
+    await this.calibrationService.updateClaim(
+      userId,
+      claimId,
+      data as Parameters<typeof this.calibrationService.updateClaim>[2],
+    );
+  }
+
+  async deleteClaim(userId: string, claimId: string): Promise<void> {
+    await this.calibrationService.deleteClaim(userId, claimId);
+  }
+
+  async addRisk(
+    userId: string,
+    profileId: string,
+    data: Record<string, unknown>,
+  ) {
+    return this.calibrationService.addRisk(
+      userId,
+      profileId,
+      data as Parameters<typeof this.calibrationService.addRisk>[2],
+    );
+  }
+
+  async updateRisk(
+    userId: string,
+    riskId: string,
+    data: Record<string, unknown>,
+  ): Promise<void> {
+    await this.calibrationService.updateRisk(
+      userId,
+      riskId,
+      data as Parameters<typeof this.calibrationService.updateRisk>[2],
+    );
+  }
+
+  async deleteRisk(userId: string, riskId: string): Promise<void> {
+    await this.calibrationService.deleteRisk(userId, riskId);
+  }
+
+  async streamCalibrationStatus(userId: string, res: Response): Promise<void> {
+    this._openSseStream(res);
+    const subscriber = this.redis.duplicate();
+    await subscriber.subscribe(`calibration:${userId}`);
+    subscriber.on('message', (_channel: string, message: string) => {
+      this._emitSse(res, JSON.parse(message) as object);
+      void subscriber.quit();
+      res.end();
+    });
+    res.on('close', () => {
+      void subscriber.quit();
+    });
   }
 
   private _openSseStream(res: Response): void {

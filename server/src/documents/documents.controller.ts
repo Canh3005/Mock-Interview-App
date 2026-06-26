@@ -193,4 +193,109 @@ export class DocumentsController {
   async getCalibrationLatest(@Req() req: { user: { id: string } }) {
     return this.documentsService.getCalibrationLatest(req.user.id);
   }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'SSE stream — notifies when calibration completes' })
+  @Get('calibration/stream')
+  async streamCalibrationStatus(
+    @Req() req: { user: { id: string } },
+    @Res() res: Response,
+  ): Promise<void> {
+    await this.documentsService.streamCalibrationStatus(req.user.id, res);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get current calibration profile + claims + risks' })
+  @Get('calibration/current')
+  async getCalibrationCurrent(@Req() req: { user: { id: string } }) {
+    return this.documentsService.getCalibrationCurrent(req.user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update calibration profile fields' })
+  @Patch('calibration/:profileId')
+  async updateCalibrationProfile(
+    @Req() req: { user: { id: string } },
+    @Param('profileId') profileId: string,
+    @Body() body: Record<string, unknown>,
+  ): Promise<void> {
+    await this.documentsService.updateCalibrationProfile(
+      req.user.id,
+      profileId,
+      body,
+    );
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Add a new candidate claim to a profile' })
+  @Post('calibration/:profileId/claims')
+  async addClaim(
+    @Req() req: { user: { id: string } },
+    @Param('profileId') profileId: string,
+    @Body() body: Record<string, unknown>,
+  ) {
+    return this.documentsService.addClaim(req.user.id, profileId, body);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update a candidate claim' })
+  @Patch('claims/:claimId')
+  async updateClaim(
+    @Req() req: { user: { id: string } },
+    @Param('claimId') claimId: string,
+    @Body() body: Record<string, unknown>,
+  ): Promise<void> {
+    await this.documentsService.updateClaim(req.user.id, claimId, body);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Delete a candidate claim' })
+  @Delete('claims/:claimId')
+  async deleteClaim(
+    @Req() req: { user: { id: string } },
+    @Param('claimId') claimId: string,
+  ): Promise<void> {
+    await this.documentsService.deleteClaim(req.user.id, claimId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Add a new risk hypothesis to a profile' })
+  @Post('calibration/:profileId/risks')
+  async addRisk(
+    @Req() req: { user: { id: string } },
+    @Param('profileId') profileId: string,
+    @Body() body: Record<string, unknown>,
+  ) {
+    return this.documentsService.addRisk(req.user.id, profileId, body);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update a risk hypothesis' })
+  @Patch('risks/:riskId')
+  async updateRisk(
+    @Req() req: { user: { id: string } },
+    @Param('riskId') riskId: string,
+    @Body() body: Record<string, unknown>,
+  ): Promise<void> {
+    await this.documentsService.updateRisk(req.user.id, riskId, body);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Delete a risk hypothesis' })
+  @Delete('risks/:riskId')
+  async deleteRisk(
+    @Req() req: { user: { id: string } },
+    @Param('riskId') riskId: string,
+  ): Promise<void> {
+    await this.documentsService.deleteRisk(req.user.id, riskId);
+  }
 }

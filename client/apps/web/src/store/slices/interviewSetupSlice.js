@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 // step flow:
-// 'idle' → preflight_loading → context_missing | context_confirm
+// 'idle' → preflight_loading → context_missing | calibration_pending | calibration_review
 // -> mode_select -> (combat? combat_permission :) initializing -> done
 const initialState = {
   step: 'idle',
@@ -11,6 +11,11 @@ const initialState = {
   summary: null, // { cvSnippet, jdSnippet }
   cv: null,      // full CvJson
   jd: null,      // full JdJson
+
+  // calibration
+  calibrationProfileId: null,
+  calibrationStatus: null,   // 'processing' | 'partial' | 'ready' | 'failed' | null
+  calibrationData: null,     // { profile, claims, risks }
 
   // language
   selectedLanguage: 'vi', // 'vi' | 'en' | 'ja'
@@ -75,15 +80,35 @@ const interviewSetupSlice = createSlice({
     },
     preflightSuccess(state, action) {
       state.loading = false;
-      const { ready, missing, summary, cv, jd, calibrationStale } = action.payload;
+      const { ready, missing, summary, cv, jd, calibrationStale, calibrationProfileId, calibrationStatus, calibrationData } = action.payload;
       if (ready) {
         state.summary = summary;
         state.cv = cv;
         state.jd = jd;
         state.calibrationStale = calibrationStale ?? false;
-        state.step = 'context_confirm';
+        state.calibrationProfileId = calibrationProfileId ?? null;
+        state.calibrationStatus = calibrationStatus ?? null;
+        if (calibrationData) state.calibrationData = calibrationData;
+        if (!calibrationStatus || calibrationStatus === 'failed') {
+          state.step = 'context_missing';
+        } else if (calibrationStatus === 'processing') {
+          state.step = 'calibration_pending';
+        } else {
+          state.step = 'calibration_review';
+        }
       } else {
         state.missing = missing;
+        state.step = 'context_missing';
+      }
+    },
+    calibrationStatusUpdated(state, action) {
+      const { profileId, status, calibrationData } = action.payload;
+      state.calibrationProfileId = profileId;
+      state.calibrationStatus = status;
+      if (calibrationData) state.calibrationData = calibrationData;
+      if (status === 'ready' || status === 'partial') {
+        state.step = 'calibration_review';
+      } else if (status === 'failed') {
         state.step = 'context_missing';
       }
     },
@@ -95,6 +120,9 @@ const interviewSetupSlice = createSlice({
 
     // ─── Step transitions ──────────────────────────────────────────────────
     confirmContext(state) {
+      state.step = 'mode_select';
+    },
+    confirmCalibrationReview(state) {
       state.step = 'mode_select';
     },
     selectLanguage(state, action) {
@@ -222,7 +250,9 @@ export const {
   preflightRequest,
   preflightSuccess,
   preflightFailure,
+  calibrationStatusUpdated,
   confirmContext,
+  confirmCalibrationReview,
   selectLanguage,
   selectMode,
   proceedFromMode,

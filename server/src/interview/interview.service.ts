@@ -132,6 +132,7 @@ export class InterviewService {
       jd: context.jd,
       behaviorCalibration,
       calibrationProfileId: calibrationProfile?.id ?? null,
+      calibrationStatus: calibrationProfile?.status ?? null,
       calibrationStale,
     };
   }
