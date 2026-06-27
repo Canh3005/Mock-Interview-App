@@ -8,6 +8,7 @@ export const CV_SYSTEM_INSTRUCTION = `You are a CV parsing assistant. Extract st
     {
       "company": string,
       "title": string,
+      "type": "job" | "project",
       "startDate": string | null,
       "endDate": string | null,
       "responsibilities": string[],
@@ -30,11 +31,14 @@ export const CV_SYSTEM_INSTRUCTION = `You are a CV parsing assistant. Extract st
   "seniority": "intern" | "junior" | "mid" | "senior" | "lead" | "staff" | "manager" | "unknown"
 }
 Rules:
+- CRITICAL — do not skip any section. Scan the ENTIRE CV, including any "Projects" / "Personal Projects" / "Academic Projects" section. Every project listed there MUST become its own entry in "experience" with "type": "project" — one entry per project, never merged together. It is WRONG to represent a project only by adding its tech stack to the global "skills" array without also creating its experience entry; that loses the project's description and is a parsing failure.
 - skills: flat list of ALL technical skills. Use full names: "JavaScript" not "JS", "TypeScript" not "TS", "Node.js" not "Node", "PostgreSQL" not "PG".
+- experience[].type: "job" for paid work history (Experience/Work History sections). "project" for personal, academic, or side projects (Projects/Personal Projects sections). Always set this field for every entry.
+- experience[].type "project": set "title" to the project name and "company" to the organization/context (e.g. school name) or "Personal Project" if none is given. Put the project's full description in "responsibilities".
 - experience[].achievements: ONLY specific outcomes with metrics or impact (e.g. "Reduced API latency by 40%"). Skip vague statements like "improved performance".
-- experience[].techStack: only technologies used in that specific role.
-- totalYearsExperience: estimate from dates across all roles or infer from context.
-- seniority: infer from job titles and scope of responsibilities.
+- experience[].techStack: only technologies used in that specific role/project.
+- totalYearsExperience: estimate from dates of "job" entries only. Never count "project" entries — they are not paid work experience.
+- seniority: infer from job titles and scope of responsibilities of "job" entries only.
 - Return ONLY the JSON object. No explanation text.
 
 Example 1 — CV with clear achievements:
@@ -45,7 +49,7 @@ Output excerpt:
   "seniority": "senior",
   "skills": ["Node.js", "PostgreSQL", "Redis"],
   "experience": [{
-    "company": "Acme", "title": "Senior Engineer",
+    "company": "Acme", "title": "Senior Engineer", "type": "job",
     "startDate": "2020", "endDate": "2023",
     "responsibilities": ["Led backend team of 5"],
     "achievements": ["Reduced DB query time by 60% via indexing"],
@@ -60,10 +64,24 @@ Output excerpt:
   "seniority": "unknown",
   "skills": ["React", "TypeScript"],
   "experience": [{
-    "company": "Beta Corp", "title": "Engineer",
+    "company": "Beta Corp", "title": "Engineer", "type": "job",
     "responsibilities": ["Worked on API development"],
     "achievements": [],
     "techStack": ["React", "TypeScript"]
+  }]
+}
+
+Example 3 — CV with a personal project section:
+Input: "PROJECTS\\nMock Interview Platform — Hanoi University of Science and Technology (Feb 2026 - Apr 2026)\\nDeveloped a full-featured AI mock interview platform with live coding and behavioral rounds. Stack: NestJS, React, PostgreSQL."
+Output excerpt:
+{
+  "experience": [{
+    "company": "Hanoi University of Science and Technology",
+    "title": "Mock Interview Platform", "type": "project",
+    "startDate": "2026-02", "endDate": "2026-04",
+    "responsibilities": ["Developed a full-featured AI mock interview platform with live coding and behavioral rounds"],
+    "achievements": [],
+    "techStack": ["NestJS", "React", "PostgreSQL"]
   }]
 }`;
 
@@ -202,6 +220,35 @@ Example 5 — WRONG vs RIGHT for a required skill present in cv.skills[]:
 requirementId: "required_skill:postgresql"
 WRONG: { "status": "missing", "evidenceStrength": "none", "cvEvidence": [] }  ← Incorrect when "PostgreSQL" is in cv.skills[]
 RIGHT: { "status": "partial", "evidenceStrength": "weak", "cvEvidence": ["Listed PostgreSQL in skills"], "rationale": "Skill listed in CV but no specific project context found." }`;
+
+export const FIT_SEMANTIC_SIGNALS_SYSTEM_INSTRUCTION = `You are a technical recruiter helping with semantic CV-to-JD matching.
+The input has a top-level "cvEvidencePool": string[] — the full set of raw CV sentences (titles, responsibilities, achievements, skills, tech stack), not pre-filtered for any specific requirement. Each requirement also has its own "evidence": string[] — a shortlist already matched to that requirement by keyword/embedding search.
+Return ONLY valid JSON matching this exact structure:
+{
+  "requirementSignals": [
+    {
+      "requirementId": string,
+      "requirement": string,
+      "source": "required_skill" | "nice_to_have_skill" | "responsibility" | "experience" | "domain",
+      "status": "met" | "partial" | "missing" | "unclear",
+      "evidenceStrength": "strong" | "weak" | "none",
+      "cvEvidence": string[],
+      "rationale": string
+    }
+  ]
+}
+Rules:
+- Evaluate ONLY the provided requirements.
+- Return one signal per provided requirementId.
+- Use the exact requirementId, requirement, and source values from input.
+- For each requirement, first check its own "evidence" list. If it is empty or insufficient — especially for abstractly-worded requirements that name no specific technology — search the full "cvEvidencePool" yourself for anything genuinely relevant before concluding there is none.
+- Use ONLY evidence strings that appear verbatim in either the requirement's own "evidence" list or "cvEvidencePool". Copy the matched string exactly; do not invent or paraphrase CV evidence.
+- Do not return gaps, risk flags, scores, or summary text.
+- If evidence directly demonstrates the requirement, use "met" + "strong".
+- If evidence shows adjacent/foundation skills but not direct delivery, use "partial" + "weak".
+- If no relevant evidence exists in either source, use "missing" + "none".
+- Use "unclear" only when evidence is insufficient or ambiguous rather than absent.
+- Return ONLY the JSON object.`;
 
 export const VALIDATION_SYSTEM_INSTRUCTION = `You are a document classifier for a hiring platform. Classify the uploaded document and return ONLY valid JSON matching this exact structure:
 {

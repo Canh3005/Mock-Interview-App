@@ -86,8 +86,7 @@ export class NSDPhase5Service {
     let progress: NSDPhase5Progress = this._normalizeProgress(
       session.phase5Progress!,
     );
-    const canvasState =
-      canvas ??
+    const canvasState = canvas ??
       session.canvasJSON ??
       progress.inheritedCanvas ?? { nodes: [], edges: [] };
 
@@ -268,15 +267,20 @@ export class NSDPhase5Service {
       progress.explanationItemCounters,
     );
     if (activeExplItem) {
-      const explCheck = question.evaluation_checklist.required_explanations.find(
-        (e) => e.key === activeExplItem.itemKey,
-      )!;
-      const evalLevel = await this.assessor.classify(candidateAnswer, explCheck, {
-        phase: 'PHASE_5_DEEP_DIVE',
-        questionKey: question.key,
-        questionAsked: explCheck.followup_question,
-        overallExpectedResult: question.expected_result,
-      });
+      const explCheck =
+        question.evaluation_checklist.required_explanations.find(
+          (e) => e.key === activeExplItem.itemKey,
+        )!;
+      const evalLevel = await this.assessor.classify(
+        candidateAnswer,
+        explCheck,
+        {
+          phase: 'PHASE_5_DEEP_DIVE',
+          questionKey: question.key,
+          questionAsked: explCheck.followup_question,
+          overallExpectedResult: question.expected_result,
+        },
+      );
 
       const { action, updatedCounters } = this.policy.applyEvalLevel(
         activeExplItem,
@@ -317,7 +321,11 @@ export class NSDPhase5Service {
         await this.streamSvc.streamText(
           res,
           responseText,
-          { stageChanged: false, wasFill: true, fillAnswer } satisfies NSDSSEMeta,
+          {
+            stageChanged: false,
+            wasFill: true,
+            fillAnswer,
+          } satisfies NSDSSEMeta,
           language,
         );
         return;
@@ -348,9 +356,10 @@ export class NSDPhase5Service {
       // action === 'advance' — item resolved
       const nextExpl = this.policy.findNextUnresolved(newExplCounters);
       if (nextExpl) {
-        const responseText = question.evaluation_checklist.required_explanations.find(
-          (e) => e.key === nextExpl.itemKey,
-        )!.followup_question;
+        const responseText =
+          question.evaluation_checklist.required_explanations.find(
+            (e) => e.key === nextExpl.itemKey,
+          )!.followup_question;
         await this._persistTurn(
           session,
           progress,

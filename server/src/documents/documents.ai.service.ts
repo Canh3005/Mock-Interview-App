@@ -11,10 +11,15 @@ import {
 } from './constants/document-ai.constants';
 import {
   CV_SYSTEM_INSTRUCTION,
+  FIT_SEMANTIC_SIGNALS_SYSTEM_INSTRUCTION,
   FIT_RUBRIC_SYSTEM_INSTRUCTION,
   JD_SYSTEM_INSTRUCTION,
   VALIDATION_SYSTEM_INSTRUCTION,
 } from './prompts/document-ai.prompts';
+import type {
+  FitSemanticEvaluationInput,
+  FitSemanticEvaluationResult,
+} from './types/fit-rubric-pipeline.types';
 import type {
   CvJson,
   DocumentValidationResult,
@@ -107,10 +112,43 @@ ${JSON.stringify(requirements, null, 2)}`;
       config: {
         systemInstruction: FIT_RUBRIC_SYSTEM_INSTRUCTION,
         maxOutputTokens: 8192,
+        temperature: 0,
       },
     });
 
     return JSON.parse(result || '{}') as FitRubricEvaluation;
+  }
+
+  async evaluateFitSemanticSignals(
+    input: FitSemanticEvaluationInput,
+  ): Promise<FitSemanticEvaluationResult> {
+    this.logger.log('Evaluating semantic fit signals via Groq...');
+
+    const result = await this.groq.generateJsonContent({
+      model: DOCUMENT_FIT_ASSESSMENT_MODEL,
+      contents: [
+        {
+          role: 'user',
+          parts: [
+            {
+              text: `Semantic fit evaluation input:\n${JSON.stringify(
+                input,
+                null,
+                2,
+              )}`,
+            },
+          ],
+        },
+      ],
+      config: {
+        systemInstruction: FIT_SEMANTIC_SIGNALS_SYSTEM_INSTRUCTION,
+        maxOutputTokens: 4096,
+        temperature: 0,
+      },
+      feature: 'documents.fit.semantic_signals',
+    });
+
+    return JSON.parse(result || '{}') as FitSemanticEvaluationResult;
   }
 
   async validateDocumentType(

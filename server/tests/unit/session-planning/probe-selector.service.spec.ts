@@ -338,7 +338,6 @@ describe('ProbeSelectorService', () => {
       heuristicProbe?.selectionScore ?? 0,
     );
   });
-
 });
 
 function _localized(title: string, displayQuestion: string) {

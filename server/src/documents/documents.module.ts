@@ -8,6 +8,7 @@ import { DocumentsService } from './documents.service';
 import { DocumentsAiService } from './documents.ai.service';
 import { DocumentContextService } from './document-context.service';
 import { FitAssessmentService } from './fit-assessment.service';
+import { FitRubricPipelineService } from './fit-rubric-pipeline.service';
 import { BehaviorCalibrationAiService } from './behavior-calibration.ai.service';
 import { BehaviorCalibrationService } from './behavior-calibration.service';
 import { DOCUMENT_PARSING_QUEUE } from '../jobs/jobs.constants';
@@ -51,6 +52,7 @@ import { UserProfile } from '../users/entities/user-profile.entity';
     DocumentsAiService,
     DocumentContextService,
     FitAssessmentService,
+    FitRubricPipelineService,
     BehaviorCalibrationAiService,
     BehaviorCalibrationService,
   ],
@@ -59,6 +61,7 @@ import { UserProfile } from '../users/entities/user-profile.entity';
     DocumentsAiService,
     DocumentContextService,
     FitAssessmentService,
+    FitRubricPipelineService,
     BehaviorCalibrationService,
   ],
 })

@@ -577,8 +577,7 @@ export class BehaviorSessionService {
         priority: CLAIM_PRIORITY_ORDER[claim.verificationPriority] ?? 0,
       }))
       .filter(
-        (item) =>
-          item.relevance > 0 || probe.type === 'cv_claim_verification',
+        (item) => item.relevance > 0 || probe.type === 'cv_claim_verification',
       )
       .sort(
         (left, right) =>

@@ -22,6 +22,7 @@ import { DOCUMENT_PARSING_QUEUE } from '../jobs/jobs.constants';
 import { DocumentsAiService } from './documents.ai.service';
 import { DocumentContextService } from './document-context.service';
 import { FitAssessmentService } from './fit-assessment.service';
+import { FitRubricPipelineService } from './fit-rubric-pipeline.service';
 import { BehaviorCalibrationService } from './behavior-calibration.service';
 import { CV_SIGNALS, JD_SIGNALS } from './constants/document-signals.constants';
 import { UserCv } from '../users/entities/user-cv.entity';
@@ -49,6 +50,7 @@ export class DocumentsService {
     private aiService: DocumentsAiService,
     private contextService: DocumentContextService,
     private fitAssessmentService: FitAssessmentService,
+    private fitRubricPipelineService: FitRubricPipelineService,
     private calibrationService: BehaviorCalibrationService,
     @Inject('DOCUMENT_QUEUE_EVENTS') private queueEvents: QueueEvents,
     @Inject(REDIS_CLIENT) private readonly redis: Redis,
@@ -205,11 +207,12 @@ export class DocumentsService {
           `CV duplicate detected, reusing parsedJson from record ${cvDuplicate.id} userId=${userId}`,
         );
       } else {
+        console.log('documentText', documentText);
         const rawCvJson = await this.aiService.extractCvJson(documentText);
         ({ cvJson, parseError: cvParseError } =
           this.fitAssessmentService.normalizeCvJson(rawCvJson));
       }
-
+      console.log('cvJson', cvJson);
       cvRecord.fileUrl = filePath;
       cvRecord.originalName = originalName;
       cvRecord.parsedJson = cvJson;
@@ -408,11 +411,11 @@ export class DocumentsService {
       const jdJson = jdRecord.parsedJson as JdJson;
       const requirements =
         this.fitAssessmentService.buildNormalizedJdRequirements(jdJson);
-      const rubric = await this.aiService.assessFitRubric(
+      const rubric = await this.fitRubricPipelineService.assessFitRubric({
         cvJson,
         jdJson,
         requirements,
-      );
+      });
       const fitAssessment = this.fitAssessmentService.buildFitAssessment({
         cvJson,
         jdJson,

@@ -31,6 +31,18 @@ export class GeminiService {
     return values.map((value: number) => Number(value));
   }
 
+  async embedContents(params: {
+    model: string;
+    contents: string[];
+    config?: any;
+  }): Promise<number[][]> {
+    const response = await this.ai.models.embedContent(params);
+    const embeddings = response.embeddings ?? [];
+    return embeddings.map((embedding) =>
+      (embedding.values ?? []).map((value: number) => Number(value)),
+    );
+  }
+
   generateContentStream(params: {
     model: string;
     contents: any;
