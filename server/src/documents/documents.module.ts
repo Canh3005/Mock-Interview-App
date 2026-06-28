@@ -17,6 +17,7 @@ import { CandidateClaim } from './entities/candidate-claim.entity';
 import { RiskHypothesis } from './entities/risk-hypothesis.entity';
 import { SessionClaimOutcome } from './entities/session-claim-outcome.entity';
 import { SessionRiskOutcome } from './entities/session-risk-outcome.entity';
+import { FitAssessmentRecord } from './entities/fit-assessment-record.entity';
 import { UserCv } from '../users/entities/user-cv.entity';
 import { JdAnalysis } from '../users/entities/jd-analysis.entity';
 import { UserProfile } from '../users/entities/user-profile.entity';
@@ -31,6 +32,7 @@ import { UserProfile } from '../users/entities/user-profile.entity';
       RiskHypothesis,
       SessionClaimOutcome,
       SessionRiskOutcome,
+      FitAssessmentRecord,
       UserProfile,
     ]),
     BullModule.registerQueueAsync({ name: DOCUMENT_PARSING_QUEUE }),

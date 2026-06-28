@@ -28,6 +28,7 @@ import { CV_SIGNALS, JD_SIGNALS } from './constants/document-signals.constants';
 import { UserCv } from '../users/entities/user-cv.entity';
 import { JdAnalysis } from '../users/entities/jd-analysis.entity';
 import { UserProfile } from '../users/entities/user-profile.entity';
+import { FitAssessmentRecord } from './entities/fit-assessment-record.entity';
 import type { FitAssessmentV2 } from './types/fit-assessment.types';
 import { DOCX_MIME } from './constants/document-file.constants';
 import { DOCUMENT_FIT_ASSESSMENT_MODEL } from './constants/document-ai.constants';
@@ -47,6 +48,8 @@ export class DocumentsService {
     @InjectRepository(UserCv) private cvRepository: Repository<UserCv>,
     @InjectRepository(JdAnalysis)
     private jdRepository: Repository<JdAnalysis>,
+    @InjectRepository(FitAssessmentRecord)
+    private fitAssessmentRepository: Repository<FitAssessmentRecord>,
     private aiService: DocumentsAiService,
     private contextService: DocumentContextService,
     private fitAssessmentService: FitAssessmentService,
@@ -261,26 +264,28 @@ export class DocumentsService {
   }
 
   async getAssessmentHistory(userId: string) {
-    const records = await this.jdRepository.find({
+    const records = await this.fitAssessmentRepository.find({
       where: { userId },
-      order: { createdAt: 'DESC' },
+      order: { updatedAt: 'DESC' },
     });
-    return records
-      .filter((record) => record.assessmentStatus === 'completed')
-      .map((record) => {
-        const fitAssessment = record.fitAssessment as FitAssessmentV2 | null;
-        return {
-          id: record.id,
-          originalName: record.originalName,
-          fitScore: record.fitScore,
-          matchReport: record.matchReport as unknown,
-          fitAssessmentSummary:
-            this.fitAssessmentService.buildSummary(fitAssessment),
-          confidence: record.assessmentConfidence,
-          scoringVersion: record.scoringVersion,
-          createdAt: record.createdAt,
-        };
-      });
+    const completedRecords = records.filter(
+      (record) => record.assessmentStatus === 'completed',
+    );
+
+    return completedRecords.map((record) => {
+      const fitAssessment = record.fitAssessment as FitAssessmentV2 | null;
+      return {
+        id: record.id,
+        originalName: record.jdOriginalName,
+        fitScore: record.fitScore,
+        matchReport: record.matchReport,
+        fitAssessmentSummary:
+          this.fitAssessmentService.buildSummary(fitAssessment),
+        confidence: record.assessmentConfidence,
+        scoringVersion: record.scoringVersion,
+        createdAt: record.updatedAt,
+      };
+    });
   }
 
   async getDocumentContext(
@@ -307,13 +312,13 @@ export class DocumentsService {
   }
 
   async deleteAssessment(userId: string, assessmentId: string) {
-    const record = await this.jdRepository.findOne({
+    const record = await this.fitAssessmentRepository.findOne({
       where: { id: assessmentId, userId },
     });
     if (!record) {
       throw new BadRequestException('Assessment not found.');
     }
-    await this.jdRepository.remove(record);
+    await this.fitAssessmentRepository.remove(record);
     return { message: 'Assessment deleted.' };
   }
 
@@ -368,8 +373,6 @@ export class DocumentsService {
       jdRecord.processingStatus = 'completed';
       jdRecord.parseError = null;
       jdRecord.parsedTextHash = parsedTextHash;
-      jdRecord.assessmentStatus = 'not_ready';
-      jdRecord.assessmentError = null;
 
       const latestCv =
         await this.contextService.getLatestCompletedCvRecord(userId);
@@ -403,9 +406,21 @@ export class DocumentsService {
   }
 
   private async assessJdFit(
+    userId: string,
     jdRecord: JdAnalysis,
     cvRecord: UserCv,
-  ): Promise<void> {
+  ): Promise<FitAssessmentRecord> {
+    const record =
+      (await this.fitAssessmentRepository.findOne({
+        where: { jdAnalysisId: jdRecord.id, cvId: cvRecord.id },
+      })) ??
+      this.fitAssessmentRepository.create({
+        userId,
+        jdAnalysisId: jdRecord.id,
+        jdOriginalName: jdRecord.originalName,
+        cvId: cvRecord.id,
+      });
+
     try {
       const cvJson = cvRecord.parsedJson as CvJson;
       const jdJson = jdRecord.parsedJson as JdJson;
@@ -424,23 +439,24 @@ export class DocumentsService {
         requirements,
       });
 
-      jdRecord.fitAssessment = fitAssessment;
-      jdRecord.fitScore = fitAssessment.finalScore;
-      jdRecord.matchReport =
+      record.fitAssessment = fitAssessment;
+      record.fitScore = fitAssessment.finalScore;
+      record.matchReport =
         this.fitAssessmentService.buildLegacyMatchReport(fitAssessment);
-      jdRecord.scoringVersion = fitAssessment.scoringVersion;
-      jdRecord.assessmentModel = fitAssessment.model;
-      jdRecord.assessmentConfidence = fitAssessment.confidence;
-      jdRecord.assessmentStatus = 'completed';
-      jdRecord.assessmentError = null;
-      jdRecord.cvId = cvRecord.id;
+      record.scoringVersion = fitAssessment.scoringVersion;
+      record.assessmentModel = fitAssessment.model;
+      record.assessmentConfidence = fitAssessment.confidence;
+      record.assessmentStatus = 'completed';
+      record.assessmentError = null;
     } catch (error) {
-      jdRecord.assessmentStatus = 'failed';
-      jdRecord.assessmentError = this.toSafeErrorMessage(error);
-      jdRecord.fitAssessment = null;
-      jdRecord.fitScore = null;
-      jdRecord.matchReport = null;
+      record.assessmentStatus = 'failed';
+      record.assessmentError = this.toSafeErrorMessage(error);
+      record.fitAssessment = null;
+      record.fitScore = null;
+      record.matchReport = null;
     }
+
+    return this.fitAssessmentRepository.save(record);
   }
 
   private async createProcessingRecord(
@@ -469,7 +485,6 @@ export class DocumentsService {
         processingStatus: 'processing',
         parseError: null,
         parsedJson: null,
-        assessmentStatus: 'not_ready',
       }),
     );
   }
@@ -597,8 +612,6 @@ export class DocumentsService {
         processingStatus: 'failed',
         parseError,
         parsedTextHash: parsedTextHash ?? undefined,
-        assessmentStatus: 'failed',
-        assessmentError: parseError,
       },
     );
   }
@@ -700,10 +713,9 @@ export class DocumentsService {
       throw new BadRequestException('CV và JD là bắt buộc để đánh giá.');
     }
 
-    await this.assessJdFit(jdRecord, cvRecord);
-    await this.jdRepository.save(jdRecord);
+    const assessmentRecord = await this.assessJdFit(userId, jdRecord, cvRecord);
 
-    const fitAssessment = jdRecord.fitAssessment as FitAssessmentV2;
+    const fitAssessment = assessmentRecord.fitAssessment as FitAssessmentV2;
     const fitAssessmentSummary =
       this.fitAssessmentService.buildSummary(fitAssessment);
 
@@ -724,7 +736,7 @@ export class DocumentsService {
     });
 
     return {
-      fitScore: jdRecord.fitScore ?? 0,
+      fitScore: assessmentRecord.fitScore ?? 0,
       fitAssessmentSummary,
       profileId,
     };
