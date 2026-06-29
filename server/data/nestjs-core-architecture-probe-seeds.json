@@ -1,39 +1,156 @@
 [
   {
     "code": "NESTJS_CORE_ARCH_MODULE_ROLE_001",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking"],
-    "techTags": ["nestjs", "nodejs", "typescript"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking"
+    ],
+    "techTags": [
+      "nestjs",
+      "nodejs",
+      "typescript"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Evaluate whether the candidate understands a NestJS module as the composition and dependency boundary that organizes related controllers, providers, and imported/exported capabilities.",
     "primaryQuestion": "What is a Module in NestJS and what role does it play in application structure?",
     "expectedSignals": [
-      { "label": "Defines a module as a class annotated with @Module() metadata that groups related application parts.", "relatedTrigger": null },
-      { "label": "Explains that modules organize controllers, providers, and dependencies around a feature or technical concern.", "relatedTrigger": null },
-      { "label": "Mentions that modules create dependency visibility boundaries, so providers are not automatically visible everywhere.", "relatedTrigger": null },
-      { "label": "Connects feature modules to maintainability, separation of concerns, and clearer ownership in larger applications.", "relatedTrigger": null },
-      { "label": "Recognizes AppModule as the root module that composes the rest of the application.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Describes a module as only a folder or file naming convention.",
-      "Thinks modules only exist for routing and have no impact on dependency injection.",
-      "Assumes providers registered in one module are globally injectable without imports or exports.",
-      "Cannot distinguish feature modules from the root AppModule."
+      {
+        "label": "Defines a module as a class annotated with @Module() metadata that groups related application parts.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "module_class_with_decorator",
+            "description": "Defines a Nest module as a class annotated with @Module()"
+          },
+          {
+            "key": "module_metadata",
+            "description": "Mentions @Module metadata as the source of module configuration"
+          },
+          {
+            "key": "groups_related_parts",
+            "description": "Explains that a module groups related application parts"
+          }
+        ]
+      },
+      {
+        "label": "Explains that modules organize controllers, providers, and dependencies around a feature or technical concern.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "organizes_controllers",
+            "description": "Mentions controllers as part of module organization"
+          },
+          {
+            "key": "organizes_providers",
+            "description": "Mentions providers or services as part of module organization"
+          },
+          {
+            "key": "feature_or_technical_boundary",
+            "description": "Connects the module boundary to a feature or technical concern"
+          }
+        ]
+      },
+      {
+        "label": "Mentions that modules create dependency visibility boundaries, so providers are not automatically visible everywhere.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "dependency_visibility_boundary",
+            "description": "Explains that modules create dependency visibility boundaries"
+          },
+          {
+            "key": "providers_not_global_by_default",
+            "description": "States that providers are not automatically visible everywhere"
+          },
+          {
+            "key": "imports_exports_control_visibility",
+            "description": "Mentions imports and exports as the mechanism for cross-module visibility"
+          }
+        ]
+      },
+      {
+        "label": "Connects feature modules to maintainability, separation of concerns, and clearer ownership in larger applications.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "feature_modules_improve_maintainability",
+            "description": "Connects feature modules to maintainability in larger apps"
+          },
+          {
+            "key": "separation_of_concerns",
+            "description": "Mentions separation of concerns as a benefit"
+          },
+          {
+            "key": "clearer_ownership",
+            "description": "Explains that feature modules create clearer ownership than putting everything in AppModule"
+          }
+        ]
+      },
+      {
+        "label": "Recognizes AppModule as the root module that composes the rest of the application.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "appmodule_root",
+            "description": "Recognizes AppModule as the root module"
+          },
+          {
+            "key": "composes_application_modules",
+            "description": "Explains that AppModule composes the rest of the application"
+          },
+          {
+            "key": "root_not_all_features",
+            "description": "Clarifies that root composition does not mean every feature must live directly in AppModule"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Explains @Module metadata, composition role, dependency visibility, feature boundaries, and how AppModule composes feature modules." },
-      { "scoreBand": "solid", "description": "Understands modules as grouping units but misses provider visibility or root-module composition detail." },
-      { "scoreBand": "needs_work", "description": "Knows that modules exist but treats them as folders or boilerplate without architectural meaning." },
-      { "scoreBand": "insufficient_evidence", "description": "Cannot explain the role of modules in NestJS application structure." }
+      {
+        "scoreBand": "strong",
+        "description": "Explains @Module metadata, composition role, dependency visibility, feature boundaries, and how AppModule composes feature modules."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands modules as grouping units but misses provider visibility or root-module composition detail."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows that modules exist but treats them as folders or boilerplate without architectural meaning."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Cannot explain the role of modules in NestJS application structure."
+      }
     ],
     "followUps": [
-      { "trigger": "vague_answer", "question": "If you had Users, Orders, and Payments features, how would you split them into modules and why?", "purpose": "Force the candidate to apply module boundaries to a concrete application." },
-      { "trigger": "missing_context", "question": "What changes when OrdersService needs to use UsersService from another module?", "purpose": "Check whether module boundaries are connected to dependency visibility." },
-      { "trigger": "red_flag", "question": "Why is putting every controller and service into AppModule usually a poor long-term structure?", "purpose": "Probe maintainability and modular design judgment." }
+      {
+        "trigger": "vague_answer",
+        "question": "If you had Users, Orders, and Payments features, how would you split them into modules and why?",
+        "purpose": "Force the candidate to apply module boundaries to a concrete application."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "What changes when OrdersService needs to use UsersService from another module?",
+        "purpose": "Check whether module boundaries are connected to dependency visibility."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "Why is putting every controller and service into AppModule usually a poor long-term structure?",
+        "purpose": "Probe maintainability and modular design judgment."
+      }
     ],
     "localizedContent": {
       "en": {
@@ -50,7 +167,12 @@
           "Ignoring the dependency injection boundary.",
           "Putting everything in AppModule without a reason."
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth", "topic": "module" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth",
+          "topic": "module"
+        }
       },
       "vi": {
         "title": "Vai trò của Module trong NestJS",
@@ -66,7 +188,12 @@
           "Bỏ qua vai trò boundary của dependency injection.",
           "Đưa toàn bộ controller/service vào AppModule mà không có lý do."
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth", "topic": "module" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth",
+          "topic": "module"
+        }
       },
       "ja": {
         "title": "NestJS module の役割",
@@ -82,49 +209,175 @@
           "dependency injection の境界を無視する。",
           "理由なくすべてを AppModule に置く。"
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth", "topic": "module" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth",
+          "topic": "module"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "NestJS docs: Modules", "url": "https://docs.nestjs.com/modules", "note": "Used for @Module metadata, feature modules, shared modules, imports, exports, and module boundaries." }
+      {
+        "label": "NestJS docs: Modules",
+        "url": "https://docs.nestjs.com/modules",
+        "note": "Used for @Module metadata, feature modules, shared modules, imports, exports, and module boundaries."
+      }
     ],
     "status": "active"
   },
   {
     "code": "NESTJS_CORE_ARCH_MODULE_METADATA_002",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking"],
-    "techTags": ["nestjs", "nodejs", "typescript"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking"
+    ],
+    "techTags": [
+      "nestjs",
+      "nodejs",
+      "typescript"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Check whether the candidate can accurately distinguish imports, exports, providers, and controllers in @Module() and use them to reason about module wiring.",
     "primaryQuestion": "What is the difference between imports, exports, providers, and controllers in @Module()?",
     "expectedSignals": [
-      { "label": "Explains providers as injectable classes or provider definitions instantiated by Nest's injector within the module context.", "relatedTrigger": null },
-      { "label": "Explains controllers as route handlers registered in the module.", "relatedTrigger": null },
-      { "label": "Explains imports as modules whose exported providers are needed by this module.", "relatedTrigger": null },
-      { "label": "Explains exports as the subset of this module's providers or imported modules made available to importing modules.", "relatedTrigger": null },
-      { "label": "Clarifies that imports do not expose every provider from the imported module, only what that module exports.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Says imports are for importing TypeScript files rather than module dependencies.",
-      "Thinks exports expose controllers as routes to other modules.",
-      "Believes providers become available app-wide as soon as they are listed in any providers array.",
-      "Cannot explain why a service may be registered but still not injectable from another module."
+      {
+        "label": "Explains providers as injectable classes or provider definitions instantiated by Nest's injector within the module context.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "providers_injectable_definitions",
+            "description": "Defines providers as injectable classes or provider definitions"
+          },
+          {
+            "key": "instantiated_by_injector",
+            "description": "Explains that Nest's injector instantiates providers"
+          },
+          {
+            "key": "module_context_scope",
+            "description": "Mentions that providers are registered within a module context"
+          }
+        ]
+      },
+      {
+        "label": "Explains controllers as route handlers registered in the module.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "controllers_handle_routes",
+            "description": "Explains controllers as HTTP route-handling classes"
+          },
+          {
+            "key": "registered_in_controllers_array",
+            "description": "Mentions the module controllers array"
+          },
+          {
+            "key": "discovered_through_module",
+            "description": "Explains that module registration lets Nest discover controllers"
+          }
+        ]
+      },
+      {
+        "label": "Explains imports as modules whose exported providers are needed by this module.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "imports_other_modules",
+            "description": "Explains imports as other modules brought into the current module"
+          },
+          {
+            "key": "needs_exported_providers",
+            "description": "Mentions that imports are used when this module needs exported providers"
+          },
+          {
+            "key": "consumer_module_dependency",
+            "description": "Connects imports to dependency consumption across module boundaries"
+          }
+        ]
+      },
+      {
+        "label": "Explains exports as the subset of this module's providers or imported modules made available to importing modules.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "exports_public_subset",
+            "description": "Explains exports as the subset made public to importing modules"
+          },
+          {
+            "key": "exports_providers_or_modules",
+            "description": "Mentions exporting providers or imported modules"
+          },
+          {
+            "key": "available_to_importers",
+            "description": "States that exports are what importing modules can inject or re-use"
+          }
+        ]
+      },
+      {
+        "label": "Clarifies that imports do not expose every provider from the imported module, only what that module exports.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "imports_not_all_providers",
+            "description": "Clarifies that importing a module does not expose all of its providers"
+          },
+          {
+            "key": "only_exported_visible",
+            "description": "States that only exported providers or modules become visible"
+          },
+          {
+            "key": "avoid_redeclaring_owned_provider",
+            "description": "Explains that redeclaring a provider in the consumer can create ownership or instance problems"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Clearly differentiates all four @Module arrays and explains provider visibility through exports and imports with an example." },
-      { "scoreBand": "solid", "description": "Correctly explains most metadata fields but is slightly vague about exports or re-exports." },
-      { "scoreBand": "needs_work", "description": "Recognizes the names but confuses TypeScript imports with Nest module imports or providers with controllers." },
-      { "scoreBand": "insufficient_evidence", "description": "Cannot use @Module metadata to explain dependency injection or route registration." }
+      {
+        "scoreBand": "strong",
+        "description": "Clearly differentiates all four @Module arrays and explains provider visibility through exports and imports with an example."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Correctly explains most metadata fields but is slightly vague about exports or re-exports."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Recognizes the names but confuses TypeScript imports with Nest module imports or providers with controllers."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Cannot use @Module metadata to explain dependency injection or route registration."
+      }
     ],
     "followUps": [
-      { "trigger": "missing_context", "question": "If AuthModule imports UsersModule, what exactly must UsersModule export for AuthService to inject UsersService?", "purpose": "Verify understanding of exports as module public API." },
-      { "trigger": "vague_answer", "question": "Where would you put UsersController and UsersService in UsersModule metadata?", "purpose": "Make the answer concrete." },
-      { "trigger": "red_flag", "question": "Why does adding UsersService to AuthModule.providers create a different ownership problem?", "purpose": "Probe duplicate registration and module boundary discipline." }
+      {
+        "trigger": "missing_context",
+        "question": "If AuthModule imports UsersModule, what exactly must UsersModule export for AuthService to inject UsersService?",
+        "purpose": "Verify understanding of exports as module public API."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "Where would you put UsersController and UsersService in UsersModule metadata?",
+        "purpose": "Make the answer concrete."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "Why does adding UsersService to AuthModule.providers create a different ownership problem?",
+        "purpose": "Probe duplicate registration and module boundary discipline."
+      }
     ],
     "localizedContent": {
       "en": {
@@ -141,7 +394,12 @@
           "Assuming imports expose all providers from another module.",
           "Putting controllers in exports to share routes."
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth", "topic": "module_metadata" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth",
+          "topic": "module_metadata"
+        }
       },
       "vi": {
         "title": "Các trường metadata trong @Module",
@@ -157,7 +415,12 @@
           "Tưởng import một module là lấy được toàn bộ provider bên trong.",
           "Đưa controller vào exports để 'share route'."
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth", "topic": "module_metadata" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth",
+          "topic": "module_metadata"
+        }
       },
       "ja": {
         "title": "@Module metadata の各 field",
@@ -173,49 +436,176 @@
           "import すれば相手 module の全 provider が見えると思う。",
           "route を共有するために controller を exports に入れる。"
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth", "topic": "module_metadata" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth",
+          "topic": "module_metadata"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "NestJS docs: Modules", "url": "https://docs.nestjs.com/modules", "note": "Used for imports, exports, providers, controllers, and module encapsulation." }
+      {
+        "label": "NestJS docs: Modules",
+        "url": "https://docs.nestjs.com/modules",
+        "note": "Used for imports, exports, providers, controllers, and module encapsulation."
+      }
     ],
     "status": "active"
   },
   {
     "code": "NESTJS_CORE_ARCH_GLOBAL_MODULE_003",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "trade_off",
-    "competencies": ["technical_fundamentals", "trade_off_analysis", "system_thinking"],
-    "techTags": ["nestjs", "nodejs", "typescript"],
+    "competencies": [
+      "technical_fundamentals",
+      "trade_off_analysis",
+      "system_thinking"
+    ],
+    "techTags": [
+      "nestjs",
+      "nodejs",
+      "typescript"
+    ],
     "difficulty": 3,
     "conversationDepth": "mid",
     "intent": "Assess whether the candidate understands global modules, their appropriate use for stable cross-cutting providers, and the coupling risk of making dependencies globally visible.",
     "primaryQuestion": "What is a Global Module and when should you use it?",
     "expectedSignals": [
-      { "label": "Explains that @Global() makes a module's exported providers available without importing that module in every consumer.", "relatedTrigger": null },
-      { "label": "Mentions that a global module should still export the providers it wants to expose.", "relatedTrigger": null },
-      { "label": "Says global modules should usually be registered once, often in a root or core module.", "relatedTrigger": null },
-      { "label": "Gives appropriate examples such as configuration, logging, database connection, or shared infrastructure helpers.", "relatedTrigger": null },
-      { "label": "Warns against making feature modules global because it hides dependencies and increases coupling.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Suggests marking every shared module global to avoid imports.",
-      "Forgets that global visibility applies to exported providers, not all internal providers.",
-      "Uses global modules to bypass poor module boundaries or circular dependencies.",
-      "Cannot describe any downside of global modules."
+      {
+        "label": "Explains that @Global() makes a module's exported providers available without importing that module in every consumer.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "global_decorator_effect",
+            "description": "Explains that @Global() affects module provider visibility"
+          },
+          {
+            "key": "exported_providers_available",
+            "description": "Mentions exported providers become available to other modules"
+          },
+          {
+            "key": "without_import_every_consumer",
+            "description": "Explains consumers do not need to import the global module repeatedly"
+          }
+        ]
+      },
+      {
+        "label": "Mentions that a global module should still export the providers it wants to expose.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "global_still_needs_exports",
+            "description": "States that global modules still need exports"
+          },
+          {
+            "key": "exports_controls_exposure",
+            "description": "Explains exports control which providers are exposed"
+          },
+          {
+            "key": "not_every_provider_automatic",
+            "description": "Clarifies that @Global() does not make every internal provider public"
+          }
+        ]
+      },
+      {
+        "label": "Says global modules should usually be registered once, often in a root or core module.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "registered_once",
+            "description": "Says a global module should usually be registered once"
+          },
+          {
+            "key": "root_or_core_registration",
+            "description": "Mentions root or core module registration"
+          },
+          {
+            "key": "avoids_repeated_global_imports",
+            "description": "Explains that repeated global registration is usually unnecessary or confusing"
+          }
+        ]
+      },
+      {
+        "label": "Gives appropriate examples such as configuration, logging, database connection, or shared infrastructure helpers.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "config_logging_examples",
+            "description": "Gives configuration or logging as appropriate global module examples"
+          },
+          {
+            "key": "database_connection_example",
+            "description": "Gives database connection or shared infrastructure as an example"
+          },
+          {
+            "key": "stable_cross_cutting_provider",
+            "description": "Explains that global modules fit stable cross-cutting infrastructure providers"
+          }
+        ]
+      },
+      {
+        "label": "Warns against making feature modules global because it hides dependencies and increases coupling.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "feature_module_not_global",
+            "description": "Warns against making feature modules global"
+          },
+          {
+            "key": "hidden_dependencies",
+            "description": "Explains that global feature modules hide dependencies during review"
+          },
+          {
+            "key": "increased_coupling",
+            "description": "Explains that global visibility increases coupling and may mask circular-design problems"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Explains @Global(), exported provider visibility, one-time registration, good cross-cutting examples, and maintainability trade-offs." },
-      { "scoreBand": "solid", "description": "Understands global availability but only partially explains exports or coupling risks." },
-      { "scoreBand": "needs_work", "description": "Knows @Global by name but treats it mainly as a shortcut to avoid proper imports." },
-      { "scoreBand": "insufficient_evidence", "description": "Cannot explain when global modules are appropriate or risky." }
+      {
+        "scoreBand": "strong",
+        "description": "Explains @Global(), exported provider visibility, one-time registration, good cross-cutting examples, and maintainability trade-offs."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands global availability but only partially explains exports or coupling risks."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows @Global by name but treats it mainly as a shortcut to avoid proper imports."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Cannot explain when global modules are appropriate or risky."
+      }
     ],
     "followUps": [
-      { "trigger": "missing_tradeoff", "question": "What dependency visibility problem can a global module hide during code review?", "purpose": "Check maintainability and coupling awareness." },
-      { "trigger": "missing_context", "question": "Would you make UsersModule global? Why or why not?", "purpose": "Separate cross-cutting infrastructure from business feature modules." },
-      { "trigger": "red_flag", "question": "If making a module global fixes a circular dependency, what should you inspect instead?", "purpose": "Discourage using global modules as an architectural bandage." }
+      {
+        "trigger": "missing_tradeoff",
+        "question": "What dependency visibility problem can a global module hide during code review?",
+        "purpose": "Check maintainability and coupling awareness."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Would you make UsersModule global? Why or why not?",
+        "purpose": "Separate cross-cutting infrastructure from business feature modules."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "If making a module global fixes a circular dependency, what should you inspect instead?",
+        "purpose": "Discourage using global modules as an architectural bandage."
+      }
     ],
     "localizedContent": {
       "en": {
@@ -232,7 +622,12 @@
           "Assuming internal providers are exposed without exports.",
           "Using global modules to hide bad module boundaries."
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "trade_off", "topic": "global_module" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "trade_off",
+          "topic": "global_module"
+        }
       },
       "vi": {
         "title": "Global Module",
@@ -248,7 +643,12 @@
           "Tưởng provider nội bộ tự động được expose dù không export.",
           "Dùng global module để che module boundary kém."
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "trade_off", "topic": "global_module" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "trade_off",
+          "topic": "global_module"
+        }
       },
       "ja": {
         "title": "Global Module",
@@ -264,49 +664,177 @@
           "exports なしで内部 provider が公開されると思う。",
           "悪い module boundary を隠すために global module を使う。"
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "trade_off", "topic": "global_module" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "trade_off",
+          "topic": "global_module"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "NestJS docs: Global modules", "url": "https://docs.nestjs.com/modules", "note": "Used for @Global(), exported providers, one-time registration, and design warnings." }
+      {
+        "label": "NestJS docs: Global modules",
+        "url": "https://docs.nestjs.com/modules",
+        "note": "Used for @Global(), exported providers, one-time registration, and design warnings."
+      }
     ],
     "status": "active"
   },
   {
     "code": "NESTJS_CORE_ARCH_CONTROLLER_SERVICE_004",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "communication"],
-    "techTags": ["nestjs", "rest", "nodejs", "typescript"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "communication"
+    ],
+    "techTags": [
+      "nestjs",
+      "rest",
+      "nodejs",
+      "typescript"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Evaluate whether the candidate can separate HTTP/API orchestration in controllers from business logic and dependency orchestration in services.",
     "primaryQuestion": "What is the difference between a Controller and a Service?",
     "expectedSignals": [
-      { "label": "Explains controllers as classes responsible for handling incoming requests and returning responses.", "relatedTrigger": null },
-      { "label": "Explains services as injectable providers that contain business logic, data access orchestration, or reusable application operations.", "relatedTrigger": null },
-      { "label": "Mentions that controllers should delegate non-trivial work to services instead of embedding domain logic.", "relatedTrigger": null },
-      { "label": "Connects services to dependency injection and testability.", "relatedTrigger": null },
-      { "label": "Recognizes that services can be reused by multiple controllers or providers when exported/imported correctly.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Puts all validation, persistence, and business rules directly in the controller.",
-      "Says services are only database wrappers or repositories.",
-      "Cannot explain why services are easier to unit test than fat controllers.",
-      "Manually instantiates services inside controllers with new."
+      {
+        "label": "Explains controllers as classes responsible for handling incoming requests and returning responses.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "controllers_handle_requests",
+            "description": "Explains that controllers handle incoming HTTP/API requests"
+          },
+          {
+            "key": "controllers_return_responses",
+            "description": "Mentions returning responses or response DTOs"
+          },
+          {
+            "key": "controller_api_boundary",
+            "description": "Frames controllers as the API orchestration boundary"
+          }
+        ]
+      },
+      {
+        "label": "Explains services as injectable providers that contain business logic, data access orchestration, or reusable application operations.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "services_are_injectable_providers",
+            "description": "Explains services as injectable providers"
+          },
+          {
+            "key": "services_hold_business_logic",
+            "description": "Mentions business logic or application operations"
+          },
+          {
+            "key": "services_orchestrate_data_access",
+            "description": "Mentions data access orchestration or reusable operations"
+          }
+        ]
+      },
+      {
+        "label": "Mentions that controllers should delegate non-trivial work to services instead of embedding domain logic.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "controllers_delegate_work",
+            "description": "Explains that controllers should delegate non-trivial work to services"
+          },
+          {
+            "key": "avoid_domain_logic_in_controller",
+            "description": "Warns against embedding domain logic directly in controllers"
+          },
+          {
+            "key": "fat_controller_coupling",
+            "description": "Explains that controllers talking to many repositories or APIs become coupled and hard to test"
+          }
+        ]
+      },
+      {
+        "label": "Connects services to dependency injection and testability.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "services_injected",
+            "description": "Connects services to constructor injection"
+          },
+          {
+            "key": "mockable_dependencies",
+            "description": "Mentions mocking service dependencies in tests"
+          },
+          {
+            "key": "unit_testable_logic",
+            "description": "Explains that service-contained logic is easier to unit test"
+          }
+        ]
+      },
+      {
+        "label": "Recognizes that services can be reused by multiple controllers or providers when exported/imported correctly.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "services_reused",
+            "description": "Recognizes that services can be reused by multiple controllers or providers"
+          },
+          {
+            "key": "requires_correct_exports",
+            "description": "Mentions exports from the owning module"
+          },
+          {
+            "key": "requires_correct_imports",
+            "description": "Mentions imports by consuming modules"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Clearly separates request/response orchestration from business logic and ties service injection to reuse and testing." },
-      { "scoreBand": "solid", "description": "Understands controller-service separation but misses testability or reuse detail." },
-      { "scoreBand": "needs_work", "description": "Has a rough idea but still places significant business logic inside controllers." },
-      { "scoreBand": "insufficient_evidence", "description": "Cannot distinguish controller responsibilities from service responsibilities." }
+      {
+        "scoreBand": "strong",
+        "description": "Clearly separates request/response orchestration from business logic and ties service injection to reuse and testing."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands controller-service separation but misses testability or reuse detail."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Has a rough idea but still places significant business logic inside controllers."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Cannot distinguish controller responsibilities from service responsibilities."
+      }
     ],
     "followUps": [
-      { "trigger": "vague_answer", "question": "For POST /users, what code belongs in UsersController and what belongs in UsersService?", "purpose": "Force responsibility split with a concrete endpoint." },
-      { "trigger": "missing_context", "question": "Why does moving business logic into a service improve testing?", "purpose": "Probe testability and dependency injection understanding." },
-      { "trigger": "red_flag", "question": "What goes wrong when a controller directly talks to multiple repositories and external APIs?", "purpose": "Check awareness of fat-controller coupling." }
+      {
+        "trigger": "vague_answer",
+        "question": "For POST /users, what code belongs in UsersController and what belongs in UsersService?",
+        "purpose": "Force responsibility split with a concrete endpoint."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Why does moving business logic into a service improve testing?",
+        "purpose": "Probe testability and dependency injection understanding."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "What goes wrong when a controller directly talks to multiple repositories and external APIs?",
+        "purpose": "Check awareness of fat-controller coupling."
+      }
     ],
     "localizedContent": {
       "en": {
@@ -323,7 +851,12 @@
           "Treating services only as database access classes.",
           "Using new instead of dependency injection."
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth", "topic": "controller_service" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth",
+          "topic": "controller_service"
+        }
       },
       "vi": {
         "title": "Controller và Service",
@@ -339,7 +872,12 @@
           "Xem service chỉ là lớp truy cập database.",
           "Dùng new thay vì dependency injection."
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth", "topic": "controller_service" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth",
+          "topic": "controller_service"
+        }
       },
       "ja": {
         "title": "Controller と Service",
@@ -355,50 +893,181 @@
           "service を database access class としてだけ扱う。",
           "dependency injection ではなく new を使う。"
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth", "topic": "controller_service" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth",
+          "topic": "controller_service"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "NestJS docs: Controllers", "url": "https://docs.nestjs.com/controllers", "note": "Used for controller request/response responsibility and route metadata." },
-      { "label": "NestJS docs: Providers", "url": "https://docs.nestjs.com/components", "note": "Used for provider/service registration and dependency injection." }
+      {
+        "label": "NestJS docs: Controllers",
+        "url": "https://docs.nestjs.com/controllers",
+        "note": "Used for controller request/response responsibility and route metadata."
+      },
+      {
+        "label": "NestJS docs: Providers",
+        "url": "https://docs.nestjs.com/components",
+        "note": "Used for provider/service registration and dependency injection."
+      }
     ],
     "status": "active"
   },
   {
     "code": "NESTJS_CORE_ARCH_ROUTE_PREFIX_005",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "communication"],
-    "techTags": ["nestjs", "rest", "nodejs", "typescript"],
+    "competencies": [
+      "technical_fundamentals",
+      "communication"
+    ],
+    "techTags": [
+      "nestjs",
+      "rest",
+      "nodejs",
+      "typescript"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Verify whether the candidate understands how @Controller('users') creates a route prefix and combines with method decorators such as @Get(), @Post(), and @Get(':id').",
     "primaryQuestion": "How does @Controller('users') define route prefixes?",
     "expectedSignals": [
-      { "label": "Explains that @Controller('users') sets a controller-level path prefix.", "relatedTrigger": null },
-      { "label": "Shows that @Get() inside the controller maps to GET /users.", "relatedTrigger": null },
-      { "label": "Shows that @Get(':id') maps to GET /users/:id.", "relatedTrigger": null },
-      { "label": "Mentions that method decorators add route-specific HTTP method and path metadata.", "relatedTrigger": null },
-      { "label": "Optionally notes that a global prefix such as /api would be prepended if configured during bootstrap.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Thinks @Controller('users') only names the class or module.",
-      "Cannot combine controller-level prefix with method-level paths.",
-      "Confuses @Controller('users') with route parameter extraction.",
-      "Assumes the prefix registers routes even if the controller is not part of any module."
+      {
+        "label": "Explains that @Controller('users') sets a controller-level path prefix.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "controller_sets_prefix",
+            "description": "Explains that @Controller('users') sets a controller-level path prefix"
+          },
+          {
+            "key": "prefix_users",
+            "description": "Identifies users as the prefix segment"
+          },
+          {
+            "key": "prefix_combines_with_methods",
+            "description": "Explains that method routes are combined with the controller prefix"
+          }
+        ]
+      },
+      {
+        "label": "Shows that @Get() inside the controller maps to GET /users.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "get_empty_path",
+            "description": "Recognizes @Get() with no path inside UsersController"
+          },
+          {
+            "key": "maps_get_users",
+            "description": "Maps it to GET /users"
+          },
+          {
+            "key": "method_decorator_supplies_http_method",
+            "description": "Connects @Get() to the HTTP GET method"
+          }
+        ]
+      },
+      {
+        "label": "Shows that @Get(':id') maps to GET /users/:id.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "get_id_path",
+            "description": "Recognizes @Get(':id') as a route with a path parameter"
+          },
+          {
+            "key": "maps_get_users_id",
+            "description": "Maps it to GET /users/:id"
+          },
+          {
+            "key": "id_is_route_param",
+            "description": "Explains that :id is a route parameter"
+          }
+        ]
+      },
+      {
+        "label": "Mentions that method decorators add route-specific HTTP method and path metadata.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "method_route_metadata",
+            "description": "Mentions method decorators add route-specific metadata"
+          },
+          {
+            "key": "http_method_metadata",
+            "description": "Mentions HTTP method metadata such as GET or POST"
+          },
+          {
+            "key": "method_path_metadata",
+            "description": "Mentions method-level path metadata"
+          }
+        ]
+      },
+      {
+        "label": "Optionally notes that a global prefix such as /api would be prepended if configured during bootstrap.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "global_prefix_bootstrap",
+            "description": "Mentions app.setGlobalPrefix or bootstrap global prefix configuration"
+          },
+          {
+            "key": "api_prefix_prepended",
+            "description": "Explains that a prefix such as /api is prepended to controller routes"
+          },
+          {
+            "key": "full_path_with_global_prefix",
+            "description": "Can derive the full path, such as /api/users/:id"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Correctly maps controller prefix plus method decorators to full routes and mentions module registration when relevant." },
-      { "scoreBand": "solid", "description": "Understands prefix composition but misses global prefix or module registration nuance." },
-      { "scoreBand": "needs_work", "description": "Can state that it is a prefix but cannot produce exact routes." },
-      { "scoreBand": "insufficient_evidence", "description": "Does not understand NestJS routing metadata." }
+      {
+        "scoreBand": "strong",
+        "description": "Correctly maps controller prefix plus method decorators to full routes and mentions module registration when relevant."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands prefix composition but misses global prefix or module registration nuance."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can state that it is a prefix but cannot produce exact routes."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Does not understand NestJS routing metadata."
+      }
     ],
     "followUps": [
-      { "trigger": "vague_answer", "question": "What URLs are produced by @Controller('users') with @Get(), @Post(), and @Get(':id')?", "purpose": "Check exact route composition." },
-      { "trigger": "missing_context", "question": "What else must happen before Nest actually mounts that controller's routes?", "purpose": "Connect route metadata to module registration." },
-      { "trigger": "red_flag", "question": "If app.setGlobalPrefix('api') is configured, what is the full path for @Get(':id')?", "purpose": "Check layered route prefix reasoning." }
+      {
+        "trigger": "vague_answer",
+        "question": "What URLs are produced by @Controller('users') with @Get(), @Post(), and @Get(':id')?",
+        "purpose": "Check exact route composition."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "What else must happen before Nest actually mounts that controller's routes?",
+        "purpose": "Connect route metadata to module registration."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "If app.setGlobalPrefix('api') is configured, what is the full path for @Get(':id')?",
+        "purpose": "Check layered route prefix reasoning."
+      }
     ],
     "localizedContent": {
       "en": {
@@ -415,7 +1084,12 @@
           "Forgetting method decorators add HTTP method and path.",
           "Ignoring that the controller must be registered in a module."
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth", "topic": "routing" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth",
+          "topic": "routing"
+        }
       },
       "vi": {
         "title": "Route prefix của Controller",
@@ -431,7 +1105,12 @@
           "Quên method decorator thêm HTTP method và path.",
           "Bỏ qua việc controller phải được đăng ký trong module."
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth", "topic": "routing" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth",
+          "topic": "routing"
+        }
       },
       "ja": {
         "title": "Controller の route prefix",
@@ -447,50 +1126,180 @@
           "method decorator が HTTP method と path を追加することを忘れる。",
           "controller が module に登録される必要を無視する。"
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth", "topic": "routing" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth",
+          "topic": "routing"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "NestJS docs: Controllers", "url": "https://docs.nestjs.com/controllers", "note": "Used for @Controller route prefix and method route decorators." },
-      { "label": "NestJS docs: Global prefix FAQ", "url": "https://docs.nestjs.com/faq/global-prefix", "note": "Used for optional global prefix context." }
+      {
+        "label": "NestJS docs: Controllers",
+        "url": "https://docs.nestjs.com/controllers",
+        "note": "Used for @Controller route prefix and method route decorators."
+      },
+      {
+        "label": "NestJS docs: Global prefix FAQ",
+        "url": "https://docs.nestjs.com/faq/global-prefix",
+        "note": "Used for optional global prefix context."
+      }
     ],
     "status": "active"
   },
   {
     "code": "NESTJS_CORE_ARCH_PROVIDER_006",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking"],
-    "techTags": ["nestjs", "nodejs", "typescript"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking"
+    ],
+    "techTags": [
+      "nestjs",
+      "nodejs",
+      "typescript"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Check whether the candidate understands providers as injectable dependencies managed by Nest's inversion-of-control container, not just services by another name.",
     "primaryQuestion": "What is a Provider in NestJS?",
     "expectedSignals": [
-      { "label": "Defines a provider as a class or provider definition that Nest can instantiate and inject.", "relatedTrigger": null },
-      { "label": "Mentions common provider examples such as services, repositories, factories, guards, or custom clients.", "relatedTrigger": null },
-      { "label": "Explains that providers are registered in a module's providers array or exposed through imported modules.", "relatedTrigger": null },
-      { "label": "Connects @Injectable() and constructor injection to Nest's dependency injection system.", "relatedTrigger": null },
-      { "label": "Recognizes custom provider forms such as useValue, useClass, useFactory, or injection tokens as a deeper example.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Equates provider only with service and cannot discuss other provider types.",
-      "Thinks @Injectable() alone makes a class available everywhere without module registration.",
-      "Manually constructs dependencies instead of letting Nest inject them.",
-      "Cannot explain why provider registration is needed."
+      {
+        "label": "Defines a provider as a class or provider definition that Nest can instantiate and inject.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "provider_class_or_definition",
+            "description": "Defines a provider as a class or provider definition"
+          },
+          {
+            "key": "nest_instantiates_provider",
+            "description": "Explains that Nest can instantiate the provider"
+          },
+          {
+            "key": "provider_can_be_injected",
+            "description": "Explains that providers can be injected into other classes"
+          }
+        ]
+      },
+      {
+        "label": "Mentions common provider examples such as services, repositories, factories, guards, or custom clients.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "services_repositories_examples",
+            "description": "Mentions services or repositories as provider examples"
+          },
+          {
+            "key": "factories_guards_examples",
+            "description": "Mentions factories or guards as provider examples"
+          },
+          {
+            "key": "custom_client_or_config_examples",
+            "description": "Mentions custom clients, config objects, or external SDK wrappers as providers"
+          }
+        ]
+      },
+      {
+        "label": "Explains that providers are registered in a module's providers array or exposed through imported modules.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "registered_in_providers_array",
+            "description": "Explains that local providers are registered in a module's providers array"
+          },
+          {
+            "key": "exposed_by_imported_modules",
+            "description": "Explains that providers can also be made available through imported modules"
+          },
+          {
+            "key": "module_registration_required",
+            "description": "Clarifies that declaring a class alone is not enough for injection"
+          }
+        ]
+      },
+      {
+        "label": "Connects @Injectable() and constructor injection to Nest's dependency injection system.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "injectable_marks_class",
+            "description": "Connects @Injectable() to DI metadata and provider classes"
+          },
+          {
+            "key": "constructor_injection",
+            "description": "Mentions constructor injection as the normal way to consume providers"
+          },
+          {
+            "key": "avoid_manual_new",
+            "description": "Explains that manually calling new UsersService() bypasses DI lifecycle and dependencies"
+          }
+        ]
+      },
+      {
+        "label": "Recognizes custom provider forms such as useValue, useClass, useFactory, or injection tokens as a deeper example.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "mentions_usevalue_useclass",
+            "description": "Mentions useValue or useClass provider forms"
+          },
+          {
+            "key": "mentions_usefactory",
+            "description": "Mentions useFactory for provider creation"
+          },
+          {
+            "key": "mentions_injection_tokens",
+            "description": "Mentions injection tokens for non-class or custom providers"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Explains provider registration, injection, @Injectable(), DI container ownership, and at least one custom provider pattern." },
-      { "scoreBand": "solid", "description": "Understands services as providers and constructor injection but misses custom providers or module visibility." },
-      { "scoreBand": "needs_work", "description": "Knows providers by name but cannot explain registration or injection mechanics." },
-      { "scoreBand": "insufficient_evidence", "description": "Cannot describe providers as injectable dependencies managed by Nest." }
+      {
+        "scoreBand": "strong",
+        "description": "Explains provider registration, injection, @Injectable(), DI container ownership, and at least one custom provider pattern."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands services as providers and constructor injection but misses custom providers or module visibility."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows providers by name but cannot explain registration or injection mechanics."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Cannot describe providers as injectable dependencies managed by Nest."
+      }
     ],
     "followUps": [
-      { "trigger": "missing_context", "question": "What is the difference between adding @Injectable() to a class and adding that class to a module's providers array?", "purpose": "Check decorator versus registration understanding." },
-      { "trigger": "vague_answer", "question": "Can a database client or config object be a provider? How would you register it?", "purpose": "Probe broader provider concept beyond services." },
-      { "trigger": "red_flag", "question": "What breaks if a controller calls new UsersService() directly?", "purpose": "Check DI lifecycle and dependency graph awareness." }
+      {
+        "trigger": "missing_context",
+        "question": "What is the difference between adding @Injectable() to a class and adding that class to a module's providers array?",
+        "purpose": "Check decorator versus registration understanding."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "Can a database client or config object be a provider? How would you register it?",
+        "purpose": "Probe broader provider concept beyond services."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "What breaks if a controller calls new UsersService() directly?",
+        "purpose": "Check DI lifecycle and dependency graph awareness."
+      }
     ],
     "localizedContent": {
       "en": {
@@ -507,7 +1316,12 @@
           "Thinking @Injectable() is enough without module registration.",
           "Bypassing DI with manual instantiation."
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth", "topic": "provider" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth",
+          "topic": "provider"
+        }
       },
       "vi": {
         "title": "Provider trong NestJS",
@@ -523,7 +1337,12 @@
           "Tưởng @Injectable() là đủ dù chưa đăng ký trong module.",
           "Bỏ qua DI bằng cách tự new instance."
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth", "topic": "provider" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth",
+          "topic": "provider"
+        }
       },
       "ja": {
         "title": "NestJS provider",
@@ -539,50 +1358,181 @@
           "@Injectable() だけで module registration が不要だと思う。",
           "手動で new して DI を迂回する。"
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth", "topic": "provider" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth",
+          "topic": "provider"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "NestJS docs: Providers", "url": "https://docs.nestjs.com/components", "note": "Used for provider registration, @Injectable(), and constructor-based injection." },
-      { "label": "NestJS docs: Custom providers", "url": "https://docs.nestjs.com/fundamentals/custom-providers", "note": "Used for provider tokens and custom provider patterns." }
+      {
+        "label": "NestJS docs: Providers",
+        "url": "https://docs.nestjs.com/components",
+        "note": "Used for provider registration, @Injectable(), and constructor-based injection."
+      },
+      {
+        "label": "NestJS docs: Custom providers",
+        "url": "https://docs.nestjs.com/fundamentals/custom-providers",
+        "note": "Used for provider tokens and custom provider patterns."
+      }
     ],
     "status": "active"
   },
   {
     "code": "NESTJS_CORE_ARCH_SHARE_SERVICE_007",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "problem_solving"],
-    "techTags": ["nestjs", "nodejs", "typescript"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "problem_solving"
+    ],
+    "techTags": [
+      "nestjs",
+      "nodejs",
+      "typescript"
+    ],
     "difficulty": 2,
     "conversationDepth": "mid",
     "intent": "Evaluate whether the candidate can correctly share a service across modules by exporting it from the owning module and importing that module in consumers.",
     "primaryQuestion": "How do you share a Service across multiple Modules?",
     "expectedSignals": [
-      { "label": "Identifies the module that owns the service and registers it in that module's providers array.", "relatedTrigger": null },
-      { "label": "Exports the service from the owning module's exports array.", "relatedTrigger": null },
-      { "label": "Imports the owning module into each consuming module that needs the service.", "relatedTrigger": null },
-      { "label": "Explains that importing modules share the same singleton provider instance by default.", "relatedTrigger": null },
-      { "label": "Avoids duplicating the service in multiple modules' providers arrays unless intentionally creating separate provider contexts.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Adds the same service to providers arrays in every consuming module.",
-      "Imports the service class directly in TypeScript and assumes Nest DI will resolve it.",
-      "Makes the service global without considering whether explicit imports are clearer.",
-      "Cannot explain why the service must be exported by its owning module."
+      {
+        "label": "Identifies the module that owns the service and registers it in that module's providers array.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "identifies_owning_module",
+            "description": "Identifies the module that owns the service"
+          },
+          {
+            "key": "registers_in_owning_providers",
+            "description": "Registers the service in the owning module's providers array"
+          },
+          {
+            "key": "keeps_provider_ownership_clear",
+            "description": "Explains that ownership should stay clear instead of being duplicated casually"
+          }
+        ]
+      },
+      {
+        "label": "Exports the service from the owning module's exports array.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "exports_service",
+            "description": "Exports the service from the owning module"
+          },
+          {
+            "key": "exports_array",
+            "description": "Mentions the module exports array"
+          },
+          {
+            "key": "public_api_for_consumers",
+            "description": "Explains that exports make the service part of the module's public API"
+          }
+        ]
+      },
+      {
+        "label": "Imports the owning module into each consuming module that needs the service.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "consumer_imports_owner",
+            "description": "Explains that each consuming module imports the owning module"
+          },
+          {
+            "key": "not_import_service_file_only",
+            "description": "Distinguishes Nest module imports from TypeScript file imports"
+          },
+          {
+            "key": "auth_users_example",
+            "description": "Can apply the pattern to AuthModule needing UsersService from UsersModule"
+          }
+        ]
+      },
+      {
+        "label": "Explains that importing modules share the same singleton provider instance by default.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "singleton_by_default",
+            "description": "Explains providers are singleton-scoped by default"
+          },
+          {
+            "key": "shared_instance_through_import",
+            "description": "Explains importing the owning module shares the same provider instance"
+          },
+          {
+            "key": "scope_unless_overridden",
+            "description": "Notes this default can change only when provider scope or registration is intentionally changed"
+          }
+        ]
+      },
+      {
+        "label": "Avoids duplicating the service in multiple modules' providers arrays unless intentionally creating separate provider contexts.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "avoid_duplicate_provider_registration",
+            "description": "Avoids putting the same service in multiple modules' providers arrays by default"
+          },
+          {
+            "key": "duplicate_instances_risk",
+            "description": "Explains duplicate registration can create separate instances or confused ownership"
+          },
+          {
+            "key": "separate_context_only_intentional",
+            "description": "Mentions separate provider contexts should be intentional"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Uses owner-module provider registration, exports, consumer imports, singleton semantics, and avoids duplicate ownership." },
-      { "scoreBand": "solid", "description": "Knows export/import pattern but misses singleton or duplicate-provider nuance." },
-      { "scoreBand": "needs_work", "description": "Can make it work by copying providers but does not understand module ownership." },
-      { "scoreBand": "insufficient_evidence", "description": "Cannot describe the standard NestJS service sharing pattern." }
+      {
+        "scoreBand": "strong",
+        "description": "Uses owner-module provider registration, exports, consumer imports, singleton semantics, and avoids duplicate ownership."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows export/import pattern but misses singleton or duplicate-provider nuance."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can make it work by copying providers but does not understand module ownership."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Cannot describe the standard NestJS service sharing pattern."
+      }
     ],
     "followUps": [
-      { "trigger": "missing_context", "question": "UsersService is declared in UsersModule and AuthService needs it. What exact metadata changes are required?", "purpose": "Test practical module wiring." },
-      { "trigger": "red_flag", "question": "What is the risk of putting UsersService in both UsersModule.providers and AuthModule.providers?", "purpose": "Probe duplicate provider instances and ownership confusion." },
-      { "trigger": "missing_tradeoff", "question": "When would you choose a global module instead of explicit imports?", "purpose": "Check judgment around shared infrastructure versus feature services." }
+      {
+        "trigger": "missing_context",
+        "question": "UsersService is declared in UsersModule and AuthService needs it. What exact metadata changes are required?",
+        "purpose": "Test practical module wiring."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "What is the risk of putting UsersService in both UsersModule.providers and AuthModule.providers?",
+        "purpose": "Probe duplicate provider instances and ownership confusion."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "When would you choose a global module instead of explicit imports?",
+        "purpose": "Check judgment around shared infrastructure versus feature services."
+      }
     ],
     "localizedContent": {
       "en": {
@@ -599,7 +1549,12 @@
           "Confusing TypeScript import with Nest module import.",
           "Making the service global by default."
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth", "topic": "service_sharing" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth",
+          "topic": "service_sharing"
+        }
       },
       "vi": {
         "title": "Share Service giữa nhiều Module",
@@ -615,7 +1570,12 @@
           "Nhầm TypeScript import với Nest module import.",
           "Mặc định biến service thành global."
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth", "topic": "service_sharing" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth",
+          "topic": "service_sharing"
+        }
       },
       "ja": {
         "title": "module 間で Service を共有する",
@@ -631,49 +1591,175 @@
           "TypeScript import と Nest module import を混同する。",
           "デフォルトで service を global にする。"
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth", "topic": "service_sharing" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth",
+          "topic": "service_sharing"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "NestJS docs: Shared modules", "url": "https://docs.nestjs.com/modules", "note": "Used for exporting a service from one module and importing that module in consumers." }
+      {
+        "label": "NestJS docs: Shared modules",
+        "url": "https://docs.nestjs.com/modules",
+        "note": "Used for exporting a service from one module and importing that module in consumers."
+      }
     ],
     "status": "active"
   },
   {
     "code": "NESTJS_CORE_ARCH_MISSING_PROVIDER_008",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "debugging",
-    "competencies": ["technical_fundamentals", "problem_solving"],
-    "techTags": ["nestjs", "nodejs", "typescript"],
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving"
+    ],
+    "techTags": [
+      "nestjs",
+      "nodejs",
+      "typescript"
+    ],
     "difficulty": 2,
     "conversationDepth": "mid",
     "intent": "Assess whether the candidate can diagnose the common NestJS dependency resolution failure caused by missing provider registration or missing module exports/imports.",
     "primaryQuestion": "What happens if you forget to add a Service to the providers array?",
     "expectedSignals": [
-      { "label": "Explains that Nest may fail to resolve the dependency at application startup or testing module compilation.", "relatedTrigger": null },
-      { "label": "Mentions common error wording such as Nest can't resolve dependencies of X or provider not available in the current context.", "relatedTrigger": null },
-      { "label": "Distinguishes missing local provider registration from missing export/import across modules.", "relatedTrigger": null },
-      { "label": "States that @Injectable() alone does not register the provider with a module.", "relatedTrigger": null },
-      { "label": "Uses the constructor parameter index or injection token in the error message to locate the missing dependency.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Says the service will just be undefined and fail later in business logic.",
-      "Fixes the problem by randomly adding the service to many modules.",
-      "Ignores module exports/imports and only checks TypeScript imports.",
-      "Cannot use the Nest error message to identify the unresolved dependency."
+      {
+        "label": "Explains that Nest may fail to resolve the dependency at application startup or testing module compilation.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "startup_dependency_resolution_failure",
+            "description": "Explains that Nest may fail during application startup"
+          },
+          {
+            "key": "testing_module_compile_failure",
+            "description": "Mentions testing module compilation can also fail"
+          },
+          {
+            "key": "dependency_unavailable",
+            "description": "Connects the failure to a dependency not being available in the module context"
+          }
+        ]
+      },
+      {
+        "label": "Mentions common error wording such as Nest can't resolve dependencies of X or provider not available in the current context.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "cant_resolve_dependencies",
+            "description": "Mentions the common \"Nest can't resolve dependencies\" wording"
+          },
+          {
+            "key": "provider_not_available_context",
+            "description": "Mentions provider not available in the current context"
+          },
+          {
+            "key": "identifies_error_as_di",
+            "description": "Identifies the error as a dependency-injection/module wiring issue"
+          }
+        ]
+      },
+      {
+        "label": "Distinguishes missing local provider registration from missing export/import across modules.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "missing_local_provider",
+            "description": "Distinguishes a provider missing from the local module providers array"
+          },
+          {
+            "key": "missing_export_import",
+            "description": "Distinguishes a provider missing because an owning module was not exported or imported"
+          },
+          {
+            "key": "fix_depends_on_ownership",
+            "description": "Explains that the fix depends on which module owns the provider"
+          }
+        ]
+      },
+      {
+        "label": "States that @Injectable() alone does not register the provider with a module.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "injectable_not_registration",
+            "description": "States that @Injectable() alone does not register a provider"
+          },
+          {
+            "key": "must_be_in_providers_or_imported",
+            "description": "Explains the provider must be registered in providers or made available through imports"
+          },
+          {
+            "key": "decorator_vs_module_metadata",
+            "description": "Distinguishes class decorator metadata from module registration metadata"
+          }
+        ]
+      },
+      {
+        "label": "Uses the constructor parameter index or injection token in the error message to locate the missing dependency.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "uses_constructor_index",
+            "description": "Uses the constructor parameter index in the error to locate the missing dependency"
+          },
+          {
+            "key": "uses_injection_token",
+            "description": "Uses the injection token in the error message when present"
+          },
+          {
+            "key": "avoids_wrong_consumer_registration",
+            "description": "Avoids blindly adding the same provider to the consumer module when ownership/export is the real issue"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Explains DI resolution failure, startup/test compile timing, @Injectable versus registration, and systematic debugging of module context." },
-      { "scoreBand": "solid", "description": "Knows a DI error occurs but misses cross-module export/import or error-index detail." },
-      { "scoreBand": "needs_work", "description": "Can patch by trial and error but cannot reason from the module context." },
-      { "scoreBand": "insufficient_evidence", "description": "Does not understand provider registration failure behavior." }
+      {
+        "scoreBand": "strong",
+        "description": "Explains DI resolution failure, startup/test compile timing, @Injectable versus registration, and systematic debugging of module context."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows a DI error occurs but misses cross-module export/import or error-index detail."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can patch by trial and error but cannot reason from the module context."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Does not understand provider registration failure behavior."
+      }
     ],
     "followUps": [
-      { "trigger": "missing_context", "question": "Nest says it cannot resolve dependencies of OrdersService at index [1]. What do you inspect first?", "purpose": "Check systematic error-message based debugging." },
-      { "trigger": "vague_answer", "question": "How is the fix different if the missing dependency belongs to another module?", "purpose": "Distinguish providers from exports/imports." },
-      { "trigger": "red_flag", "question": "Why is adding the same provider to the consuming module not always the right fix?", "purpose": "Probe ownership and duplicate instance risks." }
+      {
+        "trigger": "missing_context",
+        "question": "Nest says it cannot resolve dependencies of OrdersService at index [1]. What do you inspect first?",
+        "purpose": "Check systematic error-message based debugging."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "How is the fix different if the missing dependency belongs to another module?",
+        "purpose": "Distinguish providers from exports/imports."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "Why is adding the same provider to the consuming module not always the right fix?",
+        "purpose": "Probe ownership and duplicate instance risks."
+      }
     ],
     "localizedContent": {
       "en": {
@@ -690,7 +1776,12 @@
           "Adding providers randomly to many modules.",
           "Only checking TypeScript imports."
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "debugging", "topic": "dependency_injection" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "debugging",
+          "topic": "dependency_injection"
+        }
       },
       "vi": {
         "title": "Thiếu provider registration",
@@ -706,7 +1797,12 @@
           "Thêm provider bừa vào nhiều module.",
           "Chỉ kiểm tra TypeScript import."
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "debugging", "topic": "dependency_injection" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "debugging",
+          "topic": "dependency_injection"
+        }
       },
       "ja": {
         "title": "provider registration の不足",
@@ -722,50 +1818,180 @@
           "多くの module に provider をランダムに追加する。",
           "TypeScript import だけを確認する。"
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "debugging", "topic": "dependency_injection" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "debugging",
+          "topic": "dependency_injection"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "NestJS docs: Providers", "url": "https://docs.nestjs.com/components", "note": "Used for provider registration and dependency resolution." },
-      { "label": "NestJS docs: Modules", "url": "https://docs.nestjs.com/modules", "note": "Used for module-scoped provider visibility." }
+      {
+        "label": "NestJS docs: Providers",
+        "url": "https://docs.nestjs.com/components",
+        "note": "Used for provider registration and dependency resolution."
+      },
+      {
+        "label": "NestJS docs: Modules",
+        "url": "https://docs.nestjs.com/modules",
+        "note": "Used for module-scoped provider visibility."
+      }
     ],
     "status": "active"
   },
   {
     "code": "NESTJS_CORE_ARCH_APP_MODULE_009",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking"],
-    "techTags": ["nestjs", "nodejs", "typescript"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking"
+    ],
+    "techTags": [
+      "nestjs",
+      "nodejs",
+      "typescript"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Check whether the candidate understands AppModule as the root module passed to NestFactory and the composition point for application modules.",
     "primaryQuestion": "What is AppModule and why must every NestJS app have one?",
     "expectedSignals": [
-      { "label": "Defines AppModule as the root module of the Nest application.", "relatedTrigger": null },
-      { "label": "Explains that main.ts bootstraps the application with NestFactory.create(AppModule).", "relatedTrigger": null },
-      { "label": "Says AppModule composes feature modules through imports and may configure application-wide infrastructure.", "relatedTrigger": null },
-      { "label": "Clarifies that controllers and providers can live in feature modules imported by AppModule, not necessarily directly inside AppModule.", "relatedTrigger": null },
-      { "label": "Recognizes that Nest needs a root module to build the module graph and dependency injection container.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Thinks AppModule is just a default generated file that can be deleted without replacement.",
-      "Puts all controllers and services directly in AppModule because it is the root.",
-      "Cannot connect AppModule to NestFactory bootstrap.",
-      "Confuses AppModule with main.ts or an HTTP controller."
+      {
+        "label": "Defines AppModule as the root module of the Nest application.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "appmodule_root_module",
+            "description": "Defines AppModule as the root module"
+          },
+          {
+            "key": "root_of_nest_app",
+            "description": "Connects AppModule to the Nest application root"
+          },
+          {
+            "key": "not_feature_dumping_ground",
+            "description": "Clarifies that root module status does not mean every feature belongs directly there"
+          }
+        ]
+      },
+      {
+        "label": "Explains that main.ts bootstraps the application with NestFactory.create(AppModule).",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "main_bootstraps_app",
+            "description": "Explains that main.ts bootstraps the Nest app"
+          },
+          {
+            "key": "nestfactory_create_appmodule",
+            "description": "Mentions NestFactory.create(AppModule)"
+          },
+          {
+            "key": "bootstrap_needs_root_module",
+            "description": "Explains that bootstrap needs the root module to start building the app"
+          }
+        ]
+      },
+      {
+        "label": "Says AppModule composes feature modules through imports and may configure application-wide infrastructure.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "appmodule_imports_features",
+            "description": "Mentions AppModule importing feature modules"
+          },
+          {
+            "key": "composes_application",
+            "description": "Explains that AppModule composes the application from modules"
+          },
+          {
+            "key": "app_wide_infrastructure",
+            "description": "Mentions application-wide infrastructure configuration when appropriate"
+          }
+        ]
+      },
+      {
+        "label": "Clarifies that controllers and providers can live in feature modules imported by AppModule, not necessarily directly inside AppModule.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "controllers_in_feature_modules",
+            "description": "Explains controllers can live in feature modules"
+          },
+          {
+            "key": "providers_in_feature_modules",
+            "description": "Explains providers can live in feature modules"
+          },
+          {
+            "key": "avoid_everything_in_appmodule",
+            "description": "Explains why putting every feature service directly in AppModule hurts modularity"
+          }
+        ]
+      },
+      {
+        "label": "Recognizes that Nest needs a root module to build the module graph and dependency injection container.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "root_builds_module_graph",
+            "description": "Explains that Nest uses the root module to build the module graph"
+          },
+          {
+            "key": "root_builds_di_container",
+            "description": "Explains that Nest uses module metadata to build the DI container"
+          },
+          {
+            "key": "starting_point_for_discovery",
+            "description": "Recognizes AppModule as the starting point for module/controller/provider discovery"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Explains bootstrap, root module graph, feature-module composition, and appropriate AppModule responsibilities." },
-      { "scoreBand": "solid", "description": "Understands AppModule as root but misses composition or DI graph detail." },
-      { "scoreBand": "needs_work", "description": "Recognizes the name but treats it as generated boilerplate." },
-      { "scoreBand": "insufficient_evidence", "description": "Cannot explain why a Nest application needs a root module." }
+      {
+        "scoreBand": "strong",
+        "description": "Explains bootstrap, root module graph, feature-module composition, and appropriate AppModule responsibilities."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands AppModule as root but misses composition or DI graph detail."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Recognizes the name but treats it as generated boilerplate."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Cannot explain why a Nest application needs a root module."
+      }
     ],
     "followUps": [
-      { "trigger": "missing_context", "question": "What does NestFactory.create(AppModule) need AppModule for?", "purpose": "Connect bootstrap to module graph construction." },
-      { "trigger": "vague_answer", "question": "What should AppModule import in an app with UsersModule and OrdersModule?", "purpose": "Probe composition role." },
-      { "trigger": "red_flag", "question": "Why is AppModule usually not the right place for every feature service?", "purpose": "Check modularity and maintainability." }
+      {
+        "trigger": "missing_context",
+        "question": "What does NestFactory.create(AppModule) need AppModule for?",
+        "purpose": "Connect bootstrap to module graph construction."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "What should AppModule import in an app with UsersModule and OrdersModule?",
+        "purpose": "Probe composition role."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "Why is AppModule usually not the right place for every feature service?",
+        "purpose": "Check modularity and maintainability."
+      }
     ],
     "localizedContent": {
       "en": {
@@ -782,7 +2008,12 @@
           "Putting every feature directly in AppModule.",
           "Confusing AppModule with main.ts."
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth", "topic": "app_module" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth",
+          "topic": "app_module"
+        }
       },
       "vi": {
         "title": "AppModule là root module",
@@ -798,7 +2029,12 @@
           "Đưa mọi feature trực tiếp vào AppModule.",
           "Nhầm AppModule với main.ts."
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth", "topic": "app_module" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth",
+          "topic": "app_module"
+        }
       },
       "ja": {
         "title": "root module としての AppModule",
@@ -814,50 +2050,181 @@
           "すべての feature を直接 AppModule に置く。",
           "AppModule と main.ts を混同する。"
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth", "topic": "app_module" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth",
+          "topic": "app_module"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "NestJS docs: First steps", "url": "https://docs.nestjs.com/first-steps", "note": "Used for NestFactory.create(AppModule) bootstrap pattern." },
-      { "label": "NestJS docs: Modules", "url": "https://docs.nestjs.com/modules", "note": "Used for root module and feature module composition." }
+      {
+        "label": "NestJS docs: First steps",
+        "url": "https://docs.nestjs.com/first-steps",
+        "note": "Used for NestFactory.create(AppModule) bootstrap pattern."
+      },
+      {
+        "label": "NestJS docs: Modules",
+        "url": "https://docs.nestjs.com/modules",
+        "note": "Used for root module and feature module composition."
+      }
     ],
     "status": "active"
   },
   {
     "code": "NESTJS_CORE_ARCH_CONTROLLER_INPUTS_010",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "communication"],
-    "techTags": ["nestjs", "rest", "nodejs", "typescript"],
+    "competencies": [
+      "technical_fundamentals",
+      "communication"
+    ],
+    "techTags": [
+      "nestjs",
+      "rest",
+      "nodejs",
+      "typescript"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Verify whether the candidate can use NestJS parameter decorators to extract route parameters, query strings, and request bodies in controller handlers.",
     "primaryQuestion": "How do you extract route params, query strings, and request body in a Controller?",
     "expectedSignals": [
-      { "label": "Uses @Param('id') to extract route parameters from a path such as @Get(':id').", "relatedTrigger": null },
-      { "label": "Uses @Query() or @Query('limit') to read query string values.", "relatedTrigger": null },
-      { "label": "Uses @Body() or @Body('field') to read request payloads.", "relatedTrigger": null },
-      { "label": "Mentions DTO classes for typed request bodies and validation with pipes when appropriate.", "relatedTrigger": null },
-      { "label": "Understands that decorator values are handler parameters and should be passed to services after validation or transformation.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Accesses raw req manually for every endpoint instead of using Nest parameter decorators.",
-      "Confuses @Param and @Query or cannot produce a route example.",
-      "Uses untyped any payloads without mentioning DTOs or validation.",
-      "Parses route params from strings manually in business logic without considering pipes."
+      {
+        "label": "Uses @Param('id') to extract route parameters from a path such as @Get(':id').",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "uses_param_id",
+            "description": "Uses @Param('id') for a route parameter"
+          },
+          {
+            "key": "connects_to_get_id",
+            "description": "Connects it to a route such as @Get(':id')"
+          },
+          {
+            "key": "path_param_not_query",
+            "description": "Distinguishes route parameters from query string values"
+          }
+        ]
+      },
+      {
+        "label": "Uses @Query() or @Query('limit') to read query string values.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "uses_query_decorator",
+            "description": "Uses @Query() or @Query('name')"
+          },
+          {
+            "key": "reads_query_string",
+            "description": "Explains it reads query string values"
+          },
+          {
+            "key": "notify_limit_example",
+            "description": "Can apply it to examples such as notify=true or limit=10"
+          }
+        ]
+      },
+      {
+        "label": "Uses @Body() or @Body('field') to read request payloads.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "uses_body_decorator",
+            "description": "Uses @Body() for request payloads"
+          },
+          {
+            "key": "uses_body_field",
+            "description": "Mentions @Body('field') for extracting a single payload field"
+          },
+          {
+            "key": "body_for_put_post_patch",
+            "description": "Connects body extraction to PUT, POST, PATCH, or similar payload methods"
+          }
+        ]
+      },
+      {
+        "label": "Mentions DTO classes for typed request bodies and validation with pipes when appropriate.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_dto_class",
+            "description": "Mentions DTO classes for request bodies"
+          },
+          {
+            "key": "validation_pipe",
+            "description": "Mentions validation with pipes such as ValidationPipe"
+          },
+          {
+            "key": "transform_pipe_for_id",
+            "description": "Mentions transformation or parsing, such as ensuring id is a number before service use"
+          }
+        ]
+      },
+      {
+        "label": "Understands that decorator values are handler parameters and should be passed to services after validation or transformation.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "decorator_values_handler_params",
+            "description": "Explains that extracted decorator values are handler parameters"
+          },
+          {
+            "key": "passes_clean_values_to_services",
+            "description": "Explains services should receive validated or transformed values"
+          },
+          {
+            "key": "req_only_for_raw_context",
+            "description": "Recognizes @Req() is reserved for raw request context cases rather than normal params/query/body extraction"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Shows correct @Param, @Query, @Body usage with concrete route examples and mentions DTO validation or pipes." },
-      { "scoreBand": "solid", "description": "Uses the decorators correctly but misses DTO validation or primitive transformation." },
-      { "scoreBand": "needs_work", "description": "Knows some decorator names but confuses when to use each." },
-      { "scoreBand": "insufficient_evidence", "description": "Cannot explain how controller handler inputs are extracted in NestJS." }
+      {
+        "scoreBand": "strong",
+        "description": "Shows correct @Param, @Query, @Body usage with concrete route examples and mentions DTO validation or pipes."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Uses the decorators correctly but misses DTO validation or primitive transformation."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows some decorator names but confuses when to use each."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Cannot explain how controller handler inputs are extracted in NestJS."
+      }
     ],
     "followUps": [
-      { "trigger": "vague_answer", "question": "Write the handler signature for PUT /users/:id?notify=true with an UpdateUserDto body.", "purpose": "Force concrete decorator usage." },
-      { "trigger": "missing_context", "question": "How would you ensure id is a number before the service receives it?", "purpose": "Probe pipes and transformation awareness." },
-      { "trigger": "red_flag", "question": "When would you still use @Req() instead of @Param, @Query, and @Body?", "purpose": "Check understanding of standard versus raw request access." }
+      {
+        "trigger": "vague_answer",
+        "question": "Write the handler signature for PUT /users/:id?notify=true with an UpdateUserDto body.",
+        "purpose": "Force concrete decorator usage."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "How would you ensure id is a number before the service receives it?",
+        "purpose": "Probe pipes and transformation awareness."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "When would you still use @Req() instead of @Param, @Query, and @Body?",
+        "purpose": "Check understanding of standard versus raw request access."
+      }
     ],
     "localizedContent": {
       "en": {
@@ -874,7 +2241,12 @@
           "Confusing route params with query strings.",
           "Skipping DTOs and validation."
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth", "topic": "controller_inputs" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth",
+          "topic": "controller_inputs"
+        }
       },
       "vi": {
         "title": "Decorator lấy input trong Controller",
@@ -890,7 +2262,12 @@
           "Nhầm route param với query string.",
           "Bỏ qua DTO và validation."
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth", "topic": "controller_inputs" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth",
+          "topic": "controller_inputs"
+        }
       },
       "ja": {
         "title": "Controller input decorator",
@@ -906,50 +2283,180 @@
           "route param と query string を混同する。",
           "DTO と validation を省略する。"
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth", "topic": "controller_inputs" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth",
+          "topic": "controller_inputs"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "NestJS docs: Controllers", "url": "https://docs.nestjs.com/controllers", "note": "Used for @Param, @Query, @Body, DTO, and request handler examples." },
-      { "label": "NestJS docs: Pipes", "url": "https://docs.nestjs.com/pipes", "note": "Used for route parameter transformation and validation context." }
+      {
+        "label": "NestJS docs: Controllers",
+        "url": "https://docs.nestjs.com/controllers",
+        "note": "Used for @Param, @Query, @Body, DTO, and request handler examples."
+      },
+      {
+        "label": "NestJS docs: Pipes",
+        "url": "https://docs.nestjs.com/pipes",
+        "note": "Used for route parameter transformation and validation context."
+      }
     ],
     "status": "active"
   },
   {
     "code": "NESTJS_CORE_ARCH_FEATURE_MODULE_011",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking"],
-    "techTags": ["nestjs", "nodejs", "typescript"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking"
+    ],
+    "techTags": [
+      "nestjs",
+      "nodejs",
+      "typescript"
+    ],
     "difficulty": 2,
     "conversationDepth": "mid",
     "intent": "Assess whether the candidate understands feature modules as domain-oriented organization units that improve cohesion, maintainability, and dependency boundaries.",
     "primaryQuestion": "What is a Feature Module and what are its benefits?",
     "expectedSignals": [
-      { "label": "Defines a feature module as a module grouping code for a specific business capability or feature.", "relatedTrigger": null },
-      { "label": "Uses examples such as UsersModule containing UsersController, UsersService, DTOs, and related providers.", "relatedTrigger": null },
-      { "label": "Explains benefits such as cohesion, easier navigation, clearer ownership, and isolated module boundaries.", "relatedTrigger": null },
-      { "label": "Mentions that AppModule can import feature modules to compose the application.", "relatedTrigger": null },
-      { "label": "Recognizes that feature modules should export only the providers other modules actually need.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Splits modules only by technical layer such as one giant ControllersModule and one giant ServicesModule.",
-      "Creates feature modules but exports everything from them by default.",
-      "Does not connect feature modules to dependency boundaries.",
-      "Cannot explain a benefit beyond generated file organization."
+      {
+        "label": "Defines a feature module as a module grouping code for a specific business capability or feature.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "feature_module_business_capability",
+            "description": "Defines a feature module around a specific business capability or feature"
+          },
+          {
+            "key": "groups_related_code",
+            "description": "Explains that it groups related code together"
+          },
+          {
+            "key": "not_generic_shared_bucket",
+            "description": "Distinguishes feature modules from a giant generic shared bucket"
+          }
+        ]
+      },
+      {
+        "label": "Uses examples such as UsersModule containing UsersController, UsersService, DTOs, and related providers.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "usersmodule_example",
+            "description": "Uses UsersModule or another concrete feature module example"
+          },
+          {
+            "key": "contains_controller_service",
+            "description": "Mentions containing the feature controller and service"
+          },
+          {
+            "key": "contains_dtos_related_providers",
+            "description": "Mentions DTOs and related providers belonging to that feature"
+          }
+        ]
+      },
+      {
+        "label": "Explains benefits such as cohesion, easier navigation, clearer ownership, and isolated module boundaries.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "cohesion_benefit",
+            "description": "Explains cohesion as a benefit of feature modules"
+          },
+          {
+            "key": "navigation_ownership_benefit",
+            "description": "Mentions easier navigation or clearer ownership"
+          },
+          {
+            "key": "isolated_boundaries_benefit",
+            "description": "Mentions isolated module boundaries and why giant shared modules weaken them"
+          }
+        ]
+      },
+      {
+        "label": "Mentions that AppModule can import feature modules to compose the application.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "appmodule_imports_features",
+            "description": "Mentions AppModule importing feature modules"
+          },
+          {
+            "key": "composition_role",
+            "description": "Explains that imports compose the application"
+          },
+          {
+            "key": "feature_modules_not_direct_dump",
+            "description": "Clarifies that feature contents do not all need to be declared directly in AppModule"
+          }
+        ]
+      },
+      {
+        "label": "Recognizes that feature modules should export only the providers other modules actually need.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "minimal_exports",
+            "description": "Recommends keeping feature module exports minimal"
+          },
+          {
+            "key": "exports_only_needed_providers",
+            "description": "Mentions exporting only providers other modules actually need"
+          },
+          {
+            "key": "avoids_excessive_coupling",
+            "description": "Explains excessive exports increase coupling and boundary leakage"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Explains domain cohesion, feature ownership, AppModule composition, explicit exports, and maintainability benefits." },
-      { "scoreBand": "solid", "description": "Understands feature grouping but misses exports or dependency boundary implications." },
-      { "scoreBand": "needs_work", "description": "Treats feature modules as folders generated by CLI without architectural benefits." },
-      { "scoreBand": "insufficient_evidence", "description": "Cannot explain what feature modules are for." }
+      {
+        "scoreBand": "strong",
+        "description": "Explains domain cohesion, feature ownership, AppModule composition, explicit exports, and maintainability benefits."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands feature grouping but misses exports or dependency boundary implications."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Treats feature modules as folders generated by CLI without architectural benefits."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Cannot explain what feature modules are for."
+      }
     ],
     "followUps": [
-      { "trigger": "vague_answer", "question": "What would you put inside UsersModule and what would you keep outside it?", "purpose": "Check concrete boundary design." },
-      { "trigger": "missing_tradeoff", "question": "When can splitting too aggressively into modules become painful?", "purpose": "Probe pragmatic modularity trade-offs." },
-      { "trigger": "red_flag", "question": "Why is a giant SharedModule not the same as healthy feature modularization?", "purpose": "Check understanding of cohesion and public API control." }
+      {
+        "trigger": "vague_answer",
+        "question": "What would you put inside UsersModule and what would you keep outside it?",
+        "purpose": "Check concrete boundary design."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "When can splitting too aggressively into modules become painful?",
+        "purpose": "Probe pragmatic modularity trade-offs."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "Why is a giant SharedModule not the same as healthy feature modularization?",
+        "purpose": "Check understanding of cohesion and public API control."
+      }
     ],
     "localizedContent": {
       "en": {
@@ -966,7 +2473,12 @@
           "Exporting everything from each feature.",
           "Treating modules as folders only."
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth", "topic": "feature_module" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth",
+          "topic": "feature_module"
+        }
       },
       "vi": {
         "title": "Feature Module",
@@ -982,7 +2494,12 @@
           "Export mọi thứ từ mỗi feature.",
           "Xem module chỉ là folder."
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth", "topic": "feature_module" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth",
+          "topic": "feature_module"
+        }
       },
       "ja": {
         "title": "Feature Module",
@@ -998,49 +2515,175 @@
           "各 feature からすべてを export する。",
           "module を folder としてだけ扱う。"
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth", "topic": "feature_module" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth",
+          "topic": "feature_module"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "NestJS docs: Feature modules", "url": "https://docs.nestjs.com/modules", "note": "Used for feature module structure, AppModule imports, and module organization." }
+      {
+        "label": "NestJS docs: Feature modules",
+        "url": "https://docs.nestjs.com/modules",
+        "note": "Used for feature module structure, AppModule imports, and module organization."
+      }
     ],
     "status": "active"
   },
   {
     "code": "NESTJS_CORE_ARCH_EXPORTS_PURPOSE_012",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking"],
-    "techTags": ["nestjs", "nodejs", "typescript"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking"
+    ],
+    "techTags": [
+      "nestjs",
+      "nodejs",
+      "typescript"
+    ],
     "difficulty": 2,
     "conversationDepth": "mid",
     "intent": "Verify whether the candidate understands exports in @Module() as the public API of a module for dependency injection across module boundaries.",
     "primaryQuestion": "What is the purpose of exports in @Module()?",
     "expectedSignals": [
-      { "label": "Defines exports as the set of providers or modules made available to modules that import this module.", "relatedTrigger": null },
-      { "label": "Explains that providers are encapsulated by default and must be exported to be injected elsewhere.", "relatedTrigger": null },
-      { "label": "Clarifies that exporting a provider does not automatically register it in unrelated modules; consumers still import the exporting module.", "relatedTrigger": null },
-      { "label": "Mentions re-exporting an imported module when building a CoreModule or SharedModule style aggregator.", "relatedTrigger": null },
-      { "label": "Frames exports as the module's public API and recommends keeping it minimal.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Thinks exports are for JavaScript/TypeScript module syntax only.",
-      "Says controllers need to be exported for their routes to work.",
-      "Exports every provider from every module by default.",
-      "Cannot explain why an imported module's internal provider may still be unavailable."
+      {
+        "label": "Defines exports as the set of providers or modules made available to modules that import this module.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "exports_define_available_set",
+            "description": "Defines exports as what this module makes available"
+          },
+          {
+            "key": "exports_providers_or_modules",
+            "description": "Mentions providers or modules can be exported"
+          },
+          {
+            "key": "available_to_importing_modules",
+            "description": "Explains exports are available to modules that import this module"
+          }
+        ]
+      },
+      {
+        "label": "Explains that providers are encapsulated by default and must be exported to be injected elsewhere.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "providers_encapsulated_default",
+            "description": "Explains providers are encapsulated by default"
+          },
+          {
+            "key": "must_export_for_external_injection",
+            "description": "States a provider must be exported to be injected elsewhere"
+          },
+          {
+            "key": "orders_repository_example",
+            "description": "Can apply the rule to an example such as OrdersRepository in OrdersModule"
+          }
+        ]
+      },
+      {
+        "label": "Clarifies that exporting a provider does not automatically register it in unrelated modules; consumers still import the exporting module.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "export_not_global_registration",
+            "description": "Clarifies that exporting a provider does not make it globally available everywhere"
+          },
+          {
+            "key": "consumer_imports_exporting_module",
+            "description": "States consumers still import the exporting module"
+          },
+          {
+            "key": "module_boundary_rule",
+            "description": "Connects export/import to module boundary discipline"
+          }
+        ]
+      },
+      {
+        "label": "Mentions re-exporting an imported module when building a CoreModule or SharedModule style aggregator.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_reexporting",
+            "description": "Mentions re-exporting an imported module"
+          },
+          {
+            "key": "core_shared_aggregator",
+            "description": "Connects re-exporting to CoreModule or SharedModule aggregator patterns"
+          },
+          {
+            "key": "aggregator_with_care",
+            "description": "Notes aggregators should still keep a clear public API"
+          }
+        ]
+      },
+      {
+        "label": "Frames exports as the module's public API and recommends keeping it minimal.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "exports_public_api",
+            "description": "Frames exports as the module's public API"
+          },
+          {
+            "key": "keep_exports_minimal",
+            "description": "Recommends keeping exports minimal"
+          },
+          {
+            "key": "export_everything_coupling",
+            "description": "Explains exporting every provider increases coupling and weakens encapsulation"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Explains module encapsulation, provider public API, consumer imports, re-exporting, and minimal exports." },
-      { "scoreBand": "solid", "description": "Understands exports for sharing providers but misses re-export or minimal API judgment." },
-      { "scoreBand": "needs_work", "description": "Knows exports are for sharing but cannot explain the importing module relationship." },
-      { "scoreBand": "insufficient_evidence", "description": "Confuses Nest module exports with TypeScript exports or route mounting." }
+      {
+        "scoreBand": "strong",
+        "description": "Explains module encapsulation, provider public API, consumer imports, re-exporting, and minimal exports."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands exports for sharing providers but misses re-export or minimal API judgment."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows exports are for sharing but cannot explain the importing module relationship."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Confuses Nest module exports with TypeScript exports or route mounting."
+      }
     ],
     "followUps": [
-      { "trigger": "missing_context", "question": "If PaymentsModule imports OrdersModule, can PaymentsService inject OrdersRepository if OrdersModule does not export it?", "purpose": "Check provider encapsulation." },
-      { "trigger": "vague_answer", "question": "What would you export from UsersModule: UsersService, UsersController, DTOs, or repositories? Why?", "purpose": "Probe public API design." },
-      { "trigger": "missing_tradeoff", "question": "What is the downside of exporting every provider from a feature module?", "purpose": "Check coupling and boundary awareness." }
+      {
+        "trigger": "missing_context",
+        "question": "If PaymentsModule imports OrdersModule, can PaymentsService inject OrdersRepository if OrdersModule does not export it?",
+        "purpose": "Check provider encapsulation."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "What would you export from UsersModule: UsersService, UsersController, DTOs, or repositories? Why?",
+        "purpose": "Probe public API design."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "What is the downside of exporting every provider from a feature module?",
+        "purpose": "Check coupling and boundary awareness."
+      }
     ],
     "localizedContent": {
       "en": {
@@ -1057,7 +2700,12 @@
           "Exporting controllers for route mounting.",
           "Exporting everything by default."
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth", "topic": "module_exports" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth",
+          "topic": "module_exports"
+        }
       },
       "vi": {
         "title": "Mục đích của exports trong Module",
@@ -1073,7 +2721,12 @@
           "Export controller để mount route.",
           "Export mọi thứ mặc định."
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth", "topic": "module_exports" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth",
+          "topic": "module_exports"
+        }
       },
       "ja": {
         "title": "module exports の目的",
@@ -1089,49 +2742,176 @@
           "route mount のために controller を export する。",
           "デフォルトですべてを export する。"
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth", "topic": "module_exports" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth",
+          "topic": "module_exports"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "NestJS docs: Module exports", "url": "https://docs.nestjs.com/modules", "note": "Used for module exports, shared modules, and re-exporting." }
+      {
+        "label": "NestJS docs: Module exports",
+        "url": "https://docs.nestjs.com/modules",
+        "note": "Used for module exports, shared modules, and re-exporting."
+      }
     ],
     "status": "active"
   },
   {
     "code": "NESTJS_CORE_ARCH_FORROOT_ASYNC_013",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend"],
-    "levels": ["mid", "senior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend"
+    ],
+    "levels": [
+      "mid",
+      "senior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "trade_off_analysis"],
-    "techTags": ["nestjs", "nodejs", "typescript"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "trade_off_analysis"
+    ],
+    "techTags": [
+      "nestjs",
+      "nodejs",
+      "typescript"
+    ],
     "difficulty": 3,
     "conversationDepth": "deep",
     "intent": "Assess whether the candidate understands dynamic module configuration patterns, especially synchronous forRoot() versus DI-powered asynchronous forRootAsync().",
     "primaryQuestion": "What is the difference between forRoot() and forRootAsync()?",
     "expectedSignals": [
-      { "label": "Explains that forRoot() typically configures a dynamic module synchronously with directly supplied options.", "relatedTrigger": null },
-      { "label": "Explains that forRootAsync() builds configuration asynchronously or through Nest dependency injection.", "relatedTrigger": null },
-      { "label": "Mentions useFactory, useClass, or useExisting patterns for async configuration.", "relatedTrigger": null },
-      { "label": "Gives examples such as loading database options from ConfigService, secrets manager, or environment-dependent providers.", "relatedTrigger": null },
-      { "label": "Recognizes that forRoot is usually application-wide configuration, while forFeature often registers feature-scoped pieces that rely on root configuration.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Says forRootAsync is only for returning a Promise and misses dependency injection.",
-      "Uses forRoot in feature modules repeatedly for singleton infrastructure without considering duplicate configuration.",
-      "Hard-codes process.env in reusable modules instead of injecting configuration.",
-      "Cannot explain what a DynamicModule returns."
+      {
+        "label": "Explains that forRoot() typically configures a dynamic module synchronously with directly supplied options.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "forroot_dynamic_module",
+            "description": "Explains forRoot() as a dynamic module configuration pattern"
+          },
+          {
+            "key": "synchronous_options",
+            "description": "Mentions synchronously supplied options"
+          },
+          {
+            "key": "direct_config_object",
+            "description": "Mentions direct configuration objects such as database options"
+          }
+        ]
+      },
+      {
+        "label": "Explains that forRootAsync() builds configuration asynchronously or through Nest dependency injection.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "forrootasync_async_config",
+            "description": "Explains forRootAsync() builds configuration asynchronously"
+          },
+          {
+            "key": "di_powered_config",
+            "description": "Mentions using Nest dependency injection for configuration"
+          },
+          {
+            "key": "configservice_example",
+            "description": "Can explain using ConfigService instead of hard-coded options"
+          }
+        ]
+      },
+      {
+        "label": "Mentions useFactory, useClass, or useExisting patterns for async configuration.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_usefactory",
+            "description": "Mentions useFactory for async configuration"
+          },
+          {
+            "key": "mentions_useclass",
+            "description": "Mentions useClass for async configuration"
+          },
+          {
+            "key": "mentions_useexisting",
+            "description": "Mentions useExisting for async configuration"
+          }
+        ]
+      },
+      {
+        "label": "Gives examples such as loading database options from ConfigService, secrets manager, or environment-dependent providers.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "database_options_from_config",
+            "description": "Gives database options from ConfigService as an example"
+          },
+          {
+            "key": "secrets_manager_example",
+            "description": "Mentions secrets manager or secret-loading configuration"
+          },
+          {
+            "key": "environment_dependent_providers",
+            "description": "Mentions environment-dependent providers or runtime configuration"
+          }
+        ]
+      },
+      {
+        "label": "Recognizes that forRoot is usually application-wide configuration, while forFeature often registers feature-scoped pieces that rely on root configuration.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "forroot_app_wide",
+            "description": "Recognizes forRoot as usually application-wide/root configuration"
+          },
+          {
+            "key": "forfeature_feature_scoped",
+            "description": "Recognizes forFeature as feature-scoped registration"
+          },
+          {
+            "key": "avoid_multiple_forroot",
+            "description": "Explains that multiple feature modules calling forRoot on the same infrastructure module can duplicate configuration or lifecycle"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Explains dynamic modules, sync versus DI/async configuration, useFactory/useClass/useExisting, and when root configuration should be centralized." },
-      { "scoreBand": "solid", "description": "Understands sync versus async options but misses provider-token or forFeature nuance." },
-      { "scoreBand": "needs_work", "description": "Recognizes method names from libraries but cannot explain the underlying dynamic module pattern." },
-      { "scoreBand": "insufficient_evidence", "description": "Cannot distinguish forRoot() from forRootAsync() in practical NestJS configuration." }
+      {
+        "scoreBand": "strong",
+        "description": "Explains dynamic modules, sync versus DI/async configuration, useFactory/useClass/useExisting, and when root configuration should be centralized."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands sync versus async options but misses provider-token or forFeature nuance."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Recognizes method names from libraries but cannot explain the underlying dynamic module pattern."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Cannot distinguish forRoot() from forRootAsync() in practical NestJS configuration."
+      }
     ],
     "followUps": [
-      { "trigger": "missing_context", "question": "How would you configure TypeOrmModule using ConfigService instead of a hard-coded object?", "purpose": "Test async DI-based configuration." },
-      { "trigger": "missing_tradeoff", "question": "What can go wrong if multiple feature modules call forRoot() on the same infrastructure module?", "purpose": "Probe duplicate configuration and lifecycle awareness." },
-      { "trigger": "vague_answer", "question": "What does a dynamic module return, and where do its providers and exports come from?", "purpose": "Check actual DynamicModule mechanics." }
+      {
+        "trigger": "missing_context",
+        "question": "How would you configure TypeOrmModule using ConfigService instead of a hard-coded object?",
+        "purpose": "Test async DI-based configuration."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "What can go wrong if multiple feature modules call forRoot() on the same infrastructure module?",
+        "purpose": "Probe duplicate configuration and lifecycle awareness."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "What does a dynamic module return, and where do its providers and exports come from?",
+        "purpose": "Check actual DynamicModule mechanics."
+      }
     ],
     "localizedContent": {
       "en": {
@@ -1148,7 +2928,12 @@
           "Calling forRoot repeatedly in feature modules without considering lifecycle.",
           "Hard-coding environment access inside reusable modules."
         ],
-        "labels": { "role": "Backend", "level": "Mid/Senior", "type": "technical_depth", "topic": "dynamic_modules" }
+        "labels": {
+          "role": "Backend",
+          "level": "Mid/Senior",
+          "type": "technical_depth",
+          "topic": "dynamic_modules"
+        }
       },
       "vi": {
         "title": "forRoot và forRootAsync",
@@ -1164,7 +2949,12 @@
           "Gọi forRoot lặp lại ở feature module mà không nghĩ tới lifecycle.",
           "Hard-code env access trong reusable module."
         ],
-        "labels": { "role": "Backend", "level": "Mid/Senior", "type": "technical_depth", "topic": "dynamic_modules" }
+        "labels": {
+          "role": "Backend",
+          "level": "Mid/Senior",
+          "type": "technical_depth",
+          "topic": "dynamic_modules"
+        }
       },
       "ja": {
         "title": "forRoot と forRootAsync",
@@ -1180,49 +2970,176 @@
           "lifecycle を考えず feature module で forRoot を繰り返す。",
           "reusable module の中で env access を hard-code する。"
         ],
-        "labels": { "role": "Backend", "level": "Mid/Senior", "type": "technical_depth", "topic": "dynamic_modules" }
+        "labels": {
+          "role": "Backend",
+          "level": "Mid/Senior",
+          "type": "technical_depth",
+          "topic": "dynamic_modules"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "NestJS docs: Dynamic modules", "url": "https://docs.nestjs.com/fundamentals/dynamic-modules", "note": "Used for forRoot, forRootAsync, registerAsync, ConfigurableModuleBuilder, and dynamic module conventions." }
+      {
+        "label": "NestJS docs: Dynamic modules",
+        "url": "https://docs.nestjs.com/fundamentals/dynamic-modules",
+        "note": "Used for forRoot, forRootAsync, registerAsync, ConfigurableModuleBuilder, and dynamic module conventions."
+      }
     ],
     "status": "active"
   },
   {
     "code": "NESTJS_CORE_ARCH_SELF_IMPORT_014",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "debugging",
-    "competencies": ["technical_fundamentals", "problem_solving", "system_thinking"],
-    "techTags": ["nestjs", "nodejs", "typescript"],
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving",
+      "system_thinking"
+    ],
+    "techTags": [
+      "nestjs",
+      "nodejs",
+      "typescript"
+    ],
     "difficulty": 3,
     "conversationDepth": "deep",
     "intent": "Assess whether the candidate understands that modules should not import themselves and can reason about circular module dependency problems instead of hiding them.",
     "primaryQuestion": "Can a Module import itself? What happens?",
     "expectedSignals": [
-      { "label": "States that a module should not import itself because it creates an invalid or circular module relationship.", "relatedTrigger": null },
-      { "label": "Explains that Nest builds a module graph from imports and self-imports can lead to circular dependency or module resolution errors.", "relatedTrigger": null },
-      { "label": "Mentions that the underlying design issue is usually confused ownership or misplaced shared dependency.", "relatedTrigger": null },
-      { "label": "Suggests extracting shared providers into a separate module or correcting which module imports which dependency.", "relatedTrigger": null },
-      { "label": "Can distinguish a self-import from valid re-exporting or from importing another module that exports needed providers.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Says self-import is a normal way to access the module's own providers.",
-      "Uses forwardRef reflexively without understanding the dependency direction.",
-      "Confuses TypeScript circular imports with Nest module graph imports and cannot inspect either.",
-      "Cannot suggest a redesign when module imports become circular."
+      {
+        "label": "States that a module should not import itself because it creates an invalid or circular module relationship.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "module_should_not_self_import",
+            "description": "States that a module should not import itself"
+          },
+          {
+            "key": "invalid_module_relationship",
+            "description": "Explains that self-import creates an invalid module relationship"
+          },
+          {
+            "key": "circular_relationship",
+            "description": "Connects self-import to circular module relationships"
+          }
+        ]
+      },
+      {
+        "label": "Explains that Nest builds a module graph from imports and self-imports can lead to circular dependency or module resolution errors.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "nest_builds_module_graph",
+            "description": "Explains that Nest builds a module graph from imports"
+          },
+          {
+            "key": "self_import_circular_error",
+            "description": "Mentions circular dependency or module resolution errors from self-import"
+          },
+          {
+            "key": "cycle_design_questions",
+            "description": "Connects cycles to design questions about dependency direction"
+          }
+        ]
+      },
+      {
+        "label": "Mentions that the underlying design issue is usually confused ownership or misplaced shared dependency.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "confused_ownership",
+            "description": "Mentions confused ownership as an underlying issue"
+          },
+          {
+            "key": "misplaced_shared_dependency",
+            "description": "Mentions misplaced shared dependency as an underlying issue"
+          },
+          {
+            "key": "inspect_design_not_only_syntax",
+            "description": "Explains that the module design should be inspected, not just syntax patched"
+          }
+        ]
+      },
+      {
+        "label": "Suggests extracting shared providers into a separate module or correcting which module imports which dependency.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "extract_shared_provider_module",
+            "description": "Suggests extracting shared providers into a separate module"
+          },
+          {
+            "key": "correct_import_direction",
+            "description": "Suggests correcting which module imports which dependency"
+          },
+          {
+            "key": "concrete_cycle_break_example",
+            "description": "Can give a concrete provider or module extraction example to break the cycle"
+          }
+        ]
+      },
+      {
+        "label": "Can distinguish a self-import from valid re-exporting or from importing another module that exports needed providers.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "distinguishes_self_import",
+            "description": "Distinguishes a module importing itself from valid module imports"
+          },
+          {
+            "key": "valid_reexporting",
+            "description": "Explains valid re-exporting of imported modules"
+          },
+          {
+            "key": "forwardref_escape_hatch",
+            "description": "Mentions forwardRef as an occasional escape hatch, not the first design choice"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Rejects self-import, explains module graph/circular dependency risk, and proposes extracting or correcting boundaries." },
-      { "scoreBand": "solid", "description": "Knows self-import is wrong but only partially explains why or how to fix the design." },
-      { "scoreBand": "needs_work", "description": "Recognizes an error may happen but relies on forwardRef or trial-and-error fixes." },
-      { "scoreBand": "insufficient_evidence", "description": "Cannot reason about module import cycles." }
+      {
+        "scoreBand": "strong",
+        "description": "Rejects self-import, explains module graph/circular dependency risk, and proposes extracting or correcting boundaries."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows self-import is wrong but only partially explains why or how to fix the design."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Recognizes an error may happen but relies on forwardRef or trial-and-error fixes."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Cannot reason about module import cycles."
+      }
     ],
     "followUps": [
-      { "trigger": "missing_context", "question": "If OrdersModule imports PaymentsModule and PaymentsModule imports OrdersModule, what design questions would you ask first?", "purpose": "Probe circular module redesign." },
-      { "trigger": "red_flag", "question": "When is forwardRef acceptable, and why should it not be your first design choice?", "purpose": "Check escape-hatch versus architecture understanding." },
-      { "trigger": "vague_answer", "question": "What shared provider could be moved into a separate module to break a cycle?", "purpose": "Make the fix concrete." }
+      {
+        "trigger": "missing_context",
+        "question": "If OrdersModule imports PaymentsModule and PaymentsModule imports OrdersModule, what design questions would you ask first?",
+        "purpose": "Probe circular module redesign."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "When is forwardRef acceptable, and why should it not be your first design choice?",
+        "purpose": "Check escape-hatch versus architecture understanding."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "What shared provider could be moved into a separate module to break a cycle?",
+        "purpose": "Make the fix concrete."
+      }
     ],
     "localizedContent": {
       "en": {
@@ -1239,7 +3156,12 @@
           "Using forwardRef without redesigning boundaries.",
           "Confusing TypeScript imports with Nest module imports."
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "debugging", "topic": "module_graph" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "debugging",
+          "topic": "module_graph"
+        }
       },
       "vi": {
         "title": "Module tự import chính nó",
@@ -1255,7 +3177,12 @@
           "Dùng forwardRef mà không xem lại boundary.",
           "Nhầm TypeScript import với Nest module import."
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "debugging", "topic": "module_graph" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "debugging",
+          "topic": "module_graph"
+        }
       },
       "ja": {
         "title": "module の self-import",
@@ -1271,50 +3198,181 @@
           "boundary を見直さず forwardRef を使う。",
           "TypeScript import と Nest module import を混同する。"
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "debugging", "topic": "module_graph" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "debugging",
+          "topic": "module_graph"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "NestJS docs: Modules", "url": "https://docs.nestjs.com/modules", "note": "Used for module imports, module graph, and module encapsulation concepts." },
-      { "label": "NestJS docs: Circular dependency", "url": "https://docs.nestjs.com/fundamentals/circular-dependency", "note": "Used for circular dependency concepts and forwardRef caution." }
+      {
+        "label": "NestJS docs: Modules",
+        "url": "https://docs.nestjs.com/modules",
+        "note": "Used for module imports, module graph, and module encapsulation concepts."
+      },
+      {
+        "label": "NestJS docs: Circular dependency",
+        "url": "https://docs.nestjs.com/fundamentals/circular-dependency",
+        "note": "Used for circular dependency concepts and forwardRef caution."
+      }
     ],
     "status": "active"
   },
   {
     "code": "NESTJS_CORE_ARCH_ROUTE_RESOLUTION_015",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking"],
-    "techTags": ["nestjs", "rest", "nodejs", "typescript"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking"
+    ],
+    "techTags": [
+      "nestjs",
+      "rest",
+      "nodejs",
+      "typescript"
+    ],
     "difficulty": 2,
     "conversationDepth": "mid",
     "intent": "Evaluate whether the candidate understands how Nest uses controller and route decorator metadata, plus module registration, to build the routing map.",
     "primaryQuestion": "How does NestJS know which Controller handles which route?",
     "expectedSignals": [
-      { "label": "Explains that decorators such as @Controller(), @Get(), @Post(), @Put(), and @Delete() attach route metadata to classes and methods.", "relatedTrigger": null },
-      { "label": "Mentions that controllers must be listed in a module's controllers array for Nest to discover and instantiate them.", "relatedTrigger": null },
-      { "label": "Explains that Nest scans module metadata during bootstrap and builds a routing map from controller prefix plus method-level route metadata.", "relatedTrigger": null },
-      { "label": "Connects HTTP method and path matching to the selected handler method.", "relatedTrigger": null },
-      { "label": "Notes that route order and parameterized routes can matter when routes overlap.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Thinks Nest discovers every class ending in Controller automatically from the filesystem.",
-      "Ignores module registration in the controllers array.",
-      "Cannot explain how @Controller('users') and @Get(':id') combine.",
-      "Confuses routing with dependency injection provider resolution."
+      {
+        "label": "Explains that decorators such as @Controller(), @Get(), @Post(), @Put(), and @Delete() attach route metadata to classes and methods.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "controller_route_decorators",
+            "description": "Mentions @Controller() and method decorators such as @Get(), @Post(), @Put(), or @Delete()"
+          },
+          {
+            "key": "metadata_on_classes_methods",
+            "description": "Explains decorators attach metadata to classes and methods"
+          },
+          {
+            "key": "route_metadata_not_handler_execution",
+            "description": "Clarifies that decorators configure route metadata rather than handling the request themselves"
+          }
+        ]
+      },
+      {
+        "label": "Mentions that controllers must be listed in a module's controllers array for Nest to discover and instantiate them.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "controllers_array_required",
+            "description": "Mentions that controllers must be listed in a module's controllers array"
+          },
+          {
+            "key": "nest_discovers_controller",
+            "description": "Explains that module registration lets Nest discover the controller"
+          },
+          {
+            "key": "instantiates_registered_controller",
+            "description": "Explains that Nest instantiates registered controllers"
+          }
+        ]
+      },
+      {
+        "label": "Explains that Nest scans module metadata during bootstrap and builds a routing map from controller prefix plus method-level route metadata.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "scans_module_metadata_bootstrap",
+            "description": "Explains that Nest scans module metadata during bootstrap"
+          },
+          {
+            "key": "combines_controller_prefix",
+            "description": "Mentions combining the controller prefix such as @Controller('users')"
+          },
+          {
+            "key": "combines_method_route_metadata",
+            "description": "Mentions combining method-level route metadata such as @Get(':id')"
+          }
+        ]
+      },
+      {
+        "label": "Connects HTTP method and path matching to the selected handler method.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "http_method_matching",
+            "description": "Connects HTTP method matching to handler selection"
+          },
+          {
+            "key": "path_matching",
+            "description": "Connects path matching to handler selection"
+          },
+          {
+            "key": "selected_handler_method",
+            "description": "Explains that the matched controller method handles the request"
+          }
+        ]
+      },
+      {
+        "label": "Notes that route order and parameterized routes can matter when routes overlap.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "route_order_matters",
+            "description": "Notes that route order can matter when routes overlap"
+          },
+          {
+            "key": "parameterized_routes_overlap",
+            "description": "Mentions parameterized routes overlapping with static routes"
+          },
+          {
+            "key": "static_before_param_routes",
+            "description": "Explains why static routes are often declared before parameterized routes when paths overlap"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Explains decorator metadata, module controller registration, bootstrap scanning, route map construction, and handler selection." },
-      { "scoreBand": "solid", "description": "Understands decorators and module registration but misses bootstrap scanning or overlapping route nuance." },
-      { "scoreBand": "needs_work", "description": "Knows route decorators by name but not how Nest discovers controllers." },
-      { "scoreBand": "insufficient_evidence", "description": "Cannot explain NestJS route-to-controller resolution." }
+      {
+        "scoreBand": "strong",
+        "description": "Explains decorator metadata, module controller registration, bootstrap scanning, route map construction, and handler selection."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands decorators and module registration but misses bootstrap scanning or overlapping route nuance."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows route decorators by name but not how Nest discovers controllers."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Cannot explain NestJS route-to-controller resolution."
+      }
     ],
     "followUps": [
-      { "trigger": "missing_context", "question": "What happens if UsersController has decorators but is not added to any module's controllers array?", "purpose": "Check discovery and module registration." },
-      { "trigger": "vague_answer", "question": "How does Nest combine @Controller('users') and @Get(':id') during route mapping?", "purpose": "Make route metadata composition explicit." },
-      { "trigger": "red_flag", "question": "Why should static routes usually be declared before parameterized routes when paths overlap?", "purpose": "Probe practical route matching awareness." }
+      {
+        "trigger": "missing_context",
+        "question": "What happens if UsersController has decorators but is not added to any module's controllers array?",
+        "purpose": "Check discovery and module registration."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "How does Nest combine @Controller('users') and @Get(':id') during route mapping?",
+        "purpose": "Make route metadata composition explicit."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "Why should static routes usually be declared before parameterized routes when paths overlap?",
+        "purpose": "Probe practical route matching awareness."
+      }
     ],
     "localizedContent": {
       "en": {
@@ -1331,7 +3389,12 @@
           "Forgetting controller module registration.",
           "Confusing routing with provider injection."
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth", "topic": "route_resolution" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth",
+          "topic": "route_resolution"
+        }
       },
       "vi": {
         "title": "Nest map route tới Controller",
@@ -1347,7 +3410,12 @@
           "Quên đăng ký controller trong module.",
           "Nhầm routing với provider injection."
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth", "topic": "route_resolution" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth",
+          "topic": "route_resolution"
+        }
       },
       "ja": {
         "title": "route と controller の解決",
@@ -1363,12 +3431,25 @@
           "controller の module registration を忘れる。",
           "routing と provider injection を混同する。"
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth", "topic": "route_resolution" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth",
+          "topic": "route_resolution"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "NestJS docs: Controllers", "url": "https://docs.nestjs.com/controllers", "note": "Used for controller routing metadata, module registration, and route mapping." },
-      { "label": "NestJS docs: Modules", "url": "https://docs.nestjs.com/modules", "note": "Used for controllers array and module metadata." }
+      {
+        "label": "NestJS docs: Controllers",
+        "url": "https://docs.nestjs.com/controllers",
+        "note": "Used for controller routing metadata, module registration, and route mapping."
+      },
+      {
+        "label": "NestJS docs: Modules",
+        "url": "https://docs.nestjs.com/modules",
+        "note": "Used for controllers array and module metadata."
+      }
     ],
     "status": "active"
   }

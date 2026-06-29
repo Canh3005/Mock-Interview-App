@@ -1,30 +1,114 @@
 [
   {
     "code": "NODE_HTTP_EXPRESS_JR_TECH_HTTP_SERVER_001",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "communication"],
-    "techTags": ["nodejs", "http"],
+    "competencies": [
+      "technical_fundamentals",
+      "communication"
+    ],
+    "techTags": [
+      "nodejs",
+      "http"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Check whether the candidate can describe the minimal pieces needed to serve HTTP requests with Node.js before using a framework.",
     "primaryQuestion": "How do you create a basic HTTP server in Node.js?",
     "expectedSignals": [
-      { "label": "Mentions importing the built-in http module, for example require('http') or import http from 'node:http'.", "relatedTrigger": null },
-      { "label": "Describes using http.createServer with a request listener that receives req and res for every incoming request.", "relatedTrigger": null },
-      { "label": "Explains that the handler should set a status code and optionally headers such as Content-Type before writing the response.", "relatedTrigger": null },
-      { "label": "Mentions ending the response with res.end() or equivalent so the client is not left waiting.", "relatedTrigger": null },
-      { "label": "Mentions calling server.listen(port, callback) to bind the server to a port and start accepting connections.", "relatedTrigger": null },
-      { "label": "Can give a small route-like example using req.method and req.url, while recognizing that this becomes verbose as the API grows.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Says Node.js cannot create an HTTP server without Express.",
-      "Creates a handler but forgets to call listen, so no server actually starts.",
-      "Writes response data but never ends the response.",
-      "Confuses client-side fetch code with server-side request handling.",
-      "Thinks createServer automatically gives Express-style routing or JSON parsing."
+      {
+        "label": "Mentions importing the built-in http module, for example require('http') or import http from 'node:http'.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "imports_builtin_http_module",
+            "description": "Mentions using Node's built-in http module via require('http') or node:http import."
+          },
+          {
+            "key": "does_not_require_framework_for_basic_server",
+            "description": "Recognizes that a basic HTTP server can be created without Express."
+          }
+        ]
+      },
+      {
+        "label": "Describes using http.createServer with a request listener that receives req and res for every incoming request.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "uses_http_create_server",
+            "description": "Mentions http.createServer as the core API."
+          },
+          {
+            "key": "describes_request_listener_req_res",
+            "description": "Explains that the listener receives req and res for each request."
+          }
+        ]
+      },
+      {
+        "label": "Explains that the handler should set a status code and optionally headers such as Content-Type before writing the response.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "sets_status_code",
+            "description": "Mentions setting an appropriate response status code."
+          },
+          {
+            "key": "sets_headers_before_body",
+            "description": "Mentions setting headers such as Content-Type before writing/sending the body."
+          }
+        ]
+      },
+      {
+        "label": "Mentions ending the response with res.end() or equivalent so the client is not left waiting.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "ends_response_with_res_end",
+            "description": "Mentions res.end() or equivalent response completion."
+          },
+          {
+            "key": "connects_missing_end_to_waiting_client",
+            "description": "Explains that failing to end the response leaves the client waiting."
+          }
+        ]
+      },
+      {
+        "label": "Mentions calling server.listen(port, callback) to bind the server to a port and start accepting connections.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "calls_server_listen_with_port",
+            "description": "Mentions server.listen(port, callback) or equivalent."
+          },
+          {
+            "key": "connects_listen_to_accepting_connections",
+            "description": "Explains that listen binds the server and starts accepting network connections."
+          }
+        ]
+      },
+      {
+        "label": "Can give a small route-like example using req.method and req.url, while recognizing that this becomes verbose as the API grows.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "uses_req_method_and_url_for_manual_routing",
+            "description": "Shows or describes manual routing using req.method and req.url."
+          },
+          {
+            "key": "recognizes_manual_routing_boilerplate",
+            "description": "Explains that manual routing becomes verbose as the API grows."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -129,29 +213,102 @@
   },
   {
     "code": "NODE_HTTP_EXPRESS_JR_TRADE_EXPRESS_VS_HTTP_002",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "trade_off",
-    "competencies": ["technical_fundamentals", "trade_off_analysis", "communication"],
-    "techTags": ["nodejs", "http", "express"],
+    "competencies": [
+      "technical_fundamentals",
+      "trade_off_analysis",
+      "communication"
+    ],
+    "techTags": [
+      "nodejs",
+      "http",
+      "express"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Evaluate whether the candidate understands the practical problems Express solves compared with writing all HTTP handling directly.",
     "primaryQuestion": "What problem does Express solve compared with the built-in http module?",
     "expectedSignals": [
-      { "label": "Explains that the built-in http module is low-level and requires manually checking methods, paths, headers, body streams, and response formatting.", "relatedTrigger": null },
-      { "label": "Describes Express as a minimal web framework that adds routing, middleware, request/response helpers, and better structure for web APIs.", "relatedTrigger": null },
-      { "label": "Mentions that Express is built on top of Node's HTTP request/response model rather than replacing HTTP itself.", "relatedTrigger": null },
-      { "label": "Gives examples of conveniences such as app.get, app.post, routers, express.json, res.status, res.json, and centralized middleware.", "relatedTrigger": null },
-      { "label": "Recognizes trade-offs: Express reduces boilerplate but developers still need to understand HTTP semantics, validation, errors, and security.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Says Express makes Node.js asynchronous or is required for async code.",
-      "Claims Express is a separate web server unrelated to Node's HTTP model.",
-      "Believes Express automatically handles all security, validation, and database work.",
-      "Cannot name any concrete feature beyond saying it is easier.",
-      "Says the built-in http module cannot serve real requests."
+      {
+        "label": "Explains that the built-in http module is low-level and requires manually checking methods, paths, headers, body streams, and response formatting.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "identifies_http_module_low_level_work",
+            "description": "Mentions manual handling of method, path, headers, body stream, or response formatting."
+          },
+          {
+            "key": "connects_low_level_work_to_repetition",
+            "description": "Explains why the same API becomes repetitive with only the http module."
+          }
+        ]
+      },
+      {
+        "label": "Describes Express as a minimal web framework that adds routing, middleware, request/response helpers, and better structure for web APIs.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "defines_express_as_web_framework",
+            "description": "Describes Express as a minimal web framework for Node.js."
+          },
+          {
+            "key": "names_core_express_features",
+            "description": "Mentions routing, middleware, req/res helpers, or app structure."
+          }
+        ]
+      },
+      {
+        "label": "Mentions that Express is built on top of Node's HTTP request/response model rather than replacing HTTP itself.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "places_express_on_node_http_model",
+            "description": "Explains that Express uses Node's HTTP request/response model underneath."
+          },
+          {
+            "key": "does_not_treat_express_as_http_replacement",
+            "description": "Avoids implying Express removes the need to understand HTTP methods, headers, and status codes."
+          }
+        ]
+      },
+      {
+        "label": "Gives examples of conveniences such as app.get, app.post, routers, express.json, res.status, res.json, and centralized middleware.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "gives_routing_and_router_examples",
+            "description": "Gives examples such as app.get, app.post, or routers."
+          },
+          {
+            "key": "gives_parser_response_or_middleware_examples",
+            "description": "Gives examples such as express.json, res.status, res.json, or centralized middleware."
+          }
+        ]
+      },
+      {
+        "label": "Recognizes trade-offs: Express reduces boilerplate but developers still need to understand HTTP semantics, validation, errors, and security.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "states_express_reduces_boilerplate",
+            "description": "States that Express reduces routing and middleware boilerplate."
+          },
+          {
+            "key": "keeps_http_validation_error_security_responsibility",
+            "description": "Mentions that developers still handle HTTP semantics, validation, errors, and security."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -178,9 +335,9 @@
         "purpose": "Move from generic convenience to concrete framework responsibilities."
       },
       {
-        "trigger": "red_flag",
-        "question": "Does Express remove the need to know HTTP methods and status codes?",
-        "purpose": "Check whether the candidate understands Express as an abstraction over HTTP, not a replacement."
+        "trigger": "missing_consequence",
+        "question": "What HTTP knowledge do you still need even when using Express?",
+        "purpose": "Check that Express is understood as an abstraction over HTTP rather than a replacement."
       }
     ],
     "localizedContent": {
@@ -261,30 +418,116 @@
   },
   {
     "code": "NODE_HTTP_EXPRESS_JR_TECH_ROUTING_003",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "communication"],
-    "techTags": ["nodejs", "express", "routing", "http"],
+    "competencies": [
+      "technical_fundamentals",
+      "communication"
+    ],
+    "techTags": [
+      "nodejs",
+      "express",
+      "routing",
+      "http"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Check whether the candidate can define Express routing as method plus path plus handler matching.",
     "primaryQuestion": "What is routing in Express?",
     "expectedSignals": [
-      { "label": "Defines routing as deciding how the app responds to a request for a specific HTTP method and URL path.", "relatedTrigger": null },
-      { "label": "Mentions the route shape app.METHOD(path, handler), such as app.get('/users/:id', handler).", "relatedTrigger": null },
-      { "label": "Explains that method and path both matter, so GET /users and POST /users can execute different handlers.", "relatedTrigger": null },
-      { "label": "Understands that route handlers receive req and res and should send a response or pass control.", "relatedTrigger": null },
-      { "label": "Mentions route parameters, router modules, or route order as practical routing details.", "relatedTrigger": null },
-      { "label": "Recognizes that if no route matches, the app should eventually return a 404 response.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Defines routing as only naming URLs without mentioning handlers.",
-      "Confuses Express routing with frontend client-side routing.",
-      "Thinks a matching path is enough regardless of HTTP method.",
-      "Cannot provide a minimal app.get or router.get example.",
-      "Assumes Express automatically creates routes from database models."
+      {
+        "label": "Defines routing as deciding how the app responds to a request for a specific HTTP method and URL path.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "defines_routing_by_method_and_path",
+            "description": "Defines routing as matching an HTTP method and URL path."
+          },
+          {
+            "key": "connects_route_match_to_response_handler",
+            "description": "Explains that the matched route decides which handler responds."
+          }
+        ]
+      },
+      {
+        "label": "Mentions the route shape app.METHOD(path, handler), such as app.get('/users/:id', handler).",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "shows_app_method_path_handler_shape",
+            "description": "Shows app.METHOD(path, handler) syntax."
+          },
+          {
+            "key": "uses_concrete_param_route_example",
+            "description": "Uses an example such as app.get('/users/:id', handler)."
+          }
+        ]
+      },
+      {
+        "label": "Explains that method and path both matter, so GET /users and POST /users can execute different handlers.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "states_method_and_path_both_match",
+            "description": "States that both HTTP method and path participate in route matching."
+          },
+          {
+            "key": "distinguishes_get_and_post_same_path",
+            "description": "Explains that GET /users and POST /users can hit different handlers."
+          }
+        ]
+      },
+      {
+        "label": "Understands that route handlers receive req and res and should send a response or pass control.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "mentions_req_res_in_handler",
+            "description": "Mentions req and res as route handler parameters."
+          },
+          {
+            "key": "states_handler_must_complete_or_delegate",
+            "description": "States that a handler should send a response or pass control with next."
+          }
+        ]
+      },
+      {
+        "label": "Mentions route parameters, router modules, or route order as practical routing details.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "mentions_route_params_or_routers",
+            "description": "Mentions route params or Router modules as practical routing features."
+          },
+          {
+            "key": "mentions_route_order",
+            "description": "Mentions that route order can matter when routes overlap."
+          }
+        ]
+      },
+      {
+        "label": "Recognizes that if no route matches, the app should eventually return a 404 response.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "recognizes_unmatched_route",
+            "description": "Mentions the no-matching-route case."
+          },
+          {
+            "key": "returns_404_for_unmatched_route",
+            "description": "States that the app should eventually return 404 Not Found."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -389,30 +632,117 @@
   },
   {
     "code": "NODE_HTTP_EXPRESS_JR_TECH_HTTP_METHODS_004",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "communication"],
-    "techTags": ["nodejs", "express", "http", "rest"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "communication"
+    ],
+    "techTags": [
+      "nodejs",
+      "express",
+      "http",
+      "rest"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Evaluate whether the candidate can connect common Express route helpers to HTTP method semantics.",
     "primaryQuestion": "What is the difference between app.get, app.post, app.put, and app.delete?",
     "expectedSignals": [
-      { "label": "Explains that each helper registers a route handler for a specific HTTP method.", "relatedTrigger": null },
-      { "label": "Connects app.get to reading or retrieving a representation without intended server-side mutation.", "relatedTrigger": null },
-      { "label": "Connects app.post to creating resources, submitting data, or triggering operations that may not be idempotent.", "relatedTrigger": null },
-      { "label": "Connects app.put to replacing or updating a resource at a known URI, usually with idempotent intent.", "relatedTrigger": null },
-      { "label": "Connects app.delete to removing or deactivating a resource.", "relatedTrigger": null },
-      { "label": "Notes that Express routes by method but does not enforce REST semantics; handler code and API design must do that.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Says all methods are interchangeable because they can all return JSON.",
-      "Uses GET for destructive operations without recognizing the problem.",
-      "Believes app.post automatically inserts into a database.",
-      "Cannot explain the basic difference between reading, creating, updating, and deleting.",
-      "Thinks Express prevents developers from mutating data inside GET handlers."
+      {
+        "label": "Explains that each helper registers a route handler for a specific HTTP method.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "maps_app_helpers_to_http_methods",
+            "description": "States that app.get, app.post, app.put, and app.delete register handlers for specific HTTP methods."
+          },
+          {
+            "key": "does_not_treat_helpers_as_business_actions",
+            "description": "Avoids explaining helpers as arbitrary function names unrelated to HTTP."
+          }
+        ]
+      },
+      {
+        "label": "Connects app.get to reading or retrieving a representation without intended server-side mutation.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "maps_get_to_read",
+            "description": "Maps GET to reading or retrieving a resource representation."
+          },
+          {
+            "key": "mentions_get_safe_semantics",
+            "description": "Mentions that GET should not intentionally mutate server state."
+          }
+        ]
+      },
+      {
+        "label": "Connects app.post to creating resources, submitting data, or triggering operations that may not be idempotent.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "maps_post_to_create_or_submit",
+            "description": "Maps POST to creation, submission, or processing."
+          },
+          {
+            "key": "mentions_post_not_generally_idempotent",
+            "description": "Mentions POST may not be idempotent."
+          }
+        ]
+      },
+      {
+        "label": "Connects app.put to replacing or updating a resource at a known URI, usually with idempotent intent.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "maps_put_to_known_resource_update",
+            "description": "Maps PUT to replacing/updating a known resource URI."
+          },
+          {
+            "key": "mentions_put_idempotent_intent",
+            "description": "Mentions idempotent intent when PUT is implemented correctly."
+          }
+        ]
+      },
+      {
+        "label": "Connects app.delete to removing or deactivating a resource.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "maps_delete_to_removal",
+            "description": "Maps DELETE to removing or deactivating a resource."
+          },
+          {
+            "key": "uses_resource_example_for_delete",
+            "description": "Can apply DELETE to a concrete resource such as /todos/:id."
+          }
+        ]
+      },
+      {
+        "label": "Notes that Express routes by method but does not enforce REST semantics; handler code and API design must do that.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "states_express_does_not_enforce_rest_semantics",
+            "description": "States that Express only routes by method/path and does not enforce REST correctness."
+          },
+          {
+            "key": "connects_semantics_to_handler_design",
+            "description": "Explains that handler behavior and API design must preserve safe/idempotent semantics."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -522,30 +852,116 @@
   },
   {
     "code": "NODE_HTTP_EXPRESS_JR_TECH_REQ_RES_005",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "communication", "problem_solving"],
-    "techTags": ["nodejs", "express", "request_response"],
+    "competencies": [
+      "technical_fundamentals",
+      "communication",
+      "problem_solving"
+    ],
+    "techTags": [
+      "nodejs",
+      "express",
+      "request_response"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Check whether the candidate understands the request and response objects used inside Express route handlers.",
     "primaryQuestion": "What are req and res in an Express route handler?",
     "expectedSignals": [
-      { "label": "Explains that req represents the incoming HTTP request and contains data such as method, URL, headers, params, query, body, cookies, and authentication context if middleware adds it.", "relatedTrigger": null },
-      { "label": "Explains that res represents the HTTP response being built and is used to set status, headers, cookies, and send data.", "relatedTrigger": null },
-      { "label": "Mentions common response helpers such as res.status(), res.json(), res.send(), res.redirect(), or res.end().", "relatedTrigger": null },
-      { "label": "Understands that req and res are per-request objects and should not be stored globally for later reuse.", "relatedTrigger": null },
-      { "label": "Mentions that a handler should normally send one final response or delegate control, not send multiple responses.", "relatedTrigger": null },
-      { "label": "Recognizes that Express extends or wraps Node's request and response objects with convenience methods.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Thinks req is a database request and res is the returned data object.",
-      "Cannot name where to read path parameters, query string, headers, or body.",
-      "Sends multiple responses from the same request path without recognizing headers-sent errors.",
-      "Stores req or res in global state for background work.",
-      "Believes returning a JavaScript object from the handler automatically sends JSON in Express."
+      {
+        "label": "Explains that req represents the incoming HTTP request and contains data such as method, URL, headers, params, query, body, cookies, and authentication context if middleware adds it.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "defines_req_as_incoming_request",
+            "description": "Defines req as the incoming HTTP request object."
+          },
+          {
+            "key": "names_common_req_data_sources",
+            "description": "Mentions data sources such as headers, params, query, body, cookies, or auth context added by middleware."
+          }
+        ]
+      },
+      {
+        "label": "Explains that res represents the HTTP response being built and is used to set status, headers, cookies, and send data.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "defines_res_as_outgoing_response",
+            "description": "Defines res as the outgoing response object being built."
+          },
+          {
+            "key": "mentions_status_headers_cookies_body",
+            "description": "Mentions using res to set status, headers, cookies, or response body."
+          }
+        ]
+      },
+      {
+        "label": "Mentions common response helpers such as res.status(), res.json(), res.send(), res.redirect(), or res.end().",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "names_status_and_json_helpers",
+            "description": "Mentions helpers such as res.status() and res.json()."
+          },
+          {
+            "key": "names_other_response_helpers",
+            "description": "Mentions helpers such as res.send(), res.redirect(), or res.end()."
+          }
+        ]
+      },
+      {
+        "label": "Understands that req and res are per-request objects and should not be stored globally for later reuse.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "states_req_res_are_per_request",
+            "description": "States that req and res belong to one request lifecycle."
+          },
+          {
+            "key": "warns_against_global_reuse",
+            "description": "Warns not to store req/res globally or reuse them across requests."
+          }
+        ]
+      },
+      {
+        "label": "Mentions that a handler should normally send one final response or delegate control, not send multiple responses.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "states_one_final_response_rule",
+            "description": "States that a handler should send one final response or delegate."
+          },
+          {
+            "key": "mentions_duplicate_send_error",
+            "description": "Mentions duplicate response or headers-already-sent problems."
+          }
+        ]
+      },
+      {
+        "label": "Recognizes that Express extends or wraps Node's request and response objects with convenience methods.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "connects_express_req_res_to_node_objects",
+            "description": "Recognizes that Express builds on Node's HTTP request/response objects."
+          },
+          {
+            "key": "mentions_express_convenience_methods",
+            "description": "Mentions added Express convenience methods such as req.params or res.json."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -572,7 +988,7 @@
         "purpose": "Check practical req usage across common request data sources."
       },
       {
-        "trigger": "red_flag",
+        "trigger": "missing_consequence",
         "question": "What happens if one branch calls res.json() and later code calls res.send() again?",
         "purpose": "Probe response lifecycle and duplicate send awareness."
       }
@@ -655,30 +1071,116 @@
   },
   {
     "code": "NODE_HTTP_EXPRESS_JR_TECH_MIDDLEWARE_006",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "communication"],
-    "techTags": ["nodejs", "express", "middleware"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "communication"
+    ],
+    "techTags": [
+      "nodejs",
+      "express",
+      "middleware"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Verify whether the candidate understands Express middleware as request pipeline functions, not just route handlers.",
     "primaryQuestion": "What is Express middleware?",
     "expectedSignals": [
-      { "label": "Defines middleware as a function in the request-response cycle that has access to req, res, and next.", "relatedTrigger": null },
-      { "label": "Explains that middleware can run before route handlers, after earlier middleware, or at route/router/application level depending on registration.", "relatedTrigger": null },
-      { "label": "Mentions common uses such as logging, authentication, authorization, parsing JSON, validation, CORS, rate limiting, and error handling.", "relatedTrigger": null },
-      { "label": "Understands middleware can modify req or res, end the response, or call next to continue.", "relatedTrigger": null },
-      { "label": "Mentions that registration order matters because Express runs matching middleware in sequence.", "relatedTrigger": null },
-      { "label": "Can distinguish normal middleware from error-handling middleware at a high level.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Says middleware is only authentication code.",
-      "Thinks middleware always runs after route handlers.",
-      "Does not know the role of next.",
-      "Assumes middleware must always send a response.",
-      "Ignores registration order and matching paths."
+      {
+        "label": "Defines middleware as a function in the request-response cycle that has access to req, res, and next.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "defines_middleware_req_res_next_function",
+            "description": "Defines middleware as a request-response cycle function with access to req, res, and next."
+          },
+          {
+            "key": "places_middleware_in_pipeline",
+            "description": "Explains that middleware participates in the Express request pipeline."
+          }
+        ]
+      },
+      {
+        "label": "Explains that middleware can run before route handlers, after earlier middleware, or at route/router/application level depending on registration.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "mentions_registration_scope_levels",
+            "description": "Mentions app-level, router-level, or route-level middleware placement."
+          },
+          {
+            "key": "connects_registration_to_execution_position",
+            "description": "Explains that registration determines whether it runs before routes or after earlier middleware."
+          }
+        ]
+      },
+      {
+        "label": "Mentions common uses such as logging, authentication, authorization, parsing JSON, validation, CORS, rate limiting, and error handling.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "names_cross_cutting_middleware_examples",
+            "description": "Names cross-cutting examples such as logging, auth, CORS, rate limiting, or error handling."
+          },
+          {
+            "key": "names_request_preparation_examples",
+            "description": "Names request preparation examples such as JSON parsing or validation."
+          }
+        ]
+      },
+      {
+        "label": "Understands middleware can modify req or res, end the response, or call next to continue.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "mentions_req_res_modification",
+            "description": "Mentions middleware can add data to req or set headers/state on res."
+          },
+          {
+            "key": "distinguishes_end_response_vs_next",
+            "description": "Explains middleware can end the response or call next() to continue."
+          }
+        ]
+      },
+      {
+        "label": "Mentions that registration order matters because Express runs matching middleware in sequence.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "states_middleware_order_matters",
+            "description": "States that Express executes matching middleware in registration order."
+          },
+          {
+            "key": "connects_order_to_auth_or_parser_placement",
+            "description": "Connects order to examples such as auth before protected routes or parsers before body readers."
+          }
+        ]
+      },
+      {
+        "label": "Can distinguish normal middleware from error-handling middleware at a high level.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "distinguishes_normal_and_error_middleware",
+            "description": "Separates normal middleware from error-handling middleware."
+          },
+          {
+            "key": "mentions_error_middleware_signature",
+            "description": "Mentions the four-argument error middleware shape or next(err) flow at a high level."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -783,30 +1285,116 @@
   },
   {
     "code": "NODE_HTTP_EXPRESS_JR_TECH_NEXT_007",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "problem_solving", "communication"],
-    "techTags": ["nodejs", "express", "middleware"],
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving",
+      "communication"
+    ],
+    "techTags": [
+      "nodejs",
+      "express",
+      "middleware"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Check whether the candidate understands next() as explicit control transfer in the Express middleware chain.",
     "primaryQuestion": "What does next() do in middleware?",
     "expectedSignals": [
-      { "label": "Explains that next() passes control to the next matching middleware or route handler in the Express stack.", "relatedTrigger": null },
-      { "label": "Understands that middleware should call next() only when it has not ended the response and wants processing to continue.", "relatedTrigger": null },
-      { "label": "Mentions next(err) as the way to forward an error to error-handling middleware.", "relatedTrigger": null },
-      { "label": "Recognizes that calling next() more than once can cause confusing flow, duplicate handlers, or duplicate responses.", "relatedTrigger": null },
-      { "label": "Mentions that code after next() may still run unless the function returns or control flow is structured carefully.", "relatedTrigger": null },
-      { "label": "Can describe a practical example such as authentication middleware calling next only after a token is valid.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Says next() sends the response to the client.",
-      "Thinks next() always routes to the next URL path instead of the next handler in the stack.",
-      "Calls next() after res.json() as a default habit without understanding duplicate response risk.",
-      "Does not know how errors are passed to centralized error middleware.",
-      "Assumes Express automatically calls next() if the middleware forgets."
+      {
+        "label": "Explains that next() passes control to the next matching middleware or route handler in the Express stack.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "defines_next_as_control_transfer",
+            "description": "Explains that next() passes control rather than sending a response itself."
+          },
+          {
+            "key": "scopes_next_to_matching_stack",
+            "description": "Mentions the next matching middleware or route handler in the current Express stack."
+          }
+        ]
+      },
+      {
+        "label": "Understands that middleware should call next() only when it has not ended the response and wants processing to continue.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "calls_next_only_on_continue_path",
+            "description": "States that next() belongs on paths where processing should continue."
+          },
+          {
+            "key": "avoids_next_after_final_response",
+            "description": "Warns not to call next() after sending a final response such as 401."
+          }
+        ]
+      },
+      {
+        "label": "Mentions next(err) as the way to forward an error to error-handling middleware.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_next_err_forwarding",
+            "description": "Mentions next(err) as error forwarding."
+          },
+          {
+            "key": "connects_next_err_to_error_handler",
+            "description": "Connects next(err) to centralized error-handling middleware."
+          }
+        ]
+      },
+      {
+        "label": "Recognizes that calling next() more than once can cause confusing flow, duplicate handlers, or duplicate responses.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "warns_next_called_more_than_once",
+            "description": "Warns that calling next() more than once is usually a bug."
+          },
+          {
+            "key": "mentions_duplicate_handlers_or_responses",
+            "description": "Mentions duplicate handler execution, duplicate responses, or headers-already-sent errors."
+          }
+        ]
+      },
+      {
+        "label": "Mentions that code after next() may still run unless the function returns or control flow is structured carefully.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "states_code_after_next_can_run",
+            "description": "States that next() does not automatically stop executing the current function."
+          },
+          {
+            "key": "mentions_return_or_branch_control",
+            "description": "Mentions returning or structuring branches to avoid accidental fall-through after next()."
+          }
+        ]
+      },
+      {
+        "label": "Can describe a practical example such as authentication middleware calling next only after a token is valid.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "uses_auth_middleware_next_example",
+            "description": "Uses an auth middleware example with valid and invalid token branches."
+          },
+          {
+            "key": "continues_only_after_successful_check",
+            "description": "Calls next() only after the token or condition is accepted."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -828,14 +1416,14 @@
     ],
     "followUps": [
       {
-        "trigger": "red_flag",
-        "question": "Should middleware call next() after it already sent a 401 response? Why or why not?",
-        "purpose": "Check response lifecycle boundaries."
-      },
-      {
         "trigger": "missing_context",
         "question": "How would you pass a database error from middleware to a centralized error handler?",
         "purpose": "Probe next(err) awareness."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "Should middleware call next() after it already sent a 401 response? Why or why not?",
+        "purpose": "Check response lifecycle boundaries."
       }
     ],
     "localizedContent": {
@@ -911,30 +1499,116 @@
   },
   {
     "code": "NODE_HTTP_EXPRESS_JR_DEBUG_MIDDLEWARE_HANG_008",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "practical_scenario",
-    "competencies": ["technical_fundamentals", "problem_solving", "ownership"],
-    "techTags": ["nodejs", "express", "middleware", "debugging"],
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving",
+      "ownership"
+    ],
+    "techTags": [
+      "nodejs",
+      "express",
+      "middleware",
+      "debugging"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Verify whether the candidate can reason about a hung request caused by middleware that neither ends the response nor passes control.",
     "primaryQuestion": "What happens if middleware does not call next() or send a response?",
     "expectedSignals": [
-      { "label": "Explains that the request-response cycle is not completed, so the client keeps waiting until a timeout or connection close.", "relatedTrigger": null },
-      { "label": "States that later matching middleware and route handlers will not run because control was not passed onward.", "relatedTrigger": null },
-      { "label": "Distinguishes this bug from an intentional middleware that sends a response, such as returning 401 for unauthorized access.", "relatedTrigger": null },
-      { "label": "Mentions that the fix is to either send/end a response or call next/next(err) on every code path.", "relatedTrigger": null },
-      { "label": "Recognizes common causes such as missing return in a conditional branch, swallowed async error, or forgot next inside validation/auth middleware.", "relatedTrigger": null },
-      { "label": "Can describe debugging by checking logs, browser/network pending requests, and middleware order.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Says Express automatically continues to the next route.",
-      "Says Express automatically sends a 404 if middleware stops without next.",
-      "Does not understand why the browser request remains pending.",
-      "Suggests calling next after every res.send without considering duplicate response risk.",
-      "Ignores unhandled async branches that never resolve the request."
+      {
+        "label": "Explains that the request-response cycle is not completed, so the client keeps waiting until a timeout or connection close.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "explains_uncompleted_cycle",
+            "description": "Explains that the request-response cycle remains incomplete."
+          },
+          {
+            "key": "mentions_timeout_or_pending_request",
+            "description": "Mentions timeout, pending network request, or connection close as symptoms."
+          }
+        ]
+      },
+      {
+        "label": "States that later matching middleware and route handlers will not run because control was not passed onward.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "states_later_handlers_do_not_run",
+            "description": "States that later matching middleware/routes will not run."
+          },
+          {
+            "key": "connects_blocking_to_missing_next_or_response",
+            "description": "Connects the blockage to not calling next()/next(err) or sending a response."
+          }
+        ]
+      },
+      {
+        "label": "Distinguishes this bug from an intentional middleware that sends a response, such as returning 401 for unauthorized access.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "distinguishes_hang_from_intentional_response",
+            "description": "Separates a hanging middleware from one that intentionally ends the response."
+          },
+          {
+            "key": "uses_unauthorized_response_example",
+            "description": "Uses an example such as returning 401 for invalid credentials." 
+          }
+        ]
+      },
+      {
+        "label": "Mentions that the fix is to either send/end a response or call next/next(err) on every code path.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "states_every_path_must_complete",
+            "description": "States that every code path must complete the request somehow."
+          },
+          {
+            "key": "names_completion_options",
+            "description": "Names sending/ending a response, calling next(), or calling next(err)."
+          }
+        ]
+      },
+      {
+        "label": "Recognizes common causes such as missing return in a conditional branch, swallowed async error, or forgot next inside validation/auth middleware.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "names_branch_or_return_cause",
+            "description": "Mentions missing return or missing branch completion as a cause."
+          },
+          {
+            "key": "names_async_or_auth_validation_cause",
+            "description": "Mentions swallowed async errors or forgotten next in auth/validation middleware."
+          }
+        ]
+      },
+      {
+        "label": "Can describe debugging by checking logs, browser/network pending requests, and middleware order.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "uses_logs_or_network_pending_for_debug",
+            "description": "Mentions logs or browser/network pending requests when debugging."
+          },
+          {
+            "key": "checks_middleware_order_for_blocking", "description": "Mentions checking middleware order and identifying the blocking middleware."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -961,7 +1635,7 @@
         "purpose": "Check practical branch control and response completion."
       },
       {
-        "trigger": "red_flag",
+        "trigger": "missing_consequence",
         "question": "Why would placing a middleware that never calls next before all routes make the whole API look down?",
         "purpose": "Probe pipeline order and blocking behavior."
       }
@@ -1039,30 +1713,116 @@
   },
   {
     "code": "NODE_HTTP_EXPRESS_JR_TECH_PARAMS_QUERY_BODY_009",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "problem_solving", "communication"],
-    "techTags": ["nodejs", "express", "request_response", "rest"],
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving",
+      "communication"
+    ],
+    "techTags": [
+      "nodejs",
+      "express",
+      "request_response",
+      "rest"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Check whether the candidate can choose the correct Express request data source for path identity, URL options, and payloads.",
     "primaryQuestion": "What is the difference between req.params, req.query, and req.body?",
     "expectedSignals": [
-      { "label": "Explains that req.params contains named path parameters declared in the route pattern, such as /users/:id.", "relatedTrigger": null },
-      { "label": "Explains that req.query contains URL query string values after ?, often used for filters, pagination, sorting, search, and optional flags.", "relatedTrigger": null },
-      { "label": "Explains that req.body contains parsed request payload data, commonly used for POST, PUT, and PATCH create/update operations.", "relatedTrigger": null },
-      { "label": "Mentions that req.body depends on body-parsing middleware such as express.json or express.urlencoded registered before the route.", "relatedTrigger": null },
-      { "label": "Treats all three as user-controlled input that requires validation, normalization, and type conversion.", "relatedTrigger": null },
-      { "label": "Can give a concrete example such as GET /users/:id?include=posts using params and query, versus POST /users using body.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Says params, query, and body are interchangeable.",
-      "Assumes req.query values are already numbers or booleans.",
-      "Forgets body parser middleware is required for JSON request bodies.",
-      "Uses request body for required resource identity without recognizing API design issues.",
-      "Trusts any of these values without validation."
+      {
+        "label": "Explains that req.params contains named path parameters declared in the route pattern, such as /users/:id.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "defines_req_params_path_values",
+            "description": "Explains req.params as named values from the route path pattern."
+          },
+          {
+            "key": "uses_users_id_param_example",
+            "description": "Uses an example such as /users/:id."
+          }
+        ]
+      },
+      {
+        "label": "Explains that req.query contains URL query string values after ?, often used for filters, pagination, sorting, search, and optional flags.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "defines_req_query_string_values",
+            "description": "Explains req.query as values parsed from the URL query string after ?."
+          },
+          {
+            "key": "mentions_query_use_cases", "description": "Mentions filters, pagination, sorting, search, or optional flags."
+          }
+        ]
+      },
+      {
+        "label": "Explains that req.body contains parsed request payload data, commonly used for POST, PUT, and PATCH create/update operations.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "defines_req_body_payload",
+            "description": "Explains req.body as parsed request payload data."
+          },
+          {
+            "key": "connects_body_to_write_methods",
+            "description": "Connects body payloads to POST, PUT, or PATCH create/update operations."
+          }
+        ]
+      },
+      {
+        "label": "Mentions that req.body depends on body-parsing middleware such as express.json or express.urlencoded registered before the route.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_body_parser_dependency",
+            "description": "Mentions express.json, express.urlencoded, or body-parsing middleware."
+          },
+          {
+            "key": "places_parser_before_route",
+            "description": "States that the parser must be registered before routes that read req.body."
+          }
+        ]
+      },
+      {
+        "label": "Treats all three as user-controlled input that requires validation, normalization, and type conversion.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "treats_params_query_body_as_untrusted",
+            "description": "States that params, query, and body are user-controlled input."
+          },
+          {
+            "key": "requires_validation_type_conversion",
+            "description": "Mentions validation, normalization, and type conversion before use."
+          }
+        ]
+      },
+      {
+        "label": "Can give a concrete example such as GET /users/:id?include=posts using params and query, versus POST /users using body.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "maps_get_example_to_params_and_query",
+            "description": "Maps a GET example such as /users/:id?include=posts to params and query."
+          },
+          {
+            "key": "maps_post_example_to_body",
+            "description": "Maps POST /users or similar create/update data to req.body."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1172,30 +1932,116 @@
   },
   {
     "code": "NODE_HTTP_EXPRESS_JR_TECH_EXPRESS_JSON_010",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "problem_solving"],
-    "techTags": ["nodejs", "express", "json", "middleware"],
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving"
+    ],
+    "techTags": [
+      "nodejs",
+      "express",
+      "json",
+      "middleware"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Verify whether the candidate understands JSON body parsing middleware and its placement in the Express pipeline.",
     "primaryQuestion": "Why do we use express.json()?",
     "expectedSignals": [
-      { "label": "Explains that express.json() is built-in middleware for parsing incoming JSON request bodies.", "relatedTrigger": null },
-      { "label": "States that it populates req.body with the parsed JavaScript object when the request has a matching JSON Content-Type.", "relatedTrigger": null },
-      { "label": "Mentions it must be registered before routes that need req.body.", "relatedTrigger": null },
-      { "label": "Distinguishes express.json() from res.json(): one parses incoming request bodies, the other sends JSON responses.", "relatedTrigger": null },
-      { "label": "Mentions handling invalid JSON and considering size limits or validation after parsing.", "relatedTrigger": null },
-      { "label": "Recognizes that parsing does not make input trusted; schema validation and sanitization may still be needed.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Says express.json() is used to return JSON responses.",
-      "Thinks it is needed for req.params or req.query.",
-      "Registers it after routes and expects earlier handlers to see req.body.",
-      "Assumes it parses every body type including multipart files.",
-      "Trusts parsed body values without validation."
+      {
+        "label": "Explains that express.json() is built-in middleware for parsing incoming JSON request bodies.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "defines_express_json_request_parser",
+            "description": "Defines express.json() as middleware for parsing incoming JSON request bodies."
+          },
+          {
+            "key": "distinguishes_from_response_json_helper",
+            "description": "Distinguishes express.json() from res.json()."
+          }
+        ]
+      },
+      {
+        "label": "States that it populates req.body with the parsed JavaScript object when the request has a matching JSON Content-Type.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "populates_req_body_with_parsed_object",
+            "description": "States that parsed JSON is made available on req.body."
+          },
+          {
+            "key": "mentions_matching_json_content_type",
+            "description": "Mentions that parsing depends on a matching JSON Content-Type."
+          }
+        ]
+      },
+      {
+        "label": "Mentions it must be registered before routes that need req.body.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "registers_express_json_before_routes",
+            "description": "States that express.json() must be mounted before routes needing req.body."
+          },
+          {
+            "key": "connects_order_to_available_body",
+            "description": "Explains that wrong order leaves routes without the parsed body."
+          }
+        ]
+      },
+      {
+        "label": "Distinguishes express.json() from res.json(): one parses incoming request bodies, the other sends JSON responses.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "states_express_json_parses_request",
+            "description": "States that express.json() parses incoming request bodies."
+          },
+          {
+            "key": "states_res_json_sends_response",
+            "description": "States that res.json() sends JSON responses."
+          }
+        ]
+      },
+      {
+        "label": "Mentions handling invalid JSON and considering size limits or validation after parsing.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_invalid_json_error_handling",
+            "description": "Mentions handling invalid JSON parse errors."
+          },
+          {
+            "key": "mentions_size_limits_or_validation",
+            "description": "Mentions size limits and validation after parsing."
+          }
+        ]
+      },
+      {
+        "label": "Recognizes that parsing does not make input trusted; schema validation and sanitization may still be needed.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "states_parsed_input_still_untrusted",
+            "description": "States that parsed JSON is still client-controlled."
+          },
+          {
+            "key": "requires_schema_validation_or_sanitization",
+            "description": "Mentions schema validation, sanitization, or type checks before use."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1217,14 +2063,14 @@
     ],
     "followUps": [
       {
-        "trigger": "red_flag",
-        "question": "What is the difference between app.use(express.json()) and res.json({ ok: true })?",
-        "purpose": "Separate request parsing from response serialization."
-      },
-      {
         "trigger": "missing_context",
         "question": "What happens if the client sends invalid JSON to a route using express.json()?",
         "purpose": "Probe error handling and parser behavior."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "What is the difference between app.use(express.json()) and res.json({ ok: true })?",
+        "purpose": "Separate request parsing from response serialization."
       }
     ],
     "localizedContent": {
@@ -1305,30 +2151,118 @@
   },
   {
     "code": "NODE_HTTP_EXPRESS_JR_TECH_REST_BASIC_011",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "communication"],
-    "techTags": ["nodejs", "express", "rest", "api_design", "http"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "communication"
+    ],
+    "techTags": [
+      "nodejs",
+      "express",
+      "rest",
+      "api_design",
+      "http"
+    ],
     "difficulty": 3,
     "conversationDepth": "mid",
     "intent": "Check whether the candidate can describe basic RESTful API design beyond simply returning JSON.",
     "primaryQuestion": "What makes an API RESTful at a basic level?",
     "expectedSignals": [
-      { "label": "Explains that RESTful APIs model resources with stable URIs, such as /users and /users/:id, rather than only action names.", "relatedTrigger": null },
-      { "label": "Connects standard HTTP methods to resource operations, such as GET to read, POST to create, PUT/PATCH to update, and DELETE to remove.", "relatedTrigger": null },
-      { "label": "Mentions stateless requests: each request should carry the information needed to authenticate and process it without relying on conversational server state.", "relatedTrigger": null },
-      { "label": "Mentions using representations such as JSON and appropriate Content-Type headers.", "relatedTrigger": null },
-      { "label": "Mentions meaningful HTTP status codes and predictable error responses.", "relatedTrigger": null },
-      { "label": "Recognizes that basic RESTfulness is not guaranteed just because an endpoint uses Express or returns JSON.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Says REST means any API that returns JSON.",
-      "Uses only verb-based URLs such as /getUsers or /deleteUser without recognizing resource modeling issues.",
-      "Ignores HTTP methods and status codes.",
-      "Thinks REST requires no authentication or no database.",
-      "Treats every Express route as automatically RESTful."
+      {
+        "label": "Explains that RESTful APIs model resources with stable URIs, such as /users and /users/:id, rather than only action names.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "models_resources_with_stable_uris",
+            "description": "Models resources with stable URIs such as /users and /users/:id."
+          },
+          {
+            "key": "avoids_action_only_route_names",
+            "description": "Avoids action-only names such as /createUser for basic resource CRUD."
+          }
+        ]
+      },
+      {
+        "label": "Connects standard HTTP methods to resource operations, such as GET to read, POST to create, PUT/PATCH to update, and DELETE to remove.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "maps_http_methods_to_resource_operations",
+            "description": "Maps GET, POST, PUT/PATCH, and DELETE to read, create, update, and remove."
+          },
+          {
+            "key": "uses_method_semantics_not_path_verbs",
+            "description": "Uses method semantics instead of encoding CRUD actions into path names."
+          }
+        ]
+      },
+      {
+        "label": "Mentions stateless requests: each request should carry the information needed to authenticate and process it without relying on conversational server state.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_stateless_request_context",
+            "description": "Mentions each request carrying the context needed to authenticate and process it."
+          },
+          {
+            "key": "avoids_conversational_server_state_dependency",
+            "description": "Avoids relying on previous conversational server session state."
+          }
+        ]
+      },
+      {
+        "label": "Mentions using representations such as JSON and appropriate Content-Type headers.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_json_representation",
+            "description": "Mentions JSON or another representation format for resources."
+          },
+          {
+            "key": "mentions_content_type_headers",
+            "description": "Mentions appropriate Content-Type or Accept headers."
+          }
+        ]
+      },
+      {
+        "label": "Mentions meaningful HTTP status codes and predictable error responses.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "uses_meaningful_http_status_codes",
+            "description": "Mentions using status codes that reflect the outcome."
+          },
+          {
+            "key": "uses_predictable_error_contract",
+            "description": "Mentions predictable JSON error responses or stable error structure."
+          }
+        ]
+      },
+      {
+        "label": "Recognizes that basic RESTfulness is not guaranteed just because an endpoint uses Express or returns JSON.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "rejects_framework_equals_restful",
+            "description": "States that using Express does not automatically make an API RESTful."
+          },
+          {
+            "key": "rejects_json_equals_restful",
+            "description": "States that returning JSON alone does not make an API RESTful."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1438,30 +2372,117 @@
   },
   {
     "code": "NODE_HTTP_EXPRESS_JR_TECH_STATUS_CODES_012",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "problem_solving", "communication"],
-    "techTags": ["nodejs", "express", "http", "rest"],
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving",
+      "communication"
+    ],
+    "techTags": [
+      "nodejs",
+      "express",
+      "http",
+      "rest"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Verify whether the candidate knows common HTTP status codes and can choose them for basic API outcomes.",
     "primaryQuestion": "Which HTTP status codes should a junior backend developer know?",
     "expectedSignals": [
-      { "label": "Names common success codes: 200 OK, 201 Created, and 204 No Content, with appropriate use cases.", "relatedTrigger": null },
-      { "label": "Names common client error codes: 400 Bad Request, 401 Unauthorized, 403 Forbidden, 404 Not Found, and often 409 Conflict or 422 Unprocessable Content.", "relatedTrigger": null },
-      { "label": "Names common server error code 500 Internal Server Error and understands it represents unexpected server failure.", "relatedTrigger": null },
-      { "label": "Explains the broad classes: 2xx success, 3xx redirects, 4xx client/request problems, and 5xx server problems.", "relatedTrigger": null },
-      { "label": "Can map practical cases: validation error, missing auth, authenticated but not allowed, missing resource, successful deletion, and created resource.", "relatedTrigger": null },
-      { "label": "Recognizes that returning HTTP 200 for every outcome makes clients and observability worse.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Returns 200 for errors and puts success false in the body as the only signal.",
-      "Uses 500 for validation errors or missing resources.",
-      "Confuses 401 authentication missing/invalid with 403 authenticated but forbidden.",
-      "Thinks status codes are only frontend concerns.",
-      "Cannot explain 201 versus 200 or 204 versus 200."
+      {
+        "label": "Names common success codes: 200 OK, 201 Created, and 204 No Content, with appropriate use cases.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "names_common_success_codes",
+            "description": "Names 200 OK, 201 Created, and 204 No Content."
+          },
+          {
+            "key": "maps_success_codes_to_cases",
+            "description": "Maps those success codes to read/update, create, and no-body delete/update cases."
+          }
+        ]
+      },
+      {
+        "label": "Names common client error codes: 400 Bad Request, 401 Unauthorized, 403 Forbidden, 404 Not Found, and often 409 Conflict or 422 Unprocessable Content.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "names_common_client_error_codes",
+            "description": "Names 400, 401, 403, 404, and optionally 409 or 422."
+          },
+          {
+            "key": "distinguishes_auth_validation_missing_conflict_cases",
+            "description": "Connects client errors to invalid request, missing auth, forbidden, missing resource, conflict, or validation cases."
+          }
+        ]
+      },
+      {
+        "label": "Names common server error code 500 Internal Server Error and understands it represents unexpected server failure.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "names_500_internal_server_error",
+            "description": "Names 500 Internal Server Error."
+          },
+          {
+            "key": "maps_500_to_unexpected_server_failure",
+            "description": "Explains 500 as unexpected server-side failure, not normal validation/user mistakes."
+          }
+        ]
+      },
+      {
+        "label": "Explains the broad classes: 2xx success, 3xx redirects, 4xx client/request problems, and 5xx server problems.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "explains_status_code_classes",
+            "description": "Explains broad 2xx, 3xx, 4xx, and 5xx classes."
+          },
+          {
+            "key": "uses_classes_to_reason_about_errors",
+            "description": "Uses classes to distinguish client/request problems from server problems."
+          }
+        ]
+      },
+      {
+        "label": "Can map practical cases: validation error, missing auth, authenticated but not allowed, missing resource, successful deletion, and created resource.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "maps_common_error_cases_to_codes",
+            "description": "Maps validation, missing auth, forbidden, and missing resource to suitable 4xx codes."
+          },
+          {
+            "key": "maps_common_success_cases_to_codes",
+            "description": "Maps successful deletion and resource creation to suitable 2xx codes."
+          }
+        ]
+      },
+      {
+        "label": "Recognizes that returning HTTP 200 for every outcome makes clients and observability worse.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "rejects_always_200_contract",
+            "description": "Recognizes that always returning 200 hides the real outcome."
+          },
+          {
+            "key": "connects_status_misuse_to_clients_and_monitoring",
+            "description": "Explains harm to clients, caches, retry logic, logs, monitoring, or alerts."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1488,7 +2509,7 @@
         "purpose": "Check scenario-based code selection."
       },
       {
-        "trigger": "red_flag",
+        "trigger": "missing_consequence",
         "question": "Why is always returning 200 with an error field in JSON a problem?",
         "purpose": "Probe client behavior, caches, monitoring, and HTTP semantics."
       }
@@ -1566,30 +2587,116 @@
   },
   {
     "code": "NODE_HTTP_EXPRESS_JR_TECH_RETURN_JSON_013",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "problem_solving"],
-    "techTags": ["nodejs", "express", "json", "rest"],
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving"
+    ],
+    "techTags": [
+      "nodejs",
+      "express",
+      "json",
+      "rest"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Check whether the candidate can return JSON correctly from an Express route while managing status and response lifecycle.",
     "primaryQuestion": "How do you return JSON from an Express route?",
     "expectedSignals": [
-      { "label": "Uses res.json(data) to serialize a JavaScript object or array and send a JSON response.", "relatedTrigger": null },
-      { "label": "Mentions setting the status code with res.status(code).json(data), such as res.status(201).json(createdUser).", "relatedTrigger": null },
-      { "label": "Understands that res.json ends the response for that request and later code should not send another response.", "relatedTrigger": null },
-      { "label": "Mentions that Express sets the JSON Content-Type header appropriately.", "relatedTrigger": null },
-      { "label": "Avoids returning sensitive fields such as passwords, tokens, or internal-only data in the response body.", "relatedTrigger": null },
-      { "label": "Can distinguish returning JSON from parsing incoming JSON with express.json().", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Thinks return { ok: true } from the handler automatically sends JSON.",
-      "Uses JSON.stringify manually without understanding headers or response completion.",
-      "Calls res.json multiple times in the same request path.",
-      "Confuses res.json with express.json.",
-      "Returns raw database records containing sensitive fields without considering response shape."
+      {
+        "label": "Uses res.json(data) to serialize a JavaScript object or array and send a JSON response.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "uses_res_json_to_send_json",
+            "description": "Uses res.json(data) to send a JSON response."
+          },
+          {
+            "key": "mentions_object_or_array_serialization",
+            "description": "Mentions serializing an object or array into JSON."
+          }
+        ]
+      },
+      {
+        "label": "Mentions setting the status code with res.status(code).json(data), such as res.status(201).json(createdUser).",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "chains_status_before_json",
+            "description": "Uses res.status(code).json(data) or equivalent."
+          },
+          {
+            "key": "uses_created_201_example",
+            "description": "Gives an example such as returning 201 with a created user."
+          }
+        ]
+      },
+      {
+        "label": "Understands that res.json ends the response for that request and later code should not send another response.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "states_res_json_ends_response",
+            "description": "States that res.json sends/ends the response for that request."
+          },
+          {
+            "key": "avoids_later_duplicate_send",
+            "description": "Warns against later sending another response after res.json()."
+          }
+        ]
+      },
+      {
+        "label": "Mentions that Express sets the JSON Content-Type header appropriately.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "mentions_json_content_type",
+            "description": "Mentions Express sets an appropriate JSON Content-Type."
+          },
+          {
+            "key": "connects_helper_to_response_serialization",
+            "description": "Connects res.json to response serialization and headers."
+          }
+        ]
+      },
+      {
+        "label": "Avoids returning sensitive fields such as passwords, tokens, or internal-only data in the response body.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "avoids_sensitive_response_fields",
+            "description": "Warns not to return passwords, tokens, secrets, or internal-only fields."
+          },
+          {
+            "key": "mentions_response_dto_or_projection",
+            "description": "Mentions selecting/sanitizing fields before sending a JSON response."
+          }
+        ]
+      },
+      {
+        "label": "Can distinguish returning JSON from parsing incoming JSON with express.json().",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "states_res_json_sends_response",
+            "description": "States that res.json() sends JSON to the client."
+          },
+          {
+            "key": "states_express_json_parses_request",
+            "description": "States that express.json() parses incoming request bodies."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1616,7 +2723,7 @@
         "purpose": "Check status chaining and practical syntax."
       },
       {
-        "trigger": "red_flag",
+        "trigger": "missing_consequence",
         "question": "What is the difference between res.json() and express.json()?",
         "purpose": "Separate response serialization from request body parsing."
       }
@@ -1699,30 +2806,117 @@
   },
   {
     "code": "NODE_HTTP_EXPRESS_JR_TECH_404_ROUTE_014",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "practical_scenario",
-    "competencies": ["technical_fundamentals", "problem_solving", "ownership"],
-    "techTags": ["nodejs", "express", "routing", "rest", "error_handling"],
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving",
+      "ownership"
+    ],
+    "techTags": [
+      "nodejs",
+      "express",
+      "routing",
+      "rest",
+      "error_handling"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Check whether the candidate knows how to return a proper 404 for unmatched Express routes.",
     "primaryQuestion": "How do you handle a route that does not exist?",
     "expectedSignals": [
-      { "label": "Explains that unmatched routes should return a 404 Not Found response rather than a 500 server error.", "relatedTrigger": null },
-      { "label": "Mentions adding a catch-all 404 middleware or route after all normal routes have been registered.", "relatedTrigger": null },
-      { "label": "Shows the basic shape app.use((req, res) => res.status(404).json({ error: 'Not found' })) or equivalent.", "relatedTrigger": null },
-      { "label": "Understands route order matters: placing the catch-all before real routes would block them.", "relatedTrigger": null },
-      { "label": "Mentions returning a consistent JSON error shape for APIs.", "relatedTrigger": null },
-      { "label": "Can distinguish 404 handling from centralized error-handling middleware for thrown or passed errors.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Returns 500 for unknown routes.",
-      "Registers the catch-all route before the actual routes.",
-      "Redirects every unknown API route to the frontend without considering API clients.",
-      "Leaves unmatched API requests hanging.",
-      "Says Express always returns the exact JSON 404 format the application needs without custom handling."
+      {
+        "label": "Explains that unmatched routes should return a 404 Not Found response rather than a 500 server error.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "uses_404_for_unmatched_routes",
+            "description": "States that unknown routes should return 404 Not Found."
+          },
+          {
+            "key": "distinguishes_404_from_500",
+            "description": "Explains that an unknown route is usually not an unexpected server failure."
+          }
+        ]
+      },
+      {
+        "label": "Mentions adding a catch-all 404 middleware or route after all normal routes have been registered.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "adds_catch_all_404_after_routes",
+            "description": "Mentions a catch-all 404 middleware/route after normal routes."
+          },
+          {
+            "key": "connects_position_to_unmatched_only",
+            "description": "Explains that placing it after routes makes it handle only unmatched requests."
+          }
+        ]
+      },
+      {
+        "label": "Shows the basic shape app.use((req, res) => res.status(404).json({ error: 'Not found' })) or equivalent.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "shows_app_use_404_handler_shape",
+            "description": "Shows app.use((req, res) => res.status(404).json(...)) or equivalent."
+          },
+          {
+            "key": "sends_json_not_found_body",
+            "description": "Returns a clear JSON not-found error body."
+          }
+        ]
+      },
+      {
+        "label": "Understands route order matters: placing the catch-all before real routes would block them.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "states_route_order_matters_for_404",
+            "description": "States that route order matters for the catch-all handler."
+          },
+          {
+            "key": "warns_early_catch_all_blocks_routes",
+            "description": "Warns that placing catch-all before real routes blocks valid routes."
+          }
+        ]
+      },
+      {
+        "label": "Mentions returning a consistent JSON error shape for APIs.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "uses_consistent_api_error_shape",
+            "description": "Mentions a consistent JSON error shape for API clients."
+          },
+          {
+            "key": "includes_code_message_or_request_id", "description": "Mentions fields such as code, message, path, or requestId."
+          }
+        ]
+      },
+      {
+        "label": "Can distinguish 404 handling from centralized error-handling middleware for thrown or passed errors.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "distinguishes_unmatched_from_error_flow",
+            "description": "Separates unmatched route handling from thrown/passed errors."
+          },
+          {
+            "key": "mentions_error_middleware_for_next_err",
+            "description": "Mentions centralized error middleware for next(err) or thrown errors."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1749,7 +2943,7 @@
         "purpose": "Probe Express order and pipeline understanding."
       },
       {
-        "trigger": "red_flag",
+        "trigger": "missing_consequence",
         "question": "Why is an unknown route usually 404 instead of 500?",
         "purpose": "Check client versus server error classification."
       }
@@ -1832,31 +3026,118 @@
   },
   {
     "code": "NODE_HTTP_EXPRESS_JR_TECH_CORS_015",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "communication"],
-    "techTags": ["nodejs", "express", "http", "cors", "security"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "communication"
+    ],
+    "techTags": [
+      "nodejs",
+      "express",
+      "http",
+      "cors",
+      "security"
+    ],
     "difficulty": 3,
     "conversationDepth": "mid",
     "intent": "Evaluate whether the candidate understands why CORS appears in browser-to-backend calls and how to configure it safely at a basic level.",
     "primaryQuestion": "What is CORS, and why does it appear when frontend calls backend APIs?",
     "expectedSignals": [
-      { "label": "Defines CORS as Cross-Origin Resource Sharing, a browser security mechanism around cross-origin HTTP requests.", "relatedTrigger": null },
-      { "label": "Explains that origins differ by scheme, host, or port, so http://localhost:3000 calling http://localhost:5000 is cross-origin.", "relatedTrigger": null },
-      { "label": "Mentions that browsers enforce same-origin policy for frontend JavaScript and require the server to allow the origin with CORS response headers.", "relatedTrigger": null },
-      { "label": "Mentions common headers or configuration such as Access-Control-Allow-Origin, allowed methods, allowed headers, and credentials handling.", "relatedTrigger": null },
-      { "label": "Explains preflight OPTIONS requests for non-simple requests such as custom headers, JSON content type, or methods like PUT/DELETE.", "relatedTrigger": null },
-      { "label": "Recognizes that CORS is enforced by browsers, not usually by curl or server-to-server requests, and that disabling it broadly can be unsafe.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Says CORS is a backend bug unrelated to browser security.",
-      "Thinks CORS is authentication or authorization.",
-      "Suggests always using Access-Control-Allow-Origin: * together with credentials.",
-      "Tries to fix CORS only in frontend code while the server never sends allow headers.",
-      "Does not understand why different localhost ports count as different origins.",
-      "Ignores preflight OPTIONS when debugging failed frontend API calls."
+      {
+        "label": "Defines CORS as Cross-Origin Resource Sharing, a browser security mechanism around cross-origin HTTP requests.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "defines_cors_cross_origin_resource_sharing",
+            "description": "Defines CORS as Cross-Origin Resource Sharing."
+          },
+          {
+            "key": "frames_cors_as_browser_security_mechanism",
+            "description": "Explains it as a browser security mechanism around cross-origin requests."
+          }
+        ]
+      },
+      {
+        "label": "Explains that origins differ by scheme, host, or port, so http://localhost:3000 calling http://localhost:5000 is cross-origin.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "defines_origin_scheme_host_port",
+            "description": "Explains that origin includes scheme, host, and port."
+          },
+          {
+            "key": "uses_localhost_different_port_example",
+            "description": "Recognizes localhost frontend/backend on different ports as cross-origin."
+          }
+        ]
+      },
+      {
+        "label": "Mentions that browsers enforce same-origin policy for frontend JavaScript and require the server to allow the origin with CORS response headers.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "mentions_browser_same_origin_enforcement",
+            "description": "Mentions browser same-origin enforcement for frontend JavaScript."
+          },
+          {
+            "key": "connects_server_headers_to_browser_allowance",
+            "description": "Explains that server CORS response headers allow permitted origins."
+          }
+        ]
+      },
+      {
+        "label": "Mentions common headers or configuration such as Access-Control-Allow-Origin, allowed methods, allowed headers, and credentials handling.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_allow_origin_header",
+            "description": "Mentions Access-Control-Allow-Origin or origin allowlist configuration."
+          },
+          {
+            "key": "mentions_methods_headers_credentials_config",
+            "description": "Mentions allowed methods, allowed headers, or credentials handling."
+          }
+        ]
+      },
+      {
+        "label": "Explains preflight OPTIONS requests for non-simple requests such as custom headers, JSON content type, or methods like PUT/DELETE.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_preflight_options",
+            "description": "Mentions preflight OPTIONS requests."
+          },
+          {
+            "key": "names_preflight_triggers",
+            "description": "Names triggers such as custom headers, JSON content type, Authorization, PUT, or DELETE."
+          }
+        ]
+      },
+      {
+        "label": "Recognizes that CORS is enforced by browsers, not usually by curl or server-to-server requests, and that disabling it broadly can be unsafe.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "states_cors_browser_only_enforcement",
+            "description": "States that CORS is enforced by browsers, not usually by curl or backend-to-backend clients."
+          },
+          {
+            "key": "warns_against_overly_broad_cors",
+            "description": "Warns that disabling or allowing CORS too broadly can be unsafe."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {

@@ -1,30 +1,116 @@
 [
   {
     "code": "NODE_ERRSEC_JR_TECH_SYNC_ERRORS_001",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "problem_solving", "communication"],
-    "techTags": ["nodejs", "javascript", "error-handling"],
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving",
+      "communication"
+    ],
+    "techTags": [
+      "nodejs",
+      "javascript",
+      "error-handling"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Check whether the candidate understands how synchronous exceptions work in Node.js and how to handle them without confusing them with asynchronous failures.",
     "primaryQuestion": "How do you handle synchronous errors in Node.js?",
     "expectedSignals": [
-      { "label": "Explains that synchronous errors are thrown during the current call stack and can be handled with try/catch around the code that may throw.", "relatedTrigger": null },
-      { "label": "Gives practical examples such as JSON.parse, input parsing, configuration loading, or synchronous filesystem calls throwing exceptions.", "relatedTrigger": null },
-      { "label": "States that the handler should either recover intentionally, return a controlled response, or rethrow/delegate the error rather than silently swallowing it.", "relatedTrigger": null },
-      { "label": "Distinguishes synchronous try/catch from asynchronous error handling: a try/catch around code that schedules a timer, callback, or Promise will not catch errors that happen later unless they are awaited or forwarded.", "relatedTrigger": null },
-      { "label": "Mentions that in HTTP frameworks such as Express, a synchronous throw inside a route or middleware can be passed into centralized error handling.", "relatedTrigger": null },
-      { "label": "Recognizes that unexpected fatal startup errors should usually stop the process instead of leaving the service in an unknown state.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Says all Node.js errors can be handled by one outer try/catch around the server startup code.",
-      "Catches errors and ignores them without logging, returning a response, or stopping unsafe execution.",
-      "Uses try/catch as if it automatically catches future Promise rejections, timer errors, or callback errors.",
-      "Returns raw exception details directly to API clients.",
-      "Cannot give a concrete example of synchronous code that throws."
+      {
+        "label": "Explains that synchronous errors are thrown during the current call stack and can be handled with try/catch around the code that may throw.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "defines_sync_error_current_call_stack",
+            "description": "Explains that synchronous errors are thrown during the current call stack."
+          },
+          {
+            "key": "places_try_catch_around_throwing_code",
+            "description": "States that try/catch must wrap the code that may throw."
+          }
+        ]
+      },
+      {
+        "label": "Gives practical examples such as JSON.parse, input parsing, configuration loading, or synchronous filesystem calls throwing exceptions.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "uses_json_parse_or_input_parsing_example",
+            "description": "Gives examples such as JSON.parse or input parsing throwing."
+          },
+          {
+            "key": "uses_config_or_sync_fs_example",
+            "description": "Gives examples such as configuration loading or synchronous filesystem calls throwing."
+          }
+        ]
+      },
+      {
+        "label": "States that the handler should either recover intentionally, return a controlled response, or rethrow/delegate the error rather than silently swallowing it.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "handles_error_with_recovery_response_or_delegate",
+            "description": "States the handler should recover, return a controlled response, rethrow, or delegate."
+          },
+          {
+            "key": "rejects_silent_swallowing",
+            "description": "Warns against silently swallowing errors."
+          }
+        ]
+      },
+      {
+        "label": "Distinguishes synchronous try/catch from asynchronous error handling: a try/catch around code that schedules a timer, callback, or Promise will not catch errors that happen later unless they are awaited or forwarded.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "distinguishes_try_catch_from_later_async_errors",
+            "description": "Explains that try/catch around scheduling code does not catch errors thrown later."
+          },
+          {
+            "key": "mentions_await_or_forward_async_errors",
+            "description": "Mentions awaiting promises or forwarding async errors to catch/handle them."
+          }
+        ]
+      },
+      {
+        "label": "Mentions that in HTTP frameworks such as Express, a synchronous throw inside a route or middleware can be passed into centralized error handling.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "mentions_express_sync_throw_handling",
+            "description": "Mentions that Express can pass synchronous route/middleware throws to error handling."
+          },
+          {
+            "key": "connects_to_centralized_error_middleware",
+            "description": "Connects this to centralized error middleware."
+          }
+        ]
+      },
+      {
+        "label": "Recognizes that unexpected fatal startup errors should usually stop the process instead of leaving the service in an unknown state.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "recognizes_fatal_startup_errors",
+            "description": "Recognizes unexpected fatal errors during startup/configuration."
+          },
+          {
+            "key": "prefers_stop_over_unknown_state",
+            "description": "Explains that the service should usually stop rather than run in an unknown state."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -137,30 +223,117 @@
   },
   {
     "code": "NODE_ERRSEC_JR_TECH_ASYNC_EXPRESS_ERRORS_002",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "problem_solving", "communication"],
-    "techTags": ["nodejs", "express", "async-await", "error-handling"],
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving",
+      "communication"
+    ],
+    "techTags": [
+      "nodejs",
+      "express",
+      "async-await",
+      "error-handling"
+    ],
     "difficulty": 2,
     "conversationDepth": "mid",
     "intent": "Assess whether the candidate can safely propagate asynchronous route errors in Express instead of losing them or causing unhandled promise rejections.",
     "primaryQuestion": "How do you handle async errors in Express routes?",
     "expectedSignals": [
-      { "label": "Explains that async route errors should be forwarded to Express error handling rather than handled inconsistently in every route.", "relatedTrigger": null },
-      { "label": "For Express 4, mentions using try/catch around awaited work and calling next(err), or using a reusable asyncHandler wrapper that catches rejected promises.", "relatedTrigger": null },
-      { "label": "For Express 5, mentions that rejected Promises returned from route handlers are automatically forwarded to next, while a centralized error handler is still needed.", "relatedTrigger": null },
-      { "label": "Understands that work started but not awaited or returned can still escape the request lifecycle and needs its own error handling.", "relatedTrigger": null },
-      { "label": "Avoids sending a response and then also calling next(err), which can cause duplicate response or headers-sent bugs.", "relatedTrigger": null },
-      { "label": "Mentions logging the internal error and returning a safe, consistent API response through error middleware.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Claims Express 4 automatically catches all async/await errors.",
-      "Catches async errors and only console.logs them without sending or delegating a response.",
-      "Calls next() without the error after catching a failure.",
-      "Starts background async work in a route and assumes Express will catch any later failure.",
-      "Sends both a success response and an error response for the same request."
+      {
+        "label": "Explains that async route errors should be forwarded to Express error handling rather than handled inconsistently in every route.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "forwards_async_route_errors",
+            "description": "Explains that async route errors should be forwarded to Express error handling."
+          },
+          {
+            "key": "avoids_inconsistent_per_route_error_shapes",
+            "description": "Avoids handling each route with inconsistent ad hoc error responses."
+          }
+        ]
+      },
+      {
+        "label": "For Express 4, mentions using try/catch around awaited work and calling next(err), or using a reusable asyncHandler wrapper that catches rejected promises.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "mentions_express4_try_catch_next_err",
+            "description": "Mentions try/catch around awaited work and calling next(err) in Express 4."
+          },
+          {
+            "key": "mentions_express4_async_handler_wrapper",
+            "description": "Mentions a reusable asyncHandler wrapper that catches rejected promises."
+          }
+        ]
+      },
+      {
+        "label": "For Express 5, mentions that rejected Promises returned from route handlers are automatically forwarded to next, while a centralized error handler is still needed.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_express5_promise_forwarding",
+            "description": "Mentions Express 5 automatically forwards returned rejected promises."
+          },
+          {
+            "key": "still_requires_central_error_handler",
+            "description": "States that a centralized error handler is still needed to shape/log responses."
+          }
+        ]
+      },
+      {
+        "label": "Understands that work started but not awaited or returned can still escape the request lifecycle and needs its own error handling.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "recognizes_unawaited_unreturned_work_escape",
+            "description": "Recognizes that async work not awaited or returned can escape Express request handling."
+          },
+          {
+            "key": "requires_own_error_handling_for_background_work",
+            "description": "Mentions separate error handling/logging for background or detached work."
+          }
+        ]
+      },
+      {
+        "label": "Avoids sending a response and then also calling next(err), which can cause duplicate response or headers-sent bugs.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "avoids_response_then_next_err",
+            "description": "Warns against sending a response and then calling next(err)."
+          },
+          {
+            "key": "mentions_duplicate_response_or_headers_sent",
+            "description": "Mentions duplicate responses or headers-already-sent bugs."
+          }
+        ]
+      },
+      {
+        "label": "Mentions logging the internal error and returning a safe, consistent API response through error middleware.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "logs_internal_error",
+            "description": "Mentions logging internal error details."
+          },
+          {
+            "key": "returns_safe_consistent_error_response",
+            "description": "Mentions returning a safe consistent API response through error middleware."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -268,30 +441,116 @@
   },
   {
     "code": "NODE_ERRSEC_JR_TECH_EXPRESS_ERROR_MIDDLEWARE_003",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "communication"],
-    "techTags": ["nodejs", "express", "middleware", "error-handling"],
+    "competencies": [
+      "technical_fundamentals",
+      "communication"
+    ],
+    "techTags": [
+      "nodejs",
+      "express",
+      "middleware",
+      "error-handling"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Check whether the candidate understands the role of Express error-handling middleware as a centralized error response and logging point.",
     "primaryQuestion": "What is Express error-handling middleware?",
     "expectedSignals": [
-      { "label": "Defines Express error-handling middleware as middleware used on the error path, usually registered after routes and normal middleware.", "relatedTrigger": null },
-      { "label": "States that it has the special signature (err, req, res, next), which distinguishes it from normal middleware.", "relatedTrigger": null },
-      { "label": "Explains that it receives errors from thrown synchronous exceptions, next(err), and in Express 5 returned rejected Promises.", "relatedTrigger": null },
-      { "label": "Describes practical responsibilities: log internal details, map known errors to HTTP status codes, return a safe response shape, and delegate when needed.", "relatedTrigger": null },
-      { "label": "Mentions that order matters because it should be registered after routes it is meant to handle.", "relatedTrigger": null },
-      { "label": "Understands that it should not expose stack traces or sensitive internals in production responses.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Describes normal middleware with (req, res, next) and does not mention the err parameter.",
-      "Thinks error middleware runs on every successful request.",
-      "Registers error middleware before routes and expects it to catch later route errors.",
-      "Uses error middleware only for console logging and leaves the request hanging.",
-      "Returns raw Error objects to users."
+      {
+        "label": "Defines Express error-handling middleware as middleware used on the error path, usually registered after routes and normal middleware.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "defines_error_middleware_error_path",
+            "description": "Defines Express error middleware as middleware used on the error path."
+          },
+          {
+            "key": "places_error_middleware_after_routes",
+            "description": "Mentions registering it after routes and normal middleware."
+          }
+        ]
+      },
+      {
+        "label": "States that it has the special signature (err, req, res, next), which distinguishes it from normal middleware.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "states_error_middleware_signature",
+            "description": "States the (err, req, res, next) signature."
+          },
+          {
+            "key": "distinguishes_from_normal_middleware_signature",
+            "description": "Explains that the four-argument signature distinguishes it from normal middleware."
+          }
+        ]
+      },
+      {
+        "label": "Explains that it receives errors from thrown synchronous exceptions, next(err), and in Express 5 returned rejected Promises.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_sync_throw_and_next_err_sources",
+            "description": "Mentions thrown synchronous exceptions and next(err) as sources."
+          },
+          {
+            "key": "mentions_express5_rejected_promise_source",
+            "description": "Mentions returned rejected Promises in Express 5."
+          }
+        ]
+      },
+      {
+        "label": "Describes practical responsibilities: log internal details, map known errors to HTTP status codes, return a safe response shape, and delegate when needed.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "logs_and_maps_errors",
+            "description": "Mentions logging internal details and mapping known errors to status codes."
+          },
+          {
+            "key": "returns_safe_shape_or_delegates",
+            "description": "Mentions returning a safe response shape and delegating when needed."
+          }
+        ]
+      },
+      {
+        "label": "Mentions that order matters because it should be registered after routes it is meant to handle.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "states_error_handler_order_matters",
+            "description": "States that error handler registration order matters."
+          },
+          {
+            "key": "connects_order_to_routes_handled",
+            "description": "Explains it should be after routes it is meant to handle."
+          }
+        ]
+      },
+      {
+        "label": "Understands that it should not expose stack traces or sensitive internals in production responses.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "does_not_expose_stack_traces",
+            "description": "Warns not to expose stack traces in production responses."
+          },
+          {
+            "key": "does_not_expose_sensitive_internals",
+            "description": "Warns not to expose sensitive internals, secrets, SQL, or implementation details."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -399,30 +658,116 @@
   },
   {
     "code": "NODE_ERRSEC_JR_TECH_ERR_MW_SIGNATURE_004",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "communication"],
-    "techTags": ["nodejs", "express", "middleware", "error-handling"],
+    "competencies": [
+      "technical_fundamentals",
+      "communication"
+    ],
+    "techTags": [
+      "nodejs",
+      "express",
+      "middleware",
+      "error-handling"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Verify whether the candidate understands why Express error middleware uses a four-argument err-first function shape.",
     "primaryQuestion": "Why does error middleware use (err, req, res, next)?",
     "expectedSignals": [
-      { "label": "States that Express recognizes error-handling middleware by the declared four-argument signature.", "relatedTrigger": null },
-      { "label": "Explains that err is the error object or rejected value being passed through the middleware chain.", "relatedTrigger": null },
-      { "label": "Contrasts it with normal middleware, which usually uses (req, res, next) and handles normal request flow.", "relatedTrigger": null },
-      { "label": "Mentions that req and res are still needed to inspect request context and send an appropriate HTTP response.", "relatedTrigger": null },
-      { "label": "Mentions that next is still needed to delegate to the next error handler or the default handler, especially when headers are already sent.", "relatedTrigger": null },
-      { "label": "Understands that removing an unused parameter can change how Express treats the middleware at runtime.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Says the four parameters are only a naming convention with no runtime meaning.",
-      "Places err after req or omits it completely.",
-      "Removes next because it is not currently used and cannot explain the risk.",
-      "Thinks TypeScript types alone make a function an Express error handler.",
-      "Cannot explain what the err parameter contains."
+      {
+        "label": "States that Express recognizes error-handling middleware by the declared four-argument signature.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "states_express_recognizes_four_args",
+            "description": "States that Express recognizes error middleware by its declared four arguments."
+          },
+          {
+            "key": "mentions_runtime_signature_shape_matters",
+            "description": "Mentions that the function shape matters at runtime."
+          }
+        ]
+      },
+      {
+        "label": "Explains that err is the error object or rejected value being passed through the middleware chain.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "defines_err_parameter",
+            "description": "Explains err as the error object or rejected value."
+          },
+          {
+            "key": "connects_err_to_error_chain",
+            "description": "Connects err to being passed through the Express error middleware chain."
+          }
+        ]
+      },
+      {
+        "label": "Contrasts it with normal middleware, which usually uses (req, res, next) and handles normal request flow.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "contrasts_with_normal_middleware_signature",
+            "description": "Contrasts (err, req, res, next) with normal (req, res, next)."
+          },
+          {
+            "key": "contrasts_error_path_with_normal_flow",
+            "description": "Explains that normal middleware handles normal request flow while error middleware handles error flow."
+          }
+        ]
+      },
+      {
+        "label": "Mentions that req and res are still needed to inspect request context and send an appropriate HTTP response.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "uses_req_for_request_context",
+            "description": "Mentions req is used to inspect request context."
+          },
+          {
+            "key": "uses_res_for_http_error_response",
+            "description": "Mentions res is used to send an appropriate HTTP response."
+          }
+        ]
+      },
+      {
+        "label": "Mentions that next is still needed to delegate to the next error handler or the default handler, especially when headers are already sent.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "uses_next_to_delegate_error",
+            "description": "Mentions next can delegate to the next error handler or default handler."
+          },
+          {
+            "key": "mentions_headers_sent_delegation",
+            "description": "Mentions delegating when headers have already been sent."
+          }
+        ]
+      },
+      {
+        "label": "Understands that removing an unused parameter can change how Express treats the middleware at runtime.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "warns_against_removing_err_or_next_arg",
+            "description": "Warns that removing an apparently unused parameter can change the declared function arity."
+          },
+          {
+            "key": "connects_arity_to_express_classification",
+            "description": "Connects function arity to how Express classifies middleware."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -443,11 +788,6 @@
       }
     ],
     "followUps": [
-      {
-        "trigger": "red_flag",
-        "question": "What can happen if you define the handler as (err, req, res) and omit next?",
-        "purpose": "Check whether the candidate understands function arity in Express."
-      },
       {
         "trigger": "vague_answer",
         "question": "How is (err, req, res, next) different from (req, res, next) in the middleware chain?",
@@ -530,30 +870,116 @@
   },
   {
     "code": "NODE_ERRSEC_JR_TECH_UNHANDLED_REJECTION_005",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "problem_solving"],
-    "techTags": ["nodejs", "javascript", "promises", "error-handling"],
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving"
+    ],
+    "techTags": [
+      "nodejs",
+      "javascript",
+      "promises",
+      "error-handling"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Check whether the candidate understands unhandled Promise rejections and why they are a reliability problem in Node.js services.",
     "primaryQuestion": "What is an unhandled promise rejection?",
     "expectedSignals": [
-      { "label": "Defines it as a Promise that rejects without a rejection handler such as catch or an awaited try/catch being attached in time.", "relatedTrigger": null },
-      { "label": "Explains common causes: forgetting await, forgetting return, missing catch, or starting async work without observing the Promise.", "relatedTrigger": null },
-      { "label": "Connects it to real service risk: failed operations may not produce a proper HTTP response, logs may be incomplete, and the process may terminate depending on Node.js behavior and configuration.", "relatedTrigger": null },
-      { "label": "Mentions that async functions return Promises, so throwing inside an async function becomes a rejection.", "relatedTrigger": null },
-      { "label": "Suggests prevention patterns such as always await or return Promises, use catch, use Express async error handling, and test failure paths.", "relatedTrigger": null },
-      { "label": "Understands that process-level unhandledRejection handlers are for logging and controlled shutdown policy, not a substitute for local error handling.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Says a rejected Promise is automatically ignored safely.",
-      "Thinks try/catch catches a Promise rejection even when the Promise is not awaited.",
-      "Relies on process.on('unhandledRejection') as normal application control flow.",
-      "Cannot explain the difference between throw in a normal function and throw in an async function.",
-      "Does not see unhandled rejections as production reliability issues."
+      {
+        "label": "Defines it as a Promise that rejects without a rejection handler such as catch or an awaited try/catch being attached in time.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "defines_unhandled_rejection",
+            "description": "Defines an unhandled rejection as a Promise rejection without a handler attached in time."
+          },
+          {
+            "key": "mentions_catch_or_await_try_catch",
+            "description": "Mentions catch or try/catch around await as ways to handle rejection."
+          }
+        ]
+      },
+      {
+        "label": "Explains common causes: forgetting await, forgetting return, missing catch, or starting async work without observing the Promise.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "mentions_forgetting_await_or_return",
+            "description": "Mentions forgetting to await or return a Promise."
+          },
+          {
+            "key": "mentions_missing_catch_or_unobserved_async_work",
+            "description": "Mentions missing catch or starting async work without observing the Promise."
+          }
+        ]
+      },
+      {
+        "label": "Connects it to real service risk: failed operations may not produce a proper HTTP response, logs may be incomplete, and the process may terminate depending on Node.js behavior and configuration.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "connects_to_missing_http_response_or_logs",
+            "description": "Explains failed operations may not produce proper HTTP responses or logs."
+          },
+          {
+            "key": "mentions_process_termination_policy",
+            "description": "Mentions process behavior/termination depending on Node.js version or configuration."
+          }
+        ]
+      },
+      {
+        "label": "Mentions that async functions return Promises, so throwing inside an async function becomes a rejection.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "states_async_functions_return_promises",
+            "description": "States that async functions return Promises."
+          },
+          {
+            "key": "states_throw_inside_async_becomes_rejection",
+            "description": "Explains that throwing inside an async function becomes a Promise rejection."
+          }
+        ]
+      },
+      {
+        "label": "Suggests prevention patterns such as always await or return Promises, use catch, use Express async error handling, and test failure paths.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "mentions_await_return_or_catch",
+            "description": "Mentions awaiting, returning, or catching Promises."
+          },
+          {
+            "key": "mentions_express_async_handling_and_tests",
+            "description": "Mentions Express async error handling and testing failure paths."
+          }
+        ]
+      },
+      {
+        "label": "Understands that process-level unhandledRejection handlers are for logging and controlled shutdown policy, not a substitute for local error handling.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "process_unhandled_rejection_for_logging_shutdown",
+            "description": "Describes process-level unhandledRejection as logging/controlled shutdown policy."
+          },
+          {
+            "key": "not_substitute_for_request_local_handling",
+            "description": "States it is not a substitute for request-level or local error handling."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -666,30 +1092,117 @@
   },
   {
     "code": "NODE_ERRSEC_JR_SECURITY_STACK_TRACES_006",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "communication", "ownership"],
-    "techTags": ["nodejs", "api", "security", "error-handling"],
+    "competencies": [
+      "technical_fundamentals",
+      "communication",
+      "ownership"
+    ],
+    "techTags": [
+      "nodejs",
+      "api",
+      "security",
+      "error-handling"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Assess whether the candidate understands why production APIs should separate internal diagnostic errors from public error responses.",
     "primaryQuestion": "Why should production APIs not expose stack traces to users?",
     "expectedSignals": [
-      { "label": "Explains that stack traces reveal internal file paths, framework details, function names, package versions, query fragments, or implementation structure.", "relatedTrigger": null },
-      { "label": "Connects leaked internals to security risk because attackers can use the information to target known vulnerabilities or map the system.", "relatedTrigger": null },
-      { "label": "Mentions that stack traces may accidentally include sensitive data such as tokens, database details, environment values, or user input.", "relatedTrigger": null },
-      { "label": "States that production responses should return safe messages and stable error codes while detailed stack traces go to protected logs or observability tools.", "relatedTrigger": null },
-      { "label": "Mentions environment-aware behavior: verbose errors may be acceptable in local development but not in production.", "relatedTrigger": null },
-      { "label": "Understands that hiding stack traces does not mean hiding all errors; clients still need useful status codes and request correlation IDs.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Says stack traces are harmless because users will not understand them.",
-      "Returns err.stack or raw Error objects from API handlers.",
-      "Disables logging entirely to avoid leaking errors.",
-      "Gives every error a vague 500 response with no stable code or request ID.",
-      "Does not distinguish local development diagnostics from production client responses."
+      {
+        "label": "Explains that stack traces reveal internal file paths, framework details, function names, package versions, query fragments, or implementation structure.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "names_internal_details_in_stack_trace",
+            "description": "Mentions file paths, framework details, function names, package versions, query fragments, or implementation structure."
+          },
+          {
+            "key": "connects_stack_trace_to_internal_mapping",
+            "description": "Explains that stack traces reveal implementation details."
+          }
+        ]
+      },
+      {
+        "label": "Connects leaked internals to security risk because attackers can use the information to target known vulnerabilities or map the system.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "connects_leak_to_attack_recon",
+            "description": "Connects leaked internals to attacker reconnaissance or system mapping."
+          },
+          {
+            "key": "connects_versions_to_known_vulnerabilities",
+            "description": "Mentions targeting known vulnerabilities based on revealed libraries/versions."
+          }
+        ]
+      },
+      {
+        "label": "Mentions that stack traces may accidentally include sensitive data such as tokens, database details, environment values, or user input.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_sensitive_data_in_errors",
+            "description": "Mentions tokens, database details, environment values, or user input appearing in errors."
+          },
+          {
+            "key": "connects_to_public_response_leak",
+            "description": "Explains why that information should not be returned to clients."
+          }
+        ]
+      },
+      {
+        "label": "States that production responses should return safe messages and stable error codes while detailed stack traces go to protected logs or observability tools.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "uses_safe_public_error_message_and_code",
+            "description": "States production responses should use safe messages and stable error codes."
+          },
+          {
+            "key": "keeps_stack_traces_in_protected_logs",
+            "description": "States detailed stack traces belong in protected logs or observability tools."
+          }
+        ]
+      },
+      {
+        "label": "Mentions environment-aware behavior: verbose errors may be acceptable in local development but not in production.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "distinguishes_dev_and_prod_error_detail",
+            "description": "Distinguishes local development from production error verbosity."
+          },
+          {
+            "key": "mentions_environment_aware_error_handling",
+            "description": "Mentions environment-aware behavior or NODE_ENV-like configuration."
+          }
+        ]
+      },
+      {
+        "label": "Understands that hiding stack traces does not mean hiding all errors; clients still need useful status codes and request correlation IDs.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "still_returns_useful_status_codes",
+            "description": "States clients should still receive useful HTTP status codes."
+          },
+          {
+            "key": "mentions_request_or_correlation_id",
+            "description": "Mentions request ID, correlation ID, or trace ID for support/debugging."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -714,11 +1227,6 @@
         "trigger": "missing_context",
         "question": "What information would you return to the client, and what would you keep only in logs?",
         "purpose": "Check separation between public error contract and internal diagnostics."
-      },
-      {
-        "trigger": "red_flag",
-        "question": "How could a file path or package name in a stack trace help an attacker?",
-        "purpose": "Probe concrete security reasoning beyond memorized advice."
       }
     ],
     "localizedContent": {
@@ -802,30 +1310,115 @@
   },
   {
     "code": "NODE_ERRSEC_JR_TECH_PROCESS_ENV_007",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "communication"],
-    "techTags": ["nodejs", "configuration", "environment-variables"],
+    "competencies": [
+      "technical_fundamentals",
+      "communication"
+    ],
+    "techTags": [
+      "nodejs",
+      "configuration",
+      "environment-variables"
+    ],
     "difficulty": 1,
     "conversationDepth": "intro",
     "intent": "Check whether the candidate understands process.env as Node.js runtime configuration and its practical limitations.",
     "primaryQuestion": "What is process.env used for?",
     "expectedSignals": [
-      { "label": "Explains that process.env exposes environment variables available to the Node.js process at runtime.", "relatedTrigger": null },
-      { "label": "Gives examples such as PORT, NODE_ENV, database URLs, feature flags, API endpoints, and secret references.", "relatedTrigger": null },
-      { "label": "Mentions that values from process.env are strings or undefined, so the application should parse and validate numbers, booleans, URLs, and required values.", "relatedTrigger": null },
-      { "label": "Understands that process.env is commonly used to keep environment-specific configuration out of source code.", "relatedTrigger": null },
-      { "label": "Mentions that secrets may be injected through environment variables or secret managers, but should still be protected and not logged.", "relatedTrigger": null },
-      { "label": "Recognizes that reading process.env directly everywhere can make configuration inconsistent; many apps centralize validation in a config module.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Thinks process.env is a secure secret vault by itself.",
-      "Assumes values are automatically typed as numbers or booleans.",
-      "Hardcodes fallback production secrets when environment variables are missing.",
-      "Logs all environment variables for debugging.",
-      "Cannot explain why configuration should differ between local, test, staging, and production."
+      {
+        "label": "Explains that process.env exposes environment variables available to the Node.js process at runtime.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "defines_process_env",
+            "description": "Explains that process.env exposes environment variables."
+          },
+          {
+            "key": "scopes_env_to_current_process_runtime",
+            "description": "Mentions variables available to the current Node.js process at runtime."
+          }
+        ]
+      },
+      {
+        "label": "Gives examples such as PORT, NODE_ENV, database URLs, feature flags, API endpoints, and secret references.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "names_port_node_env_or_urls",
+            "description": "Gives examples such as PORT, NODE_ENV, database URLs, or API endpoints."
+          },
+          {
+            "key": "names_feature_flags_or_secret_references",
+            "description": "Mentions feature flags or secret references."
+          }
+        ]
+      },
+      {
+        "label": "Mentions that values from process.env are strings or undefined, so the application should parse and validate numbers, booleans, URLs, and required values.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "states_env_values_strings_or_undefined",
+            "description": "States process.env values are strings or undefined."
+          },
+          {
+            "key": "requires_parse_validate_env_types",
+            "description": "Mentions parsing and validating numbers, booleans, URLs, and required values."
+          }
+        ]
+      },
+      {
+        "label": "Understands that process.env is commonly used to keep environment-specific configuration out of source code.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "connects_env_to_environment_specific_config",
+            "description": "Explains process.env is used for environment-specific configuration."
+          },
+          {
+            "key": "keeps_config_out_of_source_code",
+            "description": "Mentions keeping deployment-specific config out of source code."
+          }
+        ]
+      },
+      {
+        "label": "Mentions that secrets may be injected through environment variables or secret managers, but should still be protected and not logged.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_env_or_secret_manager_injection",
+            "description": "Mentions injecting secrets through env vars or secret managers."
+          },
+          {
+            "key": "warns_not_to_log_secrets",
+            "description": "Warns that secrets should be protected and not logged."
+          }
+        ]
+      },
+      {
+        "label": "Recognizes that reading process.env directly everywhere can make configuration inconsistent; many apps centralize validation in a config module.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "warns_against_scattered_process_env_reads",
+            "description": "Recognizes that reading process.env directly everywhere can become inconsistent."
+          },
+          {
+            "key": "recommends_central_config_validation_module",
+            "description": "Mentions centralizing validation in a config module or startup step."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -938,30 +1531,117 @@
   },
   {
     "code": "NODE_ERRSEC_JR_SECURITY_NO_HARDCODED_SECRETS_008",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "ownership", "communication"],
-    "techTags": ["nodejs", "security", "secrets", "configuration"],
+    "competencies": [
+      "technical_fundamentals",
+      "ownership",
+      "communication"
+    ],
+    "techTags": [
+      "nodejs",
+      "security",
+      "secrets",
+      "configuration"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Assess whether the candidate understands the security and operational risks of hardcoded secrets in Node.js applications.",
     "primaryQuestion": "Why should secrets and API keys not be hardcoded?",
     "expectedSignals": [
-      { "label": "Explains that hardcoded secrets can be committed to source control, copied into logs, shared in pull requests, or included in built artifacts.", "relatedTrigger": null },
-      { "label": "Mentions that source repositories often have many readers and long history, so removing a committed secret later does not fully undo exposure.", "relatedTrigger": null },
-      { "label": "Connects hardcoded secrets to weak environment separation because local, test, staging, and production may accidentally share credentials.", "relatedTrigger": null },
-      { "label": "Explains that rotation becomes harder because changing the secret requires code changes, rebuilds, redeploys, and cleanup across versions.", "relatedTrigger": null },
-      { "label": "Suggests safer approaches such as environment variables, secret managers, deployment platform secrets, restricted IAM roles, and runtime injection.", "relatedTrigger": null },
-      { "label": "Mentions least privilege and monitoring: secrets should have limited scope, be rotated when exposed, and not be logged.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Says it is acceptable if the repository is private.",
-      "Commits example real credentials for convenience.",
-      "Uses the same key in local, staging, and production.",
-      "Logs secrets to verify they were loaded.",
-      "Thinks deleting a secret from the latest commit fully removes the risk."
+      {
+        "label": "Explains that hardcoded secrets can be committed to source control, copied into logs, shared in pull requests, or included in built artifacts.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_source_control_pr_artifact_exposure",
+            "description": "Mentions exposure through source control, pull requests, built artifacts, or logs."
+          },
+          {
+            "key": "connects_hardcoding_to_secret_spread",
+            "description": "Explains that hardcoding spreads secrets beyond the runtime environment."
+          }
+        ]
+      },
+      {
+        "label": "Mentions that source repositories often have many readers and long history, so removing a committed secret later does not fully undo exposure.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_repo_readers_and_history",
+            "description": "Mentions repository readers, forks, caches, or long commit history."
+          },
+          {
+            "key": "states_deletion_does_not_undo_exposure",
+            "description": "Explains that removing a committed secret does not fully undo exposure."
+          }
+        ]
+      },
+      {
+        "label": "Connects hardcoded secrets to weak environment separation because local, test, staging, and production may accidentally share credentials.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "connects_hardcoding_to_env_coupling",
+            "description": "Explains that hardcoding weakens separation between environments."
+          },
+          {
+            "key": "mentions_local_test_staging_prod_credential_risk",
+            "description": "Mentions accidental credential sharing across local, test, staging, or production."
+          }
+        ]
+      },
+      {
+        "label": "Explains that rotation becomes harder because changing the secret requires code changes, rebuilds, redeploys, and cleanup across versions.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "connects_hardcoding_to_rotation_cost",
+            "description": "Explains that secret rotation becomes harder."
+          },
+          {
+            "key": "mentions_code_rebuild_redeploy_cleanup",
+            "description": "Mentions code changes, rebuilds, redeploys, or cleanup across versions."
+          }
+        ]
+      },
+      {
+        "label": "Suggests safer approaches such as environment variables, secret managers, deployment platform secrets, restricted IAM roles, and runtime injection.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_env_secret_manager_platform_secrets",
+            "description": "Mentions environment variables, secret managers, or deployment platform secrets."
+          },
+          {
+            "key": "mentions_iam_or_runtime_injection",
+            "description": "Mentions restricted IAM roles or runtime injection."
+          }
+        ]
+      },
+      {
+        "label": "Mentions least privilege and monitoring: secrets should have limited scope, be rotated when exposed, and not be logged.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_least_privilege_and_scope",
+            "description": "Mentions least privilege or limiting secret scope."
+          },
+          {
+            "key": "mentions_rotation_monitoring_no_logging",
+            "description": "Mentions rotating exposed secrets, monitoring usage, and not logging them."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -982,11 +1662,6 @@
       }
     ],
     "followUps": [
-      {
-        "trigger": "red_flag",
-        "question": "If an API key was committed to a private repo and then deleted, what should you do next?",
-        "purpose": "Check understanding of credential rotation after exposure."
-      },
       {
         "trigger": "missing_context",
         "question": "Where would you store database credentials for staging and production in a deployment pipeline?",
@@ -1069,30 +1744,117 @@
   },
   {
     "code": "NODE_ERRSEC_JR_DEBUG_REQUIRED_ENV_009",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "debugging",
-    "competencies": ["technical_fundamentals", "problem_solving", "ownership"],
-    "techTags": ["nodejs", "configuration", "environment-variables", "debugging"],
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving",
+      "ownership"
+    ],
+    "techTags": [
+      "nodejs",
+      "configuration",
+      "environment-variables",
+      "debugging"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Check whether the candidate knows that missing required configuration should be detected early and fail safely instead of causing hidden runtime errors.",
     "primaryQuestion": "What should happen if a required environment variable is missing?",
     "expectedSignals": [
-      { "label": "States that the application should fail fast during startup or configuration loading when a required variable is missing.", "relatedTrigger": null },
-      { "label": "Explains that the error should be clear for operators or developers, naming the missing configuration key without printing sensitive values.", "relatedTrigger": null },
-      { "label": "Mentions using a central config validation step or schema to check required variables and parse types before the app starts serving traffic.", "relatedTrigger": null },
-      { "label": "Rejects unsafe fallback defaults for production secrets, database URLs, signing keys, or payment credentials.", "relatedTrigger": null },
-      { "label": "Connects fail-fast behavior to safer deployments: health checks should fail, the release should not accept traffic, and misconfiguration should be visible quickly.", "relatedTrigger": null },
-      { "label": "Mentions that tests or CI can validate required configuration for each environment where practical.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Falls back to a default production secret or localhost database silently.",
-      "Lets the app start and fail later on the first request that needs the value.",
-      "Logs the full secret value while reporting the missing or invalid configuration.",
-      "Catches the startup config error and continues running.",
-      "Treats all missing environment variables as harmless warnings."
+      {
+        "label": "States that the application should fail fast during startup or configuration loading when a required variable is missing.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "states_fail_fast_on_missing_required_env",
+            "description": "States that the app should fail fast when required config is missing."
+          },
+          {
+            "key": "places_check_at_startup_config_loading",
+            "description": "Places the check during startup or configuration loading."
+          }
+        ]
+      },
+      {
+        "label": "Explains that the error should be clear for operators or developers, naming the missing configuration key without printing sensitive values.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "names_missing_config_key",
+            "description": "Mentions naming the missing configuration key in the error."
+          },
+          {
+            "key": "does_not_print_sensitive_values",
+            "description": "Warns not to print sensitive values."
+          }
+        ]
+      },
+      {
+        "label": "Mentions using a central config validation step or schema to check required variables and parse types before the app starts serving traffic.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_central_config_validation_schema",
+            "description": "Mentions central config validation or a schema."
+          },
+          {
+            "key": "validates_required_vars_and_types_before_serving",
+            "description": "Mentions checking required vars and parsing types before serving traffic."
+          }
+        ]
+      },
+      {
+        "label": "Rejects unsafe fallback defaults for production secrets, database URLs, signing keys, or payment credentials.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "rejects_unsafe_secret_defaults",
+            "description": "Rejects unsafe fallback defaults for secrets."
+          },
+          {
+            "key": "names_database_signing_payment_credentials",
+            "description": "Mentions database URLs, signing keys, or payment credentials as unsafe to default silently."
+          }
+        ]
+      },
+      {
+        "label": "Connects fail-fast behavior to safer deployments: health checks should fail, the release should not accept traffic, and misconfiguration should be visible quickly.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "connects_fail_fast_to_health_checks",
+            "description": "Explains that health checks/startup should fail on missing config."
+          },
+          {
+            "key": "prevents_misconfigured_release_serving_traffic",
+            "description": "Explains the release should not accept traffic while misconfigured."
+          }
+        ]
+      },
+      {
+        "label": "Mentions that tests or CI can validate required configuration for each environment where practical.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_ci_config_validation",
+            "description": "Mentions tests or CI checking required configuration."
+          },
+          {
+            "key": "mentions_environment_specific_validation",
+            "description": "Mentions validating expected config per environment where practical."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1113,11 +1875,6 @@
       }
     ],
     "followUps": [
-      {
-        "trigger": "red_flag",
-        "question": "Why is using a default JWT secret when JWT_SECRET is missing dangerous?",
-        "purpose": "Check whether the candidate understands insecure fallback risk."
-      },
       {
         "trigger": "missing_context",
         "question": "Would you validate environment variables inside each route or once at startup? Why?",
@@ -1205,30 +1962,117 @@
   },
   {
     "code": "NODE_ERRSEC_JR_SECURITY_UNTRUSTED_INPUT_010",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "problem_solving", "ownership"],
-    "techTags": ["nodejs", "security", "validation", "api"],
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving",
+      "ownership"
+    ],
+    "techTags": [
+      "nodejs",
+      "security",
+      "validation",
+      "api"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Assess whether the candidate understands that all client-controlled input can be malicious, malformed, or inconsistent with business rules.",
     "primaryQuestion": "Why should user input never be trusted?",
     "expectedSignals": [
-      { "label": "Explains that clients can be modified, requests can be crafted manually, and frontend validation can be bypassed.", "relatedTrigger": null },
-      { "label": "Mentions risks such as SQL or NoSQL injection, command injection, XSS, path traversal, mass assignment, authentication bypass, and resource exhaustion.", "relatedTrigger": null },
-      { "label": "States that backend services must validate and authorize input even if the frontend already validates it.", "relatedTrigger": null },
-      { "label": "Distinguishes validation from sanitization and escaping: validate shape and allowed values, sanitize or normalize where appropriate, and escape output in the right context.", "relatedTrigger": null },
-      { "label": "Mentions using parameterized queries, allowlists, schemas, size limits, and safe parsers rather than string concatenation.", "relatedTrigger": null },
-      { "label": "Recognizes that user identity, role, ownership, and permissions must be checked server-side and cannot be trusted from client-provided fields.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Trusts input because it comes from the app's own frontend.",
-      "Relies only on HTML form validation or TypeScript client types.",
-      "Concatenates user input into SQL, shell commands, file paths, or HTML.",
-      "Accepts client-sent role, price, userId, or ownership fields as authoritative.",
-      "Only checks that fields exist but ignores type, range, length, and allowed values."
+      {
+        "label": "Explains that clients can be modified, requests can be crafted manually, and frontend validation can be bypassed.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "states_clients_can_be_modified",
+            "description": "Explains that clients/frontends can be modified."
+          },
+          {
+            "key": "states_requests_can_be_crafted_and_frontend_bypassed",
+            "description": "Mentions crafted requests and bypassed frontend validation."
+          }
+        ]
+      },
+      {
+        "label": "Mentions risks such as SQL or NoSQL injection, command injection, XSS, path traversal, mass assignment, authentication bypass, and resource exhaustion.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "names_injection_and_xss_risks",
+            "description": "Mentions SQL/NoSQL injection, command injection, or XSS."
+          },
+          {
+            "key": "names_path_mass_assignment_auth_resource_risks",
+            "description": "Mentions path traversal, mass assignment, auth bypass, or resource exhaustion."
+          }
+        ]
+      },
+      {
+        "label": "States that backend services must validate and authorize input even if the frontend already validates it.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "requires_backend_validation",
+            "description": "States backend services must validate input."
+          },
+          {
+            "key": "requires_backend_authorization",
+            "description": "States backend services must enforce authorization even if the frontend validates."
+          }
+        ]
+      },
+      {
+        "label": "Distinguishes validation from sanitization and escaping: validate shape and allowed values, sanitize or normalize where appropriate, and escape output in the right context.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "distinguishes_validation_sanitization_escaping",
+            "description": "Distinguishes validation from sanitization/normalization and output escaping."
+          },
+          {
+            "key": "explains_context_appropriate_output_escaping",
+            "description": "Explains escaping output in the correct context such as HTML."
+          }
+        ]
+      },
+      {
+        "label": "Mentions using parameterized queries, allowlists, schemas, size limits, and safe parsers rather than string concatenation.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_parameterized_queries_or_allowlists",
+            "description": "Mentions parameterized queries or allowlists."
+          },
+          {
+            "key": "mentions_schemas_size_limits_safe_parsers",
+            "description": "Mentions schemas, size limits, safe parsers, and avoiding string concatenation."
+          }
+        ]
+      },
+      {
+        "label": "Recognizes that user identity, role, ownership, and permissions must be checked server-side and cannot be trusted from client-provided fields.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "checks_identity_role_ownership_server_side",
+            "description": "Mentions server-side checks for identity, roles, ownership, or permissions."
+          },
+          {
+            "key": "does_not_trust_client_permission_fields",
+            "description": "Warns not to trust client-provided role/owner/permission fields."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1249,11 +2093,6 @@
       }
     ],
     "followUps": [
-      {
-        "trigger": "red_flag",
-        "question": "If the frontend disables the role field, can a user still send role=admin to the API? What should the backend do?",
-        "purpose": "Check whether the candidate understands client-side controls are bypassable."
-      },
       {
         "trigger": "missing_context",
         "question": "What is the difference between validating a string and escaping it for HTML output?",
@@ -1341,30 +2180,117 @@
   },
   {
     "code": "NODE_ERRSEC_JR_TECH_REQUEST_VALIDATION_011",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "problem_solving", "communication"],
-    "techTags": ["nodejs", "api", "validation", "express"],
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving",
+      "communication"
+    ],
+    "techTags": [
+      "nodejs",
+      "api",
+      "validation",
+      "express"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Check whether the candidate can describe basic request validation for Node.js APIs in a practical and implementation-ready way.",
     "primaryQuestion": "What is basic request validation?",
     "expectedSignals": [
-      { "label": "Defines request validation as checking incoming body, query, params, headers, and sometimes files before business logic uses them.", "relatedTrigger": null },
-      { "label": "Mentions checking required fields, types, formats, length, ranges, enum values, allowed keys, and nested object shapes.", "relatedTrigger": null },
-      { "label": "Explains that invalid requests should receive a clear 400-level response with safe validation details rather than causing internal errors.", "relatedTrigger": null },
-      { "label": "Mentions using validation libraries or schemas such as Zod, Joi, Yup, express-validator, JSON Schema, or framework-provided pipes where appropriate.", "relatedTrigger": null },
-      { "label": "Understands that validation should happen on the server even when the frontend already validates.", "relatedTrigger": null },
-      { "label": "Distinguishes validation from authorization and business rules: validation checks shape and allowed values, while authorization checks permission and ownership.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Only checks that req.body exists.",
-      "Trusts frontend validation and skips backend validation.",
-      "Lets invalid input reach database queries or business logic and relies on crashes.",
-      "Returns raw validator internals or stack traces to clients.",
-      "Confuses validation with authentication or authorization."
+      {
+        "label": "Defines request validation as checking incoming body, query, params, headers, and sometimes files before business logic uses them.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "defines_request_validation_sources",
+            "description": "Defines validation across body, query, params, headers, and sometimes files."
+          },
+          {
+            "key": "places_validation_before_business_logic",
+            "description": "States validation happens before business logic uses the data."
+          }
+        ]
+      },
+      {
+        "label": "Mentions checking required fields, types, formats, length, ranges, enum values, allowed keys, and nested object shapes.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "checks_required_types_formats_lengths",
+            "description": "Mentions required fields, types, formats, length, or ranges."
+          },
+          {
+            "key": "checks_enums_allowed_keys_nested_shapes",
+            "description": "Mentions enum values, allowed keys, or nested object shapes."
+          }
+        ]
+      },
+      {
+        "label": "Explains that invalid requests should receive a clear 400-level response with safe validation details rather than causing internal errors.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "uses_400_level_validation_response",
+            "description": "Mentions returning a clear 400-level response for invalid requests."
+          },
+          {
+            "key": "avoids_internal_errors_for_bad_input",
+            "description": "Explains invalid input should not cause uncaught internal errors."
+          }
+        ]
+      },
+      {
+        "label": "Mentions using validation libraries or schemas such as Zod, Joi, Yup, express-validator, JSON Schema, or framework-provided pipes where appropriate.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "names_schema_validation_libraries",
+            "description": "Mentions libraries such as Zod, Joi, Yup, JSON Schema, or express-validator."
+          },
+          {
+            "key": "mentions_framework_validation_tools",
+            "description": "Mentions framework-provided pipes or validators where appropriate."
+          }
+        ]
+      },
+      {
+        "label": "Understands that validation should happen on the server even when the frontend already validates.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "requires_server_side_validation",
+            "description": "States validation must happen server-side."
+          },
+          {
+            "key": "does_not_rely_on_frontend_validation",
+            "description": "Explains frontend validation can be bypassed and is not sufficient."
+          }
+        ]
+      },
+      {
+        "label": "Distinguishes validation from authorization and business rules: validation checks shape and allowed values, while authorization checks permission and ownership.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "defines_validation_scope",
+            "description": "Explains validation checks shape, types, and allowed values."
+          },
+          {
+            "key": "distinguishes_authorization_permission_ownership",
+            "description": "Explains authorization checks permissions, ownership, or policy."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1477,30 +2403,117 @@
   },
   {
     "code": "NODE_ERRSEC_JR_SECURITY_PASSWORD_HASHING_012",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "ownership", "communication"],
-    "techTags": ["nodejs", "security", "passwords", "authentication"],
+    "competencies": [
+      "technical_fundamentals",
+      "ownership",
+      "communication"
+    ],
+    "techTags": [
+      "nodejs",
+      "security",
+      "passwords",
+      "authentication"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Assess whether the candidate understands basic password storage safety and can distinguish hashing from encryption or plain storage.",
     "primaryQuestion": "Why should passwords be hashed instead of stored directly?",
     "expectedSignals": [
-      { "label": "Explains that plain-text password storage exposes every user's password immediately if the database, logs, or backups are breached.", "relatedTrigger": null },
-      { "label": "Defines password hashing as a one-way transformation used to verify a password without storing the original password.", "relatedTrigger": null },
-      { "label": "Mentions that password hashes should use a slow, salted, password-specific algorithm such as Argon2id, bcrypt, or scrypt rather than fast general hashes like SHA-256 alone.", "relatedTrigger": null },
-      { "label": "Explains that a unique salt prevents identical passwords from having identical hashes and makes precomputed attacks harder.", "relatedTrigger": null },
-      { "label": "Mentions password verification by hashing the submitted password with the stored parameters and comparing the result safely.", "relatedTrigger": null },
-      { "label": "Recognizes that passwords should not be logged, emailed, returned by APIs, or stored reversibly unless there is a very specific non-password credential use case.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Stores passwords in plain text for easier login or password recovery.",
-      "Uses reversible encryption and keeps the decryption key next to the database as the main password strategy.",
-      "Uses MD5, SHA-1, or plain SHA-256 without salt and work factor.",
-      "Uses one global salt for every user.",
-      "Logs submitted passwords during debugging."
+      {
+        "label": "Explains that plain-text password storage exposes every user's password immediately if the database, logs, or backups are breached.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "explains_plaintext_breach_impact",
+            "description": "Explains that plaintext storage exposes user passwords immediately in a breach."
+          },
+          {
+            "key": "mentions_database_logs_backups_exposure",
+            "description": "Mentions exposure through databases, logs, or backups."
+          }
+        ]
+      },
+      {
+        "label": "Defines password hashing as a one-way transformation used to verify a password without storing the original password.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "defines_hashing_one_way",
+            "description": "Defines password hashing as a one-way transformation."
+          },
+          {
+            "key": "connects_hashing_to_verify_without_plaintext",
+            "description": "Explains verification without storing the original password."
+          }
+        ]
+      },
+      {
+        "label": "Mentions that password hashes should use a slow, salted, password-specific algorithm such as Argon2id, bcrypt, or scrypt rather than fast general hashes like SHA-256 alone.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "names_password_hashing_algorithms",
+            "description": "Mentions Argon2id, bcrypt, or scrypt."
+          },
+          {
+            "key": "rejects_fast_general_hash_alone",
+            "description": "Warns against using fast general hashes such as SHA-256 alone for passwords."
+          }
+        ]
+      },
+      {
+        "label": "Explains that a unique salt prevents identical passwords from having identical hashes and makes precomputed attacks harder.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "explains_unique_salt_distinguishes_same_passwords",
+            "description": "Explains that unique salts prevent identical passwords from producing identical hashes."
+          },
+          {
+            "key": "connects_salt_to_precomputed_attack_resistance",
+            "description": "Mentions making rainbow-table or precomputed attacks harder."
+          }
+        ]
+      },
+      {
+        "label": "Mentions password verification by hashing the submitted password with the stored parameters and comparing the result safely.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "describes_password_verification_flow",
+            "description": "Describes verifying by hashing the submitted password with stored parameters."
+          },
+          {
+            "key": "mentions_safe_comparison",
+            "description": "Mentions comparing the result safely using the library or constant-time style comparison where applicable."
+          }
+        ]
+      },
+      {
+        "label": "Recognizes that passwords should not be logged, emailed, returned by APIs, or stored reversibly unless there is a very specific non-password credential use case.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "does_not_log_email_or_return_passwords",
+            "description": "States passwords should not be logged, emailed, or returned by APIs."
+          },
+          {
+            "key": "rejects_reversible_password_storage",
+            "description": "Warns against storing passwords reversibly for normal password use cases."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1521,11 +2534,6 @@
       }
     ],
     "followUps": [
-      {
-        "trigger": "red_flag",
-        "question": "Why is plain SHA-256 not a good password hashing strategy by itself?",
-        "purpose": "Check slow hashing and salt/work-factor understanding."
-      },
       {
         "trigger": "missing_context",
         "question": "If a user forgets their password, should the system be able to show it to them? What should happen instead?",
@@ -1608,30 +2616,116 @@
   },
   {
     "code": "NODE_ERRSEC_JR_TECH_AUTHN_AUTHZ_013",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "communication"],
-    "techTags": ["nodejs", "security", "authentication", "authorization"],
+    "competencies": [
+      "technical_fundamentals",
+      "communication"
+    ],
+    "techTags": [
+      "nodejs",
+      "security",
+      "authentication",
+      "authorization"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Check whether the candidate can clearly distinguish authentication from authorization and apply both in backend request handling.",
     "primaryQuestion": "What is the difference between authentication and authorization?",
     "expectedSignals": [
-      { "label": "Defines authentication as verifying who the user or client is, such as login with password, session cookie, JWT, API key, or OAuth token.", "relatedTrigger": null },
-      { "label": "Defines authorization as deciding what that authenticated identity is allowed to do or access.", "relatedTrigger": null },
-      { "label": "Gives a practical example: a logged-in user is authenticated, but may not be authorized to delete another user's resource or access an admin endpoint.", "relatedTrigger": null },
-      { "label": "Mentions that authorization checks should happen server-side for protected operations and should not rely on hidden frontend buttons.", "relatedTrigger": null },
-      { "label": "Recognizes that authentication alone is not enough; every sensitive route should still enforce permissions, roles, ownership, or policy checks.", "relatedTrigger": null },
-      { "label": "May mention common HTTP semantics: 401 for unauthenticated or invalid credentials and 403 for authenticated but not allowed.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Uses authentication and authorization as interchangeable terms.",
-      "Says logging in means the user can access everything.",
-      "Relies on frontend route hiding as the only authorization control.",
-      "Trusts client-sent role or userId without server-side verification.",
-      "Cannot give a concrete example that separates identity from permission."
+      {
+        "label": "Defines authentication as verifying who the user or client is, such as login with password, session cookie, JWT, API key, or OAuth token.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "defines_authentication_identity_verification",
+            "description": "Defines authentication as verifying who the user/client is."
+          },
+          {
+            "key": "names_authentication_mechanisms",
+            "description": "Names login/password, session cookie, JWT, API key, or OAuth token."
+          }
+        ]
+      },
+      {
+        "label": "Defines authorization as deciding what that authenticated identity is allowed to do or access.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "defines_authorization_permission_decision",
+            "description": "Defines authorization as deciding what an identity may do or access."
+          },
+          {
+            "key": "ties_authorization_to_authenticated_identity",
+            "description": "Connects authorization decisions to the authenticated identity."
+          }
+        ]
+      },
+      {
+        "label": "Gives a practical example: a logged-in user is authenticated, but may not be authorized to delete another user's resource or access an admin endpoint.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "uses_logged_in_but_not_authorized_example",
+            "description": "Uses an example where a logged-in user is authenticated but not permitted."
+          },
+          {
+            "key": "mentions_ownership_or_admin_endpoint",
+            "description": "Mentions another user's resource, ownership, or admin endpoint."
+          }
+        ]
+      },
+      {
+        "label": "Mentions that authorization checks should happen server-side for protected operations and should not rely on hidden frontend buttons.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "requires_server_side_authorization",
+            "description": "States authorization checks must happen server-side."
+          },
+          {
+            "key": "rejects_hidden_button_as_authz",
+            "description": "Explains hiding frontend UI is not sufficient authorization."
+          }
+        ]
+      },
+      {
+        "label": "Recognizes that authentication alone is not enough; every sensitive route should still enforce permissions, roles, ownership, or policy checks.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "states_authentication_alone_not_enough",
+            "description": "States that being authenticated does not imply every action is allowed."
+          },
+          {
+            "key": "mentions_permissions_roles_ownership_policy",
+            "description": "Mentions permissions, roles, ownership, or policy checks."
+          }
+        ]
+      },
+      {
+        "label": "May mention common HTTP semantics: 401 for unauthenticated or invalid credentials and 403 for authenticated but not allowed.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "maps_401_to_unauthenticated",
+            "description": "Maps 401 to unauthenticated or invalid credentials."
+          },
+          {
+            "key": "maps_403_to_authenticated_forbidden",
+            "description": "Maps 403 to authenticated but not allowed."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1744,30 +2838,117 @@
   },
   {
     "code": "NODE_ERRSEC_JR_SECURITY_DEPENDENCY_UPDATES_014",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "ownership", "problem_solving"],
-    "techTags": ["nodejs", "npm", "security", "dependencies"],
+    "competencies": [
+      "technical_fundamentals",
+      "ownership",
+      "problem_solving"
+    ],
+    "techTags": [
+      "nodejs",
+      "npm",
+      "security",
+      "dependencies"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Assess whether the candidate understands why dependency maintenance matters in Node.js projects and how to update safely.",
     "primaryQuestion": "Why should dependencies be kept updated?",
     "expectedSignals": [
-      { "label": "Explains that dependencies can contain known security vulnerabilities, bugs, performance issues, or compatibility problems that are fixed in later versions.", "relatedTrigger": null },
-      { "label": "Mentions that Node.js applications often rely on many transitive dependencies, so vulnerability exposure is not limited to packages directly imported in code.", "relatedTrigger": null },
-      { "label": "Recognizes that updates should be managed deliberately using lockfiles, changelogs, tests, code review, and staged rollout rather than blindly upgrading production.", "relatedTrigger": null },
-      { "label": "Mentions tooling such as npm audit, npm outdated, Dependabot, Renovate, Snyk, or CI checks to detect vulnerable and outdated packages.", "relatedTrigger": null },
-      { "label": "Understands semantic versioning and the difference between patch, minor, and major updates at a basic level.", "relatedTrigger": null },
-      { "label": "Mentions removing unused dependencies because every dependency increases maintenance and attack surface.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Says dependencies should never be updated once the app works.",
-      "Blindly updates every package to latest in production without tests or review.",
-      "Ignores transitive dependency vulnerabilities.",
-      "Commits changes to package.json without updating or respecting the lockfile.",
-      "Treats security audit output as noise without triage."
+      {
+        "label": "Explains that dependencies can contain known security vulnerabilities, bugs, performance issues, or compatibility problems that are fixed in later versions.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_security_bug_performance_fixes",
+            "description": "Mentions vulnerabilities, bugs, performance issues, or compatibility fixes."
+          },
+          {
+            "key": "connects_updates_to_fixed_versions",
+            "description": "Explains that later versions may contain fixes."
+          }
+        ]
+      },
+      {
+        "label": "Mentions that Node.js applications often rely on many transitive dependencies, so vulnerability exposure is not limited to packages directly imported in code.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_transitive_dependencies",
+            "description": "Mentions transitive dependencies."
+          },
+          {
+            "key": "states_exposure_not_limited_to_direct_imports",
+            "description": "Explains vulnerability exposure is not limited to direct imports."
+          }
+        ]
+      },
+      {
+        "label": "Recognizes that updates should be managed deliberately using lockfiles, changelogs, tests, code review, and staged rollout rather than blindly upgrading production.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_lockfiles_changelogs_tests_review",
+            "description": "Mentions lockfiles, changelogs, tests, or code review."
+          },
+          {
+            "key": "mentions_staged_rollout_not_blind_upgrade",
+            "description": "Mentions staged rollout or avoiding blind production upgrades."
+          }
+        ]
+      },
+      {
+        "label": "Mentions tooling such as npm audit, npm outdated, Dependabot, Renovate, Snyk, or CI checks to detect vulnerable and outdated packages.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "names_npm_or_dependency_tools",
+            "description": "Names tools such as npm audit, npm outdated, Dependabot, Renovate, or Snyk."
+          },
+          {
+            "key": "mentions_ci_detection",
+            "description": "Mentions CI checks for vulnerable or outdated packages."
+          }
+        ]
+      },
+      {
+        "label": "Understands semantic versioning and the difference between patch, minor, and major updates at a basic level.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_semantic_versioning",
+            "description": "Mentions semantic versioning."
+          },
+          {
+            "key": "distinguishes_patch_minor_major",
+            "description": "Distinguishes patch, minor, and major update risk at a basic level."
+          }
+        ]
+      },
+      {
+        "label": "Mentions removing unused dependencies because every dependency increases maintenance and attack surface.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_removing_unused_dependencies",
+            "description": "Mentions removing unused dependencies."
+          },
+          {
+            "key": "connects_dependency_count_to_attack_surface",
+            "description": "Explains every dependency adds maintenance burden and attack surface."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1792,11 +2973,6 @@
         "trigger": "missing_context",
         "question": "What is the role of package-lock.json or another lockfile when updating dependencies?",
         "purpose": "Check reproducible install and dependency resolution awareness."
-      },
-      {
-        "trigger": "red_flag",
-        "question": "If npm audit reports a high severity vulnerability in a transitive dependency, what steps would you take before deploying a fix?",
-        "purpose": "Probe vulnerability triage and safe release process."
       }
     ],
     "localizedContent": {
@@ -1880,31 +3056,131 @@
   },
   {
     "code": "NODE_ERRSEC_JR_TECH_API_ERROR_RESPONSE_015",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "communication", "problem_solving"],
-    "techTags": ["nodejs", "api", "error-handling", "rest"],
+    "competencies": [
+      "technical_fundamentals",
+      "communication",
+      "problem_solving"
+    ],
+    "techTags": [
+      "nodejs",
+      "api",
+      "error-handling",
+      "rest"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Check whether the candidate can describe a consistent and safe API error response contract for Node.js services.",
     "primaryQuestion": "What should a consistent API error response include?",
     "expectedSignals": [
-      { "label": "Mentions an appropriate HTTP status code that matches the failure category, such as 400 validation error, 401 unauthenticated, 403 forbidden, 404 not found, or 500 internal error.", "relatedTrigger": null },
-      { "label": "Includes a stable machine-readable error code that clients can use without parsing natural language messages.", "relatedTrigger": null },
-      { "label": "Includes a safe human-readable message that explains the problem without exposing stack traces, SQL, secrets, or internal implementation details.", "relatedTrigger": null },
-      { "label": "For validation errors, includes structured field-level details such as field, issue, and expected constraint when safe and useful.", "relatedTrigger": null },
-      { "label": "Includes a request ID, correlation ID, or trace ID so support and logs can connect the client-visible error to internal diagnostics.", "relatedTrigger": null },
-      { "label": "Mentions consistent JSON shape, content type, and naming across endpoints so frontend and API clients can handle errors uniformly.", "relatedTrigger": null },
-      { "label": "Understands that internal logs should contain richer diagnostic data than public responses.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Returns different ad hoc shapes from each endpoint.",
-      "Returns raw Error objects, stack traces, SQL errors, or ORM internals to clients.",
-      "Always returns HTTP 200 with an error message in the body.",
-      "Only returns a vague message with no status, code, or request ID.",
-      "For validation errors, returns unreadable validator internals instead of useful field-level feedback."
+      {
+        "label": "Mentions an appropriate HTTP status code that matches the failure category, such as 400 validation error, 401 unauthenticated, 403 forbidden, 404 not found, or 500 internal error.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "uses_status_matching_failure_category",
+            "description": "Mentions HTTP status codes that match the failure category."
+          },
+          {
+            "key": "maps_common_error_status_examples",
+            "description": "Maps examples such as 400, 401, 403, 404, or 500 to common error cases."
+          }
+        ]
+      },
+      {
+        "label": "Includes a stable machine-readable error code that clients can use without parsing natural language messages.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "includes_stable_machine_error_code",
+            "description": "Includes a stable machine-readable error code."
+          },
+          {
+            "key": "explains_clients_avoid_parsing_message",
+            "description": "Explains clients should not need to parse natural language messages."
+          }
+        ]
+      },
+      {
+        "label": "Includes a safe human-readable message that explains the problem without exposing stack traces, SQL, secrets, or internal implementation details.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "includes_safe_human_message",
+            "description": "Includes a safe human-readable message."
+          },
+          {
+            "key": "avoids_stack_sql_secret_internal_leaks",
+            "description": "Avoids exposing stack traces, SQL, secrets, or internal implementation details."
+          }
+        ]
+      },
+      {
+        "label": "For validation errors, includes structured field-level details such as field, issue, and expected constraint when safe and useful.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "includes_field_level_validation_details",
+            "description": "Includes structured field-level validation details."
+          },
+          {
+            "key": "mentions_field_issue_expected_constraint",
+            "description": "Mentions field, issue, expected constraint, or similar safe details."
+          }
+        ]
+      },
+      {
+        "label": "Includes a request ID, correlation ID, or trace ID so support and logs can connect the client-visible error to internal diagnostics.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "includes_request_correlation_or_trace_id",
+            "description": "Includes request ID, correlation ID, or trace ID."
+          },
+          {
+            "key": "connects_id_to_logs_and_support",
+            "description": "Explains the ID links client-visible errors to internal diagnostics/logs."
+          }
+        ]
+      },
+      {
+        "label": "Mentions consistent JSON shape, content type, and naming across endpoints so frontend and API clients can handle errors uniformly.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "mentions_consistent_json_error_shape",
+            "description": "Mentions a consistent JSON error shape."
+          },
+          {
+            "key": "mentions_content_type_naming_uniform_client_handling",
+            "description": "Mentions content type, naming consistency, or uniform client handling across endpoints."
+          }
+        ]
+      },
+      {
+        "label": "Understands that internal logs should contain richer diagnostic data than public responses.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "separates_public_response_from_internal_logs",
+            "description": "Separates public error responses from internal diagnostic logs."
+          },
+          {
+            "key": "keeps_richer_details_in_protected_logs",
+            "description": "Mentions protected logs may contain richer diagnostic details than the client response."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {

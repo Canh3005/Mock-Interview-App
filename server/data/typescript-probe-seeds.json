@@ -1,25 +1,85 @@
 [
   {
     "code": "TS_JR_TECH_ANY_UNKNOWN_001",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["frontend", "fullstack", "backend"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "frontend",
+      "fullstack",
+      "backend"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "communication"],
-    "techTags": ["typescript"],
+    "competencies": [
+      "technical_fundamentals",
+      "communication"
+    ],
+    "techTags": [
+      "typescript"
+    ],
     "difficulty": 2,
     "intent": "Check whether the candidate understands the practical difference between any and unknown and can explain how to keep type safety when handling uncertain data.",
     "primaryQuestion": "What is the difference between any and unknown in TypeScript, and when would you choose unknown over any?",
     "expectedSignals": [
-      { "label": "Explains that any disables useful type checking for that value while unknown requires narrowing before use.", "relatedTrigger": null },
-      { "label": "Uses unknown for external or uncertain values such as API responses, catch errors, localStorage, or message payloads.", "relatedTrigger": null },
-      { "label": "Mentions narrowing through typeof, instanceof, property checks, schema parsing, or user-defined type guards.", "relatedTrigger": null },
-      { "label": "Understands that type assertions can bypass safety and should be localized and justified.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Says any and unknown are basically the same.",
-      "Uses as SomeType as the default way to handle external data.",
-      "Cannot explain how to safely read a property from an unknown value."
+      {
+        "label": "Explains that any disables useful type checking for that value while unknown requires narrowing before use.",
+        "requirements": [
+          {
+            "key": "contrasts_any_and_unknown_safety",
+            "description": "States that any allows unchecked operations while unknown blocks use until narrowed."
+          },
+          {
+            "key": "shows_effect_on_property_access",
+            "description": "Uses property access or method call behavior to show the practical difference."
+          }
+        ],
+        "relatedTrigger": "vague_answer"
+      },
+      {
+        "label": "Uses unknown for external or uncertain values such as API responses, catch errors, localStorage, or message payloads.",
+        "requirements": [
+          {
+            "key": "names_uncertain_boundary",
+            "description": "Names an external boundary such as JSON.parse, API response, catch error, localStorage, or message payload."
+          },
+          {
+            "key": "chooses_unknown_at_boundary",
+            "description": "Explains why unknown is safer than any for data whose runtime shape is not trusted."
+          }
+        ],
+        "relatedTrigger": "vague_answer"
+      },
+      {
+        "label": "Mentions narrowing through typeof, instanceof, property checks, schema parsing, or user-defined type guards.",
+        "requirements": [
+          {
+            "key": "uses_specific_narrowing_check",
+            "description": "Names concrete checks needed before reading a field such as user.email."
+          },
+          {
+            "key": "keeps_runtime_validation_aligned",
+            "description": "Connects narrowing to actual runtime validation, not only compile-time annotation."
+          }
+        ],
+        "relatedTrigger": "vague_answer"
+      },
+      {
+        "label": "Understands that type assertions can bypass safety and should be localized and justified.",
+        "requirements": [
+          {
+            "key": "identifies_assertion_bypass",
+            "description": "Explains that `as User` can silence TypeScript without proving the value is a User."
+          },
+          {
+            "key": "limits_assertion_to_verified_boundary",
+            "description": "Requires assertions to be close to validation or backed by a documented invariant."
+          }
+        ],
+        "relatedTrigger": "missing_consequence"
+      }
     ],
     "scoringHints": [
       {
@@ -46,7 +106,7 @@
         "purpose": "Force concrete narrowing and boundary reasoning."
       },
       {
-        "trigger": "red_flag",
+        "trigger": "missing_consequence",
         "question": "What risk do you introduce by writing value as User without validation?",
         "purpose": "Check awareness of assertion bypasses."
       }
@@ -123,25 +183,85 @@
   },
   {
     "code": "TS_JR_TECH_TYPE_INTERFACE_002",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["frontend", "fullstack", "backend"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "frontend",
+      "fullstack",
+      "backend"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "communication"],
-    "techTags": ["typescript"],
+    "competencies": [
+      "technical_fundamentals",
+      "communication"
+    ],
+    "techTags": [
+      "typescript"
+    ],
     "difficulty": 2,
     "intent": "Evaluate whether the candidate can choose between type aliases and interfaces based on extension, declaration merging, unions, and readability.",
     "primaryQuestion": "How do type aliases and interfaces differ in TypeScript, and how would you decide which one to use for a domain model?",
     "expectedSignals": [
-      { "label": "Explains that both can describe object shapes for many common cases.", "relatedTrigger": null },
-      { "label": "Mentions interface extension and declaration merging as useful for public object contracts or augmentation.", "relatedTrigger": null },
-      { "label": "Mentions type aliases for unions, intersections, primitives, tuples, mapped or conditional compositions.", "relatedTrigger": null },
-      { "label": "Chooses consistently based on project convention, API surface, and expected evolution.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Claims one is always strictly better for every use case.",
-      "Cannot explain declaration merging or why it can be useful or risky.",
-      "Confuses runtime classes with compile-time object shape declarations."
+      {
+        "label": "Explains that both can describe object shapes for many common cases.",
+        "requirements": [
+          {
+            "key": "states_overlap_for_object_shapes",
+            "description": "States that both type aliases and interfaces can model ordinary object shapes."
+          },
+          {
+            "key": "avoids_false_absolute_rule",
+            "description": "Avoids claiming one is always required for all domain models."
+          }
+        ],
+        "relatedTrigger": "vague_answer"
+      },
+      {
+        "label": "Mentions interface extension and declaration merging as useful for public object contracts or augmentation.",
+        "requirements": [
+          {
+            "key": "explains_interface_extension",
+            "description": "Mentions extending interfaces for object contracts that may evolve."
+          },
+          {
+            "key": "explains_merging_tradeoff",
+            "description": "Explains declaration merging as useful for augmentation but surprising if accidental."
+          }
+        ],
+        "relatedTrigger": "missing_tradeoff"
+      },
+      {
+        "label": "Mentions type aliases for unions, intersections, primitives, tuples, mapped or conditional compositions.",
+        "requirements": [
+          {
+            "key": "uses_type_for_union_result",
+            "description": "Explains that a union such as Success | Failure is represented with a type alias."
+          },
+          {
+            "key": "names_non_interface_compositions",
+            "description": "Names at least one composition better suited to type aliases, such as tuples or mapped types."
+          }
+        ],
+        "relatedTrigger": "vague_answer"
+      },
+      {
+        "label": "Chooses consistently based on project convention, API surface, and expected evolution.",
+        "requirements": [
+          {
+            "key": "considers_project_convention",
+            "description": "Uses the repository or team convention as a decision input."
+          },
+          {
+            "key": "considers_public_api_evolution",
+            "description": "Considers whether the domain model is a public extensible contract or a closed internal type."
+          }
+        ],
+        "relatedTrigger": "missing_tradeoff"
+      }
     ],
     "scoringHints": [
       {
@@ -245,25 +365,85 @@
   },
   {
     "code": "TS_JR_TECH_UNION_NARROWING_003",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["frontend", "fullstack", "backend"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "frontend",
+      "fullstack",
+      "backend"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "problem_solving"],
-    "techTags": ["typescript"],
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving"
+    ],
+    "techTags": [
+      "typescript"
+    ],
     "difficulty": 2,
     "intent": "Check whether the candidate understands union types, control-flow narrowing, and why TypeScript only allows access to fields common to all union members before narrowing.",
     "primaryQuestion": "If a value has type User | Admin, why can TypeScript block access to adminOnlyField, and how would you narrow the value safely?",
     "expectedSignals": [
-      { "label": "Explains that a union value may be any member of the union at runtime.", "relatedTrigger": null },
-      { "label": "States that only fields common to all members are safe before narrowing.", "relatedTrigger": null },
-      { "label": "Uses checks such as discriminant fields, in operator, typeof, instanceof, or custom type predicates.", "relatedTrigger": null },
-      { "label": "Avoids unsafe casts unless there is an external invariant and it is documented.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Forces access with as Admin without proving the branch.",
-      "Cannot explain why a common property is allowed but a member-specific property is not.",
-      "Thinks TypeScript performs runtime validation automatically."
+      {
+        "label": "Explains that a union value may be any member of the union at runtime.",
+        "requirements": [
+          {
+            "key": "states_runtime_union_uncertainty",
+            "description": "Explains that User | Admin means the runtime value could be either member."
+          },
+          {
+            "key": "connects_error_to_member_specific_field",
+            "description": "Connects the compile error to adminOnlyField existing only on Admin."
+          }
+        ],
+        "relatedTrigger": "vague_answer"
+      },
+      {
+        "label": "States that only fields common to all members are safe before narrowing.",
+        "requirements": [
+          {
+            "key": "identifies_common_fields_only",
+            "description": "States that only properties shared by User and Admin are safe before narrowing."
+          },
+          {
+            "key": "avoids_using_member_field_early",
+            "description": "Avoids accessing admin-only data before a successful check."
+          }
+        ],
+        "relatedTrigger": "vague_answer"
+      },
+      {
+        "label": "Uses checks such as discriminant fields, in operator, typeof, instanceof, or custom type predicates.",
+        "requirements": [
+          {
+            "key": "uses_admin_narrowing_branch",
+            "description": "Provides a concrete branch that proves the value is Admin before reading permissions."
+          },
+          {
+            "key": "chooses_check_matching_shape",
+            "description": "Chooses a discriminant, `in` check, instanceof, or predicate that fits the value shape."
+          }
+        ],
+        "relatedTrigger": "vague_answer"
+      },
+      {
+        "label": "Avoids unsafe casts unless there is an external invariant and it is documented.",
+        "requirements": [
+          {
+            "key": "explains_bad_cast_risk",
+            "description": "Explains the runtime risk if an API sends User but code casts it to Admin."
+          },
+          {
+            "key": "requires_documented_invariant",
+            "description": "Allows casts only when a trusted external invariant is explicit and localized."
+          }
+        ],
+        "relatedTrigger": "missing_consequence"
+      }
     ],
     "scoringHints": [
       {
@@ -290,7 +470,7 @@
         "purpose": "Turn the concept into concrete code reasoning."
       },
       {
-        "trigger": "red_flag",
+        "trigger": "missing_consequence",
         "question": "What could go wrong if the API sends a User but your code casts it to Admin?",
         "purpose": "Check runtime and boundary awareness."
       }
@@ -362,25 +542,85 @@
   },
   {
     "code": "TS_JR_TECH_OPTIONAL_NULL_004",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["frontend", "fullstack", "backend"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "frontend",
+      "fullstack",
+      "backend"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "problem_solving"],
-    "techTags": ["typescript"],
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving"
+    ],
+    "techTags": [
+      "typescript"
+    ],
     "difficulty": 2,
     "intent": "Assess whether the candidate can reason about optional properties, nullability, strictNullChecks, optional chaining, and defaulting without hiding bugs.",
     "primaryQuestion": "How do optional properties, undefined, null, optional chaining, and nullish coalescing work together in TypeScript?",
     "expectedSignals": [
-      { "label": "Distinguishes a missing property from a value explicitly set to undefined or null.", "relatedTrigger": null },
-      { "label": "Explains that strictNullChecks forces handling of possibly null or undefined values.", "relatedTrigger": null },
-      { "label": "Uses optional chaining for safe access and nullish coalescing for defaults that should not treat empty string or zero as missing.", "relatedTrigger": null },
-      { "label": "Mentions exactOptionalPropertyTypes when discussing precise optional property semantics.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Uses non-null assertion everywhere to silence errors.",
-      "Confuses || defaults with ?? defaults and breaks valid falsy values.",
-      "Cannot explain how strictNullChecks changes code behavior."
+      {
+        "label": "Distinguishes a missing property from a value explicitly set to undefined or null.",
+        "requirements": [
+          {
+            "key": "distinguishes_missing_undefined_null",
+            "description": "Separates omitted properties from explicit undefined and explicit null values."
+          },
+          {
+            "key": "ties_optional_property_to_undefined",
+            "description": "Explains how an optional property can be absent or read as undefined."
+          }
+        ],
+        "relatedTrigger": "missing_context"
+      },
+      {
+        "label": "Explains that strictNullChecks forces handling of possibly null or undefined values.",
+        "requirements": [
+          {
+            "key": "names_strict_null_checks_effect",
+            "description": "Explains that strictNullChecks prevents treating nullable values as definitely present."
+          },
+          {
+            "key": "requires_guard_before_use",
+            "description": "Mentions guards, defaults, or early returns before using nullable values."
+          }
+        ],
+        "relatedTrigger": "missing_consequence"
+      },
+      {
+        "label": "Uses optional chaining for safe access and nullish coalescing for defaults that should not treat empty string or zero as missing.",
+        "requirements": [
+          {
+            "key": "uses_optional_chaining_for_access",
+            "description": "Uses optional chaining for nested access that may encounter null or undefined."
+          },
+          {
+            "key": "contrasts_nullish_with_or",
+            "description": "Explains why count ?? 10 preserves 0 while count || 10 does not."
+          }
+        ],
+        "relatedTrigger": "missing_context"
+      },
+      {
+        "label": "Mentions exactOptionalPropertyTypes when discussing precise optional property semantics.",
+        "requirements": [
+          {
+            "key": "mentions_exact_optional_semantics",
+            "description": "Mentions exactOptionalPropertyTypes when the distinction between absent and undefined matters."
+          },
+          {
+            "key": "limits_non_null_assertion",
+            "description": "Explains user!.email is acceptable only with strong evidence that user is present."
+          }
+        ],
+        "relatedTrigger": "missing_consequence"
+      }
     ],
     "scoringHints": [
       {
@@ -407,7 +647,7 @@
         "purpose": "Check defaulting correctness."
       },
       {
-        "trigger": "red_flag",
+        "trigger": "missing_consequence",
         "question": "When is user!.email acceptable, and what evidence should exist before using it?",
         "purpose": "Probe non-null assertion discipline."
       }
@@ -484,25 +724,86 @@
   },
   {
     "code": "TS_JR_DEBUG_TYPE_ERROR_005",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["frontend", "fullstack", "backend"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "frontend",
+      "fullstack",
+      "backend"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "debugging",
-    "competencies": ["problem_solving", "technical_fundamentals", "ownership"],
-    "techTags": ["typescript"],
+    "competencies": [
+      "problem_solving",
+      "technical_fundamentals",
+      "ownership"
+    ],
+    "techTags": [
+      "typescript"
+    ],
     "difficulty": 2,
     "intent": "Evaluate whether the candidate can debug TypeScript compiler errors by following the data shape and the assignment site instead of suppressing the error.",
     "primaryQuestion": "A TypeScript error says Type 'string | undefined' is not assignable to type 'string'. How would you debug and fix it?",
     "expectedSignals": [
-      { "label": "Finds where the value becomes optional or possibly undefined.", "relatedTrigger": null },
-      { "label": "Checks whether the receiving function truly requires a string or should accept missing values.", "relatedTrigger": null },
-      { "label": "Chooses an appropriate fix such as validation, defaulting, early return, type refinement, or API contract change.", "relatedTrigger": null },
-      { "label": "Avoids blindly using as string or non-null assertion as the first fix.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Immediately adds ! or as string without checking the source.",
-      "Changes the target type to any to unblock compilation.",
-      "Cannot explain the runtime case TypeScript is warning about."
+      {
+        "label": "Finds where the value becomes optional or possibly undefined.",
+        "requirements": [
+          {
+            "key": "traces_optional_source",
+            "description": "Inspects the declaration, API type, destructuring, or caller path that introduced string | undefined."
+          },
+          {
+            "key": "checks_control_flow",
+            "description": "Checks whether TypeScript can prove the value is present along the current control flow."
+          }
+        ],
+        "relatedTrigger": "vague_answer"
+      },
+      {
+        "label": "Checks whether the receiving function truly requires a string or should accept missing values.",
+        "requirements": [
+          {
+            "key": "examines_callee_contract",
+            "description": "Determines whether the receiving function needs a guaranteed string."
+          },
+          {
+            "key": "examines_domain_absence",
+            "description": "Decides whether missing value is valid domain state or an upstream bug."
+          }
+        ],
+        "relatedTrigger": "vague_answer"
+      },
+      {
+        "label": "Chooses an appropriate fix such as validation, defaulting, early return, type refinement, or API contract change.",
+        "requirements": [
+          {
+            "key": "matches_fix_to_domain",
+            "description": "Chooses validation, defaulting, early return, refinement, or contract change based on domain meaning."
+          },
+          {
+            "key": "keeps_runtime_behavior_correct",
+            "description": "Explains what the application should do when the value is actually missing."
+          }
+        ],
+        "relatedTrigger": "vague_answer"
+      },
+      {
+        "label": "Avoids blindly using as string or non-null assertion as the first fix.",
+        "requirements": [
+          {
+            "key": "explains_non_null_hidden_bug",
+            "description": "Explains how user.name! can hide an API omission or crash later."
+          },
+          {
+            "key": "uses_assertion_only_after_proof",
+            "description": "Uses assertion only after a guard or documented invariant proves the value exists."
+          }
+        ],
+        "relatedTrigger": "missing_consequence"
+      }
     ],
     "scoringHints": [
       {
@@ -529,7 +830,7 @@
         "purpose": "Check debugging order."
       },
       {
-        "trigger": "red_flag",
+        "trigger": "missing_consequence",
         "question": "What bug can user.name! hide if the API sometimes omits name?",
         "purpose": "Expose non-null assertion risk."
       }
@@ -606,25 +907,85 @@
   },
   {
     "code": "TS_JR_TECH_LITERAL_ENUM_006",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["frontend", "fullstack", "backend"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "frontend",
+      "fullstack",
+      "backend"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "trade_off_analysis"],
-    "techTags": ["typescript"],
+    "competencies": [
+      "technical_fundamentals",
+      "trade_off_analysis"
+    ],
+    "techTags": [
+      "typescript"
+    ],
     "difficulty": 2,
     "intent": "Check whether the candidate can model finite states with literal unions or enums and understand the runtime implications of each choice.",
     "primaryQuestion": "When would you model a finite set of values with a string literal union instead of an enum in TypeScript?",
     "expectedSignals": [
-      { "label": "Explains that string literal unions are type-level and usually emit no runtime object.", "relatedTrigger": null },
-      { "label": "Mentions enums can provide a runtime object but add emitted JavaScript and have interop considerations.", "relatedTrigger": null },
-      { "label": "Uses literal unions for simple API statuses, component variants, or discriminants.", "relatedTrigger": null },
-      { "label": "Considers readability, refactoring, external contract compatibility, and project conventions.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Thinks every finite value set must be an enum.",
-      "Cannot explain that TypeScript types are erased but enums can exist at runtime.",
-      "Ignores external API string values when designing the type."
+      {
+        "label": "Explains that string literal unions are type-level and usually emit no runtime object.",
+        "requirements": [
+          {
+            "key": "states_literal_union_no_runtime_object",
+            "description": "Explains that a string literal union is erased at runtime and mainly constrains types."
+          },
+          {
+            "key": "connects_to_simple_finite_values",
+            "description": "Connects literal unions to simple finite values such as status or variant strings."
+          }
+        ],
+        "relatedTrigger": "missing_context"
+      },
+      {
+        "label": "Mentions enums can provide a runtime object but add emitted JavaScript and have interop considerations.",
+        "requirements": [
+          {
+            "key": "states_enum_runtime_object",
+            "description": "Explains that enums can create runtime objects or values that code can reference."
+          },
+          {
+            "key": "mentions_emit_or_interop_cost",
+            "description": "Mentions emitted JavaScript, const enum constraints, or external API interop considerations."
+          }
+        ],
+        "relatedTrigger": "missing_tradeoff"
+      },
+      {
+        "label": "Uses literal unions for simple API statuses, component variants, or discriminants.",
+        "requirements": [
+          {
+            "key": "models_rest_status_union",
+            "description": "Shows a concrete union such as 'draft' | 'active' | 'archived' for an API status field."
+          },
+          {
+            "key": "uses_union_as_discriminant",
+            "description": "Mentions component variants or discriminated union tags as good literal-union fits."
+          }
+        ],
+        "relatedTrigger": "missing_context"
+      },
+      {
+        "label": "Considers readability, refactoring, external contract compatibility, and project conventions.",
+        "requirements": [
+          {
+            "key": "compares_refactor_and_discoverability",
+            "description": "Compares readability, autocomplete, and refactoring ergonomics between enum and union."
+          },
+          {
+            "key": "respects_external_contract_and_convention",
+            "description": "Considers API contract strings and existing project conventions before choosing."
+          }
+        ],
+        "relatedTrigger": "missing_tradeoff"
+      }
     ],
     "scoringHints": [
       {
@@ -728,25 +1089,85 @@
   },
   {
     "code": "TS_MID_TECH_GENERICS_CONSTRAINTS_007",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["frontend", "fullstack", "backend"],
-    "levels": ["mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "frontend",
+      "fullstack",
+      "backend"
+    ],
+    "levels": [
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking"],
-    "techTags": ["typescript"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking"
+    ],
+    "techTags": [
+      "typescript"
+    ],
     "difficulty": 3,
     "intent": "Assess whether the candidate can design generic functions that preserve relationships between inputs and outputs without falling back to any.",
     "primaryQuestion": "How would you design a generic helper that returns one property from an object while ensuring the key and return type stay linked?",
     "expectedSignals": [
-      { "label": "Uses generics with a key constraint such as K extends keyof T.", "relatedTrigger": null },
-      { "label": "Explains that the return type should be T[K] instead of a broad union or any.", "relatedTrigger": null },
-      { "label": "Understands why unconstrained T cannot be indexed safely.", "relatedTrigger": null },
-      { "label": "Can discuss type inference and when explicit type parameters are or are not needed.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Uses any for the object or key and loses type information.",
-      "Cannot explain why key must be constrained to keyof T.",
-      "Returns unknown or T[keyof T] without preserving the selected key relationship."
+      {
+        "label": "Uses generics with a key constraint such as K extends keyof T.",
+        "requirements": [
+          {
+            "key": "uses_two_type_parameters",
+            "description": "Models the helper with object type T and key type K."
+          },
+          {
+            "key": "constrains_key_to_keyof_t",
+            "description": "Constrains K with `K extends keyof T` so only real keys are accepted."
+          }
+        ],
+        "relatedTrigger": "missing_context"
+      },
+      {
+        "label": "Explains that the return type should be T[K] instead of a broad union or any.",
+        "requirements": [
+          {
+            "key": "returns_indexed_access_type",
+            "description": "Uses `T[K]` as the return type to keep the key and property value linked."
+          },
+          {
+            "key": "preserves_optional_property_type",
+            "description": "Explains that getProperty(user, 'email') returns the exact email type such as string | undefined."
+          }
+        ],
+        "relatedTrigger": "vague_answer"
+      },
+      {
+        "label": "Understands why unconstrained T cannot be indexed safely.",
+        "requirements": [
+          {
+            "key": "rejects_key_string_indexing",
+            "description": "Explains why `key: string` can ask for keys that do not exist on T."
+          },
+          {
+            "key": "avoids_any_escape",
+            "description": "Avoids using any or broad index signatures to silence the indexing problem."
+          }
+        ],
+        "relatedTrigger": "missing_context"
+      },
+      {
+        "label": "Can discuss type inference and when explicit type parameters are or are not needed.",
+        "requirements": [
+          {
+            "key": "explains_inference_from_arguments",
+            "description": "Explains that TypeScript usually infers T and K from the object and key arguments."
+          },
+          {
+            "key": "names_explicit_generic_case",
+            "description": "Mentions explicit type parameters only for ambiguous or intentionally constrained calls."
+          }
+        ],
+        "relatedTrigger": "vague_answer"
+      }
     ],
     "scoringHints": [
       {
@@ -850,25 +1271,86 @@
   },
   {
     "code": "TS_MID_TECH_DISCRIMINATED_UNION_008",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["frontend", "fullstack", "backend"],
-    "levels": ["mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "frontend",
+      "fullstack",
+      "backend"
+    ],
+    "levels": [
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "problem_solving"],
-    "techTags": ["typescript"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "problem_solving"
+    ],
+    "techTags": [
+      "typescript"
+    ],
     "difficulty": 3,
     "intent": "Evaluate whether the candidate can model state machines or API result shapes with discriminated unions and exhaustive handling.",
     "primaryQuestion": "How would you model loading, success, and error states with a discriminated union, and how would you make missing cases visible?",
     "expectedSignals": [
-      { "label": "Uses a shared discriminant field such as status, kind, or state with literal values.", "relatedTrigger": null },
-      { "label": "Keeps variant-specific data on the correct branch, such as data only on success and error only on failure.", "relatedTrigger": null },
-      { "label": "Explains switch-based narrowing and access to branch-specific fields.", "relatedTrigger": null },
-      { "label": "Mentions exhaustive checking with never, strict return types, or lint/compiler support.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Models state as multiple optional fields that can create impossible combinations.",
-      "Does not understand how the discriminant narrows the union.",
-      "Ignores what happens when a new variant is added."
+      {
+        "label": "Uses a shared discriminant field such as status, kind, or state with literal values.",
+        "requirements": [
+          {
+            "key": "defines_literal_discriminant",
+            "description": "Defines a shared field such as status with literal values for loading, success, and error."
+          },
+          {
+            "key": "avoids_boolean_bag_state",
+            "description": "Avoids optional boolean/data/error bags that allow contradictory states."
+          }
+        ],
+        "relatedTrigger": "missing_context"
+      },
+      {
+        "label": "Keeps variant-specific data on the correct branch, such as data only on success and error only on failure.",
+        "requirements": [
+          {
+            "key": "puts_data_on_success",
+            "description": "Places data only on the success variant."
+          },
+          {
+            "key": "puts_error_on_error",
+            "description": "Places error details only on the error variant, not on loading or success."
+          }
+        ],
+        "relatedTrigger": "missing_context"
+      },
+      {
+        "label": "Explains switch-based narrowing and access to branch-specific fields.",
+        "requirements": [
+          {
+            "key": "uses_switch_or_branch_narrowing",
+            "description": "Uses a switch or branch on the discriminant to narrow the state."
+          },
+          {
+            "key": "accesses_branch_fields_after_narrowing",
+            "description": "Reads data or error only inside the branch where TypeScript has narrowed the variant."
+          }
+        ],
+        "relatedTrigger": "missing_context"
+      },
+      {
+        "label": "Mentions exhaustive checking with never, strict return types, or lint/compiler support.",
+        "requirements": [
+          {
+            "key": "uses_exhaustive_never_check",
+            "description": "Mentions assigning the default case to never or an equivalent exhaustive check."
+          },
+          {
+            "key": "explains_new_variant_visibility",
+            "description": "Explains how adding a new state such as from_cache makes missing handlers visible."
+          }
+        ],
+        "relatedTrigger": "missing_tradeoff"
+      }
     ],
     "scoringHints": [
       {
@@ -972,25 +1454,85 @@
   },
   {
     "code": "TS_MID_TECH_UTILITY_TYPES_009",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["frontend", "fullstack", "backend"],
-    "levels": ["mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "frontend",
+      "fullstack",
+      "backend"
+    ],
+    "levels": [
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking"],
-    "techTags": ["typescript"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking"
+    ],
+    "techTags": [
+      "typescript"
+    ],
     "difficulty": 3,
     "intent": "Check whether the candidate can use built-in utility types to derive related shapes while preserving intent and avoiding accidental loose contracts.",
     "primaryQuestion": "How would you use Partial, Pick, Omit, Record, ReturnType, or Awaited to avoid duplicating TypeScript types?",
     "expectedSignals": [
-      { "label": "Explains utility types as transformations of existing types.", "relatedTrigger": null },
-      { "label": "Chooses specific utilities for practical examples such as update DTOs, public view models, lookup maps, inferred function returns, or promise unwrapping.", "relatedTrigger": null },
-      { "label": "Mentions risks such as overusing Partial and making required domain fields accidentally optional.", "relatedTrigger": null },
-      { "label": "Understands that derived types should still express clear API boundaries.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Uses Partial for every input type without thinking about required fields.",
-      "Duplicates similar interfaces manually and lets them drift.",
-      "Cannot explain what a utility type is transforming."
+      {
+        "label": "Explains utility types as transformations of existing types.",
+        "requirements": [
+          {
+            "key": "defines_utility_type_transform",
+            "description": "Explains utility types as reusable transformations over existing types."
+          },
+          {
+            "key": "avoids_manual_duplicate_shapes",
+            "description": "Connects utilities to reducing duplicated type declarations."
+          }
+        ],
+        "relatedTrigger": "vague_answer"
+      },
+      {
+        "label": "Chooses specific utilities for practical examples such as update DTOs, public view models, lookup maps, inferred function returns, or promise unwrapping.",
+        "requirements": [
+          {
+            "key": "matches_utility_to_example",
+            "description": "Uses the right utility for a concrete case such as Pick/Omit for view models or Record for lookup maps."
+          },
+          {
+            "key": "uses_returntype_or_awaited_correctly",
+            "description": "Explains ReturnType or Awaited only where inferred returns or promise unwrapping are actually needed."
+          }
+        ],
+        "relatedTrigger": "vague_answer"
+      },
+      {
+        "label": "Mentions risks such as overusing Partial and making required domain fields accidentally optional.",
+        "requirements": [
+          {
+            "key": "explains_partial_update_risk",
+            "description": "Explains why Partial<User> can be too loose for an update request."
+          },
+          {
+            "key": "preserves_required_domain_fields",
+            "description": "Maintains required fields when the API or domain invariant requires them."
+          }
+        ],
+        "relatedTrigger": "missing_tradeoff"
+      },
+      {
+        "label": "Understands that derived types should still express clear API boundaries.",
+        "requirements": [
+          {
+            "key": "keeps_boundary_type_named",
+            "description": "Uses derived types to express a clear request, response, or view boundary rather than hiding intent."
+          },
+          {
+            "key": "avoids_leaking_internal_model",
+            "description": "Avoids exposing internal domain fields accidentally through broad derived types."
+          }
+        ],
+        "relatedTrigger": "missing_tradeoff"
+      }
     ],
     "scoringHints": [
       {
@@ -1089,25 +1631,85 @@
   },
   {
     "code": "TS_MID_TECH_MAPPED_TYPES_010",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["frontend", "fullstack", "backend"],
-    "levels": ["mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "frontend",
+      "fullstack",
+      "backend"
+    ],
+    "levels": [
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking"],
-    "techTags": ["typescript"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking"
+    ],
+    "techTags": [
+      "typescript"
+    ],
     "difficulty": 3,
     "intent": "Assess whether the candidate understands mapped types, keyof, modifiers, and how to derive systematic object transformations.",
     "primaryQuestion": "What are mapped types in TypeScript, and how would you use them to transform every property of a type?",
     "expectedSignals": [
-      { "label": "Explains mapped types as iterating over keys of a type using keyof.", "relatedTrigger": null },
-      { "label": "Uses examples such as readonly, optional, nullable, validation error maps, or form state maps.", "relatedTrigger": null },
-      { "label": "Mentions mapping modifiers like readonly, ?, -readonly, or -?.", "relatedTrigger": null },
-      { "label": "Understands when mapped types improve consistency versus when explicit types are clearer.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Cannot connect mapped types to keyof.",
-      "Uses hand-written duplicate types for mechanical transformations.",
-      "Creates overly clever types that obscure a simple domain shape."
+      {
+        "label": "Explains mapped types as iterating over keys of a type using keyof.",
+        "requirements": [
+          {
+            "key": "uses_keyof_iteration",
+            "description": "Explains `[K in keyof T]` as iterating over the keys of T."
+          },
+          {
+            "key": "maps_each_property",
+            "description": "States that each property can be transformed while preserving the key set."
+          }
+        ],
+        "relatedTrigger": "vague_answer"
+      },
+      {
+        "label": "Uses examples such as readonly, optional, nullable, validation error maps, or form state maps.",
+        "requirements": [
+          {
+            "key": "gives_validation_error_map",
+            "description": "Shows a type where each User field maps to validation error string arrays."
+          },
+          {
+            "key": "names_other_transform_example",
+            "description": "Names another practical transform such as readonly, optional, nullable, or form state."
+          }
+        ],
+        "relatedTrigger": "vague_answer"
+      },
+      {
+        "label": "Mentions mapping modifiers like readonly, ?, -readonly, or -?.",
+        "requirements": [
+          {
+            "key": "mentions_add_remove_optional",
+            "description": "Mentions adding or removing optionality with ? or -?."
+          },
+          {
+            "key": "mentions_add_remove_readonly",
+            "description": "Mentions adding or removing readonly with readonly or -readonly."
+          }
+        ],
+        "relatedTrigger": "vague_answer"
+      },
+      {
+        "label": "Understands when mapped types improve consistency versus when explicit types are clearer.",
+        "requirements": [
+          {
+            "key": "uses_mapped_type_for_consistency",
+            "description": "Uses mapped types when every property should follow the same transform."
+          },
+          {
+            "key": "chooses_explicit_type_for_special_cases",
+            "description": "Recognizes when explicit types are clearer because each field has different semantics."
+          }
+        ],
+        "relatedTrigger": "missing_tradeoff"
+      }
     ],
     "scoringHints": [
       {
@@ -1211,25 +1813,85 @@
   },
   {
     "code": "TS_MID_TECH_CONDITIONAL_TYPES_011",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["frontend", "fullstack", "backend"],
-    "levels": ["mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "frontend",
+      "fullstack",
+      "backend"
+    ],
+    "levels": [
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking"],
-    "techTags": ["typescript"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking"
+    ],
+    "techTags": [
+      "typescript"
+    ],
     "difficulty": 3,
     "intent": "Evaluate whether the candidate can explain conditional types, infer, and distributive behavior over unions without treating them as magic.",
     "primaryQuestion": "How do conditional types work in TypeScript, and what does it mean that they can distribute over unions?",
     "expectedSignals": [
-      { "label": "Explains the SomeType extends OtherType ? True : False shape.", "relatedTrigger": null },
-      { "label": "Uses a practical example such as extracting Promise payloads, array elements, or function return types.", "relatedTrigger": null },
-      { "label": "Mentions infer for capturing a type from a matched structure.", "relatedTrigger": null },
-      { "label": "Explains distributive conditional types and how wrapping in tuples can prevent distribution.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Cannot distinguish runtime if statements from type-level conditional types.",
-      "Does not understand why a union input can become a union of transformed outputs.",
-      "Uses complex conditional types without explaining maintainability costs."
+      {
+        "label": "Explains the SomeType extends OtherType ? True : False shape.",
+        "requirements": [
+          {
+            "key": "states_conditional_type_shape",
+            "description": "Explains the `T extends U ? X : Y` form as a type-level branch."
+          },
+          {
+            "key": "connects_condition_to_assignability",
+            "description": "Connects the branch to whether one type is assignable to another."
+          }
+        ],
+        "relatedTrigger": "vague_answer"
+      },
+      {
+        "label": "Uses a practical example such as extracting Promise payloads, array elements, or function return types.",
+        "requirements": [
+          {
+            "key": "uses_practical_extraction_example",
+            "description": "Gives a concrete conditional type for Promise payloads, array elements, or function returns."
+          },
+          {
+            "key": "explains_example_result",
+            "description": "States the resulting type for at least one input."
+          }
+        ],
+        "relatedTrigger": "vague_answer"
+      },
+      {
+        "label": "Mentions infer for capturing a type from a matched structure.",
+        "requirements": [
+          {
+            "key": "uses_infer_capture",
+            "description": "Uses `infer` to capture an inner type from a matched structure."
+          },
+          {
+            "key": "limits_infer_to_conditional_context",
+            "description": "Understands infer is used inside conditional type matching, not as runtime inference."
+          }
+        ],
+        "relatedTrigger": "vague_answer"
+      },
+      {
+        "label": "Explains distributive conditional types and how wrapping in tuples can prevent distribution.",
+        "requirements": [
+          {
+            "key": "explains_union_distribution",
+            "description": "Explains that a naked type parameter distributes over a union such as string | number."
+          },
+          {
+            "key": "explains_tuple_wrap_prevents_distribution",
+            "description": "Mentions wrapping T in a tuple to treat the union as a whole."
+          }
+        ],
+        "relatedTrigger": "missing_tradeoff"
+      }
     ],
     "scoringHints": [
       {
@@ -1328,25 +1990,87 @@
   },
   {
     "code": "TS_MID_TECH_RUNTIME_VALIDATION_012",
-    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
-    "roleFamilies": ["frontend", "fullstack", "backend"],
-    "levels": ["mid"],
+    "stages": [
+      "stage_2_tech_stack",
+      "stage_3_domain_knowledge"
+    ],
+    "roleFamilies": [
+      "frontend",
+      "fullstack",
+      "backend"
+    ],
+    "levels": [
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "problem_solving"],
-    "techTags": ["typescript"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "problem_solving"
+    ],
+    "techTags": [
+      "typescript"
+    ],
     "difficulty": 3,
     "intent": "Assess whether the candidate understands that TypeScript types are erased at runtime and can place validation at trust boundaries.",
     "primaryQuestion": "Why are TypeScript types not enough when reading data from an API, localStorage, a queue, or user input, and where would you validate?",
     "expectedSignals": [
-      { "label": "Explains that TypeScript checks static code but does not validate external data at runtime.", "relatedTrigger": null },
-      { "label": "Identifies trust boundaries such as HTTP responses, request bodies, localStorage, message queues, and environment variables.", "relatedTrigger": null },
-      { "label": "Uses parsing or schema validation to turn unknown data into validated domain types.", "relatedTrigger": null },
-      { "label": "Discusses error handling, normalization, logging, and backward compatibility for malformed payloads.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Says TypeScript prevents bad API data from reaching runtime.",
-      "Casts external payloads directly to domain types.",
-      "Validates only deep inside business logic instead of at clear boundaries."
+      {
+        "label": "Explains that TypeScript checks static code but does not validate external data at runtime.",
+        "requirements": [
+          {
+            "key": "states_types_erased_at_runtime",
+            "description": "Explains that TypeScript types and interfaces do not validate data after compilation."
+          },
+          {
+            "key": "connects_static_check_to_runtime_gap",
+            "description": "Connects the gap to APIs, storage, queues, or user input that can have unexpected shapes."
+          }
+        ],
+        "relatedTrigger": "missing_consequence"
+      },
+      {
+        "label": "Identifies trust boundaries such as HTTP responses, request bodies, localStorage, message queues, and environment variables.",
+        "requirements": [
+          {
+            "key": "names_specific_trust_boundary",
+            "description": "Names at least one concrete boundary where data enters from outside trusted TypeScript code."
+          },
+          {
+            "key": "places_validation_before_domain_state",
+            "description": "Places validation before the value is used as domain state or business input."
+          }
+        ],
+        "relatedTrigger": "missing_context"
+      },
+      {
+        "label": "Uses parsing or schema validation to turn unknown data into validated domain types.",
+        "requirements": [
+          {
+            "key": "starts_from_unknown",
+            "description": "Treats external data as unknown before validation."
+          },
+          {
+            "key": "uses_schema_or_parser",
+            "description": "Uses a parser, schema validator, or explicit guard to produce a trusted domain type."
+          }
+        ],
+        "relatedTrigger": "missing_context"
+      },
+      {
+        "label": "Discusses error handling, normalization, logging, and backward compatibility for malformed payloads.",
+        "requirements": [
+          {
+            "key": "handles_validation_failure",
+            "description": "Describes user-facing fallback, rejection, or error handling for invalid payloads."
+          },
+          {
+            "key": "mentions_logging_or_compatibility",
+            "description": "Mentions logging, normalization, or backwards compatibility for schema changes."
+          }
+        ],
+        "relatedTrigger": "missing_consequence"
+      }
     ],
     "scoringHints": [
       {
@@ -1373,7 +2097,7 @@
         "purpose": "Check boundary placement."
       },
       {
-        "trigger": "red_flag",
+        "trigger": "missing_consequence",
         "question": "What happens to TypeScript interfaces after compilation?",
         "purpose": "Verify type erasure understanding."
       }
@@ -1450,25 +2174,86 @@
   },
   {
     "code": "TS_MID_DEBUG_GENERIC_INFERENCE_013",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["frontend", "fullstack", "backend"],
-    "levels": ["mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "frontend",
+      "fullstack",
+      "backend"
+    ],
+    "levels": [
+      "mid"
+    ],
     "type": "debugging",
-    "competencies": ["problem_solving", "technical_fundamentals", "ownership"],
-    "techTags": ["typescript"],
+    "competencies": [
+      "problem_solving",
+      "technical_fundamentals",
+      "ownership"
+    ],
+    "techTags": [
+      "typescript"
+    ],
     "difficulty": 3,
     "intent": "Evaluate practical debugging of generic inference issues where TypeScript infers a type that is too broad, too narrow, or polluted by literals and unions.",
     "primaryQuestion": "A generic function infers the wrong type and downstream code becomes too broad or too narrow. How would you debug the signature?",
     "expectedSignals": [
-      { "label": "Inspects the function signature, type parameter positions, constraints, and return type.", "relatedTrigger": null },
-      { "label": "Checks whether inference is coming from the right argument or being widened by arrays, literals, or unions.", "relatedTrigger": null },
-      { "label": "Uses techniques such as overloads, explicit type arguments, const assertions, satisfies, helper parameters, or separating input/output generics when appropriate.", "relatedTrigger": null },
-      { "label": "Avoids fixing inference by replacing the generic with any.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Changes generic parameters to any to make the error disappear.",
-      "Does not inspect how the type parameter is inferred.",
-      "Cannot distinguish inference problems from runtime bugs."
+      {
+        "label": "Inspects the function signature, type parameter positions, constraints, and return type.",
+        "requirements": [
+          {
+            "key": "reviews_generic_positions",
+            "description": "Checks where each type parameter appears in inputs and outputs."
+          },
+          {
+            "key": "checks_constraints_and_return",
+            "description": "Reviews constraints and return type to see why the inferred type is too broad or narrow."
+          }
+        ],
+        "relatedTrigger": "vague_answer"
+      },
+      {
+        "label": "Checks whether inference is coming from the right argument or being widened by arrays, literals, or unions.",
+        "requirements": [
+          {
+            "key": "identifies_inference_source",
+            "description": "Identifies which argument TypeScript is using to infer the type parameter."
+          },
+          {
+            "key": "checks_literal_widening",
+            "description": "Checks whether literals, arrays, or unions are widening the inferred type."
+          }
+        ],
+        "relatedTrigger": "vague_answer"
+      },
+      {
+        "label": "Uses techniques such as overloads, explicit type arguments, const assertions, satisfies, helper parameters, or separating input/output generics when appropriate.",
+        "requirements": [
+          {
+            "key": "chooses_targeted_inference_tool",
+            "description": "Chooses a specific technique such as overload, explicit type argument, const assertion, or satisfies for the cause."
+          },
+          {
+            "key": "compares_overload_vs_conditional",
+            "description": "Explains when overloads are clearer than a conditional return type."
+          }
+        ],
+        "relatedTrigger": "missing_tradeoff"
+      },
+      {
+        "label": "Avoids fixing inference by replacing the generic with any.",
+        "requirements": [
+          {
+            "key": "rejects_any_as_inference_fix",
+            "description": "Avoids using any to silence inference problems."
+          },
+          {
+            "key": "inspects_type_without_runtime_change",
+            "description": "Uses editor hover, type aliases, satisfies, or compile-time assertions to inspect inferred types without changing runtime behavior."
+          }
+        ],
+        "relatedTrigger": "vague_answer"
+      }
     ],
     "scoringHints": [
       {
@@ -1572,25 +2357,86 @@
   },
   {
     "code": "TS_MID_TRADE_TSCONFIG_STRICT_014",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["frontend", "fullstack", "backend"],
-    "levels": ["mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "frontend",
+      "fullstack",
+      "backend"
+    ],
+    "levels": [
+      "mid"
+    ],
     "type": "trade_off",
-    "competencies": ["trade_off_analysis", "system_thinking", "ownership"],
-    "techTags": ["typescript"],
+    "competencies": [
+      "trade_off_analysis",
+      "system_thinking",
+      "ownership"
+    ],
+    "techTags": [
+      "typescript"
+    ],
     "difficulty": 3,
     "intent": "Assess judgment around TypeScript strictness settings, migration cost, and risk reduction in an existing codebase.",
     "primaryQuestion": "A team wants to turn on strict TypeScript settings in an existing project. What would you evaluate, and how would you roll it out?",
     "expectedSignals": [
-      { "label": "Explains the value of strict checks for nullability, implicit any, this binding, function types, and related correctness risks.", "relatedTrigger": null },
-      { "label": "Assesses current error volume, ownership, test coverage, CI impact, and release risk.", "relatedTrigger": null },
-      { "label": "Plans incremental rollout by package, directory, tsconfig layering, or selected flags.", "relatedTrigger": null },
-      { "label": "Avoids mass suppression and tracks remaining debt with clear owners.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Turns on strict everywhere without measuring the blast radius.",
-      "Adds broad ts-ignore comments or any types to pass CI.",
-      "Rejects strictness only because it creates many errors, without triage."
+      {
+        "label": "Explains the value of strict checks for nullability, implicit any, this binding, function types, and related correctness risks.",
+        "requirements": [
+          {
+            "key": "names_strict_correctness_areas",
+            "description": "Names strict checks such as nullability, implicit any, strict function types, or this binding."
+          },
+          {
+            "key": "connects_flags_to_bug_classes",
+            "description": "Connects strict flags to real correctness risks rather than style preference."
+          }
+        ],
+        "relatedTrigger": "missing_tradeoff"
+      },
+      {
+        "label": "Assesses current error volume, ownership, test coverage, CI impact, and release risk.",
+        "requirements": [
+          {
+            "key": "collects_error_baseline",
+            "description": "Collects baseline error counts by flag, package, or owner before rollout."
+          },
+          {
+            "key": "checks_release_and_ci_impact",
+            "description": "Assesses test coverage, CI time, and release risk before enforcing strict checks."
+          }
+        ],
+        "relatedTrigger": "missing_metric"
+      },
+      {
+        "label": "Plans incremental rollout by package, directory, tsconfig layering, or selected flags.",
+        "requirements": [
+          {
+            "key": "chooses_incremental_scope",
+            "description": "Plans rollout by selected flags, package, directory, or layered tsconfig."
+          },
+          {
+            "key": "justifies_first_flag",
+            "description": "Explains which strict flag to enable first and why."
+          }
+        ],
+        "relatedTrigger": "missing_tradeoff"
+      },
+      {
+        "label": "Avoids mass suppression and tracks remaining debt with clear owners.",
+        "requirements": [
+          {
+            "key": "avoids_blanket_suppression",
+            "description": "Avoids broad ts-ignore or any casts that erase the benefit of strictness."
+          },
+          {
+            "key": "tracks_debt_with_owner",
+            "description": "Tracks remaining errors with owners, deadlines, or accepted risk."
+          }
+        ],
+        "relatedTrigger": "missing_metric"
+      }
     ],
     "scoringHints": [
       {
@@ -1694,25 +2540,87 @@
   },
   {
     "code": "TS_SR_TECH_API_TYPE_DESIGN_015",
-    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
-    "roleFamilies": ["frontend", "fullstack", "backend"],
-    "levels": ["senior"],
+    "stages": [
+      "stage_2_tech_stack",
+      "stage_3_domain_knowledge"
+    ],
+    "roleFamilies": [
+      "frontend",
+      "fullstack",
+      "backend"
+    ],
+    "levels": [
+      "senior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "trade_off_analysis"],
-    "techTags": ["typescript"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "trade_off_analysis"
+    ],
+    "techTags": [
+      "typescript"
+    ],
     "difficulty": 4,
     "intent": "Evaluate senior ability to design TypeScript API surfaces that are precise, evolvable, and not overly complex.",
     "primaryQuestion": "How would you design TypeScript types for a public SDK or shared package so consumers get strong inference without a fragile or overly clever API?",
     "expectedSignals": [
-      { "label": "Designs stable exported types and avoids leaking internal implementation details.", "relatedTrigger": null },
-      { "label": "Uses generics, overloads, discriminated unions, or conditional types only where they improve consumer ergonomics.", "relatedTrigger": null },
-      { "label": "Considers semantic versioning, backwards compatibility, declaration output, documentation, and examples.", "relatedTrigger": null },
-      { "label": "Tests type behavior with compile-time assertions or consumer-style examples.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Optimizes for clever type tricks instead of clear consumer experience.",
-      "Breaks public types casually without migration guidance.",
-      "Cannot explain how exported declarations will be consumed outside the package."
+      {
+        "label": "Designs stable exported types and avoids leaking internal implementation details.",
+        "requirements": [
+          {
+            "key": "separates_public_and_internal_types",
+            "description": "Defines intentional exported SDK types rather than exposing internal implementation shapes."
+          },
+          {
+            "key": "keeps_public_contract_stable",
+            "description": "Explains how public types remain stable as implementation changes."
+          }
+        ],
+        "relatedTrigger": "missing_tradeoff"
+      },
+      {
+        "label": "Uses generics, overloads, discriminated unions, or conditional types only where they improve consumer ergonomics.",
+        "requirements": [
+          {
+            "key": "chooses_typing_tool_for_api_shape",
+            "description": "Chooses generics, overloads, discriminated unions, or conditionals based on consumer call patterns."
+          },
+          {
+            "key": "avoids_clever_fragile_types",
+            "description": "Avoids overly clever types when overloads or explicit models make the SDK easier to use."
+          }
+        ],
+        "relatedTrigger": "missing_tradeoff"
+      },
+      {
+        "label": "Considers semantic versioning, backwards compatibility, declaration output, documentation, and examples.",
+        "requirements": [
+          {
+            "key": "mentions_semver_type_breaks",
+            "description": "Treats type signature changes as potential breaking changes for consumers."
+          },
+          {
+            "key": "checks_declaration_and_docs",
+            "description": "Considers generated declaration files, documentation, and examples as part of the contract."
+          }
+        ],
+        "relatedTrigger": "missing_metric"
+      },
+      {
+        "label": "Tests type behavior with compile-time assertions or consumer-style examples.",
+        "requirements": [
+          {
+            "key": "uses_compile_time_type_tests",
+            "description": "Uses compile-time assertions or type tests to verify inference behavior."
+          },
+          {
+            "key": "runs_consumer_style_examples",
+            "description": "Verifies downstream-style usage or sample projects to catch consumer breakage."
+          }
+        ],
+        "relatedTrigger": "missing_metric"
+      }
     ],
     "scoringHints": [
       {
@@ -1816,25 +2724,86 @@
   },
   {
     "code": "TS_SR_TRADE_TYPES_VS_COMPLEXITY_016",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["frontend", "fullstack", "backend"],
-    "levels": ["senior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "frontend",
+      "fullstack",
+      "backend"
+    ],
+    "levels": [
+      "senior"
+    ],
     "type": "trade_off",
-    "competencies": ["trade_off_analysis", "system_thinking", "communication"],
-    "techTags": ["typescript"],
+    "competencies": [
+      "trade_off_analysis",
+      "system_thinking",
+      "communication"
+    ],
+    "techTags": [
+      "typescript"
+    ],
     "difficulty": 4,
     "intent": "Assess senior judgment around when advanced type modeling improves safety and when it harms readability, build performance, or team velocity.",
     "primaryQuestion": "How do you decide whether a complex TypeScript type is worth it, versus using simpler types plus runtime checks or tests?",
     "expectedSignals": [
-      { "label": "Evaluates risk, frequency of mistakes, API surface size, team familiarity, and maintenance cost.", "relatedTrigger": null },
-      { "label": "Considers compiler performance, editor responsiveness, error readability, and onboarding impact.", "relatedTrigger": null },
-      { "label": "Uses advanced types when they encode meaningful invariants and prevent real bugs.", "relatedTrigger": null },
-      { "label": "Chooses runtime validation or tests for value-level constraints that TypeScript cannot prove.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Assumes more advanced types are always better.",
-      "Rejects advanced types entirely without considering safety benefits.",
-      "Ignores developer experience and error-message readability."
+      {
+        "label": "Evaluates risk, frequency of mistakes, API surface size, team familiarity, and maintenance cost.",
+        "requirements": [
+          {
+            "key": "weighs_bug_risk_and_api_surface",
+            "description": "Considers how often mistakes happen and how widely the type is consumed."
+          },
+          {
+            "key": "weighs_team_maintenance_cost",
+            "description": "Considers team familiarity, readability, and maintenance cost of the type abstraction."
+          }
+        ],
+        "relatedTrigger": "missing_tradeoff"
+      },
+      {
+        "label": "Considers compiler performance, editor responsiveness, error readability, and onboarding impact.",
+        "requirements": [
+          {
+            "key": "checks_type_performance_signals",
+            "description": "Mentions compiler time, editor responsiveness, or type instantiation complexity as costs."
+          },
+          {
+            "key": "checks_error_message_quality",
+            "description": "Considers whether error messages remain understandable for developers."
+          }
+        ],
+        "relatedTrigger": "missing_metric"
+      },
+      {
+        "label": "Uses advanced types when they encode meaningful invariants and prevent real bugs.",
+        "requirements": [
+          {
+            "key": "names_type_encoded_invariant",
+            "description": "Gives an invariant worth encoding in types because it prevents a real bug class."
+          },
+          {
+            "key": "ties_invariant_to_callsite_safety",
+            "description": "Explains how the advanced type improves safety or ergonomics at call sites."
+          }
+        ],
+        "relatedTrigger": "missing_tradeoff"
+      },
+      {
+        "label": "Chooses runtime validation or tests for value-level constraints that TypeScript cannot prove.",
+        "requirements": [
+          {
+            "key": "names_runtime_only_constraint",
+            "description": "Gives an example of a value-level constraint that TypeScript cannot prove reliably."
+          },
+          {
+            "key": "chooses_validation_or_tests",
+            "description": "Places that constraint in runtime validation, tests, or monitoring instead of complex static types."
+          }
+        ],
+        "relatedTrigger": "missing_tradeoff"
+      }
     ],
     "scoringHints": [
       {
@@ -1938,25 +2907,86 @@
   },
   {
     "code": "TS_SR_DEBUG_PROJECT_REFS_017",
-    "stages": ["stage_3_domain_knowledge"],
-    "roleFamilies": ["frontend", "fullstack", "backend"],
-    "levels": ["senior"],
+    "stages": [
+      "stage_3_domain_knowledge"
+    ],
+    "roleFamilies": [
+      "frontend",
+      "fullstack",
+      "backend"
+    ],
+    "levels": [
+      "senior"
+    ],
     "type": "debugging",
-    "competencies": ["problem_solving", "system_thinking", "ownership"],
-    "techTags": ["typescript"],
+    "competencies": [
+      "problem_solving",
+      "system_thinking",
+      "ownership"
+    ],
+    "techTags": [
+      "typescript"
+    ],
     "difficulty": 4,
     "intent": "Evaluate senior debugging of TypeScript build and module resolution problems in a multi-package codebase.",
     "primaryQuestion": "A monorepo TypeScript build fails only in CI with stale declarations or module resolution errors. How would you diagnose it?",
     "expectedSignals": [
-      { "label": "Checks tsconfig inheritance, paths, moduleResolution, outDir/rootDir, declaration output, and project references.", "relatedTrigger": null },
-      { "label": "Compares local and CI TypeScript versions, package manager lockfile, build cache, and clean build behavior.", "relatedTrigger": null },
-      { "label": "Inspects dependency graph order and whether referenced packages emit declarations before consumers build.", "relatedTrigger": null },
-      { "label": "Uses traceResolution, build verbose output, cache invalidation, and minimal reproduction where useful.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Only reruns CI without collecting evidence.",
-      "Deletes build caches permanently without understanding the invalidation issue.",
-      "Ignores version skew or tsconfig differences between packages."
+      {
+        "label": "Checks tsconfig inheritance, paths, moduleResolution, outDir/rootDir, declaration output, and project references.",
+        "requirements": [
+          {
+            "key": "checks_tsconfig_chain",
+            "description": "Inspects inherited tsconfig settings, paths, moduleResolution, rootDir, outDir, and declaration output."
+          },
+          {
+            "key": "checks_project_references",
+            "description": "Verifies composite/project reference configuration for referenced packages."
+          }
+        ],
+        "relatedTrigger": "missing_context"
+      },
+      {
+        "label": "Compares local and CI TypeScript versions, package manager lockfile, build cache, and clean build behavior.",
+        "requirements": [
+          {
+            "key": "compares_tool_versions_and_lockfile",
+            "description": "Compares TypeScript version, package manager, and lockfile between local and CI."
+          },
+          {
+            "key": "runs_clean_build",
+            "description": "Runs or reasons about a clean build to separate cache artifacts from real configuration issues."
+          }
+        ],
+        "relatedTrigger": "missing_metric"
+      },
+      {
+        "label": "Inspects dependency graph order and whether referenced packages emit declarations before consumers build.",
+        "requirements": [
+          {
+            "key": "checks_build_graph_order",
+            "description": "Verifies package build order so producers build before consumers."
+          },
+          {
+            "key": "checks_declaration_artifacts",
+            "description": "Checks whether referenced packages emit fresh .d.ts files consumed by downstream packages."
+          }
+        ],
+        "relatedTrigger": "missing_context"
+      },
+      {
+        "label": "Uses traceResolution, build verbose output, cache invalidation, and minimal reproduction where useful.",
+        "requirements": [
+          {
+            "key": "uses_trace_resolution_or_verbose",
+            "description": "Uses traceResolution or verbose build output to see actual module lookup and project build behavior."
+          },
+          {
+            "key": "proves_fix_durable",
+            "description": "Verifies the fix with repeat clean CI-style builds, not only a one-off cache deletion."
+          }
+        ],
+        "relatedTrigger": "missing_metric"
+      }
     ],
     "scoringHints": [
       {
@@ -2060,25 +3090,87 @@
   },
   {
     "code": "TS_SR_TECH_DECLARATION_AUGMENTATION_018",
-    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
-    "roleFamilies": ["frontend", "fullstack", "backend"],
-    "levels": ["senior"],
+    "stages": [
+      "stage_2_tech_stack",
+      "stage_3_domain_knowledge"
+    ],
+    "roleFamilies": [
+      "frontend",
+      "fullstack",
+      "backend"
+    ],
+    "levels": [
+      "senior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "ownership"],
-    "techTags": ["typescript"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "ownership"
+    ],
+    "techTags": [
+      "typescript"
+    ],
     "difficulty": 4,
     "intent": "Assess senior understanding of declaration files, module augmentation, global augmentation, and safe typing of third-party libraries.",
     "primaryQuestion": "How would you type a third-party JavaScript library or safely augment an existing module in TypeScript?",
     "expectedSignals": [
-      { "label": "Distinguishes writing .d.ts declarations, ambient modules, module augmentation, and global augmentation.", "relatedTrigger": null },
-      { "label": "Keeps declarations close to the library's real runtime behavior and examples.", "relatedTrigger": null },
-      { "label": "Avoids broad any declarations that provide false confidence.", "relatedTrigger": null },
-      { "label": "Plans testing through type checks, sample consumer code, and upgrade monitoring.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Declares the whole module as any and considers the work finished.",
-      "Confuses ambient module declarations with module augmentation.",
-      "Adds global types without considering pollution or collisions."
+      {
+        "label": "Distinguishes writing .d.ts declarations, ambient modules, module augmentation, and global augmentation.",
+        "requirements": [
+          {
+            "key": "distinguishes_declaration_kinds",
+            "description": "Separates .d.ts files, ambient module declarations, module augmentation, and global augmentation."
+          },
+          {
+            "key": "chooses_scope_matching_need",
+            "description": "Chooses the declaration scope that matches whether the library, module, or global API is being typed."
+          }
+        ],
+        "relatedTrigger": "missing_context"
+      },
+      {
+        "label": "Keeps declarations close to the library's real runtime behavior and examples.",
+        "requirements": [
+          {
+            "key": "checks_runtime_docs_or_source",
+            "description": "Uses library docs, examples, or source behavior to shape the declarations."
+          },
+          {
+            "key": "models_actual_exports",
+            "description": "Models actual default/named exports and call signatures rather than desired behavior."
+          }
+        ],
+        "relatedTrigger": "missing_context"
+      },
+      {
+        "label": "Avoids broad any declarations that provide false confidence.",
+        "requirements": [
+          {
+            "key": "explains_any_declaration_risk",
+            "description": "Explains how declaring a library export as any removes useful type checking for consumers."
+          },
+          {
+            "key": "uses_unknown_or_specific_types",
+            "description": "Prefers specific types, generics, or unknown plus narrowing over broad any where possible."
+          }
+        ],
+        "relatedTrigger": "missing_consequence"
+      },
+      {
+        "label": "Plans testing through type checks, sample consumer code, and upgrade monitoring.",
+        "requirements": [
+          {
+            "key": "tests_declaration_with_consumer_code",
+            "description": "Verifies the declaration using sample consumer code or type tests."
+          },
+          {
+            "key": "monitors_library_upgrades",
+            "description": "Plans to revisit declarations when the JavaScript library changes."
+          }
+        ],
+        "relatedTrigger": "missing_context"
+      }
     ],
     "scoringHints": [
       {
@@ -2105,7 +3197,7 @@
         "purpose": "Check validation discipline."
       },
       {
-        "trigger": "red_flag",
+        "trigger": "missing_consequence",
         "question": "What risk comes from declare module 'legacy-lib' { const x: any; export default x; }?",
         "purpose": "Probe false-safety awareness."
       }
@@ -2182,25 +3274,87 @@
   },
   {
     "code": "TS_SR_TRADE_SCHEMA_SOURCE_OF_TRUTH_019",
-    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
-    "roleFamilies": ["frontend", "fullstack", "backend"],
-    "levels": ["senior"],
+    "stages": [
+      "stage_2_tech_stack",
+      "stage_3_domain_knowledge"
+    ],
+    "roleFamilies": [
+      "frontend",
+      "fullstack",
+      "backend"
+    ],
+    "levels": [
+      "senior"
+    ],
     "type": "trade_off",
-    "competencies": ["trade_off_analysis", "system_thinking", "impact_measurement"],
-    "techTags": ["typescript"],
+    "competencies": [
+      "trade_off_analysis",
+      "system_thinking",
+      "impact_measurement"
+    ],
+    "techTags": [
+      "typescript"
+    ],
     "difficulty": 4,
     "intent": "Evaluate senior architecture judgment around keeping TypeScript types, runtime schemas, API contracts, and generated clients consistent.",
     "primaryQuestion": "For a product with frontend and backend TypeScript, how would you keep API contracts, runtime validation, and shared types in sync?",
     "expectedSignals": [
-      { "label": "Compares options such as shared packages, OpenAPI/GraphQL generation, schema-first validation, or code-first schema generation.", "relatedTrigger": null },
-      { "label": "Addresses versioning, backwards compatibility, deployment order, and consumer upgrade paths.", "relatedTrigger": null },
-      { "label": "Keeps runtime validation at boundaries instead of relying only on shared compile-time types.", "relatedTrigger": null },
-      { "label": "Uses CI checks, contract tests, generated clients, or schema diffing to prevent drift.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Assumes a shared TypeScript interface alone validates API traffic.",
-      "Ignores independent deployment and version skew between frontend and backend.",
-      "Has no mechanism to detect contract drift."
+      {
+        "label": "Compares options such as shared packages, OpenAPI/GraphQL generation, schema-first validation, or code-first schema generation.",
+        "requirements": [
+          {
+            "key": "compares_contract_sync_options",
+            "description": "Compares shared TS packages, OpenAPI/GraphQL generation, schema-first validation, or code-first generation."
+          },
+          {
+            "key": "names_fit_for_team_and_stack",
+            "description": "Explains which option fits the team's deployment and frontend/backend stack."
+          }
+        ],
+        "relatedTrigger": "missing_tradeoff"
+      },
+      {
+        "label": "Addresses versioning, backwards compatibility, deployment order, and consumer upgrade paths.",
+        "requirements": [
+          {
+            "key": "handles_versioning_and_compatibility",
+            "description": "Plans versioning and backwards-compatible changes for API contracts."
+          },
+          {
+            "key": "handles_deployment_order",
+            "description": "Considers producer/consumer deployment order and upgrade paths."
+          }
+        ],
+        "relatedTrigger": "missing_tradeoff"
+      },
+      {
+        "label": "Keeps runtime validation at boundaries instead of relying only on shared compile-time types.",
+        "requirements": [
+          {
+            "key": "keeps_runtime_validation",
+            "description": "Keeps validation at API boundaries even when types are shared."
+          },
+          {
+            "key": "explains_compile_time_type_limit",
+            "description": "Explains why shared compile-time types cannot guarantee runtime payload shape."
+          }
+        ],
+        "relatedTrigger": "missing_tradeoff"
+      },
+      {
+        "label": "Uses CI checks, contract tests, generated clients, or schema diffing to prevent drift.",
+        "requirements": [
+          {
+            "key": "names_ci_contract_signal",
+            "description": "Names a CI signal such as schema diff, generated client check, or contract test."
+          },
+          {
+            "key": "catches_breaking_change_before_deploy",
+            "description": "Explains how the check catches a breaking contract change before deployment."
+          }
+        ],
+        "relatedTrigger": "missing_metric"
+      }
     ],
     "scoringHints": [
       {
@@ -2304,25 +3458,86 @@
   },
   {
     "code": "TS_SR_CV_MIGRATION_020",
-    "stages": ["stage_4_cv_deep_dive"],
-    "roleFamilies": ["frontend", "fullstack", "backend"],
-    "levels": ["senior"],
+    "stages": [
+      "stage_4_cv_deep_dive"
+    ],
+    "roleFamilies": [
+      "frontend",
+      "fullstack",
+      "backend"
+    ],
+    "levels": [
+      "senior"
+    ],
     "type": "cv_claim_verification",
-    "competencies": ["ownership", "impact_measurement", "technical_fundamentals"],
-    "techTags": ["typescript"],
+    "competencies": [
+      "ownership",
+      "impact_measurement",
+      "technical_fundamentals"
+    ],
+    "techTags": [
+      "typescript"
+    ],
     "difficulty": 4,
     "intent": "Verify senior ownership of a JavaScript-to-TypeScript migration or a large TypeScript strictness improvement.",
     "primaryQuestion": "You mention migrating a codebase to TypeScript or improving TypeScript strictness. What decisions were yours, what changed technically, and how did you measure success?",
     "expectedSignals": [
-      { "label": "Separates personal decisions from team execution.", "relatedTrigger": null },
-      { "label": "Describes migration scope, sequencing, tsconfig choices, typing strategy, and suppression policy.", "relatedTrigger": null },
-      { "label": "Mentions tests, CI gates, type coverage, bug reduction, developer workflow, or build-time impacts.", "relatedTrigger": null },
-      { "label": "Explains rollout risk, compatibility plan, and what was intentionally deferred.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Says 'we migrated to TypeScript' without naming personal decisions.",
-      "Only counts files renamed to .ts without discussing type quality.",
-      "Cannot provide baseline, metric, or observable outcome."
+      {
+        "label": "Separates personal decisions from team execution.",
+        "requirements": [
+          {
+            "key": "names_personal_migration_decisions",
+            "description": "Names the TypeScript migration or strictness decisions they personally made."
+          },
+          {
+            "key": "distinguishes_team_execution",
+            "description": "Separates their decision ownership from implementation work done by the team."
+          }
+        ],
+        "relatedTrigger": "missing_context"
+      },
+      {
+        "label": "Describes migration scope, sequencing, tsconfig choices, typing strategy, and suppression policy.",
+        "requirements": [
+          {
+            "key": "describes_scope_and_sequence",
+            "description": "Describes which packages, directories, or flags were migrated and in what order."
+          },
+          {
+            "key": "describes_typing_and_suppression_policy",
+            "description": "Explains type strategy and how any, ts-ignore, or suppression debt was controlled."
+          }
+        ],
+        "relatedTrigger": "missing_context"
+      },
+      {
+        "label": "Mentions tests, CI gates, type coverage, bug reduction, developer workflow, or build-time impacts.",
+        "requirements": [
+          {
+            "key": "mentions_quality_gates",
+            "description": "Mentions tests, CI type checks, type coverage, or lint gates used during migration."
+          },
+          {
+            "key": "mentions_measured_quality_or_velocity",
+            "description": "Mentions measured impact such as fewer type bugs, better workflow, or build-time change."
+          }
+        ],
+        "relatedTrigger": "missing_metric"
+      },
+      {
+        "label": "Explains rollout risk, compatibility plan, and what was intentionally deferred.",
+        "requirements": [
+          {
+            "key": "explains_rollout_risk_control",
+            "description": "Explains compatibility, rollback, or phased rollout risk control."
+          },
+          {
+            "key": "states_deferred_work",
+            "description": "States what was intentionally deferred and why it was acceptable."
+          }
+        ],
+        "relatedTrigger": "missing_metric"
+      }
     ],
     "scoringHints": [
       {
@@ -2344,7 +3559,7 @@
     ],
     "followUps": [
       {
-        "trigger": "red_flag",
+        "trigger": "missing_context",
         "question": "Which TypeScript migration decision would not have happened without you?",
         "purpose": "Verify personal ownership."
       },

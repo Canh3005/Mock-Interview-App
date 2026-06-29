@@ -1,647 +1,2044 @@
 [
   {
     "code": "DOCKER_JR_TECH_IMAGE_CONTAINER_001",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack", "devops"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "devops"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking"],
-    "techTags": ["docker"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking"
+    ],
+    "techTags": [
+      "docker"
+    ],
     "difficulty": 2,
     "intent": "Check whether the candidate understands the practical difference between Docker images, containers, immutable layers, and the container writable layer.",
     "primaryQuestion": "How would you explain the difference between a Docker image and a running container, and what happens to files written inside the container?",
     "expectedSignals": [
-      { "label": "Explains an image as a reusable, layered, mostly immutable filesystem plus metadata used to create containers.", "relatedTrigger": null },
-      { "label": "Explains a container as a running or stopped instance of an image with its own writable layer and runtime configuration.", "relatedTrigger": null },
-      { "label": "Understands that data written only to the container writable layer is removed when the container is removed.", "relatedTrigger": null },
-      { "label": "Mentions volumes or bind mounts when data must survive container replacement or be shared outside the container.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Treats an image and a container as the same thing.",
-      "Assumes changes made inside a container automatically update the original image.",
-      "Stores important application data only in the container filesystem without noticing persistence risk."
+      {
+        "label": "Explains an image as a reusable, layered, mostly immutable filesystem plus metadata used to create containers.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "defines_image_template",
+            "description": "Defines an image as the template used to create containers rather than the running process itself"
+          },
+          {
+            "key": "mentions_layered_filesystem",
+            "description": "Mentions that images are built from layers that are reused across builds and containers"
+          },
+          {
+            "key": "mentions_image_metadata",
+            "description": "Mentions image metadata such as default command, environment, exposed ports, or filesystem contents"
+          }
+        ]
+      },
+      {
+        "label": "Explains a container as a running or stopped instance of an image with its own writable layer and runtime configuration.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "defines_container_instance",
+            "description": "Defines a container as an instance created from an image that can be running, stopped, or removed"
+          },
+          {
+            "key": "mentions_writable_layer",
+            "description": "Mentions the container-specific writable layer on top of the image layers"
+          },
+          {
+            "key": "mentions_runtime_config",
+            "description": "Mentions runtime configuration such as command, environment variables, ports, networks, or mounts"
+          }
+        ]
+      },
+      {
+        "label": "Understands that data written only to the container writable layer is removed when the container is removed.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "states_container_layer_lifetime",
+            "description": "States that files written only inside the container writable layer are tied to that container"
+          },
+          {
+            "key": "distinguishes_stop_from_remove",
+            "description": "Distinguishes stopping a container from removing it when explaining whether container-layer data remains"
+          },
+          {
+            "key": "applies_to_uploaded_files",
+            "description": "Applies the rule to a concrete path such as uploaded files written under the application directory"
+          }
+        ]
+      },
+      {
+        "label": "Mentions volumes or bind mounts when data must survive container replacement or be shared outside the container.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "chooses_persistent_mount",
+            "description": "Chooses a volume or bind mount for data that must survive container replacement"
+          },
+          {
+            "key": "explains_external_storage_location",
+            "description": "Explains that mounted data lives outside the container writable layer"
+          },
+          {
+            "key": "connects_mount_to_sharing",
+            "description": "Connects mounts to sharing data with the host or another container when needed"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Clearly distinguishes image layers, container lifecycle, writable layer behavior, and persistent storage options with a concrete example." },
-      { "scoreBand": "solid", "description": "Understands image versus container but gives limited detail about writable layer persistence." },
-      { "scoreBand": "needs_work", "description": "Knows Docker runs containers but cannot explain filesystem or lifecycle behavior." },
-      { "scoreBand": "insufficient_evidence", "description": "Answer is mostly terminology without showing practical understanding." }
+      {
+        "scoreBand": "strong",
+        "description": "Clearly distinguishes image layers, container lifecycle, writable layer behavior, and persistent storage options with a concrete example."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands image versus container but gives limited detail about writable layer persistence."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows Docker runs containers but cannot explain filesystem or lifecycle behavior."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is mostly terminology without showing practical understanding."
+      }
     ],
     "followUps": [
-      { "trigger": "vague_answer", "question": "If a container writes uploaded files to /app/uploads and then the container is removed, what survives?", "purpose": "Force concrete persistence reasoning." },
-      { "trigger": "missing_context", "question": "When would you rebuild an image versus restart or replace a container?", "purpose": "Check lifecycle separation." }
+      {
+        "trigger": "vague_answer",
+        "question": "If a container writes uploaded files to /app/uploads and then the container is removed, what survives?",
+        "purpose": "Force concrete persistence reasoning."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "When would you rebuild an image versus restart or replace a container?",
+        "purpose": "Check lifecycle separation."
+      }
     ],
     "localizedContent": {
       "en": {
         "title": "Docker image and container basics",
         "displayQuestion": "How would you explain the difference between a Docker image and a running container, and what happens to files written inside the container?",
         "displayIntent": "Check Docker image, container, layer, and persistence fundamentals.",
-        "guidance": ["Use a concrete application file example.", "Listen for writable layer and persistence boundaries."],
-        "commonMistakes": ["Treating containers as permanent servers.", "Assuming container writes modify the source image."],
-        "labels": { "role": "Backend/DevOps", "level": "Junior", "type": "technical_depth" }
+        "guidance": [
+          "Use a concrete application file example.",
+          "Listen for writable layer and persistence boundaries."
+        ],
+        "commonMistakes": [
+          "Treating containers as permanent servers.",
+          "Assuming container writes modify the source image."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "Nền tảng image và container Docker",
         "displayQuestion": "Bạn giải thích sự khác nhau giữa Docker image và container đang chạy như thế nào, và điều gì xảy ra với các file được ghi bên trong container?",
         "displayIntent": "Kiểm tra nền tảng về Docker image, container, layer và persistence.",
-        "guidance": ["Dùng một ví dụ file của application thật.", "Nghe xem ứng viên có nói rõ writable layer và boundary persistence không."],
-        "commonMistakes": ["Xem container như server cố định lâu dài.", "Giả định ghi file trong container sẽ sửa image gốc."],
-        "labels": { "role": "Backend/DevOps", "level": "Junior", "type": "technical_depth" }
+        "guidance": [
+          "Dùng một ví dụ file của application thật.",
+          "Nghe xem ứng viên có nói rõ writable layer và boundary persistence không."
+        ],
+        "commonMistakes": [
+          "Xem container như server cố định lâu dài.",
+          "Giả định ghi file trong container sẽ sửa image gốc."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "Docker image と container の基礎",
         "displayQuestion": "Docker image と実行中 container の違いをどう説明しますか。また container 内に書き込まれた file はどうなりますか。",
         "displayIntent": "Docker image、container、layer、persistence の基礎を確認する。",
-        "guidance": ["具体的な application file の例を使う。", "writable layer と persistence boundary に触れるかを見る。"],
-        "commonMistakes": ["container を永続的な server として扱う。", "container 内の書き込みが元 image を変更すると考える。"],
-        "labels": { "role": "Backend/DevOps", "level": "Junior", "type": "technical_depth" }
+        "guidance": [
+          "具体的な application file の例を使う。",
+          "writable layer と persistence boundary に触れるかを見る。"
+        ],
+        "commonMistakes": [
+          "container を永続的な server として扱う。",
+          "container 内の書き込みが元 image を変更すると考える。"
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "Docker Docs: Understanding the image layers", "url": "https://docs.docker.com/get-started/docker-concepts/building-images/understanding-image-layers/", "note": "Used for immutable image layer concepts." },
-      { "label": "Docker Docs: Storage", "url": "https://docs.docker.com/storage/", "note": "Used for container writable layer and mount persistence behavior." }
+      {
+        "label": "Docker Docs: Understanding the image layers",
+        "url": "https://docs.docker.com/get-started/docker-concepts/building-images/understanding-image-layers/",
+        "note": "Used for immutable image layer concepts."
+      },
+      {
+        "label": "Docker Docs: Storage",
+        "url": "https://docs.docker.com/storage/",
+        "note": "Used for container writable layer and mount persistence behavior."
+      }
     ],
     "status": "active"
   },
   {
     "code": "DOCKER_JR_TECH_DOCKERFILE_RUNTIME_002",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack", "devops"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "devops"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "communication"],
-    "techTags": ["docker"],
+    "competencies": [
+      "technical_fundamentals",
+      "communication"
+    ],
+    "techTags": [
+      "docker"
+    ],
     "difficulty": 2,
     "intent": "Evaluate whether the candidate can read and explain core Dockerfile instructions and separate build-time choices from runtime behavior.",
     "primaryQuestion": "Walk through a basic Dockerfile for a web service. What do FROM, WORKDIR, COPY, RUN, ENV, EXPOSE, CMD, and ENTRYPOINT do, and which ones affect build time versus runtime?",
     "expectedSignals": [
-      { "label": "Explains FROM as the base image and build stage boundary.", "relatedTrigger": null },
-      { "label": "Separates build-time instructions such as COPY and RUN from runtime defaults such as CMD and ENTRYPOINT.", "relatedTrigger": null },
-      { "label": "Understands EXPOSE documents/listens metadata but does not publish a host port by itself.", "relatedTrigger": null },
-      { "label": "Mentions USER or least-privilege runtime when discussing production images.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Cannot distinguish RUN from CMD or ENTRYPOINT.",
-      "Believes EXPOSE automatically makes a service reachable from the host or internet.",
-      "Puts secrets directly into ENV or Dockerfile instructions without recognizing the risk."
+      {
+        "label": "Explains FROM as the base image and build stage boundary.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "defines_base_image",
+            "description": "Explains that FROM selects the base image that provides the starting filesystem and runtime"
+          },
+          {
+            "key": "mentions_stage_boundary",
+            "description": "Mentions that each FROM can start a new build stage in a multi-stage Dockerfile"
+          },
+          {
+            "key": "connects_to_dependency_surface",
+            "description": "Connects base image choice to available tools, runtime version, size, or security surface"
+          }
+        ]
+      },
+      {
+        "label": "Separates build-time instructions such as COPY and RUN from runtime defaults such as CMD and ENTRYPOINT.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "classifies_copy_run_build_time",
+            "description": "Classifies COPY and RUN as build-time instructions that create image layers"
+          },
+          {
+            "key": "classifies_cmd_entrypoint_runtime",
+            "description": "Classifies CMD and ENTRYPOINT as runtime command defaults for containers created from the image"
+          },
+          {
+            "key": "uses_npm_build_start_example",
+            "description": "Correctly distinguishes a build command such as RUN npm run build from a startup command such as CMD npm start"
+          }
+        ]
+      },
+      {
+        "label": "Understands EXPOSE documents/listens metadata but does not publish a host port by itself.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "defines_expose_metadata",
+            "description": "Explains that EXPOSE documents the intended container port and metadata for tooling"
+          },
+          {
+            "key": "requires_port_publish",
+            "description": "Explains that host access still requires docker run -p, Compose ports, or equivalent publishing"
+          },
+          {
+            "key": "distinguishes_container_host_port",
+            "description": "Distinguishes the container listening port from the host port used by localhost"
+          }
+        ]
+      },
+      {
+        "label": "Mentions USER or least-privilege runtime when discussing production images.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_non_root_user",
+            "description": "Mentions running the production container as a non-root user when practical"
+          },
+          {
+            "key": "connects_user_to_runtime_risk",
+            "description": "Connects USER to reducing the impact of a compromised application process"
+          },
+          {
+            "key": "considers_file_permissions",
+            "description": "Considers file ownership or permission changes needed so the non-root process can read and write required paths"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Explains each instruction through build/runtime effects and calls out port publishing, command defaults, and user/security concerns." },
-      { "scoreBand": "solid", "description": "Understands the main instructions but misses one runtime nuance such as EXPOSE or ENTRYPOINT override behavior." },
-      { "scoreBand": "needs_work", "description": "Can read a Dockerfile superficially but confuses build execution with container startup." },
-      { "scoreBand": "insufficient_evidence", "description": "No reliable Dockerfile instruction understanding is demonstrated." }
+      {
+        "scoreBand": "strong",
+        "description": "Explains each instruction through build/runtime effects and calls out port publishing, command defaults, and user/security concerns."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands the main instructions but misses one runtime nuance such as EXPOSE or ENTRYPOINT override behavior."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can read a Dockerfile superficially but confuses build execution with container startup."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "No reliable Dockerfile instruction understanding is demonstrated."
+      }
     ],
     "followUps": [
-      { "trigger": "vague_answer", "question": "What is the difference between RUN npm run build and CMD [\"npm\", \"start\"]?", "purpose": "Check build-time versus runtime distinction." },
-      { "trigger": "red_flag", "question": "If a Dockerfile has EXPOSE 3000, why might localhost:3000 still not work?", "purpose": "Verify port publishing understanding." }
+      {
+        "trigger": "vague_answer",
+        "question": "What is the difference between RUN npm run build and CMD [\"npm\", \"start\"]?",
+        "purpose": "Check build-time versus runtime distinction."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "If a Dockerfile has EXPOSE 3000, why might localhost:3000 still not work?",
+        "purpose": "Verify port publishing understanding."
+      }
     ],
     "localizedContent": {
       "en": {
         "title": "Dockerfile instruction basics",
         "displayQuestion": "Walk through a basic Dockerfile for a web service. What do FROM, WORKDIR, COPY, RUN, ENV, EXPOSE, CMD, and ENTRYPOINT do, and which ones affect build time versus runtime?",
         "displayIntent": "Check practical Dockerfile reading and build/runtime separation.",
-        "guidance": ["Use a web service Dockerfile example.", "Ask for effects, not just definitions."],
-        "commonMistakes": ["Confusing RUN with CMD.", "Thinking EXPOSE publishes a host port."],
-        "labels": { "role": "Backend/DevOps", "level": "Junior", "type": "technical_depth" }
+        "guidance": [
+          "Use a web service Dockerfile example.",
+          "Ask for effects, not just definitions."
+        ],
+        "commonMistakes": [
+          "Confusing RUN with CMD.",
+          "Thinking EXPOSE publishes a host port."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "Các instruction cơ bản trong Dockerfile",
         "displayQuestion": "Hãy đi qua một Dockerfile cơ bản cho web service. FROM, WORKDIR, COPY, RUN, ENV, EXPOSE, CMD và ENTRYPOINT làm gì, instruction nào ảnh hưởng build time và instruction nào ảnh hưởng runtime?",
         "displayIntent": "Kiểm tra khả năng đọc Dockerfile và tách build time khỏi runtime.",
-        "guidance": ["Dùng ví dụ Dockerfile của web service.", "Hỏi về tác động thực tế, không chỉ định nghĩa."],
-        "commonMistakes": ["Nhầm RUN với CMD.", "Nghĩ EXPOSE tự publish port ra host."],
-        "labels": { "role": "Backend/DevOps", "level": "Junior", "type": "technical_depth" }
+        "guidance": [
+          "Dùng ví dụ Dockerfile của web service.",
+          "Hỏi về tác động thực tế, không chỉ định nghĩa."
+        ],
+        "commonMistakes": [
+          "Nhầm RUN với CMD.",
+          "Nghĩ EXPOSE tự publish port ra host."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "Dockerfile instruction の基礎",
         "displayQuestion": "web service 用の基本的な Dockerfile を説明してください。FROM、WORKDIR、COPY、RUN、ENV、EXPOSE、CMD、ENTRYPOINT は何をし、どれが build time と runtime に影響しますか。",
         "displayIntent": "Dockerfile を実務的に読み、build time と runtime を分けて理解できるか確認する。",
-        "guidance": ["web service の Dockerfile 例を使う。", "定義だけでなく実際の効果を聞く。"],
-        "commonMistakes": ["RUN と CMD を混同する。", "EXPOSE が host port を公開すると考える。"],
-        "labels": { "role": "Backend/DevOps", "level": "Junior", "type": "technical_depth" }
+        "guidance": [
+          "web service の Dockerfile 例を使う。",
+          "定義だけでなく実際の効果を聞く。"
+        ],
+        "commonMistakes": [
+          "RUN と CMD を混同する。",
+          "EXPOSE が host port を公開すると考える。"
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "Docker Docs: Dockerfile reference", "url": "https://docs.docker.com/reference/builder", "note": "Used for Dockerfile instruction behavior and HEALTHCHECK/CMD/ENTRYPOINT context." },
-      { "label": "Docker Docs: Building best practices", "url": "https://docs.docker.com/build/building/best-practices/", "note": "Used for production Dockerfile practice framing." }
+      {
+        "label": "Docker Docs: Dockerfile reference",
+        "url": "https://docs.docker.com/reference/builder",
+        "note": "Used for Dockerfile instruction behavior and HEALTHCHECK/CMD/ENTRYPOINT context."
+      },
+      {
+        "label": "Docker Docs: Building best practices",
+        "url": "https://docs.docker.com/build/building/best-practices/",
+        "note": "Used for production Dockerfile practice framing."
+      }
     ],
     "status": "active"
   },
   {
     "code": "DOCKER_JR_DEBUG_CONTAINER_EXIT_003",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack", "devops"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "devops"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "debugging",
-    "competencies": ["problem_solving", "technical_fundamentals", "ownership"],
-    "techTags": ["docker", "logging"],
+    "competencies": [
+      "problem_solving",
+      "technical_fundamentals",
+      "ownership"
+    ],
+    "techTags": [
+      "docker",
+      "logging"
+    ],
     "difficulty": 2,
     "intent": "Assess basic troubleshooting when a container exits immediately or does not serve traffic after startup.",
     "primaryQuestion": "A container starts and exits immediately, or it stays running but the app is unreachable. What Docker commands and evidence would you check first?",
     "expectedSignals": [
-      { "label": "Uses docker ps -a, docker logs, docker inspect, and exit code or command information before changing the image.", "relatedTrigger": null },
-      { "label": "Checks whether the main process exits, crashes, waits on missing config, or binds to the wrong address or port.", "relatedTrigger": null },
-      { "label": "Separates container-internal listening port from host port publishing.", "relatedTrigger": null },
-      { "label": "Verifies environment variables, mounted files, working directory, and command/entrypoint overrides.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Rebuilds the image repeatedly without reading logs or exit code.",
-      "Only checks host firewall while ignoring whether the process is running inside the container.",
-      "Confuses localhost inside the container with localhost on the host."
+      {
+        "label": "Uses docker ps -a, docker logs, docker inspect, and exit code or command information before changing the image.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "checks_container_status",
+            "description": "Uses docker ps -a or equivalent to see whether the container exited, restarted, or is still running"
+          },
+          {
+            "key": "checks_logs_and_exit_code",
+            "description": "Checks container logs and exit code before guessing at the fix"
+          },
+          {
+            "key": "checks_inspect_command",
+            "description": "Uses docker inspect or equivalent to verify configured command, entrypoint, ports, env, and mounts"
+          }
+        ]
+      },
+      {
+        "label": "Checks whether the main process exits, crashes, waits on missing config, or binds to the wrong address or port.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "checks_main_process_lifecycle",
+            "description": "Checks whether the main process exits successfully, crashes, or is being restarted"
+          },
+          {
+            "key": "checks_missing_config",
+            "description": "Checks missing environment variables, config files, secrets, or dependencies that block startup"
+          },
+          {
+            "key": "checks_bind_address_port",
+            "description": "Checks whether the app binds to the intended port and to an address reachable from outside the container"
+          }
+        ]
+      },
+      {
+        "label": "Separates container-internal listening port from host port publishing.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "tests_inside_container",
+            "description": "Tests from inside the container or network namespace to prove whether the app is listening"
+          },
+          {
+            "key": "checks_host_port_mapping",
+            "description": "Checks docker run -p, Compose ports, or published port mappings separately from the app listener"
+          },
+          {
+            "key": "avoids_blaming_host_network_first",
+            "description": "Avoids blaming host networking until internal listening and port publishing are separately verified"
+          }
+        ]
+      },
+      {
+        "label": "Verifies environment variables, mounted files, working directory, and command/entrypoint overrides.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "verifies_env_runtime",
+            "description": "Verifies runtime environment variables and secrets visible to the container"
+          },
+          {
+            "key": "verifies_mounts_workdir",
+            "description": "Verifies mounted files and working directory are what the application expects"
+          },
+          {
+            "key": "verifies_command_overrides",
+            "description": "Verifies command or entrypoint overrides in Compose, docker run, or orchestration config"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Follows an evidence-based path across logs, inspect output, process lifecycle, ports, config, and mounts." },
-      { "scoreBand": "solid", "description": "Checks logs and ports but misses one common cause such as bind address, env, or entrypoint override." },
-      { "scoreBand": "needs_work", "description": "Has generic debugging steps but little Docker-specific investigation." },
-      { "scoreBand": "insufficient_evidence", "description": "No clear diagnostic sequence or evidence gathering." }
+      {
+        "scoreBand": "strong",
+        "description": "Follows an evidence-based path across logs, inspect output, process lifecycle, ports, config, and mounts."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Checks logs and ports but misses one common cause such as bind address, env, or entrypoint override."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Has generic debugging steps but little Docker-specific investigation."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "No clear diagnostic sequence or evidence gathering."
+      }
     ],
     "followUps": [
-      { "trigger": "missing_context", "question": "How would you prove whether the app is listening inside the container before blaming host networking?", "purpose": "Check container boundary reasoning." },
-      { "trigger": "red_flag", "question": "What does an exit code and the container's configured command tell you?", "purpose": "Move from guessing to evidence." }
+      {
+        "trigger": "missing_context",
+        "question": "How would you prove whether the app is listening inside the container before blaming host networking?",
+        "purpose": "Check container boundary reasoning."
+      },
+      {
+        "trigger": "missing_metric",
+        "question": "What does an exit code and the container's configured command tell you?",
+        "purpose": "Move from guessing to evidence."
+      }
     ],
     "localizedContent": {
       "en": {
         "title": "Debug an exiting Docker container",
         "displayQuestion": "A container starts and exits immediately, or it stays running but the app is unreachable. What Docker commands and evidence would you check first?",
         "displayIntent": "Evaluate basic Docker runtime troubleshooting.",
-        "guidance": ["Start from logs, exit status, and inspect output.", "Cover process, config, ports, and mounts."],
-        "commonMistakes": ["Rebuilding before reading logs.", "Confusing container localhost with host localhost."],
-        "labels": { "role": "Backend/DevOps", "level": "Junior", "type": "debugging" }
+        "guidance": [
+          "Start from logs, exit status, and inspect output.",
+          "Cover process, config, ports, and mounts."
+        ],
+        "commonMistakes": [
+          "Rebuilding before reading logs.",
+          "Confusing container localhost with host localhost."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Junior",
+          "type": "debugging"
+        }
       },
       "vi": {
         "title": "Debug container Docker thoát ngay",
         "displayQuestion": "Một container start rồi exit ngay, hoặc vẫn chạy nhưng app không truy cập được. Bạn sẽ kiểm tra command Docker và bằng chứng nào trước?",
         "displayIntent": "Đánh giá khả năng troubleshoot runtime Docker cơ bản.",
-        "guidance": ["Bắt đầu từ logs, exit status và inspect output.", "Bao phủ process, config, port và mount."],
-        "commonMistakes": ["Rebuild trước khi đọc logs.", "Nhầm localhost trong container với localhost trên host."],
-        "labels": { "role": "Backend/DevOps", "level": "Junior", "type": "debugging" }
+        "guidance": [
+          "Bắt đầu từ logs, exit status và inspect output.",
+          "Bao phủ process, config, port và mount."
+        ],
+        "commonMistakes": [
+          "Rebuild trước khi đọc logs.",
+          "Nhầm localhost trong container với localhost trên host."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Junior",
+          "type": "debugging"
+        }
       },
       "ja": {
         "title": "すぐ終了する Docker container の debug",
         "displayQuestion": "container が起動後すぐ終了する、または動いているのに app に到達できません。まずどの Docker command と証拠を確認しますか。",
         "displayIntent": "Docker runtime troubleshooting の基礎を評価する。",
-        "guidance": ["logs、exit status、inspect output から始める。", "process、config、ports、mounts を確認する。"],
-        "commonMistakes": ["logs を読まずに rebuild する。", "container の localhost と host の localhost を混同する。"],
-        "labels": { "role": "Backend/DevOps", "level": "Junior", "type": "debugging" }
+        "guidance": [
+          "logs、exit status、inspect output から始める。",
+          "process、config、ports、mounts を確認する。"
+        ],
+        "commonMistakes": [
+          "logs を読まずに rebuild する。",
+          "container の localhost と host の localhost を混同する。"
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Junior",
+          "type": "debugging"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "Docker Docs: docker container run", "url": "https://docs.docker.com/reference/cli/docker/container/run", "note": "Used for runtime configuration, port publishing, and restart policy context." },
-      { "label": "Docker Docs: Dockerfile reference", "url": "https://docs.docker.com/reference/builder", "note": "Used for command, entrypoint, and startup behavior context." }
+      {
+        "label": "Docker Docs: docker container run",
+        "url": "https://docs.docker.com/reference/cli/docker/container/run",
+        "note": "Used for runtime configuration, port publishing, and restart policy context."
+      },
+      {
+        "label": "Docker Docs: Dockerfile reference",
+        "url": "https://docs.docker.com/reference/builder",
+        "note": "Used for command, entrypoint, and startup behavior context."
+      }
     ],
     "status": "active"
   },
   {
     "code": "DOCKER_MID_TECH_MULTI_STAGE_CACHE_004",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack", "devops"],
-    "levels": ["mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "devops"
+    ],
+    "levels": [
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "trade_off_analysis", "system_thinking"],
-    "techTags": ["docker", "github_actions"],
+    "competencies": [
+      "technical_fundamentals",
+      "trade_off_analysis",
+      "system_thinking"
+    ],
+    "techTags": [
+      "docker",
+      "github_actions"
+    ],
     "difficulty": 3,
     "intent": "Evaluate whether the candidate can design efficient Docker builds using multi-stage builds, cache-friendly ordering, and small runtime images.",
     "primaryQuestion": "How would you design a Dockerfile for a Node, Go, or Java service so builds are cache-friendly and the final runtime image stays small?",
     "expectedSignals": [
-      { "label": "Uses multi-stage builds to separate build dependencies from runtime artifacts.", "relatedTrigger": null },
-      { "label": "Orders COPY and dependency install steps to preserve cache when source code changes but dependency manifests do not.", "relatedTrigger": null },
-      { "label": "Uses .dockerignore to keep unnecessary files out of the build context.", "relatedTrigger": null },
-      { "label": "Considers base image choice, version pinning, rebuild cadence, and CI cache behavior.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Ships compilers, test fixtures, package caches, or source-only tooling in the final runtime image without reason.",
-      "Copies the whole repository before installing dependencies, causing avoidable cache invalidation.",
-      "Ignores .dockerignore and sends secrets, node_modules, build outputs, or large local files into the build context."
+      {
+        "label": "Uses multi-stage builds to separate build dependencies from runtime artifacts.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "separates_builder_runtime",
+            "description": "Uses a builder stage for compilers, package managers, or test tooling and a separate runtime stage for deployable artifacts"
+          },
+          {
+            "key": "copies_only_runtime_artifacts",
+            "description": "Copies only the built artifact and required runtime files into the final image"
+          },
+          {
+            "key": "connects_to_size_security",
+            "description": "Connects multi-stage builds to smaller image size, reduced attack surface, or fewer runtime dependencies"
+          }
+        ]
+      },
+      {
+        "label": "Orders COPY and dependency install steps to preserve cache when source code changes but dependency manifests do not.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "copies_manifest_first",
+            "description": "Copies dependency manifests such as package.json, package-lock.json, go.mod, or pom.xml before application source"
+          },
+          {
+            "key": "installs_deps_before_source",
+            "description": "Runs dependency installation before copying frequently changing source files"
+          },
+          {
+            "key": "explains_cache_invalidation",
+            "description": "Explains that Docker cache is invalidated from the changed layer onward"
+          }
+        ]
+      },
+      {
+        "label": "Uses .dockerignore to keep unnecessary files out of the build context.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "excludes_dependency_dirs",
+            "description": "Excludes files such as node_modules, build outputs, test artifacts, logs, and local caches when they are not needed"
+          },
+          {
+            "key": "excludes_sensitive_files",
+            "description": "Excludes local secrets, .env files, credentials, and other sensitive files from the build context"
+          },
+          {
+            "key": "connects_context_to_cache_speed",
+            "description": "Connects a smaller build context to faster uploads, fewer cache invalidations, and lower leakage risk"
+          }
+        ]
+      },
+      {
+        "label": "Considers base image choice, version pinning, rebuild cadence, and CI cache behavior.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "evaluates_base_image_size_compat",
+            "description": "Evaluates base image size, library compatibility, debugging needs, and security patch availability"
+          },
+          {
+            "key": "pins_versions_deliberately",
+            "description": "Pins image or runtime versions deliberately while still planning patch rebuilds"
+          },
+          {
+            "key": "considers_ci_cache",
+            "description": "Considers CI layer cache behavior, dependency cache reuse, and when cache should be invalidated"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Designs a multi-stage, cache-aware Dockerfile and explains final image size, attack surface, CI behavior, and rebuild freshness." },
-      { "scoreBand": "solid", "description": "Uses multi-stage builds and basic cache ordering but misses .dockerignore or base image update trade-offs." },
-      { "scoreBand": "needs_work", "description": "Knows multi-stage exists but cannot apply it to dependency and source-code layering." },
-      { "scoreBand": "insufficient_evidence", "description": "No practical Docker build optimization knowledge is shown." }
+      {
+        "scoreBand": "strong",
+        "description": "Designs a multi-stage, cache-aware Dockerfile and explains final image size, attack surface, CI behavior, and rebuild freshness."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Uses multi-stage builds and basic cache ordering but misses .dockerignore or base image update trade-offs."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows multi-stage exists but cannot apply it to dependency and source-code layering."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "No practical Docker build optimization knowledge is shown."
+      }
     ],
     "followUps": [
-      { "trigger": "missing_tradeoff", "question": "What do you gain and lose by using a very small runtime base image?", "purpose": "Check image-size versus operability/security trade-offs." },
-      { "trigger": "missing_context", "question": "Which Dockerfile line would you place before copying application source to improve cache reuse?", "purpose": "Force concrete build-cache reasoning." }
+      {
+        "trigger": "missing_tradeoff",
+        "question": "What do you gain and lose by using a very small runtime base image?",
+        "purpose": "Check image-size versus operability/security trade-offs."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Which Dockerfile line would you place before copying application source to improve cache reuse?",
+        "purpose": "Force concrete build-cache reasoning."
+      }
     ],
     "localizedContent": {
       "en": {
         "title": "Multi-stage and cache-friendly builds",
         "displayQuestion": "How would you design a Dockerfile for a Node, Go, or Java service so builds are cache-friendly and the final runtime image stays small?",
         "displayIntent": "Evaluate Docker build optimization and runtime image design.",
-        "guidance": ["Ask for a concrete Dockerfile sequence.", "Listen for cache invalidation, build context, and final-stage contents."],
-        "commonMistakes": ["Keeping build tooling in the runtime image.", "Invalidating dependency cache on every source change."],
-        "labels": { "role": "Backend/DevOps", "level": "Mid-level", "type": "technical_depth" }
+        "guidance": [
+          "Ask for a concrete Dockerfile sequence.",
+          "Listen for cache invalidation, build context, and final-stage contents."
+        ],
+        "commonMistakes": [
+          "Keeping build tooling in the runtime image.",
+          "Invalidating dependency cache on every source change."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "Build multi-stage và tối ưu cache",
         "displayQuestion": "Bạn thiết kế Dockerfile cho service Node, Go hoặc Java thế nào để build tận dụng cache tốt và final runtime image vẫn nhỏ?",
         "displayIntent": "Đánh giá khả năng tối ưu Docker build và thiết kế runtime image.",
-        "guidance": ["Yêu cầu sequence Dockerfile cụ thể.", "Nghe về cache invalidation, build context và nội dung final stage."],
-        "commonMistakes": ["Giữ build tooling trong runtime image.", "Làm mất cache dependency ở mỗi lần đổi source."],
-        "labels": { "role": "Backend/DevOps", "level": "Mid-level", "type": "technical_depth" }
+        "guidance": [
+          "Yêu cầu sequence Dockerfile cụ thể.",
+          "Nghe về cache invalidation, build context và nội dung final stage."
+        ],
+        "commonMistakes": [
+          "Giữ build tooling trong runtime image.",
+          "Làm mất cache dependency ở mỗi lần đổi source."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "multi-stage と cache-friendly build",
         "displayQuestion": "Node、Go、Java service の Dockerfile を、build cache を活かしつつ final runtime image を小さく保つようにどう設計しますか。",
         "displayIntent": "Docker build 最適化と runtime image 設計を評価する。",
-        "guidance": ["具体的な Dockerfile sequence を聞く。", "cache invalidation、build context、final stage の中身に注目する。"],
-        "commonMistakes": ["runtime image に build tooling を残す。", "source 変更のたびに dependency cache を無効化する。"],
-        "labels": { "role": "Backend/DevOps", "level": "Mid-level", "type": "technical_depth" }
+        "guidance": [
+          "具体的な Dockerfile sequence を聞く。",
+          "cache invalidation、build context、final stage の中身に注目する。"
+        ],
+        "commonMistakes": [
+          "runtime image に build tooling を残す。",
+          "source 変更のたびに dependency cache を無効化する。"
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "Docker Docs: Multi-stage builds", "url": "https://docs.docker.com/build/building/multi-stage/", "note": "Used for separating build and runtime stages." },
-      { "label": "Docker Docs: Building best practices", "url": "https://docs.docker.com/build/building/best-practices/", "note": "Used for cache, .dockerignore, base image, and CI build practice." },
-      { "label": "Docker Docs: BuildKit", "url": "https://docs.docker.com/build/buildkit/", "note": "Used for modern build cache and parallel build behavior." }
+      {
+        "label": "Docker Docs: Multi-stage builds",
+        "url": "https://docs.docker.com/build/building/multi-stage/",
+        "note": "Used for separating build and runtime stages."
+      },
+      {
+        "label": "Docker Docs: Building best practices",
+        "url": "https://docs.docker.com/build/building/best-practices/",
+        "note": "Used for cache, .dockerignore, base image, and CI build practice."
+      },
+      {
+        "label": "Docker Docs: BuildKit",
+        "url": "https://docs.docker.com/build/buildkit/",
+        "note": "Used for modern build cache and parallel build behavior."
+      }
     ],
     "status": "active"
   },
   {
     "code": "DOCKER_MID_TECH_NETWORKING_COMPOSE_005",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack", "devops"],
-    "levels": ["mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "devops"
+    ],
+    "levels": [
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "problem_solving"],
-    "techTags": ["docker"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "problem_solving"
+    ],
+    "techTags": [
+      "docker"
+    ],
     "difficulty": 3,
     "intent": "Assess practical understanding of Docker networking, Compose service discovery, user-defined bridge networks, and port publishing.",
     "primaryQuestion": "In Docker Compose, how should an API container talk to a database container, and how is that different from exposing the API to your host browser?",
     "expectedSignals": [
-      { "label": "Uses the Compose service name or network alias for container-to-container communication on the Compose network.", "relatedTrigger": null },
-      { "label": "Distinguishes container ports from published host ports.", "relatedTrigger": null },
-      { "label": "Understands why localhost inside one container is not another container or the host service by default.", "relatedTrigger": null },
-      { "label": "Mentions user-defined bridge networks, DNS resolution, and avoiding unnecessary database port publication.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Configures the API to connect to the database using localhost without considering container boundaries.",
-      "Publishes database ports to the host as the default solution for service-to-service communication.",
-      "Cannot explain the difference between ports, expose, and internal container networking."
+      {
+        "label": "Uses the Compose service name or network alias for container-to-container communication on the Compose network.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "uses_service_name_hostname",
+            "description": "Uses the Compose service name, such as db, as the hostname from the API container"
+          },
+          {
+            "key": "uses_container_port",
+            "description": "Connects to the database container's listening port on the Compose network rather than a host-published port"
+          },
+          {
+            "key": "mentions_network_alias",
+            "description": "Mentions network aliases or service DNS when a custom name is needed"
+          }
+        ]
+      },
+      {
+        "label": "Distinguishes container ports from published host ports.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "defines_container_port",
+            "description": "Defines the container port as the port the process listens on inside the container network"
+          },
+          {
+            "key": "defines_published_host_port",
+            "description": "Defines the published host port as a mapping for host-to-container access"
+          },
+          {
+            "key": "applies_to_browser_access",
+            "description": "Explains that the host browser needs a published API port while another container can use the service name and container port"
+          }
+        ]
+      },
+      {
+        "label": "Understands why localhost inside one container is not another container or the host service by default.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "defines_localhost_scope",
+            "description": "Explains that localhost inside a container refers to that same container"
+          },
+          {
+            "key": "avoids_localhost_for_db",
+            "description": "Avoids using localhost from the API container to reach the database container"
+          },
+          {
+            "key": "mentions_host_access_exception",
+            "description": "Mentions host.docker.internal or platform-specific host access only when the target is truly the host"
+          }
+        ]
+      },
+      {
+        "label": "Mentions user-defined bridge networks, DNS resolution, and avoiding unnecessary database port publication.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "mentions_compose_network_dns",
+            "description": "Mentions Compose-created user-defined bridge networks and automatic DNS resolution"
+          },
+          {
+            "key": "limits_db_publication",
+            "description": "Avoids publishing the database port to the host unless local access or operations require it"
+          },
+          {
+            "key": "connects_to_security_scope",
+            "description": "Connects unnecessary database port publication to larger attack surface or accidental local exposure"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Explains Compose DNS, bridge networking, internal service names, port publishing, and security implications." },
-      { "scoreBand": "solid", "description": "Understands service names and host ports but misses one nuance such as database exposure or localhost behavior." },
-      { "scoreBand": "needs_work", "description": "Can make Compose work by trial and error but lacks networking model clarity." },
-      { "scoreBand": "insufficient_evidence", "description": "No reliable Docker networking understanding is demonstrated." }
+      {
+        "scoreBand": "strong",
+        "description": "Explains Compose DNS, bridge networking, internal service names, port publishing, and security implications."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands service names and host ports but misses one nuance such as database exposure or localhost behavior."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can make Compose work by trial and error but lacks networking model clarity."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "No reliable Docker networking understanding is demonstrated."
+      }
     ],
     "followUps": [
-      { "trigger": "vague_answer", "question": "What hostname should api use to connect to a Compose service named db?", "purpose": "Verify Compose DNS usage." },
-      { "trigger": "missing_tradeoff", "question": "Why might publishing the database port to the host be unnecessary or risky?", "purpose": "Check exposure and security judgment." }
+      {
+        "trigger": "vague_answer",
+        "question": "What hostname should api use to connect to a Compose service named db?",
+        "purpose": "Verify Compose DNS usage."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "Why might publishing the database port to the host be unnecessary or risky?",
+        "purpose": "Check exposure and security judgment."
+      }
     ],
     "localizedContent": {
       "en": {
         "title": "Docker Compose networking",
         "displayQuestion": "In Docker Compose, how should an API container talk to a database container, and how is that different from exposing the API to your host browser?",
         "displayIntent": "Check Compose networking, service discovery, and port publishing.",
-        "guidance": ["Use an api/db Compose example.", "Separate internal networking from host access."],
-        "commonMistakes": ["Using localhost for another container.", "Publishing every internal service port."],
-        "labels": { "role": "Backend/DevOps", "level": "Mid-level", "type": "technical_depth" }
+        "guidance": [
+          "Use an api/db Compose example.",
+          "Separate internal networking from host access."
+        ],
+        "commonMistakes": [
+          "Using localhost for another container.",
+          "Publishing every internal service port."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "Networking trong Docker Compose",
         "displayQuestion": "Trong Docker Compose, API container nên nói chuyện với database container như thế nào, và việc đó khác gì với expose API cho browser trên host?",
         "displayIntent": "Kiểm tra Compose networking, service discovery và port publishing.",
-        "guidance": ["Dùng ví dụ Compose có api/db.", "Tách internal networking khỏi host access."],
-        "commonMistakes": ["Dùng localhost để gọi container khác.", "Publish mọi port của service nội bộ."],
-        "labels": { "role": "Backend/DevOps", "level": "Mid-level", "type": "technical_depth" }
+        "guidance": [
+          "Dùng ví dụ Compose có api/db.",
+          "Tách internal networking khỏi host access."
+        ],
+        "commonMistakes": [
+          "Dùng localhost để gọi container khác.",
+          "Publish mọi port của service nội bộ."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "Docker Compose networking",
         "displayQuestion": "Docker Compose で API container は database container とどう通信すべきですか。また host browser に API を公開することとは何が違いますか。",
         "displayIntent": "Compose networking、service discovery、port publishing を確認する。",
-        "guidance": ["api/db の Compose 例を使う。", "internal networking と host access を分ける。"],
-        "commonMistakes": ["別 container に localhost で接続する。", "内部 service の port をすべて publish する。"],
-        "labels": { "role": "Backend/DevOps", "level": "Mid-level", "type": "technical_depth" }
+        "guidance": [
+          "api/db の Compose 例を使う。",
+          "internal networking と host access を分ける。"
+        ],
+        "commonMistakes": [
+          "別 container に localhost で接続する。",
+          "内部 service の port をすべて publish する。"
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "Docker Docs: Bridge network driver", "url": "https://docs.docker.com/engine/network/drivers/bridge/", "note": "Used for user-defined bridge networks and Docker-managed networking." },
-      { "label": "Docker Docs: Docker Compose", "url": "https://docs.docker.com/compose/", "note": "Used for Compose as a multi-container application definition and lifecycle tool." }
+      {
+        "label": "Docker Docs: Bridge network driver",
+        "url": "https://docs.docker.com/engine/network/drivers/bridge/",
+        "note": "Used for user-defined bridge networks and Docker-managed networking."
+      },
+      {
+        "label": "Docker Docs: Docker Compose",
+        "url": "https://docs.docker.com/compose/",
+        "note": "Used for Compose as a multi-container application definition and lifecycle tool."
+      }
     ],
     "status": "active"
   },
   {
     "code": "DOCKER_MID_TECH_STORAGE_MOUNTS_006",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack", "devops"],
-    "levels": ["mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "devops"
+    ],
+    "levels": [
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "trade_off_analysis", "problem_solving"],
-    "techTags": ["docker"],
+    "competencies": [
+      "technical_fundamentals",
+      "trade_off_analysis",
+      "problem_solving"
+    ],
+    "techTags": [
+      "docker"
+    ],
     "difficulty": 3,
     "intent": "Evaluate practical judgment around Docker volumes, bind mounts, tmpfs, and data persistence boundaries.",
     "primaryQuestion": "When would you use a Docker volume versus a bind mount for application data, source code, configuration, or database storage?",
     "expectedSignals": [
-      { "label": "Explains volumes as Docker-managed persistent storage suitable for container data such as database files.", "relatedTrigger": null },
-      { "label": "Explains bind mounts as host-path mounts useful for development source code, generated artifacts, or explicit host configuration.", "relatedTrigger": null },
-      { "label": "Understands that mounts can hide existing image contents at the target path.", "relatedTrigger": null },
-      { "label": "Considers portability, backup, permissions, host coupling, read-only mounts, and least privilege.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Stores database data only in the container writable layer.",
-      "Uses bind mounts for production data without acknowledging host coupling and permission risk.",
-      "Is surprised that mounting over a non-empty directory hides files already present in the image."
+      {
+        "label": "Explains volumes as Docker-managed persistent storage suitable for container data such as database files.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "defines_docker_volume",
+            "description": "Defines a volume as Docker-managed storage independent of a container lifecycle"
+          },
+          {
+            "key": "chooses_volume_for_db_data",
+            "description": "Chooses volumes for database files or application state that should persist across container replacement"
+          },
+          {
+            "key": "mentions_backup_management",
+            "description": "Mentions backup, restore, or operational management of volume data"
+          }
+        ]
+      },
+      {
+        "label": "Explains bind mounts as host-path mounts useful for development source code, generated artifacts, or explicit host configuration.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "defines_bind_mount",
+            "description": "Defines a bind mount as mapping a specific host path into the container"
+          },
+          {
+            "key": "chooses_bind_for_dev_source",
+            "description": "Chooses bind mounts for local development source code or explicitly managed host files"
+          },
+          {
+            "key": "notes_host_coupling",
+            "description": "Notes that bind mounts couple the container to the host filesystem layout and permissions"
+          }
+        ]
+      },
+      {
+        "label": "Understands that mounts can hide existing image contents at the target path.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "explains_mount_shadowing",
+            "description": "Explains that a mount at a target path hides files already present in the image at that path"
+          },
+          {
+            "key": "applies_to_config_defaults",
+            "description": "Applies shadowing to a case such as bind mounting ./config over /app/config with default files inside the image"
+          },
+          {
+            "key": "plans_target_paths",
+            "description": "Plans mount target paths to avoid accidentally hiding required application files"
+          }
+        ]
+      },
+      {
+        "label": "Considers portability, backup, permissions, host coupling, read-only mounts, and least privilege.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "compares_portability_backup",
+            "description": "Compares portability and backup implications of volumes versus bind mounts"
+          },
+          {
+            "key": "handles_permissions",
+            "description": "Considers UID/GID, filesystem permissions, and write access needed by the container process"
+          },
+          {
+            "key": "uses_read_only_when_possible",
+            "description": "Uses read-only mounts for source code, config, or credentials when the container should not modify them"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Compares volume, bind mount, and writable layer behavior with persistence, portability, security, and operational implications." },
-      { "scoreBand": "solid", "description": "Chooses volumes and bind mounts correctly for common cases but misses mount shadowing or permissions." },
-      { "scoreBand": "needs_work", "description": "Knows mounts persist data but cannot choose the right mount type by use case." },
-      { "scoreBand": "insufficient_evidence", "description": "Answer does not show reliable Docker storage knowledge." }
+      {
+        "scoreBand": "strong",
+        "description": "Compares volume, bind mount, and writable layer behavior with persistence, portability, security, and operational implications."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Chooses volumes and bind mounts correctly for common cases but misses mount shadowing or permissions."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows mounts persist data but cannot choose the right mount type by use case."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not show reliable Docker storage knowledge."
+      }
     ],
     "followUps": [
-      { "trigger": "missing_tradeoff", "question": "What can go wrong if you bind mount ./config over /app/config in an image that already contains default config files?", "purpose": "Check mount shadowing behavior." },
-      { "trigger": "missing_context", "question": "How would you make a source-code bind mount read-only, and why might that matter?", "purpose": "Probe security and write-boundary awareness." }
+      {
+        "trigger": "missing_tradeoff",
+        "question": "What can go wrong if you bind mount ./config over /app/config in an image that already contains default config files?",
+        "purpose": "Check mount shadowing behavior."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "How would you make a source-code bind mount read-only, and why might that matter?",
+        "purpose": "Probe security and write-boundary awareness."
+      }
     ],
     "localizedContent": {
       "en": {
         "title": "Docker volumes and bind mounts",
         "displayQuestion": "When would you use a Docker volume versus a bind mount for application data, source code, configuration, or database storage?",
         "displayIntent": "Evaluate Docker persistence and mount trade-offs.",
-        "guidance": ["Ask for separate dev and production examples.", "Listen for host coupling, permissions, and mount shadowing."],
-        "commonMistakes": ["Keeping durable data in the writable container layer.", "Using bind mounts everywhere without trade-off analysis."],
-        "labels": { "role": "Backend/DevOps", "level": "Mid-level", "type": "technical_depth" }
+        "guidance": [
+          "Ask for separate dev and production examples.",
+          "Listen for host coupling, permissions, and mount shadowing."
+        ],
+        "commonMistakes": [
+          "Keeping durable data in the writable container layer.",
+          "Using bind mounts everywhere without trade-off analysis."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "Docker volume và bind mount",
         "displayQuestion": "Khi nào bạn dùng Docker volume thay vì bind mount cho application data, source code, configuration hoặc database storage?",
         "displayIntent": "Đánh giá trade-off về persistence và mount trong Docker.",
-        "guidance": ["Yêu cầu ví dụ riêng cho dev và production.", "Nghe về host coupling, permission và mount shadowing."],
-        "commonMistakes": ["Giữ dữ liệu bền vững trong writable container layer.", "Dùng bind mount cho mọi thứ mà không phân tích trade-off."],
-        "labels": { "role": "Backend/DevOps", "level": "Mid-level", "type": "technical_depth" }
+        "guidance": [
+          "Yêu cầu ví dụ riêng cho dev và production.",
+          "Nghe về host coupling, permission và mount shadowing."
+        ],
+        "commonMistakes": [
+          "Giữ dữ liệu bền vững trong writable container layer.",
+          "Dùng bind mount cho mọi thứ mà không phân tích trade-off."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "Docker volume と bind mount",
         "displayQuestion": "application data、source code、configuration、database storage に対して、Docker volume と bind mount をいつ使い分けますか。",
         "displayIntent": "Docker persistence と mount の trade-off を評価する。",
-        "guidance": ["dev と production の例を分けて聞く。", "host coupling、permissions、mount shadowing に触れるかを見る。"],
-        "commonMistakes": ["永続データを writable container layer に置く。", "trade-off なしに bind mount を何にでも使う。"],
-        "labels": { "role": "Backend/DevOps", "level": "Mid-level", "type": "technical_depth" }
+        "guidance": [
+          "dev と production の例を分けて聞く。",
+          "host coupling、permissions、mount shadowing に触れるかを見る。"
+        ],
+        "commonMistakes": [
+          "永続データを writable container layer に置く。",
+          "trade-off なしに bind mount を何にでも使う。"
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "Docker Docs: Storage", "url": "https://docs.docker.com/storage/", "note": "Used for writable layer and storage mount options." },
-      { "label": "Docker Docs: Bind mounts", "url": "https://docs.docker.com/engine/storage/bind-mounts/", "note": "Used for bind mount behavior, host coupling, read-only mounts, and mount shadowing." }
+      {
+        "label": "Docker Docs: Storage",
+        "url": "https://docs.docker.com/storage/",
+        "note": "Used for writable layer and storage mount options."
+      },
+      {
+        "label": "Docker Docs: Bind mounts",
+        "url": "https://docs.docker.com/engine/storage/bind-mounts/",
+        "note": "Used for bind mount behavior, host coupling, read-only mounts, and mount shadowing."
+      }
     ],
     "status": "active"
   },
   {
     "code": "DOCKER_MID_DEBUG_HEALTH_RESTART_007",
-    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
-    "roleFamilies": ["backend", "fullstack", "devops"],
-    "levels": ["mid"],
+    "stages": [
+      "stage_2_tech_stack",
+      "stage_3_domain_knowledge"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "devops"
+    ],
+    "levels": [
+      "mid"
+    ],
     "type": "debugging",
-    "competencies": ["problem_solving", "system_thinking", "technical_fundamentals"],
-    "techTags": ["docker", "logging", "alerting"],
+    "competencies": [
+      "problem_solving",
+      "system_thinking",
+      "technical_fundamentals"
+    ],
+    "techTags": [
+      "docker",
+      "logging",
+      "alerting"
+    ],
     "difficulty": 3,
     "intent": "Assess whether the candidate can reason about Docker health checks, restart policies, startup timing, and service readiness.",
     "primaryQuestion": "A Compose stack shows a service as running, but users still get errors until dependencies are ready. How would you use health checks, restart policies, and logs to diagnose and improve this?",
     "expectedSignals": [
-      { "label": "Separates process running state from application readiness and dependency readiness.", "relatedTrigger": null },
-      { "label": "Designs a health check that validates the actual service path or dependency needed for readiness, not just process existence.", "relatedTrigger": null },
-      { "label": "Explains health check interval, timeout, retries, start period, and how to inspect health output.", "relatedTrigger": null },
-      { "label": "Uses restart policies carefully and avoids hiding crash loops without root-cause investigation.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Assumes a running container is necessarily ready to serve traffic.",
-      "Uses restart: always as the only fix for readiness or dependency failures.",
-      "Writes a health check that always returns success or only checks that a process exists."
+      {
+        "label": "Separates process running state from application readiness and dependency readiness.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "distinguishes_running_ready",
+            "description": "Distinguishes a running container process from an application that is ready to serve traffic"
+          },
+          {
+            "key": "accounts_for_dependency_readiness",
+            "description": "Accounts for dependencies such as database, cache, migrations, or external services not being ready yet"
+          },
+          {
+            "key": "connects_to_user_errors",
+            "description": "Connects readiness gaps to user-facing errors even when Compose shows the service as running"
+          }
+        ]
+      },
+      {
+        "label": "Designs a health check that validates the actual service path or dependency needed for readiness, not just process existence.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "tests_real_endpoint",
+            "description": "Designs a health check against an endpoint or command that reflects real application readiness"
+          },
+          {
+            "key": "includes_required_dependency",
+            "description": "Includes required dependency checks when the service cannot function without that dependency"
+          },
+          {
+            "key": "avoids_pid_only_check",
+            "description": "Avoids treating process existence alone as sufficient readiness"
+          }
+        ]
+      },
+      {
+        "label": "Explains health check interval, timeout, retries, start period, and how to inspect health output.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "explains_health_timing",
+            "description": "Explains interval, timeout, retries, and start period in relation to startup and transient dependency delay"
+          },
+          {
+            "key": "inspects_health_output",
+            "description": "Uses docker inspect, compose ps, or health logs to see recent health check output"
+          },
+          {
+            "key": "tunes_without_masking",
+            "description": "Tunes health timing to avoid false failures without hiding real readiness problems"
+          }
+        ]
+      },
+      {
+        "label": "Uses restart policies carefully and avoids hiding crash loops without root-cause investigation.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "chooses_restart_policy",
+            "description": "Chooses an appropriate restart policy for expected failure modes rather than defaulting blindly"
+          },
+          {
+            "key": "detects_crash_loop",
+            "description": "Checks restart counts and logs to detect crash loops before relying on restarts"
+          },
+          {
+            "key": "states_debugging_tradeoff",
+            "description": "Explains how aggressive restarts can erase evidence or delay root-cause diagnosis"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Connects readiness, health status, startup grace periods, restart policy behavior, logs, and dependency failure diagnosis." },
-      { "scoreBand": "solid", "description": "Understands health checks and logs but misses one dimension such as start period or restart policy side effects." },
-      { "scoreBand": "needs_work", "description": "Knows health checks exist but cannot design a useful readiness signal." },
-      { "scoreBand": "insufficient_evidence", "description": "No credible Docker readiness troubleshooting approach." }
+      {
+        "scoreBand": "strong",
+        "description": "Connects readiness, health status, startup grace periods, restart policy behavior, logs, and dependency failure diagnosis."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands health checks and logs but misses one dimension such as start period or restart policy side effects."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows health checks exist but cannot design a useful readiness signal."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "No credible Docker readiness troubleshooting approach."
+      }
     ],
     "followUps": [
-      { "trigger": "missing_context", "question": "What should the health check actually test for an HTTP API with a database dependency?", "purpose": "Verify readiness signal design." },
-      { "trigger": "missing_tradeoff", "question": "When can a restart policy make debugging harder?", "purpose": "Check operational nuance." }
+      {
+        "trigger": "missing_context",
+        "question": "What should the health check actually test for an HTTP API with a database dependency?",
+        "purpose": "Verify readiness signal design."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "When can a restart policy make debugging harder?",
+        "purpose": "Check operational nuance."
+      }
     ],
     "localizedContent": {
       "en": {
         "title": "Health checks and restart behavior",
         "displayQuestion": "A Compose stack shows a service as running, but users still get errors until dependencies are ready. How would you use health checks, restart policies, and logs to diagnose and improve this?",
         "displayIntent": "Assess Docker readiness and runtime recovery reasoning.",
-        "guidance": ["Separate liveness from readiness.", "Ask how the candidate would inspect health output and logs."],
-        "commonMistakes": ["Treating running as ready.", "Using restart policy as a substitute for root-cause analysis."],
-        "labels": { "role": "Backend/DevOps", "level": "Mid-level", "type": "debugging" }
+        "guidance": [
+          "Separate liveness from readiness.",
+          "Ask how the candidate would inspect health output and logs."
+        ],
+        "commonMistakes": [
+          "Treating running as ready.",
+          "Using restart policy as a substitute for root-cause analysis."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Mid-level",
+          "type": "debugging"
+        }
       },
       "vi": {
         "title": "Health check và restart behavior",
         "displayQuestion": "Một Compose stack hiển thị service đang running, nhưng user vẫn gặp lỗi cho đến khi dependency sẵn sàng. Bạn dùng health check, restart policy và logs để chẩn đoán và cải thiện như thế nào?",
         "displayIntent": "Đánh giá tư duy readiness và runtime recovery trong Docker.",
-        "guidance": ["Tách liveness khỏi readiness.", "Hỏi cách ứng viên inspect health output và logs."],
-        "commonMistakes": ["Xem running là ready.", "Dùng restart policy thay cho phân tích root cause."],
-        "labels": { "role": "Backend/DevOps", "level": "Mid-level", "type": "debugging" }
+        "guidance": [
+          "Tách liveness khỏi readiness.",
+          "Hỏi cách ứng viên inspect health output và logs."
+        ],
+        "commonMistakes": [
+          "Xem running là ready.",
+          "Dùng restart policy thay cho phân tích root cause."
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Mid-level",
+          "type": "debugging"
+        }
       },
       "ja": {
         "title": "health check と restart behavior",
         "displayQuestion": "Compose stack では service が running と表示されていますが、dependency が ready になるまで user error が出ます。health check、restart policy、logs を使ってどう診断し改善しますか。",
         "displayIntent": "Docker readiness と runtime recovery の判断を評価する。",
-        "guidance": ["liveness と readiness を分ける。", "health output と logs の確認方法を聞く。"],
-        "commonMistakes": ["running を ready と同一視する。", "root cause analysis の代わりに restart policy だけを使う。"],
-        "labels": { "role": "Backend/DevOps", "level": "Mid-level", "type": "debugging" }
+        "guidance": [
+          "liveness と readiness を分ける。",
+          "health output と logs の確認方法を聞く。"
+        ],
+        "commonMistakes": [
+          "running を ready と同一視する。",
+          "root cause analysis の代わりに restart policy だけを使う。"
+        ],
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Mid-level",
+          "type": "debugging"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "Docker Docs: Dockerfile reference - HEALTHCHECK", "url": "https://docs.docker.com/reference/builder", "note": "Used for health check status, options, exit codes, and inspectable output." },
-      { "label": "Docker Docs: docker container run - restart policies", "url": "https://docs.docker.com/reference/cli/docker/container/run", "note": "Used for restart policy behavior." },
-      { "label": "Docker Docs: Docker Compose", "url": "https://docs.docker.com/compose/", "note": "Used for Compose stack lifecycle context." }
+      {
+        "label": "Docker Docs: Dockerfile reference - HEALTHCHECK",
+        "url": "https://docs.docker.com/reference/builder",
+        "note": "Used for health check status, options, exit codes, and inspectable output."
+      },
+      {
+        "label": "Docker Docs: docker container run - restart policies",
+        "url": "https://docs.docker.com/reference/cli/docker/container/run",
+        "note": "Used for restart policy behavior."
+      },
+      {
+        "label": "Docker Docs: Docker Compose",
+        "url": "https://docs.docker.com/compose/",
+        "note": "Used for Compose stack lifecycle context."
+      }
     ],
     "status": "active"
   },
   {
     "code": "DOCKER_SR_TRADE_BUILD_SECRETS_SUPPLY_CHAIN_008",
-    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
-    "roleFamilies": ["backend", "devops", "security"],
-    "levels": ["senior"],
+    "stages": [
+      "stage_2_tech_stack",
+      "stage_3_domain_knowledge"
+    ],
+    "roleFamilies": [
+      "backend",
+      "devops",
+      "security"
+    ],
+    "levels": [
+      "senior"
+    ],
     "type": "trade_off",
-    "competencies": ["trade_off_analysis", "system_thinking", "technical_fundamentals", "ownership"],
-    "techTags": ["docker", "github_actions", "owasp"],
+    "competencies": [
+      "trade_off_analysis",
+      "system_thinking",
+      "technical_fundamentals",
+      "ownership"
+    ],
+    "techTags": [
+      "docker",
+      "github_actions",
+      "owasp"
+    ],
     "difficulty": 4,
     "intent": "Evaluate senior judgment around Docker build secrets, image metadata leakage, dependency fetching, and CI/CD supply-chain controls.",
     "primaryQuestion": "A Docker build needs access to private packages and cloud credentials in CI. How would you pass secrets safely and prevent them from leaking into the final image or build logs?",
     "expectedSignals": [
-      { "label": "Avoids ARG and ENV for sensitive values because they can persist in image metadata, layers, history, or logs.", "relatedTrigger": null },
-      { "label": "Uses BuildKit secret mounts or SSH mounts for build-time access and grants secrets only to the specific build step that needs them.", "relatedTrigger": null },
-      { "label": "Keeps final runtime image free of package-manager tokens, credential files, and private keys.", "relatedTrigger": null },
-      { "label": "Adds CI controls such as short-lived tokens, masked logs, image scanning, provenance, cache hygiene, and review of Dockerfile changes.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Copies .npmrc, cloud credentials, SSH keys, or .env files into the image and deletes them later as the main protection.",
-      "Uses build args for secrets without acknowledging history and layer leakage.",
-      "Cannot explain how to verify that a secret is absent from the final image."
+      {
+        "label": "Avoids ARG and ENV for sensitive values because they can persist in image metadata, layers, history, or logs.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "rejects_arg_env_secrets",
+            "description": "Rejects passing package tokens or cloud credentials through ARG or ENV in the Dockerfile"
+          },
+          {
+            "key": "explains_layer_history_risk",
+            "description": "Explains that secrets may remain in image history, layers, metadata, or build logs even if removed later"
+          },
+          {
+            "key": "accounts_for_cache_leak",
+            "description": "Accounts for build cache or remote cache leaking secret-containing layers"
+          }
+        ]
+      },
+      {
+        "label": "Uses BuildKit secret mounts or SSH mounts for build-time access and grants secrets only to the specific build step that needs them.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "uses_buildkit_secret_mount",
+            "description": "Uses BuildKit secret mounts for files or tokens needed only during a specific RUN step"
+          },
+          {
+            "key": "uses_ssh_mount_when_needed",
+            "description": "Uses SSH mounts for private git or package access when SSH agent forwarding is the safer fit"
+          },
+          {
+            "key": "scopes_secret_to_step",
+            "description": "Scopes the secret to the minimal build step and avoids copying it into the image filesystem"
+          }
+        ]
+      },
+      {
+        "label": "Keeps final runtime image free of package-manager tokens, credential files, and private keys.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "removes_package_tokens",
+            "description": "Ensures npm, pip, Maven, or cloud credential files are not present in the final stage"
+          },
+          {
+            "key": "uses_clean_final_stage",
+            "description": "Uses a clean final stage that copies only runtime artifacts from the builder"
+          },
+          {
+            "key": "verifies_no_secret_files",
+            "description": "Verifies the final image filesystem and metadata do not contain secret files or token values"
+          }
+        ]
+      },
+      {
+        "label": "Adds CI controls such as short-lived tokens, masked logs, image scanning, provenance, cache hygiene, and review of Dockerfile changes.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "uses_short_lived_masked_tokens",
+            "description": "Uses short-lived credentials and masked CI logs for build-time access"
+          },
+          {
+            "key": "scans_image_for_secrets",
+            "description": "Runs image or filesystem secret scanning to detect leaked credentials before publishing"
+          },
+          {
+            "key": "controls_cache_provenance",
+            "description": "Controls cache export/import, provenance, and Dockerfile reviews to reduce supply-chain leakage risk"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Designs a BuildKit-based secret flow with least privilege, final image verification, CI log controls, and supply-chain risk reduction." },
-      { "scoreBand": "solid", "description": "Uses secret mounts correctly but misses verification, cache, or CI governance details." },
-      { "scoreBand": "needs_work", "description": "Understands secrets are sensitive but proposes brittle delete-after-copy patterns." },
-      { "scoreBand": "insufficient_evidence", "description": "No safe Docker build secret handling is demonstrated." }
+      {
+        "scoreBand": "strong",
+        "description": "Designs a BuildKit-based secret flow with least privilege, final image verification, CI log controls, and supply-chain risk reduction."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Uses secret mounts correctly but misses verification, cache, or CI governance details."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Understands secrets are sensitive but proposes brittle delete-after-copy patterns."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "No safe Docker build secret handling is demonstrated."
+      }
     ],
     "followUps": [
-      { "trigger": "red_flag", "question": "Why is copying a token into one Docker layer and deleting it in a later layer still risky?", "purpose": "Check layer and metadata leakage understanding." },
-      { "trigger": "missing_metric", "question": "What checks in CI would prove the image does not contain the secret?", "purpose": "Recover verification and governance detail." }
+      {
+        "trigger": "missing_tradeoff",
+        "question": "Why is copying a token into one Docker layer and deleting it in a later layer still risky?",
+        "purpose": "Check layer and metadata leakage understanding."
+      },
+      {
+        "trigger": "missing_metric",
+        "question": "What checks in CI would prove the image does not contain the secret?",
+        "purpose": "Recover verification and governance detail."
+      }
     ],
     "localizedContent": {
       "en": {
         "title": "Docker build secrets and leakage",
         "displayQuestion": "A Docker build needs access to private packages and cloud credentials in CI. How would you pass secrets safely and prevent them from leaking into the final image or build logs?",
         "displayIntent": "Evaluate senior Docker build security and supply-chain judgment.",
-        "guidance": ["Ask for a concrete CI build flow.", "Listen for BuildKit secret mounts, least privilege, and verification."],
-        "commonMistakes": ["Passing secrets through ARG or ENV.", "Deleting copied secrets in a later layer and assuming that is safe."],
-        "labels": { "role": "DevOps/Security", "level": "Senior", "type": "trade_off" }
+        "guidance": [
+          "Ask for a concrete CI build flow.",
+          "Listen for BuildKit secret mounts, least privilege, and verification."
+        ],
+        "commonMistakes": [
+          "Passing secrets through ARG or ENV.",
+          "Deleting copied secrets in a later layer and assuming that is safe."
+        ],
+        "labels": {
+          "role": "DevOps/Security",
+          "level": "Senior",
+          "type": "trade_off"
+        }
       },
       "vi": {
         "title": "Docker build secrets và rò rỉ credential",
         "displayQuestion": "Một Docker build cần truy cập private packages và cloud credentials trong CI. Bạn truyền secrets an toàn thế nào và ngăn chúng leak vào final image hoặc build logs ra sao?",
         "displayIntent": "Đánh giá judgment senior về Docker build security và supply chain.",
-        "guidance": ["Yêu cầu flow CI build cụ thể.", "Nghe về BuildKit secret mounts, least privilege và verification."],
-        "commonMistakes": ["Truyền secrets qua ARG hoặc ENV.", "Copy secret rồi xóa ở layer sau và nghĩ như vậy là an toàn."],
-        "labels": { "role": "DevOps/Security", "level": "Senior", "type": "trade_off" }
+        "guidance": [
+          "Yêu cầu flow CI build cụ thể.",
+          "Nghe về BuildKit secret mounts, least privilege và verification."
+        ],
+        "commonMistakes": [
+          "Truyền secrets qua ARG hoặc ENV.",
+          "Copy secret rồi xóa ở layer sau và nghĩ như vậy là an toàn."
+        ],
+        "labels": {
+          "role": "DevOps/Security",
+          "level": "Senior",
+          "type": "trade_off"
+        }
       },
       "ja": {
         "title": "Docker build secrets と漏えい対策",
         "displayQuestion": "CI の Docker build が private packages と cloud credentials にアクセスする必要があります。secrets をどう安全に渡し、final image や build logs への漏えいをどう防ぎますか。",
         "displayIntent": "senior level の Docker build security と supply-chain 判断を評価する。",
-        "guidance": ["具体的な CI build flow を聞く。", "BuildKit secret mounts、least privilege、verification に注目する。"],
-        "commonMistakes": ["secrets を ARG や ENV で渡す。", "secret を copy して後の layer で削除すれば安全と考える。"],
-        "labels": { "role": "DevOps/Security", "level": "Senior", "type": "trade_off" }
+        "guidance": [
+          "具体的な CI build flow を聞く。",
+          "BuildKit secret mounts、least privilege、verification に注目する。"
+        ],
+        "commonMistakes": [
+          "secrets を ARG や ENV で渡す。",
+          "secret を copy して後の layer で削除すれば安全と考える。"
+        ],
+        "labels": {
+          "role": "DevOps/Security",
+          "level": "Senior",
+          "type": "trade_off"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "Docker Docs: Build secrets", "url": "https://docs.docker.com/build/building/secrets/", "note": "Used for BuildKit secret and SSH mount patterns." },
-      { "label": "Docker Docs: BuildKit", "url": "https://docs.docker.com/build/buildkit/", "note": "Used for BuildKit build execution and cache behavior." },
-      { "label": "Docker Docs: Building best practices", "url": "https://docs.docker.com/build/building/best-practices/", "note": "Used for image hygiene and CI build practices." }
+      {
+        "label": "Docker Docs: Build secrets",
+        "url": "https://docs.docker.com/build/building/secrets/",
+        "note": "Used for BuildKit secret and SSH mount patterns."
+      },
+      {
+        "label": "Docker Docs: BuildKit",
+        "url": "https://docs.docker.com/build/buildkit/",
+        "note": "Used for BuildKit build execution and cache behavior."
+      },
+      {
+        "label": "Docker Docs: Building best practices",
+        "url": "https://docs.docker.com/build/building/best-practices/",
+        "note": "Used for image hygiene and CI build practices."
+      }
     ],
     "status": "active"
   },
   {
     "code": "DOCKER_SR_TECH_SECURITY_HARDENING_009",
-    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
-    "roleFamilies": ["backend", "devops", "security"],
-    "levels": ["senior"],
+    "stages": [
+      "stage_2_tech_stack",
+      "stage_3_domain_knowledge"
+    ],
+    "roleFamilies": [
+      "backend",
+      "devops",
+      "security"
+    ],
+    "levels": [
+      "senior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "trade_off_analysis"],
-    "techTags": ["docker", "owasp"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "trade_off_analysis"
+    ],
+    "techTags": [
+      "docker",
+      "owasp"
+    ],
     "difficulty": 4,
     "intent": "Assess senior understanding of Docker container hardening, least privilege, rootless mode, capabilities, and operational trade-offs.",
     "primaryQuestion": "How would you harden a Dockerized production service without breaking operability for debugging, logging, and deployments?",
     "expectedSignals": [
-      { "label": "Runs the application as a non-root user where possible and understands the difference between container user and host privileges.", "relatedTrigger": null },
-      { "label": "Reduces attack surface with minimal runtime images, fewer packages, read-only filesystems where practical, and no unnecessary tools.", "relatedTrigger": null },
-      { "label": "Considers dropping Linux capabilities, avoiding privileged containers, limiting mounts, and protecting the Docker socket.", "relatedTrigger": null },
-      { "label": "Discusses rootless mode or user namespaces as mitigation options while acknowledging networking, filesystem, or operational constraints.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Runs everything as root or privileged because it is convenient.",
-      "Mounts the host Docker socket into application containers without recognizing host-level control risk.",
-      "Removes all shell/tools without a debugging, observability, or break-glass plan."
+      {
+        "label": "Runs the application as a non-root user where possible and understands the difference between container user and host privileges.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "uses_non_root_user",
+            "description": "Runs the application process as a non-root user when the workload allows it"
+          },
+          {
+            "key": "distinguishes_container_host_privilege",
+            "description": "Distinguishes container user identity from the broader host privilege boundary"
+          },
+          {
+            "key": "handles_runtime_permissions",
+            "description": "Handles ownership and write permissions for directories the non-root process needs"
+          }
+        ]
+      },
+      {
+        "label": "Reduces attack surface with minimal runtime images, fewer packages, read-only filesystems where practical, and no unnecessary tools.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "uses_minimal_runtime_image",
+            "description": "Chooses a minimal runtime image while considering required libraries and operational support"
+          },
+          {
+            "key": "removes_unneeded_tools",
+            "description": "Removes build tools, package managers, shells, or debugging utilities unless intentionally retained"
+          },
+          {
+            "key": "considers_read_only_fs",
+            "description": "Considers a read-only filesystem and explicit writable paths for logs, temp files, or app state"
+          }
+        ]
+      },
+      {
+        "label": "Considers dropping Linux capabilities, avoiding privileged containers, limiting mounts, and protecting the Docker socket.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "drops_unneeded_capabilities",
+            "description": "Drops unnecessary Linux capabilities and avoids privileged mode unless explicitly justified"
+          },
+          {
+            "key": "limits_sensitive_mounts",
+            "description": "Limits host mounts and treats the Docker socket as highly sensitive"
+          },
+          {
+            "key": "explains_docker_sock_risk",
+            "description": "Explains that mounting the Docker socket can allow control over the host Docker daemon and other containers"
+          }
+        ]
+      },
+      {
+        "label": "Discusses rootless mode or user namespaces as mitigation options while acknowledging networking, filesystem, or operational constraints.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "mentions_rootless_or_userns",
+            "description": "Mentions rootless Docker or user namespaces as ways to reduce host-level impact"
+          },
+          {
+            "key": "acknowledges_operational_constraints",
+            "description": "Acknowledges constraints such as networking, volume permissions, debugging, or compatibility"
+          },
+          {
+            "key": "balances_operability_security",
+            "description": "Balances hardening with controlled ways to debug, collect logs, and deploy safely"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Balances least privilege, image hardening, runtime restrictions, rootless/user namespace options, observability, and operational escape hatches." },
-      { "scoreBand": "solid", "description": "Covers non-root and smaller images but misses capabilities, Docker socket risk, or operability trade-offs." },
-      { "scoreBand": "needs_work", "description": "Mentions security slogans but cannot connect them to Docker runtime controls." },
-      { "scoreBand": "insufficient_evidence", "description": "No credible container hardening approach is demonstrated." }
+      {
+        "scoreBand": "strong",
+        "description": "Balances least privilege, image hardening, runtime restrictions, rootless/user namespace options, observability, and operational escape hatches."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Covers non-root and smaller images but misses capabilities, Docker socket risk, or operability trade-offs."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Mentions security slogans but cannot connect them to Docker runtime controls."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "No credible container hardening approach is demonstrated."
+      }
     ],
     "followUps": [
-      { "trigger": "missing_tradeoff", "question": "What debugging capability would you intentionally preserve, and how would you control access to it?", "purpose": "Check operability versus hardening balance." },
-      { "trigger": "red_flag", "question": "Why is mounting /var/run/docker.sock into a container dangerous?", "purpose": "Verify host-control risk awareness." }
+      {
+        "trigger": "missing_tradeoff",
+        "question": "What debugging capability would you intentionally preserve, and how would you control access to it?",
+        "purpose": "Check operability versus hardening balance."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Why is mounting /var/run/docker.sock into a container dangerous?",
+        "purpose": "Verify host-control risk awareness."
+      }
     ],
     "localizedContent": {
       "en": {
         "title": "Docker production hardening",
         "displayQuestion": "How would you harden a Dockerized production service without breaking operability for debugging, logging, and deployments?",
         "displayIntent": "Assess senior container security and operational trade-off judgment.",
-        "guidance": ["Ask for image, runtime, and host-boundary controls.", "Expect discussion of least privilege and debugging access."],
-        "commonMistakes": ["Using privileged containers by default.", "Hardening so aggressively that incidents cannot be diagnosed."],
-        "labels": { "role": "DevOps/Security", "level": "Senior", "type": "technical_depth" }
+        "guidance": [
+          "Ask for image, runtime, and host-boundary controls.",
+          "Expect discussion of least privilege and debugging access."
+        ],
+        "commonMistakes": [
+          "Using privileged containers by default.",
+          "Hardening so aggressively that incidents cannot be diagnosed."
+        ],
+        "labels": {
+          "role": "DevOps/Security",
+          "level": "Senior",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "Hardening Docker cho production",
         "displayQuestion": "Bạn harden một production service chạy bằng Docker như thế nào mà vẫn không phá operability cho debugging, logging và deployment?",
         "displayIntent": "Đánh giá container security và judgment trade-off vận hành ở mức senior.",
-        "guidance": ["Hỏi về control ở image, runtime và host boundary.", "Kỳ vọng thảo luận least privilege và debugging access."],
-        "commonMistakes": ["Mặc định dùng privileged container.", "Harden quá mức khiến incident không thể chẩn đoán."],
-        "labels": { "role": "DevOps/Security", "level": "Senior", "type": "technical_depth" }
+        "guidance": [
+          "Hỏi về control ở image, runtime và host boundary.",
+          "Kỳ vọng thảo luận least privilege và debugging access."
+        ],
+        "commonMistakes": [
+          "Mặc định dùng privileged container.",
+          "Harden quá mức khiến incident không thể chẩn đoán."
+        ],
+        "labels": {
+          "role": "DevOps/Security",
+          "level": "Senior",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "Docker production hardening",
         "displayQuestion": "debugging、logging、deployments の operability を壊さずに、Docker 化された production service をどう harden しますか。",
         "displayIntent": "senior level の container security と operational trade-off 判断を評価する。",
-        "guidance": ["image、runtime、host boundary の control を聞く。", "least privilege と debugging access の議論を期待する。"],
-        "commonMistakes": ["default で privileged container を使う。", "incident を診断できないほど過度に harden する。"],
-        "labels": { "role": "DevOps/Security", "level": "Senior", "type": "technical_depth" }
+        "guidance": [
+          "image、runtime、host boundary の control を聞く。",
+          "least privilege と debugging access の議論を期待する。"
+        ],
+        "commonMistakes": [
+          "default で privileged container を使う。",
+          "incident を診断できないほど過度に harden する。"
+        ],
+        "labels": {
+          "role": "DevOps/Security",
+          "level": "Senior",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "Docker Docs: Rootless mode", "url": "https://docs.docker.com/engine/security/rootless/", "note": "Used for rootless daemon/container mitigation and limitations context." },
-      { "label": "Docker Docs: Building best practices", "url": "https://docs.docker.com/build/building/best-practices/", "note": "Used for smaller images, unnecessary packages, and image hygiene." },
-      { "label": "Docker Docs: Dockerfile reference", "url": "https://docs.docker.com/reference/builder", "note": "Used for USER, STOPSIGNAL, and runtime instruction context." }
+      {
+        "label": "Docker Docs: Rootless mode",
+        "url": "https://docs.docker.com/engine/security/rootless/",
+        "note": "Used for rootless daemon/container mitigation and limitations context."
+      },
+      {
+        "label": "Docker Docs: Building best practices",
+        "url": "https://docs.docker.com/build/building/best-practices/",
+        "note": "Used for smaller images, unnecessary packages, and image hygiene."
+      },
+      {
+        "label": "Docker Docs: Dockerfile reference",
+        "url": "https://docs.docker.com/reference/builder",
+        "note": "Used for USER, STOPSIGNAL, and runtime instruction context."
+      }
     ],
     "status": "active"
   },
   {
     "code": "DOCKER_SR_CV_PROD_INCIDENT_010",
-    "stages": ["stage_4_cv_deep_dive"],
-    "roleFamilies": ["backend", "devops", "security"],
-    "levels": ["senior"],
+    "stages": [
+      "stage_4_cv_deep_dive"
+    ],
+    "roleFamilies": [
+      "backend",
+      "devops",
+      "security"
+    ],
+    "levels": [
+      "senior"
+    ],
     "type": "cv_claim_verification",
-    "competencies": ["ownership", "problem_solving", "impact_measurement", "communication"],
-    "techTags": ["docker", "logging", "alerting", "rollback"],
+    "competencies": [
+      "ownership",
+      "problem_solving",
+      "impact_measurement",
+      "communication"
+    ],
+    "techTags": [
+      "docker",
+      "logging",
+      "alerting",
+      "rollback"
+    ],
     "difficulty": 4,
     "intent": "Verify senior production ownership through a Docker-related incident involving build, runtime, networking, storage, security, or rollout behavior.",
     "primaryQuestion": "Tell me about a serious Docker-related production issue you owned. What was the symptom, root cause, mitigation, permanent fix, and measured outcome?",
     "expectedSignals": [
-      { "label": "Frames user impact, timeline, affected services, and blast radius clearly.", "relatedTrigger": null },
-      { "label": "Uses Docker-specific evidence such as image digest, Dockerfile change, container logs, inspect output, health status, network configuration, volumes, restart behavior, or registry/deployment events.", "relatedTrigger": null },
-      { "label": "Separates immediate mitigation from permanent fix and prevention.", "relatedTrigger": null },
-      { "label": "Provides measured outcome such as reduced startup failures, image size, build time, rollback time, incident recurrence, or error rate.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Gives a generic outage story with no Docker-specific signal.",
-      "Cannot identify what decision they personally owned.",
-      "No measured outcome, prevention, rollback improvement, or runbook update."
+      {
+        "label": "Frames user impact, timeline, affected services, and blast radius clearly.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "states_user_impact",
+            "description": "States the user-facing or business impact of the Docker-related issue"
+          },
+          {
+            "key": "gives_timeline",
+            "description": "Gives a concrete timeline from detection through mitigation and recovery"
+          },
+          {
+            "key": "names_services_blast_radius",
+            "description": "Names affected services, environments, and blast radius rather than describing a generic outage"
+          }
+        ]
+      },
+      {
+        "label": "Uses Docker-specific evidence such as image digest, Dockerfile change, container logs, inspect output, health status, network configuration, volumes, restart behavior, or registry/deployment events.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "uses_image_or_deploy_evidence",
+            "description": "Uses image digest, tag, registry, Dockerfile, or deployment event evidence to narrow the root cause"
+          },
+          {
+            "key": "uses_container_runtime_evidence",
+            "description": "Uses container logs, inspect output, health status, network config, volume mounts, or restart counts"
+          },
+          {
+            "key": "connects_evidence_to_root_cause",
+            "description": "Connects Docker-specific evidence directly to the incident root cause"
+          }
+        ]
+      },
+      {
+        "label": "Separates immediate mitigation from permanent fix and prevention.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "states_immediate_mitigation",
+            "description": "States the immediate mitigation such as rollback, image pinning, config fix, restart policy change, or traffic diversion"
+          },
+          {
+            "key": "states_permanent_fix",
+            "description": "States the durable fix that removed the Docker-related root cause"
+          },
+          {
+            "key": "adds_prevention",
+            "description": "Adds prevention such as CI checks, health checks, image scanning, runbooks, or deployment guardrails"
+          }
+        ]
+      },
+      {
+        "label": "Provides measured outcome such as reduced startup failures, image size, build time, rollback time, incident recurrence, or error rate.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "provides_before_after_metric",
+            "description": "Provides a before/after metric tied to the fix, such as error rate, startup failures, image size, build time, or rollback time"
+          },
+          {
+            "key": "mentions_recurrence_signal",
+            "description": "Mentions whether recurrence decreased or alerts stayed clean after the fix"
+          },
+          {
+            "key": "connects_metric_to_user_impact",
+            "description": "Connects the measured outcome back to the incident impact instead of reporting an isolated number"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Shows senior incident ownership with Docker-specific evidence, decisive mitigation, durable prevention, communication, and measured impact." },
-      { "scoreBand": "solid", "description": "Real incident story but one dimension such as metrics, personal ownership, or prevention is incomplete." },
-      { "scoreBand": "needs_work", "description": "Participated in an issue but cannot demonstrate senior diagnosis or ownership." },
-      { "scoreBand": "insufficient_evidence", "description": "Claim cannot be validated from the answer." }
+      {
+        "scoreBand": "strong",
+        "description": "Shows senior incident ownership with Docker-specific evidence, decisive mitigation, durable prevention, communication, and measured impact."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Real incident story but one dimension such as metrics, personal ownership, or prevention is incomplete."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Participated in an issue but cannot demonstrate senior diagnosis or ownership."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Claim cannot be validated from the answer."
+      }
     ],
     "followUps": [
-      { "trigger": "missing_metric", "question": "What metric changed after the permanent fix, and what were the before and after values?", "purpose": "Recover impact evidence." },
-      { "trigger": "red_flag", "question": "Which decision during the incident was yours, and what evidence did you use to make it?", "purpose": "Verify individual ownership and decision quality." }
+      {
+        "trigger": "missing_metric",
+        "question": "What metric changed after the permanent fix, and what were the before and after values?",
+        "purpose": "Recover impact evidence."
+      },
+      {
+        "trigger": "missing_personal_contribution",
+        "question": "Which decision during the incident was yours, and what evidence did you use to make it?",
+        "purpose": "Verify individual ownership and decision quality."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "What was the timeline, affected service list, and blast radius?",
+        "purpose": "Recover concrete incident framing."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "What did you do immediately to reduce impact, and how did the permanent fix differ?",
+        "purpose": "Separate mitigation from durable prevention."
+      }
     ],
     "localizedContent": {
       "en": {
         "title": "Verify Docker incident ownership",
         "displayQuestion": "Tell me about a serious Docker-related production issue you owned. What was the symptom, root cause, mitigation, permanent fix, and measured outcome?",
         "displayIntent": "Verify senior Docker production ownership through an incident story.",
-        "guidance": ["Ask for timeline, evidence, and personal decisions.", "Separate mitigation, permanent fix, and prevention."],
-        "commonMistakes": ["Telling a generic outage story.", "Skipping measured outcome and Docker-specific signals."],
-        "labels": { "role": "Backend/DevOps/Security", "level": "Senior", "type": "cv_claim_verification" }
+        "guidance": [
+          "Ask for timeline, evidence, and personal decisions.",
+          "Separate mitigation, permanent fix, and prevention."
+        ],
+        "commonMistakes": [
+          "Telling a generic outage story.",
+          "Skipping measured outcome and Docker-specific signals."
+        ],
+        "labels": {
+          "role": "Backend/DevOps/Security",
+          "level": "Senior",
+          "type": "cv_claim_verification"
+        }
       },
       "vi": {
         "title": "Xác minh ownership incident Docker",
         "displayQuestion": "Hãy kể về một production issue nghiêm trọng liên quan tới Docker mà bạn owned. Symptom, root cause, mitigation, permanent fix và outcome đo được là gì?",
         "displayIntent": "Xác minh ownership production Docker ở mức senior qua câu chuyện incident.",
-        "guidance": ["Hỏi timeline, bằng chứng và quyết định cá nhân.", "Tách mitigation, permanent fix và prevention."],
-        "commonMistakes": ["Kể outage chung chung.", "Bỏ qua outcome đo được và tín hiệu cụ thể của Docker."],
-        "labels": { "role": "Backend/DevOps/Security", "level": "Senior", "type": "cv_claim_verification" }
+        "guidance": [
+          "Hỏi timeline, bằng chứng và quyết định cá nhân.",
+          "Tách mitigation, permanent fix và prevention."
+        ],
+        "commonMistakes": [
+          "Kể outage chung chung.",
+          "Bỏ qua outcome đo được và tín hiệu cụ thể của Docker."
+        ],
+        "labels": {
+          "role": "Backend/DevOps/Security",
+          "level": "Senior",
+          "type": "cv_claim_verification"
+        }
       },
       "ja": {
         "title": "Docker incident ownership の確認",
         "displayQuestion": "あなたが owned した重大な Docker 関連 production issue について話してください。symptom、root cause、mitigation、permanent fix、measured outcome は何でしたか。",
         "displayIntent": "incident story を通じて senior Docker production ownership を確認する。",
-        "guidance": ["timeline、evidence、personal decisions を聞く。", "mitigation、permanent fix、prevention を分ける。"],
-        "commonMistakes": ["一般的な outage story だけを話す。", "measured outcome と Docker-specific signals を省略する。"],
-        "labels": { "role": "Backend/DevOps/Security", "level": "Senior", "type": "cv_claim_verification" }
+        "guidance": [
+          "timeline、evidence、personal decisions を聞く。",
+          "mitigation、permanent fix、prevention を分ける。"
+        ],
+        "commonMistakes": [
+          "一般的な outage story だけを話す。",
+          "measured outcome と Docker-specific signals を省略する。"
+        ],
+        "labels": {
+          "role": "Backend/DevOps/Security",
+          "level": "Senior",
+          "type": "cv_claim_verification"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "Docker Docs: Dockerfile reference - HEALTHCHECK", "url": "https://docs.docker.com/reference/builder", "note": "Used for health status and runtime diagnosis context." },
-      { "label": "Docker Docs: docker container run", "url": "https://docs.docker.com/reference/cli/docker/container/run", "note": "Used for restart policy and runtime behavior context." },
-      { "label": "Docker Docs: Storage", "url": "https://docs.docker.com/storage/", "note": "Used for persistence and writable layer incident scenarios." },
-      { "label": "Docker Docs: Bridge network driver", "url": "https://docs.docker.com/engine/network/drivers/bridge/", "note": "Used for container networking incident scenarios." }
+      {
+        "label": "Docker Docs: Dockerfile reference - HEALTHCHECK",
+        "url": "https://docs.docker.com/reference/builder",
+        "note": "Used for health status and runtime diagnosis context."
+      },
+      {
+        "label": "Docker Docs: docker container run",
+        "url": "https://docs.docker.com/reference/cli/docker/container/run",
+        "note": "Used for restart policy and runtime behavior context."
+      },
+      {
+        "label": "Docker Docs: Storage",
+        "url": "https://docs.docker.com/storage/",
+        "note": "Used for persistence and writable layer incident scenarios."
+      },
+      {
+        "label": "Docker Docs: Bridge network driver",
+        "url": "https://docs.docker.com/engine/network/drivers/bridge/",
+        "note": "Used for container networking incident scenarios."
+      }
     ],
     "status": "active"
   }

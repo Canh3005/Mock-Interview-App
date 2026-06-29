@@ -1,25 +1,102 @@
 [
   {
     "code": "MONGODB_JR_TECH_DOCUMENT_MODEL_001",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack", "data"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "data"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking"],
-    "techTags": ["mongodb", "schema_design"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking"
+    ],
+    "techTags": [
+      "mongodb",
+      "schema_design"
+    ],
     "difficulty": 2,
     "intent": "Check whether the candidate understands MongoDB's document model, BSON documents, collections, and why schema design is query-driven.",
     "primaryQuestion": "How would you explain the difference between a MongoDB document, a collection, and a relational database row/table, and how does that affect schema design?",
     "expectedSignals": [
-      { "label": "Explains documents as JSON-like BSON records grouped in collections.", "relatedTrigger": null },
-      { "label": "Understands that related data can be embedded in a single document when access patterns fit.", "relatedTrigger": null },
-      { "label": "Mentions that MongoDB does not remove the need for schema design; the schema is shaped around reads, writes, and update frequency.", "relatedTrigger": null },
-      { "label": "Can compare flexibility with the risk of inconsistent document shapes.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Says MongoDB has no schema so no modeling is needed.",
-      "Only maps tables to collections without discussing embedded structures.",
-      "Cannot explain why access patterns matter."
+      {
+        "label": "Explains documents as JSON-like BSON records grouped in collections.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "defines_bson_document",
+            "description": "Explains a MongoDB document as a JSON-like BSON record with fields and nested values"
+          },
+          {
+            "key": "defines_collection",
+            "description": "Explains a collection as a grouping of related documents"
+          },
+          {
+            "key": "compares_to_row_table",
+            "description": "Compares documents and collections to relational rows and tables without claiming they behave identically"
+          }
+        ]
+      },
+      {
+        "label": "Understands that related data can be embedded in a single document when access patterns fit.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "mentions_embedding_related_data",
+            "description": "Mentions embedding related data in the same document for data usually read together"
+          },
+          {
+            "key": "ties_embedding_to_access_pattern",
+            "description": "Connects embedding to read and write access patterns rather than using it by default"
+          },
+          {
+            "key": "mentions_embedding_bounds",
+            "description": "Mentions bounded size, update frequency, or document growth as constraints on embedding"
+          }
+        ]
+      },
+      {
+        "label": "Mentions that MongoDB does not remove the need for schema design; the schema is shaped around reads, writes, and update frequency.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "rejects_schemaless_myth",
+            "description": "States that MongoDB still needs intentional schema design even without fixed table columns"
+          },
+          {
+            "key": "starts_from_queries",
+            "description": "Shapes the document model around common queries and read paths"
+          },
+          {
+            "key": "considers_write_frequency",
+            "description": "Considers how often fields or nested arrays change when choosing document shape"
+          }
+        ]
+      },
+      {
+        "label": "Can compare flexibility with the risk of inconsistent document shapes.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "mentions_schema_flexibility",
+            "description": "Mentions flexibility for optional fields, evolving attributes, or heterogeneous documents"
+          },
+          {
+            "key": "mentions_inconsistent_shapes",
+            "description": "Mentions risk from documents in the same collection having incompatible shapes"
+          },
+          {
+            "key": "mentions_validation_or_conventions",
+            "description": "Mentions schema validation, application conventions, or migrations to control shape drift"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -49,6 +126,11 @@
         "trigger": "missing_tradeoff",
         "question": "What can go wrong if document shapes vary too much across the same collection?",
         "purpose": "Check awareness of validation, query complexity, and operational consistency."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Which reads and writes would drive your document shape for that blog model?",
+        "purpose": "Tie schema design to concrete access patterns."
       }
     ],
     "localizedContent": {
@@ -123,25 +205,100 @@
   },
   {
     "code": "MONGODB_JR_TECH_CRUD_FILTERS_002",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "problem_solving"],
-    "techTags": ["mongodb"],
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving"
+    ],
+    "techTags": [
+      "mongodb"
+    ],
     "difficulty": 2,
     "intent": "Evaluate whether the candidate can reason about basic MongoDB CRUD filters, projections, sorting, and update operators.",
     "primaryQuestion": "How would you query active users by email domain, return only needed fields, sort by creation time, and update one user's lastLoginAt in MongoDB?",
     "expectedSignals": [
-      { "label": "Builds a filter using fields and operators instead of scanning in application code.", "relatedTrigger": null },
-      { "label": "Uses projection to avoid returning unnecessary fields.", "relatedTrigger": null },
-      { "label": "Mentions sort and limit when result ordering or size matters.", "relatedTrigger": null },
-      { "label": "Uses an update operator such as $set instead of replacing the whole document unintentionally.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Fetches all users and filters in memory for a normal database query.",
-      "Cannot distinguish replacement updates from operator-based updates.",
-      "Returns sensitive or unnecessary fields without noticing."
+      {
+        "label": "Builds a filter using fields and operators instead of scanning in application code.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "filters_active_users",
+            "description": "Builds a MongoDB filter for active users using fields such as status or active"
+          },
+          {
+            "key": "filters_email_domain",
+            "description": "Filters by email domain through an appropriate field, derived domain, or anchored pattern rather than scanning every user in application code"
+          },
+          {
+            "key": "uses_query_operators",
+            "description": "Uses MongoDB query operators or field predicates intentionally instead of fetching all documents first"
+          }
+        ]
+      },
+      {
+        "label": "Uses projection to avoid returning unnecessary fields.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "selects_needed_fields",
+            "description": "Uses projection to return only fields needed by the response"
+          },
+          {
+            "key": "excludes_sensitive_fields",
+            "description": "Avoids returning sensitive fields such as password hashes, tokens, or internal metadata"
+          },
+          {
+            "key": "connects_projection_to_payload",
+            "description": "Connects projection to smaller payloads, privacy, or lower application processing cost"
+          }
+        ]
+      },
+      {
+        "label": "Mentions sort and limit when result ordering or size matters.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "sorts_by_created_time",
+            "description": "Sorts by creation time in the required direction for deterministic result order"
+          },
+          {
+            "key": "uses_limit_for_result_size",
+            "description": "Uses limit or pagination when the result set can be large"
+          },
+          {
+            "key": "considers_index_for_sort",
+            "description": "Mentions that sorting should be supported by an index when the result set is large"
+          }
+        ]
+      },
+      {
+        "label": "Uses an update operator such as $set instead of replacing the whole document unintentionally.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "uses_set_operator",
+            "description": "Uses $set to update lastLoginAt without rewriting unrelated fields"
+          },
+          {
+            "key": "targets_single_user",
+            "description": "Targets the intended user with updateOne or an equivalent precise filter"
+          },
+          {
+            "key": "avoids_unintended_replace",
+            "description": "Explains the risk of replaceOne or full-document replacement when only one field should change"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -168,9 +325,14 @@
         "purpose": "Check projection and privacy awareness."
       },
       {
-        "trigger": "red_flag",
+        "trigger": "missing_tradeoff",
         "question": "What is the risk of calling replaceOne when you only meant to update lastLoginAt?",
         "purpose": "Verify update semantics."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "What would the filter, projection, sort, and update operator look like for this user query?",
+        "purpose": "Force a concrete MongoDB CRUD query shape."
       }
     ],
     "localizedContent": {
@@ -245,25 +407,104 @@
   },
   {
     "code": "MONGODB_JR_DEBUG_CONNECTION_003",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack", "devops"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "devops"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "debugging",
-    "competencies": ["problem_solving", "technical_fundamentals", "ownership"],
-    "techTags": ["mongodb", "nodejs", "logging"],
+    "competencies": [
+      "problem_solving",
+      "technical_fundamentals",
+      "ownership"
+    ],
+    "techTags": [
+      "mongodb",
+      "nodejs",
+      "logging"
+    ],
     "difficulty": 2,
     "intent": "Assess basic operational debugging when an application cannot connect to MongoDB.",
     "primaryQuestion": "A Node.js service suddenly cannot connect to MongoDB after deployment. What would you check before changing application code?",
     "expectedSignals": [
-      { "label": "Checks connection string, credentials, database name, and environment variables.", "relatedTrigger": null },
-      { "label": "Verifies network path, DNS, firewall, allowlist, and TLS settings.", "relatedTrigger": null },
-      { "label": "Looks at driver error messages and database/server logs.", "relatedTrigger": null },
-      { "label": "Considers deployment differences such as secrets, replica set name, or SRV record resolution.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Starts rewriting repository code without reading the actual error.",
-      "Ignores environment or network changes between local and deployed runtime.",
-      "Prints credentials into logs while debugging."
+      {
+        "label": "Checks connection string, credentials, database name, and environment variables.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "checks_connection_string",
+            "description": "Checks the MongoDB connection string, host, scheme, options, and database name"
+          },
+          {
+            "key": "checks_credentials",
+            "description": "Checks username, password, auth source, and credential rotation without exposing secrets"
+          },
+          {
+            "key": "checks_environment_variables",
+            "description": "Compares deployed environment variables or secret references with the expected deployment configuration"
+          }
+        ]
+      },
+      {
+        "label": "Verifies network path, DNS, firewall, allowlist, and TLS settings.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "checks_dns_resolution",
+            "description": "Checks DNS or SRV record resolution from the deployed environment"
+          },
+          {
+            "key": "checks_network_allowlist",
+            "description": "Checks firewall rules, IP allowlists, VPC peering, or network reachability"
+          },
+          {
+            "key": "checks_tls_settings",
+            "description": "Checks TLS, certificate, or driver connection options when the error points to handshake problems"
+          }
+        ]
+      },
+      {
+        "label": "Looks at driver error messages and database/server logs.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "reads_driver_error",
+            "description": "Uses the exact driver error message, error code, or timeout type to guide debugging"
+          },
+          {
+            "key": "checks_database_logs",
+            "description": "Checks MongoDB server, Atlas, or deployment logs for authentication, network, or topology errors"
+          },
+          {
+            "key": "correlates_with_deploy_time",
+            "description": "Correlates logs and errors with the deployment time and changed configuration"
+          }
+        ]
+      },
+      {
+        "label": "Considers deployment differences such as secrets, replica set name, or SRV record resolution.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "compares_environment_diff",
+            "description": "Compares working and failing environments to identify deployment-specific differences"
+          },
+          {
+            "key": "checks_replica_set_name",
+            "description": "Checks replica set name, direct connection, or topology options when relevant"
+          },
+          {
+            "key": "checks_secret_injection",
+            "description": "Checks whether secrets were mounted, injected, or decoded correctly in the new deployment"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -290,7 +531,7 @@
         "purpose": "Check whether debugging is evidence-driven."
       },
       {
-        "trigger": "red_flag",
+        "trigger": "vague_answer",
         "question": "How would you debug credentials without exposing secrets in logs?",
         "purpose": "Verify secure troubleshooting practice."
       }
@@ -367,25 +608,102 @@
   },
   {
     "code": "MONGODB_JR_TECH_INDEX_BASICS_004",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack", "data"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "data"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "problem_solving"],
-    "techTags": ["mongodb", "indexing"],
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving"
+    ],
+    "techTags": [
+      "mongodb",
+      "indexing"
+    ],
     "difficulty": 2,
     "intent": "Check whether the candidate understands what indexes do, why they speed reads, and what trade-offs they introduce.",
     "primaryQuestion": "What is a MongoDB index, how can it help a query, and what costs should you expect when adding indexes?",
     "expectedSignals": [
-      { "label": "Explains that indexes let MongoDB find matching documents without scanning the whole collection.", "relatedTrigger": null },
-      { "label": "Mentions index keys should match common filters, sorts, or uniqueness requirements.", "relatedTrigger": null },
-      { "label": "Understands indexes consume storage and add write maintenance overhead.", "relatedTrigger": null },
-      { "label": "Can distinguish a useful index from adding indexes to every field.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Says indexes always make everything faster.",
-      "Cannot explain collection scan versus index scan at a basic level.",
-      "Adds indexes without considering writes or storage."
+      {
+        "label": "Explains that indexes let MongoDB find matching documents without scanning the whole collection.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "explains_index_lookup",
+            "description": "Explains that an index lets MongoDB locate matching documents through indexed keys"
+          },
+          {
+            "key": "contrasts_with_collection_scan",
+            "description": "Contrasts indexed access with scanning the whole collection"
+          },
+          {
+            "key": "connects_to_selective_query",
+            "description": "Connects index value to selective filters or ordered access patterns"
+          }
+        ]
+      },
+      {
+        "label": "Mentions index keys should match common filters, sorts, or uniqueness requirements.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "matches_filter_fields",
+            "description": "Chooses index keys based on common query filter fields"
+          },
+          {
+            "key": "matches_sort_fields",
+            "description": "Considers sort fields and direction when index ordering matters"
+          },
+          {
+            "key": "mentions_unique_index",
+            "description": "Mentions unique indexes when the domain requires uniqueness such as users.email"
+          }
+        ]
+      },
+      {
+        "label": "Understands indexes consume storage and add write maintenance overhead.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "mentions_storage_cost",
+            "description": "Mentions additional storage consumed by indexes"
+          },
+          {
+            "key": "mentions_write_overhead",
+            "description": "Mentions insert, update, or delete overhead from maintaining indexes"
+          },
+          {
+            "key": "mentions_index_maintenance",
+            "description": "Mentions operational maintenance, build time, or memory/cache impact from indexes"
+          }
+        ]
+      },
+      {
+        "label": "Can distinguish a useful index from adding indexes to every field.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "rejects_index_every_field",
+            "description": "Rejects adding indexes to every field by default"
+          },
+          {
+            "key": "uses_workload_evidence",
+            "description": "Uses query workload, explain output, or slow query data to justify an index"
+          },
+          {
+            "key": "balances_read_write_cost",
+            "description": "Balances read improvement against write overhead and storage cost"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -415,6 +733,11 @@
         "trigger": "missing_context",
         "question": "What query pattern would justify an index on users.email?",
         "purpose": "Connect index choice to a real access pattern."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "How would you explain the difference between an index scan and a collection scan?",
+        "purpose": "Check basic index mechanics in concrete terms."
       }
     ],
     "localizedContent": {
@@ -484,25 +807,103 @@
   },
   {
     "code": "MONGODB_JR_SITU_SCHEMA_CHOICE_005",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack", "data"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "data"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "situational",
-    "competencies": ["technical_fundamentals", "trade_off_analysis", "communication"],
-    "techTags": ["mongodb", "schema_design"],
+    "competencies": [
+      "technical_fundamentals",
+      "trade_off_analysis",
+      "communication"
+    ],
+    "techTags": [
+      "mongodb",
+      "schema_design"
+    ],
     "difficulty": 2,
     "intent": "Evaluate whether the candidate can choose between embedding and referencing for a simple product model.",
     "primaryQuestion": "You are modeling orders and order items in MongoDB. Would you embed the items inside the order document or reference them from another collection?",
     "expectedSignals": [
-      { "label": "Starts from how orders and items are read and updated.", "relatedTrigger": null },
-      { "label": "Chooses embedding when items are usually retrieved with the order and bounded in size.", "relatedTrigger": null },
-      { "label": "Considers references if items are large, independently updated, or shared across many documents.", "relatedTrigger": null },
-      { "label": "Mentions document growth and maximum document size as constraints.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Always embeds everything because MongoDB is document-based.",
-      "Always normalizes everything without considering read locality.",
-      "Ignores unbounded arrays and document growth."
+      {
+        "label": "Starts from how orders and items are read and updated.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "identifies_read_pattern",
+            "description": "Identifies whether order items are usually read together with the order"
+          },
+          {
+            "key": "identifies_update_pattern",
+            "description": "Identifies whether line items are updated independently after order creation"
+          },
+          {
+            "key": "considers_query_boundaries",
+            "description": "Considers whether queries need order-level data, item-level searches, or both"
+          }
+        ]
+      },
+      {
+        "label": "Chooses embedding when items are usually retrieved with the order and bounded in size.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "embeds_for_order_read",
+            "description": "Chooses embedding when the order and its items are commonly retrieved as one aggregate"
+          },
+          {
+            "key": "requires_bounded_items",
+            "description": "States that embedded items should be bounded in count or document size"
+          },
+          {
+            "key": "mentions_atomic_order_update",
+            "description": "Mentions that embedding can make order-level updates atomic within one document"
+          }
+        ]
+      },
+      {
+        "label": "Considers references if items are large, independently updated, or shared across many documents.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "references_large_or_unbounded_items",
+            "description": "Considers references when the item list can become large or unbounded"
+          },
+          {
+            "key": "references_independently_updated_items",
+            "description": "Considers references when items need independent updates or lifecycle"
+          },
+          {
+            "key": "references_shared_entities",
+            "description": "Considers references for entities shared across many documents"
+          }
+        ]
+      },
+      {
+        "label": "Mentions document growth and maximum document size as constraints.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_document_growth",
+            "description": "Mentions document growth as line items are added or modified"
+          },
+          {
+            "key": "mentions_document_size_limit",
+            "description": "Mentions MongoDB's maximum document size constraint at a practical level"
+          },
+          {
+            "key": "mentions_large_array_performance",
+            "description": "Mentions performance or update concerns with very large embedded arrays"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -606,25 +1007,101 @@
   },
   {
     "code": "MONGODB_JR_TECH_AGGREGATION_BASICS_006",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack", "data"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "data"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "problem_solving"],
-    "techTags": ["mongodb"],
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving"
+    ],
+    "techTags": [
+      "mongodb"
+    ],
     "difficulty": 2,
     "intent": "Check whether the candidate understands the aggregation pipeline as ordered data transformation stages.",
     "primaryQuestion": "What is the MongoDB aggregation pipeline, and how would you use $match, $group, and $sort to calculate daily order revenue?",
     "expectedSignals": [
-      { "label": "Explains aggregation as a sequence of stages where documents flow through transformations.", "relatedTrigger": null },
-      { "label": "Uses $match early to filter relevant orders.", "relatedTrigger": null },
-      { "label": "Groups by a date bucket and sums order amounts.", "relatedTrigger": null },
-      { "label": "Sorts results and considers date/timezone boundaries at a basic level.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Confuses aggregation with only counting documents.",
-      "Places expensive grouping before obvious filtering without reasoning.",
-      "Cannot describe what $group outputs."
+      {
+        "label": "Explains aggregation as a sequence of stages where documents flow through transformations.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "explains_stage_sequence",
+            "description": "Explains that an aggregation pipeline processes documents through ordered stages"
+          },
+          {
+            "key": "mentions_document_shape_changes",
+            "description": "Mentions that each stage can filter, reshape, group, or sort the documents flowing through it"
+          },
+          {
+            "key": "connects_pipeline_to_reporting",
+            "description": "Connects aggregation to server-side reporting or transformation rather than application-side loops"
+          }
+        ]
+      },
+      {
+        "label": "Uses $match early to filter relevant orders.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "filters_relevant_orders",
+            "description": "Uses $match to filter only the orders relevant to the report"
+          },
+          {
+            "key": "places_match_before_group",
+            "description": "Places $match before $group when possible to reduce documents entering expensive stages"
+          },
+          {
+            "key": "considers_match_index_use",
+            "description": "Mentions that early $match can use indexes when it appears before transformations that prevent index use"
+          }
+        ]
+      },
+      {
+        "label": "Groups by a date bucket and sums order amounts.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "groups_by_day_bucket",
+            "description": "Groups orders by a daily date bucket or equivalent day key"
+          },
+          {
+            "key": "sums_order_amounts",
+            "description": "Uses $sum or equivalent aggregation to calculate total order revenue"
+          },
+          {
+            "key": "understands_group_output",
+            "description": "Explains that $group changes the result shape to one document per group"
+          }
+        ]
+      },
+      {
+        "label": "Sorts results and considers date/timezone boundaries at a basic level.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "sorts_daily_results",
+            "description": "Sorts the daily revenue output by date or another intentional ordering"
+          },
+          {
+            "key": "mentions_timezone_boundary",
+            "description": "Mentions timezone or business-day boundaries when grouping revenue by day"
+          },
+          {
+            "key": "handles_date_range_boundary",
+            "description": "Considers inclusive/exclusive date range boundaries for the report"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -646,7 +1123,7 @@
     ],
     "followUps": [
       {
-        "trigger": "missing_context",
+        "trigger": "missing_tradeoff",
         "question": "Why would you usually put $match before $group?",
         "purpose": "Check stage ordering and performance intuition."
       },
@@ -654,6 +1131,11 @@
         "trigger": "missing_context",
         "question": "How would timezone affect a daily revenue report?",
         "purpose": "Surface practical reporting correctness."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "What documents or fields would the pipeline output after $group for daily revenue?",
+        "purpose": "Check whether the candidate understands aggregation result shape."
       }
     ],
     "localizedContent": {
@@ -728,25 +1210,103 @@
   },
   {
     "code": "MONGODB_MID_TECH_COMPOUND_INDEX_007",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack", "data"],
-    "levels": ["mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "data"
+    ],
+    "levels": [
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "trade_off_analysis"],
-    "techTags": ["mongodb", "indexing"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "trade_off_analysis"
+    ],
+    "techTags": [
+      "mongodb",
+      "indexing"
+    ],
     "difficulty": 3,
     "intent": "Assess mid-level understanding of compound index ordering, query shape, sort support, and covered queries.",
     "primaryQuestion": "For a collection of events queried by tenantId, status, createdAt range, and sorted by createdAt desc, how would you design a compound index and verify it is being used?",
     "expectedSignals": [
-      { "label": "Chooses an index order based on equality predicates, range predicate, and sort requirement.", "relatedTrigger": null },
-      { "label": "Explains why tenantId is usually a leading key in multi-tenant queries.", "relatedTrigger": null },
-      { "label": "Uses explain plans to inspect IXSCAN, keys examined, documents examined, and sort behavior.", "relatedTrigger": null },
-      { "label": "Mentions covered queries or projection when relevant.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Creates separate single-field indexes and assumes MongoDB will always combine them optimally.",
-      "Ignores sort direction and range placement.",
-      "Does not know how to verify query plan behavior."
+      {
+        "label": "Chooses an index order based on equality predicates, range predicate, and sort requirement.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "places_equality_fields_first",
+            "description": "Considers leading equality fields such as tenantId and possibly status before range fields"
+          },
+          {
+            "key": "handles_created_at_range_sort",
+            "description": "Accounts for createdAt range filtering and createdAt descending sort in the compound index"
+          },
+          {
+            "key": "explains_order_tradeoff",
+            "description": "Explains how field order affects filtering, sort support, and index scan efficiency"
+          }
+        ]
+      },
+      {
+        "label": "Explains why tenantId is usually a leading key in multi-tenant queries.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "uses_tenant_scoping",
+            "description": "Uses tenantId early when most queries are tenant-scoped"
+          },
+          {
+            "key": "mentions_tenant_selectivity",
+            "description": "Explains tenantId selectivity or isolation as a reason to lead the index"
+          },
+          {
+            "key": "avoids_cross_tenant_scan",
+            "description": "Explains that omitting tenantId can scan across many tenants or reduce isolation of workload"
+          }
+        ]
+      },
+      {
+        "label": "Uses explain plans to inspect IXSCAN, keys examined, documents examined, and sort behavior.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "checks_ixscan",
+            "description": "Uses explain to confirm an IXSCAN or intended index access path"
+          },
+          {
+            "key": "compares_keys_docs_examined",
+            "description": "Compares keys examined and documents examined to expected result size"
+          },
+          {
+            "key": "checks_blocking_sort",
+            "description": "Checks whether the plan avoids an expensive blocking sort or in-memory sort"
+          }
+        ]
+      },
+      {
+        "label": "Mentions covered queries or projection when relevant.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "mentions_covered_query",
+            "description": "Mentions covered queries when all required fields can be satisfied from the index"
+          },
+          {
+            "key": "uses_projection_for_coverage",
+            "description": "Uses projection to limit returned fields when trying to achieve coverage"
+          },
+          {
+            "key": "balances_coverage_index_size",
+            "description": "Balances covered-query benefit against larger index size or write overhead"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -776,6 +1336,11 @@
         "trigger": "missing_metric",
         "question": "Which explain output fields would convince you the index improved the query?",
         "purpose": "Verify plan inspection depth."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "What would make this query covered by the compound index?",
+        "purpose": "Check projection and covered-query understanding."
       }
     ],
     "localizedContent": {
@@ -850,25 +1415,105 @@
   },
   {
     "code": "MONGODB_MID_DEBUG_SLOW_QUERY_008",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack", "data", "devops"],
-    "levels": ["mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "data",
+      "devops"
+    ],
+    "levels": [
+      "mid"
+    ],
     "type": "debugging",
-    "competencies": ["problem_solving", "technical_fundamentals", "ownership"],
-    "techTags": ["mongodb", "indexing", "logging"],
+    "competencies": [
+      "problem_solving",
+      "technical_fundamentals",
+      "ownership"
+    ],
+    "techTags": [
+      "mongodb",
+      "indexing",
+      "logging"
+    ],
     "difficulty": 3,
     "intent": "Evaluate systematic diagnosis of a slow MongoDB query in production.",
     "primaryQuestion": "A MongoDB endpoint changed from 80 ms to 3 seconds after data growth. How would you diagnose whether the issue is index design, query shape, or data distribution?",
     "expectedSignals": [
-      { "label": "Captures the exact query, parameters, projection, sort, and collection size.", "relatedTrigger": null },
-      { "label": "Uses explain execution stats or profiler/slow query logs to compare keys examined, docs examined, and execution time.", "relatedTrigger": null },
-      { "label": "Checks whether the query performs COLLSCAN, blocking sort, or reads too many documents.", "relatedTrigger": null },
-      { "label": "Considers data skew, tenant distribution, and changes in cardinality after growth.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Adds an index blindly without measuring the current plan.",
-      "Benchmarks with a tiny local dataset only.",
-      "Ignores parameter values and data skew."
+      {
+        "label": "Captures the exact query, parameters, projection, sort, and collection size.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "captures_exact_query",
+            "description": "Captures the exact MongoDB query filter and parameter values used by the slow endpoint"
+          },
+          {
+            "key": "captures_projection_sort",
+            "description": "Captures projection, sort, limit, and pagination behavior for the query"
+          },
+          {
+            "key": "captures_collection_size",
+            "description": "Captures collection size, relevant subset size, and data growth since the fast baseline"
+          }
+        ]
+      },
+      {
+        "label": "Uses explain execution stats or profiler/slow query logs to compare keys examined, docs examined, and execution time.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "uses_explain_execution_stats",
+            "description": "Uses explain execution stats to inspect actual query work"
+          },
+          {
+            "key": "uses_profiler_or_slow_logs",
+            "description": "Uses profiler output or slow query logs when diagnosing production behavior"
+          },
+          {
+            "key": "compares_keys_docs_time",
+            "description": "Compares keys examined, docs examined, returned docs, and execution time"
+          }
+        ]
+      },
+      {
+        "label": "Checks whether the query performs COLLSCAN, blocking sort, or reads too many documents.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "checks_collscan",
+            "description": "Checks whether the plan performs a COLLSCAN instead of using an index"
+          },
+          {
+            "key": "checks_blocking_sort",
+            "description": "Checks whether sorting is unsupported by the index and requires a blocking sort"
+          },
+          {
+            "key": "checks_docs_examined_ratio",
+            "description": "Checks whether documents examined is much larger than documents returned"
+          }
+        ]
+      },
+      {
+        "label": "Considers data skew, tenant distribution, and changes in cardinality after growth.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "considers_tenant_skew",
+            "description": "Considers that one tenant or segment may have much more data than others"
+          },
+          {
+            "key": "considers_cardinality_change",
+            "description": "Considers changes in field cardinality or selectivity after data growth"
+          },
+          {
+            "key": "tests_representative_parameters",
+            "description": "Tests with representative parameter values instead of only average or local cases"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -895,7 +1540,7 @@
         "purpose": "Check validation discipline."
       },
       {
-        "trigger": "red_flag",
+        "trigger": "missing_context",
         "question": "Why can the same query shape be fast for one tenant and slow for another?",
         "purpose": "Assess data skew understanding."
       }
@@ -972,25 +1617,103 @@
   },
   {
     "code": "MONGODB_MID_TRADE_EMBED_REFERENCE_009",
-    "stages": ["stage_3_domain_knowledge"],
-    "roleFamilies": ["backend", "fullstack", "data"],
-    "levels": ["mid"],
+    "stages": [
+      "stage_3_domain_knowledge"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "data"
+    ],
+    "levels": [
+      "mid"
+    ],
     "type": "trade_off",
-    "competencies": ["trade_off_analysis", "system_thinking", "technical_fundamentals"],
-    "techTags": ["mongodb", "schema_design"],
+    "competencies": [
+      "trade_off_analysis",
+      "system_thinking",
+      "technical_fundamentals"
+    ],
+    "techTags": [
+      "mongodb",
+      "schema_design"
+    ],
     "difficulty": 3,
     "intent": "Assess nuanced schema modeling for one-to-many and many-to-many relationships beyond basic embedding advice.",
     "primaryQuestion": "For a product catalog with products, categories, variants, inventory, and reviews, what would you embed, what would you reference, and why?",
     "expectedSignals": [
-      { "label": "Separates read-heavy product display data from frequently changing inventory or reviews.", "relatedTrigger": null },
-      { "label": "Considers bounded versus unbounded arrays.", "relatedTrigger": null },
-      { "label": "Mentions denormalization for read performance and the need to keep duplicated data consistent.", "relatedTrigger": null },
-      { "label": "Explains how category and search/filter access patterns affect the model.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Embeds all reviews indefinitely inside the product document.",
-      "Normalizes everything and ignores product page read locality.",
-      "Does not discuss update frequency or consistency of duplicated fields."
+      {
+        "label": "Separates read-heavy product display data from frequently changing inventory or reviews.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "embeds_product_display_snapshot",
+            "description": "Keeps read-heavy product display fields near the product document when they are commonly rendered together"
+          },
+          {
+            "key": "separates_inventory_updates",
+            "description": "Treats inventory as frequently changing data that may need separate documents or careful update boundaries"
+          },
+          {
+            "key": "separates_review_growth",
+            "description": "Treats reviews as potentially growing and independently paginated rather than blindly embedding all reviews"
+          }
+        ]
+      },
+      {
+        "label": "Considers bounded versus unbounded arrays.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "identifies_bounded_arrays",
+            "description": "Identifies arrays that are naturally small or bounded, such as a limited variant list"
+          },
+          {
+            "key": "identifies_unbounded_arrays",
+            "description": "Identifies arrays that can grow without bound, such as reviews or events"
+          },
+          {
+            "key": "connects_unbounded_growth_to_model",
+            "description": "Uses references or separate collections when unbounded growth would harm document size or update performance"
+          }
+        ]
+      },
+      {
+        "label": "Mentions denormalization for read performance and the need to keep duplicated data consistent.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "accepts_targeted_denormalization",
+            "description": "Accepts duplicating selected product, category, or summary fields to speed common reads"
+          },
+          {
+            "key": "defines_consistency_strategy",
+            "description": "Explains how duplicated fields are updated, refreshed, or tolerated as eventually consistent"
+          },
+          {
+            "key": "balances_read_speed_update_cost",
+            "description": "Balances faster product reads against update fan-out and stale data risk"
+          }
+        ]
+      },
+      {
+        "label": "Explains how category and search/filter access patterns affect the model.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "models_category_navigation",
+            "description": "Considers category browsing or many-to-many category relationships when choosing references or duplicated category data"
+          },
+          {
+            "key": "supports_filter_queries",
+            "description": "Considers filters by variant, price, availability, category, or attributes in the document/index design"
+          },
+          {
+            "key": "connects_model_to_indexes",
+            "description": "Connects catalog access patterns to indexes or search-oriented projections"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1094,25 +1817,102 @@
   },
   {
     "code": "MONGODB_MID_TECH_AGG_LOOKUP_GROUP_010",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack", "data"],
-    "levels": ["mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "data"
+    ],
+    "levels": [
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "problem_solving", "system_thinking"],
-    "techTags": ["mongodb"],
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving",
+      "system_thinking"
+    ],
+    "techTags": [
+      "mongodb"
+    ],
     "difficulty": 3,
     "intent": "Evaluate aggregation pipeline depth including joins, grouping, unwinding arrays, and performance considerations.",
     "primaryQuestion": "How would you build an aggregation that joins orders to customers, unwinds line items, groups revenue by customer segment, and keeps the pipeline performant?",
     "expectedSignals": [
-      { "label": "Uses $lookup for collection joins and understands the join field requirements.", "relatedTrigger": null },
-      { "label": "Uses $unwind when aggregating array elements such as line items.", "relatedTrigger": null },
-      { "label": "Groups by customer segment and sums revenue correctly.", "relatedTrigger": null },
-      { "label": "Pushes filtering and projection early and considers indexes on join/filter fields.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Performs N+1 queries from application code for a report that fits aggregation.",
-      "Uses $lookup without considering cardinality or indexes.",
-      "Cannot explain how $unwind changes document cardinality."
+      {
+        "label": "Uses $lookup for collection joins and understands the join field requirements.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "uses_lookup_for_customer_join",
+            "description": "Uses $lookup to join orders to customers or customer segment data"
+          },
+          {
+            "key": "matches_join_fields",
+            "description": "Identifies localField and foreignField or pipeline join conditions correctly"
+          },
+          {
+            "key": "considers_lookup_cardinality",
+            "description": "Considers join cardinality and index support on the foreign collection"
+          }
+        ]
+      },
+      {
+        "label": "Uses $unwind when aggregating array elements such as line items.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "unwinds_line_items",
+            "description": "Uses $unwind on lineItems or equivalent array before summing item-level revenue"
+          },
+          {
+            "key": "explains_document_multiplication",
+            "description": "Explains that $unwind can multiply documents and increase downstream work"
+          },
+          {
+            "key": "handles_empty_or_missing_arrays",
+            "description": "Considers preserveNullAndEmptyArrays or filtering behavior when arrays are empty or missing"
+          }
+        ]
+      },
+      {
+        "label": "Groups by customer segment and sums revenue correctly.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "groups_by_segment",
+            "description": "Groups by customer segment or an equivalent joined customer attribute"
+          },
+          {
+            "key": "sums_line_item_revenue",
+            "description": "Sums line item price times quantity or the correct order amount basis"
+          },
+          {
+            "key": "avoids_double_counting",
+            "description": "Avoids double-counting revenue after $lookup or $unwind changes cardinality"
+          }
+        ]
+      },
+      {
+        "label": "Pushes filtering and projection early and considers indexes on join/filter fields.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "pushes_match_early",
+            "description": "Places $match early to reduce orders entering lookup, unwind, and group stages"
+          },
+          {
+            "key": "pushes_project_early",
+            "description": "Uses $project to keep only fields needed by later stages when useful"
+          },
+          {
+            "key": "checks_filter_join_indexes",
+            "description": "Considers indexes on filter fields and join fields used by the aggregation"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1142,6 +1942,11 @@
         "trigger": "missing_metric",
         "question": "How would you inspect whether $lookup is the expensive stage?",
         "purpose": "Assess explain and pipeline optimization knowledge."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "After joining and unwinding, what exactly would you group by and sum?",
+        "purpose": "Force concrete aggregation result-shape reasoning."
       }
     ],
     "localizedContent": {
@@ -1216,25 +2021,104 @@
   },
   {
     "code": "MONGODB_MID_TECH_TRANSACTIONS_011",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack", "data"],
-    "levels": ["mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "data"
+    ],
+    "levels": [
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "trade_off_analysis"],
-    "techTags": ["mongodb", "transaction", "consistency"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "trade_off_analysis"
+    ],
+    "techTags": [
+      "mongodb",
+      "transaction",
+      "consistency"
+    ],
     "difficulty": 3,
     "intent": "Assess understanding of single-document atomicity, multi-document transactions, and when transactions are appropriate.",
     "primaryQuestion": "MongoDB writes are atomic at what level, and when would you use a multi-document transaction instead of modeling data to update one document?",
     "expectedSignals": [
-      { "label": "Knows single-document writes are atomic.", "relatedTrigger": null },
-      { "label": "Uses multi-document transactions for invariants across multiple documents or collections.", "relatedTrigger": null },
-      { "label": "Considers embedding or denormalization to keep common atomic updates within one document when appropriate.", "relatedTrigger": null },
-      { "label": "Mentions retry/error handling and performance/latency overhead for transactions.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Assumes every MongoDB write across collections is automatically atomic.",
-      "Uses transactions for all writes without considering schema design.",
-      "Ignores transaction retries and failure handling."
+      {
+        "label": "Knows single-document writes are atomic.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "states_single_document_atomicity",
+            "description": "States that MongoDB write operations are atomic at the single-document level"
+          },
+          {
+            "key": "explains_embedded_update_atomicity",
+            "description": "Explains that related embedded fields can be updated atomically within one document"
+          },
+          {
+            "key": "avoids_cross_collection_atomicity_assumption",
+            "description": "Avoids claiming that unrelated writes across documents or collections are automatically atomic"
+          }
+        ]
+      },
+      {
+        "label": "Uses multi-document transactions for invariants across multiple documents or collections.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "names_cross_document_invariant",
+            "description": "Names an invariant that spans multiple documents or collections"
+          },
+          {
+            "key": "uses_transaction_for_required_atomicity",
+            "description": "Uses a multi-document transaction when that invariant must commit or roll back together"
+          },
+          {
+            "key": "keeps_transaction_scope_small",
+            "description": "Keeps transaction scope focused on the required consistency boundary"
+          }
+        ]
+      },
+      {
+        "label": "Considers embedding or denormalization to keep common atomic updates within one document when appropriate.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "considers_model_redesign",
+            "description": "Considers changing the document model before adding transactions to every workflow"
+          },
+          {
+            "key": "keeps_common_updates_single_document",
+            "description": "Embeds or denormalizes data when common atomic updates naturally belong in one aggregate"
+          },
+          {
+            "key": "balances_document_growth",
+            "description": "Balances single-document atomicity against document growth, duplication, and update complexity"
+          }
+        ]
+      },
+      {
+        "label": "Mentions retry/error handling and performance/latency overhead for transactions.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "handles_transient_errors",
+            "description": "Mentions retrying transient transaction errors safely"
+          },
+          {
+            "key": "mentions_latency_overhead",
+            "description": "Mentions additional latency, coordination, or resource overhead from transactions"
+          },
+          {
+            "key": "mentions_idempotent_retry",
+            "description": "Mentions idempotent application behavior when retrying transaction work"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1264,6 +2148,11 @@
         "trigger": "missing_context",
         "question": "What retry behavior should application code have around transient transaction errors?",
         "purpose": "Assess operational transaction handling."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "What exactly is atomic when you update one MongoDB document?",
+        "purpose": "Force clarity on the atomicity boundary."
       }
     ],
     "localizedContent": {
@@ -1338,25 +2227,104 @@
   },
   {
     "code": "MONGODB_MID_DEBUG_WRITE_CONCERN_012",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack", "data", "devops"],
-    "levels": ["mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "data",
+      "devops"
+    ],
+    "levels": [
+      "mid"
+    ],
     "type": "debugging",
-    "competencies": ["problem_solving", "technical_fundamentals", "system_thinking"],
-    "techTags": ["mongodb", "consistency"],
+    "competencies": [
+      "problem_solving",
+      "technical_fundamentals",
+      "system_thinking"
+    ],
+    "techTags": [
+      "mongodb",
+      "consistency"
+    ],
     "difficulty": 3,
     "intent": "Evaluate debugging of perceived missing writes or stale reads using read/write concern and replication lag concepts.",
     "primaryQuestion": "Users report that a saved change sometimes disappears for a few seconds after refresh. How would you investigate read preference, read concern, write concern, and replication lag?",
     "expectedSignals": [
-      { "label": "Checks whether writes are acknowledged with an appropriate write concern.", "relatedTrigger": null },
-      { "label": "Verifies if reads may be served from secondaries through read preference.", "relatedTrigger": null },
-      { "label": "Considers replication lag and session/causal consistency for read-your-writes behavior.", "relatedTrigger": null },
-      { "label": "Uses logs/metrics to compare primary writes and secondary read timing.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Assumes MongoDB lost data without checking read path and acknowledgment.",
-      "Ignores whether the app reads from secondaries.",
-      "Cannot distinguish write concern from read concern or read preference."
+      {
+        "label": "Checks whether writes are acknowledged with an appropriate write concern.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "checks_write_concern",
+            "description": "Checks the configured write concern for the save operation"
+          },
+          {
+            "key": "distinguishes_acknowledged_durable",
+            "description": "Distinguishes acknowledged writes from majority-durable writes"
+          },
+          {
+            "key": "checks_write_result_errors",
+            "description": "Checks write result, exceptions, timeouts, or write concern errors before assuming data loss"
+          }
+        ]
+      },
+      {
+        "label": "Verifies if reads may be served from secondaries through read preference.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "checks_read_preference",
+            "description": "Checks whether the application uses secondary, secondaryPreferred, nearest, or other non-primary read preference"
+          },
+          {
+            "key": "connects_secondary_reads_to_stale_data",
+            "description": "Explains that secondary reads can lag behind primary writes"
+          },
+          {
+            "key": "checks_read_routing_path",
+            "description": "Checks routing through drivers, services, or read endpoints that may differ after refresh"
+          }
+        ]
+      },
+      {
+        "label": "Considers replication lag and session/causal consistency for read-your-writes behavior.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "mentions_replication_lag",
+            "description": "Mentions replication lag as a cause of temporarily stale reads"
+          },
+          {
+            "key": "mentions_causal_consistency",
+            "description": "Mentions sessions or causal consistency for read-your-writes expectations"
+          },
+          {
+            "key": "balances_primary_reads_latency",
+            "description": "Balances reading from primary for freshness against latency or load trade-offs"
+          }
+        ]
+      },
+      {
+        "label": "Uses logs/metrics to compare primary writes and secondary read timing.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "correlates_write_read_timestamps",
+            "description": "Correlates write acknowledgment time with the later read time and target node"
+          },
+          {
+            "key": "checks_replication_lag_metrics",
+            "description": "Checks replication lag metrics or replica status during the incident window"
+          },
+          {
+            "key": "checks_driver_or_app_logs",
+            "description": "Uses driver, application, or database logs to see which node handled reads and writes"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1386,6 +2354,16 @@
         "trigger": "missing_metric",
         "question": "What metric or log would show replication lag during the incident?",
         "purpose": "Verify evidence collection."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "How would you tell whether the write was not acknowledged or the later read was stale?",
+        "purpose": "Separate lost-write suspicion from stale-read diagnosis."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "When would you force reads to primary, and what cost might that add?",
+        "purpose": "Probe read-your-writes consistency trade-offs."
       }
     ],
     "localizedContent": {
@@ -1465,25 +2443,103 @@
   },
   {
     "code": "MONGODB_MID_TRADE_TTL_ARCHIVE_013",
-    "stages": ["stage_3_domain_knowledge"],
-    "roleFamilies": ["backend", "data", "devops"],
-    "levels": ["mid"],
+    "stages": [
+      "stage_3_domain_knowledge"
+    ],
+    "roleFamilies": [
+      "backend",
+      "data",
+      "devops"
+    ],
+    "levels": [
+      "mid"
+    ],
     "type": "trade_off",
-    "competencies": ["trade_off_analysis", "system_thinking", "ownership"],
-    "techTags": ["mongodb", "indexing"],
+    "competencies": [
+      "trade_off_analysis",
+      "system_thinking",
+      "ownership"
+    ],
+    "techTags": [
+      "mongodb",
+      "indexing"
+    ],
     "difficulty": 3,
     "intent": "Assess ability to design retention and archiving behavior using TTL indexes and operational constraints.",
     "primaryQuestion": "You need to keep session documents for 30 days and audit events for 7 years. Would you use TTL indexes, an archive job, or another design?",
     "expectedSignals": [
-      { "label": "Uses TTL indexes for simple automatic expiration of time-based data such as sessions.", "relatedTrigger": null },
-      { "label": "Recognizes audit data often has legal, reporting, and restore requirements that may need archiving instead of simple deletion.", "relatedTrigger": null },
-      { "label": "Mentions TTL deletion is asynchronous and should not be treated as exact scheduling.", "relatedTrigger": null },
-      { "label": "Considers indexes, storage growth, backup/restore, and query patterns for retained data.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Uses TTL for audit logs without discussing compliance or archive needs.",
-      "Assumes TTL deletes exactly at the expiration second.",
-      "Ignores backup and restore implications."
+      {
+        "label": "Uses TTL indexes for simple automatic expiration of time-based data such as sessions.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "uses_ttl_for_sessions",
+            "description": "Uses a TTL index for session documents with a clear expiration timestamp"
+          },
+          {
+            "key": "matches_simple_expiration",
+            "description": "Explains that TTL fits simple time-based deletion with no complex retention workflow"
+          },
+          {
+            "key": "avoids_ttl_for_all_data",
+            "description": "Avoids using TTL as a universal retention solution for data with compliance or archive needs"
+          }
+        ]
+      },
+      {
+        "label": "Recognizes audit data often has legal, reporting, and restore requirements that may need archiving instead of simple deletion.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "mentions_audit_compliance",
+            "description": "Mentions legal, compliance, or audit retention requirements for seven-year data"
+          },
+          {
+            "key": "uses_archive_or_cold_storage",
+            "description": "Considers archive collections, cold storage, or external archival systems instead of simple deletion"
+          },
+          {
+            "key": "supports_restore_or_reporting",
+            "description": "Considers restore, reporting, and access requirements for historical audit events"
+          }
+        ]
+      },
+      {
+        "label": "Mentions TTL deletion is asynchronous and should not be treated as exact scheduling.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "mentions_ttl_asynchronous",
+            "description": "Mentions TTL cleanup happens asynchronously in the background"
+          },
+          {
+            "key": "avoids_exact_delete_assumption",
+            "description": "Avoids assuming documents disappear exactly at the expiration second"
+          },
+          {
+            "key": "plans_for_cleanup_lag",
+            "description": "Plans for some lag or monitoring around expiration cleanup"
+          }
+        ]
+      },
+      {
+        "label": "Considers indexes, storage growth, backup/restore, and query patterns for retained data.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "indexes_retained_queries",
+            "description": "Considers indexes for expected historical audit queries"
+          },
+          {
+            "key": "plans_storage_growth",
+            "description": "Plans storage growth and cost for seven years of audit data"
+          },
+          {
+            "key": "plans_backup_restore",
+            "description": "Considers backup and restore behavior for both hot and archived retention data"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1513,6 +2569,11 @@
         "trigger": "missing_context",
         "question": "How would your design support querying last year's audit events?",
         "purpose": "Tie retention to access patterns."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "Why should TTL cleanup not be treated as an exact scheduler?",
+        "purpose": "Check practical TTL behavior."
       }
     ],
     "localizedContent": {
@@ -1587,25 +2648,105 @@
   },
   {
     "code": "MONGODB_MID_CV_PROD_MIGRATION_014",
-    "stages": ["stage_4_cv_deep_dive"],
-    "roleFamilies": ["backend", "fullstack", "data", "devops"],
-    "levels": ["mid"],
+    "stages": [
+      "stage_4_cv_deep_dive"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "data",
+      "devops"
+    ],
+    "levels": [
+      "mid"
+    ],
     "type": "cv_claim_verification",
-    "competencies": ["ownership", "problem_solving", "impact_measurement"],
-    "techTags": ["mongodb", "schema_design", "indexing"],
+    "competencies": [
+      "ownership",
+      "problem_solving",
+      "impact_measurement"
+    ],
+    "techTags": [
+      "mongodb",
+      "schema_design",
+      "indexing"
+    ],
     "difficulty": 3,
     "intent": "Verify hands-on MongoDB migration experience from CV claims, including rollout, backfill, indexes, and validation.",
     "primaryQuestion": "Your CV mentions migrating data or changing a MongoDB schema in production. What changed, how did you backfill safely, and how did you verify correctness and performance?",
     "expectedSignals": [
-      { "label": "Describes the old and new schema or index design clearly.", "relatedTrigger": null },
-      { "label": "Uses a safe rollout plan such as dual reads/writes, idempotent backfill, or feature flags when appropriate.", "relatedTrigger": null },
-      { "label": "Mentions validation queries, sampling, counts, or checksums.", "relatedTrigger": null },
-      { "label": "Measures performance impact before and after the migration.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Only says the team migrated without naming personal work.",
-      "No rollback or resume strategy for the backfill.",
-      "No correctness or performance validation."
+      {
+        "label": "Describes the old and new schema or index design clearly.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "describes_old_shape",
+            "description": "Describes the old document schema, index, or data layout before the migration"
+          },
+          {
+            "key": "describes_new_shape",
+            "description": "Describes the new schema, index, or data layout after the migration"
+          },
+          {
+            "key": "explains_reason_for_change",
+            "description": "Explains the product, performance, or correctness reason for the migration"
+          }
+        ]
+      },
+      {
+        "label": "Uses a safe rollout plan such as dual reads/writes, idempotent backfill, or feature flags when appropriate.",
+        "relatedTrigger": "missing_personal_contribution",
+        "requirements": [
+          {
+            "key": "states_personal_role",
+            "description": "States the candidate's personal role or decision in the rollout or implementation"
+          },
+          {
+            "key": "uses_safe_rollout",
+            "description": "Uses dual reads/writes, feature flags, compatibility windows, or staged deploys where appropriate"
+          },
+          {
+            "key": "uses_idempotent_backfill",
+            "description": "Designs the backfill to be resumable and idempotent so it can recover from failures"
+          }
+        ]
+      },
+      {
+        "label": "Mentions validation queries, sampling, counts, or checksums.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "uses_validation_queries",
+            "description": "Uses validation queries to compare old and new data or detect missing migrated documents"
+          },
+          {
+            "key": "uses_counts_or_sampling",
+            "description": "Uses counts, samples, checksums, or spot checks to verify correctness"
+          },
+          {
+            "key": "checks_error_or_mismatch_rate",
+            "description": "Tracks mismatch counts, error rates, or failed records during and after backfill"
+          }
+        ]
+      },
+      {
+        "label": "Measures performance impact before and after the migration.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "measures_before_after_latency",
+            "description": "Measures query latency, write latency, or endpoint latency before and after the migration"
+          },
+          {
+            "key": "measures_index_or_resource_usage",
+            "description": "Measures index use, documents examined, CPU, memory, or storage impact where relevant"
+          },
+          {
+            "key": "states_success_metric",
+            "description": "States the metric that proved the new schema or index was better"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1627,7 +2768,7 @@
     ],
     "followUps": [
       {
-        "trigger": "red_flag",
+        "trigger": "missing_personal_contribution",
         "question": "Which part of the migration decision or implementation was personally yours?",
         "purpose": "Verify individual ownership."
       },
@@ -1635,6 +2776,11 @@
         "trigger": "missing_metric",
         "question": "What metric proved the new schema or index was better?",
         "purpose": "Recover impact evidence."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "What was the exact old shape and new shape of the document or index you migrated?",
+        "purpose": "Force concrete migration context before evaluating ownership and impact."
       }
     ],
     "localizedContent": {
@@ -1709,25 +2855,103 @@
   },
   {
     "code": "MONGODB_SR_TRADE_SHARD_KEY_015",
-    "stages": ["stage_3_domain_knowledge"],
-    "roleFamilies": ["backend", "data", "devops"],
-    "levels": ["senior"],
+    "stages": [
+      "stage_3_domain_knowledge"
+    ],
+    "roleFamilies": [
+      "backend",
+      "data",
+      "devops"
+    ],
+    "levels": [
+      "senior"
+    ],
     "type": "trade_off",
-    "competencies": ["trade_off_analysis", "system_thinking", "technical_fundamentals"],
-    "techTags": ["mongodb", "schema_design"],
+    "competencies": [
+      "trade_off_analysis",
+      "system_thinking",
+      "technical_fundamentals"
+    ],
+    "techTags": [
+      "mongodb",
+      "schema_design"
+    ],
     "difficulty": 4,
     "intent": "Evaluate senior-level judgment for sharding strategy, shard key selection, and operational trade-offs.",
     "primaryQuestion": "You need to shard a multi-tenant MongoDB workload. How would you choose a shard key, and what failure modes would you watch for after rollout?",
     "expectedSignals": [
-      { "label": "Evaluates query isolation, cardinality, frequency, and monotonic insert patterns.", "relatedTrigger": null },
-      { "label": "Considers tenantId-based keys, compound shard keys, hashed keys, and zone/range needs.", "relatedTrigger": null },
-      { "label": "Watches for jumbo chunks, hot shards, scatter-gather queries, and uneven storage or write distribution.", "relatedTrigger": null },
-      { "label": "Plans rollout validation, metrics, and operational remediation.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Chooses a shard key only because it is unique without considering query routing.",
-      "Ignores monotonically increasing keys and hot shard risk.",
-      "Does not discuss shard key immutability or migration cost."
+      {
+        "label": "Evaluates query isolation, cardinality, frequency, and monotonic insert patterns.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "evaluates_query_routing",
+            "description": "Evaluates whether the shard key supports targeted query routing for common tenant queries"
+          },
+          {
+            "key": "evaluates_cardinality_frequency",
+            "description": "Evaluates cardinality and frequency of shard key values to avoid poor distribution"
+          },
+          {
+            "key": "evaluates_monotonic_inserts",
+            "description": "Evaluates whether monotonic insert patterns could create a hot shard"
+          }
+        ]
+      },
+      {
+        "label": "Considers tenantId-based keys, compound shard keys, hashed keys, and zone/range needs.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "considers_tenant_key",
+            "description": "Considers tenantId-based shard keys and the risk of large or uneven tenants"
+          },
+          {
+            "key": "considers_compound_or_hashed_key",
+            "description": "Considers compound or hashed shard keys to balance routing and distribution"
+          },
+          {
+            "key": "considers_zone_range_needs",
+            "description": "Considers zone sharding, range placement, or data residency needs when applicable"
+          }
+        ]
+      },
+      {
+        "label": "Watches for jumbo chunks, hot shards, scatter-gather queries, and uneven storage or write distribution.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "monitors_hot_shards",
+            "description": "Monitors uneven writes, CPU, IOPS, or operation rates across shards"
+          },
+          {
+            "key": "monitors_jumbo_chunks",
+            "description": "Monitors jumbo chunks, chunk distribution, and balancer behavior"
+          },
+          {
+            "key": "monitors_scatter_gather",
+            "description": "Monitors scatter-gather queries or queries not routed by shard key"
+          }
+        ]
+      },
+      {
+        "label": "Plans rollout validation, metrics, and operational remediation.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "validates_before_rollout",
+            "description": "Validates shard key choice with sample workload, cardinality analysis, or staged rollout"
+          },
+          {
+            "key": "defines_success_metrics",
+            "description": "Defines success metrics such as balanced writes, targeted queries, and stable latency"
+          },
+          {
+            "key": "plans_remediation",
+            "description": "Plans remediation such as query changes, zone changes, resharding, or data model changes if rollout exposes skew"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1831,25 +3055,103 @@
   },
   {
     "code": "MONGODB_SR_TECH_REPLICA_CONSISTENCY_016",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "data", "devops"],
-    "levels": ["senior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "data",
+      "devops"
+    ],
+    "levels": [
+      "senior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "trade_off_analysis"],
-    "techTags": ["mongodb", "consistency"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "trade_off_analysis"
+    ],
+    "techTags": [
+      "mongodb",
+      "consistency"
+    ],
     "difficulty": 4,
     "intent": "Assess senior understanding of replica sets, elections, write durability, read routing, and application-level consistency expectations.",
     "primaryQuestion": "How do MongoDB replica sets handle primary elections, write durability, and read-your-writes expectations in an application?",
     "expectedSignals": [
-      { "label": "Explains primary/secondary replication and election behavior at a practical level.", "relatedTrigger": null },
-      { "label": "Connects write concern majority to durability across voting members.", "relatedTrigger": null },
-      { "label": "Explains how read preference and read concern affect stale reads and consistency.", "relatedTrigger": null },
-      { "label": "Mentions retryable writes, failover handling, and application timeouts.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Assumes reads from any secondary are always current.",
-      "Confuses replication with sharding.",
-      "Ignores application behavior during elections or failover."
+      {
+        "label": "Explains primary/secondary replication and election behavior at a practical level.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "explains_primary_write_role",
+            "description": "Explains that normal writes go to the primary and secondaries replicate from the oplog"
+          },
+          {
+            "key": "explains_election_window",
+            "description": "Explains that a primary election can create a temporary write interruption or retryable failure"
+          },
+          {
+            "key": "connects_failover_to_app_behavior",
+            "description": "Connects replica set failover to application behavior such as reconnecting, retrying, or surfacing a transient error"
+          }
+        ]
+      },
+      {
+        "label": "Connects write concern majority to durability across voting members.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "defines_majority_ack",
+            "description": "Defines majority write concern as acknowledgement after the write is durable on a majority of voting data-bearing members"
+          },
+          {
+            "key": "connects_majority_to_rollback_risk",
+            "description": "Connects majority acknowledgement to lower rollback risk during failover"
+          },
+          {
+            "key": "states_latency_availability_cost",
+            "description": "States the latency or availability cost of waiting for majority acknowledgement compared with weaker write concern"
+          }
+        ]
+      },
+      {
+        "label": "Explains how read preference and read concern affect stale reads and consistency.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "distinguishes_read_preference",
+            "description": "Distinguishes reading from primary versus secondaries and the stale-read risk of secondary reads"
+          },
+          {
+            "key": "mentions_read_concern",
+            "description": "Mentions read concern or majority reads when discussing stronger consistency expectations"
+          },
+          {
+            "key": "connects_to_read_your_writes",
+            "description": "Connects read routing and concern choices to whether the application can expect read-your-writes behavior"
+          }
+        ]
+      },
+      {
+        "label": "Mentions retryable writes, failover handling, and application timeouts.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "uses_retryable_writes",
+            "description": "Mentions retryable writes or retry-safe driver behavior for transient failover errors"
+          },
+          {
+            "key": "bounds_timeouts",
+            "description": "Mentions bounding waits with timeouts or server selection settings during failover"
+          },
+          {
+            "key": "keeps_operations_idempotent",
+            "description": "Considers idempotency or duplicate handling when the application retries writes after uncertain outcomes"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1953,25 +3255,104 @@
   },
   {
     "code": "MONGODB_SR_DEBUG_HOT_SHARD_017",
-    "stages": ["stage_3_domain_knowledge"],
-    "roleFamilies": ["backend", "data", "devops"],
-    "levels": ["senior"],
+    "stages": [
+      "stage_3_domain_knowledge"
+    ],
+    "roleFamilies": [
+      "backend",
+      "data",
+      "devops"
+    ],
+    "levels": [
+      "senior"
+    ],
     "type": "debugging",
-    "competencies": ["problem_solving", "system_thinking", "ownership"],
-    "techTags": ["mongodb", "indexing", "logging"],
+    "competencies": [
+      "problem_solving",
+      "system_thinking",
+      "ownership"
+    ],
+    "techTags": [
+      "mongodb",
+      "indexing",
+      "logging"
+    ],
     "difficulty": 4,
     "intent": "Evaluate senior operational debugging of hot shards, uneven load, and scatter-gather behavior in a sharded MongoDB cluster.",
     "primaryQuestion": "After sharding, one shard receives most writes and some queries scatter across all shards. How would you diagnose and fix the issue?",
     "expectedSignals": [
-      { "label": "Checks shard key distribution, chunk distribution, balancer state, and jumbo chunks.", "relatedTrigger": null },
-      { "label": "Compares query filters to shard key prefixes to identify scatter-gather patterns.", "relatedTrigger": null },
-      { "label": "Looks at per-shard CPU, IOPS, locks, queueing, and operation metrics.", "relatedTrigger": null },
-      { "label": "Considers resharding, compound shard key changes, query changes, zone sharding, or data model changes.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Only adds more shards without addressing key distribution or query routing.",
-      "Ignores whether queries include the shard key.",
-      "Cannot explain hot shard symptoms with metrics."
+      {
+        "label": "Checks shard key distribution, chunk distribution, balancer state, and jumbo chunks.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "checks_shard_key_skew",
+            "description": "Checks whether shard key values are skewed, monotonically increasing, or dominated by a few tenants"
+          },
+          {
+            "key": "checks_chunk_distribution",
+            "description": "Checks chunk distribution and whether one shard owns a disproportionate amount of active data"
+          },
+          {
+            "key": "checks_balancer_jumbo_chunks",
+            "description": "Checks balancer state, migration failures, and jumbo chunks that prevent balancing"
+          }
+        ]
+      },
+      {
+        "label": "Compares query filters to shard key prefixes to identify scatter-gather patterns.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "reviews_query_shapes",
+            "description": "Reviews the slow or high-volume query shapes that scatter across shards"
+          },
+          {
+            "key": "matches_filters_to_shard_key",
+            "description": "Compares query filters against the shard key or compound shard key prefix used for targeted routing"
+          },
+          {
+            "key": "identifies_scatter_gather_cause",
+            "description": "Identifies whether scatter-gather comes from missing shard key predicates, unsuitable indexes, or workload shape changes"
+          }
+        ]
+      },
+      {
+        "label": "Looks at per-shard CPU, IOPS, locks, queueing, and operation metrics.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "compares_per_shard_cpu_iops",
+            "description": "Compares CPU, disk IOPS, and memory pressure across shards"
+          },
+          {
+            "key": "compares_lock_queue_metrics",
+            "description": "Compares locks, operation queues, and active operations across shards"
+          },
+          {
+            "key": "correlates_metrics_with_ops",
+            "description": "Correlates per-shard resource imbalance with write rate, query rate, and latency symptoms"
+          }
+        ]
+      },
+      {
+        "label": "Considers resharding, compound shard key changes, query changes, zone sharding, or data model changes.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "considers_query_remediation",
+            "description": "Considers adding shard key predicates, changing query shapes, or adding supporting indexes before disruptive fixes"
+          },
+          {
+            "key": "considers_resharding_cost",
+            "description": "Considers resharding or compound shard key changes with their operational cost, risk, and rollout time"
+          },
+          {
+            "key": "considers_zone_or_model_changes",
+            "description": "Considers zone sharding, tenant isolation, or data model changes when workload distribution requires them"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -2001,6 +3382,11 @@
         "trigger": "missing_tradeoff",
         "question": "What is the cost and risk of resharding compared with changing query patterns?",
         "purpose": "Assess remediation judgment."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Which query shapes are missing the shard key prefix and causing scatter-gather routing?",
+        "purpose": "Check whether diagnosis uses actual routed query shapes."
       }
     ],
     "localizedContent": {
@@ -2075,25 +3461,103 @@
   },
   {
     "code": "MONGODB_SR_TRADE_MULTI_DOC_TXN_018",
-    "stages": ["stage_3_domain_knowledge"],
-    "roleFamilies": ["backend", "data"],
-    "levels": ["senior"],
+    "stages": [
+      "stage_3_domain_knowledge"
+    ],
+    "roleFamilies": [
+      "backend",
+      "data"
+    ],
+    "levels": [
+      "senior"
+    ],
     "type": "trade_off",
-    "competencies": ["trade_off_analysis", "system_thinking", "technical_fundamentals"],
-    "techTags": ["mongodb", "transaction", "consistency"],
+    "competencies": [
+      "trade_off_analysis",
+      "system_thinking",
+      "technical_fundamentals"
+    ],
+    "techTags": [
+      "mongodb",
+      "transaction",
+      "consistency"
+    ],
     "difficulty": 4,
     "intent": "Evaluate senior design trade-offs between MongoDB multi-document transactions, document modeling, idempotency, and event-driven consistency.",
     "primaryQuestion": "For a checkout flow that updates inventory, creates an order, records payment state, and publishes events, where would you use MongoDB transactions, and where would you prefer idempotency or eventual consistency?",
     "expectedSignals": [
-      { "label": "Identifies strong invariants that may require a transaction, such as avoiding oversell for a specific stock record.", "relatedTrigger": null },
-      { "label": "Separates external payment calls from database transaction boundaries.", "relatedTrigger": null },
-      { "label": "Uses idempotency keys and outbox/event patterns for reliable event publication.", "relatedTrigger": null },
-      { "label": "Considers latency, lock duration, retries, and failure compensation.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Wraps external payment API calls inside a long database transaction.",
-      "Assumes transactions solve event publication reliability by themselves.",
-      "Ignores idempotency for retries and duplicate requests."
+      {
+        "label": "Identifies strong invariants that may require a transaction, such as avoiding oversell for a specific stock record.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "names_checkout_invariants",
+            "description": "Names the concrete checkout invariants that must be protected, such as inventory not going below zero for a stock record"
+          },
+          {
+            "key": "scopes_transaction_to_db_writes",
+            "description": "Scopes the transaction to the MongoDB writes that must commit or abort together"
+          },
+          {
+            "key": "uses_conditional_inventory_update",
+            "description": "Mentions conditional inventory update, unique constraints, or equivalent checks to prevent oversell"
+          }
+        ]
+      },
+      {
+        "label": "Separates external payment calls from database transaction boundaries.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "keeps_payment_outside_txn",
+            "description": "Keeps external payment API calls outside the MongoDB transaction boundary"
+          },
+          {
+            "key": "explains_long_txn_risk",
+            "description": "Explains that holding a database transaction while waiting on an external service increases lock time, abort risk, and uncertainty"
+          },
+          {
+            "key": "records_payment_state",
+            "description": "Records payment intent, authorization, or reconciliation state in MongoDB without assuming the external call is atomic with the database commit"
+          }
+        ]
+      },
+      {
+        "label": "Uses idempotency keys and outbox/event patterns for reliable event publication.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "uses_idempotency_key",
+            "description": "Uses an idempotency key or unique request identifier to prevent duplicate order creation on retries"
+          },
+          {
+            "key": "uses_outbox_pattern",
+            "description": "Uses an outbox or durable event record written with the order state before asynchronous publication"
+          },
+          {
+            "key": "handles_event_retry",
+            "description": "Handles event publication retry and deduplication instead of assuming the transaction publishes events reliably"
+          }
+        ]
+      },
+      {
+        "label": "Considers latency, lock duration, retries, and failure compensation.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "limits_transaction_duration",
+            "description": "Limits transaction duration and document scope to reduce latency, lock pressure, and abort probability"
+          },
+          {
+            "key": "plans_retry_strategy",
+            "description": "Plans retries for transient transaction errors and unknown commit results"
+          },
+          {
+            "key": "plans_compensation",
+            "description": "Plans compensation or reconciliation for failures after payment, event publication, or inventory reservation steps"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -2197,25 +3661,103 @@
   },
   {
     "code": "MONGODB_SR_TECH_SCHEMA_EVOLUTION_019",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack", "data"],
-    "levels": ["senior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "data"
+    ],
+    "levels": [
+      "senior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "ownership"],
-    "techTags": ["mongodb", "schema_design"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "ownership"
+    ],
+    "techTags": [
+      "mongodb",
+      "schema_design"
+    ],
     "difficulty": 4,
     "intent": "Assess senior approach to schema evolution, validation, backward compatibility, and mixed-version application deployments.",
     "primaryQuestion": "How would you evolve a MongoDB document schema safely when old application versions may still read and write documents during a rolling deployment?",
     "expectedSignals": [
-      { "label": "Designs backward-compatible reads and writes for mixed document versions.", "relatedTrigger": null },
-      { "label": "Uses additive changes, default handling, and version fields or feature flags when useful.", "relatedTrigger": null },
-      { "label": "Plans idempotent backfill and validation after readers are compatible.", "relatedTrigger": null },
-      { "label": "Introduces schema validation carefully after data and application compatibility are proven.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Deploys a breaking schema change and backfill at the same time without compatibility plan.",
-      "Assumes all documents have the new fields immediately.",
-      "Adds strict validation before old writers are removed."
+      {
+        "label": "Designs backward-compatible reads and writes for mixed document versions.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "supports_old_and_new_shapes",
+            "description": "Designs code that can read both old and new document shapes during the rolling deployment"
+          },
+          {
+            "key": "keeps_old_writers_safe",
+            "description": "Accounts for old application versions that may still write the old shape while new code is deployed"
+          },
+          {
+            "key": "plans_rollback_compatibility",
+            "description": "Keeps rollback safe by avoiding a data shape that old code cannot tolerate"
+          }
+        ]
+      },
+      {
+        "label": "Uses additive changes, default handling, and version fields or feature flags when useful.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "prefers_additive_change",
+            "description": "Prefers additive fields or tolerant readers before removing or renaming existing fields"
+          },
+          {
+            "key": "handles_defaults",
+            "description": "Handles missing new fields with defaults or derived values instead of assuming every document is already migrated"
+          },
+          {
+            "key": "uses_version_or_flag_when_needed",
+            "description": "Uses schema version fields or feature flags when the application must distinguish old and new behavior"
+          }
+        ]
+      },
+      {
+        "label": "Plans idempotent backfill and validation after readers are compatible.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "runs_idempotent_backfill",
+            "description": "Plans a resumable and idempotent backfill that can be rerun safely"
+          },
+          {
+            "key": "orders_backfill_after_reader_compat",
+            "description": "Runs backfill only after deployed readers can handle both shapes"
+          },
+          {
+            "key": "defines_validation_counts",
+            "description": "Defines validation queries, counts, samples, or checksums to prove affected documents were migrated correctly"
+          }
+        ]
+      },
+      {
+        "label": "Introduces schema validation carefully after data and application compatibility are proven.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "delays_strict_validation",
+            "description": "Delays strict schema validation until old writers are gone and existing data is compatible"
+          },
+          {
+            "key": "uses_gradual_validation_mode",
+            "description": "Considers warn mode, partial validation, or staged enforcement before blocking writes"
+          },
+          {
+            "key": "monitors_validation_failures",
+            "description": "Monitors validation failures and rollout health before increasing enforcement"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -2245,6 +3787,11 @@
         "trigger": "missing_metric",
         "question": "What validation would prove the backfill covered all affected documents?",
         "purpose": "Assess data correctness checks."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "What can go wrong if strict schema validation is enabled before all application versions are compatible?",
+        "purpose": "Check validation rollout timing judgment."
       }
     ],
     "localizedContent": {
@@ -2319,25 +3866,105 @@
   },
   {
     "code": "MONGODB_SR_CV_INCIDENT_PERFORMANCE_020",
-    "stages": ["stage_4_cv_deep_dive"],
-    "roleFamilies": ["backend", "data", "devops"],
-    "levels": ["senior"],
+    "stages": [
+      "stage_4_cv_deep_dive"
+    ],
+    "roleFamilies": [
+      "backend",
+      "data",
+      "devops"
+    ],
+    "levels": [
+      "senior"
+    ],
     "type": "cv_claim_verification",
-    "competencies": ["ownership", "problem_solving", "impact_measurement", "communication"],
-    "techTags": ["mongodb", "indexing", "logging"],
+    "competencies": [
+      "ownership",
+      "problem_solving",
+      "impact_measurement",
+      "communication"
+    ],
+    "techTags": [
+      "mongodb",
+      "indexing",
+      "logging"
+    ],
     "difficulty": 4,
     "intent": "Verify senior production ownership through a concrete MongoDB performance or reliability incident.",
     "primaryQuestion": "Tell me about a serious MongoDB performance or reliability incident you owned. What was the symptom, root cause, mitigation, permanent fix, and measured outcome?",
     "expectedSignals": [
-      { "label": "Frames the incident with user/business impact and timeline.", "relatedTrigger": null },
-      { "label": "Uses evidence from metrics, logs, query plans, replication/sharding state, or deployment changes.", "relatedTrigger": null },
-      { "label": "Distinguishes immediate mitigation from durable fix.", "relatedTrigger": null },
-      { "label": "Provides measured outcome and prevention such as alerts, tests, runbooks, or capacity planning.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Gives a vague story with no concrete MongoDB signal.",
-      "Only blames infrastructure or another team.",
-      "Cannot explain the permanent fix or post-incident prevention."
+      {
+        "label": "Frames the incident with user/business impact and timeline.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "states_user_business_impact",
+            "description": "States the user-visible or business impact of the MongoDB incident"
+          },
+          {
+            "key": "gives_incident_timeline",
+            "description": "Gives a concrete timeline from symptom detection through mitigation and recovery"
+          },
+          {
+            "key": "identifies_owned_scope",
+            "description": "Identifies the part of the incident response or system area the candidate personally owned"
+          }
+        ]
+      },
+      {
+        "label": "Uses evidence from metrics, logs, query plans, replication/sharding state, or deployment changes.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "uses_mongodb_metrics",
+            "description": "Uses MongoDB-specific metrics such as latency, CPU, IOPS, locks, replication lag, cache pressure, or operation rate"
+          },
+          {
+            "key": "uses_query_or_cluster_evidence",
+            "description": "Uses query plans, slow logs, index usage, shard distribution, or replica state to support the root cause"
+          },
+          {
+            "key": "correlates_with_change",
+            "description": "Correlates the incident with a traffic pattern, deployment, data growth, index change, or topology event"
+          }
+        ]
+      },
+      {
+        "label": "Distinguishes immediate mitigation from durable fix.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "states_immediate_mitigation",
+            "description": "States the immediate mitigation used to reduce user impact, such as rollback, throttling, index change, query disablement, failover, or capacity action"
+          },
+          {
+            "key": "states_permanent_fix",
+            "description": "States the durable fix that removed or reduced the root cause rather than only treating symptoms"
+          },
+          {
+            "key": "explains_mitigation_tradeoff",
+            "description": "Explains the trade-off or risk accepted during the temporary mitigation"
+          }
+        ]
+      },
+      {
+        "label": "Provides measured outcome and prevention such as alerts, tests, runbooks, or capacity planning.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "provides_before_after_metric",
+            "description": "Provides a before/after metric for the permanent fix, such as p95 latency, error rate, lag, CPU, or throughput"
+          },
+          {
+            "key": "adds_prevention",
+            "description": "Adds prevention such as alerts, load tests, query review, runbooks, or capacity planning"
+          },
+          {
+            "key": "connects_prevention_to_root_cause",
+            "description": "Connects the prevention step directly to the incident root cause instead of listing generic process improvements"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -2364,9 +3991,19 @@
         "purpose": "Recover impact evidence."
       },
       {
-        "trigger": "red_flag",
+        "trigger": "missing_personal_contribution",
         "question": "What decision did you personally make during the incident?",
         "purpose": "Verify individual ownership."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "What was the incident timeline, blast radius, and user or business impact?",
+        "purpose": "Recover concrete incident framing."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "What did you do immediately to reduce impact, and how was that different from the permanent fix?",
+        "purpose": "Separate temporary mitigation from durable remediation."
       }
     ],
     "localizedContent": {

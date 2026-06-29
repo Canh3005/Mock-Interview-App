@@ -1,37 +1,138 @@
 [
   {
     "code": "NESTJS_JR_TECH_DECORATOR_METADATA_031",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "communication"],
-    "techTags": ["nestjs", "typescript", "nodejs"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "communication"
+    ],
+    "techTags": [
+      "nestjs",
+      "typescript",
+      "nodejs"
+    ],
     "difficulty": 2,
     "intent": "Check whether the candidate understands TypeScript decorators as runtime functions that attach or transform metadata, and can explain how NestJS builds modules, routing, dependency injection, and request pipelines from that metadata.",
     "primaryQuestion": "What is a TypeScript decorator and how does NestJS use them?",
     "expectedSignals": [
-      { "label": "Defines a decorator as an expression evaluated to a function and applied to a class, method, property, accessor, or parameter.", "relatedTrigger": null },
-      { "label": "Explains that decorators usually attach metadata or wrap/alter behavior rather than being normal runtime calls inside the handler body.", "relatedTrigger": null },
-      { "label": "Connects NestJS decorators such as @Module, @Controller, @Injectable, @Get, @Body, and @UseGuards to metadata scanned by the framework.", "relatedTrigger": null },
-      { "label": "Mentions that Nest uses metadata to build the DI container, route map, parameter extraction, validation pipeline, guards, interceptors, and Swagger metadata where applicable.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Describes decorators as comments, annotations only, or compile-time-only TypeScript types.",
-      "Cannot distinguish decorator metadata from business logic inside the method.",
-      "Thinks NestJS decorators execute the HTTP request themselves instead of configuring framework behavior.",
-      "Ignores runtime requirements such as experimental decorators and metadata reflection in Nest-style TypeScript projects."
+      {
+        "label": "Defines a decorator as an expression evaluated to a function and applied to a class, method, property, accessor, or parameter.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "defines_expression_to_function",
+            "description": "Defines a decorator as an expression that evaluates to a function"
+          },
+          {
+            "key": "lists_decorator_targets",
+            "description": "Mentions valid decorator targets such as class, method, property, accessor, or parameter"
+          },
+          {
+            "key": "distinguishes_from_interfaces",
+            "description": "Distinguishes decorators from TypeScript interfaces or erased type-only constructs"
+          }
+        ]
+      },
+      {
+        "label": "Explains that decorators usually attach metadata or wrap/alter behavior rather than being normal runtime calls inside the handler body.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "mentions_metadata_attachment",
+            "description": "Explains that decorators can attach metadata to their target"
+          },
+          {
+            "key": "mentions_behavior_wrapping",
+            "description": "Explains that decorators can wrap or alter behavior depending on implementation"
+          },
+          {
+            "key": "not_handler_body_call",
+            "description": "Clarifies that a Nest decorator is not a normal call inside the handler body"
+          }
+        ]
+      },
+      {
+        "label": "Connects NestJS decorators such as @Module, @Controller, @Injectable, @Get, @Body, and @UseGuards to metadata scanned by the framework.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "names_structural_decorators",
+            "description": "Names structural Nest decorators such as @Module, @Controller, or @Injectable"
+          },
+          {
+            "key": "names_route_pipeline_decorators",
+            "description": "Names route, parameter, or pipeline decorators such as @Get, @Body, or @UseGuards"
+          },
+          {
+            "key": "framework_scans_decorator_metadata",
+            "description": "Explains that Nest scans decorator metadata to configure framework behavior"
+          }
+        ]
+      },
+      {
+        "label": "Mentions that Nest uses metadata to build the DI container, route map, parameter extraction, validation pipeline, guards, interceptors, and Swagger metadata where applicable.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "metadata_builds_di_routes",
+            "description": "Mentions that metadata helps build the DI container and route map"
+          },
+          {
+            "key": "metadata_drives_request_pipeline",
+            "description": "Mentions parameter extraction, validation, guards, or interceptors as metadata-driven behavior"
+          },
+          {
+            "key": "metadata_supports_docs",
+            "description": "Mentions documentation metadata such as Swagger where applicable"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Explains decorator mechanics, valid targets, metadata attachment, and concrete Nest examples across routing, DI, and request pipeline configuration." },
-      { "scoreBand": "solid", "description": "Understands decorators as metadata-driven framework configuration but misses one detail such as decorator targets or DI metadata." },
-      { "scoreBand": "needs_work", "description": "Can name common decorators but cannot explain what they do under the hood." },
-      { "scoreBand": "insufficient_evidence", "description": "Answer is generic or treats decorators as syntax sugar without explaining runtime metadata." }
+      {
+        "scoreBand": "strong",
+        "description": "Explains decorator mechanics, valid targets, metadata attachment, and concrete Nest examples across routing, DI, and request pipeline configuration."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands decorators as metadata-driven framework configuration but misses one detail such as decorator targets or DI metadata."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can name common decorators but cannot explain what they do under the hood."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is generic or treats decorators as syntax sugar without explaining runtime metadata."
+      }
     ],
     "followUps": [
-      { "trigger": "vague_answer", "question": "Pick @Controller('users') and @Get(':id'). What metadata do they give Nest, and when does Nest use it?", "purpose": "Force a concrete route-mapping explanation." },
-      { "trigger": "missing_context", "question": "Which NestJS features would become harder if the framework could not read decorator metadata?", "purpose": "Check understanding of the decorator-driven framework model." },
-      { "trigger": "red_flag", "question": "Are decorators the same thing as TypeScript interfaces? Why or why not?", "purpose": "Separate runtime metadata from erased compile-time types." }
+      {
+        "trigger": "vague_answer",
+        "question": "Pick @Controller('users') and @Get(':id'). What metadata do they give Nest, and when does Nest use it?",
+        "purpose": "Force a concrete route-mapping explanation."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Which NestJS features would become harder if the framework could not read decorator metadata?",
+        "purpose": "Check understanding of the decorator-driven framework model."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "Are decorators the same thing as TypeScript interfaces? Why or why not?",
+        "purpose": "Separate runtime metadata from erased compile-time types."
+      }
     ],
     "localizedContent": {
       "en": {
@@ -48,7 +149,11 @@
           "Listing decorators without explaining metadata or framework scanning.",
           "Confusing TypeScript type declarations with runtime metadata."
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "Decorator TypeScript trong NestJS",
@@ -64,7 +169,11 @@
           "Chỉ liệt kê decorator mà không giải thích metadata và cơ chế scan của framework.",
           "Nhầm TypeScript type/interface với runtime metadata."
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "NestJS における TypeScript decorator",
@@ -80,49 +189,165 @@
           "metadata や framework scanning を説明せず decorator 名だけを列挙する。",
           "TypeScript の type/interface と runtime metadata を混同する。"
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "TypeScript Handbook: Decorators", "url": "https://www.typescriptlang.org/docs/handbook/decorators", "note": "Used for TypeScript decorator concepts and decorator targets." },
-      { "label": "NestJS docs: Controllers", "url": "https://docs.nestjs.com/controllers", "note": "Used for Nest controller and route decorator behavior." },
-      { "label": "NestJS docs: Modules", "url": "https://docs.nestjs.com/modules", "note": "Used for module decorator metadata framing." }
+      {
+        "label": "TypeScript Handbook: Decorators",
+        "url": "https://www.typescriptlang.org/docs/handbook/decorators",
+        "note": "Used for TypeScript decorator concepts and decorator targets."
+      },
+      {
+        "label": "NestJS docs: Controllers",
+        "url": "https://docs.nestjs.com/controllers",
+        "note": "Used for Nest controller and route decorator behavior."
+      },
+      {
+        "label": "NestJS docs: Modules",
+        "url": "https://docs.nestjs.com/modules",
+        "note": "Used for module decorator metadata framing."
+      }
     ],
     "status": "active"
   },
   {
     "code": "NESTJS_MID_TECH_REFLECT_METADATA_032",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend"],
-    "levels": ["mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend"
+    ],
+    "levels": [
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "problem_solving"],
-    "techTags": ["nestjs", "typescript", "nodejs"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "problem_solving"
+    ],
+    "techTags": [
+      "nestjs",
+      "typescript",
+      "nodejs"
+    ],
     "difficulty": 3,
     "intent": "Evaluate whether the candidate understands reflect-metadata, TypeScript emitted design metadata, and why NestJS depends on runtime metadata for constructor injection and decorator-driven framework behavior.",
     "primaryQuestion": "What does reflect-metadata do and why is it required?",
     "expectedSignals": [
-      { "label": "Explains that reflect-metadata provides APIs such as Reflect.defineMetadata and Reflect.getMetadata for storing and reading metadata at runtime.", "relatedTrigger": null },
-      { "label": "Mentions TypeScript compiler options such as experimentalDecorators and emitDecoratorMetadata in Nest-style projects.", "relatedTrigger": null },
-      { "label": "Connects emitted design metadata such as design:paramtypes to Nest dependency injection and constructor parameter discovery.", "relatedTrigger": null },
-      { "label": "Clarifies limits: interfaces, generics, unions, and many erased TypeScript types are not fully available at runtime.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Says reflect-metadata performs validation or type checking by itself.",
-      "Thinks TypeScript interfaces are available to Nest at runtime.",
-      "Cannot explain why removing reflect-metadata or decorator metadata can break dependency injection.",
-      "Treats reflection metadata as database metadata or request metadata."
+      {
+        "label": "Explains that reflect-metadata provides APIs such as Reflect.defineMetadata and Reflect.getMetadata for storing and reading metadata at runtime.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "defines_reflect_metadata_role",
+            "description": "Explains reflect-metadata as runtime metadata storage and reading support"
+          },
+          {
+            "key": "mentions_define_metadata",
+            "description": "Mentions Reflect.defineMetadata or equivalent metadata-writing behavior"
+          },
+          {
+            "key": "mentions_get_metadata",
+            "description": "Mentions Reflect.getMetadata or equivalent metadata-reading behavior"
+          }
+        ]
+      },
+      {
+        "label": "Mentions TypeScript compiler options such as experimentalDecorators and emitDecoratorMetadata in Nest-style projects.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_experimental_decorators",
+            "description": "Mentions experimentalDecorators for decorator syntax support"
+          },
+          {
+            "key": "mentions_emit_decorator_metadata",
+            "description": "Mentions emitDecoratorMetadata for emitted design metadata"
+          },
+          {
+            "key": "connects_options_to_nest_projects",
+            "description": "Connects those compiler options to Nest-style TypeScript projects"
+          }
+        ]
+      },
+      {
+        "label": "Connects emitted design metadata such as design:paramtypes to Nest dependency injection and constructor parameter discovery.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_design_paramtypes",
+            "description": "Mentions emitted design:paramtypes metadata"
+          },
+          {
+            "key": "connects_to_constructor_params",
+            "description": "Explains that constructor parameter types can be discovered from metadata"
+          },
+          {
+            "key": "connects_to_di_resolution",
+            "description": "Connects emitted metadata to Nest dependency injection resolution"
+          }
+        ]
+      },
+      {
+        "label": "Clarifies limits: interfaces, generics, unions, and many erased TypeScript types are not fully available at runtime.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "interfaces_erased_runtime",
+            "description": "Explains that interfaces are erased and not available as runtime injection tokens"
+          },
+          {
+            "key": "generics_unions_limited",
+            "description": "Mentions that generics, unions, or complex TypeScript types are not fully reflected"
+          },
+          {
+            "key": "needs_explicit_tokens_when_erased",
+            "description": "Explains that erased abstractions often require explicit tokens or providers"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Connects reflect-metadata APIs, emitted design:paramtypes metadata, Nest DI, decorator metadata reading, and runtime type limitations." },
-      { "scoreBand": "solid", "description": "Understands that Nest reads runtime metadata but misses exact metadata keys or TypeScript erasure limitations." },
-      { "scoreBand": "needs_work", "description": "Knows reflect-metadata by name but cannot explain why Nest needs it." },
-      { "scoreBand": "insufficient_evidence", "description": "Answer is inaccurate or confuses reflection metadata with unrelated concepts." }
+      {
+        "scoreBand": "strong",
+        "description": "Connects reflect-metadata APIs, emitted design:paramtypes metadata, Nest DI, decorator metadata reading, and runtime type limitations."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands that Nest reads runtime metadata but misses exact metadata keys or TypeScript erasure limitations."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows reflect-metadata by name but cannot explain why Nest needs it."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is inaccurate or confuses reflection metadata with unrelated concepts."
+      }
     ],
     "followUps": [
-      { "trigger": "missing_context", "question": "How can Nest know that constructor(private usersService: UsersService) needs UsersService?", "purpose": "Check practical DI metadata reasoning." },
-      { "trigger": "red_flag", "question": "If a constructor parameter is typed as an interface, can Nest inject it automatically from type metadata? What would you do instead?", "purpose": "Test runtime type erasure and custom injection token knowledge." },
-      { "trigger": "missing_tradeoff", "question": "What kinds of TypeScript type information are not reliable at runtime even with emitDecoratorMetadata enabled?", "purpose": "Check metadata limitation awareness." }
+      {
+        "trigger": "missing_context",
+        "question": "How can Nest know that constructor(private usersService: UsersService) needs UsersService?",
+        "purpose": "Check practical DI metadata reasoning."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "If a constructor parameter is typed as an interface, can Nest inject it automatically from type metadata? What would you do instead?",
+        "purpose": "Test runtime type erasure and custom injection token knowledge."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "What kinds of TypeScript type information are not reliable at runtime even with emitDecoratorMetadata enabled?",
+        "purpose": "Check metadata limitation awareness."
+      }
     ],
     "localizedContent": {
       "en": {
@@ -139,7 +364,11 @@
           "Assuming TypeScript interfaces exist at runtime.",
           "Ignoring the relation between metadata and Nest's IoC container."
         ],
-        "labels": { "role": "Backend", "level": "Mid", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend",
+          "level": "Mid",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "reflect-metadata và runtime metadata trong NestJS",
@@ -155,7 +384,11 @@
           "Cho rằng TypeScript interface tồn tại ở runtime.",
           "Bỏ qua mối liên hệ giữa metadata và IoC container của Nest."
         ],
-        "labels": { "role": "Backend", "level": "Mid", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend",
+          "level": "Mid",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "reflect-metadata と NestJS の runtime metadata",
@@ -171,50 +404,183 @@
           "TypeScript interface が runtime に存在すると考える。",
           "metadata と Nest の IoC container の関係を説明しない。"
         ],
-        "labels": { "role": "Backend", "level": "Mid", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend",
+          "level": "Mid",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "TypeScript TSConfig: emitDecoratorMetadata", "url": "https://www.typescriptlang.org/tsconfig/emitDecoratorMetadata.html", "note": "Used for TypeScript design metadata behavior." },
-      { "label": "TypeScript Handbook: Decorator metadata", "url": "https://www.typescriptlang.org/docs/handbook/decorators#metadata", "note": "Used for reflect-metadata and emitted type metadata concepts." },
-      { "label": "reflect-metadata package", "url": "https://www.npmjs.com/package/reflect-metadata", "note": "Used for Metadata Reflection API package behavior." }
+      {
+        "label": "TypeScript TSConfig: emitDecoratorMetadata",
+        "url": "https://www.typescriptlang.org/tsconfig/emitDecoratorMetadata.html",
+        "note": "Used for TypeScript design metadata behavior."
+      },
+      {
+        "label": "TypeScript Handbook: Decorator metadata",
+        "url": "https://www.typescriptlang.org/docs/handbook/decorators#metadata",
+        "note": "Used for reflect-metadata and emitted type metadata concepts."
+      },
+      {
+        "label": "reflect-metadata package",
+        "url": "https://www.npmjs.com/package/reflect-metadata",
+        "note": "Used for Metadata Reflection API package behavior."
+      }
     ],
     "status": "active"
   },
   {
     "code": "NESTJS_JR_TECH_PARAM_DECORATORS_033",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "communication"],
-    "techTags": ["nestjs", "rest", "typescript"],
+    "competencies": [
+      "technical_fundamentals",
+      "communication"
+    ],
+    "techTags": [
+      "nestjs",
+      "rest",
+      "typescript"
+    ],
     "difficulty": 2,
     "intent": "Check whether the candidate can distinguish NestJS HTTP parameter decorators and choose the correct source for request body, route parameters, query string, and headers.",
     "primaryQuestion": "What is the difference between @Body(), @Param(), @Query(), and @Headers()?",
     "expectedSignals": [
-      { "label": "Explains @Body() reads req.body, typically used for POST, PUT, PATCH payloads and DTOs.", "relatedTrigger": null },
-      { "label": "Explains @Param() reads path parameters from route patterns such as @Get(':id').", "relatedTrigger": null },
-      { "label": "Explains @Query() reads query string values such as ?page=1&limit=20.", "relatedTrigger": null },
-      { "label": "Explains @Headers() reads request headers and can extract a specific header by name.", "relatedTrigger": null },
-      { "label": "Mentions that each decorator can read the whole object or a single key, for example @Param('id') or @Body('email').", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Uses @Param() for query strings or @Query() for path segments.",
-      "Thinks @Headers() sets response headers instead of reading request headers.",
-      "Cannot give URL examples showing path params versus query params.",
-      "Treats all incoming data as @Body() regardless of HTTP semantics."
+      {
+        "label": "Explains @Body() reads req.body, typically used for POST, PUT, PATCH payloads and DTOs.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "body_reads_request_body",
+            "description": "Explains that @Body() reads req.body"
+          },
+          {
+            "key": "body_used_for_payload_methods",
+            "description": "Connects @Body() to POST, PUT, PATCH, or similar payload methods"
+          },
+          {
+            "key": "body_connects_to_dtos",
+            "description": "Mentions DTO classes or typed payloads as a common @Body() use"
+          }
+        ]
+      },
+      {
+        "label": "Explains @Param() reads path parameters from route patterns such as @Get(':id').",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "param_reads_path_params",
+            "description": "Explains that @Param() reads path parameters"
+          },
+          {
+            "key": "param_tied_to_route_pattern",
+            "description": "Connects @Param() to route patterns such as @Get(':id')"
+          },
+          {
+            "key": "param_not_query_string",
+            "description": "Clarifies that @Param('id') does not read ?id=42 from the query string"
+          }
+        ]
+      },
+      {
+        "label": "Explains @Query() reads query string values such as ?page=1&limit=20.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "query_reads_query_string",
+            "description": "Explains that @Query() reads query string values"
+          },
+          {
+            "key": "gives_query_example",
+            "description": "Gives examples such as ?page=1&limit=20"
+          },
+          {
+            "key": "query_used_for_filters_pagination",
+            "description": "Connects query parameters to filters, pagination, search, or representation options"
+          }
+        ]
+      },
+      {
+        "label": "Explains @Headers() reads request headers and can extract a specific header by name.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "headers_reads_request_headers",
+            "description": "Explains that @Headers() reads incoming request headers"
+          },
+          {
+            "key": "headers_extracts_named_header",
+            "description": "Mentions extracting a specific header by name"
+          },
+          {
+            "key": "gives_header_example",
+            "description": "Gives an example such as Authorization, Content-Type, or User-Agent"
+          }
+        ]
+      },
+      {
+        "label": "Mentions that each decorator can read the whole object or a single key, for example @Param('id') or @Body('email').",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "whole_object_extraction",
+            "description": "Mentions reading the whole body, params, query, or headers object"
+          },
+          {
+            "key": "single_key_extraction",
+            "description": "Mentions reading a single named key"
+          },
+          {
+            "key": "gives_keyed_examples",
+            "description": "Gives examples such as @Param('id'), @Body('email'), or @Query('page')"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Clearly maps all four decorators to request sources and gives concrete route examples with single-key extraction." },
-      { "scoreBand": "solid", "description": "Gets the main mapping correct but misses a nuance such as whole-object versus key extraction." },
-      { "scoreBand": "needs_work", "description": "Confuses at least two request sources or cannot map decorators to Express/Fastify request data." },
-      { "scoreBand": "insufficient_evidence", "description": "Answer remains generic and does not show practical Nest controller knowledge." }
+      {
+        "scoreBand": "strong",
+        "description": "Clearly maps all four decorators to request sources and gives concrete route examples with single-key extraction."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Gets the main mapping correct but misses a nuance such as whole-object versus key extraction."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Confuses at least two request sources or cannot map decorators to Express/Fastify request data."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer remains generic and does not show practical Nest controller knowledge."
+      }
     ],
     "followUps": [
-      { "trigger": "vague_answer", "question": "For GET /users/42?expand=profile with an Authorization header, which decorator reads 42, expand, and the header?", "purpose": "Check concrete request-source mapping." },
-      { "trigger": "red_flag", "question": "Would @Param('id') read ?id=42? Why or why not?", "purpose": "Detect route parameter versus query parameter confusion." },
-      { "trigger": "missing_context", "question": "When would you type @Body() as a DTO class instead of accepting any?", "purpose": "Connect parameter extraction to validation and API contract design." }
+      {
+        "trigger": "vague_answer",
+        "question": "For GET /users/42?expand=profile with an Authorization header, which decorator reads 42, expand, and the header?",
+        "purpose": "Check concrete request-source mapping."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "Would @Param('id') read ?id=42? Why or why not?",
+        "purpose": "Detect route parameter versus query parameter confusion."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "When would you type @Body() as a DTO class instead of accepting any?",
+        "purpose": "Connect parameter extraction to validation and API contract design."
+      }
     ],
     "localizedContent": {
       "en": {
@@ -231,7 +597,11 @@
           "Thinking @Headers() writes response headers.",
           "Putting filters or pagination into the request body for simple GET endpoints."
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "Decorator lấy dữ liệu HTTP request",
@@ -247,7 +617,11 @@
           "Nghĩ @Headers() dùng để set response header.",
           "Đưa filter hoặc pagination vào body cho endpoint GET đơn giản."
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "HTTP parameter decorator",
@@ -263,48 +637,160 @@
           "@Headers() が response header を設定すると考える。",
           "単純な GET endpoint の filter や pagination を body に入れる。"
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "NestJS docs: Controllers", "url": "https://docs.nestjs.com/controllers", "note": "Used for built-in HTTP parameter decorators and request object mapping." },
-      { "label": "NestJS docs: Custom decorators", "url": "https://docs.nestjs.com/custom-decorators", "note": "Used for built-in parameter decorator list and custom parameter decorator behavior." }
+      {
+        "label": "NestJS docs: Controllers",
+        "url": "https://docs.nestjs.com/controllers",
+        "note": "Used for built-in HTTP parameter decorators and request object mapping."
+      },
+      {
+        "label": "NestJS docs: Custom decorators",
+        "url": "https://docs.nestjs.com/custom-decorators",
+        "note": "Used for built-in parameter decorator list and custom parameter decorator behavior."
+      }
     ],
     "status": "active"
   },
   {
     "code": "NESTJS_JR_TECH_HTTP_CODE_034",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "communication"],
-    "techTags": ["nestjs", "rest", "typescript"],
+    "competencies": [
+      "technical_fundamentals",
+      "communication"
+    ],
+    "techTags": [
+      "nestjs",
+      "rest",
+      "typescript"
+    ],
     "difficulty": 2,
     "intent": "Assess whether the candidate knows how NestJS chooses default response status codes and when @HttpCode() should override the status for a route handler.",
     "primaryQuestion": "What is @HttpCode() used for?",
     "expectedSignals": [
-      { "label": "Explains that @HttpCode(status) sets the static HTTP response status for a route handler.", "relatedTrigger": null },
-      { "label": "Mentions Nest defaults such as 200 for most handlers and 201 for POST when returning data normally.", "relatedTrigger": null },
-      { "label": "Gives practical examples such as @HttpCode(204) for no-content responses or @HttpCode(200) for login POST endpoints.", "relatedTrigger": null },
-      { "label": "Clarifies that dynamic status decisions usually require throwing exceptions or using the response object carefully.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Thinks @HttpCode() changes route path or request method.",
-      "Uses @HttpCode() for every endpoint without understanding defaults.",
-      "Returns a body with 204 No Content without noticing the semantic mismatch.",
-      "Thinks @HttpCode() still applies when fully handling the response with @Res() in library-specific mode."
+      {
+        "label": "Explains that @HttpCode(status) sets the static HTTP response status for a route handler.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "httpcode_sets_status",
+            "description": "Explains that @HttpCode(status) sets the response status code"
+          },
+          {
+            "key": "static_per_handler",
+            "description": "Clarifies that the configured status is static for that route handler"
+          },
+          {
+            "key": "normal_nest_response_path",
+            "description": "Connects @HttpCode to Nest's normal response handling path"
+          }
+        ]
+      },
+      {
+        "label": "Mentions Nest defaults such as 200 for most handlers and 201 for POST when returning data normally.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_default_200",
+            "description": "Mentions 200 as the default for most successful handlers"
+          },
+          {
+            "key": "mentions_default_post_201",
+            "description": "Mentions Nest's common 201 default for POST handlers"
+          },
+          {
+            "key": "default_when_returning_normally",
+            "description": "Clarifies that these defaults apply when returning data through Nest normally"
+          }
+        ]
+      },
+      {
+        "label": "Gives practical examples such as @HttpCode(204) for no-content responses or @HttpCode(200) for login POST endpoints.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "example_204_no_content",
+            "description": "Gives @HttpCode(204) as an example for a successful no-content response"
+          },
+          {
+            "key": "example_login_post_200",
+            "description": "Gives @HttpCode(200) as an example for a login POST that should not return 201"
+          },
+          {
+            "key": "status_matches_body_semantics",
+            "description": "Explains that the chosen status should match response-body semantics"
+          }
+        ]
+      },
+      {
+        "label": "Clarifies that dynamic status decisions usually require throwing exceptions or using the response object carefully.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "static_not_dynamic_status",
+            "description": "Clarifies that @HttpCode is not for per-branch dynamic status selection"
+          },
+          {
+            "key": "mentions_exceptions_for_status",
+            "description": "Mentions throwing Nest exceptions for error status decisions"
+          },
+          {
+            "key": "manual_response_can_bypass_httpcode",
+            "description": "Explains that manually using the response object can change or bypass @HttpCode behavior"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Explains default statuses, static override behavior, common use cases, and interaction with normal Nest response handling." },
-      { "scoreBand": "solid", "description": "Knows @HttpCode sets status but misses defaults or dynamic response caveats." },
-      { "scoreBand": "needs_work", "description": "Recognizes it is about status codes but cannot apply it correctly." },
-      { "scoreBand": "insufficient_evidence", "description": "Answer does not demonstrate HTTP semantics or Nest response behavior." }
+      {
+        "scoreBand": "strong",
+        "description": "Explains default statuses, static override behavior, common use cases, and interaction with normal Nest response handling."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows @HttpCode sets status but misses defaults or dynamic response caveats."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Recognizes it is about status codes but cannot apply it correctly."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not demonstrate HTTP semantics or Nest response behavior."
+      }
     ],
     "followUps": [
-      { "trigger": "missing_context", "question": "Why might a POST /auth/login handler use @HttpCode(200) instead of accepting Nest's default?", "purpose": "Check practical default-status understanding." },
-      { "trigger": "missing_tradeoff", "question": "When would @HttpCode(204) be inappropriate even if the operation succeeded?", "purpose": "Check response body and HTTP semantics." },
-      { "trigger": "red_flag", "question": "If you inject @Res() and call res.status(201).json(...), what does @HttpCode(200) on that method do?", "purpose": "Check interaction with manual response handling." }
+      {
+        "trigger": "missing_context",
+        "question": "Why might a POST /auth/login handler use @HttpCode(200) instead of accepting Nest's default?",
+        "purpose": "Check practical default-status understanding."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "When would @HttpCode(204) be inappropriate even if the operation succeeded?",
+        "purpose": "Check response body and HTTP semantics."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "If you inject @Res() and call res.status(201).json(...), what does @HttpCode(200) on that method do?",
+        "purpose": "Check interaction with manual response handling."
+      }
     ],
     "localizedContent": {
       "en": {
@@ -321,7 +807,11 @@
           "Returning content with a 204 response.",
           "Forgetting that manual @Res() handling bypasses standard Nest response decorators."
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "Set response status bằng @HttpCode",
@@ -337,7 +827,11 @@
           "Trả body cho response 204.",
           "Quên rằng manual @Res() có thể bypass decorator response chuẩn của Nest."
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "@HttpCode による response status 設定",
@@ -353,48 +847,160 @@
           "204 response に body を返す。",
           "manual @Res() が Nest の標準 response decorator を bypass し得ることを忘れる。"
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "NestJS docs: Controllers status code", "url": "https://docs.nestjs.com/controllers#status-code", "note": "Used for default response status and @HttpCode behavior." },
-      { "label": "NestJS docs: Controllers response headers and library-specific response", "url": "https://docs.nestjs.com/controllers", "note": "Used for interaction with standard response handling and @Res()." }
+      {
+        "label": "NestJS docs: Controllers status code",
+        "url": "https://docs.nestjs.com/controllers#status-code",
+        "note": "Used for default response status and @HttpCode behavior."
+      },
+      {
+        "label": "NestJS docs: Controllers response headers and library-specific response",
+        "url": "https://docs.nestjs.com/controllers",
+        "note": "Used for interaction with standard response handling and @Res()."
+      }
     ],
     "status": "active"
   },
   {
     "code": "NESTJS_JR_TECH_HEADER_DECORATOR_035",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "communication"],
-    "techTags": ["nestjs", "rest", "typescript"],
+    "competencies": [
+      "technical_fundamentals",
+      "communication"
+    ],
+    "techTags": [
+      "nestjs",
+      "rest",
+      "typescript"
+    ],
     "difficulty": 2,
     "intent": "Check whether the candidate understands @Header() as a response header decorator and can distinguish it from @Headers(), which reads request headers.",
     "primaryQuestion": "What is @Header() and when would you use it?",
     "expectedSignals": [
-      { "label": "Explains that @Header(name, value) sets a static response header on a route handler.", "relatedTrigger": null },
-      { "label": "Distinguishes @Header() from @Headers(), where @Headers() reads request headers.", "relatedTrigger": null },
-      { "label": "Gives use cases such as Cache-Control, Content-Disposition, Content-Type overrides, or no-store headers.", "relatedTrigger": null },
-      { "label": "Mentions that dynamic headers can be set through interceptors or @Res({ passthrough: true }) when needed.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Confuses @Header() with @Headers() and says it reads incoming headers.",
-      "Uses static @Header() for values that must be calculated per request without explaining alternatives.",
-      "Ignores security or caching implications of headers such as Cache-Control.",
-      "Uses @Res() for simple static headers when @Header() would keep standard Nest response handling."
+      {
+        "label": "Explains that @Header(name, value) sets a static response header on a route handler.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "header_sets_response_header",
+            "description": "Explains that @Header() sets an outgoing response header"
+          },
+          {
+            "key": "static_name_value",
+            "description": "Mentions that @Header(name, value) uses a static header name and value"
+          },
+          {
+            "key": "handler_level_header",
+            "description": "Connects @Header() to a specific route handler"
+          }
+        ]
+      },
+      {
+        "label": "Distinguishes @Header() from @Headers(), where @Headers() reads request headers.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "header_outgoing_response",
+            "description": "States that @Header() writes an outgoing response header"
+          },
+          {
+            "key": "headers_incoming_request",
+            "description": "States that @Headers() reads incoming request headers"
+          },
+          {
+            "key": "avoids_direction_confusion",
+            "description": "Avoids confusing response-header setting with request-header reading"
+          }
+        ]
+      },
+      {
+        "label": "Gives use cases such as Cache-Control, Content-Disposition, Content-Type overrides, or no-store headers.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_cache_control",
+            "description": "Mentions Cache-Control or no-store response headers"
+          },
+          {
+            "key": "mentions_content_disposition",
+            "description": "Mentions Content-Disposition for downloads or file responses"
+          },
+          {
+            "key": "mentions_content_type_override",
+            "description": "Mentions Content-Type overrides where appropriate"
+          }
+        ]
+      },
+      {
+        "label": "Mentions that dynamic headers can be set through interceptors or @Res({ passthrough: true }) when needed.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "dynamic_header_not_static",
+            "description": "Explains that user-dependent or runtime-dependent header values do not fit static @Header() well"
+          },
+          {
+            "key": "mentions_interceptor_option",
+            "description": "Mentions interceptors as an option for dynamic response headers"
+          },
+          {
+            "key": "mentions_passthrough_response",
+            "description": "Mentions @Res({ passthrough: true }) while preserving normal Nest return handling"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Clearly explains static response header setting, @Headers() contrast, real use cases, and dynamic alternatives." },
-      { "scoreBand": "solid", "description": "Knows @Header sets response headers but misses dynamic-header trade-offs." },
-      { "scoreBand": "needs_work", "description": "Confuses request and response header decorators or cannot provide realistic use cases." },
-      { "scoreBand": "insufficient_evidence", "description": "Answer does not show practical HTTP header understanding." }
+      {
+        "scoreBand": "strong",
+        "description": "Clearly explains static response header setting, @Headers() contrast, real use cases, and dynamic alternatives."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows @Header sets response headers but misses dynamic-header trade-offs."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Confuses request and response header decorators or cannot provide realistic use cases."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not show practical HTTP header understanding."
+      }
     ],
     "followUps": [
-      { "trigger": "red_flag", "question": "Which decorator would read the incoming Authorization header, and which would set Cache-Control on the response?", "purpose": "Separate @Headers() from @Header()." },
-      { "trigger": "missing_tradeoff", "question": "If the header value depends on the current user, would you use @Header()? What alternative fits better?", "purpose": "Check static versus dynamic response-header reasoning." },
-      { "trigger": "missing_context", "question": "What does Cache-Control: no-store communicate to clients or proxies?", "purpose": "Check HTTP semantics behind a common @Header() use case." }
+      {
+        "trigger": "missing_consequence",
+        "question": "Which decorator would read the incoming Authorization header, and which would set Cache-Control on the response?",
+        "purpose": "Separate @Headers() from @Header()."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "If the header value depends on the current user, would you use @Header()? What alternative fits better?",
+        "purpose": "Check static versus dynamic response-header reasoning."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "What does Cache-Control: no-store communicate to clients or proxies?",
+        "purpose": "Check HTTP semantics behind a common @Header() use case."
+      }
     ],
     "localizedContent": {
       "en": {
@@ -411,7 +1017,11 @@
           "Using static decorators for per-request values.",
           "Switching to @Res() unnecessarily for simple response headers."
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "Set response header bằng @Header",
@@ -427,7 +1037,11 @@
           "Dùng decorator tĩnh cho giá trị thay đổi theo từng request.",
           "Chuyển sang @Res() không cần thiết cho response header đơn giản."
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "@Header による response header 設定",
@@ -443,50 +1057,196 @@
           "request-specific な値に static decorator を使う。",
           "単純な response header のために不要に @Res() へ切り替える。"
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "NestJS docs: Controllers response headers", "url": "https://docs.nestjs.com/controllers#response-headers", "note": "Used for @Header() behavior and examples." },
-      { "label": "NestJS docs: Controllers request object", "url": "https://docs.nestjs.com/controllers#request-object", "note": "Used for @Headers() request-header extraction contrast." }
+      {
+        "label": "NestJS docs: Controllers response headers",
+        "url": "https://docs.nestjs.com/controllers#response-headers",
+        "note": "Used for @Header() behavior and examples."
+      },
+      {
+        "label": "NestJS docs: Controllers request object",
+        "url": "https://docs.nestjs.com/controllers#request-object",
+        "note": "Used for @Headers() request-header extraction contrast."
+      }
     ],
     "status": "active"
   },
   {
     "code": "NESTJS_MID_TRADE_RES_DECORATOR_036",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend"],
-    "levels": ["mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend"
+    ],
+    "levels": [
+      "mid"
+    ],
     "type": "trade_off",
-    "competencies": ["technical_fundamentals", "trade_off_analysis", "system_thinking"],
-    "techTags": ["nestjs", "rest", "typescript"],
+    "competencies": [
+      "technical_fundamentals",
+      "trade_off_analysis",
+      "system_thinking"
+    ],
+    "techTags": [
+      "nestjs",
+      "rest",
+      "typescript"
+    ],
     "difficulty": 3,
     "intent": "Evaluate whether the candidate understands @Res() as access to the underlying platform response object and can explain the trade-off between manual response control and Nest standard response handling.",
     "primaryQuestion": "What does @Res() do? What is the tradeoff of using it vs returning data normally?",
     "expectedSignals": [
-      { "label": "Explains that @Res() injects the native response object from the underlying HTTP platform, such as Express Response or Fastify reply.", "relatedTrigger": null },
-      { "label": "States that using @Res() without passthrough puts the handler into library-specific/manual response mode.", "relatedTrigger": null },
-      { "label": "Mentions the developer must call res.status(), res.json(), res.send(), redirect, stream, or otherwise finish the response.", "relatedTrigger": null },
-      { "label": "Explains trade-offs: more control for cookies, streaming, redirects, downloads, and dynamic headers, but more platform coupling and harder tests.", "relatedTrigger": null },
-      { "label": "Mentions standard Nest features such as interceptors, response mapping, @HttpCode(), and @Header() may not work the same when the response is handled manually.", "relatedTrigger": null },
-      { "label": "Knows @Res({ passthrough: true }) can set headers/cookies while still returning data through Nest.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Injects @Res() in every controller by default.",
-      "Forgets to send a response and risks hanging the request.",
-      "Does not understand why interceptors or response decorators may be bypassed.",
-      "Claims @Res() is required to set any status code or header."
+      {
+        "label": "Explains that @Res() injects the native response object from the underlying HTTP platform, such as Express Response or Fastify reply.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "res_injects_native_response",
+            "description": "Explains that @Res() injects the native response object"
+          },
+          {
+            "key": "mentions_express_fastify",
+            "description": "Mentions Express Response or Fastify reply as platform examples"
+          },
+          {
+            "key": "recognizes_platform_specific_api",
+            "description": "Recognizes that the object exposes platform-specific response APIs"
+          }
+        ]
+      },
+      {
+        "label": "States that using @Res() without passthrough puts the handler into library-specific/manual response mode.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "plain_res_manual_mode",
+            "description": "States that plain @Res() moves the handler into manual response mode"
+          },
+          {
+            "key": "without_passthrough_condition",
+            "description": "Mentions that this behavior applies when passthrough is not enabled"
+          },
+          {
+            "key": "library_specific_handling",
+            "description": "Connects manual mode to platform-specific handling"
+          }
+        ]
+      },
+      {
+        "label": "Mentions the developer must call res.status(), res.json(), res.send(), redirect, stream, or otherwise finish the response.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "must_finish_response",
+            "description": "Explains that the developer must finish the response manually"
+          },
+          {
+            "key": "names_response_methods",
+            "description": "Names methods such as res.status(), res.json(), res.send(), redirect, or streaming"
+          },
+          {
+            "key": "hanging_response_risk",
+            "description": "Explains that failing to finish the response can leave the request hanging"
+          }
+        ]
+      },
+      {
+        "label": "Explains trade-offs: more control for cookies, streaming, redirects, downloads, and dynamic headers, but more platform coupling and harder tests.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "manual_control_benefits",
+            "description": "Mentions benefits such as cookies, streaming, redirects, downloads, or dynamic headers"
+          },
+          {
+            "key": "platform_coupling_cost",
+            "description": "Mentions increased coupling to Express or Fastify APIs"
+          },
+          {
+            "key": "testing_cost",
+            "description": "Mentions harder tests or more mocking when using manual response objects"
+          }
+        ]
+      },
+      {
+        "label": "Mentions standard Nest features such as interceptors, response mapping, @HttpCode(), and @Header() may not work the same when the response is handled manually.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "interceptors_may_change_behavior",
+            "description": "Mentions interceptors or response mapping may be less useful with manual responses"
+          },
+          {
+            "key": "httpcode_header_interaction",
+            "description": "Mentions @HttpCode() or @Header() may not work the same"
+          },
+          {
+            "key": "manual_response_bypasses_mapping",
+            "description": "Explains that manual response handling can bypass normal Nest response mapping"
+          }
+        ]
+      },
+      {
+        "label": "Knows @Res({ passthrough: true }) can set headers/cookies while still returning data through Nest.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "knows_passthrough_option",
+            "description": "Mentions @Res({ passthrough: true })"
+          },
+          {
+            "key": "passthrough_sets_headers_cookies",
+            "description": "Explains passthrough can set headers or cookies"
+          },
+          {
+            "key": "passthrough_keeps_nest_return",
+            "description": "Explains that the handler can still return data through Nest"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Covers native response object, manual mode, response completion responsibility, platform/test trade-offs, feature bypasses, and passthrough." },
-      { "scoreBand": "solid", "description": "Understands manual response control but misses passthrough or one Nest feature interaction." },
-      { "scoreBand": "needs_work", "description": "Uses @Res() mechanically without articulating when it is justified." },
-      { "scoreBand": "insufficient_evidence", "description": "Cannot distinguish manual response handling from returning data normally." }
+      {
+        "scoreBand": "strong",
+        "description": "Covers native response object, manual mode, response completion responsibility, platform/test trade-offs, feature bypasses, and passthrough."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands manual response control but misses passthrough or one Nest feature interaction."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Uses @Res() mechanically without articulating when it is justified."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Cannot distinguish manual response handling from returning data normally."
+      }
     ],
     "followUps": [
-      { "trigger": "missing_tradeoff", "question": "What breaks or becomes less useful if you use @Res() and call res.json() yourself?", "purpose": "Check standard-response feature awareness." },
-      { "trigger": "red_flag", "question": "What happens if a handler injects @Res() but neither returns passthrough data nor calls res.send()/res.json()?", "purpose": "Check hanging-request risk." },
-      { "trigger": "missing_context", "question": "When would @Res({ passthrough: true }) be a better choice than plain @Res()?", "purpose": "Verify nuanced response customization knowledge." }
+      {
+        "trigger": "missing_tradeoff",
+        "question": "What breaks or becomes less useful if you use @Res() and call res.json() yourself?",
+        "purpose": "Check standard-response feature awareness."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "What happens if a handler injects @Res() but neither returns passthrough data nor calls res.send()/res.json()?",
+        "purpose": "Check hanging-request risk."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "When would @Res({ passthrough: true }) be a better choice than plain @Res()?",
+        "purpose": "Verify nuanced response customization knowledge."
+      }
     ],
     "localizedContent": {
       "en": {
@@ -503,7 +1263,11 @@
           "Forgetting to finish the response manually.",
           "Missing that interceptors, @HttpCode(), and @Header() depend on standard response handling."
         ],
-        "labels": { "role": "Backend", "level": "Mid", "type": "trade_off" }
+        "labels": {
+          "role": "Backend",
+          "level": "Mid",
+          "type": "trade_off"
+        }
       },
       "vi": {
         "title": "@Res() và manual response handling",
@@ -519,7 +1283,11 @@
           "Quên tự kết thúc response.",
           "Không nhận ra interceptor, @HttpCode() và @Header() phụ thuộc vào standard response handling."
         ],
-        "labels": { "role": "Backend", "level": "Mid", "type": "trade_off" }
+        "labels": {
+          "role": "Backend",
+          "level": "Mid",
+          "type": "trade_off"
+        }
       },
       "ja": {
         "title": "@Res() と manual response handling",
@@ -535,49 +1303,178 @@
           "手動で response を完了することを忘れる。",
           "interceptor、@HttpCode()、@Header() が standard response handling に依存する点を見落とす。"
         ],
-        "labels": { "role": "Backend", "level": "Mid", "type": "trade_off" }
+        "labels": {
+          "role": "Backend",
+          "level": "Mid",
+          "type": "trade_off"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "NestJS docs: Controllers library-specific response", "url": "https://docs.nestjs.com/controllers#library-specific-approach", "note": "Used for @Res(), manual response mode, and passthrough behavior." },
-      { "label": "NestJS docs: Interceptors response mapping", "url": "https://docs.nestjs.com/interceptors#response-mapping", "note": "Used for interceptor limitations with manual response handling." }
+      {
+        "label": "NestJS docs: Controllers library-specific response",
+        "url": "https://docs.nestjs.com/controllers#library-specific-approach",
+        "note": "Used for @Res(), manual response mode, and passthrough behavior."
+      },
+      {
+        "label": "NestJS docs: Interceptors response mapping",
+        "url": "https://docs.nestjs.com/interceptors#response-mapping",
+        "note": "Used for interceptor limitations with manual response handling."
+      }
     ],
     "status": "active"
   },
   {
     "code": "NESTJS_MID_TECH_SET_METADATA_037",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend"],
-    "levels": ["mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend"
+    ],
+    "levels": [
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "communication"],
-    "techTags": ["nestjs", "typescript", "security"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "communication"
+    ],
+    "techTags": [
+      "nestjs",
+      "typescript",
+      "security"
+    ],
     "difficulty": 3,
     "intent": "Check whether the candidate understands SetMetadata() as a low-level way to attach custom route or controller metadata that can later be read by guards, interceptors, or other framework components.",
     "primaryQuestion": "What is SetMetadata() used for?",
     "expectedSignals": [
-      { "label": "Explains that SetMetadata(key, value) attaches custom metadata to a class or route handler.", "relatedTrigger": null },
-      { "label": "Gives common examples such as roles, permissions, public routes, cache policy, rate-limit policy, or feature flags.", "relatedTrigger": null },
-      { "label": "Mentions that SetMetadata is often wrapped in a custom decorator such as export const Roles = (...roles) => SetMetadata('roles', roles).", "relatedTrigger": null },
-      { "label": "Connects the metadata to later reads via Reflector inside guards, interceptors, or other providers with ExecutionContext.", "relatedTrigger": null },
-      { "label": "Understands that metadata by itself does nothing unless some component reads and enforces it.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Thinks SetMetadata directly performs authorization or validation.",
-      "Uses raw SetMetadata everywhere instead of a named custom decorator for readability and consistency.",
-      "Cannot explain who reads the metadata later.",
-      "Stores large mutable request data in decorator metadata instead of static policy/configuration."
+      {
+        "label": "Explains that SetMetadata(key, value) attaches custom metadata to a class or route handler.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "setmetadata_key_value",
+            "description": "Explains SetMetadata(key, value) as key-value metadata attachment"
+          },
+          {
+            "key": "metadata_on_class_or_handler",
+            "description": "Mentions attaching metadata to a class or route handler"
+          },
+          {
+            "key": "custom_metadata_not_enforcement",
+            "description": "Clarifies that it stores custom metadata rather than enforcing behavior by itself"
+          }
+        ]
+      },
+      {
+        "label": "Gives common examples such as roles, permissions, public routes, cache policy, rate-limit policy, or feature flags.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "mentions_roles_permissions",
+            "description": "Mentions roles or permissions metadata"
+          },
+          {
+            "key": "mentions_public_or_auth_policy",
+            "description": "Mentions public-route or authentication policy metadata"
+          },
+          {
+            "key": "mentions_operational_policy",
+            "description": "Mentions cache, rate-limit, feature-flag, or similar policy metadata"
+          }
+        ]
+      },
+      {
+        "label": "Mentions that SetMetadata is often wrapped in a custom decorator such as export const Roles = (...roles) => SetMetadata('roles', roles).",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "wraps_in_custom_decorator",
+            "description": "Mentions wrapping SetMetadata in a custom decorator"
+          },
+          {
+            "key": "roles_decorator_example",
+            "description": "Gives a concrete example such as Roles(...roles)"
+          },
+          {
+            "key": "custom_decorator_improves_readability",
+            "description": "Explains that wrapping gives readable route-level policy syntax"
+          }
+        ]
+      },
+      {
+        "label": "Connects the metadata to later reads via Reflector inside guards, interceptors, or other providers with ExecutionContext.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "reflector_reads_metadata",
+            "description": "Mentions Reflector as the helper that reads the custom metadata"
+          },
+          {
+            "key": "reads_inside_guard_interceptor",
+            "description": "Mentions guards, interceptors, or providers as places that read metadata"
+          },
+          {
+            "key": "uses_execution_context_target",
+            "description": "Connects metadata reads to ExecutionContext handler or class targets"
+          }
+        ]
+      },
+      {
+        "label": "Understands that metadata by itself does nothing unless some component reads and enforces it.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "metadata_alone_no_effect",
+            "description": "Explains that setting metadata alone does not change behavior"
+          },
+          {
+            "key": "requires_reader_component",
+            "description": "Mentions that a guard, interceptor, or other component must read it"
+          },
+          {
+            "key": "requires_enforcement_logic",
+            "description": "Explains that enforcement logic must act on the metadata"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Explains key/value metadata, custom decorator wrapping, realistic policy examples, and enforcement via Reflector-powered guards or interceptors." },
-      { "scoreBand": "solid", "description": "Understands custom metadata but misses the need for a reader/enforcer or clean wrapper decorator." },
-      { "scoreBand": "needs_work", "description": "Knows SetMetadata syntax but cannot describe a complete use case." },
-      { "scoreBand": "insufficient_evidence", "description": "Confuses metadata attachment with business logic execution." }
+      {
+        "scoreBand": "strong",
+        "description": "Explains key/value metadata, custom decorator wrapping, realistic policy examples, and enforcement via Reflector-powered guards or interceptors."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands custom metadata but misses the need for a reader/enforcer or clean wrapper decorator."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows SetMetadata syntax but cannot describe a complete use case."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Confuses metadata attachment with business logic execution."
+      }
     ],
     "followUps": [
-      { "trigger": "vague_answer", "question": "How would you implement @Roles('admin') using SetMetadata()?", "purpose": "Force a concrete custom-decorator example." },
-      { "trigger": "missing_context", "question": "After metadata is set, where would you read it to enforce authorization?", "purpose": "Connect metadata definition to guard enforcement." },
-      { "trigger": "red_flag", "question": "If no guard or interceptor reads the metadata, what effect does SetMetadata('roles', ['admin']) have?", "purpose": "Check that metadata alone is inert." }
+      {
+        "trigger": "vague_answer",
+        "question": "How would you implement @Roles('admin') using SetMetadata()?",
+        "purpose": "Force a concrete custom-decorator example."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "After metadata is set, where would you read it to enforce authorization?",
+        "purpose": "Connect metadata definition to guard enforcement."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "If no guard or interceptor reads the metadata, what effect does SetMetadata('roles', ['admin']) have?",
+        "purpose": "Check that metadata alone is inert."
+      }
     ],
     "localizedContent": {
       "en": {
@@ -594,7 +1491,11 @@
           "Not creating a readable custom decorator around raw metadata keys.",
           "Forgetting that another component must read the metadata."
         ],
-        "labels": { "role": "Backend", "level": "Mid", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend",
+          "level": "Mid",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "Custom route metadata với SetMetadata",
@@ -610,7 +1511,11 @@
           "Không tạo custom decorator dễ đọc quanh raw metadata key.",
           "Quên rằng phải có component khác đọc metadata."
         ],
-        "labels": { "role": "Backend", "level": "Mid", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend",
+          "level": "Mid",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "SetMetadata による custom route metadata",
@@ -626,49 +1531,178 @@
           "raw metadata key のまま使い、読みやすい custom decorator を作らない。",
           "metadata を読む component が必要なことを忘れる。"
         ],
-        "labels": { "role": "Backend", "level": "Mid", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend",
+          "level": "Mid",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "NestJS docs: Execution context reflection and metadata", "url": "https://docs.nestjs.com/fundamentals/execution-context#reflection-and-metadata", "note": "Used for SetMetadata and Reflector usage." },
-      { "label": "NestJS docs: Guards setting roles per handler", "url": "https://docs.nestjs.com/guards#setting-roles-per-handler", "note": "Used for roles metadata examples." }
+      {
+        "label": "NestJS docs: Execution context reflection and metadata",
+        "url": "https://docs.nestjs.com/fundamentals/execution-context#reflection-and-metadata",
+        "note": "Used for SetMetadata and Reflector usage."
+      },
+      {
+        "label": "NestJS docs: Guards setting roles per handler",
+        "url": "https://docs.nestjs.com/guards#setting-roles-per-handler",
+        "note": "Used for roles metadata examples."
+      }
     ],
     "status": "active"
   },
   {
     "code": "NESTJS_MID_TECH_REFLECTOR_038",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend"],
-    "levels": ["mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend"
+    ],
+    "levels": [
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "problem_solving"],
-    "techTags": ["nestjs", "typescript", "security"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "problem_solving"
+    ],
+    "techTags": [
+      "nestjs",
+      "typescript",
+      "security"
+    ],
     "difficulty": 3,
     "intent": "Assess whether the candidate understands Reflector as the NestJS helper for reading custom metadata in context-aware components such as guards and interceptors, especially metadata set by SetMetadata() or Reflector.createDecorator().",
     "primaryQuestion": "What is Reflector and how does it pair with SetMetadata()?",
     "expectedSignals": [
-      { "label": "Explains that Reflector is an injectable helper from @nestjs/core used to read metadata from handlers and classes.", "relatedTrigger": null },
-      { "label": "Connects SetMetadata('roles', roles) on a handler or controller with this.reflector.get('roles', context.getHandler()).", "relatedTrigger": null },
-      { "label": "Mentions ExecutionContext methods getHandler() and getClass() as metadata targets.", "relatedTrigger": null },
-      { "label": "Explains getAllAndOverride for method-overrides-controller defaults and getAllAndMerge for combining class and method metadata.", "relatedTrigger": null },
-      { "label": "Understands the typical pattern: custom decorator sets policy metadata, guard/interceptor reads metadata, then enforces or changes behavior.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Cannot explain the relationship between metadata keys and Reflector reads.",
-      "Reads only method metadata and accidentally ignores controller-level metadata.",
-      "Thinks Reflector creates database reflection or TypeScript compile-time types.",
-      "Uses hard-coded strings inconsistently without constants or typed decorators."
+      {
+        "label": "Explains that Reflector is an injectable helper from @nestjs/core used to read metadata from handlers and classes.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "reflector_injectable_helper",
+            "description": "Explains Reflector as an injectable helper"
+          },
+          {
+            "key": "reflector_from_nest_core",
+            "description": "Mentions that Reflector comes from @nestjs/core"
+          },
+          {
+            "key": "reads_handler_class_metadata",
+            "description": "Explains that Reflector reads metadata from handlers and classes"
+          }
+        ]
+      },
+      {
+        "label": "Connects SetMetadata('roles', roles) on a handler or controller with this.reflector.get('roles', context.getHandler()).",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "connects_setmetadata_to_reflector",
+            "description": "Connects metadata set with SetMetadata to later reads through Reflector"
+          },
+          {
+            "key": "uses_same_metadata_key",
+            "description": "Mentions using the same key such as roles when setting and reading metadata"
+          },
+          {
+            "key": "shows_reflector_get_handler",
+            "description": "Shows or describes this.reflector.get('roles', context.getHandler())"
+          }
+        ]
+      },
+      {
+        "label": "Mentions ExecutionContext methods getHandler() and getClass() as metadata targets.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_get_handler",
+            "description": "Mentions context.getHandler() for method-level metadata"
+          },
+          {
+            "key": "mentions_get_class",
+            "description": "Mentions context.getClass() for controller-level metadata"
+          },
+          {
+            "key": "distinguishes_metadata_scopes",
+            "description": "Distinguishes method-level and class-level metadata targets"
+          }
+        ]
+      },
+      {
+        "label": "Explains getAllAndOverride for method-overrides-controller defaults and getAllAndMerge for combining class and method metadata.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "explains_getallandoverride",
+            "description": "Explains getAllAndOverride for precedence where method metadata overrides controller defaults"
+          },
+          {
+            "key": "explains_getallandmerge",
+            "description": "Explains getAllAndMerge for combining class and method metadata"
+          },
+          {
+            "key": "chooses_based_on_policy_semantics",
+            "description": "Connects override versus merge choice to intended policy semantics"
+          }
+        ]
+      },
+      {
+        "label": "Understands the typical pattern: custom decorator sets policy metadata, guard/interceptor reads metadata, then enforces or changes behavior.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "custom_decorator_sets_policy",
+            "description": "Explains that a custom decorator sets policy metadata"
+          },
+          {
+            "key": "guard_interceptor_reads_policy",
+            "description": "Explains that a guard or interceptor reads that metadata"
+          },
+          {
+            "key": "reader_enforces_behavior",
+            "description": "Explains that the reader enforces access or changes behavior based on metadata"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Explains Reflector injection, get/getAllAndOverride/getAllAndMerge, handler/class targets, and complete SetMetadata-to-guard flow." },
-      { "scoreBand": "solid", "description": "Understands Reflector reads metadata but misses class-level fallback or merge/override behavior." },
-      { "scoreBand": "needs_work", "description": "Can repeat Reflector.get syntax but cannot reason about metadata scopes." },
-      { "scoreBand": "insufficient_evidence", "description": "Answer does not connect Reflector to custom metadata enforcement." }
+      {
+        "scoreBand": "strong",
+        "description": "Explains Reflector injection, get/getAllAndOverride/getAllAndMerge, handler/class targets, and complete SetMetadata-to-guard flow."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands Reflector reads metadata but misses class-level fallback or merge/override behavior."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can repeat Reflector.get syntax but cannot reason about metadata scopes."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not connect Reflector to custom metadata enforcement."
+      }
     ],
     "followUps": [
-      { "trigger": "missing_context", "question": "In a RolesGuard, what is the difference between context.getHandler() and context.getClass() when reading roles?", "purpose": "Check method versus controller metadata awareness." },
-      { "trigger": "missing_tradeoff", "question": "When would you use getAllAndOverride instead of getAllAndMerge?", "purpose": "Check policy precedence reasoning." },
-      { "trigger": "red_flag", "question": "If @Roles('user') is on the controller and @Roles('admin') is on the method, what should your guard read if method-level roles should override defaults?", "purpose": "Force concrete Reflector API use." }
+      {
+        "trigger": "missing_context",
+        "question": "In a RolesGuard, what is the difference between context.getHandler() and context.getClass() when reading roles?",
+        "purpose": "Check method versus controller metadata awareness."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "When would you use getAllAndOverride instead of getAllAndMerge?",
+        "purpose": "Check policy precedence reasoning."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "If @Roles('user') is on the controller and @Roles('admin') is on the method, what should your guard read if method-level roles should override defaults?",
+        "purpose": "Force concrete Reflector API use."
+      }
     ],
     "localizedContent": {
       "en": {
@@ -685,7 +1719,11 @@
           "Ignoring controller-level metadata.",
           "Not defining consistent metadata keys or typed decorators."
         ],
-        "labels": { "role": "Backend", "level": "Mid", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend",
+          "level": "Mid",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "Đọc metadata bằng Reflector",
@@ -701,7 +1739,11 @@
           "Bỏ qua metadata ở controller level.",
           "Không định nghĩa metadata key nhất quán hoặc typed decorator."
         ],
-        "labels": { "role": "Backend", "level": "Mid", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend",
+          "level": "Mid",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "Reflector による metadata 読み取り",
@@ -717,48 +1759,160 @@
           "controller-level metadata を無視する。",
           "metadata key や typed decorator を一貫して定義しない。"
         ],
-        "labels": { "role": "Backend", "level": "Mid", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend",
+          "level": "Mid",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "NestJS docs: Execution context reflection and metadata", "url": "https://docs.nestjs.com/fundamentals/execution-context#reflection-and-metadata", "note": "Used for Reflector, getHandler/getClass, getAllAndOverride, and getAllAndMerge." },
-      { "label": "NestJS docs: Guards setting roles per handler", "url": "https://docs.nestjs.com/guards#setting-roles-per-handler", "note": "Used for RolesGuard metadata-reading pattern." }
+      {
+        "label": "NestJS docs: Execution context reflection and metadata",
+        "url": "https://docs.nestjs.com/fundamentals/execution-context#reflection-and-metadata",
+        "note": "Used for Reflector, getHandler/getClass, getAllAndOverride, and getAllAndMerge."
+      },
+      {
+        "label": "NestJS docs: Guards setting roles per handler",
+        "url": "https://docs.nestjs.com/guards#setting-roles-per-handler",
+        "note": "Used for RolesGuard metadata-reading pattern."
+      }
     ],
     "status": "active"
   },
   {
     "code": "NESTJS_JR_TECH_MULTIPLE_DECORATORS_039",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "communication"],
-    "techTags": ["nestjs", "typescript", "rest"],
+    "competencies": [
+      "technical_fundamentals",
+      "communication"
+    ],
+    "techTags": [
+      "nestjs",
+      "typescript",
+      "rest"
+    ],
     "difficulty": 2,
     "intent": "Check whether the candidate can apply multiple NestJS decorators to a route handler cleanly and understands method decorators versus parameter decorators and decorator composition.",
     "primaryQuestion": "How do you apply multiple decorators to a single route handler?",
     "expectedSignals": [
-      { "label": "Explains that multiple decorators can be stacked above the same method, for example @Post(), @HttpCode(200), @UseGuards(AuthGuard), and @UseInterceptors(...).", "relatedTrigger": null },
-      { "label": "Distinguishes method decorators from parameter decorators inside the method signature such as @Body() dto or @Param('id') id.", "relatedTrigger": null },
-      { "label": "Mentions that decorator order can matter for composition/evaluation and should be kept readable and conventional.", "relatedTrigger": null },
-      { "label": "Mentions applyDecorators() as an option to bundle repeated decorator sets into a custom decorator.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Thinks only one decorator can be used per handler.",
-      "Places parameter decorators above the method instead of on parameters.",
-      "Uses decorators to hide too much behavior without naming the abstraction clearly.",
-      "Cannot give a syntactically plausible Nest route example."
+      {
+        "label": "Explains that multiple decorators can be stacked above the same method, for example @Post(), @HttpCode(200), @UseGuards(AuthGuard), and @UseInterceptors(...).",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "decorators_can_stack",
+            "description": "Explains that multiple method decorators can be stacked above one handler"
+          },
+          {
+            "key": "gives_route_status_guard_examples",
+            "description": "Gives examples such as @Post(), @HttpCode(), @UseGuards(), or @UseInterceptors()"
+          },
+          {
+            "key": "same_handler_application",
+            "description": "Clarifies that the decorators apply to the same route handler"
+          }
+        ]
+      },
+      {
+        "label": "Distinguishes method decorators from parameter decorators inside the method signature such as @Body() dto or @Param('id') id.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "method_decorators_above_method",
+            "description": "Explains that method decorators are placed above the method"
+          },
+          {
+            "key": "parameter_decorators_in_signature",
+            "description": "Explains that parameter decorators are placed inside the method signature"
+          },
+          {
+            "key": "gives_param_decorator_examples",
+            "description": "Gives examples such as @Body() dto or @Param('id') id"
+          }
+        ]
+      },
+      {
+        "label": "Mentions that decorator order can matter for composition/evaluation and should be kept readable and conventional.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "order_can_matter",
+            "description": "Mentions that decorator order can matter for composition or evaluation"
+          },
+          {
+            "key": "keeps_layout_readable",
+            "description": "Mentions keeping stacked decorators readable"
+          },
+          {
+            "key": "follows_project_convention",
+            "description": "Mentions following conventional or project-specific ordering"
+          }
+        ]
+      },
+      {
+        "label": "Mentions applyDecorators() as an option to bundle repeated decorator sets into a custom decorator.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "mentions_applydecorators",
+            "description": "Mentions applyDecorators() as a Nest helper"
+          },
+          {
+            "key": "bundles_repeated_sets",
+            "description": "Explains that it can bundle repeated decorator combinations"
+          },
+          {
+            "key": "custom_decorator_for_readability",
+            "description": "Connects the bundle to a reusable custom decorator for readability"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Shows a correct stacked route example, separates method and parameter decorators, and mentions applyDecorators for repeated bundles." },
-      { "scoreBand": "solid", "description": "Understands stacked decorators but misses order/readability or composition details." },
-      { "scoreBand": "needs_work", "description": "Can name decorators but cannot place them correctly in code." },
-      { "scoreBand": "insufficient_evidence", "description": "Answer does not demonstrate practical Nest controller syntax." }
+      {
+        "scoreBand": "strong",
+        "description": "Shows a correct stacked route example, separates method and parameter decorators, and mentions applyDecorators for repeated bundles."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands stacked decorators but misses order/readability or composition details."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can name decorators but cannot place them correctly in code."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not demonstrate practical Nest controller syntax."
+      }
     ],
     "followUps": [
-      { "trigger": "vague_answer", "question": "Write the decorator layout for a protected POST /users route that reads a CreateUserDto and returns 201.", "purpose": "Force concrete syntax and placement." },
-      { "trigger": "missing_context", "question": "Which decorators go above the method, and which ones go inside the parameter list?", "purpose": "Check method versus parameter decorator distinction." },
-      { "trigger": "missing_tradeoff", "question": "When would stacking many decorators become a readability problem, and how could you clean it up?", "purpose": "Lead into applyDecorators and naming abstractions." }
+      {
+        "trigger": "vague_answer",
+        "question": "Write the decorator layout for a protected POST /users route that reads a CreateUserDto and returns 201.",
+        "purpose": "Force concrete syntax and placement."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Which decorators go above the method, and which ones go inside the parameter list?",
+        "purpose": "Check method versus parameter decorator distinction."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "When would stacking many decorators become a readability problem, and how could you clean it up?",
+        "purpose": "Lead into applyDecorators and naming abstractions."
+      }
     ],
     "localizedContent": {
       "en": {
@@ -775,7 +1929,11 @@
           "Putting parameter decorators in the wrong position.",
           "Creating a composed decorator with a vague name that hides important behavior."
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "Stack nhiều route decorator",
@@ -791,7 +1949,11 @@
           "Đặt parameter decorator sai vị trí.",
           "Tạo composed decorator có tên mơ hồ và che mất hành vi quan trọng."
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "複数の route decorator の stacking",
@@ -807,49 +1969,166 @@
           "parameter decorator の位置を間違える。",
           "重要な挙動を曖昧な名前の composed decorator で隠す。"
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "NestJS docs: Controllers", "url": "https://docs.nestjs.com/controllers", "note": "Used for stacked route and parameter decorator examples." },
-      { "label": "NestJS docs: Custom decorators decorator composition", "url": "https://docs.nestjs.com/custom-decorators#decorator-composition", "note": "Used for applyDecorators composition behavior." },
-      { "label": "TypeScript Handbook: Decorator composition", "url": "https://www.typescriptlang.org/docs/handbook/decorators#decorator-composition", "note": "Used for decorator stacking and composition concepts." }
+      {
+        "label": "NestJS docs: Controllers",
+        "url": "https://docs.nestjs.com/controllers",
+        "note": "Used for stacked route and parameter decorator examples."
+      },
+      {
+        "label": "NestJS docs: Custom decorators decorator composition",
+        "url": "https://docs.nestjs.com/custom-decorators#decorator-composition",
+        "note": "Used for applyDecorators composition behavior."
+      },
+      {
+        "label": "TypeScript Handbook: Decorator composition",
+        "url": "https://www.typescriptlang.org/docs/handbook/decorators#decorator-composition",
+        "note": "Used for decorator stacking and composition concepts."
+      }
     ],
     "status": "active"
   },
   {
     "code": "NESTJS_JR_TECH_ROUTE_PARAM_QUERY_040",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "problem_solving", "communication"],
-    "techTags": ["nestjs", "rest", "typescript"],
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving",
+      "communication"
+    ],
+    "techTags": [
+      "nestjs",
+      "rest",
+      "typescript"
+    ],
     "difficulty": 2,
     "intent": "Verify that the candidate distinguishes route path parameters from query string parameters and knows that @Get('?id') is not the correct way to define a query parameter route in NestJS.",
     "primaryQuestion": "What is the difference between @Get(':id') and @Get('?id')?",
     "expectedSignals": [
-      { "label": "Explains that @Get(':id') defines a dynamic path segment such as GET /users/123 and is read with @Param('id').", "relatedTrigger": null },
-      { "label": "Explains that query strings are not defined in the @Get() path string in Nest; they are read with @Query('id') from requests such as GET /users?id=123.", "relatedTrigger": null },
-      { "label": "States that @Get('?id') is incorrect or at least not the intended Nest pattern for query parameters.", "relatedTrigger": null },
-      { "label": "Connects route design semantics: path params identify a resource, query params usually filter, search, paginate, or change representation.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Claims @Get('?id') is the normal way to handle ?id=123.",
-      "Cannot explain how @Param('id') differs from @Query('id').",
-      "Designs ambiguous routes where the same resource identity is split inconsistently between path and query.",
-      "Treats query strings as part of the route path."
+      {
+        "label": "Explains that @Get(':id') defines a dynamic path segment such as GET /users/123 and is read with @Param('id').",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "get_id_path_segment",
+            "description": "Explains that @Get(':id') defines a dynamic path segment"
+          },
+          {
+            "key": "path_example_users_123",
+            "description": "Gives an example such as GET /users/123"
+          },
+          {
+            "key": "read_with_param_id",
+            "description": "Explains that the value is read with @Param('id')"
+          }
+        ]
+      },
+      {
+        "label": "Explains that query strings are not defined in the @Get() path string in Nest; they are read with @Query('id') from requests such as GET /users?id=123.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "query_not_in_get_path",
+            "description": "Explains that query strings are not defined in the @Get() path string"
+          },
+          {
+            "key": "read_query_with_query_decorator",
+            "description": "Explains that query values are read with @Query('id')"
+          },
+          {
+            "key": "query_example_users_id",
+            "description": "Gives an example such as GET /users?id=123"
+          }
+        ]
+      },
+      {
+        "label": "States that @Get('?id') is incorrect or at least not the intended Nest pattern for query parameters.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "flags_get_question_id_wrong",
+            "description": "States that @Get('?id') is incorrect or not the intended Nest pattern"
+          },
+          {
+            "key": "uses_get_base_path",
+            "description": "Explains that the route should usually be defined as @Get() or another path without the query string"
+          },
+          {
+            "key": "uses_query_decorator_for_id",
+            "description": "Explains that id from the query string belongs in @Query('id')"
+          }
+        ]
+      },
+      {
+        "label": "Connects route design semantics: path params identify a resource, query params usually filter, search, paginate, or change representation.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "path_identifies_resource",
+            "description": "Explains that path parameters usually identify a resource"
+          },
+          {
+            "key": "query_modifies_collection_or_representation",
+            "description": "Explains that query parameters commonly filter, search, paginate, or change representation"
+          },
+          {
+            "key": "chooses_design_by_api_semantics",
+            "description": "Connects choosing path versus query to API design semantics"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Explains path parameter syntax, correct query parameter handling, why @Get('?id') is wrong, and resource-design semantics." },
-      { "scoreBand": "solid", "description": "Distinguishes path and query params correctly but misses route design semantics." },
-      { "scoreBand": "needs_work", "description": "Knows @Param and @Query names but confuses URL shapes." },
-      { "scoreBand": "insufficient_evidence", "description": "Answer would likely produce incorrect Nest routes." }
+      {
+        "scoreBand": "strong",
+        "description": "Explains path parameter syntax, correct query parameter handling, why @Get('?id') is wrong, and resource-design semantics."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Distinguishes path and query params correctly but misses route design semantics."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows @Param and @Query names but confuses URL shapes."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would likely produce incorrect Nest routes."
+      }
     ],
     "followUps": [
-      { "trigger": "red_flag", "question": "How would you implement GET /users?id=123 in a Nest controller?", "purpose": "Correct query parameter routing misconception." },
-      { "trigger": "missing_context", "question": "For GET /users/123/orders?page=2, which parts are @Param and which are @Query?", "purpose": "Check mixed URL parsing." },
-      { "trigger": "missing_tradeoff", "question": "When would you choose /users/:id versus /users?id=... for API design?", "purpose": "Evaluate REST resource semantics." }
+      {
+        "trigger": "vague_answer",
+        "question": "How would you implement GET /users?id=123 in a Nest controller?",
+        "purpose": "Correct query parameter routing misconception."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "For GET /users/123/orders?page=2, which parts are @Param and which are @Query?",
+        "purpose": "Check mixed URL parsing."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "When would you choose /users/:id versus /users?id=... for API design?",
+        "purpose": "Evaluate REST resource semantics."
+      }
     ],
     "localizedContent": {
       "en": {
@@ -866,7 +2145,11 @@
           "Using @Param('id') to read ?id=123.",
           "Using query params for resource identity when a path parameter would be clearer."
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "Path param và query param",
@@ -882,7 +2165,11 @@
           "Dùng @Param('id') để đọc ?id=123.",
           "Dùng query param cho resource identity trong khi path parameter rõ nghĩa hơn."
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "path param と query param",
@@ -898,49 +2185,178 @@
           "?id=123 を @Param('id') で読もうとする。",
           "path parameter の方が明確な resource identity に query param を使う。"
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "NestJS docs: Controllers route parameters", "url": "https://docs.nestjs.com/controllers#route-parameters", "note": "Used for @Get(':id') and @Param() route parameter behavior." },
-      { "label": "NestJS docs: Controllers query parameters", "url": "https://docs.nestjs.com/controllers#query-parameters", "note": "Used for @Query() query string extraction." }
+      {
+        "label": "NestJS docs: Controllers route parameters",
+        "url": "https://docs.nestjs.com/controllers#route-parameters",
+        "note": "Used for @Get(':id') and @Param() route parameter behavior."
+      },
+      {
+        "label": "NestJS docs: Controllers query parameters",
+        "url": "https://docs.nestjs.com/controllers#query-parameters",
+        "note": "Used for @Query() query string extraction."
+      }
     ],
     "status": "active"
   },
   {
     "code": "NESTJS_MID_TECH_USE_GUARDS_INTERCEPTORS_PIPES_041",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend"],
-    "levels": ["mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend"
+    ],
+    "levels": [
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "problem_solving"],
-    "techTags": ["nestjs", "typescript", "rest"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "problem_solving"
+    ],
+    "techTags": [
+      "nestjs",
+      "typescript",
+      "rest"
+    ],
     "difficulty": 3,
     "intent": "Assess whether the candidate understands the different responsibilities and request lifecycle positions of @UseGuards(), @UseInterceptors(), and @UsePipes().",
     "primaryQuestion": "What do @UseGuards(), @UseInterceptors(), and @UsePipes() do?",
     "expectedSignals": [
-      { "label": "Explains @UseGuards() binds guards that decide whether a request can proceed, commonly for authentication, authorization, and policy checks.", "relatedTrigger": null },
-      { "label": "Explains @UsePipes() binds pipes that transform and validate incoming arguments before the handler runs.", "relatedTrigger": null },
-      { "label": "Explains @UseInterceptors() binds interceptors that can run before/after the handler, transform responses, map errors, cache, log, or wrap streams.", "relatedTrigger": null },
-      { "label": "Mentions they can be applied at method, controller, or global scope.", "relatedTrigger": null },
-      { "label": "Understands lifecycle order at a high level: guards decide access before handler, pipes prepare parameters, interceptors wrap handler execution and response flow.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Uses guards for DTO validation or pipes for authorization.",
-      "Cannot explain what each component is responsible for.",
-      "Thinks interceptors are only middleware and cannot affect responses.",
-      "Does not know where to bind these components or assumes they only work globally."
+      {
+        "label": "Explains @UseGuards() binds guards that decide whether a request can proceed, commonly for authentication, authorization, and policy checks.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "guards_decide_access",
+            "description": "Explains that guards decide whether a request can proceed"
+          },
+          {
+            "key": "guards_for_auth_authz",
+            "description": "Mentions authentication, authorization, or policy checks as guard use cases"
+          },
+          {
+            "key": "guards_before_handler",
+            "description": "Explains that guards run before the route handler is executed"
+          }
+        ]
+      },
+      {
+        "label": "Explains @UsePipes() binds pipes that transform and validate incoming arguments before the handler runs.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "pipes_bind_validation_transform",
+            "description": "Explains that @UsePipes() binds transform or validation logic"
+          },
+          {
+            "key": "pipes_for_incoming_arguments",
+            "description": "Mentions incoming handler arguments or DTOs as pipe inputs"
+          },
+          {
+            "key": "pipes_before_handler_args",
+            "description": "Explains that pipes prepare arguments before the handler receives them"
+          }
+        ]
+      },
+      {
+        "label": "Explains @UseInterceptors() binds interceptors that can run before/after the handler, transform responses, map errors, cache, log, or wrap streams.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "interceptors_wrap_handler",
+            "description": "Explains that interceptors can run before and after handler execution"
+          },
+          {
+            "key": "interceptors_transform_response",
+            "description": "Mentions response transformation, error mapping, or envelope shaping"
+          },
+          {
+            "key": "interceptors_cross_cutting_examples",
+            "description": "Mentions caching, logging, streams, or similar cross-cutting behavior"
+          }
+        ]
+      },
+      {
+        "label": "Mentions they can be applied at method, controller, or global scope.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "method_scope",
+            "description": "Mentions applying guards, pipes, or interceptors at method level"
+          },
+          {
+            "key": "controller_scope",
+            "description": "Mentions applying them at controller level"
+          },
+          {
+            "key": "global_scope",
+            "description": "Mentions applying them globally for the application"
+          }
+        ]
+      },
+      {
+        "label": "Understands lifecycle order at a high level: guards decide access before handler, pipes prepare parameters, interceptors wrap handler execution and response flow.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "guards_access_first",
+            "description": "Places guards before handler execution for access decisions"
+          },
+          {
+            "key": "pipes_prepare_parameters",
+            "description": "Places pipes around parameter transformation and validation before handler logic"
+          },
+          {
+            "key": "interceptors_wrap_response_flow",
+            "description": "Places interceptors around handler execution and response flow"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Clearly separates guard, pipe, and interceptor responsibilities, binding scopes, and lifecycle position with realistic examples." },
-      { "scoreBand": "solid", "description": "Gets responsibilities mostly right but misses lifecycle order or one advanced interceptor capability." },
-      { "scoreBand": "needs_work", "description": "Can name the decorators but mixes responsibilities." },
-      { "scoreBand": "insufficient_evidence", "description": "Answer would lead to incorrect Nest request-pipeline design." }
+      {
+        "scoreBand": "strong",
+        "description": "Clearly separates guard, pipe, and interceptor responsibilities, binding scopes, and lifecycle position with realistic examples."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Gets responsibilities mostly right but misses lifecycle order or one advanced interceptor capability."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can name the decorators but mixes responsibilities."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would lead to incorrect Nest request-pipeline design."
+      }
     ],
     "followUps": [
-      { "trigger": "vague_answer", "question": "Where would you put role checking, DTO validation, and response envelope formatting: guard, pipe, or interceptor?", "purpose": "Force responsibility separation." },
-      { "trigger": "missing_context", "question": "Which of these can prevent the route handler from running before it executes?", "purpose": "Check guard and interceptor short-circuit awareness." },
-      { "trigger": "red_flag", "question": "Why is a ValidationPipe a bad place to check whether the user is an admin?", "purpose": "Detect lifecycle responsibility confusion." }
+      {
+        "trigger": "vague_answer",
+        "question": "Where would you put role checking, DTO validation, and response envelope formatting: guard, pipe, or interceptor?",
+        "purpose": "Force responsibility separation."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Which of these can prevent the route handler from running before it executes?",
+        "purpose": "Check guard and interceptor short-circuit awareness."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "Why is a ValidationPipe a bad place to check whether the user is an admin?",
+        "purpose": "Detect lifecycle responsibility confusion."
+      }
     ],
     "localizedContent": {
       "en": {
@@ -957,7 +2373,11 @@
           "Using interceptors when simple validation is needed.",
           "Forgetting that interceptors can transform or wrap responses."
         ],
-        "labels": { "role": "Backend", "level": "Mid", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend",
+          "level": "Mid",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "Guards, interceptors và pipes",
@@ -973,7 +2393,11 @@
           "Dùng interceptor khi chỉ cần validation đơn giản.",
           "Quên interceptor có thể transform hoặc wrap response."
         ],
-        "labels": { "role": "Backend", "level": "Mid", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend",
+          "level": "Mid",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "guards、interceptors、pipes",
@@ -989,51 +2413,201 @@
           "単純な validation に interceptor を使う。",
           "interceptor が response を transform/wrap できることを忘れる。"
         ],
-        "labels": { "role": "Backend", "level": "Mid", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend",
+          "level": "Mid",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "NestJS docs: Guards", "url": "https://docs.nestjs.com/guards", "note": "Used for @UseGuards() and guard binding scopes." },
-      { "label": "NestJS docs: Interceptors", "url": "https://docs.nestjs.com/interceptors", "note": "Used for @UseInterceptors(), response mapping, and binding scopes." },
-      { "label": "NestJS docs: Pipes", "url": "https://docs.nestjs.com/pipes", "note": "Used for @UsePipes(), validation, transformation, and binding scopes." }
+      {
+        "label": "NestJS docs: Guards",
+        "url": "https://docs.nestjs.com/guards",
+        "note": "Used for @UseGuards() and guard binding scopes."
+      },
+      {
+        "label": "NestJS docs: Interceptors",
+        "url": "https://docs.nestjs.com/interceptors",
+        "note": "Used for @UseInterceptors(), response mapping, and binding scopes."
+      },
+      {
+        "label": "NestJS docs: Pipes",
+        "url": "https://docs.nestjs.com/pipes",
+        "note": "Used for @UsePipes(), validation, transformation, and binding scopes."
+      }
     ],
     "status": "active"
   },
   {
     "code": "NESTJS_MID_TRADE_DECORATOR_SCOPE_042",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend"],
-    "levels": ["mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend"
+    ],
+    "levels": [
+      "mid"
+    ],
     "type": "trade_off",
-    "competencies": ["technical_fundamentals", "trade_off_analysis", "system_thinking"],
-    "techTags": ["nestjs", "typescript", "rest"],
+    "competencies": [
+      "technical_fundamentals",
+      "trade_off_analysis",
+      "system_thinking"
+    ],
+    "techTags": [
+      "nestjs",
+      "typescript",
+      "rest"
+    ],
     "difficulty": 3,
     "intent": "Evaluate whether the candidate can reason about method-level, controller-level, and global binding of NestJS decorators and pipeline components, including scope, precedence, and dependency-injection implications.",
     "primaryQuestion": "What is the difference between applying a decorator at method level vs controller level vs globally?",
     "expectedSignals": [
-      { "label": "Explains method-level decorators affect only one handler and are best for route-specific behavior.", "relatedTrigger": null },
-      { "label": "Explains controller-level decorators affect all handlers in that controller and are useful for shared policy, prefix-level concerns, or defaults.", "relatedTrigger": null },
-      { "label": "Explains global binding affects all routes in the application and is useful for cross-cutting concerns such as validation, logging, auth defaults, or response shaping.", "relatedTrigger": null },
-      { "label": "Mentions trade-offs: global consistency versus accidental broad impact; method precision versus repetition.", "relatedTrigger": null },
-      { "label": "Mentions DI nuance for global guards/interceptors/pipes registered with app.useGlobal* versus APP_GUARD, APP_INTERCEPTOR, or APP_PIPE providers.", "relatedTrigger": null },
-      { "label": "Understands metadata precedence or combination may require Reflector getAllAndOverride/getAllAndMerge.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Thinks controller-level and global-level are the same.",
-      "Applies security-sensitive behavior globally without thinking about public routes or overrides.",
-      "Copies the same decorator to every method when controller-level or composed decorators would be cleaner.",
-      "Does not know that global components registered outside a module can have dependency injection limitations."
+      {
+        "label": "Explains method-level decorators affect only one handler and are best for route-specific behavior.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "method_scope_one_handler",
+            "description": "Explains that method-level decorators affect only one route handler"
+          },
+          {
+            "key": "route_specific_behavior",
+            "description": "Connects method-level scope to route-specific behavior"
+          },
+          {
+            "key": "avoids_unnecessary_broad_scope",
+            "description": "Explains that method scope avoids applying behavior more broadly than needed"
+          }
+        ]
+      },
+      {
+        "label": "Explains controller-level decorators affect all handlers in that controller and are useful for shared policy, prefix-level concerns, or defaults.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "controller_scope_all_handlers",
+            "description": "Explains that controller-level decorators affect all handlers in that controller"
+          },
+          {
+            "key": "shared_policy_use_case",
+            "description": "Mentions shared guard, policy, pipe, or interceptor behavior as a controller-level use case"
+          },
+          {
+            "key": "controller_defaults",
+            "description": "Mentions controller-level defaults or prefix-level concerns"
+          }
+        ]
+      },
+      {
+        "label": "Explains global binding affects all routes in the application and is useful for cross-cutting concerns such as validation, logging, auth defaults, or response shaping.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "global_scope_all_routes",
+            "description": "Explains that global binding affects all routes in the app"
+          },
+          {
+            "key": "cross_cutting_concerns",
+            "description": "Mentions validation, logging, auth defaults, response shaping, or similar cross-cutting use cases"
+          },
+          {
+            "key": "public_route_exception_awareness",
+            "description": "Recognizes that broad global behavior may need exceptions such as public routes"
+          }
+        ]
+      },
+      {
+        "label": "Mentions trade-offs: global consistency versus accidental broad impact; method precision versus repetition.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "global_consistency_benefit",
+            "description": "Explains the consistency benefit of global or controller-wide binding"
+          },
+          {
+            "key": "broad_impact_risk",
+            "description": "Explains the risk of accidental broad impact when binding globally"
+          },
+          {
+            "key": "method_precision_repetition_tradeoff",
+            "description": "Explains method-level precision versus repeated decorator noise"
+          }
+        ]
+      },
+      {
+        "label": "Mentions DI nuance for global guards/interceptors/pipes registered with app.useGlobal* versus APP_GUARD, APP_INTERCEPTOR, or APP_PIPE providers.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "mentions_useglobal_registration",
+            "description": "Mentions app.useGlobalGuards, app.useGlobalInterceptors, or app.useGlobalPipes registration"
+          },
+          {
+            "key": "mentions_app_provider_tokens",
+            "description": "Mentions APP_GUARD, APP_INTERCEPTOR, or APP_PIPE provider registration"
+          },
+          {
+            "key": "di_available_with_provider_registration",
+            "description": "Explains the dependency-injection implication of registering global components through providers"
+          }
+        ]
+      },
+      {
+        "label": "Understands metadata precedence or combination may require Reflector getAllAndOverride/getAllAndMerge.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "metadata_precedence_needed",
+            "description": "Explains that class and method metadata may need precedence rules"
+          },
+          {
+            "key": "mentions_getallandoverride",
+            "description": "Mentions getAllAndOverride for override-style policy"
+          },
+          {
+            "key": "mentions_getallandmerge",
+            "description": "Mentions getAllAndMerge for combining metadata"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Explains scope differences, examples, repetition versus blast-radius trade-offs, DI implications, and metadata precedence/merge behavior." },
-      { "scoreBand": "solid", "description": "Gets method/controller/global scope right but misses DI or precedence details." },
-      { "scoreBand": "needs_work", "description": "Understands decorators can be applied in different places but cannot reason about impact." },
-      { "scoreBand": "insufficient_evidence", "description": "Answer would lead to uncontrolled or repetitive pipeline configuration." }
+      {
+        "scoreBand": "strong",
+        "description": "Explains scope differences, examples, repetition versus blast-radius trade-offs, DI implications, and metadata precedence/merge behavior."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Gets method/controller/global scope right but misses DI or precedence details."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Understands decorators can be applied in different places but cannot reason about impact."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer would lead to uncontrolled or repetitive pipeline configuration."
+      }
     ],
     "followUps": [
-      { "trigger": "missing_tradeoff", "question": "Why might a global AuthGuard be useful, and what problem does it create for public endpoints?", "purpose": "Check broad policy and override reasoning." },
-      { "trigger": "missing_context", "question": "If every route in UsersController requires the same guard, where would you bind it and why?", "purpose": "Evaluate scope selection." },
-      { "trigger": "red_flag", "question": "What is the difference between app.useGlobalGuards(new RolesGuard()) and registering { provide: APP_GUARD, useClass: RolesGuard }?", "purpose": "Check dependency-injection implication of global registration." }
+      {
+        "trigger": "missing_tradeoff",
+        "question": "Why might a global AuthGuard be useful, and what problem does it create for public endpoints?",
+        "purpose": "Check broad policy and override reasoning."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "If every route in UsersController requires the same guard, where would you bind it and why?",
+        "purpose": "Evaluate scope selection."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "What is the difference between app.useGlobalGuards(new RolesGuard()) and registering { provide: APP_GUARD, useClass: RolesGuard }?",
+        "purpose": "Check dependency-injection implication of global registration."
+      }
     ],
     "localizedContent": {
       "en": {
@@ -1050,7 +2624,11 @@
           "Repeating the same decorator on every method.",
           "Ignoring dependency injection limitations of app.useGlobal* registration."
         ],
-        "labels": { "role": "Backend", "level": "Mid", "type": "trade_off" }
+        "labels": {
+          "role": "Backend",
+          "level": "Mid",
+          "type": "trade_off"
+        }
       },
       "vi": {
         "title": "Scope method, controller và global của decorator",
@@ -1066,7 +2644,11 @@
           "Lặp cùng một decorator trên mọi method.",
           "Bỏ qua giới hạn dependency injection của app.useGlobal* registration."
         ],
-        "labels": { "role": "Backend", "level": "Mid", "type": "trade_off" }
+        "labels": {
+          "role": "Backend",
+          "level": "Mid",
+          "type": "trade_off"
+        }
       },
       "ja": {
         "title": "method、controller、global の decorator scope",
@@ -1082,50 +2664,183 @@
           "同じ decorator をすべての method に繰り返す。",
           "app.useGlobal* registration の dependency injection 制限を無視する。"
         ],
-        "labels": { "role": "Backend", "level": "Mid", "type": "trade_off" }
+        "labels": {
+          "role": "Backend",
+          "level": "Mid",
+          "type": "trade_off"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "NestJS docs: Guards binding guards", "url": "https://docs.nestjs.com/guards#binding-guards", "note": "Used for method, controller, and global guard scope plus APP_GUARD pattern." },
-      { "label": "NestJS docs: Interceptors binding interceptors", "url": "https://docs.nestjs.com/interceptors#binding-interceptors", "note": "Used for interceptor scope and APP_INTERCEPTOR registration." },
-      { "label": "NestJS docs: Execution context reflection and metadata", "url": "https://docs.nestjs.com/fundamentals/execution-context#reflection-and-metadata", "note": "Used for method/class metadata override and merge behavior." }
+      {
+        "label": "NestJS docs: Guards binding guards",
+        "url": "https://docs.nestjs.com/guards#binding-guards",
+        "note": "Used for method, controller, and global guard scope plus APP_GUARD pattern."
+      },
+      {
+        "label": "NestJS docs: Interceptors binding interceptors",
+        "url": "https://docs.nestjs.com/interceptors#binding-interceptors",
+        "note": "Used for interceptor scope and APP_INTERCEPTOR registration."
+      },
+      {
+        "label": "NestJS docs: Execution context reflection and metadata",
+        "url": "https://docs.nestjs.com/fundamentals/execution-context#reflection-and-metadata",
+        "note": "Used for method/class metadata override and merge behavior."
+      }
     ],
     "status": "active"
   },
   {
     "code": "NESTJS_JR_TECH_REQ_DECORATOR_043",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "communication"],
-    "techTags": ["nestjs", "rest", "typescript"],
+    "competencies": [
+      "technical_fundamentals",
+      "communication"
+    ],
+    "techTags": [
+      "nestjs",
+      "rest",
+      "typescript"
+    ],
     "difficulty": 2,
     "intent": "Check whether the candidate understands @Req() as access to the underlying request object and can explain when it is appropriate versus using more specific parameter decorators.",
     "primaryQuestion": "What is @Req() and when would you use it?",
     "expectedSignals": [
-      { "label": "Explains that @Req() injects the underlying request object, such as Express Request or Fastify request.", "relatedTrigger": null },
-      { "label": "Mentions it exposes request data like params, query, body, headers, IP, cookies, user, raw body, and framework-specific properties.", "relatedTrigger": null },
-      { "label": "Explains that specific decorators like @Body(), @Param(), @Query(), and @Headers() are preferable for simple extraction.", "relatedTrigger": null },
-      { "label": "Gives appropriate use cases such as reading req.user after an auth guard, accessing cookies/rawBody/platform-specific fields, or passing request context to lower-level logic carefully.", "relatedTrigger": null },
-      { "label": "Mentions trade-offs such as platform coupling, harder tests, and less explicit handler signatures if overused.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Uses @Req() as the default for all input extraction.",
-      "Does not know that @Body(), @Param(), @Query(), and @Headers() avoid manual request parsing.",
-      "Couples business services directly to Express Request without need.",
-      "Confuses @Req() with @Res() and response handling."
+      {
+        "label": "Explains that @Req() injects the underlying request object, such as Express Request or Fastify request.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "req_injects_request_object",
+            "description": "Explains that @Req() injects the underlying request object"
+          },
+          {
+            "key": "mentions_express_fastify_request",
+            "description": "Mentions Express Request or Fastify request as platform examples"
+          },
+          {
+            "key": "distinguishes_from_response_object",
+            "description": "Distinguishes @Req() request access from @Res() response handling"
+          }
+        ]
+      },
+      {
+        "label": "Mentions it exposes request data like params, query, body, headers, IP, cookies, user, raw body, and framework-specific properties.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_standard_request_parts",
+            "description": "Mentions params, query, body, or headers on the request"
+          },
+          {
+            "key": "mentions_auth_or_cookie_data",
+            "description": "Mentions user, cookies, IP, or auth-related request data"
+          },
+          {
+            "key": "mentions_platform_specific_fields",
+            "description": "Mentions raw body or platform-specific request properties when needed"
+          }
+        ]
+      },
+      {
+        "label": "Explains that specific decorators like @Body(), @Param(), @Query(), and @Headers() are preferable for simple extraction.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "specific_decorators_for_simple_extraction",
+            "description": "Explains that specific parameter decorators are cleaner for simple request data extraction"
+          },
+          {
+            "key": "names_specific_decorators",
+            "description": "Names @Body(), @Param(), @Query(), or @Headers()"
+          },
+          {
+            "key": "explicit_handler_signature",
+            "description": "Connects specific decorators to clearer and more explicit handler signatures"
+          }
+        ]
+      },
+      {
+        "label": "Gives appropriate use cases such as reading req.user after an auth guard, accessing cookies/rawBody/platform-specific fields, or passing request context to lower-level logic carefully.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "reads_req_user_after_guard",
+            "description": "Mentions reading req.user populated by an auth guard or strategy"
+          },
+          {
+            "key": "accesses_raw_or_platform_fields",
+            "description": "Mentions cookies, rawBody, IP, or platform-specific fields as appropriate @Req() cases"
+          },
+          {
+            "key": "passes_context_carefully",
+            "description": "Mentions passing request context carefully rather than leaking the full request everywhere"
+          }
+        ]
+      },
+      {
+        "label": "Mentions trade-offs such as platform coupling, harder tests, and less explicit handler signatures if overused.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "platform_coupling_risk",
+            "description": "Mentions coupling to Express, Fastify, or platform request APIs"
+          },
+          {
+            "key": "harder_tests_risk",
+            "description": "Mentions harder tests or heavier mocks when overusing @Req()"
+          },
+          {
+            "key": "less_explicit_signature",
+            "description": "Mentions that using the whole request makes handler inputs less explicit"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Explains native request access, appropriate use cases, preference for specific parameter decorators, and platform/test trade-offs." },
-      { "scoreBand": "solid", "description": "Knows @Req() exposes the request but misses overuse trade-offs." },
-      { "scoreBand": "needs_work", "description": "Uses @Req() for everything and cannot explain cleaner alternatives." },
-      { "scoreBand": "insufficient_evidence", "description": "Cannot distinguish request access from response control." }
+      {
+        "scoreBand": "strong",
+        "description": "Explains native request access, appropriate use cases, preference for specific parameter decorators, and platform/test trade-offs."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows @Req() exposes the request but misses overuse trade-offs."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Uses @Req() for everything and cannot explain cleaner alternatives."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Cannot distinguish request access from response control."
+      }
     ],
     "followUps": [
-      { "trigger": "missing_context", "question": "If an AuthGuard attaches req.user, how would you read that user in a controller without manually parsing headers?", "purpose": "Check practical authenticated request usage." },
-      { "trigger": "missing_tradeoff", "question": "Why is @Body('email') often cleaner than @Req() request.body.email?", "purpose": "Check explicit parameter extraction and testability reasoning." },
-      { "trigger": "red_flag", "question": "Should a domain service accept the whole Express Request object? What risk does that create?", "purpose": "Check layering and platform-coupling awareness." }
+      {
+        "trigger": "missing_context",
+        "question": "If an AuthGuard attaches req.user, how would you read that user in a controller without manually parsing headers?",
+        "purpose": "Check practical authenticated request usage."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "Why is @Body('email') often cleaner than @Req() request.body.email?",
+        "purpose": "Check explicit parameter extraction and testability reasoning."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "Should a domain service accept the whole Express Request object? What risk does that create?",
+        "purpose": "Check layering and platform-coupling awareness."
+      }
     ],
     "localizedContent": {
       "en": {
@@ -1142,7 +2857,11 @@
           "Passing framework request objects deep into domain services.",
           "Confusing @Req() with @Res()."
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "Truy cập request bằng @Req",
@@ -1158,7 +2877,11 @@
           "Truyền framework request object sâu vào domain service.",
           "Nhầm @Req() với @Res()."
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "@Req による request access",
@@ -1174,51 +2897,183 @@
           "framework request object を domain service に深く渡す。",
           "@Req() と @Res() を混同する。"
         ],
-        "labels": { "role": "Backend", "level": "Junior/Mid", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "NestJS docs: Controllers request object", "url": "https://docs.nestjs.com/controllers#request-object", "note": "Used for @Req() and built-in request parameter decorators." },
-      { "label": "NestJS docs: Raw body", "url": "https://docs.nestjs.com/faq/raw-body", "note": "Used for raw request body use case with @Req()." }
+      {
+        "label": "NestJS docs: Controllers request object",
+        "url": "https://docs.nestjs.com/controllers#request-object",
+        "note": "Used for @Req() and built-in request parameter decorators."
+      },
+      {
+        "label": "NestJS docs: Raw body",
+        "url": "https://docs.nestjs.com/faq/raw-body",
+        "note": "Used for raw request body use case with @Req()."
+      }
     ],
     "status": "active"
   },
   {
     "code": "NESTJS_MID_TECH_CREATE_PARAM_DECORATOR_044",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend"],
-    "levels": ["mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend"
+    ],
+    "levels": [
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "problem_solving", "communication"],
-    "techTags": ["nestjs", "typescript", "rest"],
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving",
+      "communication"
+    ],
+    "techTags": [
+      "nestjs",
+      "typescript",
+      "rest"
+    ],
     "difficulty": 3,
     "intent": "Evaluate whether the candidate can create a simple custom NestJS parameter decorator using createParamDecorator and understands data arguments, ExecutionContext, and pipe interaction.",
     "primaryQuestion": "How do you create a simple custom parameter decorator using createParamDecorator?",
     "expectedSignals": [
-      { "label": "Imports createParamDecorator and ExecutionContext from @nestjs/common.", "relatedTrigger": null },
-      { "label": "Defines a decorator factory such as CurrentUser = createParamDecorator((data, ctx) => { const req = ctx.switchToHttp().getRequest(); return data ? req.user?.[data] : req.user; }).", "relatedTrigger": null },
-      { "label": "Explains that the data argument is the value passed to the decorator, for example @CurrentUser('id').", "relatedTrigger": null },
-      { "label": "Explains ExecutionContext lets the decorator access the HTTP request through switchToHttp(), and can also support other transport contexts if designed for them.", "relatedTrigger": null },
-      { "label": "Mentions custom parameter decorators behave like built-in ones and can work with pipes; ValidationPipe needs validateCustomDecorators for validation of custom-decorated args.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Creates a method decorator instead of a parameter decorator.",
-      "Reads global state instead of using ExecutionContext.",
-      "Returns the entire request object when only a user or one field is needed.",
-      "Does not handle missing req.user safely.",
-      "Assumes pipes always validate custom-decorated parameters without configuration."
+      {
+        "label": "Imports createParamDecorator and ExecutionContext from @nestjs/common.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "imports_create_param_decorator",
+            "description": "Mentions importing createParamDecorator from @nestjs/common"
+          },
+          {
+            "key": "imports_execution_context",
+            "description": "Mentions importing ExecutionContext from @nestjs/common"
+          },
+          {
+            "key": "uses_nest_common_imports",
+            "description": "Connects both imports to building a Nest custom parameter decorator"
+          }
+        ]
+      },
+      {
+        "label": "Defines a decorator factory such as CurrentUser = createParamDecorator((data, ctx) => { const req = ctx.switchToHttp().getRequest(); return data ? req.user?.[data] : req.user; }).",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "defines_createparamdecorator_factory",
+            "description": "Defines a decorator using createParamDecorator with a factory callback"
+          },
+          {
+            "key": "gets_request_from_context",
+            "description": "Shows accessing the request through ctx.switchToHttp().getRequest()"
+          },
+          {
+            "key": "returns_user_or_property",
+            "description": "Returns req.user or a selected property such as req.user.id"
+          }
+        ]
+      },
+      {
+        "label": "Explains that the data argument is the value passed to the decorator, for example @CurrentUser('id').",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "explains_data_argument",
+            "description": "Explains that data is the argument passed to the custom decorator"
+          },
+          {
+            "key": "currentuser_id_example",
+            "description": "Uses @CurrentUser('id') as an example of passing data"
+          },
+          {
+            "key": "uses_data_to_select_field",
+            "description": "Explains using data to select a field from req.user or similar context"
+          }
+        ]
+      },
+      {
+        "label": "Explains ExecutionContext lets the decorator access the HTTP request through switchToHttp(), and can also support other transport contexts if designed for them.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "execution_context_access",
+            "description": "Explains that ExecutionContext gives the decorator access to runtime request context"
+          },
+          {
+            "key": "switch_to_http_request",
+            "description": "Mentions switchToHttp().getRequest() for HTTP controllers"
+          },
+          {
+            "key": "transport_context_awareness",
+            "description": "Mentions that other transports need deliberate context handling if supported"
+          }
+        ]
+      },
+      {
+        "label": "Mentions custom parameter decorators behave like built-in ones and can work with pipes; ValidationPipe needs validateCustomDecorators for validation of custom-decorated args.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "custom_params_like_builtin",
+            "description": "Explains that custom parameter decorators behave like built-in parameter decorators"
+          },
+          {
+            "key": "can_work_with_pipes",
+            "description": "Mentions that custom-decorated parameters can work with pipes"
+          },
+          {
+            "key": "validate_custom_decorators_option",
+            "description": "Mentions validateCustomDecorators for ValidationPipe validation of custom-decorated arguments"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Provides correct createParamDecorator code, explains data and ExecutionContext, handles optional fields safely, and mentions pipe interaction." },
-      { "scoreBand": "solid", "description": "Can write the decorator and use ctx.switchToHttp(), but misses typing, missing-user handling, or pipes." },
-      { "scoreBand": "needs_work", "description": "Understands the idea but code would not work as a parameter decorator." },
-      { "scoreBand": "insufficient_evidence", "description": "Cannot describe custom parameter decorator mechanics." }
+      {
+        "scoreBand": "strong",
+        "description": "Provides correct createParamDecorator code, explains data and ExecutionContext, handles optional fields safely, and mentions pipe interaction."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Can write the decorator and use ctx.switchToHttp(), but misses typing, missing-user handling, or pipes."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Understands the idea but code would not work as a parameter decorator."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Cannot describe custom parameter decorator mechanics."
+      }
     ],
     "followUps": [
-      { "trigger": "vague_answer", "question": "Write a @CurrentUser('id') decorator that returns req.user.id when available.", "purpose": "Force exact createParamDecorator implementation." },
-      { "trigger": "missing_context", "question": "Where does req.user usually come from before your custom decorator reads it?", "purpose": "Check relationship with authentication guards/strategies." },
-      { "trigger": "missing_tradeoff", "question": "Why might @CurrentUser() be cleaner than injecting @Req() in every handler?", "purpose": "Check readability and encapsulation reasoning." },
-      { "trigger": "red_flag", "question": "Will ValidationPipe validate custom parameter decorators by default? What option matters?", "purpose": "Check pipe interaction nuance." }
+      {
+        "trigger": "vague_answer",
+        "question": "Write a @CurrentUser('id') decorator that returns req.user.id when available.",
+        "purpose": "Force exact createParamDecorator implementation."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Where does req.user usually come from before your custom decorator reads it?",
+        "purpose": "Check relationship with authentication guards/strategies."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "Why might @CurrentUser() be cleaner than injecting @Req() in every handler?",
+        "purpose": "Check readability and encapsulation reasoning."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "Will ValidationPipe validate custom parameter decorators by default? What option matters?",
+        "purpose": "Check pipe interaction nuance."
+      }
     ],
     "localizedContent": {
       "en": {
@@ -1235,7 +3090,11 @@
           "Using @Req() everywhere instead of encapsulating repeated request extraction.",
           "Assuming custom-decorated parameters are always validated by ValidationPipe by default."
         ],
-        "labels": { "role": "Backend", "level": "Mid", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend",
+          "level": "Mid",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "Custom parameter decorator",
@@ -1251,7 +3110,11 @@
           "Dùng @Req() ở mọi nơi thay vì đóng gói logic lấy request lặp lại.",
           "Cho rằng parameter dùng custom decorator luôn được ValidationPipe validate mặc định."
         ],
-        "labels": { "role": "Backend", "level": "Mid", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend",
+          "level": "Mid",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "custom parameter decorator",
@@ -1267,49 +3130,178 @@
           "繰り返しの request extraction を encapsulate せず、あらゆる場所で @Req() を使う。",
           "custom decorator の parameter が ValidationPipe により常に default で validation されると思い込む。"
         ],
-        "labels": { "role": "Backend", "level": "Mid", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend",
+          "level": "Mid",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "NestJS docs: Custom decorators", "url": "https://docs.nestjs.com/custom-decorators", "note": "Used for createParamDecorator, data parameter, ExecutionContext, and pipe interaction." },
-      { "label": "NestJS docs: Execution context", "url": "https://docs.nestjs.com/fundamentals/execution-context", "note": "Used for ExecutionContext and switchToHttp context access." }
+      {
+        "label": "NestJS docs: Custom decorators",
+        "url": "https://docs.nestjs.com/custom-decorators",
+        "note": "Used for createParamDecorator, data parameter, ExecutionContext, and pipe interaction."
+      },
+      {
+        "label": "NestJS docs: Execution context",
+        "url": "https://docs.nestjs.com/fundamentals/execution-context",
+        "note": "Used for ExecutionContext and switchToHttp context access."
+      }
     ],
     "status": "active"
   },
   {
     "code": "NESTJS_MID_TECH_APPLY_DECORATORS_045",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend"],
-    "levels": ["mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend"
+    ],
+    "levels": [
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "trade_off_analysis", "communication"],
-    "techTags": ["nestjs", "typescript", "security"],
+    "competencies": [
+      "technical_fundamentals",
+      "trade_off_analysis",
+      "communication"
+    ],
+    "techTags": [
+      "nestjs",
+      "typescript",
+      "security"
+    ],
     "difficulty": 3,
     "intent": "Check whether the candidate understands applyDecorators() as a Nest helper for composing multiple decorators into a reusable higher-level decorator, and can identify when composition improves readability versus hides behavior.",
     "primaryQuestion": "What is applyDecorators() and when is it useful?",
     "expectedSignals": [
-      { "label": "Explains that applyDecorators() composes multiple decorators and returns one decorator that applies all of them.", "relatedTrigger": null },
-      { "label": "Gives a practical example such as @Auth('admin') combining SetMetadata or @Roles, @UseGuards, @ApiBearerAuth, and Swagger response decorators.", "relatedTrigger": null },
-      { "label": "Mentions usefulness for repeated route policies, consistent auth bundles, documentation bundles, cache policies, or versioning metadata.", "relatedTrigger": null },
-      { "label": "Explains the trade-off: it improves consistency and reduces repetition but can hide behavior if the composed decorator name is vague or too broad.", "relatedTrigger": null },
-      { "label": "Mentions that not every third-party decorator is safely composable and Swagger has known exceptions such as @ApiHideProperty().", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Thinks applyDecorators() is required whenever multiple decorators are used.",
-      "Uses a composed decorator with unclear behavior that makes security or response semantics hard to inspect.",
-      "Cannot show what decorators would be bundled in a real example.",
-      "Assumes all decorators from all libraries compose safely."
+      {
+        "label": "Explains that applyDecorators() composes multiple decorators and returns one decorator that applies all of them.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "applydecorators_composes_many",
+            "description": "Explains that applyDecorators() composes multiple decorators"
+          },
+          {
+            "key": "returns_single_decorator",
+            "description": "Explains that it returns one decorator"
+          },
+          {
+            "key": "single_decorator_applies_all",
+            "description": "Explains that the returned decorator applies all included decorators"
+          }
+        ]
+      },
+      {
+        "label": "Gives a practical example such as @Auth('admin') combining SetMetadata or @Roles, @UseGuards, @ApiBearerAuth, and Swagger response decorators.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "auth_composition_example",
+            "description": "Gives a practical composed decorator example such as @Auth('admin') or @AdminOnly()"
+          },
+          {
+            "key": "combines_policy_and_guard",
+            "description": "Mentions combining SetMetadata, @Roles, or @UseGuards"
+          },
+          {
+            "key": "combines_docs_decorators",
+            "description": "Mentions Swagger decorators such as @ApiBearerAuth or response decorators where relevant"
+          }
+        ]
+      },
+      {
+        "label": "Mentions usefulness for repeated route policies, consistent auth bundles, documentation bundles, cache policies, or versioning metadata.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "repeated_route_policies",
+            "description": "Mentions repeated route policies as a composition use case"
+          },
+          {
+            "key": "consistent_auth_or_docs_bundle",
+            "description": "Mentions consistent authentication or documentation bundles"
+          },
+          {
+            "key": "cache_versioning_metadata",
+            "description": "Mentions cache policy, versioning metadata, or similar repeated metadata bundles"
+          }
+        ]
+      },
+      {
+        "label": "Explains the trade-off: it improves consistency and reduces repetition but can hide behavior if the composed decorator name is vague or too broad.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "improves_consistency",
+            "description": "Explains that composition improves consistency across repeated routes"
+          },
+          {
+            "key": "reduces_repetition",
+            "description": "Explains that composition reduces repeated decorator stacks"
+          },
+          {
+            "key": "can_hide_behavior",
+            "description": "Explains that vague or broad composed decorators can hide important behavior"
+          }
+        ]
+      },
+      {
+        "label": "Mentions that not every third-party decorator is safely composable and Swagger has known exceptions such as @ApiHideProperty().",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "not_all_decorators_composable",
+            "description": "Mentions that not every third-party decorator is safe to compose"
+          },
+          {
+            "key": "swagger_exception_awareness",
+            "description": "Mentions Swagger caveats or @ApiHideProperty() as a known exception"
+          },
+          {
+            "key": "checks_library_docs",
+            "description": "Explains that composition caveats should be checked in library documentation"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Explains decorator composition, gives a realistic Auth-style example, discusses readability/security trade-offs, and notes composability caveats." },
-      { "scoreBand": "solid", "description": "Understands bundling repeated decorators but misses caveats or naming trade-offs." },
-      { "scoreBand": "needs_work", "description": "Knows the helper name but cannot explain why or when to use it." },
-      { "scoreBand": "insufficient_evidence", "description": "Answer does not demonstrate practical decorator composition knowledge." }
+      {
+        "scoreBand": "strong",
+        "description": "Explains decorator composition, gives a realistic Auth-style example, discusses readability/security trade-offs, and notes composability caveats."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands bundling repeated decorators but misses caveats or naming trade-offs."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows the helper name but cannot explain why or when to use it."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not demonstrate practical decorator composition knowledge."
+      }
     ],
     "followUps": [
-      { "trigger": "vague_answer", "question": "Design an @AdminOnly() decorator using applyDecorators(). Which decorators would you include?", "purpose": "Force a concrete composition example." },
-      { "trigger": "missing_tradeoff", "question": "How can a composed decorator make security harder to review?", "purpose": "Check abstraction and readability trade-off awareness." },
-      { "trigger": "red_flag", "question": "Can you always wrap any third-party decorator with applyDecorators()? What caveat should you know?", "purpose": "Check composability caveat knowledge." }
+      {
+        "trigger": "vague_answer",
+        "question": "Design an @AdminOnly() decorator using applyDecorators(). Which decorators would you include?",
+        "purpose": "Force a concrete composition example."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "How can a composed decorator make security harder to review?",
+        "purpose": "Check abstraction and readability trade-off awareness."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "Can you always wrap any third-party decorator with applyDecorators()? What caveat should you know?",
+        "purpose": "Check composability caveat knowledge."
+      }
     ],
     "localizedContent": {
       "en": {
@@ -1326,7 +3318,11 @@
           "Hiding important security behavior behind a vague decorator name.",
           "Assuming every library decorator composes safely."
         ],
-        "labels": { "role": "Backend", "level": "Mid", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend",
+          "level": "Mid",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "Compose decorator bằng applyDecorators",
@@ -1342,7 +3338,11 @@
           "Che hành vi security quan trọng sau một tên decorator mơ hồ.",
           "Cho rằng decorator của mọi thư viện đều compose an toàn."
         ],
-        "labels": { "role": "Backend", "level": "Mid", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend",
+          "level": "Mid",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "applyDecorators による decorator composition",
@@ -1358,12 +3358,24 @@
           "重要な security behavior を曖昧な decorator 名の背後に隠す。",
           "すべての library decorator が安全に compose できると思い込む。"
         ],
-        "labels": { "role": "Backend", "level": "Mid", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend",
+          "level": "Mid",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "NestJS docs: Custom decorators decorator composition", "url": "https://docs.nestjs.com/custom-decorators#decorator-composition", "note": "Used for applyDecorators(), Auth composition example, and composability warning." },
-      { "label": "NestJS docs: Execution context reflection and metadata", "url": "https://docs.nestjs.com/fundamentals/execution-context#reflection-and-metadata", "note": "Used for metadata and policy decorator patterns." }
+      {
+        "label": "NestJS docs: Custom decorators decorator composition",
+        "url": "https://docs.nestjs.com/custom-decorators#decorator-composition",
+        "note": "Used for applyDecorators(), Auth composition example, and composability warning."
+      },
+      {
+        "label": "NestJS docs: Execution context reflection and metadata",
+        "url": "https://docs.nestjs.com/fundamentals/execution-context#reflection-and-metadata",
+        "note": "Used for metadata and policy decorator patterns."
+      }
     ],
     "status": "active"
   }

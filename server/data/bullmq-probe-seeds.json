@@ -1,27 +1,121 @@
 [
   {
     "code": "BULLMQ_MID_TECH_QUEUE_WORKER_001",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "communication"],
-    "techTags": ["bullmq", "redis", "nodejs"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "communication"
+    ],
+    "techTags": [
+      "bullmq",
+      "redis",
+      "nodejs"
+    ],
     "difficulty": 3,
     "intent": "Check whether the candidate understands the core BullMQ model: Queue as producer API, Job as persisted work item, Worker as consumer, Redis as the coordination store, and the practical meaning of at-least-once execution.",
     "primaryQuestion": "How would you explain the lifecycle of a BullMQ job from queue.add() to completion, including what Redis and Worker instances are responsible for?",
     "expectedSignals": [
-      { "label": "Explains that a Queue adds named jobs with data and options into Redis-backed structures.", "relatedTrigger": null },
-      { "label": "Describes Workers as consumers that pick jobs, run an async processor, and move jobs to completed or failed.", "relatedTrigger": null },
-      { "label": "Mentions that workers can be offline when jobs are added and jobs remain waiting until workers process them.", "relatedTrigger": null },
-      { "label": "Connects BullMQ's reliability model to at-least-once delivery in failure scenarios, so processors must tolerate duplicate execution.", "relatedTrigger": null },
-      { "label": "Distinguishes job data, job options, return values, progress updates, and job state transitions.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Treats BullMQ as an in-memory queue tied to a single Node.js process.",
-      "Says a completed event is the safest place to perform the job's primary side effect.",
-      "Cannot explain what happens when no worker is currently running.",
-      "Assumes exactly-once side effects without discussing idempotency."
+      {
+        "label": "Explains that a Queue adds named jobs with data and options into Redis-backed structures.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "explains_queue_add",
+            "description": "Explains that queue.add creates a named job with payload data and options"
+          },
+          {
+            "key": "mentions_redis_storage",
+            "description": "Mentions that BullMQ stores queue state in Redis-backed structures"
+          },
+          {
+            "key": "distinguishes_add_from_process",
+            "description": "Distinguishes enqueuing a job from actually executing the work"
+          }
+        ]
+      },
+      {
+        "label": "Describes Workers as consumers that pick jobs, run an async processor, and move jobs to completed or failed.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "explains_worker_consumption",
+            "description": "Explains that Workers consume waiting jobs from the queue"
+          },
+          {
+            "key": "mentions_async_processor",
+            "description": "Mentions the async processor function that performs the job's side effects"
+          },
+          {
+            "key": "mentions_completed_failed_states",
+            "description": "Mentions that jobs move to completed or failed based on processor resolution or thrown errors"
+          }
+        ]
+      },
+      {
+        "label": "Mentions that workers can be offline when jobs are added and jobs remain waiting until workers process them.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "handles_offline_workers",
+            "description": "Explains that producers can enqueue jobs even when no worker is currently online"
+          },
+          {
+            "key": "states_waiting_until_worker",
+            "description": "States that the job remains waiting until a worker later picks it up"
+          },
+          {
+            "key": "separates_api_ack_from_job_done",
+            "description": "Separates the API response for enqueue success from completion of the background work"
+          }
+        ]
+      },
+      {
+        "label": "Connects BullMQ's reliability model to at-least-once delivery in failure scenarios, so processors must tolerate duplicate execution.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "states_at_least_once",
+            "description": "States that BullMQ processing can be at least once under crashes, stalls, retries, or lost locks"
+          },
+          {
+            "key": "requires_idempotent_processors",
+            "description": "Requires processors to tolerate duplicate execution of the same business action"
+          },
+          {
+            "key": "places_side_effects_in_processor",
+            "description": "Explains why critical side effects should be handled inside the processor path instead of only in a completed listener"
+          }
+        ]
+      },
+      {
+        "label": "Distinguishes job data, job options, return values, progress updates, and job state transitions.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "distinguishes_data_options",
+            "description": "Distinguishes job payload data from job options such as attempts, delay, backoff, or removeOnComplete"
+          },
+          {
+            "key": "distinguishes_return_progress",
+            "description": "Distinguishes processor return value from progress updates emitted during processing"
+          },
+          {
+            "key": "names_state_transitions",
+            "description": "Names key job states such as waiting, active, completed, failed, delayed, or stalled when explaining lifecycle"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -133,27 +227,122 @@
   },
   {
     "code": "BULLMQ_MID_TECH_RETRY_BACKOFF_002",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "problem_solving", "system_thinking"],
-    "techTags": ["bullmq", "redis", "nodejs", "idempotency"],
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving",
+      "system_thinking"
+    ],
+    "techTags": [
+      "bullmq",
+      "redis",
+      "nodejs",
+      "idempotency"
+    ],
     "difficulty": 3,
     "intent": "Evaluate whether the candidate can design retry behavior for BullMQ jobs without creating duplicate side effects or retry storms.",
     "primaryQuestion": "How would you configure retries and backoff for a BullMQ job that calls an unreliable external API, and what must the processor do to stay safe across retry attempts?",
     "expectedSignals": [
-      { "label": "Uses attempts greater than 1 to enable automatic retries.", "relatedTrigger": null },
-      { "label": "Explains fixed versus exponential backoff and when each is appropriate.", "relatedTrigger": null },
-      { "label": "Mentions that processors should throw Error objects for failure handling.", "relatedTrigger": null },
-      { "label": "Separates transient failures from unrecoverable validation or business errors.", "relatedTrigger": null },
-      { "label": "Connects retries to idempotent side effects, deduplication keys, or external idempotency keys.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Retries every failure indefinitely without backoff or a dead-letter strategy.",
-      "Does not distinguish transient errors from permanent input errors.",
-      "Performs non-idempotent writes before the failing external call without a recovery plan.",
-      "Throws strings or arbitrary values and assumes BullMQ will treat them correctly."
+      {
+        "label": "Uses attempts greater than 1 to enable automatic retries.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "sets_attempts",
+            "description": "Configures attempts greater than 1 for jobs that should be retried automatically"
+          },
+          {
+            "key": "bounds_retry_count",
+            "description": "Chooses a bounded attempt count rather than retrying forever by default"
+          },
+          {
+            "key": "connects_attempts_to_failure",
+            "description": "Explains that retries occur when the processor fails, such as by throwing an error"
+          }
+        ]
+      },
+      {
+        "label": "Explains fixed versus exponential backoff and when each is appropriate.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "defines_fixed_backoff",
+            "description": "Defines fixed backoff as waiting a consistent delay between attempts"
+          },
+          {
+            "key": "defines_exponential_backoff",
+            "description": "Defines exponential backoff as increasing delay after repeated failures"
+          },
+          {
+            "key": "matches_backoff_to_external_api",
+            "description": "Chooses exponential or jittered delay for unstable external APIs to reduce pressure and retry storms"
+          }
+        ]
+      },
+      {
+        "label": "Mentions that processors should throw Error objects for failure handling.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "throws_error_on_failure",
+            "description": "Mentions throwing an Error from the processor when the attempt should fail and retry"
+          },
+          {
+            "key": "avoids_swallowing_errors",
+            "description": "Avoids swallowing external API failures and marking the job completed incorrectly"
+          },
+          {
+            "key": "preserves_error_reason",
+            "description": "Preserves useful error information for failed job diagnostics without leaking sensitive data"
+          }
+        ]
+      },
+      {
+        "label": "Separates transient failures from unrecoverable validation or business errors.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "classifies_transient_failures",
+            "description": "Classifies timeouts, 5xx responses, network errors, or rate limits as potentially retryable"
+          },
+          {
+            "key": "classifies_permanent_errors",
+            "description": "Classifies validation failures, invalid payloads, or permanent business rejections as non-retryable"
+          },
+          {
+            "key": "handles_non_retryable_path",
+            "description": "Defines a non-retryable path such as failing fast, dead-letter handling, or marking a business status"
+          }
+        ]
+      },
+      {
+        "label": "Connects retries to idempotent side effects, deduplication keys, or external idempotency keys.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "uses_idempotency_key",
+            "description": "Uses an external idempotency key for side effects such as charging a customer"
+          },
+          {
+            "key": "deduplicates_business_action",
+            "description": "Uses jobId, business keys, or persisted operation state to deduplicate retry attempts"
+          },
+          {
+            "key": "handles_crash_after_side_effect",
+            "description": "Handles the case where the external side effect succeeded but the worker crashed before BullMQ marked the job completed"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -180,7 +369,7 @@
         "purpose": "Check practical trade-off reasoning for external dependency pressure."
       },
       {
-        "trigger": "red_flag",
+        "trigger": "missing_context",
         "question": "If the external API successfully charged a customer but the worker crashed before marking the job complete, how would your retry avoid double charging?",
         "purpose": "Test idempotency under the most important failure mode."
       }
@@ -265,27 +454,122 @@
   },
   {
     "code": "BULLMQ_MID_DEBUG_STALLED_003",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack", "devops"],
-    "levels": ["mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "devops"
+    ],
+    "levels": [
+      "mid"
+    ],
     "type": "debugging",
-    "competencies": ["problem_solving", "technical_fundamentals", "ownership"],
-    "techTags": ["bullmq", "redis", "nodejs"],
+    "competencies": [
+      "problem_solving",
+      "technical_fundamentals",
+      "ownership"
+    ],
+    "techTags": [
+      "bullmq",
+      "redis",
+      "nodejs"
+    ],
     "difficulty": 4,
     "intent": "Assess whether the candidate can debug stalled jobs by understanding locks, event-loop blocking, worker crashes, maxStalledCount, and sandboxed processors.",
     "primaryQuestion": "A BullMQ job sometimes runs twice and then fails with a stalled-job related reason. How would you investigate and fix it?",
     "expectedSignals": [
-      { "label": "Explains that active jobs are protected by locks that must be renewed while the worker is alive.", "relatedTrigger": null },
-      { "label": "Identifies event-loop blocking, CPU-heavy processors, worker crashes, Redis connectivity issues, and ungraceful shutdowns as likely causes.", "relatedTrigger": null },
-      { "label": "Mentions that a stalled event is emitted and the job may be moved back to waiting or eventually failed after maxStalledCount.", "relatedTrigger": null },
-      { "label": "Considers moving CPU-heavy work to sandboxed processors or separate worker processes.", "relatedTrigger": null },
-      { "label": "Adds instrumentation around worker errors, duration, lock renewal symptoms, attempts, and processor hot spots.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Disables stalled checks or raises maxStalledCount without finding the cause.",
-      "Assumes a stalled job is a normal failed state and ignores duplicate execution risk.",
-      "Only increases concurrency for a CPU-bound processor.",
-      "Ignores graceful shutdown and deploy behavior."
+      {
+        "label": "Explains that active jobs are protected by locks that must be renewed while the worker is alive.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "explains_active_lock",
+            "description": "Explains that an active job is protected by a lock while a worker processes it"
+          },
+          {
+            "key": "explains_lock_renewal",
+            "description": "Explains that the worker must keep renewing the lock during long processing"
+          },
+          {
+            "key": "connects_lost_lock_to_duplicate",
+            "description": "Connects lost or expired locks to the job being retried and possibly executed twice"
+          }
+        ]
+      },
+      {
+        "label": "Identifies event-loop blocking, CPU-heavy processors, worker crashes, Redis connectivity issues, and ungraceful shutdowns as likely causes.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "checks_event_loop_blocking",
+            "description": "Checks whether CPU-heavy or synchronous code blocks the Node.js event loop long enough to miss lock renewal"
+          },
+          {
+            "key": "checks_worker_crash_shutdown",
+            "description": "Checks worker crashes, process restarts, and ungraceful shutdown during active jobs"
+          },
+          {
+            "key": "checks_redis_connectivity",
+            "description": "Checks Redis connectivity, latency, and errors that could interrupt lock renewal or state transitions"
+          }
+        ]
+      },
+      {
+        "label": "Mentions that a stalled event is emitted and the job may be moved back to waiting or eventually failed after maxStalledCount.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_stalled_event",
+            "description": "Mentions the stalled event as evidence to inspect"
+          },
+          {
+            "key": "mentions_moved_to_waiting",
+            "description": "Explains that a stalled job can be moved back to waiting for another processing attempt"
+          },
+          {
+            "key": "mentions_max_stalled_count",
+            "description": "Mentions maxStalledCount or equivalent protection before a repeatedly stalled job is failed"
+          }
+        ]
+      },
+      {
+        "label": "Considers moving CPU-heavy work to sandboxed processors or separate worker processes.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "considers_sandboxed_processors",
+            "description": "Considers sandboxed processors for CPU-heavy or blocking work"
+          },
+          {
+            "key": "considers_separate_processes",
+            "description": "Considers separate worker processes to isolate CPU work from the main event loop"
+          },
+          {
+            "key": "compares_with_concurrency_increase",
+            "description": "Explains why simply increasing worker concurrency can make CPU-bound blocking worse"
+          }
+        ]
+      },
+      {
+        "label": "Adds instrumentation around worker errors, duration, lock renewal symptoms, attempts, and processor hot spots.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "logs_worker_errors_attempts",
+            "description": "Logs worker errors, attemptsMade, stalled events, and job identifiers"
+          },
+          {
+            "key": "measures_job_duration",
+            "description": "Measures job duration, event-loop delay, and time spent in processor hot spots"
+          },
+          {
+            "key": "correlates_lock_symptoms",
+            "description": "Correlates stalled jobs with lock renewal failures, Redis latency, crashes, or CPU spikes"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -397,27 +681,123 @@
   },
   {
     "code": "BULLMQ_SR_TRADE_CONCURRENCY_SCALE_004",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack", "devops"],
-    "levels": ["senior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "devops"
+    ],
+    "levels": [
+      "senior"
+    ],
     "type": "trade_off",
-    "competencies": ["trade_off_analysis", "system_thinking", "impact_measurement"],
-    "techTags": ["bullmq", "redis", "nodejs", "event_driven_architecture"],
+    "competencies": [
+      "trade_off_analysis",
+      "system_thinking",
+      "impact_measurement"
+    ],
+    "techTags": [
+      "bullmq",
+      "redis",
+      "nodejs",
+      "event_driven_architecture"
+    ],
     "difficulty": 4,
     "intent": "Evaluate whether the candidate can choose between local worker concurrency, multiple worker processes, and queue design while considering workload type, throughput, fairness, availability, and Redis pressure.",
     "primaryQuestion": "You need to scale BullMQ processing for 200,000 jobs per hour. How would you decide between increasing worker concurrency, running more worker processes, and splitting queues?",
     "expectedSignals": [
-      { "label": "Distinguishes local concurrency inside one Worker from multiple workers across processes or machines.", "relatedTrigger": null },
-      { "label": "Explains that high concurrency fits IO-bound work better than CPU-bound work in Node.js.", "relatedTrigger": null },
-      { "label": "Considers horizontal workers for availability and predictable parallelism.", "relatedTrigger": null },
-      { "label": "Discusses queue separation by workload characteristics, SLA, priority, and failure isolation rather than arbitrary job names.", "relatedTrigger": null },
-      { "label": "Mentions measuring throughput, job duration, queue latency, Redis CPU/memory, error rate, and downstream saturation.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Only increases concurrency to a very high number without benchmarking.",
-      "Ignores downstream database or API limits.",
-      "Splits every job type into a different queue without an operational reason.",
-      "Treats BullMQ throughput as independent from Redis capacity."
+      {
+        "label": "Distinguishes local concurrency inside one Worker from multiple workers across processes or machines.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "defines_worker_concurrency",
+            "description": "Defines local Worker concurrency as parallel jobs inside one Node.js worker process"
+          },
+          {
+            "key": "defines_multiple_workers",
+            "description": "Distinguishes multiple Worker instances across processes or machines from one high-concurrency worker"
+          },
+          {
+            "key": "connects_to_parallelism_limits",
+            "description": "Connects the choice to process, CPU, memory, and downstream parallelism limits"
+          }
+        ]
+      },
+      {
+        "label": "Explains that high concurrency fits IO-bound work better than CPU-bound work in Node.js.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "matches_concurrency_to_io_bound",
+            "description": "Explains that high concurrency is effective when jobs spend most time waiting on IO"
+          },
+          {
+            "key": "warns_cpu_bound_event_loop",
+            "description": "Explains that CPU-bound work can block the Node.js event loop and reduce effective concurrency"
+          },
+          {
+            "key": "chooses_process_isolation_for_cpu",
+            "description": "Chooses separate processes, sandboxing, or different compute strategy for CPU-heavy jobs"
+          }
+        ]
+      },
+      {
+        "label": "Considers horizontal workers for availability and predictable parallelism.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "uses_horizontal_workers",
+            "description": "Considers multiple worker processes or machines for scaling throughput"
+          },
+          {
+            "key": "improves_availability",
+            "description": "Connects horizontal workers to availability when one process or node fails"
+          },
+          {
+            "key": "controls_per_worker_concurrency",
+            "description": "Combines horizontal scale with per-worker concurrency limits to avoid overload"
+          }
+        ]
+      },
+      {
+        "label": "Discusses queue separation by workload characteristics, SLA, priority, and failure isolation rather than arbitrary job names.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "separates_by_workload_sla",
+            "description": "Splits queues when workloads have different latency, priority, retry, or resource profiles"
+          },
+          {
+            "key": "uses_named_jobs_when_shared_sla",
+            "description": "Keeps named jobs in one queue when they share workers, capacity, and failure handling needs"
+          },
+          {
+            "key": "considers_failure_isolation",
+            "description": "Uses queue separation for failure isolation or independent scaling when justified"
+          }
+        ]
+      },
+      {
+        "label": "Mentions measuring throughput, job duration, queue latency, Redis CPU/memory, error rate, and downstream saturation.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "measures_queue_throughput_latency",
+            "description": "Measures jobs per second or hour, waiting time, queue latency, and job duration"
+          },
+          {
+            "key": "measures_worker_redis_health",
+            "description": "Measures worker CPU/memory, event-loop delay, Redis CPU/memory, command latency, and connection errors"
+          },
+          {
+            "key": "measures_downstream_saturation",
+            "description": "Measures downstream API/database saturation, error rate, and rate limiting before increasing concurrency"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -529,27 +909,121 @@
   },
   {
     "code": "BULLMQ_MID_SITUATIONAL_RATE_LIMIT_005",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "mid"
+    ],
     "type": "situational",
-    "competencies": ["problem_solving", "technical_fundamentals", "trade_off_analysis"],
-    "techTags": ["bullmq", "redis", "nodejs"],
+    "competencies": [
+      "problem_solving",
+      "technical_fundamentals",
+      "trade_off_analysis"
+    ],
+    "techTags": [
+      "bullmq",
+      "redis",
+      "nodejs"
+    ],
     "difficulty": 3,
     "intent": "Check whether the candidate can apply BullMQ rate limiting for external API protection, understand global limiter behavior, and handle 429 responses with manual rate limiting.",
     "primaryQuestion": "A BullMQ worker calls a third-party API limited to 100 requests per minute across all workers. How would you enforce that limit and handle 429 responses?",
     "expectedSignals": [
-      { "label": "Uses worker limiter options with max and duration to enforce a global queue rate limit.", "relatedTrigger": null },
-      { "label": "Understands the limiter is global across workers for the same queue, not per process.", "relatedTrigger": null },
-      { "label": "Explains that rate-limited jobs remain waiting rather than being treated as normal failed jobs.", "relatedTrigger": null },
-      { "label": "Uses manual worker.rateLimit(duration) and Worker.RateLimitError() when the API returns a dynamic Retry-After or 429 response.", "relatedTrigger": null },
-      { "label": "Considers monitoring rate-limit TTL, downstream error rate, and backlog growth.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Implements only a local in-memory counter per worker process.",
-      "Retries immediately on every 429, increasing pressure on the provider.",
-      "Assumes increasing worker count preserves the provider's global limit.",
-      "Counts rate limiting as a business failure without separating it from real job errors."
+      {
+        "label": "Uses worker limiter options with max and duration to enforce a global queue rate limit.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "sets_limiter_max_duration",
+            "description": "Configures limiter max and duration to match the provider quota, such as 100 requests per 60000 ms"
+          },
+          {
+            "key": "applies_limiter_to_worker",
+            "description": "Applies limiter configuration to workers processing the queue that calls the provider"
+          },
+          {
+            "key": "matches_quota_units",
+            "description": "Matches job processing units to actual provider requests so one job does not accidentally exceed quota"
+          }
+        ]
+      },
+      {
+        "label": "Understands the limiter is global across workers for the same queue, not per process.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "states_global_limiter",
+            "description": "States that the limiter is shared across workers for the same queue"
+          },
+          {
+            "key": "computes_ten_workers_total",
+            "description": "Correctly explains that ten worker processes still process about 100 jobs per minute with a max 100 duration 60000 limiter"
+          },
+          {
+            "key": "avoids_per_process_multiplier",
+            "description": "Avoids multiplying the provider quota by the number of deployed worker processes"
+          }
+        ]
+      },
+      {
+        "label": "Explains that rate-limited jobs remain waiting rather than being treated as normal failed jobs.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "states_jobs_wait",
+            "description": "Explains that rate-limited jobs wait until they are eligible rather than failing as ordinary errors"
+          },
+          {
+            "key": "distinguishes_rate_limit_failure",
+            "description": "Distinguishes provider quota pacing from a job failure caused by invalid data or processor exception"
+          },
+          {
+            "key": "connects_to_api_response",
+            "description": "Connects rate limiting to user or API expectations for delayed background completion"
+          }
+        ]
+      },
+      {
+        "label": "Uses manual worker.rateLimit(duration) and Worker.RateLimitError() when the API returns a dynamic Retry-After or 429 response.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "uses_manual_rate_limit",
+            "description": "Uses worker.rateLimit(duration) when the provider returns a dynamic Retry-After or quota pause"
+          },
+          {
+            "key": "throws_rate_limit_error",
+            "description": "Throws Worker.RateLimitError so BullMQ treats the attempt as rate limited rather than a normal failure"
+          },
+          {
+            "key": "reads_retry_after",
+            "description": "Uses the provider's 429 or Retry-After value to choose the rate-limit duration"
+          }
+        ]
+      },
+      {
+        "label": "Considers monitoring rate-limit TTL, downstream error rate, and backlog growth.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "monitors_rate_limit_ttl",
+            "description": "Monitors rate limit TTL or current limiter state to understand provider pacing"
+          },
+          {
+            "key": "monitors_429_error_rate",
+            "description": "Monitors downstream 429 or quota-related error rates"
+          },
+          {
+            "key": "monitors_backlog_growth",
+            "description": "Monitors waiting backlog, queue latency, and age of oldest job while throttled"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -656,27 +1130,121 @@
   },
   {
     "code": "BULLMQ_SR_TECH_FLOWS_006",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["senior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "senior"
+    ],
     "type": "technical_depth",
-    "competencies": ["system_thinking", "technical_fundamentals", "trade_off_analysis"],
-    "techTags": ["bullmq", "redis", "event_driven_architecture"],
+    "competencies": [
+      "system_thinking",
+      "technical_fundamentals",
+      "trade_off_analysis"
+    ],
+    "techTags": [
+      "bullmq",
+      "redis",
+      "event_driven_architecture"
+    ],
     "difficulty": 4,
     "intent": "Evaluate whether the candidate understands BullMQ Flows for parent-child job dependencies, atomic creation, waiting-children state, result aggregation, and failure-handling choices.",
     "primaryQuestion": "When would you model work as a BullMQ Flow instead of one large job, and how do parent-child dependencies behave?",
     "expectedSignals": [
-      { "label": "Explains that FlowProducer creates parent-child job trees, potentially across queues.", "relatedTrigger": null },
-      { "label": "Mentions that the parent waits until children complete successfully before becoming processable.", "relatedTrigger": null },
-      { "label": "Knows parent jobs can access child return values through child value APIs when processing.", "relatedTrigger": null },
-      { "label": "Explains the waiting-children state and the need to reason about failed, ignored, or removed dependencies.", "relatedTrigger": null },
-      { "label": "Connects flows to splitting non-atomic work into smaller retryable/idempotent steps.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Uses a flow where simple sequential code inside one job would be clearer and safe.",
-      "Cannot explain what happens to the parent when a child fails.",
-      "Assumes all children must use the same queue as the parent.",
-      "Ignores partial progress and cleanup strategy."
+      {
+        "label": "Explains that FlowProducer creates parent-child job trees, potentially across queues.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_flowproducer",
+            "description": "Mentions FlowProducer as the API for creating related parent-child jobs"
+          },
+          {
+            "key": "describes_job_tree",
+            "description": "Describes flows as a tree or graph of parent and child jobs"
+          },
+          {
+            "key": "mentions_cross_queue_children",
+            "description": "Mentions that children can belong to different queues when the workflow spans workloads"
+          }
+        ]
+      },
+      {
+        "label": "Mentions that the parent waits until children complete successfully before becoming processable.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "states_parent_waits",
+            "description": "States that the parent does not process until required children have finished"
+          },
+          {
+            "key": "states_success_requirement",
+            "description": "Explains that normal parent processing depends on child success unless dependency options change behavior"
+          },
+          {
+            "key": "connects_to_orchestration",
+            "description": "Connects parent waiting to workflow orchestration rather than doing every step in one processor"
+          }
+        ]
+      },
+      {
+        "label": "Knows parent jobs can access child return values through child value APIs when processing.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_child_values",
+            "description": "Mentions APIs for a parent job to read child return values"
+          },
+          {
+            "key": "uses_values_in_parent",
+            "description": "Explains how the parent can aggregate or decide based on child results"
+          },
+          {
+            "key": "handles_missing_child_values",
+            "description": "Considers what happens if a child value is missing due to failure, ignore, or removal settings"
+          }
+        ]
+      },
+      {
+        "label": "Explains the waiting-children state and the need to reason about failed, ignored, or removed dependencies.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_waiting_children",
+            "description": "Mentions the waiting-children state for parent jobs waiting on dependencies"
+          },
+          {
+            "key": "handles_failed_dependencies",
+            "description": "Explains how failed child dependencies affect whether the parent can continue"
+          },
+          {
+            "key": "handles_ignored_or_removed_dependencies",
+            "description": "Considers ignored or removed dependencies and how that changes parent behavior"
+          }
+        ]
+      },
+      {
+        "label": "Connects flows to splitting non-atomic work into smaller retryable/idempotent steps.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "splits_large_job_steps",
+            "description": "Uses flows to split database update, file upload, notification, or similar work into separate steps"
+          },
+          {
+            "key": "improves_retry_isolation",
+            "description": "Explains that smaller child jobs can retry or fail independently instead of rerunning a giant job"
+          },
+          {
+            "key": "requires_step_idempotency",
+            "description": "Keeps each child step idempotent because children may still retry or be resumed after failures"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -788,27 +1356,120 @@
   },
   {
     "code": "BULLMQ_MID_TECH_DELAY_REPEAT_007",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking"],
-    "techTags": ["bullmq", "redis", "nodejs"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking"
+    ],
+    "techTags": [
+      "bullmq",
+      "redis",
+      "nodejs"
+    ],
     "difficulty": 3,
     "intent": "Check whether the candidate understands delayed jobs, repeatable jobs, modern scheduler guidance, drift/backlog behavior, and version-specific QueueScheduler caveats.",
     "primaryQuestion": "How would you design scheduled background work in BullMQ, and what are the important differences between delayed jobs, repeatable jobs, and newer job scheduler APIs?",
     "expectedSignals": [
-      { "label": "Explains delayed jobs as jobs that wait at least a configured delay before becoming eligible for processing.", "relatedTrigger": null },
-      { "label": "Explains repeatable jobs as schedule metadata that creates delayed job instances over time.", "relatedTrigger": null },
-      { "label": "Mentions that repeatable APIs are deprecated from BullMQ 5.16.0 in favor of Job Schedulers.", "relatedTrigger": null },
-      { "label": "Understands that QueueScheduler was needed for delayed/retry/rate-limit behavior before BullMQ 2.0, but not in newer versions.", "relatedTrigger": null },
-      { "label": "Considers slow job duration, worker availability, missed accumulation expectations, and idempotency for scheduled work.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Assumes cron-like jobs run exactly at the scheduled second regardless of backlog or worker availability.",
-      "Cannot distinguish one delayed job from a repeatable schedule definition.",
-      "Uses old QueueScheduler guidance without checking BullMQ version.",
-      "Creates scheduled jobs without stable identifiers or cleanup/removal strategy."
+      {
+        "label": "Explains delayed jobs as jobs that wait at least a configured delay before becoming eligible for processing.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "defines_delayed_job",
+            "description": "Defines a delayed job as a job that becomes eligible only after at least the configured delay"
+          },
+          {
+            "key": "mentions_not_exact_timer",
+            "description": "Mentions that actual processing still depends on worker availability and queue backlog"
+          },
+          {
+            "key": "uses_delayed_for_one_off",
+            "description": "Uses delayed jobs for one-off future work rather than recurring schedules"
+          }
+        ]
+      },
+      {
+        "label": "Explains repeatable jobs as schedule metadata that creates delayed job instances over time.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "defines_repeatable_metadata",
+            "description": "Explains repeatable jobs as schedule metadata rather than one permanent running job"
+          },
+          {
+            "key": "creates_delayed_instances",
+            "description": "Explains that the schedule creates delayed job instances over time"
+          },
+          {
+            "key": "connects_repeat_to_backlog",
+            "description": "Considers what happens when repeated job instances are created faster than workers process them"
+          }
+        ]
+      },
+      {
+        "label": "Mentions that repeatable APIs are deprecated from BullMQ 5.16.0 in favor of Job Schedulers.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "mentions_repeatable_deprecation",
+            "description": "Mentions that older repeatable APIs are deprecated from BullMQ 5.16.0"
+          },
+          {
+            "key": "mentions_job_schedulers",
+            "description": "Mentions Job Schedulers as the preferred newer API for schedules"
+          },
+          {
+            "key": "plans_version_aware_choice",
+            "description": "Chooses scheduling API based on the BullMQ version and migration path in the project"
+          }
+        ]
+      },
+      {
+        "label": "Understands that QueueScheduler was needed for delayed/retry/rate-limit behavior before BullMQ 2.0, but not in newer versions.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "mentions_queuescheduler_pre_v2",
+            "description": "Mentions QueueScheduler was required in BullMQ versions before 2.0 for delayed, retry, and rate-limit behavior"
+          },
+          {
+            "key": "mentions_not_needed_newer",
+            "description": "Mentions that newer BullMQ versions no longer require a separate QueueScheduler for that behavior"
+          },
+          {
+            "key": "avoids_outdated_architecture",
+            "description": "Avoids adding obsolete scheduler infrastructure without checking the project version"
+          }
+        ]
+      },
+      {
+        "label": "Considers slow job duration, worker availability, missed accumulation expectations, and idempotency for scheduled work.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "accounts_for_slow_job_backlog",
+            "description": "Accounts for a repeating job taking longer than its interval and creating backlog or delayed execution"
+          },
+          {
+            "key": "accounts_for_worker_downtime",
+            "description": "Considers worker downtime and whether missed schedules should accumulate, be skipped, or be coalesced"
+          },
+          {
+            "key": "requires_scheduled_idempotency",
+            "description": "Requires scheduled work to be idempotent or keyed by schedule window to avoid duplicate business effects"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -920,27 +1581,122 @@
   },
   {
     "code": "BULLMQ_SR_DEBUG_REDIS_CONNECTIONS_008",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack", "devops"],
-    "levels": ["senior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "devops"
+    ],
+    "levels": [
+      "senior"
+    ],
     "type": "debugging",
-    "competencies": ["problem_solving", "system_thinking", "ownership"],
-    "techTags": ["bullmq", "redis", "nodejs"],
+    "competencies": [
+      "problem_solving",
+      "system_thinking",
+      "ownership"
+    ],
+    "techTags": [
+      "bullmq",
+      "redis",
+      "nodejs"
+    ],
     "difficulty": 4,
     "intent": "Assess whether the candidate can reason about BullMQ Redis connection configuration for producers and workers, including maxRetriesPerRequest, offline queue behavior, blocking connections, and Redis eviction policy.",
     "primaryQuestion": "Your API hangs when Redis is unavailable while adding BullMQ jobs, but workers should keep retrying Redis connections in the background. How would you configure and debug the connections?",
     "expectedSignals": [
-      { "label": "Separates producer Queue connection needs from Worker connection needs.", "relatedTrigger": null },
-      { "label": "Explains that producers behind HTTP endpoints should fail fast or use bounded retries so requests do not hang indefinitely.", "relatedTrigger": null },
-      { "label": "Mentions enableOfflineQueue false as an option when the API should throw instead of waiting for Redis reconnection.", "relatedTrigger": null },
-      { "label": "Knows Worker connections require maxRetriesPerRequest null when using manually created ioredis clients.", "relatedTrigger": null },
-      { "label": "Understands that some BullMQ classes need blocking connections and Redis should not evict BullMQ keys unexpectedly.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Uses one shared Redis client configuration for all producers and workers without considering behavior differences.",
-      "Lets public HTTP requests wait indefinitely for Redis reconnection.",
-      "Sets aggressive fail-fast behavior on workers that should run continuously.",
-      "Ignores Redis maxmemory eviction policy and connection limits."
+      {
+        "label": "Separates producer Queue connection needs from Worker connection needs.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "separates_api_producer",
+            "description": "Separates Queue producers inside HTTP APIs from background Worker processes"
+          },
+          {
+            "key": "explains_different_retry_goals",
+            "description": "Explains that API producers often need bounded latency while workers can keep reconnecting in the background"
+          },
+          {
+            "key": "configures_connections_separately",
+            "description": "Configures ioredis/BullMQ connection options separately for producer and worker roles"
+          }
+        ]
+      },
+      {
+        "label": "Explains that producers behind HTTP endpoints should fail fast or use bounded retries so requests do not hang indefinitely.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "bounds_http_request_time",
+            "description": "Bounds Redis retry or enqueue time so an HTTP request does not hang indefinitely"
+          },
+          {
+            "key": "returns_clear_enqueue_failure",
+            "description": "Returns a clear API failure or fallback response when a job cannot be enqueued"
+          },
+          {
+            "key": "avoids_unbounded_offline_buffer",
+            "description": "Avoids silently buffering unbounded producer commands during Redis outage when the API must report truthfully"
+          }
+        ]
+      },
+      {
+        "label": "Mentions enableOfflineQueue false as an option when the API should throw instead of waiting for Redis reconnection.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_enable_offline_queue_false",
+            "description": "Mentions enableOfflineQueue false for producer connections that should throw when Redis is unavailable"
+          },
+          {
+            "key": "connects_to_fail_fast",
+            "description": "Connects disabling the offline queue to fail-fast HTTP behavior"
+          },
+          {
+            "key": "considers_user_facing_semantics",
+            "description": "Considers whether the product should tell the user the background action was not accepted"
+          }
+        ]
+      },
+      {
+        "label": "Knows Worker connections require maxRetriesPerRequest null when using manually created ioredis clients.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_worker_max_retries_null",
+            "description": "Mentions maxRetriesPerRequest must be null for manually supplied Worker ioredis clients"
+          },
+          {
+            "key": "explains_worker_reconnect_need",
+            "description": "Explains that workers should keep retrying Redis commands and reconnecting instead of failing after a small retry count"
+          },
+          {
+            "key": "distinguishes_from_http_producer",
+            "description": "Contrasts Worker connection behavior with bounded producer behavior behind HTTP endpoints"
+          }
+        ]
+      },
+      {
+        "label": "Understands that some BullMQ classes need blocking connections and Redis should not evict BullMQ keys unexpectedly.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "mentions_blocking_connections",
+            "description": "Mentions that some BullMQ classes use or create blocking connections for waiting on jobs"
+          },
+          {
+            "key": "warns_no_key_eviction",
+            "description": "Warns that Redis eviction policies should not evict BullMQ keys unexpectedly"
+          },
+          {
+            "key": "monitors_redis_after_change",
+            "description": "Monitors Redis connection errors, command latency, memory, CPU, and queue health after changing connection settings"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1047,27 +1803,121 @@
   },
   {
     "code": "BULLMQ_MID_TECH_EVENTS_RESULTS_009",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "impact_measurement"],
-    "techTags": ["bullmq", "redis", "nodejs"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "impact_measurement"
+    ],
+    "techTags": [
+      "bullmq",
+      "redis",
+      "nodejs"
+    ],
     "difficulty": 3,
     "intent": "Check whether the candidate understands worker-local events versus QueueEvents, progress updates, return values, and robust result persistence patterns.",
     "primaryQuestion": "How would you observe BullMQ job progress and completion results, and where would you persist the final business result?",
     "expectedSignals": [
-      { "label": "Uses job.updateProgress inside the processor for numeric or object progress data.", "relatedTrigger": null },
-      { "label": "Distinguishes Worker event listeners from QueueEvents that observe events from all workers for a queue.", "relatedTrigger": null },
-      { "label": "Explains that a processor can return data which becomes the job returnvalue and can be observed on completed events.", "relatedTrigger": null },
-      { "label": "States that critical result persistence should happen inside the processor or through a reliable result queue, not only in an event listener.", "relatedTrigger": null },
-      { "label": "Considers removeOnComplete retention, logs, metrics, and trace correlation with jobId.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Persists the only copy of a business result in a completed event listener.",
-      "Confuses progress updates with durable domain state.",
-      "Does not know how to observe jobs processed by other worker instances.",
-      "Keeps all completed jobs forever without considering storage growth."
+      {
+        "label": "Uses job.updateProgress inside the processor for numeric or object progress data.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "updates_progress_in_processor",
+            "description": "Uses job.updateProgress from inside the processor as work advances"
+          },
+          {
+            "key": "chooses_progress_shape",
+            "description": "Uses either numeric progress or structured progress data appropriate to the job"
+          },
+          {
+            "key": "connects_progress_to_observability",
+            "description": "Connects progress updates to UI, logs, metrics, or operational visibility"
+          }
+        ]
+      },
+      {
+        "label": "Distinguishes Worker event listeners from QueueEvents that observe events from all workers for a queue.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "defines_worker_events",
+            "description": "Explains that Worker event listeners observe events for that worker instance"
+          },
+          {
+            "key": "defines_queueevents",
+            "description": "Explains that QueueEvents can observe queue-level events across workers"
+          },
+          {
+            "key": "chooses_observer_by_scope",
+            "description": "Chooses event mechanism based on whether the observer needs local worker scope or whole-queue scope"
+          }
+        ]
+      },
+      {
+        "label": "Explains that a processor can return data which becomes the job returnvalue and can be observed on completed events.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "returns_processor_value",
+            "description": "Explains that returning from the processor stores a job returnvalue"
+          },
+          {
+            "key": "observes_completed_returnvalue",
+            "description": "Explains that completed events can observe the returnvalue"
+          },
+          {
+            "key": "distinguishes_returnvalue_from_business_store",
+            "description": "Distinguishes BullMQ returnvalue from the durable business record of the result"
+          }
+        ]
+      },
+      {
+        "label": "States that critical result persistence should happen inside the processor or through a reliable result queue, not only in an event listener.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "persists_result_in_processor",
+            "description": "Persists critical business result inside the processor before the job is considered completed"
+          },
+          {
+            "key": "uses_reliable_result_queue",
+            "description": "Uses a reliable follow-up/result queue when result persistence must be decoupled"
+          },
+          {
+            "key": "explains_event_listener_risk",
+            "description": "Explains that relying only on completed event listeners can lose business persistence if the listener is down or crashes"
+          }
+        ]
+      },
+      {
+        "label": "Considers removeOnComplete retention, logs, metrics, and trace correlation with jobId.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "sets_retention_policy",
+            "description": "Chooses removeOnComplete or retention settings based on debugging, storage, and privacy needs"
+          },
+          {
+            "key": "logs_job_identifiers",
+            "description": "Logs jobId, job name, attempts, queue name, and business correlation IDs"
+          },
+          {
+            "key": "emits_job_metrics_traces",
+            "description": "Emits metrics and traces for job duration, result status, failures, and progress correlation"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1174,27 +2024,123 @@
   },
   {
     "code": "BULLMQ_SR_SITUATIONAL_DEPLOY_SHUTDOWN_010",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack", "devops"],
-    "levels": ["senior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "devops"
+    ],
+    "levels": [
+      "senior"
+    ],
     "type": "situational",
-    "competencies": ["ownership", "system_thinking", "problem_solving"],
-    "techTags": ["bullmq", "redis", "nodejs", "rollback"],
+    "competencies": [
+      "ownership",
+      "system_thinking",
+      "problem_solving"
+    ],
+    "techTags": [
+      "bullmq",
+      "redis",
+      "nodejs",
+      "rollback"
+    ],
     "difficulty": 4,
     "intent": "Evaluate whether the candidate can design safe deploy and shutdown behavior for BullMQ workers, minimizing stalled jobs while preserving progress and respecting platform termination windows.",
     "primaryQuestion": "How would you implement graceful shutdown for BullMQ workers during deploys so active jobs are not unnecessarily stalled or duplicated?",
     "expectedSignals": [
-      { "label": "Uses worker.close() to stop accepting new jobs and wait for active jobs to finish or fail.", "relatedTrigger": null },
-      { "label": "Mentions that close does not impose its own timeout, so the application or orchestrator needs a termination budget.", "relatedTrigger": null },
-      { "label": "Explains what happens if shutdown is ungraceful: stalled-job recovery allows other workers to pick up work later.", "relatedTrigger": null },
-      { "label": "Considers pausing readiness, stopping new traffic, draining workers, and handling long-running jobs.", "relatedTrigger": null },
-      { "label": "Keeps processors idempotent because duplicates can still occur after crashes, timeouts, or lost locks.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Kills worker processes immediately during every deploy.",
-      "Calls close but ignores platform SIGTERM deadline and hangs shutdown forever.",
-      "Assumes graceful shutdown removes the need for idempotent processors.",
-      "Does not account for jobs that exceed the deployment termination window."
+      {
+        "label": "Uses worker.close() to stop accepting new jobs and wait for active jobs to finish or fail.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "calls_worker_close",
+            "description": "Uses worker.close() during shutdown"
+          },
+          {
+            "key": "stops_new_jobs",
+            "description": "Explains that close stops the worker from taking new jobs"
+          },
+          {
+            "key": "waits_active_jobs",
+            "description": "Explains that close waits for active jobs to finish or fail"
+          }
+        ]
+      },
+      {
+        "label": "Mentions that close does not impose its own timeout, so the application or orchestrator needs a termination budget.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "states_no_builtin_timeout",
+            "description": "States that worker.close() does not impose its own shutdown timeout"
+          },
+          {
+            "key": "defines_termination_budget",
+            "description": "Defines an application or orchestrator termination budget for shutdown"
+          },
+          {
+            "key": "handles_timeout_exceeded",
+            "description": "Explains what happens when active jobs exceed the platform termination budget"
+          }
+        ]
+      },
+      {
+        "label": "Explains what happens if shutdown is ungraceful: stalled-job recovery allows other workers to pick up work later.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "explains_ungraceful_shutdown",
+            "description": "Explains that killing a worker during an active job may leave the job to be recovered as stalled"
+          },
+          {
+            "key": "mentions_other_worker_pickup",
+            "description": "Mentions another worker can later pick up the recovered job"
+          },
+          {
+            "key": "connects_to_duplicate_risk",
+            "description": "Connects ungraceful shutdown to possible duplicate execution or delayed completion"
+          }
+        ]
+      },
+      {
+        "label": "Considers pausing readiness, stopping new traffic, draining workers, and handling long-running jobs.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "pauses_readiness",
+            "description": "Pauses readiness or removes the instance from traffic before draining"
+          },
+          {
+            "key": "drains_workers",
+            "description": "Stops accepting new work and lets active jobs drain within the termination budget"
+          },
+          {
+            "key": "handles_long_running_jobs",
+            "description": "Plans for jobs longer than the deploy timeout through splitting, checkpointing, cancellation, or extended grace"
+          }
+        ]
+      },
+      {
+        "label": "Keeps processors idempotent because duplicates can still occur after crashes, timeouts, or lost locks.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "states_graceful_not_enough",
+            "description": "States that graceful shutdown reduces but does not eliminate duplicate execution risk"
+          },
+          {
+            "key": "uses_idempotent_processor",
+            "description": "Keeps the processor idempotent for crashes, timeouts, lost locks, or forced termination"
+          },
+          {
+            "key": "deduplicates_side_effects",
+            "description": "Uses business keys, operation state, or external idempotency to prevent duplicate side effects"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1221,7 +2167,7 @@
         "purpose": "Force practical deployment and long-job handling decisions."
       },
       {
-        "trigger": "red_flag",
+        "trigger": "missing_tradeoff",
         "question": "After a supposedly graceful deploy, you still see duplicate side effects. What does that tell you about your processor design?",
         "purpose": "Confirm that graceful shutdown is not a substitute for idempotency."
       }

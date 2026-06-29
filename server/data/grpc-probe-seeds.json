@@ -1,25 +1,100 @@
 [
   {
     "code": "GRPC_JR_TECH_CONTRACT_001",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "communication"],
-    "techTags": ["grpc"],
+    "competencies": [
+      "technical_fundamentals",
+      "communication"
+    ],
+    "techTags": [
+      "grpc"
+    ],
     "difficulty": 2,
     "intent": "Check whether the candidate can explain gRPC's service contract model, client stubs, server implementations, and why Protocol Buffers are commonly used as the IDL and message format.",
     "primaryQuestion": "How would you explain the basic gRPC flow from a .proto service definition to a client calling a server method?",
     "expectedSignals": [
-      { "label": "Explains that a .proto file defines services, RPC methods, request messages, and response messages.", "relatedTrigger": null },
-      { "label": "Mentions generated client stubs and server interfaces or base classes.", "relatedTrigger": null },
-      { "label": "Understands that the client calls a remote method through the stub while the server implements the service contract.", "relatedTrigger": null },
-      { "label": "Connects Protocol Buffers to strongly typed, language-neutral message serialization rather than treating gRPC as plain JSON over HTTP.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Cannot distinguish the .proto contract from the runtime server implementation.",
-      "Describes gRPC as only a REST wrapper or only a serialization library.",
-      "Ignores code generation and type-safe request/response contracts."
+      {
+        "label": "Explains that a .proto file defines services, RPC methods, request messages, and response messages.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "defines_service_methods",
+            "description": "Explains that the .proto file defines service names and RPC methods"
+          },
+          {
+            "key": "defines_request_response_messages",
+            "description": "Explains that each RPC method refers to typed request and response messages"
+          },
+          {
+            "key": "treats_proto_as_contract",
+            "description": "Treats the .proto file as the shared API contract between client and server"
+          }
+        ]
+      },
+      {
+        "label": "Mentions generated client stubs and server interfaces or base classes.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "mentions_client_stub",
+            "description": "Mentions generated client stub code used by callers"
+          },
+          {
+            "key": "mentions_server_interface",
+            "description": "Mentions generated server interfaces, base classes, or registration code implemented by the service"
+          },
+          {
+            "key": "mentions_language_codegen",
+            "description": "Mentions code generation for the chosen language rather than hand-writing wire parsing"
+          }
+        ]
+      },
+      {
+        "label": "Understands that the client calls a remote method through the stub while the server implements the service contract.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "explains_stub_call",
+            "description": "Explains that the client invokes a method on the generated stub"
+          },
+          {
+            "key": "explains_server_implementation",
+            "description": "Explains that the server implements and registers the generated service contract"
+          },
+          {
+            "key": "separates_local_call_remote_rpc",
+            "description": "Distinguishes local stub method invocation from the remote network call handled by gRPC"
+          }
+        ]
+      },
+      {
+        "label": "Connects Protocol Buffers to strongly typed, language-neutral message serialization rather than treating gRPC as plain JSON over HTTP.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_protobuf_serialization",
+            "description": "Mentions Protocol Buffers as the normal binary serialization format for gRPC messages"
+          },
+          {
+            "key": "mentions_strong_typing",
+            "description": "Connects protobuf fields and generated classes to strongly typed request and response data"
+          },
+          {
+            "key": "mentions_polyglot_contract",
+            "description": "Explains that different implementation languages can share the same .proto contract"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -123,25 +198,100 @@
   },
   {
     "code": "GRPC_JR_TECH_RPC_TYPES_002",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking"],
-    "techTags": ["grpc"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking"
+    ],
+    "techTags": [
+      "grpc"
+    ],
     "difficulty": 2,
     "intent": "Evaluate whether the candidate understands unary, server streaming, client streaming, and bidirectional streaming RPCs and can choose the right shape for a use case.",
     "primaryQuestion": "What are the four gRPC RPC types, and when would you choose each one?",
     "expectedSignals": [
-      { "label": "Identifies unary, server streaming, client streaming, and bidirectional streaming RPCs.", "relatedTrigger": null },
-      { "label": "Maps unary to simple request/response interactions.", "relatedTrigger": null },
-      { "label": "Maps server streaming to one request producing many ordered responses.", "relatedTrigger": null },
-      { "label": "Maps client streaming or bidirectional streaming to uploads, live feeds, chat, telemetry, or interactive sessions.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Only knows unary RPC and treats all streaming as the same.",
-      "Cannot describe who sends many messages in each streaming mode.",
-      "Ignores ordering and stream completion semantics."
+      {
+        "label": "Identifies unary, server streaming, client streaming, and bidirectional streaming RPCs.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "names_unary",
+            "description": "Names unary RPC as one request followed by one response"
+          },
+          {
+            "key": "names_server_client_streaming",
+            "description": "Names both server streaming and client streaming RPC types"
+          },
+          {
+            "key": "names_bidirectional_streaming",
+            "description": "Names bidirectional streaming as both sides sending streams of messages"
+          }
+        ]
+      },
+      {
+        "label": "Maps unary to simple request/response interactions.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "maps_unary_to_lookup",
+            "description": "Maps unary RPC to simple operations such as lookup, create, update, or command-style request response"
+          },
+          {
+            "key": "mentions_single_response",
+            "description": "States that the server returns a single response for a unary call"
+          },
+          {
+            "key": "avoids_streaming_for_simple_case",
+            "description": "Avoids choosing streaming when a single request and response is enough"
+          }
+        ]
+      },
+      {
+        "label": "Maps server streaming to one request producing many ordered responses.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "defines_server_streaming_shape",
+            "description": "Defines server streaming as one client request followed by multiple server messages"
+          },
+          {
+            "key": "uses_live_updates_example",
+            "description": "Applies server streaming to a case such as live dashboard updates or incremental result delivery"
+          },
+          {
+            "key": "mentions_stream_order",
+            "description": "Mentions ordered messages within the stream from the server to the client"
+          }
+        ]
+      },
+      {
+        "label": "Maps client streaming or bidirectional streaming to uploads, live feeds, chat, telemetry, or interactive sessions.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "maps_client_streaming",
+            "description": "Maps client streaming to many client messages followed by a final server response, such as upload or telemetry aggregation"
+          },
+          {
+            "key": "maps_bidi_streaming",
+            "description": "Maps bidirectional streaming to interactive flows such as chat, live collaboration, or duplex telemetry"
+          },
+          {
+            "key": "distinguishes_client_stream_response_timing",
+            "description": "Explains when the server normally sends a response in client streaming after the client finishes or half-closes the stream"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -240,25 +390,103 @@
   },
   {
     "code": "GRPC_JR_DEBUG_STATUS_DEADLINE_003",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack", "devops"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "devops"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "debugging",
-    "competencies": ["problem_solving", "technical_fundamentals", "ownership"],
-    "techTags": ["grpc", "logging"],
+    "competencies": [
+      "problem_solving",
+      "technical_fundamentals",
+      "ownership"
+    ],
+    "techTags": [
+      "grpc",
+      "logging"
+    ],
     "difficulty": 2,
     "intent": "Assess basic troubleshooting of gRPC failures using status codes, deadlines, logs, and client/server evidence.",
     "primaryQuestion": "A gRPC client starts receiving DEADLINE_EXCEEDED and UNAVAILABLE errors after deployment. What would you check first?",
     "expectedSignals": [
-      { "label": "Reads the exact status code, message, method name, deadline, and timing before changing code.", "relatedTrigger": null },
-      { "label": "Separates DEADLINE_EXCEEDED from UNAVAILABLE and explains likely causes for each.", "relatedTrigger": null },
-      { "label": "Checks client deadline configuration, server latency, network path, DNS, load balancer, and deployment health.", "relatedTrigger": null },
-      { "label": "Uses logs, metrics, traces, or request IDs to compare client-side and server-side evidence.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Treats all gRPC failures as the same generic exception.",
-      "Only increases timeout without checking latency or availability evidence.",
-      "Retries non-idempotent calls blindly."
+      {
+        "label": "Reads the exact status code, message, method name, deadline, and timing before changing code.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "captures_status_and_message",
+            "description": "Captures the exact gRPC status code and error message instead of grouping all failures together"
+          },
+          {
+            "key": "identifies_method_and_deadline",
+            "description": "Identifies the affected method name, configured deadline, and elapsed time"
+          },
+          {
+            "key": "checks_deployment_timing",
+            "description": "Compares the error start time with deployment, config, traffic, or infrastructure changes"
+          }
+        ]
+      },
+      {
+        "label": "Separates DEADLINE_EXCEEDED from UNAVAILABLE and explains likely causes for each.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "explains_deadline_exceeded",
+            "description": "Explains DEADLINE_EXCEEDED as the client deadline expiring before a response is received"
+          },
+          {
+            "key": "explains_unavailable",
+            "description": "Explains UNAVAILABLE as a transport, endpoint, load balancer, server availability, or transient connectivity problem"
+          },
+          {
+            "key": "warns_retry_side_effects",
+            "description": "Warns that retrying non-idempotent calls after UNAVAILABLE can duplicate side effects if the server may have processed the request"
+          }
+        ]
+      },
+      {
+        "label": "Checks client deadline configuration, server latency, network path, DNS, load balancer, and deployment health.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "checks_client_deadline",
+            "description": "Checks whether client deadline settings became too short for real server latency"
+          },
+          {
+            "key": "checks_server_latency_health",
+            "description": "Checks server latency, saturation, deployment health, and application errors"
+          },
+          {
+            "key": "checks_network_resolution_lb",
+            "description": "Checks DNS, name resolution, load balancer behavior, routing, and network path changes"
+          }
+        ]
+      },
+      {
+        "label": "Uses logs, metrics, traces, or request IDs to compare client-side and server-side evidence.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "correlates_client_server_logs",
+            "description": "Uses request IDs, trace IDs, or correlation metadata to compare client and server logs"
+          },
+          {
+            "key": "uses_latency_status_metrics",
+            "description": "Uses per-method latency and status-code metrics to identify whether failures are broad or method-specific"
+          },
+          {
+            "key": "checks_server_completed_after_deadline",
+            "description": "Looks for evidence that the server completed work after the client deadline expired"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -285,7 +513,7 @@
         "purpose": "Check client/server lifecycle understanding."
       },
       {
-        "trigger": "red_flag",
+        "trigger": "missing_tradeoff",
         "question": "When is retrying an UNAVAILABLE response unsafe?",
         "purpose": "Check retry and idempotency awareness."
       }
@@ -362,25 +590,101 @@
   },
   {
     "code": "GRPC_MID_TECH_PROTO_EVOLUTION_004",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "ownership"],
-    "techTags": ["grpc"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "ownership"
+    ],
+    "techTags": [
+      "grpc"
+    ],
     "difficulty": 3,
     "intent": "Evaluate whether the candidate can evolve Protocol Buffer contracts safely across independently deployed clients and servers.",
     "primaryQuestion": "How would you change a gRPC .proto message safely when old clients and servers may still be running?",
     "expectedSignals": [
-      { "label": "Uses additive, backward-compatible changes where possible.", "relatedTrigger": null },
-      { "label": "Does not reuse or renumber field tags and reserves deleted field numbers and names.", "relatedTrigger": null },
-      { "label": "Avoids changing field types or changing repeated fields to scalar fields.", "relatedTrigger": null },
-      { "label": "Plans rollout across generated code, server compatibility, client compatibility, and validation before removing old fields.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Renumbers fields to make the schema look cleaner.",
-      "Deletes a field and immediately reuses its tag for a new meaning.",
-      "Assumes clients and servers are always deployed in lockstep."
+      {
+        "label": "Uses additive, backward-compatible changes where possible.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "prefers_optional_additive_fields",
+            "description": "Prefers adding new fields instead of changing or removing existing fields"
+          },
+          {
+            "key": "keeps_old_clients_safe",
+            "description": "Ensures old clients can ignore unknown fields and continue working"
+          },
+          {
+            "key": "keeps_old_servers_safe",
+            "description": "Ensures old servers can receive messages from newer clients without breaking required behavior"
+          }
+        ]
+      },
+      {
+        "label": "Does not reuse or renumber field tags and reserves deleted field numbers and names.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "never_reuses_field_numbers",
+            "description": "States that deleted field numbers must not be reused because old serialized data or clients may interpret them incorrectly"
+          },
+          {
+            "key": "does_not_renumber_fields",
+            "description": "Avoids renumbering existing field tags even if field names change"
+          },
+          {
+            "key": "reserves_deleted_tags_names",
+            "description": "Uses reserved field numbers and names after deleting fields"
+          }
+        ]
+      },
+      {
+        "label": "Avoids changing field types or changing repeated fields to scalar fields.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "avoids_incompatible_type_change",
+            "description": "Avoids changing an existing field's wire-incompatible type"
+          },
+          {
+            "key": "avoids_repeated_scalar_change",
+            "description": "Avoids changing repeated fields to scalar fields or the reverse without a migration strategy"
+          },
+          {
+            "key": "uses_new_field_for_new_shape",
+            "description": "Uses a new field number when a field needs a different shape or semantics"
+          }
+        ]
+      },
+      {
+        "label": "Plans rollout across generated code, server compatibility, client compatibility, and validation before removing old fields.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "orders_codegen_rollout",
+            "description": "Plans regeneration and release of server and client code in a compatible order"
+          },
+          {
+            "key": "supports_old_new_versions",
+            "description": "Keeps old and new clients and servers compatible during the rollout window"
+          },
+          {
+            "key": "validates_before_removal",
+            "description": "Validates usage has moved away from old fields before removing or reserving them"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -402,7 +706,7 @@
     ],
     "followUps": [
       {
-        "trigger": "red_flag",
+        "trigger": "missing_tradeoff",
         "question": "Why is reusing a deleted protobuf field number dangerous?",
         "purpose": "Verify wire-format compatibility understanding."
       },
@@ -484,25 +788,104 @@
   },
   {
     "code": "GRPC_MID_TECH_METADATA_AUTH_005",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack", "security"],
-    "levels": ["mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "security"
+    ],
+    "levels": [
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "communication"],
-    "techTags": ["grpc", "oauth2", "jwt"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "communication"
+    ],
+    "techTags": [
+      "grpc",
+      "oauth2",
+      "jwt"
+    ],
     "difficulty": 3,
     "intent": "Assess practical use of gRPC metadata for authentication, tracing, correlation, and response trailers without abusing it as a business payload channel.",
     "primaryQuestion": "How would you use gRPC metadata for authentication and request correlation, and what should not go into metadata?",
     "expectedSignals": [
-      { "label": "Explains metadata as RPC-associated key-value data often transmitted as HTTP/2 headers.", "relatedTrigger": null },
-      { "label": "Uses metadata for auth tokens, tenant or correlation IDs, trace context, or server trailers when appropriate.", "relatedTrigger": null },
-      { "label": "Avoids putting large business payloads, sensitive data without protection, or fields that belong in the protobuf request into metadata.", "relatedTrigger": null },
-      { "label": "Mentions key constraints such as reserved grpc- prefix, ASCII keys, binary keys ending in -bin, and size/header limits.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Puts primary request data into metadata instead of typed protobuf messages.",
-      "Logs credentials or bearer tokens while debugging metadata.",
-      "Uses custom metadata names that collide with reserved gRPC headers."
+      {
+        "label": "Explains metadata as RPC-associated key-value data often transmitted as HTTP/2 headers.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "defines_metadata_key_value",
+            "description": "Explains metadata as key-value data attached to an RPC rather than part of the protobuf message body"
+          },
+          {
+            "key": "connects_to_http2_headers",
+            "description": "Mentions that metadata is commonly transported as HTTP/2 headers or trailers"
+          },
+          {
+            "key": "distinguishes_initial_trailing",
+            "description": "Distinguishes request or initial metadata from response trailing metadata when relevant"
+          }
+        ]
+      },
+      {
+        "label": "Uses metadata for auth tokens, tenant or correlation IDs, trace context, or server trailers when appropriate.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "uses_metadata_for_auth",
+            "description": "Uses metadata for authentication credentials such as bearer tokens when protected by TLS and server-side validation"
+          },
+          {
+            "key": "uses_metadata_for_correlation",
+            "description": "Uses metadata for trace context, correlation IDs, request IDs, or tenant routing context when appropriate"
+          },
+          {
+            "key": "mentions_trailers",
+            "description": "Mentions server trailers for status details or response-side metadata when useful"
+          }
+        ]
+      },
+      {
+        "label": "Avoids putting large business payloads, sensitive data without protection, or fields that belong in the protobuf request into metadata.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "keeps_business_data_in_proto",
+            "description": "Keeps business fields that affect domain behavior in typed protobuf request messages"
+          },
+          {
+            "key": "avoids_large_payload_metadata",
+            "description": "Avoids putting large payloads or frequently changing business data into metadata"
+          },
+          {
+            "key": "protects_sensitive_metadata",
+            "description": "Avoids logging or transmitting sensitive metadata without protection and redaction"
+          }
+        ]
+      },
+      {
+        "label": "Mentions key constraints such as reserved grpc- prefix, ASCII keys, binary keys ending in -bin, and size/header limits.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "mentions_reserved_prefix",
+            "description": "Mentions that grpc- prefixed metadata keys are reserved"
+          },
+          {
+            "key": "mentions_ascii_binary_keys",
+            "description": "Mentions ASCII metadata keys and binary metadata keys ending in -bin"
+          },
+          {
+            "key": "mentions_header_size_limits",
+            "description": "Mentions header or metadata size limits as a reason not to misuse metadata for payloads"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -529,7 +912,7 @@
         "purpose": "Check API boundary reasoning."
       },
       {
-        "trigger": "red_flag",
+        "trigger": "missing_tradeoff",
         "question": "How would you debug missing auth metadata without leaking secrets?",
         "purpose": "Verify secure troubleshooting practice."
       }
@@ -606,25 +989,103 @@
   },
   {
     "code": "GRPC_MID_DEBUG_STREAM_FLOW_006",
-    "stages": ["stage_3_domain_knowledge"],
-    "roleFamilies": ["backend", "fullstack", "devops"],
-    "levels": ["mid"],
+    "stages": [
+      "stage_3_domain_knowledge"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "devops"
+    ],
+    "levels": [
+      "mid"
+    ],
     "type": "debugging",
-    "competencies": ["problem_solving", "technical_fundamentals", "system_thinking"],
-    "techTags": ["grpc", "logging"],
+    "competencies": [
+      "problem_solving",
+      "technical_fundamentals",
+      "system_thinking"
+    ],
+    "techTags": [
+      "grpc",
+      "logging"
+    ],
     "difficulty": 3,
     "intent": "Evaluate debugging skill for streaming RPCs involving flow control, slow consumers, cancellation, memory growth, and read/write coordination.",
     "primaryQuestion": "A bidirectional streaming gRPC endpoint works in tests but stalls or grows memory under production load. How would you diagnose it?",
     "expectedSignals": [
-      { "label": "Checks whether either side is writing faster than the other side reads.", "relatedTrigger": null },
-      { "label": "Understands that gRPC flow control can block writes and that streaming is sensitive to slow consumers.", "relatedTrigger": null },
-      { "label": "Looks for missing cancellation handling, unbounded buffering, oversized messages, or failure to drain streams.", "relatedTrigger": null },
-      { "label": "Uses per-stream metrics, message counts/sizes, deadlines, backpressure logs, and load-test reproduction.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Assumes streaming writes always mean messages have already been sent over the network.",
-      "Buffers every message in memory without a backpressure strategy.",
-      "Ignores cancellation or client disconnects in long-lived streams."
+      {
+        "label": "Checks whether either side is writing faster than the other side reads.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "compares_producer_consumer_rates",
+            "description": "Compares producer write rate with consumer read rate on both client and server sides"
+          },
+          {
+            "key": "identifies_slow_consumer",
+            "description": "Identifies whether a slow client or server reader is causing messages to queue"
+          },
+          {
+            "key": "tests_direction_of_stall",
+            "description": "Determines whether the stall happens on client-to-server, server-to-client, or both stream directions"
+          }
+        ]
+      },
+      {
+        "label": "Understands that gRPC flow control can block writes and that streaming is sensitive to slow consumers.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "explains_flow_control_blocking",
+            "description": "Explains that gRPC or HTTP/2 flow control can block writes when the peer is not reading fast enough"
+          },
+          {
+            "key": "distinguishes_write_buffered_sent",
+            "description": "Distinguishes application write completion from the message actually being consumed by the peer"
+          },
+          {
+            "key": "connects_to_memory_growth",
+            "description": "Connects slow consumers or buffering to memory growth under production load"
+          }
+        ]
+      },
+      {
+        "label": "Looks for missing cancellation handling, unbounded buffering, oversized messages, or failure to drain streams.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "handles_cancellation_cleanup",
+            "description": "Checks that server and client clean up goroutines, listeners, buffers, or subscriptions when a stream is cancelled"
+          },
+          {
+            "key": "bounds_buffers_and_messages",
+            "description": "Checks for unbounded queues, oversized messages, or missing maximum message size limits"
+          },
+          {
+            "key": "drains_or_closes_streams",
+            "description": "Checks whether streams are drained, half-closed, or closed correctly on errors and shutdown"
+          }
+        ]
+      },
+      {
+        "label": "Uses per-stream metrics, message counts/sizes, deadlines, backpressure logs, and load-test reproduction.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "uses_stream_metrics",
+            "description": "Uses per-stream metrics such as active streams, message counts, message sizes, queue depth, and duration"
+          },
+          {
+            "key": "uses_deadline_backpressure_logs",
+            "description": "Uses deadlines, cancellation logs, backpressure logs, and write wait times to locate the bottleneck"
+          },
+          {
+            "key": "reproduces_with_load_test",
+            "description": "Reproduces the stall or memory growth with production-like stream concurrency and message rates"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -651,7 +1112,7 @@
         "purpose": "Check flow-control evidence gathering."
       },
       {
-        "trigger": "red_flag",
+        "trigger": "missing_tradeoff",
         "question": "What cleanup should happen when the client cancels a long-lived stream?",
         "purpose": "Verify cancellation and resource management."
       }
@@ -728,25 +1189,102 @@
   },
   {
     "code": "GRPC_MID_TRADE_REST_GRPC_007",
-    "stages": ["stage_3_domain_knowledge"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["mid"],
+    "stages": [
+      "stage_3_domain_knowledge"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "mid"
+    ],
     "type": "trade_off",
-    "competencies": ["trade_off_analysis", "system_thinking", "communication"],
-    "techTags": ["grpc", "rest"],
+    "competencies": [
+      "trade_off_analysis",
+      "system_thinking",
+      "communication"
+    ],
+    "techTags": [
+      "grpc",
+      "rest"
+    ],
     "difficulty": 3,
     "intent": "Assess whether the candidate can choose between gRPC and REST based on product, platform, compatibility, operations, and client constraints.",
     "primaryQuestion": "When would you choose gRPC over REST for a service API, and when would REST still be the better choice?",
     "expectedSignals": [
-      { "label": "Chooses gRPC for strongly typed internal service contracts, efficient binary messages, streaming, and polyglot generated clients.", "relatedTrigger": null },
-      { "label": "Chooses REST/HTTP JSON for public browser-facing APIs, broad tooling compatibility, caching semantics, or simple resource-oriented APIs when appropriate.", "relatedTrigger": null },
-      { "label": "Considers operational constraints such as proxies, load balancers, observability, gateway needs, and team familiarity.", "relatedTrigger": null },
-      { "label": "Does not frame gRPC as universally faster or REST as obsolete.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Always chooses gRPC because it is newer or binary.",
-      "Ignores browser, gateway, proxy, or public API constraints.",
-      "Cannot describe any real downside of gRPC adoption."
+      {
+        "label": "Chooses gRPC for strongly typed internal service contracts, efficient binary messages, streaming, and polyglot generated clients.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "chooses_grpc_for_internal_contracts",
+            "description": "Chooses gRPC when strong internal service contracts and generated clients are valuable"
+          },
+          {
+            "key": "mentions_binary_efficiency",
+            "description": "Mentions efficient protobuf serialization or lower overhead for service-to-service traffic where it matters"
+          },
+          {
+            "key": "mentions_streaming_polyglot",
+            "description": "Mentions streaming support or polyglot generated clients as concrete reasons to choose gRPC"
+          }
+        ]
+      },
+      {
+        "label": "Chooses REST/HTTP JSON for public browser-facing APIs, broad tooling compatibility, caching semantics, or simple resource-oriented APIs when appropriate.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "chooses_rest_for_browser_public",
+            "description": "Chooses REST or HTTP JSON for browser-facing or third-party public APIs when compatibility is more important"
+          },
+          {
+            "key": "mentions_http_tooling_caching",
+            "description": "Mentions HTTP tooling, caches, gateways, debugging tools, or resource semantics as REST advantages"
+          },
+          {
+            "key": "matches_api_shape",
+            "description": "Matches the protocol choice to API shape instead of defaulting to one technology"
+          }
+        ]
+      },
+      {
+        "label": "Considers operational constraints such as proxies, load balancers, observability, gateway needs, and team familiarity.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "checks_proxy_lb_support",
+            "description": "Checks whether proxies, ingress, load balancers, and service mesh support HTTP/2 and gRPC behavior"
+          },
+          {
+            "key": "checks_observability_tooling",
+            "description": "Checks logging, metrics, tracing, status code mapping, and debugging support for gRPC"
+          },
+          {
+            "key": "checks_team_client_support",
+            "description": "Considers team familiarity, generated client publishing, gateway needs, and client language support"
+          }
+        ]
+      },
+      {
+        "label": "Does not frame gRPC as universally faster or REST as obsolete.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "avoids_universal_performance_claim",
+            "description": "Avoids claiming gRPC is always faster without considering payload, transport, infrastructure, and client constraints"
+          },
+          {
+            "key": "recognizes_rest_validity",
+            "description": "Recognizes that REST remains a good fit for many public, cacheable, or simple resource APIs"
+          },
+          {
+            "key": "states_contextual_decision",
+            "description": "Frames the decision as contextual and evidence-based rather than a technology slogan"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -850,25 +1388,103 @@
   },
   {
     "code": "GRPC_SR_TECH_RETRY_IDEMPOTENCY_008",
-    "stages": ["stage_3_domain_knowledge"],
-    "roleFamilies": ["backend", "fullstack", "devops"],
-    "levels": ["senior"],
+    "stages": [
+      "stage_3_domain_knowledge"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "devops"
+    ],
+    "levels": [
+      "senior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "trade_off_analysis"],
-    "techTags": ["grpc", "idempotency"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "trade_off_analysis"
+    ],
+    "techTags": [
+      "grpc",
+      "idempotency"
+    ],
     "difficulty": 4,
     "intent": "Evaluate senior-level reliability design around gRPC retries, deadlines, idempotency, retryable status codes, service config, and server pushback.",
     "primaryQuestion": "How would you design retry behavior for gRPC calls without causing duplicate side effects or overload?",
     "expectedSignals": [
-      { "label": "Separates retry-safe idempotent operations from non-idempotent operations that need idempotency keys or different handling.", "relatedTrigger": null },
-      { "label": "Uses realistic deadlines, retry budgets, exponential backoff, jitter, retryable status codes, and max attempts.", "relatedTrigger": null },
-      { "label": "Understands that configured retries are per method and that transparent retries may occur only under limited safe conditions.", "relatedTrigger": null },
-      { "label": "Considers server pushback, retry throttling, observability, and load amplification during incidents.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Retries every error code for every method.",
-      "Ignores duplicate writes, payment/order side effects, or at-least-once behavior.",
-      "Sets aggressive retry policies without deadline budgets or overload protection."
+      {
+        "label": "Separates retry-safe idempotent operations from non-idempotent operations that need idempotency keys or different handling.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "classifies_idempotent_methods",
+            "description": "Classifies read or idempotent methods as safer candidates for automatic retries"
+          },
+          {
+            "key": "identifies_non_idempotent_methods",
+            "description": "Identifies side-effecting methods such as create order, charge payment, or reserve inventory as unsafe to retry blindly"
+          },
+          {
+            "key": "uses_idempotency_keys",
+            "description": "Uses idempotency keys, request IDs, or deduplication for operations that may be retried after uncertain outcomes"
+          }
+        ]
+      },
+      {
+        "label": "Uses realistic deadlines, retry budgets, exponential backoff, jitter, retryable status codes, and max attempts.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "sets_deadlines",
+            "description": "Sets realistic per-call deadlines so retries do not exceed user or upstream time budgets"
+          },
+          {
+            "key": "uses_backoff_jitter_max_attempts",
+            "description": "Uses exponential backoff, jitter, and maximum attempts instead of immediate tight-loop retries"
+          },
+          {
+            "key": "limits_retryable_status_codes",
+            "description": "Limits retries to appropriate transient status codes and method policies"
+          }
+        ]
+      },
+      {
+        "label": "Understands that configured retries are per method and that transparent retries may occur only under limited safe conditions.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_per_method_policy",
+            "description": "Mentions that retry behavior should be configured per method or service policy"
+          },
+          {
+            "key": "mentions_transparent_retry_limits",
+            "description": "Mentions that transparent retries are limited to safe cases where the call has not committed at the server application level"
+          },
+          {
+            "key": "aligns_policy_with_semantics",
+            "description": "Aligns retry policy with each method's side-effect and idempotency semantics"
+          }
+        ]
+      },
+      {
+        "label": "Considers server pushback, retry throttling, observability, and load amplification during incidents.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "uses_retry_throttling_pushback",
+            "description": "Considers server pushback, retry throttling, or circuit breaking to avoid worsening outages"
+          },
+          {
+            "key": "monitors_retry_metrics",
+            "description": "Monitors retry attempts, retry success rate, exhausted retries, and status-code distribution"
+          },
+          {
+            "key": "accounts_for_load_amplification",
+            "description": "Accounts for retries amplifying load on an already unhealthy backend"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -898,6 +1514,11 @@
         "trigger": "missing_metric",
         "question": "What retry metrics would you alert on during a backend outage?",
         "purpose": "Check operational reliability thinking."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "How would you decide retry policy per method rather than using one global retry rule?",
+        "purpose": "Check method semantics and service config reasoning."
       }
     ],
     "localizedContent": {
@@ -972,25 +1593,104 @@
   },
   {
     "code": "GRPC_SR_DEBUG_LB_HEALTH_009",
-    "stages": ["stage_3_domain_knowledge"],
-    "roleFamilies": ["backend", "devops"],
-    "levels": ["senior"],
+    "stages": [
+      "stage_3_domain_knowledge"
+    ],
+    "roleFamilies": [
+      "backend",
+      "devops"
+    ],
+    "levels": [
+      "senior"
+    ],
     "type": "debugging",
-    "competencies": ["problem_solving", "system_thinking", "ownership", "impact_measurement"],
-    "techTags": ["grpc", "kubernetes", "prometheus"],
+    "competencies": [
+      "problem_solving",
+      "system_thinking",
+      "ownership",
+      "impact_measurement"
+    ],
+    "techTags": [
+      "grpc",
+      "kubernetes",
+      "prometheus"
+    ],
     "difficulty": 4,
     "intent": "Assess senior production debugging for gRPC load balancing, health checking, name resolution, connection reuse, and uneven traffic distribution.",
     "primaryQuestion": "Traffic to a gRPC service is uneven: one backend is overloaded while others are healthy. How would you diagnose and fix it?",
     "expectedSignals": [
-      { "label": "Checks load balancing policy, name resolution results, endpoint discovery, channel reuse, and connection behavior.", "relatedTrigger": null },
-      { "label": "Understands that some policies such as pick_first may keep using one ready subchannel instead of spreading calls.", "relatedTrigger": null },
-      { "label": "Verifies server health service behavior, readiness, graceful shutdown, and whether unhealthy backends are removed from traffic.", "relatedTrigger": null },
-      { "label": "Uses per-backend metrics, client channel metrics, resolver logs, load balancer configuration, and controlled rollout verification.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Only scales up replicas without checking client-side load balancing behavior.",
-      "Assumes HTTP/1.1 load balancing behavior applies directly to long-lived HTTP/2 gRPC connections.",
-      "Ignores health checking or endpoint discovery state."
+      {
+        "label": "Checks load balancing policy, name resolution results, endpoint discovery, channel reuse, and connection behavior.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "checks_lb_policy",
+            "description": "Checks the client or proxy load balancing policy in use"
+          },
+          {
+            "key": "checks_resolver_endpoints",
+            "description": "Checks resolver or service discovery results to confirm which backends the client can see"
+          },
+          {
+            "key": "checks_channel_connection_reuse",
+            "description": "Checks channel reuse, subchannel state, connection pooling, and whether all calls are pinned to one connection"
+          }
+        ]
+      },
+      {
+        "label": "Understands that some policies such as pick_first may keep using one ready subchannel instead of spreading calls.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "explains_pick_first_behavior",
+            "description": "Explains that pick_first can keep using one ready subchannel instead of distributing calls"
+          },
+          {
+            "key": "compares_round_robin_or_xds",
+            "description": "Compares alternatives such as round_robin, xDS, or proxy-side load balancing when spreading traffic is required"
+          },
+          {
+            "key": "connects_policy_to_imbalance",
+            "description": "Connects the selected policy and connection behavior to the observed backend imbalance"
+          }
+        ]
+      },
+      {
+        "label": "Verifies server health service behavior, readiness, graceful shutdown, and whether unhealthy backends are removed from traffic.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "checks_health_service",
+            "description": "Checks gRPC health service responses or readiness signals for each backend"
+          },
+          {
+            "key": "checks_unhealthy_removal",
+            "description": "Verifies unhealthy or draining backends are removed from endpoint discovery or load balancer rotation"
+          },
+          {
+            "key": "checks_graceful_shutdown",
+            "description": "Checks graceful shutdown behavior so existing streams finish and new traffic stops during deploys"
+          }
+        ]
+      },
+      {
+        "label": "Uses per-backend metrics, client channel metrics, resolver logs, load balancer configuration, and controlled rollout verification.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "uses_per_backend_metrics",
+            "description": "Uses per-backend request rate, latency, error, CPU, and active stream metrics to prove imbalance"
+          },
+          {
+            "key": "uses_client_resolver_logs",
+            "description": "Uses client channel metrics, resolver logs, or load balancer config to prove what endpoints were selected"
+          },
+          {
+            "key": "verifies_fix_with_rollout",
+            "description": "Verifies the fix with a controlled rollout and balanced per-backend traffic after deployment"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1099,25 +1799,105 @@
   },
   {
     "code": "GRPC_SR_TRADE_PRODUCTION_API_010",
-    "stages": ["stage_4_cv_deep_dive"],
-    "roleFamilies": ["backend", "fullstack", "devops"],
-    "levels": ["senior"],
+    "stages": [
+      "stage_4_cv_deep_dive"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "devops"
+    ],
+    "levels": [
+      "senior"
+    ],
     "type": "trade_off",
-    "competencies": ["system_thinking", "trade_off_analysis", "ownership", "impact_measurement"],
-    "techTags": ["grpc", "opentelemetry", "logging"],
+    "competencies": [
+      "system_thinking",
+      "trade_off_analysis",
+      "ownership",
+      "impact_measurement"
+    ],
+    "techTags": [
+      "grpc",
+      "opentelemetry",
+      "logging"
+    ],
     "difficulty": 4,
     "intent": "Verify senior judgment for owning a production gRPC API, including contract governance, deadlines, errors, observability, deployment safety, and operational readiness.",
     "primaryQuestion": "You are taking ownership of a business-critical gRPC API. What production standards would you require before calling it ready?",
     "expectedSignals": [
-      { "label": "Defines contract standards: stable .proto ownership, compatibility rules, generated client publishing, and version/deprecation policy.", "relatedTrigger": null },
-      { "label": "Requires deadline defaults, cancellation handling, clear status code mapping, and consistent error details where supported.", "relatedTrigger": null },
-      { "label": "Requires observability: per-method latency, status codes, message sizes, retry attempts, stream counts, traces, logs, and correlation metadata.", "relatedTrigger": null },
-      { "label": "Includes operational readiness: health checks, load balancing behavior, graceful shutdown, rollout/rollback plan, capacity tests, and SLO or alert thresholds.", "relatedTrigger": null }
-    ],
-    "redFlags": [
-      "Focuses only on writing service handlers and ignores client contracts or operations.",
-      "No explicit deadline, cancellation, or status-code policy.",
-      "No measurable readiness criteria or production metrics."
+      {
+        "label": "Defines contract standards: stable .proto ownership, compatibility rules, generated client publishing, and version/deprecation policy.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "defines_proto_ownership",
+            "description": "Defines ownership and review rules for the .proto contract"
+          },
+          {
+            "key": "defines_compatibility_policy",
+            "description": "Defines compatibility rules for adding, deprecating, reserving, and removing fields or methods"
+          },
+          {
+            "key": "defines_client_publishing",
+            "description": "Defines generated client publishing, versioning, and deprecation policy for consumers"
+          }
+        ]
+      },
+      {
+        "label": "Requires deadline defaults, cancellation handling, clear status code mapping, and consistent error details where supported.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "sets_deadline_defaults",
+            "description": "Requires sensible default deadlines and documented per-method timeout expectations"
+          },
+          {
+            "key": "handles_cancellation",
+            "description": "Requires server-side cancellation handling and cleanup when clients disconnect or deadlines expire"
+          },
+          {
+            "key": "maps_status_errors",
+            "description": "Defines consistent status code mapping and rich error details when the ecosystem supports them"
+          }
+        ]
+      },
+      {
+        "label": "Requires observability: per-method latency, status codes, message sizes, retry attempts, stream counts, traces, logs, and correlation metadata.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "tracks_latency_status",
+            "description": "Tracks per-method latency, status codes, and error rates"
+          },
+          {
+            "key": "tracks_message_retry_stream",
+            "description": "Tracks message sizes, retry attempts, active streams, and stream durations"
+          },
+          {
+            "key": "adds_traces_correlation_logs",
+            "description": "Adds tracing, correlation metadata, and structured logs for cross-service debugging"
+          }
+        ]
+      },
+      {
+        "label": "Includes operational readiness: health checks, load balancing behavior, graceful shutdown, rollout/rollback plan, capacity tests, and SLO or alert thresholds.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "requires_health_lb_shutdown",
+            "description": "Requires health checks, known load balancing behavior, readiness, and graceful shutdown"
+          },
+          {
+            "key": "requires_rollout_capacity",
+            "description": "Requires rollout and rollback plan plus capacity or load testing for expected traffic"
+          },
+          {
+            "key": "defines_slo_alerts",
+            "description": "Defines SLOs and alert thresholds tied to per-method latency, errors, saturation, and availability"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
