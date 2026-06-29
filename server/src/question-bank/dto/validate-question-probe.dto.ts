@@ -19,6 +19,7 @@ import {
   QUESTION_PROBE_ROLE_FAMILIES,
   QUESTION_PROBE_STAGES,
   QUESTION_PROBE_TYPES,
+  QuestionProbeFollowUpTrigger,
 } from '../constants/question-bank-taxonomy.constants';
 
 export class QuestionProbeLocalizedContentDto {
@@ -67,6 +68,22 @@ export class QuestionProbeFollowUpDto {
   @IsString()
   @IsNotEmpty()
   purpose!: string;
+}
+
+export class QuestionProbeExpectedSignalDto {
+  @ApiProperty({ example: 'Names a concrete metric or baseline.' })
+  @IsString()
+  @IsNotEmpty()
+  label!: string;
+
+  @ApiProperty({
+    enum: QUESTION_PROBE_FOLLOW_UP_TRIGGERS,
+    required: false,
+    nullable: true,
+  })
+  @IsOptional()
+  @IsIn(QUESTION_PROBE_FOLLOW_UP_TRIGGERS)
+  relatedTrigger?: QuestionProbeFollowUpTrigger | null;
 }
 
 export class QuestionProbeScoringHintDto {
@@ -132,10 +149,11 @@ export class ValidateQuestionProbeDto {
   @IsNotEmpty()
   primaryQuestion!: string;
 
-  @ApiProperty({ example: ['Specific situation', 'Personal contribution'] })
+  @ApiProperty({ type: [QuestionProbeExpectedSignalDto] })
   @IsArray()
-  @IsString({ each: true })
-  expectedSignals!: string[];
+  @ValidateNested({ each: true })
+  @Type(() => QuestionProbeExpectedSignalDto)
+  expectedSignals!: QuestionProbeExpectedSignalDto[];
 
   @ApiProperty({ example: ['Blames others', 'No concrete action'] })
   @IsArray()

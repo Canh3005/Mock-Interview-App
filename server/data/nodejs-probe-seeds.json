@@ -11,10 +11,10 @@
     "intent": "Check whether the candidate understands Node.js event loop basics and can explain why asynchronous APIs matter for server responsiveness.",
     "primaryQuestion": "Explain the Node.js event loop at a practical level. What happens when an HTTP handler starts an asynchronous database call and returns control to Node?",
     "expectedSignals": [
-      "Explains that JavaScript execution is single-threaded while I/O is coordinated asynchronously by Node and the platform.",
-      "Distinguishes the call stack from queued callbacks, timers, and promise continuations.",
-      "Connects non-blocking I/O to handling other requests while waiting for the database.",
-      "Mentions that CPU-heavy synchronous work can still block the process."
+      { "label": "Explains that JavaScript execution is single-threaded while I/O is coordinated asynchronously by Node and the platform.", "relatedTrigger": null },
+      { "label": "Distinguishes the call stack from queued callbacks, timers, and promise continuations.", "relatedTrigger": null },
+      { "label": "Connects non-blocking I/O to handling other requests while waiting for the database.", "relatedTrigger": null },
+      { "label": "Mentions that CPU-heavy synchronous work can still block the process.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Says Node creates a new JavaScript thread for every request.",
@@ -75,10 +75,10 @@
     "intent": "Assess whether the candidate can identify blocking APIs and explain their effect inside a request path.",
     "primaryQuestion": "You see fs.readFileSync and JSON.parse on a large file inside an API endpoint. What risk does that create, and how would you change the design?",
     "expectedSignals": [
-      "Identifies synchronous file I/O as blocking the event loop.",
-      "Mentions JSON.parse can also be CPU-heavy for large payloads.",
-      "Suggests moving work out of the hot request path, caching, streaming, or using async APIs.",
-      "Explains how to prove impact with latency or event loop delay metrics."
+      { "label": "Identifies synchronous file I/O as blocking the event loop.", "relatedTrigger": null },
+      { "label": "Mentions JSON.parse can also be CPU-heavy for large payloads.", "relatedTrigger": null },
+      { "label": "Suggests moving work out of the hot request path, caching, streaming, or using async APIs.", "relatedTrigger": null },
+      { "label": "Explains how to prove impact with latency or event loop delay metrics.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Only changes readFileSync to readFile without considering parsing cost.",
@@ -139,10 +139,10 @@
     "intent": "Evaluate basic async error handling in Node.js request handlers.",
     "primaryQuestion": "How do you handle errors in an async Node.js route so that rejected promises, validation errors, and unexpected failures produce consistent HTTP responses?",
     "expectedSignals": [
-      "Uses try/catch or framework-supported async error propagation.",
-      "Separates expected client errors from unexpected server errors.",
-      "Mentions centralized error middleware or exception filters.",
-      "Avoids leaking stack traces or sensitive internals to clients."
+      { "label": "Uses try/catch or framework-supported async error propagation.", "relatedTrigger": null },
+      { "label": "Separates expected client errors from unexpected server errors.", "relatedTrigger": null },
+      { "label": "Mentions centralized error middleware or exception filters.", "relatedTrigger": null },
+      { "label": "Avoids leaking stack traces or sensitive internals to clients.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Assumes thrown errors inside async code are always caught by outer synchronous try/catch.",
@@ -203,10 +203,10 @@
     "intent": "Check whether the candidate can reason about CommonJS, ES modules, and package boundaries in Node.js.",
     "primaryQuestion": "What is the practical difference between CommonJS require/module.exports and ES module import/export in Node.js, and what issues can appear when a project mixes them?",
     "expectedSignals": [
-      "Identifies CommonJS and ES modules as different module systems.",
-      "Mentions package type, file extensions, default interop, or dynamic import.",
-      "Explains migration friction for dependencies and test tooling.",
-      "Knows module loading differences can affect startup and bundling assumptions."
+      { "label": "Identifies CommonJS and ES modules as different module systems.", "relatedTrigger": null },
+      { "label": "Mentions package type, file extensions, default interop, or dynamic import.", "relatedTrigger": null },
+      { "label": "Explains migration friction for dependencies and test tooling.", "relatedTrigger": null },
+      { "label": "Knows module loading differences can affect startup and bundling assumptions.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Says require and import are just syntax aliases in all cases.",
@@ -267,10 +267,10 @@
     "intent": "Assess basic EventEmitter knowledge, especially listener lifecycle and error events.",
     "primaryQuestion": "How does EventEmitter work in Node.js, and what should you watch out for when adding listeners inside request or job processing code?",
     "expectedSignals": [
-      "Explains synchronous listener invocation in registration order at a high level.",
-      "Mentions special handling for error events.",
-      "Identifies listener leaks when adding listeners repeatedly without removal.",
-      "Knows when to use once, off/removeListener, or bounded listener registration."
+      { "label": "Explains synchronous listener invocation in registration order at a high level.", "relatedTrigger": null },
+      { "label": "Mentions special handling for error events.", "relatedTrigger": null },
+      { "label": "Identifies listener leaks when adding listeners repeatedly without removal.", "relatedTrigger": null },
+      { "label": "Knows when to use once, off/removeListener, or bounded listener registration.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Assumes EventEmitter automatically queues listeners asynchronously.",
@@ -330,10 +330,10 @@
     "intent": "Check basic understanding of streams for large payloads in Node.js.",
     "primaryQuestion": "When would you use a Node.js stream instead of loading an entire file or response into memory, and what does pipe help with?",
     "expectedSignals": [
-      "Identifies streams as chunk-based processing for large or continuous data.",
-      "Connects streams to lower memory pressure.",
-      "Explains basic readable and writable flow.",
-      "Mentions error handling and finishing the pipeline."
+      { "label": "Identifies streams as chunk-based processing for large or continuous data.", "relatedTrigger": null },
+      { "label": "Connects streams to lower memory pressure.", "relatedTrigger": null },
+      { "label": "Explains basic readable and writable flow.", "relatedTrigger": null },
+      { "label": "Mentions error handling and finishing the pipeline.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Cannot explain why buffering a large file is risky.",
@@ -394,10 +394,10 @@
     "intent": "Assess whether the candidate understands dependency reproducibility and basic package hygiene.",
     "primaryQuestion": "Why should a Node.js service commit package-lock.json, and what problem does npm ci solve in CI or production builds?",
     "expectedSignals": [
-      "Explains lockfiles as reproducible dependency resolution.",
-      "Distinguishes npm install from npm ci at a practical level.",
-      "Mentions clean installs and failing when package.json and lockfile disagree.",
-      "Connects dependency changes to review, security, and deployment repeatability."
+      { "label": "Explains lockfiles as reproducible dependency resolution.", "relatedTrigger": null },
+      { "label": "Distinguishes npm install from npm ci at a practical level.", "relatedTrigger": null },
+      { "label": "Mentions clean installs and failing when package.json and lockfile disagree.", "relatedTrigger": null },
+      { "label": "Connects dependency changes to review, security, and deployment repeatability.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Says lockfiles are only useful for frontend apps.",
@@ -458,10 +458,10 @@
     "intent": "Evaluate a practical debugging flow for a Node.js service that fails at startup.",
     "primaryQuestion": "A Node.js API fails to start in staging with EADDRINUSE or missing environment variable errors. How would you debug and fix it without guessing?",
     "expectedSignals": [
-      "Reads the exact startup error and stack trace.",
-      "Checks port binding, process manager configuration, and environment variables.",
-      "Compares local, CI, and staging configuration.",
-      "Adds validation or clear startup failure messages to prevent recurrence."
+      { "label": "Reads the exact startup error and stack trace.", "relatedTrigger": null },
+      { "label": "Checks port binding, process manager configuration, and environment variables.", "relatedTrigger": null },
+      { "label": "Compares local, CI, and staging configuration.", "relatedTrigger": null },
+      { "label": "Adds validation or clear startup failure messages to prevent recurrence.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Changes random ports without identifying the owner of the port.",
@@ -522,10 +522,10 @@
     "intent": "Check whether the candidate understands the HTTP request-response lifecycle in a Node.js web framework.",
     "primaryQuestion": "Walk through the lifecycle of an HTTP request in an Express or NestJS app from middleware to controller/handler to response.",
     "expectedSignals": [
-      "Explains middleware or guards running before business logic.",
-      "Mentions parsing, validation, authentication, and route matching.",
-      "Describes handler/controller work and response finalization.",
-      "Knows why calling next or sending a response twice can cause bugs."
+      { "label": "Explains middleware or guards running before business logic.", "relatedTrigger": null },
+      { "label": "Mentions parsing, validation, authentication, and route matching.", "relatedTrigger": null },
+      { "label": "Describes handler/controller work and response finalization.", "relatedTrigger": null },
+      { "label": "Knows why calling next or sending a response twice can cause bugs.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Cannot distinguish middleware from route handler responsibility.",
@@ -586,10 +586,10 @@
     "intent": "Evaluate basic configuration handling for Node.js services.",
     "primaryQuestion": "How would you manage configuration for a Node.js service across local, staging, and production without hardcoding secrets or creating hidden defaults?",
     "expectedSignals": [
-      "Uses environment variables or secret managers for environment-specific values.",
-      "Validates required configuration at startup.",
-      "Avoids committing secrets or relying on silent production defaults.",
-      "Separates safe local defaults from production configuration."
+      { "label": "Uses environment variables or secret managers for environment-specific values.", "relatedTrigger": null },
+      { "label": "Validates required configuration at startup.", "relatedTrigger": null },
+      { "label": "Avoids committing secrets or relying on silent production defaults.", "relatedTrigger": null },
+      { "label": "Separates safe local defaults from production configuration.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Hardcodes credentials in source control.",
@@ -650,10 +650,10 @@
     "intent": "Assess deeper event loop scheduling knowledge around nextTick, promises, timers, and setImmediate.",
     "primaryQuestion": "Compare process.nextTick, Promise microtasks, setTimeout(0), and setImmediate in Node.js. When can using nextTick repeatedly become dangerous?",
     "expectedSignals": [
-      "Distinguishes nextTick queue from Promise microtasks and timer/check phases.",
-      "Explains why exact ordering depends on context for timers and setImmediate.",
-      "Identifies starvation risk from recursive nextTick usage.",
-      "Uses the APIs intentionally rather than as generic defer mechanisms."
+      { "label": "Distinguishes nextTick queue from Promise microtasks and timer/check phases.", "relatedTrigger": null },
+      { "label": "Explains why exact ordering depends on context for timers and setImmediate.", "relatedTrigger": null },
+      { "label": "Identifies starvation risk from recursive nextTick usage.", "relatedTrigger": null },
+      { "label": "Uses the APIs intentionally rather than as generic defer mechanisms.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Claims all four APIs are equivalent.",
@@ -714,10 +714,10 @@
     "intent": "Evaluate stream backpressure understanding and safe large-data transfer design.",
     "primaryQuestion": "A Node.js export endpoint streams database rows to a CSV file download. How would you handle backpressure, errors, and client disconnects?",
     "expectedSignals": [
-      "Explains backpressure as a slower writable limiting a faster readable source.",
-      "Uses pipeline or equivalent error-aware stream composition.",
-      "Handles abort or close events from the HTTP client.",
-      "Avoids unbounded buffering and cleans up database cursors/resources."
+      { "label": "Explains backpressure as a slower writable limiting a faster readable source.", "relatedTrigger": null },
+      { "label": "Uses pipeline or equivalent error-aware stream composition.", "relatedTrigger": null },
+      { "label": "Handles abort or close events from the HTTP client.", "relatedTrigger": null },
+      { "label": "Avoids unbounded buffering and cleans up database cursors/resources.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Builds the entire CSV in an array before responding.",
@@ -778,10 +778,10 @@
     "intent": "Assess practical understanding of Buffer, binary data, encodings, and safe handling of secrets.",
     "primaryQuestion": "Where do Buffer and encoding issues show up in Node.js APIs, and how would you avoid bugs when handling uploads, hashes, tokens, or base64 data?",
     "expectedSignals": [
-      "Explains Buffer as binary data separate from JavaScript strings.",
-      "Mentions encodings such as utf8, hex, and base64 with explicit conversions.",
-      "Identifies risks from incorrect length assumptions or double encoding.",
-      "Treats secrets and tokens carefully in logs and comparisons."
+      { "label": "Explains Buffer as binary data separate from JavaScript strings.", "relatedTrigger": null },
+      { "label": "Mentions encodings such as utf8, hex, and base64 with explicit conversions.", "relatedTrigger": null },
+      { "label": "Identifies risks from incorrect length assumptions or double encoding.", "relatedTrigger": null },
+      { "label": "Treats secrets and tokens carefully in logs and comparisons.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Assumes binary data is always safe as a JavaScript string.",
@@ -842,10 +842,10 @@
     "intent": "Evaluate production trade-offs around Node.js HTTP server timeouts and slow clients.",
     "primaryQuestion": "What HTTP server timeout settings would you review for a public Node.js API, and how do you balance slow legitimate clients against resource exhaustion attacks?",
     "expectedSignals": [
-      "Mentions request, headers, keep-alive, and socket timeout concepts.",
-      "Connects timeouts to resource retention and slowloris-style risk.",
-      "Balances mobile or slow network clients with protection limits.",
-      "Coordinates app settings with reverse proxy or load balancer behavior."
+      { "label": "Mentions request, headers, keep-alive, and socket timeout concepts.", "relatedTrigger": null },
+      { "label": "Connects timeouts to resource retention and slowloris-style risk.", "relatedTrigger": null },
+      { "label": "Balances mobile or slow network clients with protection limits.", "relatedTrigger": null },
+      { "label": "Coordinates app settings with reverse proxy or load balancer behavior.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Disables timeouts to avoid client complaints.",
@@ -906,10 +906,10 @@
     "intent": "Assess request-context propagation knowledge using AsyncLocalStorage or similar mechanisms.",
     "primaryQuestion": "How would you keep a request ID available across async calls in a Node.js service for logging and tracing, and what can break that context?",
     "expectedSignals": [
-      "Describes AsyncLocalStorage or framework-supported context propagation.",
-      "Explains per-request context storage rather than global mutable variables.",
-      "Mentions async boundaries, worker threads, queues, or manual callbacks as risk areas.",
-      "Connects request IDs to logs, traces, and incident diagnosis."
+      { "label": "Describes AsyncLocalStorage or framework-supported context propagation.", "relatedTrigger": null },
+      { "label": "Explains per-request context storage rather than global mutable variables.", "relatedTrigger": null },
+      { "label": "Mentions async boundaries, worker threads, queues, or manual callbacks as risk areas.", "relatedTrigger": null },
+      { "label": "Connects request IDs to logs, traces, and incident diagnosis.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Uses a global variable for current request ID.",
@@ -970,10 +970,10 @@
     "intent": "Evaluate judgment around CPU-bound work in Node.js and when to use worker threads.",
     "primaryQuestion": "A Node.js endpoint performs image resizing or PDF generation and causes latency spikes. When would you use worker_threads, a job queue, or an external service?",
     "expectedSignals": [
-      "Identifies CPU-bound work as blocking the event loop.",
-      "Compares worker threads, background jobs, and external services.",
-      "Mentions serialization cost, worker pool sizing, timeouts, and failure handling.",
-      "Considers user experience: synchronous response versus async status/result flow."
+      { "label": "Identifies CPU-bound work as blocking the event loop.", "relatedTrigger": null },
+      { "label": "Compares worker threads, background jobs, and external services.", "relatedTrigger": null },
+      { "label": "Mentions serialization cost, worker pool sizing, timeouts, and failure handling.", "relatedTrigger": null },
+      { "label": "Considers user experience: synchronous response versus async status/result flow.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Adds more async/await and expects CPU work to become non-blocking.",
@@ -1034,10 +1034,10 @@
     "intent": "Assess safe use of child processes and trade-offs versus worker threads or native libraries.",
     "primaryQuestion": "When would you use child_process in a Node.js service, and what safeguards are needed when executing external commands from API input?",
     "expectedSignals": [
-      "Compares child processes with worker threads and in-process libraries.",
-      "Distinguishes exec shell behavior from spawn argument arrays.",
-      "Mentions input validation, command injection risk, timeouts, resource limits, and stdout/stderr handling.",
-      "Handles process exit codes, errors, and cleanup."
+      { "label": "Compares child processes with worker threads and in-process libraries.", "relatedTrigger": null },
+      { "label": "Distinguishes exec shell behavior from spawn argument arrays.", "relatedTrigger": null },
+      { "label": "Mentions input validation, command injection risk, timeouts, resource limits, and stdout/stderr handling.", "relatedTrigger": null },
+      { "label": "Handles process exit codes, errors, and cleanup.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Passes raw user input into a shell command.",
@@ -1098,10 +1098,10 @@
     "intent": "Evaluate debugging of memory growth in a production Node.js service.",
     "primaryQuestion": "A Node.js service memory usage grows until the container restarts. How would you distinguish a real memory leak from expected cache growth or traffic spikes?",
     "expectedSignals": [
-      "Starts with heap, RSS, GC behavior, traffic, and deployment timing.",
-      "Uses heap snapshots or allocation profiling in a controlled way.",
-      "Checks caches, listener accumulation, timers, queues, and retained request objects.",
-      "Defines mitigation and verification, not only a restart."
+      { "label": "Starts with heap, RSS, GC behavior, traffic, and deployment timing.", "relatedTrigger": null },
+      { "label": "Uses heap snapshots or allocation profiling in a controlled way.", "relatedTrigger": null },
+      { "label": "Checks caches, listener accumulation, timers, queues, and retained request objects.", "relatedTrigger": null },
+      { "label": "Defines mitigation and verification, not only a restart.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Only increases container memory limit.",
@@ -1162,10 +1162,10 @@
     "intent": "Assess incident debugging for event loop lag and latency degradation.",
     "primaryQuestion": "p95 latency rises while CPU is high and event loop delay alarms fire in a Node.js API. How would you find the blocking code path and decide on mitigation?",
     "expectedSignals": [
-      "Correlates latency, CPU, event loop delay, traffic shape, and deploy changes.",
-      "Uses profiling, slow logs, route-level metrics, or sampling to narrow hot paths.",
-      "Considers CPU-heavy JSON, crypto, compression, regex, sync I/O, or dependency behavior.",
-      "Balances rollback, feature flag, rate limit, or offloading work as mitigation."
+      { "label": "Correlates latency, CPU, event loop delay, traffic shape, and deploy changes.", "relatedTrigger": null },
+      { "label": "Uses profiling, slow logs, route-level metrics, or sampling to narrow hot paths.", "relatedTrigger": null },
+      { "label": "Considers CPU-heavy JSON, crypto, compression, regex, sync I/O, or dependency behavior.", "relatedTrigger": null },
+      { "label": "Balances rollback, feature flag, rate limit, or offloading work as mitigation.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Treats it as only a database problem despite event loop delay evidence.",
@@ -1226,10 +1226,10 @@
     "intent": "Evaluate test strategy for Node.js service logic, HTTP boundaries, and external dependencies.",
     "primaryQuestion": "How would you test a Node.js API endpoint that validates input, writes to PostgreSQL, and publishes a queue message?",
     "expectedSignals": [
-      "Separates unit tests, integration tests, and contract or end-to-end coverage.",
-      "Uses test database or transaction cleanup for persistence behavior.",
-      "Mocks or fakes external queues carefully while verifying message contract.",
-      "Covers validation errors, idempotency, and failure rollback behavior."
+      { "label": "Separates unit tests, integration tests, and contract or end-to-end coverage.", "relatedTrigger": null },
+      { "label": "Uses test database or transaction cleanup for persistence behavior.", "relatedTrigger": null },
+      { "label": "Mocks or fakes external queues carefully while verifying message contract.", "relatedTrigger": null },
+      { "label": "Covers validation errors, idempotency, and failure rollback behavior.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Only mocks everything and never verifies database or message behavior.",
@@ -1290,10 +1290,10 @@
     "intent": "Evaluate senior production understanding of multi-process Node.js, graceful shutdown, and rollout behavior.",
     "primaryQuestion": "How would you run a Node.js API across multiple CPU cores and deploy it without dropping in-flight requests during restarts?",
     "expectedSignals": [
-      "Compares Node cluster, process managers, containers, and orchestrator replicas.",
-      "Explains graceful shutdown: stop accepting new work, drain in-flight requests, close keep-alive connections, and close resources.",
-      "Handles readiness/liveness signals and termination grace periods.",
-      "Mentions sticky sessions or external session storage when relevant."
+      { "label": "Compares Node cluster, process managers, containers, and orchestrator replicas.", "relatedTrigger": null },
+      { "label": "Explains graceful shutdown: stop accepting new work, drain in-flight requests, close keep-alive connections, and close resources.", "relatedTrigger": null },
+      { "label": "Handles readiness/liveness signals and termination grace periods.", "relatedTrigger": null },
+      { "label": "Mentions sticky sessions or external session storage when relevant.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Assumes one Node process automatically uses all CPU cores.",
@@ -1354,10 +1354,10 @@
     "intent": "Evaluate senior design for reliable Node.js background processing.",
     "primaryQuestion": "Design a Node.js job worker that sends billing emails or webhooks. How do you make retries safe, observable, and resistant to duplicate processing?",
     "expectedSignals": [
-      "Uses idempotency keys, dedupe records, or unique constraints for side effects.",
-      "Defines retry policy, backoff, dead-letter handling, and poison message behavior.",
-      "Separates enqueue transaction consistency from worker execution.",
-      "Adds logs, metrics, trace correlation, and replay or manual recovery path."
+      { "label": "Uses idempotency keys, dedupe records, or unique constraints for side effects.", "relatedTrigger": null },
+      { "label": "Defines retry policy, backoff, dead-letter handling, and poison message behavior.", "relatedTrigger": null },
+      { "label": "Separates enqueue transaction consistency from worker execution.", "relatedTrigger": null },
+      { "label": "Adds logs, metrics, trace correlation, and replay or manual recovery path.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Retries external side effects without idempotency.",
@@ -1418,10 +1418,10 @@
     "intent": "Assess senior observability design for Node.js APIs and workers.",
     "primaryQuestion": "What observability would you build into a production Node.js service so you can debug latency, errors, event loop lag, and failed background jobs?",
     "expectedSignals": [
-      "Defines structured logs with correlation IDs and safe redaction.",
-      "Adds RED or USE-style metrics: rate, errors, duration, saturation, event loop delay, queue depth.",
-      "Uses distributed tracing across HTTP calls, database, and queues.",
-      "Creates actionable alerts and dashboards tied to SLOs or user impact."
+      { "label": "Defines structured logs with correlation IDs and safe redaction.", "relatedTrigger": null },
+      { "label": "Adds RED or USE-style metrics: rate, errors, duration, saturation, event loop delay, queue depth.", "relatedTrigger": null },
+      { "label": "Uses distributed tracing across HTTP calls, database, and queues.", "relatedTrigger": null },
+      { "label": "Creates actionable alerts and dashboards tied to SLOs or user impact.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Relies only on console.log.",
@@ -1482,10 +1482,10 @@
     "intent": "Evaluate senior judgment around Node.js dependency supply-chain risk and developer velocity.",
     "primaryQuestion": "How would you reduce npm supply-chain risk for a Node.js service without slowing every team down unnecessarily?",
     "expectedSignals": [
-      "Uses lockfiles, npm ci, code review, provenance or registry controls where available.",
-      "Defines policies for adding dependencies and updating transitive packages.",
-      "Balances vulnerability severity, exploitability, business exposure, and patch urgency.",
-      "Automates audit/scanning while avoiding noisy untriaged alerts."
+      { "label": "Uses lockfiles, npm ci, code review, provenance or registry controls where available.", "relatedTrigger": null },
+      { "label": "Defines policies for adding dependencies and updating transitive packages.", "relatedTrigger": null },
+      { "label": "Balances vulnerability severity, exploitability, business exposure, and patch urgency.", "relatedTrigger": null },
+      { "label": "Automates audit/scanning while avoiding noisy untriaged alerts.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Blocks all dependency updates indefinitely.",
@@ -1546,10 +1546,10 @@
     "intent": "Assess senior Node.js web security fundamentals and ability to apply them pragmatically.",
     "primaryQuestion": "For a public Node.js API, what security controls would you implement at the HTTP layer, authentication layer, and input boundary?",
     "expectedSignals": [
-      "Covers TLS termination assumptions, secure headers, CORS policy, body limits, and rate limiting.",
-      "Explains authentication and authorization separately.",
-      "Validates and normalizes input before business logic.",
-      "Mentions safe error responses, logging redaction, and dependency hardening."
+      { "label": "Covers TLS termination assumptions, secure headers, CORS policy, body limits, and rate limiting.", "relatedTrigger": null },
+      { "label": "Explains authentication and authorization separately.", "relatedTrigger": null },
+      { "label": "Validates and normalizes input before business logic.", "relatedTrigger": null },
+      { "label": "Mentions safe error responses, logging redaction, and dependency hardening.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Relies only on JWT verification and ignores authorization.",
@@ -1610,10 +1610,10 @@
     "intent": "Evaluate senior incident leadership for a degraded Node.js service.",
     "primaryQuestion": "A new Node.js release causes intermittent 502s, event loop delay spikes, and queue backlog. How do you lead diagnosis, mitigation, and follow-up?",
     "expectedSignals": [
-      "Starts with impact, timeline, recent changes, and clear incident roles.",
-      "Uses rollback, feature flags, traffic shaping, or worker scaling as mitigation options.",
-      "Correlates gateway 502s, app logs, event loop delay, CPU, memory, and queue metrics.",
-      "Defines post-incident actions with owners, tests, alerts, and prevention."
+      { "label": "Starts with impact, timeline, recent changes, and clear incident roles.", "relatedTrigger": null },
+      { "label": "Uses rollback, feature flags, traffic shaping, or worker scaling as mitigation options.", "relatedTrigger": null },
+      { "label": "Correlates gateway 502s, app logs, event loop delay, CPU, memory, and queue metrics.", "relatedTrigger": null },
+      { "label": "Defines post-incident actions with owners, tests, alerts, and prevention.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Keeps investigating while user impact grows and mitigation is available.",
@@ -1674,10 +1674,10 @@
     "intent": "Assess senior design for protecting Node.js APIs under abuse or overload.",
     "primaryQuestion": "Design rate limiting and load shedding for a high-traffic Node.js API. How do you avoid protecting the server in a way that unfairly breaks important users?",
     "expectedSignals": [
-      "Defines identity keys such as user, token, IP, tenant, or route.",
-      "Compares fixed window, sliding window, token bucket, and concurrency limits at a high level.",
-      "Uses distributed storage such as Redis when multiple replicas are involved.",
-      "Includes priority, quotas, retry-after responses, observability, and override mechanisms."
+      { "label": "Defines identity keys such as user, token, IP, tenant, or route.", "relatedTrigger": null },
+      { "label": "Compares fixed window, sliding window, token bucket, and concurrency limits at a high level.", "relatedTrigger": null },
+      { "label": "Uses distributed storage such as Redis when multiple replicas are involved.", "relatedTrigger": null },
+      { "label": "Includes priority, quotas, retry-after responses, observability, and override mechanisms.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Uses only process-local counters in a horizontally scaled deployment.",
@@ -1738,10 +1738,10 @@
     "intent": "Verify senior ownership of a Node.js module-system or TypeScript runtime migration.",
     "primaryQuestion": "You mention migrating a Node.js service from CommonJS to ESM or changing the TypeScript runtime/build setup. What decisions were yours, what broke, and how did you prove the migration was safe?",
     "expectedSignals": [
-      "Separates personal technical decisions from team execution.",
-      "Explains package type, dependency interop, test tooling, build output, and deployment changes.",
-      "Describes incremental rollout, compatibility shims, or rollback plan.",
-      "Provides evidence from tests, CI, production metrics, or reduced build/runtime issues."
+      { "label": "Separates personal technical decisions from team execution.", "relatedTrigger": null },
+      { "label": "Explains package type, dependency interop, test tooling, build output, and deployment changes.", "relatedTrigger": null },
+      { "label": "Describes incremental rollout, compatibility shims, or rollback plan.", "relatedTrigger": null },
+      { "label": "Provides evidence from tests, CI, production metrics, or reduced build/runtime issues.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Only says the migration was done because ESM is modern.",
@@ -1802,10 +1802,10 @@
     "intent": "Assess advanced worker thread pool design and context propagation.",
     "primaryQuestion": "If you build a worker thread pool for CPU-heavy work in Node.js, how do you manage pool size, cancellation, errors, memory transfer, and trace context?",
     "expectedSignals": [
-      "Sizes the pool based on CPU, workload, and co-location with the main service.",
-      "Uses bounded queues, timeouts, cancellation or abort signals where possible.",
-      "Handles worker crashes, task errors, retries, and backpressure to callers.",
-      "Understands structured clone, TransferList, SharedArrayBuffer trade-offs, and context propagation limitations."
+      { "label": "Sizes the pool based on CPU, workload, and co-location with the main service.", "relatedTrigger": null },
+      { "label": "Uses bounded queues, timeouts, cancellation or abort signals where possible.", "relatedTrigger": null },
+      { "label": "Handles worker crashes, task errors, retries, and backpressure to callers.", "relatedTrigger": null },
+      { "label": "Understands structured clone, TransferList, SharedArrayBuffer trade-offs, and context propagation limitations.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Spawns a new worker for every request indefinitely.",
@@ -1866,10 +1866,10 @@
     "intent": "Evaluate senior architecture judgment for a growing Node.js codebase.",
     "primaryQuestion": "A Node.js monolith has grown into many tightly coupled modules with slow releases. How would you decide whether to modularize internally, split services, or keep the monolith and improve boundaries?",
     "expectedSignals": [
-      "Starts from product, team, deployment, data ownership, and operational constraints.",
-      "Compares internal modularization, service extraction, and monolith hardening.",
-      "Considers API contracts, database boundaries, transactions, observability, and rollback.",
-      "Defines incremental migration, ownership, and success metrics."
+      { "label": "Starts from product, team, deployment, data ownership, and operational constraints.", "relatedTrigger": null },
+      { "label": "Compares internal modularization, service extraction, and monolith hardening.", "relatedTrigger": null },
+      { "label": "Considers API contracts, database boundaries, transactions, observability, and rollback.", "relatedTrigger": null },
+      { "label": "Defines incremental migration, ownership, and success metrics.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Splits services because microservices are fashionable.",

@@ -20,7 +20,7 @@ export const DEFAULT_PROBE = {
   difficulty: 3,
   intent: '',
   primaryQuestion: '',
-  expectedSignals: [''],
+  expectedSignals: [{ label: '', relatedTrigger: null }],
   redFlags: [''],
   scoringHints: [{ scoreBand: 'strong', description: '' }],
   followUps: [{ trigger: 'vague_answer', question: '', purpose: '' }],

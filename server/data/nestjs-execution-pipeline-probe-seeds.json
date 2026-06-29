@@ -12,12 +12,12 @@
     "intent": "Check whether the candidate can accurately walk through the NestJS request-response lifecycle and place middleware, guards, interceptors, pipes, handlers, services, and filters in the correct order.",
     "primaryQuestion": "What is the full execution order in NestJS from request in to response out?",
     "expectedSignals": [
-      "Gives the inbound order: incoming request, middleware, guards, interceptors before handler, pipes, controller handler, and service if the handler delegates to one.",
-      "Gives the outbound order: route-level interceptor response path, then controller-level interceptor, then global interceptor, then server response.",
-      "Mentions binding scope order for most components: global, controller, route; middleware has global and module-bound ordering.",
-      "Explains that exception filters are invoked only for uncaught exceptions and resolve from the lowest matching scope to controller and then global.",
-      "Recognizes that an uncaught exception short-circuits the normal path and jumps to the exception filter layer.",
-      "Can map real concerns to the right phase, such as authz in guards, DTO validation in pipes, and response mapping in interceptors."
+      { "label": "Gives the inbound order: incoming request, middleware, guards, interceptors before handler, pipes, controller handler, and service if the handler delegates to one.", "relatedTrigger": null },
+      { "label": "Gives the outbound order: route-level interceptor response path, then controller-level interceptor, then global interceptor, then server response.", "relatedTrigger": null },
+      { "label": "Mentions binding scope order for most components: global, controller, route; middleware has global and module-bound ordering.", "relatedTrigger": null },
+      { "label": "Explains that exception filters are invoked only for uncaught exceptions and resolve from the lowest matching scope to controller and then global.", "relatedTrigger": null },
+      { "label": "Recognizes that an uncaught exception short-circuits the normal path and jumps to the exception filter layer.", "relatedTrigger": null },
+      { "label": "Can map real concerns to the right phase, such as authz in guards, DTO validation in pipes, and response mapping in interceptors.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Places pipes before guards or middleware without explaining a special case.",
@@ -104,12 +104,12 @@
     "intent": "Evaluate whether the candidate understands NestJS middleware and can compare it with Express middleware without flattening Nest-specific DI, module, and lifecycle behavior.",
     "primaryQuestion": "What is Middleware in NestJS and how is it similar to or different from Express middleware?",
     "expectedSignals": [
-      "Defines middleware as code that runs before route handlers and can inspect or modify request and response objects.",
-      "Mentions the familiar Express-style pattern of req, res, next and the need to either call next or end the response.",
-      "Explains that Nest middleware can be function-based or class-based and class middleware can use dependency injection.",
-      "Distinguishes middleware from Nest guards because middleware does not naturally know the target controller method or route metadata.",
-      "Mentions middleware is useful for low-level cross-cutting concerns such as logging, request IDs, body parsing, cookie parsing, or simple request enrichment.",
-      "Recognizes that Nest can run on different HTTP adapters, but the common middleware model is close to Express when using the Express platform."
+      { "label": "Defines middleware as code that runs before route handlers and can inspect or modify request and response objects.", "relatedTrigger": null },
+      { "label": "Mentions the familiar Express-style pattern of req, res, next and the need to either call next or end the response.", "relatedTrigger": null },
+      { "label": "Explains that Nest middleware can be function-based or class-based and class middleware can use dependency injection.", "relatedTrigger": null },
+      { "label": "Distinguishes middleware from Nest guards because middleware does not naturally know the target controller method or route metadata.", "relatedTrigger": null },
+      { "label": "Mentions middleware is useful for low-level cross-cutting concerns such as logging, request IDs, body parsing, cookie parsing, or simple request enrichment.", "relatedTrigger": null },
+      { "label": "Recognizes that Nest can run on different HTTP adapters, but the common middleware model is close to Express when using the Express platform.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Says Nest middleware is the same thing as guards or interceptors.",
@@ -197,12 +197,12 @@
     "intent": "Check whether the candidate can apply NestJS middleware correctly using functional middleware, class-based middleware, NestModule.configure, MiddlewareConsumer, forRoutes, and excludes.",
     "primaryQuestion": "How do you apply middleware in NestJS, including functional versus class-based middleware?",
     "expectedSignals": [
-      "Describes class-based middleware as an injectable class with a use(req, res, next) method, commonly implementing NestMiddleware.",
-      "Describes functional middleware as a plain function receiving req, res, and next.",
-      "Explains module-based registration with a module implementing NestModule and configure(consumer: MiddlewareConsumer).",
-      "Uses consumer.apply(LoggerMiddleware).forRoutes(...) and can mention route path, controller class, RequestMethod, and exclude(...).",
-      "Mentions app.use(...) for globally bound middleware when appropriate.",
-      "Explains that class middleware is preferred when dependencies, configuration, or testing through DI matter."
+      { "label": "Describes class-based middleware as an injectable class with a use(req, res, next) method, commonly implementing NestMiddleware.", "relatedTrigger": null },
+      { "label": "Describes functional middleware as a plain function receiving req, res, and next.", "relatedTrigger": null },
+      { "label": "Explains module-based registration with a module implementing NestModule and configure(consumer: MiddlewareConsumer).", "relatedTrigger": null },
+      { "label": "Uses consumer.apply(LoggerMiddleware).forRoutes(...) and can mention route path, controller class, RequestMethod, and exclude(...).", "relatedTrigger": null },
+      { "label": "Mentions app.use(...) for globally bound middleware when appropriate.", "relatedTrigger": null },
+      { "label": "Explains that class middleware is preferred when dependencies, configuration, or testing through DI matter.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Tries to register middleware in the @Module providers array only and expects it to run.",
@@ -289,12 +289,12 @@
     "intent": "Verify that the candidate knows the Guard interface contract, the canActivate signature, return types, and how Nest interprets guard decisions.",
     "primaryQuestion": "What interface does a Guard implement and what does canActivate() return?",
     "expectedSignals": [
-      "Names the CanActivate interface from @nestjs/common.",
-      "States that guards implement canActivate(context: ExecutionContext).",
-      "States that canActivate returns boolean, Promise<boolean>, or Observable<boolean>.",
-      "Explains that true allows the request to continue and false denies it, typically resulting in a forbidden response.",
-      "Mentions that guards can throw explicit exceptions such as UnauthorizedException or ForbiddenException to control the error semantics.",
-      "Shows how to access the HTTP request through context.switchToHttp().getRequest() when needed."
+      { "label": "Names the CanActivate interface from @nestjs/common.", "relatedTrigger": null },
+      { "label": "States that guards implement canActivate(context: ExecutionContext).", "relatedTrigger": null },
+      { "label": "States that canActivate returns boolean, Promise<boolean>, or Observable<boolean>.", "relatedTrigger": null },
+      { "label": "Explains that true allows the request to continue and false denies it, typically resulting in a forbidden response.", "relatedTrigger": null },
+      { "label": "Mentions that guards can throw explicit exceptions such as UnauthorizedException or ForbiddenException to control the error semantics.", "relatedTrigger": null },
+      { "label": "Shows how to access the HTTP request through context.switchToHttp().getRequest() when needed.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Says canActivate returns the user object or a response DTO.",
@@ -381,12 +381,12 @@
     "intent": "Assess whether the candidate can choose between middleware and guards for authentication and authorization responsibilities in a NestJS application.",
     "primaryQuestion": "What is the difference between a Guard and Middleware for authentication checks?",
     "expectedSignals": [
-      "Explains middleware runs earlier and is useful for low-level request preprocessing, logging, request IDs, cookie parsing, or attaching preliminary data.",
-      "Explains guards are intended for deciding whether a specific route handler may execute.",
-      "Mentions guards have ExecutionContext and can inspect controller, handler, and route metadata such as roles or public-route flags.",
-      "Separates authentication identity extraction from authorization policy checks when useful, while still recognizing many Nest apps implement JWT verification directly in a guard.",
-      "Explains that middleware is not naturally handler-aware and can be awkward for per-route role rules.",
-      "Uses explicit HTTP exceptions for auth failure semantics instead of vague boolean or ad hoc responses."
+      { "label": "Explains middleware runs earlier and is useful for low-level request preprocessing, logging, request IDs, cookie parsing, or attaching preliminary data.", "relatedTrigger": null },
+      { "label": "Explains guards are intended for deciding whether a specific route handler may execute.", "relatedTrigger": null },
+      { "label": "Mentions guards have ExecutionContext and can inspect controller, handler, and route metadata such as roles or public-route flags.", "relatedTrigger": null },
+      { "label": "Separates authentication identity extraction from authorization policy checks when useful, while still recognizing many Nest apps implement JWT verification directly in a guard.", "relatedTrigger": null },
+      { "label": "Explains that middleware is not naturally handler-aware and can be awkward for per-route role rules.", "relatedTrigger": null },
+      { "label": "Uses explicit HTTP exceptions for auth failure semantics instead of vague boolean or ad hoc responses.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Always puts all authentication and authorization into middleware because that is how Express apps often do it.",
@@ -475,12 +475,12 @@
     "intent": "Check whether the candidate understands ExecutionContext as the handler-aware context object that gives guards and interceptors access to transport arguments, class, handler, and metadata.",
     "primaryQuestion": "What is ExecutionContext and why does it make Guards more powerful than Middleware?",
     "expectedSignals": [
-      "Defines ExecutionContext as an object passed to guards and interceptors that extends ArgumentsHost.",
-      "Mentions transport switching helpers such as switchToHttp(), switchToWs(), and switchToRpc().",
-      "Explains getHandler() and getClass() expose the current route handler and controller class.",
-      "Connects getHandler/getClass with Reflector for reading metadata such as @Roles or @Public.",
-      "Explains this makes guards handler-aware while middleware usually only sees req, res, and next.",
-      "Can describe how the same concept supports HTTP, WebSockets, microservices, and GraphQL with adapted context handling."
+      { "label": "Defines ExecutionContext as an object passed to guards and interceptors that extends ArgumentsHost.", "relatedTrigger": null },
+      { "label": "Mentions transport switching helpers such as switchToHttp(), switchToWs(), and switchToRpc().", "relatedTrigger": null },
+      { "label": "Explains getHandler() and getClass() expose the current route handler and controller class.", "relatedTrigger": null },
+      { "label": "Connects getHandler/getClass with Reflector for reading metadata such as @Roles or @Public.", "relatedTrigger": null },
+      { "label": "Explains this makes guards handler-aware while middleware usually only sees req, res, and next.", "relatedTrigger": null },
+      { "label": "Can describe how the same concept supports HTTP, WebSockets, microservices, and GraphQL with adapted context handling.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Says ExecutionContext is just the Express request object.",
@@ -568,12 +568,12 @@
     "intent": "Evaluate whether the candidate understands the two main uses of NestJS pipes: transformation and validation, and can place pipes correctly in the lifecycle.",
     "primaryQuestion": "What are the two main use cases for Pipes: transformation and validation?",
     "expectedSignals": [
-      "Names transformation and validation as the two primary pipe use cases.",
-      "Explains transformation as converting input values into desired types or shapes, such as string route params to numbers or plain payloads to DTO instances.",
-      "Explains validation as checking incoming data and throwing an exception before the controller method runs.",
-      "Mentions pipes implement PipeTransform and define transform(value, metadata).",
-      "Mentions metadata describes argument source such as body, query, param, or custom and may include metatype and data.",
-      "Can name examples such as ParseIntPipe, ParseBoolPipe, ParseArrayPipe, and ValidationPipe."
+      { "label": "Names transformation and validation as the two primary pipe use cases.", "relatedTrigger": null },
+      { "label": "Explains transformation as converting input values into desired types or shapes, such as string route params to numbers or plain payloads to DTO instances.", "relatedTrigger": null },
+      { "label": "Explains validation as checking incoming data and throwing an exception before the controller method runs.", "relatedTrigger": null },
+      { "label": "Mentions pipes implement PipeTransform and define transform(value, metadata).", "relatedTrigger": null },
+      { "label": "Mentions metadata describes argument source such as body, query, param, or custom and may include metatype and data.", "relatedTrigger": null },
+      { "label": "Can name examples such as ParseIntPipe, ParseBoolPipe, ParseArrayPipe, and ValidationPipe.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Uses pipes for authorization decisions.",
@@ -660,12 +660,12 @@
     "intent": "Check whether the candidate can explain ValidationPipe, DTO classes, class-validator decorators, and global registration patterns.",
     "primaryQuestion": "What is ValidationPipe and how do you register it globally?",
     "expectedSignals": [
-      "Defines ValidationPipe as a built-in Nest pipe for validating incoming request data against DTO classes and validation decorators.",
-      "Mentions class-validator decorators such as IsEmail, IsString, IsNotEmpty, MinLength, or IsOptional.",
-      "Explains that DTOs should be concrete classes, not interfaces, because runtime metadata is needed.",
-      "Shows global registration in main.ts with app.useGlobalPipes(new ValidationPipe(...)).",
-      "Can mention APP_PIPE provider as an alternative global registration when dependency injection or module-level configuration matters.",
-      "Explains that invalid input normally results in a Bad Request response before the controller method executes."
+      { "label": "Defines ValidationPipe as a built-in Nest pipe for validating incoming request data against DTO classes and validation decorators.", "relatedTrigger": null },
+      { "label": "Mentions class-validator decorators such as IsEmail, IsString, IsNotEmpty, MinLength, or IsOptional.", "relatedTrigger": null },
+      { "label": "Explains that DTOs should be concrete classes, not interfaces, because runtime metadata is needed.", "relatedTrigger": null },
+      { "label": "Shows global registration in main.ts with app.useGlobalPipes(new ValidationPipe(...)).", "relatedTrigger": null },
+      { "label": "Can mention APP_PIPE provider as an alternative global registration when dependency injection or module-level configuration matters.", "relatedTrigger": null },
+      { "label": "Explains that invalid input normally results in a Bad Request response before the controller method executes.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Uses interfaces as DTOs and expects runtime validation to work.",
@@ -753,12 +753,12 @@
     "intent": "Assess whether the candidate understands the behavioral difference between transform and whitelist in ValidationPipe and can discuss the safety trade-offs.",
     "primaryQuestion": "What is the difference between transform: true and whitelist: true in ValidationPipe?",
     "expectedSignals": [
-      "Explains transform: true converts validated plain request payloads into DTO class instances and can convert primitive route/query values when configured.",
-      "Mentions transform relies on class-transformer behavior and runtime metatype information.",
-      "Explains whitelist: true removes properties that do not have validation decorators on the DTO.",
-      "Mentions forbidNonWhitelisted can reject unknown properties instead of silently stripping them.",
-      "Recognizes transform and whitelist solve different problems: typing/conversion versus input surface reduction.",
-      "Can discuss risks such as unexpected implicit conversion, DTO properties missing decorators, and clients not noticing stripped fields."
+      { "label": "Explains transform: true converts validated plain request payloads into DTO class instances and can convert primitive route/query values when configured.", "relatedTrigger": null },
+      { "label": "Mentions transform relies on class-transformer behavior and runtime metatype information.", "relatedTrigger": null },
+      { "label": "Explains whitelist: true removes properties that do not have validation decorators on the DTO.", "relatedTrigger": null },
+      { "label": "Mentions forbidNonWhitelisted can reject unknown properties instead of silently stripping them.", "relatedTrigger": null },
+      { "label": "Recognizes transform and whitelist solve different problems: typing/conversion versus input surface reduction.", "relatedTrigger": null },
+      { "label": "Can discuss risks such as unexpected implicit conversion, DTO properties missing decorators, and clients not noticing stripped fields.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Says transform and whitelist are the same option.",
@@ -845,12 +845,12 @@
     "intent": "Verify whether the candidate understands the ExceptionFilter interface, catch method, ArgumentsHost, and response shaping responsibilities.",
     "primaryQuestion": "What interface does an Exception Filter implement?",
     "expectedSignals": [
-      "Names the ExceptionFilter<T> interface from @nestjs/common.",
-      "States that a filter implements catch(exception: T, host: ArgumentsHost).",
-      "Explains ArgumentsHost can switch to HTTP context to access request and response.",
-      "Mentions filters are commonly decorated with @Catch(...) to select exception types.",
-      "Explains filters shape the outgoing error response and can perform safe logging.",
-      "Mentions filters can be bound at method, controller, or global scope."
+      { "label": "Names the ExceptionFilter<T> interface from @nestjs/common.", "relatedTrigger": null },
+      { "label": "States that a filter implements catch(exception: T, host: ArgumentsHost).", "relatedTrigger": null },
+      { "label": "Explains ArgumentsHost can switch to HTTP context to access request and response.", "relatedTrigger": null },
+      { "label": "Mentions filters are commonly decorated with @Catch(...) to select exception types.", "relatedTrigger": null },
+      { "label": "Explains filters shape the outgoing error response and can perform safe logging.", "relatedTrigger": null },
+      { "label": "Mentions filters can be bound at method, controller, or global scope.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Confuses ExceptionFilter with NestInterceptor or PipeTransform.",
@@ -937,12 +937,12 @@
     "intent": "Check whether the candidate can distinguish Nest's HttpException base class and built-in subclasses from custom domain exception classes and unknown runtime errors.",
     "primaryQuestion": "What is the difference between HttpException and a custom exception class?",
     "expectedSignals": [
-      "Explains HttpException is Nest's base HTTP-aware exception that carries response body and HTTP status.",
-      "Mentions built-in subclasses such as BadRequestException, UnauthorizedException, ForbiddenException, NotFoundException, and InternalServerErrorException.",
-      "Explains a custom exception class can extend HttpException to standardize domain-specific error codes, messages, and status selection.",
-      "Distinguishes custom HttpException subclasses from arbitrary Error subclasses, which the default filter may treat as internal server errors.",
-      "Discusses when to prefer built-in exceptions for simple HTTP semantics and custom exceptions for reusable domain or API error contracts.",
-      "Mentions exception filters can normalize or map exceptions, but should not hide root-cause logging."
+      { "label": "Explains HttpException is Nest's base HTTP-aware exception that carries response body and HTTP status.", "relatedTrigger": null },
+      { "label": "Mentions built-in subclasses such as BadRequestException, UnauthorizedException, ForbiddenException, NotFoundException, and InternalServerErrorException.", "relatedTrigger": null },
+      { "label": "Explains a custom exception class can extend HttpException to standardize domain-specific error codes, messages, and status selection.", "relatedTrigger": null },
+      { "label": "Distinguishes custom HttpException subclasses from arbitrary Error subclasses, which the default filter may treat as internal server errors.", "relatedTrigger": null },
+      { "label": "Discusses when to prefer built-in exceptions for simple HTTP semantics and custom exceptions for reusable domain or API error contracts.", "relatedTrigger": null },
+      { "label": "Mentions exception filters can normalize or map exceptions, but should not hide root-cause logging.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Throws plain strings or generic Error objects for expected HTTP cases.",
@@ -1029,12 +1029,12 @@
     "intent": "Verify that the candidate understands the NestInterceptor interface, intercept method, CallHandler, next.handle(), and the role of RxJS Observables in response manipulation.",
     "primaryQuestion": "What interface does an Interceptor implement, and what role does RxJS play?",
     "expectedSignals": [
-      "Names the NestInterceptor<T, R> interface.",
-      "States that intercept(context: ExecutionContext, next: CallHandler) returns an Observable.",
-      "Explains next.handle() triggers the route handler and returns an Observable representing the response stream.",
-      "Mentions code before next.handle() runs before the handler and RxJS operators after next.handle() can observe, map, catch, timeout, or transform the stream.",
-      "Names practical operators such as tap for logging, map for response shaping, catchError for exception mapping, and timeout for request limits.",
-      "Explains interceptors are useful for cross-cutting concerns such as logging, metrics, caching, serialization, response envelopes, and exception mapping."
+      { "label": "Names the NestInterceptor<T, R> interface.", "relatedTrigger": null },
+      { "label": "States that intercept(context: ExecutionContext, next: CallHandler) returns an Observable.", "relatedTrigger": null },
+      { "label": "Explains next.handle() triggers the route handler and returns an Observable representing the response stream.", "relatedTrigger": null },
+      { "label": "Mentions code before next.handle() runs before the handler and RxJS operators after next.handle() can observe, map, catch, timeout, or transform the stream.", "relatedTrigger": null },
+      { "label": "Names practical operators such as tap for logging, map for response shaping, catchError for exception mapping, and timeout for request limits.", "relatedTrigger": null },
+      { "label": "Explains interceptors are useful for cross-cutting concerns such as logging, metrics, caching, serialization, response envelopes, and exception mapping.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Says interceptors return a plain value or Promise only and ignores Observables.",
@@ -1121,12 +1121,12 @@
     "intent": "Assess whether the candidate can distinguish interceptors and pipes by lifecycle position, inputs, outputs, and appropriate responsibilities.",
     "primaryQuestion": "What is the difference between an Interceptor and a Pipe?",
     "expectedSignals": [
-      "Explains pipes run before the handler receives specific method arguments and are mainly for argument validation and transformation.",
-      "Explains interceptors wrap the handler invocation and can run logic before and after handler execution.",
-      "Mentions pipes implement PipeTransform and receive value plus ArgumentMetadata.",
-      "Mentions interceptors implement NestInterceptor and receive ExecutionContext plus CallHandler, returning an Observable.",
-      "Gives examples: ParseIntPipe or ValidationPipe for input; logging, response envelope, caching, serialization, timeout, or error mapping for interceptor.",
-      "Can explain why response mapping belongs in an interceptor while DTO body validation belongs in a pipe."
+      { "label": "Explains pipes run before the handler receives specific method arguments and are mainly for argument validation and transformation.", "relatedTrigger": null },
+      { "label": "Explains interceptors wrap the handler invocation and can run logic before and after handler execution.", "relatedTrigger": null },
+      { "label": "Mentions pipes implement PipeTransform and receive value plus ArgumentMetadata.", "relatedTrigger": null },
+      { "label": "Mentions interceptors implement NestInterceptor and receive ExecutionContext plus CallHandler, returning an Observable.", "relatedTrigger": null },
+      { "label": "Gives examples: ParseIntPipe or ValidationPipe for input; logging, response envelope, caching, serialization, timeout, or error mapping for interceptor.", "relatedTrigger": null },
+      { "label": "Can explain why response mapping belongs in an interceptor while DTO body validation belongs in a pipe.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Uses interceptors for DTO validation by default.",
@@ -1214,12 +1214,12 @@
     "intent": "Check whether the candidate can implement a protected-by-default NestJS app using a global guard while allowing explicit public routes through metadata.",
     "primaryQuestion": "How do you apply a Guard globally while allowing specific routes to be public?",
     "expectedSignals": [
-      "Registers the auth guard globally using APP_GUARD in a module or app.useGlobalGuards when DI is not needed.",
-      "Explains APP_GUARD is preferred for DI-friendly global guards.",
-      "Creates a @Public decorator using SetMetadata or a typed Reflector decorator with a stable metadata key.",
-      "In canActivate, reads metadata with Reflector, commonly getAllAndOverride, against context.getHandler() and context.getClass().",
-      "Returns true early for public routes before token verification.",
-      "Keeps the default policy protected-by-default and makes public access explicit at method or controller level."
+      { "label": "Registers the auth guard globally using APP_GUARD in a module or app.useGlobalGuards when DI is not needed.", "relatedTrigger": null },
+      { "label": "Explains APP_GUARD is preferred for DI-friendly global guards.", "relatedTrigger": null },
+      { "label": "Creates a @Public decorator using SetMetadata or a typed Reflector decorator with a stable metadata key.", "relatedTrigger": null },
+      { "label": "In canActivate, reads metadata with Reflector, commonly getAllAndOverride, against context.getHandler() and context.getClass().", "relatedTrigger": null },
+      { "label": "Returns true early for public routes before token verification.", "relatedTrigger": null },
+      { "label": "Keeps the default policy protected-by-default and makes public access explicit at method or controller level.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Adds @UseGuards to every protected route manually and forgets new routes.",
@@ -1307,12 +1307,12 @@
     "intent": "Verify whether the candidate understands the @Catch decorator on NestJS exception filters and how it selects exception types or catch-all behavior.",
     "primaryQuestion": "What does @Catch() do in an Exception Filter?",
     "expectedSignals": [
-      "Explains @Catch marks a class as an exception filter and tells Nest which exception types the filter should handle.",
-      "Mentions @Catch(HttpException) catches HttpException and subclasses when the filter is bound.",
-      "Mentions @Catch() with no arguments can be used as a catch-all filter for unhandled exception types.",
-      "Explains the decorator does not by itself make the filter global; it still must be bound with @UseFilters, app.useGlobalFilters, or APP_FILTER.",
-      "Explains the catch(exception, host) method still performs the response shaping or logging.",
-      "Mentions catch-all filters must be careful not to leak unknown internal errors."
+      { "label": "Explains @Catch marks a class as an exception filter and tells Nest which exception types the filter should handle.", "relatedTrigger": null },
+      { "label": "Mentions @Catch(HttpException) catches HttpException and subclasses when the filter is bound.", "relatedTrigger": null },
+      { "label": "Mentions @Catch() with no arguments can be used as a catch-all filter for unhandled exception types.", "relatedTrigger": null },
+      { "label": "Explains the decorator does not by itself make the filter global; it still must be bound with @UseFilters, app.useGlobalFilters, or APP_FILTER.", "relatedTrigger": null },
+      { "label": "Explains the catch(exception, host) method still performs the response shaping or logging.", "relatedTrigger": null },
+      { "label": "Mentions catch-all filters must be careful not to leak unknown internal errors.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Thinks @Catch() is the same as JavaScript try/catch around every handler.",

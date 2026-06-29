@@ -11,11 +11,11 @@
     "intent": "Check whether the candidate can design a basic relational PostgreSQL schema with correct keys, constraints, and data integrity boundaries.",
     "primaryQuestion": "How would you design PostgreSQL tables for users, orders, and order_items so that relationships and data integrity are enforced by the database?",
     "expectedSignals": [
-      "Defines primary keys, foreign keys, and appropriate NOT NULL constraints.",
-      "Explains one-to-many relationships between users and orders, and orders and order_items.",
-      "Uses numeric or integer types carefully for money, quantities, and identifiers.",
-      "Mentions uniqueness rules such as unique email or order number when required by the domain.",
-      "Separates application validation from database constraints and explains why both matter."
+      { "label": "Defines primary keys, foreign keys, and appropriate NOT NULL constraints.", "relatedTrigger": null },
+      { "label": "Explains one-to-many relationships between users and orders, and orders and order_items.", "relatedTrigger": null },
+      { "label": "Uses numeric or integer types carefully for money, quantities, and identifiers.", "relatedTrigger": null },
+      { "label": "Mentions uniqueness rules such as unique email or order number when required by the domain.", "relatedTrigger": null },
+      { "label": "Separates application validation from database constraints and explains why both matter.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Stores nested order item arrays in one text column as the default model for transactional data.",
@@ -129,11 +129,11 @@
     "intent": "Evaluate whether the candidate understands what indexes do in PostgreSQL, when a B-tree index helps, and why indexes are not free.",
     "primaryQuestion": "When would you add a B-tree index in PostgreSQL, and what costs or trade-offs would you consider before adding it?",
     "expectedSignals": [
-      "Explains that indexes help PostgreSQL find matching rows without scanning the whole table for selective predicates.",
-      "Mentions common B-tree use cases such as equality, range filters, joins, and ordered lookups.",
-      "Recognizes write overhead, storage cost, and maintenance cost.",
-      "Connects index usefulness to query pattern and selectivity.",
-      "Mentions checking plans or usage instead of indexing every column."
+      { "label": "Explains that indexes help PostgreSQL find matching rows without scanning the whole table for selective predicates.", "relatedTrigger": null },
+      { "label": "Mentions common B-tree use cases such as equality, range filters, joins, and ordered lookups.", "relatedTrigger": null },
+      { "label": "Recognizes write overhead, storage cost, and maintenance cost.", "relatedTrigger": null },
+      { "label": "Connects index usefulness to query pattern and selectivity.", "relatedTrigger": null },
+      { "label": "Mentions checking plans or usage instead of indexing every column.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Says every column should be indexed.",
@@ -247,11 +247,11 @@
     "intent": "Assess whether the candidate can investigate a slow PostgreSQL query using basic evidence instead of guessing.",
     "primaryQuestion": "A PostgreSQL endpoint became slow after the table grew from 10,000 to 5 million rows. How would you investigate the query before changing code?",
     "expectedSignals": [
-      "Starts by identifying the exact SQL, parameters, timing, and row counts.",
-      "Uses EXPLAIN or EXPLAIN ANALYZE carefully to inspect scan type, joins, estimates, and actual rows.",
-      "Checks whether useful indexes exist and whether predicates match those indexes.",
-      "Considers statistics freshness and ANALYZE when estimates look wrong.",
-      "Avoids changing production queries blindly without measuring."
+      { "label": "Starts by identifying the exact SQL, parameters, timing, and row counts.", "relatedTrigger": null },
+      { "label": "Uses EXPLAIN or EXPLAIN ANALYZE carefully to inspect scan type, joins, estimates, and actual rows.", "relatedTrigger": null },
+      { "label": "Checks whether useful indexes exist and whether predicates match those indexes.", "relatedTrigger": null },
+      { "label": "Considers statistics freshness and ANALYZE when estimates look wrong.", "relatedTrigger": null },
+      { "label": "Avoids changing production queries blindly without measuring.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Immediately rewrites the endpoint without looking at the SQL plan.",
@@ -365,11 +365,11 @@
     "intent": "Check whether the candidate understands PostgreSQL transactions, commit and rollback behavior, and how transactions protect multi-step writes.",
     "primaryQuestion": "Why would you wrap multiple related PostgreSQL writes in a transaction, and what should happen if one step fails?",
     "expectedSignals": [
-      "Explains atomicity: all related writes commit together or roll back together.",
-      "Uses a concrete example such as money transfer, inventory reservation, or order creation.",
-      "Mentions BEGIN, COMMIT, ROLLBACK, or equivalent ORM transaction APIs.",
-      "Recognizes that external side effects such as emails or payment calls need careful ordering.",
-      "Mentions keeping transactions reasonably short to avoid locks and contention."
+      { "label": "Explains atomicity: all related writes commit together or roll back together.", "relatedTrigger": null },
+      { "label": "Uses a concrete example such as money transfer, inventory reservation, or order creation.", "relatedTrigger": null },
+      { "label": "Mentions BEGIN, COMMIT, ROLLBACK, or equivalent ORM transaction APIs.", "relatedTrigger": null },
+      { "label": "Recognizes that external side effects such as emails or payment calls need careful ordering.", "relatedTrigger": null },
+      { "label": "Mentions keeping transactions reasonably short to avoid locks and contention.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Thinks each SQL statement in a workflow automatically shares one transaction.",
@@ -483,11 +483,11 @@
     "intent": "Assess practical debugging of duplicate-key and upsert behavior in PostgreSQL.",
     "primaryQuestion": "An insert fails with a duplicate key error on a PostgreSQL unique constraint. How would you debug it and decide between rejecting, updating, or making the operation idempotent?",
     "expectedSignals": [
-      "Identifies the exact unique constraint and conflicting key value.",
-      "Distinguishes data-quality bugs from expected duplicate requests.",
-      "Mentions ON CONFLICT DO NOTHING or DO UPDATE when appropriate.",
-      "Considers idempotency keys for retryable APIs or payment-like flows.",
-      "Avoids hiding real consistency issues with a blanket catch-and-ignore."
+      { "label": "Identifies the exact unique constraint and conflicting key value.", "relatedTrigger": null },
+      { "label": "Distinguishes data-quality bugs from expected duplicate requests.", "relatedTrigger": null },
+      { "label": "Mentions ON CONFLICT DO NOTHING or DO UPDATE when appropriate.", "relatedTrigger": null },
+      { "label": "Considers idempotency keys for retryable APIs or payment-like flows.", "relatedTrigger": null },
+      { "label": "Avoids hiding real consistency issues with a blanket catch-and-ignore.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Drops the unique constraint to make the error disappear.",
@@ -601,11 +601,11 @@
     "intent": "Evaluate whether the candidate understands PostgreSQL MVCC, snapshots, tuple versions, and the practical impact on concurrent reads and writes.",
     "primaryQuestion": "Explain PostgreSQL MVCC in practical terms. What does a transaction snapshot see, and why do reads and writes usually avoid blocking each other?",
     "expectedSignals": [
-      "Explains that PostgreSQL keeps multiple row versions visible to different transaction snapshots.",
-      "Connects snapshots to transaction isolation and visibility rules.",
-      "Mentions that readers do not usually block writers and writers do not usually block readers under MVCC.",
-      "Recognizes that old row versions eventually need cleanup through VACUUM.",
-      "Can describe an update as creating a new tuple version rather than modifying the visible row in place."
+      { "label": "Explains that PostgreSQL keeps multiple row versions visible to different transaction snapshots.", "relatedTrigger": null },
+      { "label": "Connects snapshots to transaction isolation and visibility rules.", "relatedTrigger": null },
+      { "label": "Mentions that readers do not usually block writers and writers do not usually block readers under MVCC.", "relatedTrigger": null },
+      { "label": "Recognizes that old row versions eventually need cleanup through VACUUM.", "relatedTrigger": null },
+      { "label": "Can describe an update as creating a new tuple version rather than modifying the visible row in place.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Describes MVCC as table-level locking.",
@@ -719,11 +719,11 @@
     "intent": "Check whether the candidate can reason about PostgreSQL isolation levels, anomalies, and retry requirements.",
     "primaryQuestion": "How do Read Committed, Repeatable Read, and Serializable differ in PostgreSQL, and when would you choose a stricter isolation level?",
     "expectedSignals": [
-      "Knows Read Committed is PostgreSQL's default and each statement sees a fresh committed snapshot.",
-      "Explains that Repeatable Read uses a stable transaction snapshot.",
-      "Explains Serializable prevents serialization anomalies but requires retry handling.",
-      "Connects isolation choice to business invariants such as double booking or financial consistency.",
-      "Mentions performance or contention trade-offs when increasing isolation."
+      { "label": "Knows Read Committed is PostgreSQL's default and each statement sees a fresh committed snapshot.", "relatedTrigger": null },
+      { "label": "Explains that Repeatable Read uses a stable transaction snapshot.", "relatedTrigger": null },
+      { "label": "Explains Serializable prevents serialization anomalies but requires retry handling.", "relatedTrigger": null },
+      { "label": "Connects isolation choice to business invariants such as double booking or financial consistency.", "relatedTrigger": null },
+      { "label": "Mentions performance or contention trade-offs when increasing isolation.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Claims Read Uncommitted allows dirty reads in PostgreSQL.",
@@ -832,11 +832,11 @@
     "intent": "Evaluate the candidate's ability to choose between single-column, composite, partial, and covering indexes for real query patterns.",
     "primaryQuestion": "Given frequent queries on orders by customer_id, status, and created_at, how would you decide between separate indexes, a composite index, and a partial index?",
     "expectedSignals": [
-      "Starts from actual query predicates, sort order, cardinality, and frequency.",
-      "Explains composite index column order and leftmost-prefix implications.",
-      "Considers partial indexes for common predicates such as status = 'open' when selective and stable.",
-      "Mentions INCLUDE or index-only scans when covering a read-heavy query is useful.",
-      "Weighs write overhead, storage, and maintenance against read latency."
+      { "label": "Starts from actual query predicates, sort order, cardinality, and frequency.", "relatedTrigger": null },
+      { "label": "Explains composite index column order and leftmost-prefix implications.", "relatedTrigger": null },
+      { "label": "Considers partial indexes for common predicates such as status = 'open' when selective and stable.", "relatedTrigger": null },
+      { "label": "Mentions INCLUDE or index-only scans when covering a read-heavy query is useful.", "relatedTrigger": null },
+      { "label": "Weighs write overhead, storage, and maintenance against read latency.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Creates every possible index combination.",
@@ -950,11 +950,11 @@
     "intent": "Assess plan-reading skill for PostgreSQL performance issues, especially actual versus estimated rows and join choices.",
     "primaryQuestion": "You run EXPLAIN ANALYZE and see a nested loop over millions of rows with actual rows far above estimates. How would you interpret that and what fixes would you evaluate?",
     "expectedSignals": [
-      "Distinguishes estimated rows, actual rows, loops, planning time, and execution time.",
-      "Recognizes cardinality misestimation and stale or insufficient statistics as possible causes.",
-      "Evaluates indexes, query predicates, join order, and extended statistics where relevant.",
-      "Considers VACUUM ANALYZE or ANALYZE when statistics are stale.",
-      "Validates improvements with before/after plans and timings."
+      { "label": "Distinguishes estimated rows, actual rows, loops, planning time, and execution time.", "relatedTrigger": null },
+      { "label": "Recognizes cardinality misestimation and stale or insufficient statistics as possible causes.", "relatedTrigger": null },
+      { "label": "Evaluates indexes, query predicates, join order, and extended statistics where relevant.", "relatedTrigger": null },
+      { "label": "Considers VACUUM ANALYZE or ANALYZE when statistics are stale.", "relatedTrigger": null },
+      { "label": "Validates improvements with before/after plans and timings.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Treats every nested loop as bad without context.",
@@ -1068,11 +1068,11 @@
     "intent": "Check whether the candidate can use JSONB appropriately in PostgreSQL and choose indexing strategies for semi-structured data.",
     "primaryQuestion": "When would you store data in JSONB in PostgreSQL, and how would you index and query it without turning the schema into an unmaintainable blob?",
     "expectedSignals": [
-      "Uses JSONB for flexible or semi-structured attributes, not core relational invariants.",
-      "Distinguishes json and jsonb at a practical level, especially storage and indexing behavior.",
-      "Mentions GIN indexes and operator choices such as containment or key existence.",
-      "Considers generated columns or expression indexes for frequently queried paths.",
-      "Discusses validation, migration, and query-performance trade-offs."
+      { "label": "Uses JSONB for flexible or semi-structured attributes, not core relational invariants.", "relatedTrigger": null },
+      { "label": "Distinguishes json and jsonb at a practical level, especially storage and indexing behavior.", "relatedTrigger": null },
+      { "label": "Mentions GIN indexes and operator choices such as containment or key existence.", "relatedTrigger": null },
+      { "label": "Considers generated columns or expression indexes for frequently queried paths.", "relatedTrigger": null },
+      { "label": "Discusses validation, migration, and query-performance trade-offs.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Stores all application data in one JSONB column by default.",
@@ -1186,11 +1186,11 @@
     "intent": "Evaluate whether the candidate can reason about PostgreSQL window functions and CTEs for analytical queries without confusing row cardinality.",
     "primaryQuestion": "How would you use PostgreSQL window functions and CTEs to return the latest order per customer while also keeping each customer's total order count?",
     "expectedSignals": [
-      "Uses ROW_NUMBER or DISTINCT ON appropriately for latest row per group.",
-      "Understands that window functions calculate across related rows without collapsing result rows.",
-      "Uses COUNT(*) OVER (PARTITION BY customer_id) or an equivalent aggregate join.",
-      "Explains CTE readability and materialization or inlining considerations in modern PostgreSQL.",
-      "Considers deterministic ordering when timestamps tie."
+      { "label": "Uses ROW_NUMBER or DISTINCT ON appropriately for latest row per group.", "relatedTrigger": null },
+      { "label": "Understands that window functions calculate across related rows without collapsing result rows.", "relatedTrigger": null },
+      { "label": "Uses COUNT(*) OVER (PARTITION BY customer_id) or an equivalent aggregate join.", "relatedTrigger": null },
+      { "label": "Explains CTE readability and materialization or inlining considerations in modern PostgreSQL.", "relatedTrigger": null },
+      { "label": "Considers deterministic ordering when timestamps tie.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Uses GROUP BY and then expects non-grouped row columns to remain available.",
@@ -1304,11 +1304,11 @@
     "intent": "Assess whether the candidate can debug lock waits and deadlocks in PostgreSQL without making concurrency worse.",
     "primaryQuestion": "A production request hangs and logs show PostgreSQL lock waits or a deadlock. How would you identify the blocking transaction and prevent the issue from recurring?",
     "expectedSignals": [
-      "Checks pg_stat_activity, pg_locks, blocked and blocking process IDs, query text, and transaction age.",
-      "Differentiates lock wait, long transaction, and deadlock symptoms.",
-      "Explains consistent lock ordering and shorter transactions as prevention strategies.",
-      "Mentions SELECT FOR UPDATE or row-locking behavior when relevant.",
-      "Considers timeouts, retry handling, and safe termination only after impact analysis."
+      { "label": "Checks pg_stat_activity, pg_locks, blocked and blocking process IDs, query text, and transaction age.", "relatedTrigger": null },
+      { "label": "Differentiates lock wait, long transaction, and deadlock symptoms.", "relatedTrigger": null },
+      { "label": "Explains consistent lock ordering and shorter transactions as prevention strategies.", "relatedTrigger": null },
+      { "label": "Mentions SELECT FOR UPDATE or row-locking behavior when relevant.", "relatedTrigger": null },
+      { "label": "Considers timeouts, retry handling, and safe termination only after impact analysis.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Kills random database sessions without identifying blockers.",
@@ -1422,11 +1422,11 @@
     "intent": "Evaluate whether the candidate can decide when PostgreSQL table partitioning is useful and when it adds unnecessary operational complexity.",
     "primaryQuestion": "When would you partition a large PostgreSQL table, and how would you choose between range, list, and hash partitioning?",
     "expectedSignals": [
-      "Connects partitioning to query pruning, data lifecycle management, and very large tables.",
-      "Chooses range partitioning for time-series or date-bounded data when queries filter by time.",
-      "Chooses list partitioning for discrete tenant, region, or category groups when appropriate.",
-      "Chooses hash partitioning for spreading data when natural ranges or lists are not suitable.",
-      "Mentions operational costs such as partition maintenance, indexes per partition, and query patterns that do not prune."
+      { "label": "Connects partitioning to query pruning, data lifecycle management, and very large tables.", "relatedTrigger": null },
+      { "label": "Chooses range partitioning for time-series or date-bounded data when queries filter by time.", "relatedTrigger": null },
+      { "label": "Chooses list partitioning for discrete tenant, region, or category groups when appropriate.", "relatedTrigger": null },
+      { "label": "Chooses hash partitioning for spreading data when natural ranges or lists are not suitable.", "relatedTrigger": null },
+      { "label": "Mentions operational costs such as partition maintenance, indexes per partition, and query patterns that do not prune.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Partitions every large table without query-pattern justification.",
@@ -1540,11 +1540,11 @@
     "intent": "Assess whether the candidate can connect PostgreSQL MVCC, VACUUM, autovacuum, statistics, and table bloat to production symptoms.",
     "primaryQuestion": "A PostgreSQL table with heavy updates keeps getting slower and disk usage grows even after deletes. How would you investigate VACUUM, autovacuum, and bloat?",
     "expectedSignals": [
-      "Connects MVCC dead tuples to the need for VACUUM cleanup.",
-      "Checks autovacuum activity, table stats, dead tuple counts, and long-running transactions.",
-      "Distinguishes VACUUM, VACUUM FULL, and ANALYZE at a practical level.",
-      "Considers table-specific autovacuum tuning for high-churn tables.",
-      "Measures bloat and query impact before invasive maintenance."
+      { "label": "Connects MVCC dead tuples to the need for VACUUM cleanup.", "relatedTrigger": null },
+      { "label": "Checks autovacuum activity, table stats, dead tuple counts, and long-running transactions.", "relatedTrigger": null },
+      { "label": "Distinguishes VACUUM, VACUUM FULL, and ANALYZE at a practical level.", "relatedTrigger": null },
+      { "label": "Considers table-specific autovacuum tuning for high-churn tables.", "relatedTrigger": null },
+      { "label": "Measures bloat and query impact before invasive maintenance.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Runs VACUUM FULL in production without discussing locks or downtime.",
@@ -1658,11 +1658,11 @@
     "intent": "Evaluate senior-level reasoning about PostgreSQL replication options, HA, read scaling, lag, and operational risk.",
     "primaryQuestion": "How would you design PostgreSQL replication for high availability and read scaling, and what trade-offs would you watch around replica lag and failover?",
     "expectedSignals": [
-      "Distinguishes physical streaming replication from logical replication use cases.",
-      "Explains read replicas, failover, recovery objectives, and promotion risk.",
-      "Mentions replica lag and the effect on read-after-write consistency.",
-      "Considers monitoring WAL, replication slots, replication delay, and connection routing.",
-      "Discusses backup, restore testing, and application behavior during failover."
+      { "label": "Distinguishes physical streaming replication from logical replication use cases.", "relatedTrigger": null },
+      { "label": "Explains read replicas, failover, recovery objectives, and promotion risk.", "relatedTrigger": null },
+      { "label": "Mentions replica lag and the effect on read-after-write consistency.", "relatedTrigger": null },
+      { "label": "Considers monitoring WAL, replication slots, replication delay, and connection routing.", "relatedTrigger": null },
+      { "label": "Discusses backup, restore testing, and application behavior during failover.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Assumes replicas are always perfectly current.",
@@ -1776,11 +1776,11 @@
     "intent": "Check deep understanding of PostgreSQL logical replication, CDC pipelines, replication slots, WAL retention, and operational failure modes.",
     "primaryQuestion": "How does PostgreSQL logical replication or CDC use replication slots, and what can go wrong if a consumer falls behind?",
     "expectedSignals": [
-      "Explains that logical replication streams changes based on publications, subscriptions, decoding, and replication identity.",
-      "Knows replication slots retain WAL needed by consumers until consumed or advanced.",
-      "Identifies disk growth and retained dead tuples or WAL pressure as lag-related risks.",
-      "Mentions monitoring slot lag, confirmed flush LSN, restart LSN, and consumer health.",
-      "Considers initial snapshot, schema changes, deletes without proper replica identity, and backfill strategy."
+      { "label": "Explains that logical replication streams changes based on publications, subscriptions, decoding, and replication identity.", "relatedTrigger": null },
+      { "label": "Knows replication slots retain WAL needed by consumers until consumed or advanced.", "relatedTrigger": null },
+      { "label": "Identifies disk growth and retained dead tuples or WAL pressure as lag-related risks.", "relatedTrigger": null },
+      { "label": "Mentions monitoring slot lag, confirmed flush LSN, restart LSN, and consumer health.", "relatedTrigger": null },
+      { "label": "Considers initial snapshot, schema changes, deletes without proper replica identity, and backfill strategy.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Creates replication slots without monitoring retention.",
@@ -1894,11 +1894,11 @@
     "intent": "Evaluate ability to design PostgreSQL connection management for high-throughput applications and understand pooling trade-offs.",
     "primaryQuestion": "Your service opens too many PostgreSQL connections under load. How would you design connection pooling, and what trade-offs exist between session and transaction pooling?",
     "expectedSignals": [
-      "Explains why too many PostgreSQL connections increase memory, scheduling, and contention overhead.",
-      "Uses application pool sizing and external poolers such as PgBouncer where appropriate.",
-      "Distinguishes session pooling from transaction pooling and the impact on session state.",
-      "Mentions prepared statements, temporary tables, LISTEN/NOTIFY, advisory locks, and SET LOCAL/session settings as compatibility concerns.",
-      "Defines metrics such as active connections, wait time, pool saturation, query latency, and error rates."
+      { "label": "Explains why too many PostgreSQL connections increase memory, scheduling, and contention overhead.", "relatedTrigger": null },
+      { "label": "Uses application pool sizing and external poolers such as PgBouncer where appropriate.", "relatedTrigger": null },
+      { "label": "Distinguishes session pooling from transaction pooling and the impact on session state.", "relatedTrigger": null },
+      { "label": "Mentions prepared statements, temporary tables, LISTEN/NOTIFY, advisory locks, and SET LOCAL/session settings as compatibility concerns.", "relatedTrigger": null },
+      { "label": "Defines metrics such as active connections, wait time, pool saturation, query latency, and error rates.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Only raises max_connections without considering database capacity.",
@@ -2012,11 +2012,11 @@
     "intent": "Assess senior design reasoning around multi-tenant PostgreSQL schemas, tenant isolation, indexing, and Row Level Security.",
     "primaryQuestion": "How would you design PostgreSQL data isolation for a multi-tenant SaaS product, and when would you use tenant_id columns, separate schemas/databases, or Row Level Security?",
     "expectedSignals": [
-      "Compares shared-table tenant_id, schema-per-tenant, and database-per-tenant trade-offs.",
-      "Considers data isolation, operational complexity, migrations, backups, and noisy-neighbor risk.",
-      "Uses composite indexes including tenant_id for tenant-scoped queries.",
-      "Explains Row Level Security policies as defense-in-depth, not a substitute for application authorization.",
-      "Mentions testing policies and preventing bypass through privileged roles or unsafe connection settings."
+      { "label": "Compares shared-table tenant_id, schema-per-tenant, and database-per-tenant trade-offs.", "relatedTrigger": null },
+      { "label": "Considers data isolation, operational complexity, migrations, backups, and noisy-neighbor risk.", "relatedTrigger": null },
+      { "label": "Uses composite indexes including tenant_id for tenant-scoped queries.", "relatedTrigger": null },
+      { "label": "Explains Row Level Security policies as defense-in-depth, not a substitute for application authorization.", "relatedTrigger": null },
+      { "label": "Mentions testing policies and preventing bypass through privileged roles or unsafe connection settings.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Only filters by tenant_id in application code with no defense-in-depth.",
@@ -2130,11 +2130,11 @@
     "intent": "Assess senior operational judgment for PostgreSQL schema migrations on large production tables.",
     "primaryQuestion": "A migration that adds a column, backfills data, and creates an index on a large PostgreSQL table is causing lock waits. How would you redesign and safely roll it out?",
     "expectedSignals": [
-      "Separates metadata change, backfill, constraint validation, and index creation into safe phases.",
-      "Uses CREATE INDEX CONCURRENTLY when appropriate and understands its trade-offs.",
-      "Avoids long transactions and large blocking backfills; batches work with progress tracking.",
-      "Considers NOT VALID constraints followed by VALIDATE CONSTRAINT for large tables where applicable.",
-      "Defines rollback, observability, lock timeout, statement timeout, and deployment coordination."
+      { "label": "Separates metadata change, backfill, constraint validation, and index creation into safe phases.", "relatedTrigger": null },
+      { "label": "Uses CREATE INDEX CONCURRENTLY when appropriate and understands its trade-offs.", "relatedTrigger": null },
+      { "label": "Avoids long transactions and large blocking backfills; batches work with progress tracking.", "relatedTrigger": null },
+      { "label": "Considers NOT VALID constraints followed by VALIDATE CONSTRAINT for large tables where applicable.", "relatedTrigger": null },
+      { "label": "Defines rollback, observability, lock timeout, statement timeout, and deployment coordination.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Runs a large backfill and index creation in one transaction during peak traffic.",
@@ -2248,11 +2248,11 @@
     "intent": "Evaluate senior-level ability to combine PostgreSQL constraints, transactions, locks, idempotency, and outbox-style patterns for correctness under concurrency.",
     "primaryQuestion": "How would you design a PostgreSQL-backed workflow that creates an order, charges payment asynchronously, and publishes an event without losing consistency under retries and failures?",
     "expectedSignals": [
-      "Uses a transaction for the local state transition and durable outbox/event record.",
-      "Uses idempotency keys and unique constraints to make retries safe.",
-      "Separates external payment side effects from the database transaction and models state transitions explicitly.",
-      "Discusses row locks, optimistic concurrency, or status preconditions to prevent double processing.",
-      "Plans for outbox polling, exactly-once illusion, at-least-once delivery, and idempotent consumers."
+      { "label": "Uses a transaction for the local state transition and durable outbox/event record.", "relatedTrigger": null },
+      { "label": "Uses idempotency keys and unique constraints to make retries safe.", "relatedTrigger": null },
+      { "label": "Separates external payment side effects from the database transaction and models state transitions explicitly.", "relatedTrigger": null },
+      { "label": "Discusses row locks, optimistic concurrency, or status preconditions to prevent double processing.", "relatedTrigger": null },
+      { "label": "Plans for outbox polling, exactly-once illusion, at-least-once delivery, and idempotent consumers.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Calls payment provider inside a long database transaction without considering failure modes.",

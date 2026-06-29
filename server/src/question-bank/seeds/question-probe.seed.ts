@@ -9,6 +9,7 @@ import {
 } from '../constants/question-bank-taxonomy.constants';
 import {
   QuestionProbe,
+  QuestionProbeExpectedSignal,
   QuestionProbeFollowUp,
   QuestionProbeLocalizedContent,
   QuestionProbeLocalizedContentMap,
@@ -45,7 +46,7 @@ export type QuestionProbeSeed = Omit<
   difficulty: number;
   intent: string;
   primaryQuestion: string;
-  expectedSignals: string[];
+  expectedSignals: QuestionProbeExpectedSignal[];
   redFlags: string[];
   scoringHints: QuestionProbeScoringHint[];
   followUps: QuestionProbeFollowUp[];
@@ -2628,7 +2629,9 @@ function situational(
   };
 }
 
-function expectedSignals(blueprint: ProbeBlueprint): string[] {
+function expectedSignals(
+  blueprint: ProbeBlueprint,
+): QuestionProbeExpectedSignal[] {
   const common: string[] = [
     'Uses a concrete scenario tied to the question topic.',
     'Clarifies the candidate personal contribution and decision ownership.',
@@ -2668,7 +2671,10 @@ function expectedSignals(blueprint: ProbeBlueprint): string[] {
     ],
   };
 
-  return [...common, ...byType[blueprint.type]];
+  return [...common, ...byType[blueprint.type]].map((label) => ({
+    label,
+    relatedTrigger: null,
+  }));
 }
 
 function redFlags(type: QuestionProbeType): string[] {

@@ -68,9 +68,15 @@ export class QuestionPracticeScoringService {
     language: QuestionProbeLanguage;
     cvClaims?: string[];
   }): Promise<ProbeScoringResult> {
+    // build signal prompt
     const signalCatalog: CatalogItem[] = questionProbe.expectedSignals.map(
-      (label: string, index: number) => ({ key: `signal_${index + 1}`, label }),
+      (signal, index: number) => ({
+        key: `signal_${index + 1}`,
+        label: signal.label,
+        relatedTrigger: signal.relatedTrigger,
+      }),
     );
+    // build red flag prompt
     const redFlagCatalog: CatalogItem[] = questionProbe.redFlags.map(
       (label: string, index: number) => ({
         key: `red_flag_${index + 1}`,
@@ -251,7 +257,7 @@ Return JSON only. Do not invent evidence quotes.
 
 Probe intent: ${snapshot.canonical.intent ?? ''}
 Probe type: ${snapshot.canonical.type ?? ''}
-Expected signals: ${JSON.stringify(signalCatalog)}
+Expected signals: ${JSON.stringify(this._promptCatalog(signalCatalog))}
 Red flags: ${JSON.stringify(redFlagCatalog)}
 Scoring hints: ${JSON.stringify(snapshot.rubric.scoringHints)}
 Feedback language: ${attempt.feedbackLocale}
@@ -349,7 +355,7 @@ Return JSON only. Do not invent evidence quotes.
 
 Probe intent: ${intent}
 Probe type: ${type}
-Expected signals: ${JSON.stringify(signalCatalog)}
+Expected signals: ${JSON.stringify(this._promptCatalog(signalCatalog))}
 Red flags: ${JSON.stringify(redFlagCatalog)}
 Scoring hints: ${JSON.stringify(scoringHints)}
 Candidate CV claims to verify: ${JSON.stringify(cvClaimCatalog)}
@@ -641,6 +647,16 @@ Structured result: ${JSON.stringify(result)}`;
     }
 
     return 'answer';
+  }
+
+  /**
+   * relatedTrigger là metadata nội bộ cho policy engine, không liên quan đến việc
+   * LLM đánh giá coverage — loại khỏi prompt để tránh token thừa và gây nhiễu.
+   */
+  private _promptCatalog(
+    catalog: CatalogItem[],
+  ): { key: string; label: string }[] {
+    return catalog.map(({ key, label }) => ({ key, label }));
   }
 
   private _errorMessage(error: unknown): string {

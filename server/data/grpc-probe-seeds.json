@@ -11,10 +11,10 @@
     "intent": "Check whether the candidate can explain gRPC's service contract model, client stubs, server implementations, and why Protocol Buffers are commonly used as the IDL and message format.",
     "primaryQuestion": "How would you explain the basic gRPC flow from a .proto service definition to a client calling a server method?",
     "expectedSignals": [
-      "Explains that a .proto file defines services, RPC methods, request messages, and response messages.",
-      "Mentions generated client stubs and server interfaces or base classes.",
-      "Understands that the client calls a remote method through the stub while the server implements the service contract.",
-      "Connects Protocol Buffers to strongly typed, language-neutral message serialization rather than treating gRPC as plain JSON over HTTP."
+      { "label": "Explains that a .proto file defines services, RPC methods, request messages, and response messages.", "relatedTrigger": null },
+      { "label": "Mentions generated client stubs and server interfaces or base classes.", "relatedTrigger": null },
+      { "label": "Understands that the client calls a remote method through the stub while the server implements the service contract.", "relatedTrigger": null },
+      { "label": "Connects Protocol Buffers to strongly typed, language-neutral message serialization rather than treating gRPC as plain JSON over HTTP.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Cannot distinguish the .proto contract from the runtime server implementation.",
@@ -133,10 +133,10 @@
     "intent": "Evaluate whether the candidate understands unary, server streaming, client streaming, and bidirectional streaming RPCs and can choose the right shape for a use case.",
     "primaryQuestion": "What are the four gRPC RPC types, and when would you choose each one?",
     "expectedSignals": [
-      "Identifies unary, server streaming, client streaming, and bidirectional streaming RPCs.",
-      "Maps unary to simple request/response interactions.",
-      "Maps server streaming to one request producing many ordered responses.",
-      "Maps client streaming or bidirectional streaming to uploads, live feeds, chat, telemetry, or interactive sessions."
+      { "label": "Identifies unary, server streaming, client streaming, and bidirectional streaming RPCs.", "relatedTrigger": null },
+      { "label": "Maps unary to simple request/response interactions.", "relatedTrigger": null },
+      { "label": "Maps server streaming to one request producing many ordered responses.", "relatedTrigger": null },
+      { "label": "Maps client streaming or bidirectional streaming to uploads, live feeds, chat, telemetry, or interactive sessions.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Only knows unary RPC and treats all streaming as the same.",
@@ -250,10 +250,10 @@
     "intent": "Assess basic troubleshooting of gRPC failures using status codes, deadlines, logs, and client/server evidence.",
     "primaryQuestion": "A gRPC client starts receiving DEADLINE_EXCEEDED and UNAVAILABLE errors after deployment. What would you check first?",
     "expectedSignals": [
-      "Reads the exact status code, message, method name, deadline, and timing before changing code.",
-      "Separates DEADLINE_EXCEEDED from UNAVAILABLE and explains likely causes for each.",
-      "Checks client deadline configuration, server latency, network path, DNS, load balancer, and deployment health.",
-      "Uses logs, metrics, traces, or request IDs to compare client-side and server-side evidence."
+      { "label": "Reads the exact status code, message, method name, deadline, and timing before changing code.", "relatedTrigger": null },
+      { "label": "Separates DEADLINE_EXCEEDED from UNAVAILABLE and explains likely causes for each.", "relatedTrigger": null },
+      { "label": "Checks client deadline configuration, server latency, network path, DNS, load balancer, and deployment health.", "relatedTrigger": null },
+      { "label": "Uses logs, metrics, traces, or request IDs to compare client-side and server-side evidence.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Treats all gRPC failures as the same generic exception.",
@@ -372,10 +372,10 @@
     "intent": "Evaluate whether the candidate can evolve Protocol Buffer contracts safely across independently deployed clients and servers.",
     "primaryQuestion": "How would you change a gRPC .proto message safely when old clients and servers may still be running?",
     "expectedSignals": [
-      "Uses additive, backward-compatible changes where possible.",
-      "Does not reuse or renumber field tags and reserves deleted field numbers and names.",
-      "Avoids changing field types or changing repeated fields to scalar fields.",
-      "Plans rollout across generated code, server compatibility, client compatibility, and validation before removing old fields."
+      { "label": "Uses additive, backward-compatible changes where possible.", "relatedTrigger": null },
+      { "label": "Does not reuse or renumber field tags and reserves deleted field numbers and names.", "relatedTrigger": null },
+      { "label": "Avoids changing field types or changing repeated fields to scalar fields.", "relatedTrigger": null },
+      { "label": "Plans rollout across generated code, server compatibility, client compatibility, and validation before removing old fields.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Renumbers fields to make the schema look cleaner.",
@@ -494,10 +494,10 @@
     "intent": "Assess practical use of gRPC metadata for authentication, tracing, correlation, and response trailers without abusing it as a business payload channel.",
     "primaryQuestion": "How would you use gRPC metadata for authentication and request correlation, and what should not go into metadata?",
     "expectedSignals": [
-      "Explains metadata as RPC-associated key-value data often transmitted as HTTP/2 headers.",
-      "Uses metadata for auth tokens, tenant or correlation IDs, trace context, or server trailers when appropriate.",
-      "Avoids putting large business payloads, sensitive data without protection, or fields that belong in the protobuf request into metadata.",
-      "Mentions key constraints such as reserved grpc- prefix, ASCII keys, binary keys ending in -bin, and size/header limits."
+      { "label": "Explains metadata as RPC-associated key-value data often transmitted as HTTP/2 headers.", "relatedTrigger": null },
+      { "label": "Uses metadata for auth tokens, tenant or correlation IDs, trace context, or server trailers when appropriate.", "relatedTrigger": null },
+      { "label": "Avoids putting large business payloads, sensitive data without protection, or fields that belong in the protobuf request into metadata.", "relatedTrigger": null },
+      { "label": "Mentions key constraints such as reserved grpc- prefix, ASCII keys, binary keys ending in -bin, and size/header limits.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Puts primary request data into metadata instead of typed protobuf messages.",
@@ -616,10 +616,10 @@
     "intent": "Evaluate debugging skill for streaming RPCs involving flow control, slow consumers, cancellation, memory growth, and read/write coordination.",
     "primaryQuestion": "A bidirectional streaming gRPC endpoint works in tests but stalls or grows memory under production load. How would you diagnose it?",
     "expectedSignals": [
-      "Checks whether either side is writing faster than the other side reads.",
-      "Understands that gRPC flow control can block writes and that streaming is sensitive to slow consumers.",
-      "Looks for missing cancellation handling, unbounded buffering, oversized messages, or failure to drain streams.",
-      "Uses per-stream metrics, message counts/sizes, deadlines, backpressure logs, and load-test reproduction."
+      { "label": "Checks whether either side is writing faster than the other side reads.", "relatedTrigger": null },
+      { "label": "Understands that gRPC flow control can block writes and that streaming is sensitive to slow consumers.", "relatedTrigger": null },
+      { "label": "Looks for missing cancellation handling, unbounded buffering, oversized messages, or failure to drain streams.", "relatedTrigger": null },
+      { "label": "Uses per-stream metrics, message counts/sizes, deadlines, backpressure logs, and load-test reproduction.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Assumes streaming writes always mean messages have already been sent over the network.",
@@ -738,10 +738,10 @@
     "intent": "Assess whether the candidate can choose between gRPC and REST based on product, platform, compatibility, operations, and client constraints.",
     "primaryQuestion": "When would you choose gRPC over REST for a service API, and when would REST still be the better choice?",
     "expectedSignals": [
-      "Chooses gRPC for strongly typed internal service contracts, efficient binary messages, streaming, and polyglot generated clients.",
-      "Chooses REST/HTTP JSON for public browser-facing APIs, broad tooling compatibility, caching semantics, or simple resource-oriented APIs when appropriate.",
-      "Considers operational constraints such as proxies, load balancers, observability, gateway needs, and team familiarity.",
-      "Does not frame gRPC as universally faster or REST as obsolete."
+      { "label": "Chooses gRPC for strongly typed internal service contracts, efficient binary messages, streaming, and polyglot generated clients.", "relatedTrigger": null },
+      { "label": "Chooses REST/HTTP JSON for public browser-facing APIs, broad tooling compatibility, caching semantics, or simple resource-oriented APIs when appropriate.", "relatedTrigger": null },
+      { "label": "Considers operational constraints such as proxies, load balancers, observability, gateway needs, and team familiarity.", "relatedTrigger": null },
+      { "label": "Does not frame gRPC as universally faster or REST as obsolete.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Always chooses gRPC because it is newer or binary.",
@@ -860,10 +860,10 @@
     "intent": "Evaluate senior-level reliability design around gRPC retries, deadlines, idempotency, retryable status codes, service config, and server pushback.",
     "primaryQuestion": "How would you design retry behavior for gRPC calls without causing duplicate side effects or overload?",
     "expectedSignals": [
-      "Separates retry-safe idempotent operations from non-idempotent operations that need idempotency keys or different handling.",
-      "Uses realistic deadlines, retry budgets, exponential backoff, jitter, retryable status codes, and max attempts.",
-      "Understands that configured retries are per method and that transparent retries may occur only under limited safe conditions.",
-      "Considers server pushback, retry throttling, observability, and load amplification during incidents."
+      { "label": "Separates retry-safe idempotent operations from non-idempotent operations that need idempotency keys or different handling.", "relatedTrigger": null },
+      { "label": "Uses realistic deadlines, retry budgets, exponential backoff, jitter, retryable status codes, and max attempts.", "relatedTrigger": null },
+      { "label": "Understands that configured retries are per method and that transparent retries may occur only under limited safe conditions.", "relatedTrigger": null },
+      { "label": "Considers server pushback, retry throttling, observability, and load amplification during incidents.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Retries every error code for every method.",
@@ -982,10 +982,10 @@
     "intent": "Assess senior production debugging for gRPC load balancing, health checking, name resolution, connection reuse, and uneven traffic distribution.",
     "primaryQuestion": "Traffic to a gRPC service is uneven: one backend is overloaded while others are healthy. How would you diagnose and fix it?",
     "expectedSignals": [
-      "Checks load balancing policy, name resolution results, endpoint discovery, channel reuse, and connection behavior.",
-      "Understands that some policies such as pick_first may keep using one ready subchannel instead of spreading calls.",
-      "Verifies server health service behavior, readiness, graceful shutdown, and whether unhealthy backends are removed from traffic.",
-      "Uses per-backend metrics, client channel metrics, resolver logs, load balancer configuration, and controlled rollout verification."
+      { "label": "Checks load balancing policy, name resolution results, endpoint discovery, channel reuse, and connection behavior.", "relatedTrigger": null },
+      { "label": "Understands that some policies such as pick_first may keep using one ready subchannel instead of spreading calls.", "relatedTrigger": null },
+      { "label": "Verifies server health service behavior, readiness, graceful shutdown, and whether unhealthy backends are removed from traffic.", "relatedTrigger": null },
+      { "label": "Uses per-backend metrics, client channel metrics, resolver logs, load balancer configuration, and controlled rollout verification.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Only scales up replicas without checking client-side load balancing behavior.",
@@ -1109,10 +1109,10 @@
     "intent": "Verify senior judgment for owning a production gRPC API, including contract governance, deadlines, errors, observability, deployment safety, and operational readiness.",
     "primaryQuestion": "You are taking ownership of a business-critical gRPC API. What production standards would you require before calling it ready?",
     "expectedSignals": [
-      "Defines contract standards: stable .proto ownership, compatibility rules, generated client publishing, and version/deprecation policy.",
-      "Requires deadline defaults, cancellation handling, clear status code mapping, and consistent error details where supported.",
-      "Requires observability: per-method latency, status codes, message sizes, retry attempts, stream counts, traces, logs, and correlation metadata.",
-      "Includes operational readiness: health checks, load balancing behavior, graceful shutdown, rollout/rollback plan, capacity tests, and SLO or alert thresholds."
+      { "label": "Defines contract standards: stable .proto ownership, compatibility rules, generated client publishing, and version/deprecation policy.", "relatedTrigger": null },
+      { "label": "Requires deadline defaults, cancellation handling, clear status code mapping, and consistent error details where supported.", "relatedTrigger": null },
+      { "label": "Requires observability: per-method latency, status codes, message sizes, retry attempts, stream counts, traces, logs, and correlation metadata.", "relatedTrigger": null },
+      { "label": "Includes operational readiness: health checks, load balancing behavior, graceful shutdown, rollout/rollback plan, capacity tests, and SLO or alert thresholds.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Focuses only on writing service handlers and ignores client contracts or operations.",

@@ -11,12 +11,12 @@
     "intent": "Check whether the candidate understands Redis as an in-memory data structure store and can choose a Redis type based on the access pattern instead of treating everything as a string.",
     "primaryQuestion": "How would you choose between Redis strings, hashes, lists, sets, sorted sets, and streams for common backend features?",
     "expectedSignals": [
-      "Explains strings for simple values, counters, serialized blobs, and binary-safe data.",
-      "Uses hashes for small object-like records and field-level updates.",
-      "Distinguishes lists for ordered push/pop workflows from sets for uniqueness and membership checks.",
-      "Uses sorted sets when rank, score, or range queries matter, such as leaderboards or sliding windows.",
-      "Mentions streams for append-only event logs and consumer-group style processing.",
-      "Connects type choice to command complexity, memory shape, and required read/write operations."
+      { "label": "Explains strings for simple values, counters, serialized blobs, and binary-safe data.", "relatedTrigger": null },
+      { "label": "Uses hashes for small object-like records and field-level updates.", "relatedTrigger": null },
+      { "label": "Distinguishes lists for ordered push/pop workflows from sets for uniqueness and membership checks.", "relatedTrigger": null },
+      { "label": "Uses sorted sets when rank, score, or range queries matter, such as leaderboards or sliding windows.", "relatedTrigger": null },
+      { "label": "Mentions streams for append-only event logs and consumer-group style processing.", "relatedTrigger": null },
+      { "label": "Connects type choice to command complexity, memory shape, and required read/write operations.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Says Redis is only a key-value string cache.",
@@ -136,12 +136,12 @@
     "intent": "Evaluate whether the candidate can explain TTLs, cache-aside flow, stale data, and basic invalidation behavior.",
     "primaryQuestion": "How would you implement a Redis cache-aside read path with TTLs, and what can go wrong with stale or missing data?",
     "expectedSignals": [
-      "Describes read-through from Redis first, fallback to the database on miss, then SET with an expiration.",
-      "Explains TTL as an upper bound on cache freshness, not a guarantee that data is always correct.",
-      "Mentions explicit invalidation or update-on-write for important mutable data.",
-      "Understands that overwriting a key can affect its timeout depending on the command used.",
-      "Considers thundering herd or cache stampede when many clients miss the same hot key.",
-      "Mentions negative caching carefully for not-found responses with shorter TTLs."
+      { "label": "Describes read-through from Redis first, fallback to the database on miss, then SET with an expiration.", "relatedTrigger": null },
+      { "label": "Explains TTL as an upper bound on cache freshness, not a guarantee that data is always correct.", "relatedTrigger": null },
+      { "label": "Mentions explicit invalidation or update-on-write for important mutable data.", "relatedTrigger": null },
+      { "label": "Understands that overwriting a key can affect its timeout depending on the command used.", "relatedTrigger": null },
+      { "label": "Considers thundering herd or cache stampede when many clients miss the same hot key.", "relatedTrigger": null },
+      { "label": "Mentions negative caching carefully for not-found responses with shorter TTLs.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Assumes TTL fully solves consistency.",
@@ -261,12 +261,12 @@
     "intent": "Check whether the candidate can model a simple object in Redis and understand when hashes are better than whole-object string replacement.",
     "primaryQuestion": "If you need to cache user profile objects in Redis, when would you store each profile as a hash instead of one serialized string?",
     "expectedSignals": [
-      "Explains hashes as field-value collections under one Redis key.",
-      "Uses hashes when individual fields are read or updated independently.",
-      "Compares HGET/HSET/HGETALL with GET/SET of a serialized object.",
-      "Mentions that hashes are not a replacement for deeply nested relational modeling.",
-      "Discusses key naming, field naming, TTL policy, and source-of-truth ownership.",
-      "Recognizes that very large objects or many fields require memory and command-cost review."
+      { "label": "Explains hashes as field-value collections under one Redis key.", "relatedTrigger": null },
+      { "label": "Uses hashes when individual fields are read or updated independently.", "relatedTrigger": null },
+      { "label": "Compares HGET/HSET/HGETALL with GET/SET of a serialized object.", "relatedTrigger": null },
+      { "label": "Mentions that hashes are not a replacement for deeply nested relational modeling.", "relatedTrigger": null },
+      { "label": "Discusses key naming, field naming, TTL policy, and source-of-truth ownership.", "relatedTrigger": null },
+      { "label": "Recognizes that very large objects or many fields require memory and command-cost review.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Cannot distinguish a Redis key from a hash field.",
@@ -386,12 +386,12 @@
     "intent": "Assess whether the candidate can reason about ordered versus unique collections in Redis using lists, sets, and sorted sets.",
     "primaryQuestion": "How would you decide whether a feature should use a Redis list, set, or sorted set?",
     "expectedSignals": [
-      "Uses lists for insertion-order sequences, queue-like push/pop, or recent activity windows.",
-      "Uses sets for unique membership, deduplication, and set algebra such as union or intersection.",
-      "Uses sorted sets when unique members also need ordering by score or rank.",
-      "Identifies that list membership checks are not the same as set membership checks.",
-      "Mentions trimming bounded collections such as recent events or leaderboards.",
-      "Gives at least two concrete examples such as notification inbox, tags, leaderboard, or sliding rate limit."
+      { "label": "Uses lists for insertion-order sequences, queue-like push/pop, or recent activity windows.", "relatedTrigger": null },
+      { "label": "Uses sets for unique membership, deduplication, and set algebra such as union or intersection.", "relatedTrigger": null },
+      { "label": "Uses sorted sets when unique members also need ordering by score or rank.", "relatedTrigger": null },
+      { "label": "Identifies that list membership checks are not the same as set membership checks.", "relatedTrigger": null },
+      { "label": "Mentions trimming bounded collections such as recent events or leaderboards.", "relatedTrigger": null },
+      { "label": "Gives at least two concrete examples such as notification inbox, tags, leaderboard, or sliding rate limit.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Chooses a list for uniqueness without considering duplicates.",
@@ -511,12 +511,12 @@
     "intent": "Assess understanding of Redis persistence options and when persistence matters for cache versus durable data use cases.",
     "primaryQuestion": "What are the practical differences between Redis RDB snapshots, AOF, using both, and disabling persistence?",
     "expectedSignals": [
-      "Explains RDB as point-in-time snapshots with lower write overhead but possible data loss between snapshots.",
-      "Explains AOF as logging write operations with stronger durability options and rewrite/size considerations.",
-      "Recognizes that cache-only deployments may disable persistence if the data can be rebuilt.",
-      "Mentions combining RDB and AOF for different recovery and durability goals.",
-      "Connects persistence choice to recovery time, acceptable data loss, disk I/O, and operational complexity.",
-      "Avoids claiming Redis persistence makes it equivalent to a relational durable database for all workloads."
+      { "label": "Explains RDB as point-in-time snapshots with lower write overhead but possible data loss between snapshots.", "relatedTrigger": null },
+      { "label": "Explains AOF as logging write operations with stronger durability options and rewrite/size considerations.", "relatedTrigger": null },
+      { "label": "Recognizes that cache-only deployments may disable persistence if the data can be rebuilt.", "relatedTrigger": null },
+      { "label": "Mentions combining RDB and AOF for different recovery and durability goals.", "relatedTrigger": null },
+      { "label": "Connects persistence choice to recovery time, acceptable data loss, disk I/O, and operational complexity.", "relatedTrigger": null },
+      { "label": "Avoids claiming Redis persistence makes it equivalent to a relational durable database for all workloads.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Says Redis is purely in-memory and cannot persist data.",
@@ -631,12 +631,12 @@
     "intent": "Assess practical debugging of stale cache, wrong keys, TTL mistakes, and cache-aside invalidation issues.",
     "primaryQuestion": "Users report seeing old product data even after the database was updated. How would you debug the Redis cache path?",
     "expectedSignals": [
-      "Checks whether the request is reading from Redis, database, or another cache layer.",
-      "Inspects the exact cache key, value, TTL, and serialization/version shape.",
-      "Verifies write path invalidation, cache update ordering, and whether deletes are reaching Redis.",
-      "Considers race conditions where an old read repopulates the cache after an update.",
-      "Checks environment or tenant key prefixes to avoid looking at the wrong Redis keyspace.",
-      "Proposes a safe remediation such as targeted invalidation, shorter TTL, versioned keys, or write-through for critical fields."
+      { "label": "Checks whether the request is reading from Redis, database, or another cache layer.", "relatedTrigger": null },
+      { "label": "Inspects the exact cache key, value, TTL, and serialization/version shape.", "relatedTrigger": null },
+      { "label": "Verifies write path invalidation, cache update ordering, and whether deletes are reaching Redis.", "relatedTrigger": null },
+      { "label": "Considers race conditions where an old read repopulates the cache after an update.", "relatedTrigger": null },
+      { "label": "Checks environment or tenant key prefixes to avoid looking at the wrong Redis keyspace.", "relatedTrigger": null },
+      { "label": "Proposes a safe remediation such as targeted invalidation, shorter TTL, versioned keys, or write-through for critical fields.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Immediately flushes all Redis data without checking blast radius.",
@@ -756,12 +756,12 @@
     "intent": "Evaluate whether the candidate can select and reason about Redis maxmemory and eviction policies under memory pressure.",
     "primaryQuestion": "How would you choose a Redis maxmemory-policy for an application cache, and what metrics would tell you the policy is wrong?",
     "expectedSignals": [
-      "Explains maxmemory as a configured memory ceiling for the dataset and eviction trigger.",
-      "Compares noeviction, allkeys-lru, allkeys-lfu, volatile-lru, volatile-ttl, and random policies at a practical level.",
-      "Understands volatile policies only evict keys with expiration and can behave like noeviction if no keys have TTLs.",
-      "Connects policy choice to access pattern, such as skewed reads, frequency-based reuse, or TTL-driven freshness.",
-      "Mentions monitoring evicted_keys, keyspace hits/misses, used_memory, rejected writes, latency, and application error rates.",
-      "Accounts for replication/AOF buffers and headroom rather than setting maxmemory to total machine RAM."
+      { "label": "Explains maxmemory as a configured memory ceiling for the dataset and eviction trigger.", "relatedTrigger": null },
+      { "label": "Compares noeviction, allkeys-lru, allkeys-lfu, volatile-lru, volatile-ttl, and random policies at a practical level.", "relatedTrigger": null },
+      { "label": "Understands volatile policies only evict keys with expiration and can behave like noeviction if no keys have TTLs.", "relatedTrigger": null },
+      { "label": "Connects policy choice to access pattern, such as skewed reads, frequency-based reuse, or TTL-driven freshness.", "relatedTrigger": null },
+      { "label": "Mentions monitoring evicted_keys, keyspace hits/misses, used_memory, rejected writes, latency, and application error rates.", "relatedTrigger": null },
+      { "label": "Accounts for replication/AOF buffers and headroom rather than setting maxmemory to total machine RAM.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Uses noeviction for a cache without explaining write-failure behavior.",
@@ -876,12 +876,12 @@
     "intent": "Assess understanding of Redis command atomicity, transactions, WATCH-based optimistic locking, and Lua scripts.",
     "primaryQuestion": "How would you make a multi-step Redis update atomic, and when would you use MULTI/EXEC, WATCH, or Lua?",
     "expectedSignals": [
-      "States that individual Redis commands are atomic, but multi-command application sequences can race.",
-      "Explains MULTI/EXEC queues commands and executes them sequentially as one isolated operation.",
-      "Explains WATCH as optimistic locking that aborts EXEC if watched keys change before execution.",
-      "Uses Lua when logic must read, branch, and write atomically on the server.",
-      "Mentions that long-running scripts block other server activity and should stay small.",
-      "Understands that Redis transactions do not provide rollback semantics like many SQL databases."
+      { "label": "States that individual Redis commands are atomic, but multi-command application sequences can race.", "relatedTrigger": null },
+      { "label": "Explains MULTI/EXEC queues commands and executes them sequentially as one isolated operation.", "relatedTrigger": null },
+      { "label": "Explains WATCH as optimistic locking that aborts EXEC if watched keys change before execution.", "relatedTrigger": null },
+      { "label": "Uses Lua when logic must read, branch, and write atomically on the server.", "relatedTrigger": null },
+      { "label": "Mentions that long-running scripts block other server activity and should stay small.", "relatedTrigger": null },
+      { "label": "Understands that Redis transactions do not provide rollback semantics like many SQL databases.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Assumes pipelining makes commands atomic.",
@@ -1001,12 +1001,12 @@
     "intent": "Evaluate whether the candidate understands Redis-based locking guarantees, expiration, ownership tokens, and failure modes.",
     "primaryQuestion": "How would you implement a Redis distributed lock safely, and what guarantees would you not claim?",
     "expectedSignals": [
-      "Uses SET with NX and expiration to acquire a single-instance lock atomically.",
-      "Uses a unique random token and releases only if the token still matches, typically with Lua.",
-      "Explains why the lock must have an expiration to avoid deadlock after client failure.",
-      "Mentions lock validity time, clock/time assumptions, long-running critical sections, and retry/backoff behavior.",
-      "Distinguishes best-effort coordination from strong correctness requirements that may need a database constraint or consensus system.",
-      "Can discuss Redlock at a high level when multiple independent Redis masters are involved, without overstating guarantees."
+      { "label": "Uses SET with NX and expiration to acquire a single-instance lock atomically.", "relatedTrigger": null },
+      { "label": "Uses a unique random token and releases only if the token still matches, typically with Lua.", "relatedTrigger": null },
+      { "label": "Explains why the lock must have an expiration to avoid deadlock after client failure.", "relatedTrigger": null },
+      { "label": "Mentions lock validity time, clock/time assumptions, long-running critical sections, and retry/backoff behavior.", "relatedTrigger": null },
+      { "label": "Distinguishes best-effort coordination from strong correctness requirements that may need a database constraint or consensus system.", "relatedTrigger": null },
+      { "label": "Can discuss Redlock at a high level when multiple independent Redis masters are involved, without overstating guarantees.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Implements lock acquisition with separate SETNX and EXPIRE calls without discussing the race.",
@@ -1126,12 +1126,12 @@
     "intent": "Check whether the candidate can choose between Redis Pub/Sub, Streams, lists, and external brokers based on delivery guarantees and replay needs.",
     "primaryQuestion": "When would you use Redis Pub/Sub, Redis Streams, a Redis list queue, or a broker like Kafka/RabbitMQ?",
     "expectedSignals": [
-      "Explains Pub/Sub as low-latency fan-out where subscribers receive live messages and replay is not the main requirement.",
-      "Explains Streams as append-only event records with IDs, replay/range reads, trimming, and consumer groups.",
-      "Recognizes lists can implement simple queues but lack rich consumer-group metadata and replay semantics.",
-      "Chooses Kafka/RabbitMQ or another broker for stronger durability, routing, long retention, high-throughput event pipelines, or mature operational semantics.",
-      "Discusses at-least-once behavior, acknowledgements, idempotent consumers, and backpressure.",
-      "Connects the choice to business requirements such as missed-message tolerance and operational ownership."
+      { "label": "Explains Pub/Sub as low-latency fan-out where subscribers receive live messages and replay is not the main requirement.", "relatedTrigger": null },
+      { "label": "Explains Streams as append-only event records with IDs, replay/range reads, trimming, and consumer groups.", "relatedTrigger": null },
+      { "label": "Recognizes lists can implement simple queues but lack rich consumer-group metadata and replay semantics.", "relatedTrigger": null },
+      { "label": "Chooses Kafka/RabbitMQ or another broker for stronger durability, routing, long retention, high-throughput event pipelines, or mature operational semantics.", "relatedTrigger": null },
+      { "label": "Discusses at-least-once behavior, acknowledgements, idempotent consumers, and backpressure.", "relatedTrigger": null },
+      { "label": "Connects the choice to business requirements such as missed-message tolerance and operational ownership.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Uses Pub/Sub for durable jobs that must be processed after subscribers reconnect.",
@@ -1251,12 +1251,12 @@
     "intent": "Evaluate detailed understanding of Redis Streams consumer groups, acknowledgements, pending entries, and retry behavior.",
     "primaryQuestion": "How do Redis Streams consumer groups process messages, and how would you handle pending or stuck messages?",
     "expectedSignals": [
-      "Explains XADD for appending entries and stream IDs for ordered retrieval.",
-      "Explains XGROUP/XREADGROUP with consumers sharing work within a group.",
-      "Mentions XACK to acknowledge successful processing and the pending entries list for delivered but unacknowledged messages.",
-      "Uses XPENDING, XCLAIM, or XAUTOCLAIM to inspect and recover stuck messages.",
-      "Discusses at-least-once delivery and the need for idempotent consumers.",
-      "Mentions trimming or retention strategy so streams do not grow without bounds."
+      { "label": "Explains XADD for appending entries and stream IDs for ordered retrieval.", "relatedTrigger": null },
+      { "label": "Explains XGROUP/XREADGROUP with consumers sharing work within a group.", "relatedTrigger": null },
+      { "label": "Mentions XACK to acknowledge successful processing and the pending entries list for delivered but unacknowledged messages.", "relatedTrigger": null },
+      { "label": "Uses XPENDING, XCLAIM, or XAUTOCLAIM to inspect and recover stuck messages.", "relatedTrigger": null },
+      { "label": "Discusses at-least-once delivery and the need for idempotent consumers.", "relatedTrigger": null },
+      { "label": "Mentions trimming or retention strategy so streams do not grow without bounds.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Assumes stream messages disappear automatically after being read.",
@@ -1371,12 +1371,12 @@
     "intent": "Check understanding of Redis replication, read scaling, failover, and Sentinel responsibilities.",
     "primaryQuestion": "How do Redis replication and Sentinel provide high availability, and what consistency caveats should an application expect?",
     "expectedSignals": [
-      "Explains primary-replica replication where replicas receive a stream of commands from the primary.",
-      "Mentions replicas reconnect and attempt partial resynchronization after link breaks when possible.",
-      "Explains Sentinel monitoring, notifications, client discovery, and automatic failover for non-clustered Redis.",
-      "Discusses asynchronous replication and possible data loss or stale reads around failover.",
-      "Understands Sentinel quorum/majority at a high level and why multiple Sentinels are needed.",
-      "Mentions clients must reconnect or rediscover the new primary after failover."
+      { "label": "Explains primary-replica replication where replicas receive a stream of commands from the primary.", "relatedTrigger": null },
+      { "label": "Mentions replicas reconnect and attempt partial resynchronization after link breaks when possible.", "relatedTrigger": null },
+      { "label": "Explains Sentinel monitoring, notifications, client discovery, and automatic failover for non-clustered Redis.", "relatedTrigger": null },
+      { "label": "Discusses asynchronous replication and possible data loss or stale reads around failover.", "relatedTrigger": null },
+      { "label": "Understands Sentinel quorum/majority at a high level and why multiple Sentinels are needed.", "relatedTrigger": null },
+      { "label": "Mentions clients must reconnect or rediscover the new primary after failover.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Claims Redis replication is synchronous by default.",
@@ -1496,12 +1496,12 @@
     "intent": "Evaluate whether the candidate understands Redis pipelining, round-trip latency, batching limits, and the difference from transactions.",
     "primaryQuestion": "How does Redis pipelining improve performance, and how is it different from a transaction?",
     "expectedSignals": [
-      "Explains request/response round-trip time and why many sequential commands are slow over a network.",
-      "Explains pipelining as sending multiple commands without waiting for each individual response.",
-      "States that pipelining reduces client/server round trips but does not make commands atomic by itself.",
-      "Mentions batching limits, response buffering, timeout risk, and memory pressure if a pipeline is too large.",
-      "Compares pipeline to MULTI/EXEC for atomic grouping and to Lua for server-side conditional logic.",
-      "Discusses measuring latency, throughput, p95/p99 response time, and application-level improvement."
+      { "label": "Explains request/response round-trip time and why many sequential commands are slow over a network.", "relatedTrigger": null },
+      { "label": "Explains pipelining as sending multiple commands without waiting for each individual response.", "relatedTrigger": null },
+      { "label": "States that pipelining reduces client/server round trips but does not make commands atomic by itself.", "relatedTrigger": null },
+      { "label": "Mentions batching limits, response buffering, timeout risk, and memory pressure if a pipeline is too large.", "relatedTrigger": null },
+      { "label": "Compares pipeline to MULTI/EXEC for atomic grouping and to Lua for server-side conditional logic.", "relatedTrigger": null },
+      { "label": "Discusses measuring latency, throughput, p95/p99 response time, and application-level improvement.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Claims pipelining guarantees atomic execution.",
@@ -1621,12 +1621,12 @@
     "intent": "Assess practical debugging of Redis memory growth, latency spikes, and hot-key or large-key problems.",
     "primaryQuestion": "Redis latency suddenly increased and memory is near the maxmemory limit. How would you investigate before changing configuration?",
     "expectedSignals": [
-      "Starts with symptoms and scope: affected commands, endpoints, nodes, time window, and recent deploys or traffic changes.",
-      "Checks INFO memory/stats, hit/miss ratio, evicted_keys, expired_keys, connected clients, command stats, and slow logs.",
-      "Looks for large keys, hot keys, unbounded collections, missing TTLs, or accidental key prefix explosions.",
-      "Considers eviction pressure, persistence/AOF rewrite, replication buffers, fork overhead, and network/client backpressure.",
-      "Proposes targeted mitigation such as adding TTLs, trimming collections, fixing key cardinality, batching carefully, or scaling memory.",
-      "Avoids unsafe commands on production without sampling or using safer tooling."
+      { "label": "Starts with symptoms and scope: affected commands, endpoints, nodes, time window, and recent deploys or traffic changes.", "relatedTrigger": null },
+      { "label": "Checks INFO memory/stats, hit/miss ratio, evicted_keys, expired_keys, connected clients, command stats, and slow logs.", "relatedTrigger": null },
+      { "label": "Looks for large keys, hot keys, unbounded collections, missing TTLs, or accidental key prefix explosions.", "relatedTrigger": null },
+      { "label": "Considers eviction pressure, persistence/AOF rewrite, replication buffers, fork overhead, and network/client backpressure.", "relatedTrigger": null },
+      { "label": "Proposes targeted mitigation such as adding TTLs, trimming collections, fixing key cardinality, batching carefully, or scaling memory.", "relatedTrigger": null },
+      { "label": "Avoids unsafe commands on production without sampling or using safer tooling.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Only increases memory without finding the growth source.",
@@ -1746,12 +1746,12 @@
     "intent": "Evaluate senior-level understanding of Redis Cluster key distribution, hash slots, multi-key limitations, and operational trade-offs.",
     "primaryQuestion": "How does Redis Cluster distribute keys, and how would that affect key design for multi-key operations?",
     "expectedSignals": [
-      "Explains that Redis Cluster splits the keyspace into 16384 hash slots and assigns slots to primary nodes.",
-      "Mentions CRC16-based slot mapping and hash tags for forcing related keys into the same slot when needed.",
-      "Understands clients should follow MOVED/ASK redirections and maintain slot-to-node mapping.",
-      "Discusses limitations and complexity around multi-key commands, transactions, or Lua scripts across different slots.",
-      "Connects key design to data co-location, hot slots, uneven load, resharding, and read/write scaling.",
-      "Mentions failover with replicas and operational concerns during resharding or node replacement."
+      { "label": "Explains that Redis Cluster splits the keyspace into 16384 hash slots and assigns slots to primary nodes.", "relatedTrigger": null },
+      { "label": "Mentions CRC16-based slot mapping and hash tags for forcing related keys into the same slot when needed.", "relatedTrigger": null },
+      { "label": "Understands clients should follow MOVED/ASK redirections and maintain slot-to-node mapping.", "relatedTrigger": null },
+      { "label": "Discusses limitations and complexity around multi-key commands, transactions, or Lua scripts across different slots.", "relatedTrigger": null },
+      { "label": "Connects key design to data co-location, hot slots, uneven load, resharding, and read/write scaling.", "relatedTrigger": null },
+      { "label": "Mentions failover with replicas and operational concerns during resharding or node replacement.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Assumes Cluster is just replication with no sharding implications.",
@@ -1866,12 +1866,12 @@
     "intent": "Assess senior-level judgment about using Redis for durable or correctness-critical workflows, including persistence, replication, and application-level safeguards.",
     "primaryQuestion": "For a correctness-critical workflow, how would you decide whether Redis is acceptable as the primary store or only as a cache/coordination layer?",
     "expectedSignals": [
-      "Starts from business correctness requirements: acceptable data loss, duplicate processing, stale reads, and recovery objectives.",
-      "Compares Redis persistence and replication guarantees with database constraints, transactions, and consensus-backed systems.",
-      "Mentions asynchronous replication and failover windows that can lose acknowledged writes.",
-      "Uses Redis safely as cache, idempotency aid, rate limiter, or derived state when source of truth exists elsewhere.",
-      "Proposes durable source-of-truth patterns such as relational constraints, append-only logs, outbox, or transactional writes when needed.",
-      "Defines verification through tests, failure drills, monitoring, and documented SLO/SLA assumptions."
+      { "label": "Starts from business correctness requirements: acceptable data loss, duplicate processing, stale reads, and recovery objectives.", "relatedTrigger": null },
+      { "label": "Compares Redis persistence and replication guarantees with database constraints, transactions, and consensus-backed systems.", "relatedTrigger": null },
+      { "label": "Mentions asynchronous replication and failover windows that can lose acknowledged writes.", "relatedTrigger": null },
+      { "label": "Uses Redis safely as cache, idempotency aid, rate limiter, or derived state when source of truth exists elsewhere.", "relatedTrigger": null },
+      { "label": "Proposes durable source-of-truth patterns such as relational constraints, append-only logs, outbox, or transactional writes when needed.", "relatedTrigger": null },
+      { "label": "Defines verification through tests, failure drills, monitoring, and documented SLO/SLA assumptions.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Uses Redis as the only protection for financial correctness without additional durable safeguards.",
@@ -1996,12 +1996,12 @@
     "intent": "Assess senior incident diagnosis for hot keys, hot slots, cluster imbalance, and cache stampede under high traffic.",
     "primaryQuestion": "A Redis Cluster has one overloaded primary while other nodes are healthy. How would you diagnose and mitigate the issue?",
     "expectedSignals": [
-      "Checks whether load is due to a hot key, hot hash slot, uneven slot assignment, client routing problem, or command pattern.",
-      "Correlates node CPU, commandstats, network, latency, key access distribution, and application endpoints.",
-      "Inspects key naming and hash tags for accidental co-location of high-traffic keys.",
-      "Considers large-key operations, unbounded collections, cache stampede, and write amplification.",
-      "Proposes mitigations such as key splitting, local caching, request coalescing, TTL jitter, sharding high-cardinality keys, resharding slots, or moving hot paths.",
-      "Balances immediate mitigation with long-term data-model and workload changes."
+      { "label": "Checks whether load is due to a hot key, hot hash slot, uneven slot assignment, client routing problem, or command pattern.", "relatedTrigger": null },
+      { "label": "Correlates node CPU, commandstats, network, latency, key access distribution, and application endpoints.", "relatedTrigger": null },
+      { "label": "Inspects key naming and hash tags for accidental co-location of high-traffic keys.", "relatedTrigger": null },
+      { "label": "Considers large-key operations, unbounded collections, cache stampede, and write amplification.", "relatedTrigger": null },
+      { "label": "Proposes mitigations such as key splitting, local caching, request coalescing, TTL jitter, sharding high-cardinality keys, resharding slots, or moving hot paths.", "relatedTrigger": null },
+      { "label": "Balances immediate mitigation with long-term data-model and workload changes.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Immediately resharding without checking hot-key or hash-tag concentration.",
@@ -2121,12 +2121,12 @@
     "intent": "Evaluate senior-level design of Redis-backed rate limiting with algorithm choice, atomicity, memory bounds, and abuse cases.",
     "primaryQuestion": "How would you design a Redis-backed rate limiter, and how would you choose between fixed window, sliding window, and token bucket approaches?",
     "expectedSignals": [
-      "Compares fixed window simplicity with boundary burst problems.",
-      "Explains sliding window using sorted sets or counters with finer time buckets and the memory/cost trade-off.",
-      "Explains token bucket or leaky bucket semantics for smoothing bursts and replenishment.",
-      "Ensures atomic check-and-update with Lua or carefully chosen Redis primitives.",
-      "Defines keys by actor, route, tenant, IP, or user and sets TTLs to bound memory.",
-      "Discusses fail-open versus fail-closed behavior, observability, abuse patterns, and distributed deployment consistency."
+      { "label": "Compares fixed window simplicity with boundary burst problems.", "relatedTrigger": null },
+      { "label": "Explains sliding window using sorted sets or counters with finer time buckets and the memory/cost trade-off.", "relatedTrigger": null },
+      { "label": "Explains token bucket or leaky bucket semantics for smoothing bursts and replenishment.", "relatedTrigger": null },
+      { "label": "Ensures atomic check-and-update with Lua or carefully chosen Redis primitives.", "relatedTrigger": null },
+      { "label": "Defines keys by actor, route, tenant, IP, or user and sets TTLs to bound memory.", "relatedTrigger": null },
+      { "label": "Discusses fail-open versus fail-closed behavior, observability, abuse patterns, and distributed deployment consistency.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Uses GET then SET without atomicity under concurrent requests.",
@@ -2251,12 +2251,12 @@
     "intent": "Check whether the candidate can secure Redis access with ACLs, network isolation, command/key scoping, and operational hygiene.",
     "primaryQuestion": "What controls would you put around Redis access in production beyond just setting a password?",
     "expectedSignals": [
-      "Mentions network isolation, private connectivity, TLS where applicable, and avoiding public exposure.",
-      "Uses Redis ACLs to restrict users by commands, key patterns, and authentication credentials.",
-      "Separates application, admin, monitoring, and migration identities with least privilege.",
-      "Discusses dangerous command restrictions, rotation, secret storage, and auditability.",
-      "Mentions client-side timeouts, connection limits, and safe operational access paths.",
-      "Considers data sensitivity in Redis because cached values may contain PII or tokens."
+      { "label": "Mentions network isolation, private connectivity, TLS where applicable, and avoiding public exposure.", "relatedTrigger": null },
+      { "label": "Uses Redis ACLs to restrict users by commands, key patterns, and authentication credentials.", "relatedTrigger": null },
+      { "label": "Separates application, admin, monitoring, and migration identities with least privilege.", "relatedTrigger": null },
+      { "label": "Discusses dangerous command restrictions, rotation, secret storage, and auditability.", "relatedTrigger": null },
+      { "label": "Mentions client-side timeouts, connection limits, and safe operational access paths.", "relatedTrigger": null },
+      { "label": "Considers data sensitivity in Redis because cached values may contain PII or tokens.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Exposes Redis publicly with only a shared password.",
@@ -2371,12 +2371,12 @@
     "intent": "Verify real production Redis experience by asking for a concrete incident, migration, or scaling effort with measurable impact.",
     "primaryQuestion": "Tell me about a Redis production incident, migration, or scaling change you owned. What happened, what did you change, and how did you prove it worked?",
     "expectedSignals": [
-      "Describes a concrete Redis system, workload, topology, and business impact rather than a generic story.",
-      "Identifies root cause with evidence such as memory, eviction, latency, command stats, replication lag, hot keys, or application deploys.",
-      "Explains actions taken, trade-offs considered, rollback plan, and communication during the event.",
-      "Quantifies impact using metrics such as p95/p99 latency, hit rate, error rate, database load, cost, recovery time, or incident duration.",
-      "Mentions follow-up prevention such as dashboards, alerts, runbooks, key design changes, TTL policy, load tests, or failure drills.",
-      "Can explain what they personally owned versus what teammates or platform teams handled."
+      { "label": "Describes a concrete Redis system, workload, topology, and business impact rather than a generic story.", "relatedTrigger": null },
+      { "label": "Identifies root cause with evidence such as memory, eviction, latency, command stats, replication lag, hot keys, or application deploys.", "relatedTrigger": null },
+      { "label": "Explains actions taken, trade-offs considered, rollback plan, and communication during the event.", "relatedTrigger": null },
+      { "label": "Quantifies impact using metrics such as p95/p99 latency, hit rate, error rate, database load, cost, recovery time, or incident duration.", "relatedTrigger": null },
+      { "label": "Mentions follow-up prevention such as dashboards, alerts, runbooks, key design changes, TTL policy, load tests, or failure drills.", "relatedTrigger": null },
+      { "label": "Can explain what they personally owned versus what teammates or platform teams handled.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Cannot provide concrete metrics or timeline for a claimed Redis production effort.",

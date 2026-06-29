@@ -11,10 +11,10 @@
     "intent": "Check whether the candidate understands MongoDB's document model, BSON documents, collections, and why schema design is query-driven.",
     "primaryQuestion": "How would you explain the difference between a MongoDB document, a collection, and a relational database row/table, and how does that affect schema design?",
     "expectedSignals": [
-      "Explains documents as JSON-like BSON records grouped in collections.",
-      "Understands that related data can be embedded in a single document when access patterns fit.",
-      "Mentions that MongoDB does not remove the need for schema design; the schema is shaped around reads, writes, and update frequency.",
-      "Can compare flexibility with the risk of inconsistent document shapes."
+      { "label": "Explains documents as JSON-like BSON records grouped in collections.", "relatedTrigger": null },
+      { "label": "Understands that related data can be embedded in a single document when access patterns fit.", "relatedTrigger": null },
+      { "label": "Mentions that MongoDB does not remove the need for schema design; the schema is shaped around reads, writes, and update frequency.", "relatedTrigger": null },
+      { "label": "Can compare flexibility with the risk of inconsistent document shapes.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Says MongoDB has no schema so no modeling is needed.",
@@ -133,10 +133,10 @@
     "intent": "Evaluate whether the candidate can reason about basic MongoDB CRUD filters, projections, sorting, and update operators.",
     "primaryQuestion": "How would you query active users by email domain, return only needed fields, sort by creation time, and update one user's lastLoginAt in MongoDB?",
     "expectedSignals": [
-      "Builds a filter using fields and operators instead of scanning in application code.",
-      "Uses projection to avoid returning unnecessary fields.",
-      "Mentions sort and limit when result ordering or size matters.",
-      "Uses an update operator such as $set instead of replacing the whole document unintentionally."
+      { "label": "Builds a filter using fields and operators instead of scanning in application code.", "relatedTrigger": null },
+      { "label": "Uses projection to avoid returning unnecessary fields.", "relatedTrigger": null },
+      { "label": "Mentions sort and limit when result ordering or size matters.", "relatedTrigger": null },
+      { "label": "Uses an update operator such as $set instead of replacing the whole document unintentionally.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Fetches all users and filters in memory for a normal database query.",
@@ -255,10 +255,10 @@
     "intent": "Assess basic operational debugging when an application cannot connect to MongoDB.",
     "primaryQuestion": "A Node.js service suddenly cannot connect to MongoDB after deployment. What would you check before changing application code?",
     "expectedSignals": [
-      "Checks connection string, credentials, database name, and environment variables.",
-      "Verifies network path, DNS, firewall, allowlist, and TLS settings.",
-      "Looks at driver error messages and database/server logs.",
-      "Considers deployment differences such as secrets, replica set name, or SRV record resolution."
+      { "label": "Checks connection string, credentials, database name, and environment variables.", "relatedTrigger": null },
+      { "label": "Verifies network path, DNS, firewall, allowlist, and TLS settings.", "relatedTrigger": null },
+      { "label": "Looks at driver error messages and database/server logs.", "relatedTrigger": null },
+      { "label": "Considers deployment differences such as secrets, replica set name, or SRV record resolution.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Starts rewriting repository code without reading the actual error.",
@@ -377,10 +377,10 @@
     "intent": "Check whether the candidate understands what indexes do, why they speed reads, and what trade-offs they introduce.",
     "primaryQuestion": "What is a MongoDB index, how can it help a query, and what costs should you expect when adding indexes?",
     "expectedSignals": [
-      "Explains that indexes let MongoDB find matching documents without scanning the whole collection.",
-      "Mentions index keys should match common filters, sorts, or uniqueness requirements.",
-      "Understands indexes consume storage and add write maintenance overhead.",
-      "Can distinguish a useful index from adding indexes to every field."
+      { "label": "Explains that indexes let MongoDB find matching documents without scanning the whole collection.", "relatedTrigger": null },
+      { "label": "Mentions index keys should match common filters, sorts, or uniqueness requirements.", "relatedTrigger": null },
+      { "label": "Understands indexes consume storage and add write maintenance overhead.", "relatedTrigger": null },
+      { "label": "Can distinguish a useful index from adding indexes to every field.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Says indexes always make everything faster.",
@@ -494,10 +494,10 @@
     "intent": "Evaluate whether the candidate can choose between embedding and referencing for a simple product model.",
     "primaryQuestion": "You are modeling orders and order items in MongoDB. Would you embed the items inside the order document or reference them from another collection?",
     "expectedSignals": [
-      "Starts from how orders and items are read and updated.",
-      "Chooses embedding when items are usually retrieved with the order and bounded in size.",
-      "Considers references if items are large, independently updated, or shared across many documents.",
-      "Mentions document growth and maximum document size as constraints."
+      { "label": "Starts from how orders and items are read and updated.", "relatedTrigger": null },
+      { "label": "Chooses embedding when items are usually retrieved with the order and bounded in size.", "relatedTrigger": null },
+      { "label": "Considers references if items are large, independently updated, or shared across many documents.", "relatedTrigger": null },
+      { "label": "Mentions document growth and maximum document size as constraints.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Always embeds everything because MongoDB is document-based.",
@@ -616,10 +616,10 @@
     "intent": "Check whether the candidate understands the aggregation pipeline as ordered data transformation stages.",
     "primaryQuestion": "What is the MongoDB aggregation pipeline, and how would you use $match, $group, and $sort to calculate daily order revenue?",
     "expectedSignals": [
-      "Explains aggregation as a sequence of stages where documents flow through transformations.",
-      "Uses $match early to filter relevant orders.",
-      "Groups by a date bucket and sums order amounts.",
-      "Sorts results and considers date/timezone boundaries at a basic level."
+      { "label": "Explains aggregation as a sequence of stages where documents flow through transformations.", "relatedTrigger": null },
+      { "label": "Uses $match early to filter relevant orders.", "relatedTrigger": null },
+      { "label": "Groups by a date bucket and sums order amounts.", "relatedTrigger": null },
+      { "label": "Sorts results and considers date/timezone boundaries at a basic level.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Confuses aggregation with only counting documents.",
@@ -738,10 +738,10 @@
     "intent": "Assess mid-level understanding of compound index ordering, query shape, sort support, and covered queries.",
     "primaryQuestion": "For a collection of events queried by tenantId, status, createdAt range, and sorted by createdAt desc, how would you design a compound index and verify it is being used?",
     "expectedSignals": [
-      "Chooses an index order based on equality predicates, range predicate, and sort requirement.",
-      "Explains why tenantId is usually a leading key in multi-tenant queries.",
-      "Uses explain plans to inspect IXSCAN, keys examined, documents examined, and sort behavior.",
-      "Mentions covered queries or projection when relevant."
+      { "label": "Chooses an index order based on equality predicates, range predicate, and sort requirement.", "relatedTrigger": null },
+      { "label": "Explains why tenantId is usually a leading key in multi-tenant queries.", "relatedTrigger": null },
+      { "label": "Uses explain plans to inspect IXSCAN, keys examined, documents examined, and sort behavior.", "relatedTrigger": null },
+      { "label": "Mentions covered queries or projection when relevant.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Creates separate single-field indexes and assumes MongoDB will always combine them optimally.",
@@ -860,10 +860,10 @@
     "intent": "Evaluate systematic diagnosis of a slow MongoDB query in production.",
     "primaryQuestion": "A MongoDB endpoint changed from 80 ms to 3 seconds after data growth. How would you diagnose whether the issue is index design, query shape, or data distribution?",
     "expectedSignals": [
-      "Captures the exact query, parameters, projection, sort, and collection size.",
-      "Uses explain execution stats or profiler/slow query logs to compare keys examined, docs examined, and execution time.",
-      "Checks whether the query performs COLLSCAN, blocking sort, or reads too many documents.",
-      "Considers data skew, tenant distribution, and changes in cardinality after growth."
+      { "label": "Captures the exact query, parameters, projection, sort, and collection size.", "relatedTrigger": null },
+      { "label": "Uses explain execution stats or profiler/slow query logs to compare keys examined, docs examined, and execution time.", "relatedTrigger": null },
+      { "label": "Checks whether the query performs COLLSCAN, blocking sort, or reads too many documents.", "relatedTrigger": null },
+      { "label": "Considers data skew, tenant distribution, and changes in cardinality after growth.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Adds an index blindly without measuring the current plan.",
@@ -982,10 +982,10 @@
     "intent": "Assess nuanced schema modeling for one-to-many and many-to-many relationships beyond basic embedding advice.",
     "primaryQuestion": "For a product catalog with products, categories, variants, inventory, and reviews, what would you embed, what would you reference, and why?",
     "expectedSignals": [
-      "Separates read-heavy product display data from frequently changing inventory or reviews.",
-      "Considers bounded versus unbounded arrays.",
-      "Mentions denormalization for read performance and the need to keep duplicated data consistent.",
-      "Explains how category and search/filter access patterns affect the model."
+      { "label": "Separates read-heavy product display data from frequently changing inventory or reviews.", "relatedTrigger": null },
+      { "label": "Considers bounded versus unbounded arrays.", "relatedTrigger": null },
+      { "label": "Mentions denormalization for read performance and the need to keep duplicated data consistent.", "relatedTrigger": null },
+      { "label": "Explains how category and search/filter access patterns affect the model.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Embeds all reviews indefinitely inside the product document.",
@@ -1104,10 +1104,10 @@
     "intent": "Evaluate aggregation pipeline depth including joins, grouping, unwinding arrays, and performance considerations.",
     "primaryQuestion": "How would you build an aggregation that joins orders to customers, unwinds line items, groups revenue by customer segment, and keeps the pipeline performant?",
     "expectedSignals": [
-      "Uses $lookup for collection joins and understands the join field requirements.",
-      "Uses $unwind when aggregating array elements such as line items.",
-      "Groups by customer segment and sums revenue correctly.",
-      "Pushes filtering and projection early and considers indexes on join/filter fields."
+      { "label": "Uses $lookup for collection joins and understands the join field requirements.", "relatedTrigger": null },
+      { "label": "Uses $unwind when aggregating array elements such as line items.", "relatedTrigger": null },
+      { "label": "Groups by customer segment and sums revenue correctly.", "relatedTrigger": null },
+      { "label": "Pushes filtering and projection early and considers indexes on join/filter fields.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Performs N+1 queries from application code for a report that fits aggregation.",
@@ -1226,10 +1226,10 @@
     "intent": "Assess understanding of single-document atomicity, multi-document transactions, and when transactions are appropriate.",
     "primaryQuestion": "MongoDB writes are atomic at what level, and when would you use a multi-document transaction instead of modeling data to update one document?",
     "expectedSignals": [
-      "Knows single-document writes are atomic.",
-      "Uses multi-document transactions for invariants across multiple documents or collections.",
-      "Considers embedding or denormalization to keep common atomic updates within one document when appropriate.",
-      "Mentions retry/error handling and performance/latency overhead for transactions."
+      { "label": "Knows single-document writes are atomic.", "relatedTrigger": null },
+      { "label": "Uses multi-document transactions for invariants across multiple documents or collections.", "relatedTrigger": null },
+      { "label": "Considers embedding or denormalization to keep common atomic updates within one document when appropriate.", "relatedTrigger": null },
+      { "label": "Mentions retry/error handling and performance/latency overhead for transactions.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Assumes every MongoDB write across collections is automatically atomic.",
@@ -1348,10 +1348,10 @@
     "intent": "Evaluate debugging of perceived missing writes or stale reads using read/write concern and replication lag concepts.",
     "primaryQuestion": "Users report that a saved change sometimes disappears for a few seconds after refresh. How would you investigate read preference, read concern, write concern, and replication lag?",
     "expectedSignals": [
-      "Checks whether writes are acknowledged with an appropriate write concern.",
-      "Verifies if reads may be served from secondaries through read preference.",
-      "Considers replication lag and session/causal consistency for read-your-writes behavior.",
-      "Uses logs/metrics to compare primary writes and secondary read timing."
+      { "label": "Checks whether writes are acknowledged with an appropriate write concern.", "relatedTrigger": null },
+      { "label": "Verifies if reads may be served from secondaries through read preference.", "relatedTrigger": null },
+      { "label": "Considers replication lag and session/causal consistency for read-your-writes behavior.", "relatedTrigger": null },
+      { "label": "Uses logs/metrics to compare primary writes and secondary read timing.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Assumes MongoDB lost data without checking read path and acknowledgment.",
@@ -1475,10 +1475,10 @@
     "intent": "Assess ability to design retention and archiving behavior using TTL indexes and operational constraints.",
     "primaryQuestion": "You need to keep session documents for 30 days and audit events for 7 years. Would you use TTL indexes, an archive job, or another design?",
     "expectedSignals": [
-      "Uses TTL indexes for simple automatic expiration of time-based data such as sessions.",
-      "Recognizes audit data often has legal, reporting, and restore requirements that may need archiving instead of simple deletion.",
-      "Mentions TTL deletion is asynchronous and should not be treated as exact scheduling.",
-      "Considers indexes, storage growth, backup/restore, and query patterns for retained data."
+      { "label": "Uses TTL indexes for simple automatic expiration of time-based data such as sessions.", "relatedTrigger": null },
+      { "label": "Recognizes audit data often has legal, reporting, and restore requirements that may need archiving instead of simple deletion.", "relatedTrigger": null },
+      { "label": "Mentions TTL deletion is asynchronous and should not be treated as exact scheduling.", "relatedTrigger": null },
+      { "label": "Considers indexes, storage growth, backup/restore, and query patterns for retained data.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Uses TTL for audit logs without discussing compliance or archive needs.",
@@ -1597,10 +1597,10 @@
     "intent": "Verify hands-on MongoDB migration experience from CV claims, including rollout, backfill, indexes, and validation.",
     "primaryQuestion": "Your CV mentions migrating data or changing a MongoDB schema in production. What changed, how did you backfill safely, and how did you verify correctness and performance?",
     "expectedSignals": [
-      "Describes the old and new schema or index design clearly.",
-      "Uses a safe rollout plan such as dual reads/writes, idempotent backfill, or feature flags when appropriate.",
-      "Mentions validation queries, sampling, counts, or checksums.",
-      "Measures performance impact before and after the migration."
+      { "label": "Describes the old and new schema or index design clearly.", "relatedTrigger": null },
+      { "label": "Uses a safe rollout plan such as dual reads/writes, idempotent backfill, or feature flags when appropriate.", "relatedTrigger": null },
+      { "label": "Mentions validation queries, sampling, counts, or checksums.", "relatedTrigger": null },
+      { "label": "Measures performance impact before and after the migration.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Only says the team migrated without naming personal work.",
@@ -1719,10 +1719,10 @@
     "intent": "Evaluate senior-level judgment for sharding strategy, shard key selection, and operational trade-offs.",
     "primaryQuestion": "You need to shard a multi-tenant MongoDB workload. How would you choose a shard key, and what failure modes would you watch for after rollout?",
     "expectedSignals": [
-      "Evaluates query isolation, cardinality, frequency, and monotonic insert patterns.",
-      "Considers tenantId-based keys, compound shard keys, hashed keys, and zone/range needs.",
-      "Watches for jumbo chunks, hot shards, scatter-gather queries, and uneven storage or write distribution.",
-      "Plans rollout validation, metrics, and operational remediation."
+      { "label": "Evaluates query isolation, cardinality, frequency, and monotonic insert patterns.", "relatedTrigger": null },
+      { "label": "Considers tenantId-based keys, compound shard keys, hashed keys, and zone/range needs.", "relatedTrigger": null },
+      { "label": "Watches for jumbo chunks, hot shards, scatter-gather queries, and uneven storage or write distribution.", "relatedTrigger": null },
+      { "label": "Plans rollout validation, metrics, and operational remediation.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Chooses a shard key only because it is unique without considering query routing.",
@@ -1841,10 +1841,10 @@
     "intent": "Assess senior understanding of replica sets, elections, write durability, read routing, and application-level consistency expectations.",
     "primaryQuestion": "How do MongoDB replica sets handle primary elections, write durability, and read-your-writes expectations in an application?",
     "expectedSignals": [
-      "Explains primary/secondary replication and election behavior at a practical level.",
-      "Connects write concern majority to durability across voting members.",
-      "Explains how read preference and read concern affect stale reads and consistency.",
-      "Mentions retryable writes, failover handling, and application timeouts."
+      { "label": "Explains primary/secondary replication and election behavior at a practical level.", "relatedTrigger": null },
+      { "label": "Connects write concern majority to durability across voting members.", "relatedTrigger": null },
+      { "label": "Explains how read preference and read concern affect stale reads and consistency.", "relatedTrigger": null },
+      { "label": "Mentions retryable writes, failover handling, and application timeouts.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Assumes reads from any secondary are always current.",
@@ -1963,10 +1963,10 @@
     "intent": "Evaluate senior operational debugging of hot shards, uneven load, and scatter-gather behavior in a sharded MongoDB cluster.",
     "primaryQuestion": "After sharding, one shard receives most writes and some queries scatter across all shards. How would you diagnose and fix the issue?",
     "expectedSignals": [
-      "Checks shard key distribution, chunk distribution, balancer state, and jumbo chunks.",
-      "Compares query filters to shard key prefixes to identify scatter-gather patterns.",
-      "Looks at per-shard CPU, IOPS, locks, queueing, and operation metrics.",
-      "Considers resharding, compound shard key changes, query changes, zone sharding, or data model changes."
+      { "label": "Checks shard key distribution, chunk distribution, balancer state, and jumbo chunks.", "relatedTrigger": null },
+      { "label": "Compares query filters to shard key prefixes to identify scatter-gather patterns.", "relatedTrigger": null },
+      { "label": "Looks at per-shard CPU, IOPS, locks, queueing, and operation metrics.", "relatedTrigger": null },
+      { "label": "Considers resharding, compound shard key changes, query changes, zone sharding, or data model changes.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Only adds more shards without addressing key distribution or query routing.",
@@ -2085,10 +2085,10 @@
     "intent": "Evaluate senior design trade-offs between MongoDB multi-document transactions, document modeling, idempotency, and event-driven consistency.",
     "primaryQuestion": "For a checkout flow that updates inventory, creates an order, records payment state, and publishes events, where would you use MongoDB transactions, and where would you prefer idempotency or eventual consistency?",
     "expectedSignals": [
-      "Identifies strong invariants that may require a transaction, such as avoiding oversell for a specific stock record.",
-      "Separates external payment calls from database transaction boundaries.",
-      "Uses idempotency keys and outbox/event patterns for reliable event publication.",
-      "Considers latency, lock duration, retries, and failure compensation."
+      { "label": "Identifies strong invariants that may require a transaction, such as avoiding oversell for a specific stock record.", "relatedTrigger": null },
+      { "label": "Separates external payment calls from database transaction boundaries.", "relatedTrigger": null },
+      { "label": "Uses idempotency keys and outbox/event patterns for reliable event publication.", "relatedTrigger": null },
+      { "label": "Considers latency, lock duration, retries, and failure compensation.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Wraps external payment API calls inside a long database transaction.",
@@ -2207,10 +2207,10 @@
     "intent": "Assess senior approach to schema evolution, validation, backward compatibility, and mixed-version application deployments.",
     "primaryQuestion": "How would you evolve a MongoDB document schema safely when old application versions may still read and write documents during a rolling deployment?",
     "expectedSignals": [
-      "Designs backward-compatible reads and writes for mixed document versions.",
-      "Uses additive changes, default handling, and version fields or feature flags when useful.",
-      "Plans idempotent backfill and validation after readers are compatible.",
-      "Introduces schema validation carefully after data and application compatibility are proven."
+      { "label": "Designs backward-compatible reads and writes for mixed document versions.", "relatedTrigger": null },
+      { "label": "Uses additive changes, default handling, and version fields or feature flags when useful.", "relatedTrigger": null },
+      { "label": "Plans idempotent backfill and validation after readers are compatible.", "relatedTrigger": null },
+      { "label": "Introduces schema validation carefully after data and application compatibility are proven.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Deploys a breaking schema change and backfill at the same time without compatibility plan.",
@@ -2329,10 +2329,10 @@
     "intent": "Verify senior production ownership through a concrete MongoDB performance or reliability incident.",
     "primaryQuestion": "Tell me about a serious MongoDB performance or reliability incident you owned. What was the symptom, root cause, mitigation, permanent fix, and measured outcome?",
     "expectedSignals": [
-      "Frames the incident with user/business impact and timeline.",
-      "Uses evidence from metrics, logs, query plans, replication/sharding state, or deployment changes.",
-      "Distinguishes immediate mitigation from durable fix.",
-      "Provides measured outcome and prevention such as alerts, tests, runbooks, or capacity planning."
+      { "label": "Frames the incident with user/business impact and timeline.", "relatedTrigger": null },
+      { "label": "Uses evidence from metrics, logs, query plans, replication/sharding state, or deployment changes.", "relatedTrigger": null },
+      { "label": "Distinguishes immediate mitigation from durable fix.", "relatedTrigger": null },
+      { "label": "Provides measured outcome and prevention such as alerts, tests, runbooks, or capacity planning.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Gives a vague story with no concrete MongoDB signal.",

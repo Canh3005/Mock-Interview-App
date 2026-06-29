@@ -44,6 +44,22 @@ export class QuestionProbeFollowUpInputDto {
   purpose!: string;
 }
 
+export class QuestionProbeExpectedSignalInputDto {
+  @ApiProperty({ example: 'Names a concrete metric or baseline.' })
+  @IsString()
+  @IsNotEmpty()
+  label!: string;
+
+  @ApiProperty({
+    enum: QUESTION_PROBE_FOLLOW_UP_TRIGGERS,
+    required: false,
+    nullable: true,
+  })
+  @IsOptional()
+  @IsIn(QUESTION_PROBE_FOLLOW_UP_TRIGGERS)
+  relatedTrigger?: QuestionProbeFollowUpTrigger | null;
+}
+
 export class QuestionProbeScoringHintInputDto {
   @ApiProperty({ example: 'strong' })
   @IsString()
@@ -139,11 +155,15 @@ export class QuestionProbeDraftDto {
   @IsString()
   primaryQuestion?: string | null;
 
-  @ApiProperty({ required: false, example: ['Specific situation'] })
+  @ApiProperty({
+    required: false,
+    type: [QuestionProbeExpectedSignalInputDto],
+  })
   @IsOptional()
   @IsArray()
-  @IsString({ each: true })
-  expectedSignals?: string[];
+  @ValidateNested({ each: true })
+  @Type(() => QuestionProbeExpectedSignalInputDto)
+  expectedSignals?: QuestionProbeExpectedSignalInputDto[];
 
   @ApiProperty({ required: false, example: ['No concrete action'] })
   @IsOptional()

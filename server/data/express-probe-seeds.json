@@ -11,10 +11,10 @@
     "intent": "Check whether the candidate can explain Express routing, HTTP methods, path parameters, query strings, and response status shaping in a simple REST endpoint.",
     "primaryQuestion": "How would you implement GET /users/:id in Express, read the path parameter and query options, and return the right HTTP response?",
     "expectedSignals": [
-      "Uses an HTTP method route such as app.get or router.get with /users/:id.",
-      "Reads route parameters from req.params and optional filters from req.query.",
-      "Distinguishes not found, validation failure, and successful responses with appropriate status codes.",
-      "Avoids returning raw internal data that should not be exposed."
+      { "label": "Uses an HTTP method route such as app.get or router.get with /users/:id.", "relatedTrigger": null },
+      { "label": "Reads route parameters from req.params and optional filters from req.query.", "relatedTrigger": null },
+      { "label": "Distinguishes not found, validation failure, and successful responses with appropriate status codes.", "relatedTrigger": null },
+      { "label": "Avoids returning raw internal data that should not be exposed.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Confuses req.params, req.query, and req.body.",
@@ -75,10 +75,10 @@
     "intent": "Evaluate whether the candidate understands Express middleware as an ordered request-response pipeline and knows when to call next or end the response.",
     "primaryQuestion": "In Express, what happens when a request passes through logging, JSON parsing, authentication, a route handler, and an error handler? Why does order matter?",
     "expectedSignals": [
-      "Explains that middleware runs in registration order for matching paths.",
-      "States that middleware should either send a response or call next.",
-      "Places body parsing before routes that need req.body and auth before protected routes.",
-      "Understands that error-handling middleware is separate and usually registered after routes."
+      { "label": "Explains that middleware runs in registration order for matching paths.", "relatedTrigger": null },
+      { "label": "States that middleware should either send a response or call next.", "relatedTrigger": null },
+      { "label": "Places body parsing before routes that need req.body and auth before protected routes.", "relatedTrigger": null },
+      { "label": "Understands that error-handling middleware is separate and usually registered after routes.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Believes middleware order is automatically optimized by Express.",
@@ -139,10 +139,10 @@
     "intent": "Check whether the candidate understands built-in body parsers, content types, size limits, and why request body values must be treated as untrusted input.",
     "primaryQuestion": "When would you use express.json and express.urlencoded, what options would you configure, and why should req.body still be validated?",
     "expectedSignals": [
-      "Explains that express.json parses JSON payloads and express.urlencoded parses form-style payloads.",
-      "Mentions content type matching and middleware order before routes.",
-      "Configures limits to reduce accidental or malicious large body impact.",
-      "Treats req.body as untrusted and validates types, required fields, and allowed values."
+      { "label": "Explains that express.json parses JSON payloads and express.urlencoded parses form-style payloads.", "relatedTrigger": null },
+      { "label": "Mentions content type matching and middleware order before routes.", "relatedTrigger": null },
+      { "label": "Configures limits to reduce accidental or malicious large body impact.", "relatedTrigger": null },
+      { "label": "Treats req.body as untrusted and validates types, required fields, and allowed values.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Assumes req.body is always trustworthy because Express parsed it.",
@@ -202,10 +202,10 @@
     "intent": "Assess practical debugging of response lifecycle bugs such as sending multiple responses or calling next after a response has already been sent.",
     "primaryQuestion": "An Express route sometimes throws 'Cannot set headers after they are sent to the client'. How would you debug and fix it?",
     "expectedSignals": [
-      "Identifies multiple response paths as the likely cause.",
-      "Checks missing return statements after res.status(...).json(...) or res.redirect(...).",
-      "Mentions async branches that may both try to respond.",
-      "Uses res.headersSent carefully in error handlers and avoids continuing work after final response."
+      { "label": "Identifies multiple response paths as the likely cause.", "relatedTrigger": null },
+      { "label": "Checks missing return statements after res.status(...).json(...) or res.redirect(...).", "relatedTrigger": null },
+      { "label": "Mentions async branches that may both try to respond.", "relatedTrigger": null },
+      { "label": "Uses res.headersSent carefully in error handlers and avoids continuing work after final response.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Tries to suppress the error without finding the second response.",
@@ -266,10 +266,10 @@
     "intent": "Evaluate whether the candidate can organize Express routes using express.Router, mount paths, route-level middleware, and shared parameters.",
     "primaryQuestion": "How would you split user and order APIs into Express routers, mount them under /api, and apply middleware only to protected routes?",
     "expectedSignals": [
-      "Creates separate express.Router instances for feature route groups.",
-      "Mounts routers with app.use('/api/users', usersRouter) or similar.",
-      "Applies auth middleware at router or route level instead of globally when not needed.",
-      "Understands req.baseUrl, req.originalUrl, and mergeParams when nested routers need parent params."
+      { "label": "Creates separate express.Router instances for feature route groups.", "relatedTrigger": null },
+      { "label": "Mounts routers with app.use('/api/users', usersRouter) or similar.", "relatedTrigger": null },
+      { "label": "Applies auth middleware at router or route level instead of globally when not needed.", "relatedTrigger": null },
+      { "label": "Understands req.baseUrl, req.originalUrl, and mergeParams when nested routers need parent params.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Keeps all routes in one large file without explaining boundaries.",
@@ -330,10 +330,10 @@
     "intent": "Assess whether the candidate can design centralized Express error handling for synchronous errors, rejected promises, expected application errors, and safe response formatting.",
     "primaryQuestion": "How would you design centralized error handling in an Express API so validation errors, not-found errors, and unexpected failures are handled consistently?",
     "expectedSignals": [
-      "Uses a final error-handling middleware with the err, req, res, next signature.",
-      "Maps known application errors to stable status codes and response bodies.",
-      "Handles async route failures through try/catch with next(err) or Express 5 promise propagation.",
-      "Logs server-side details while avoiding leaking stack traces or secrets to clients."
+      { "label": "Uses a final error-handling middleware with the err, req, res, next signature.", "relatedTrigger": null },
+      { "label": "Maps known application errors to stable status codes and response bodies.", "relatedTrigger": null },
+      { "label": "Handles async route failures through try/catch with next(err) or Express 5 promise propagation.", "relatedTrigger": null },
+      { "label": "Logs server-side details while avoiding leaking stack traces or secrets to clients.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Wraps every response in 200 with an error field.",
@@ -394,10 +394,10 @@
     "intent": "Evaluate whether the candidate can build authentication and authorization middleware with clear request augmentation, error semantics, and route-level authorization.",
     "primaryQuestion": "How would you implement Express middleware that authenticates a bearer token, attaches the current user, and enforces role-based access on selected routes?",
     "expectedSignals": [
-      "Separates authentication from authorization checks.",
-      "Validates bearer token format, verifies the token, and handles expired or invalid credentials.",
-      "Attaches a minimal trusted user context to req for downstream handlers.",
-      "Uses 401 for unauthenticated and 403 for authenticated but unauthorized requests."
+      { "label": "Separates authentication from authorization checks.", "relatedTrigger": null },
+      { "label": "Validates bearer token format, verifies the token, and handles expired or invalid credentials.", "relatedTrigger": null },
+      { "label": "Attaches a minimal trusted user context to req for downstream handlers.", "relatedTrigger": null },
+      { "label": "Uses 401 for unauthenticated and 403 for authenticated but unauthorized requests.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Stores full sensitive token claims or secrets on req.",
@@ -458,10 +458,10 @@
     "intent": "Assess whether the candidate can design request validation for Express APIs without mixing transport validation, business rules, and persistence constraints.",
     "primaryQuestion": "Where would you put validation in an Express API, and how would you distinguish request shape validation from business rule validation?",
     "expectedSignals": [
-      "Uses middleware or controller-adjacent validation for request shape, types, and required fields.",
-      "Keeps domain/business invariants in service or domain logic where they can be reused.",
-      "Returns consistent 400 or 422 style client errors with field-level details when appropriate.",
-      "Avoids trusting req.body, req.query, or req.params without validation and normalization."
+      { "label": "Uses middleware or controller-adjacent validation for request shape, types, and required fields.", "relatedTrigger": null },
+      { "label": "Keeps domain/business invariants in service or domain logic where they can be reused.", "relatedTrigger": null },
+      { "label": "Returns consistent 400 or 422 style client errors with field-level details when appropriate.", "relatedTrigger": null },
+      { "label": "Avoids trusting req.body, req.query, or req.params without validation and normalization.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Validates only on the frontend.",
@@ -522,10 +522,10 @@
     "intent": "Check whether the candidate can safely serve static assets with express.static, caching options, dotfile behavior, fallback behavior, and reverse proxy considerations.",
     "primaryQuestion": "If an Express app must serve uploaded public assets and a SPA build, how would you configure express.static safely and efficiently?",
     "expectedSignals": [
-      "Mounts static middleware to an explicit public URL path and filesystem root.",
-      "Configures caching such as maxAge or immutable only for versioned assets.",
-      "Understands fallthrough behavior and custom 404 handling.",
-      "Considers dotfiles, directory traversal boundaries, and reverse proxy caching."
+      { "label": "Mounts static middleware to an explicit public URL path and filesystem root.", "relatedTrigger": null },
+      { "label": "Configures caching such as maxAge or immutable only for versioned assets.", "relatedTrigger": null },
+      { "label": "Understands fallthrough behavior and custom 404 handling.", "relatedTrigger": null },
+      { "label": "Considers dotfiles, directory traversal boundaries, and reverse proxy caching.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Serves the project root or uploads directory without considering private files.",
@@ -586,10 +586,10 @@
     "intent": "Assess whether the candidate understands practical Express production security controls including Helmet, TLS assumptions, fingerprint reduction, user input validation, and dependency hygiene.",
     "primaryQuestion": "What security middleware and production settings would you add to a public Express API before launch, and what risk does each one reduce?",
     "expectedSignals": [
-      "Uses Helmet or equivalent response security headers and can name examples such as CSP, HSTS, frame protection, or MIME sniffing prevention.",
-      "Disables or reduces obvious fingerprinting such as X-Powered-By.",
-      "Validates and sanitizes user input instead of trusting request data.",
-      "Mentions TLS termination, secure dependencies, and endpoint-specific brute-force/rate-limit protection."
+      { "label": "Uses Helmet or equivalent response security headers and can name examples such as CSP, HSTS, frame protection, or MIME sniffing prevention.", "relatedTrigger": null },
+      { "label": "Disables or reduces obvious fingerprinting such as X-Powered-By.", "relatedTrigger": null },
+      { "label": "Validates and sanitizes user input instead of trusting request data.", "relatedTrigger": null },
+      { "label": "Mentions TLS termination, secure dependencies, and endpoint-specific brute-force/rate-limit protection.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Says installing Helmet makes the app secure by itself.",
@@ -649,10 +649,10 @@
     "intent": "Evaluate whether the candidate can reason about cookie security, session storage choices, proxy/TLS interactions, and what data should never live in client-visible session cookies.",
     "primaryQuestion": "How would you configure cookies and sessions in an Express app behind HTTPS, and how would you choose between server-side sessions and cookie-backed sessions?",
     "expectedSignals": [
-      "Sets secure, httpOnly, sameSite, path/domain, and expiry settings according to the use case.",
-      "Understands secure cookies require HTTPS and often correct trust proxy settings behind a proxy.",
-      "Distinguishes server-side session IDs from cookie-backed session payloads.",
-      "Avoids storing secrets or large sensitive data in client-visible cookies."
+      { "label": "Sets secure, httpOnly, sameSite, path/domain, and expiry settings according to the use case.", "relatedTrigger": null },
+      { "label": "Understands secure cookies require HTTPS and often correct trust proxy settings behind a proxy.", "relatedTrigger": null },
+      { "label": "Distinguishes server-side session IDs from cookie-backed session payloads.", "relatedTrigger": null },
+      { "label": "Avoids storing secrets or large sensitive data in client-visible cookies.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Stores passwords, access tokens, or large profile data directly in a cookie-backed session.",
@@ -713,10 +713,10 @@
     "intent": "Check whether the candidate understands Express trust proxy behavior and how it affects req.ip, req.protocol, secure cookies, logging, and rate limiting.",
     "primaryQuestion": "Your Express API runs behind Nginx or a cloud load balancer. How would you configure trust proxy, and what breaks if it is wrong?",
     "expectedSignals": [
-      "Explains that trust proxy controls whether Express trusts X-Forwarded-* headers from upstream proxies.",
-      "Understands impact on req.ip, req.ips, req.protocol, req.hostname, secure cookies, redirects, logs, and rate limits.",
-      "Chooses a constrained trust proxy setting based on known proxy hops or IP ranges instead of blindly trusting all clients.",
-      "Verifies that the last trusted proxy strips or overwrites spoofable forwarded headers."
+      { "label": "Explains that trust proxy controls whether Express trusts X-Forwarded-* headers from upstream proxies.", "relatedTrigger": null },
+      { "label": "Understands impact on req.ip, req.ips, req.protocol, req.hostname, secure cookies, redirects, logs, and rate limits.", "relatedTrigger": null },
+      { "label": "Chooses a constrained trust proxy setting based on known proxy hops or IP ranges instead of blindly trusting all clients.", "relatedTrigger": null },
+      { "label": "Verifies that the last trusted proxy strips or overwrites spoofable forwarded headers.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Sets trust proxy to true everywhere without understanding spoofing risk.",
@@ -776,10 +776,10 @@
     "intent": "Assess debugging ability for async Express route failures, swallowed promise rejections, missing awaits, and inconsistent error responses.",
     "primaryQuestion": "A production Express endpoint sometimes times out and logs an unhandled promise rejection from inside an async database call. How would you investigate and fix it?",
     "expectedSignals": [
-      "Checks whether the route awaits promises and forwards failures to the error handler.",
-      "Distinguishes Express 4 async wrapper or try/catch needs from Express 5 rejected promise handling.",
-      "Looks for branches that neither send a response nor call next.",
-      "Adds tests for success, expected failure, and rejected promise paths."
+      { "label": "Checks whether the route awaits promises and forwards failures to the error handler.", "relatedTrigger": null },
+      { "label": "Distinguishes Express 4 async wrapper or try/catch needs from Express 5 rejected promise handling.", "relatedTrigger": null },
+      { "label": "Looks for branches that neither send a response nor call next.", "relatedTrigger": null },
+      { "label": "Adds tests for success, expected failure, and rejected promise paths.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Adds a global unhandledRejection handler as the only fix.",
@@ -840,10 +840,10 @@
     "intent": "Evaluate whether the candidate can configure CORS intentionally for Express APIs, explain preflight behavior, and avoid over-permissive credentials policies.",
     "primaryQuestion": "How would you configure CORS for an Express API used by a browser frontend, especially when cookies or Authorization headers are involved?",
     "expectedSignals": [
-      "Explains origins, methods, allowed headers, credentials, and preflight requests.",
-      "Avoids combining wildcard origin with credentialed browser requests.",
-      "Uses an allowlist or environment-specific origin policy rather than fully open production CORS.",
-      "Separates CORS from authentication and server-to-server authorization concerns."
+      { "label": "Explains origins, methods, allowed headers, credentials, and preflight requests.", "relatedTrigger": null },
+      { "label": "Avoids combining wildcard origin with credentialed browser requests.", "relatedTrigger": null },
+      { "label": "Uses an allowlist or environment-specific origin policy rather than fully open production CORS.", "relatedTrigger": null },
+      { "label": "Separates CORS from authentication and server-to-server authorization concerns.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Sets Access-Control-Allow-Origin to * and credentials to true for production.",
@@ -904,10 +904,10 @@
     "intent": "Assess whether the candidate can test Express routes by separating app creation from server listening, mocking dependencies, and covering middleware/error paths.",
     "primaryQuestion": "How would you structure an Express app so routes can be integration-tested without opening a real network port?",
     "expectedSignals": [
-      "Separates app construction from app.listen so tests can import the app instance.",
-      "Uses HTTP-level tests against the Express app with controlled dependencies or a test database.",
-      "Covers middleware behavior, validation errors, auth failures, success responses, and error middleware.",
-      "Avoids brittle tests that assert implementation details instead of API contracts."
+      { "label": "Separates app construction from app.listen so tests can import the app instance.", "relatedTrigger": null },
+      { "label": "Uses HTTP-level tests against the Express app with controlled dependencies or a test database.", "relatedTrigger": null },
+      { "label": "Covers middleware behavior, validation errors, auth failures, success responses, and error middleware.", "relatedTrigger": null },
+      { "label": "Avoids brittle tests that assert implementation details instead of API contracts.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Starts the production server as a side effect of importing app code.",
@@ -968,10 +968,10 @@
     "intent": "Evaluate whether the candidate can reason about Express production performance across code, runtime, and infrastructure layers.",
     "primaryQuestion": "An Express API has poor p95 latency under load. How would you investigate and improve performance without guessing?",
     "expectedSignals": [
-      "Starts with measurement: p50/p95/p99 latency, throughput, error rate, CPU, memory, event loop delay, database timing, and downstream timing.",
-      "Looks for synchronous work, blocking I/O, excessive JSON parsing/stringifying, inefficient logging, and slow middleware.",
-      "Considers compression, caching, reverse proxy, load balancing, clustering, and NODE_ENV=production.",
-      "Validates changes with load tests and production telemetry rather than micro-optimizing blindly."
+      { "label": "Starts with measurement: p50/p95/p99 latency, throughput, error rate, CPU, memory, event loop delay, database timing, and downstream timing.", "relatedTrigger": null },
+      { "label": "Looks for synchronous work, blocking I/O, excessive JSON parsing/stringifying, inefficient logging, and slow middleware.", "relatedTrigger": null },
+      { "label": "Considers compression, caching, reverse proxy, load balancing, clustering, and NODE_ENV=production.", "relatedTrigger": null },
+      { "label": "Validates changes with load tests and production telemetry rather than micro-optimizing blindly.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Immediately adds more servers without identifying the bottleneck.",
@@ -1031,10 +1031,10 @@
     "intent": "Assess whether the candidate can design health checks and graceful shutdown for Express services in production deployments.",
     "primaryQuestion": "How would you implement health checks and graceful shutdown for an Express service running in containers or behind a load balancer?",
     "expectedSignals": [
-      "Separates liveness from readiness and includes dependency health where appropriate.",
-      "On shutdown signal, stops accepting new connections and allows in-flight requests to finish within a deadline.",
-      "Closes database, message queue, and other resource pools cleanly.",
-      "Coordinates with load balancer or orchestrator readiness so traffic drains before process exit."
+      { "label": "Separates liveness from readiness and includes dependency health where appropriate.", "relatedTrigger": null },
+      { "label": "On shutdown signal, stops accepting new connections and allows in-flight requests to finish within a deadline.", "relatedTrigger": null },
+      { "label": "Closes database, message queue, and other resource pools cleanly.", "relatedTrigger": null },
+      { "label": "Coordinates with load balancer or orchestrator readiness so traffic drains before process exit.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Kills the process immediately on SIGTERM without draining requests.",
@@ -1095,10 +1095,10 @@
     "intent": "Evaluate whether the candidate can structure a larger Express service with clear boundaries between routing, controllers, services, repositories, policies, and cross-cutting middleware.",
     "primaryQuestion": "For a growing Express codebase, how would you structure routes, controllers, services, repositories, middleware, and configuration so the app stays maintainable?",
     "expectedSignals": [
-      "Keeps Express-specific concerns near routing/controllers and domain logic in services or domain modules.",
-      "Uses explicit dependency boundaries for databases, external clients, configuration, and policies.",
-      "Avoids turning middleware into a dumping ground for business logic.",
-      "Designs for testability, consistent errors, observability, and gradual feature ownership."
+      { "label": "Keeps Express-specific concerns near routing/controllers and domain logic in services or domain modules.", "relatedTrigger": null },
+      { "label": "Uses explicit dependency boundaries for databases, external clients, configuration, and policies.", "relatedTrigger": null },
+      { "label": "Avoids turning middleware into a dumping ground for business logic.", "relatedTrigger": null },
+      { "label": "Designs for testability, consistent errors, observability, and gradual feature ownership.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Puts all business logic in route handlers.",
@@ -1159,10 +1159,10 @@
     "intent": "Assess whether the candidate can plan an Express 4 to Express 5 migration with attention to route matching, removed APIs, async error behavior, body parsing defaults, and regression testing.",
     "primaryQuestion": "What would you check when migrating an Express 4 service to Express 5, and how would you reduce the risk of breaking routes or error handling?",
     "expectedSignals": [
-      "Runs automated tests and reviews route matching syntax changes such as named wildcards and optional segments.",
-      "Removes deprecated response signatures like res.send(body, status) and res.json(obj, status).",
-      "Understands rejected promises from async handlers are forwarded in Express 5.",
-      "Checks express.urlencoded defaults, req.body behavior, static dotfile changes, and app.listen error callback behavior."
+      { "label": "Runs automated tests and reviews route matching syntax changes such as named wildcards and optional segments.", "relatedTrigger": null },
+      { "label": "Removes deprecated response signatures like res.send(body, status) and res.json(obj, status).", "relatedTrigger": null },
+      { "label": "Understands rejected promises from async handlers are forwarded in Express 5.", "relatedTrigger": null },
+      { "label": "Checks express.urlencoded defaults, req.body behavior, static dotfile changes, and app.listen error callback behavior.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Assumes Express 5 is a drop-in upgrade without reading breaking changes.",
@@ -1222,10 +1222,10 @@
     "intent": "Evaluate senior-level incident response for Express APIs, including triage, rollback, observability, customer impact, and durable fixes.",
     "primaryQuestion": "A new Express release causes a spike in 500s and login latency. How would you triage, mitigate, and follow up?",
     "expectedSignals": [
-      "Checks error rate, latency percentiles, affected routes, deploy timing, logs, traces, and dependency health.",
-      "Mitigates with rollback, feature flag disablement, traffic shift, or rate limiting depending on blast radius.",
-      "Looks for common Express-specific causes such as auth middleware order, body parser limits, session store issues, trust proxy changes, or async error handling regressions.",
-      "Communicates impact, owns a post-incident review, adds tests/alerts, and validates the durable fix."
+      { "label": "Checks error rate, latency percentiles, affected routes, deploy timing, logs, traces, and dependency health.", "relatedTrigger": null },
+      { "label": "Mitigates with rollback, feature flag disablement, traffic shift, or rate limiting depending on blast radius.", "relatedTrigger": null },
+      { "label": "Looks for common Express-specific causes such as auth middleware order, body parser limits, session store issues, trust proxy changes, or async error handling regressions.", "relatedTrigger": null },
+      { "label": "Communicates impact, owns a post-incident review, adds tests/alerts, and validates the durable fix.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Keeps debugging in production while impact grows and no mitigation is attempted.",

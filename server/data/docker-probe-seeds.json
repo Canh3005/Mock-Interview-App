@@ -11,10 +11,10 @@
     "intent": "Check whether the candidate understands the practical difference between Docker images, containers, immutable layers, and the container writable layer.",
     "primaryQuestion": "How would you explain the difference between a Docker image and a running container, and what happens to files written inside the container?",
     "expectedSignals": [
-      "Explains an image as a reusable, layered, mostly immutable filesystem plus metadata used to create containers.",
-      "Explains a container as a running or stopped instance of an image with its own writable layer and runtime configuration.",
-      "Understands that data written only to the container writable layer is removed when the container is removed.",
-      "Mentions volumes or bind mounts when data must survive container replacement or be shared outside the container."
+      { "label": "Explains an image as a reusable, layered, mostly immutable filesystem plus metadata used to create containers.", "relatedTrigger": null },
+      { "label": "Explains a container as a running or stopped instance of an image with its own writable layer and runtime configuration.", "relatedTrigger": null },
+      { "label": "Understands that data written only to the container writable layer is removed when the container is removed.", "relatedTrigger": null },
+      { "label": "Mentions volumes or bind mounts when data must survive container replacement or be shared outside the container.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Treats an image and a container as the same thing.",
@@ -75,10 +75,10 @@
     "intent": "Evaluate whether the candidate can read and explain core Dockerfile instructions and separate build-time choices from runtime behavior.",
     "primaryQuestion": "Walk through a basic Dockerfile for a web service. What do FROM, WORKDIR, COPY, RUN, ENV, EXPOSE, CMD, and ENTRYPOINT do, and which ones affect build time versus runtime?",
     "expectedSignals": [
-      "Explains FROM as the base image and build stage boundary.",
-      "Separates build-time instructions such as COPY and RUN from runtime defaults such as CMD and ENTRYPOINT.",
-      "Understands EXPOSE documents/listens metadata but does not publish a host port by itself.",
-      "Mentions USER or least-privilege runtime when discussing production images."
+      { "label": "Explains FROM as the base image and build stage boundary.", "relatedTrigger": null },
+      { "label": "Separates build-time instructions such as COPY and RUN from runtime defaults such as CMD and ENTRYPOINT.", "relatedTrigger": null },
+      { "label": "Understands EXPOSE documents/listens metadata but does not publish a host port by itself.", "relatedTrigger": null },
+      { "label": "Mentions USER or least-privilege runtime when discussing production images.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Cannot distinguish RUN from CMD or ENTRYPOINT.",
@@ -139,10 +139,10 @@
     "intent": "Assess basic troubleshooting when a container exits immediately or does not serve traffic after startup.",
     "primaryQuestion": "A container starts and exits immediately, or it stays running but the app is unreachable. What Docker commands and evidence would you check first?",
     "expectedSignals": [
-      "Uses docker ps -a, docker logs, docker inspect, and exit code or command information before changing the image.",
-      "Checks whether the main process exits, crashes, waits on missing config, or binds to the wrong address or port.",
-      "Separates container-internal listening port from host port publishing.",
-      "Verifies environment variables, mounted files, working directory, and command/entrypoint overrides."
+      { "label": "Uses docker ps -a, docker logs, docker inspect, and exit code or command information before changing the image.", "relatedTrigger": null },
+      { "label": "Checks whether the main process exits, crashes, waits on missing config, or binds to the wrong address or port.", "relatedTrigger": null },
+      { "label": "Separates container-internal listening port from host port publishing.", "relatedTrigger": null },
+      { "label": "Verifies environment variables, mounted files, working directory, and command/entrypoint overrides.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Rebuilds the image repeatedly without reading logs or exit code.",
@@ -203,10 +203,10 @@
     "intent": "Evaluate whether the candidate can design efficient Docker builds using multi-stage builds, cache-friendly ordering, and small runtime images.",
     "primaryQuestion": "How would you design a Dockerfile for a Node, Go, or Java service so builds are cache-friendly and the final runtime image stays small?",
     "expectedSignals": [
-      "Uses multi-stage builds to separate build dependencies from runtime artifacts.",
-      "Orders COPY and dependency install steps to preserve cache when source code changes but dependency manifests do not.",
-      "Uses .dockerignore to keep unnecessary files out of the build context.",
-      "Considers base image choice, version pinning, rebuild cadence, and CI cache behavior."
+      { "label": "Uses multi-stage builds to separate build dependencies from runtime artifacts.", "relatedTrigger": null },
+      { "label": "Orders COPY and dependency install steps to preserve cache when source code changes but dependency manifests do not.", "relatedTrigger": null },
+      { "label": "Uses .dockerignore to keep unnecessary files out of the build context.", "relatedTrigger": null },
+      { "label": "Considers base image choice, version pinning, rebuild cadence, and CI cache behavior.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Ships compilers, test fixtures, package caches, or source-only tooling in the final runtime image without reason.",
@@ -268,10 +268,10 @@
     "intent": "Assess practical understanding of Docker networking, Compose service discovery, user-defined bridge networks, and port publishing.",
     "primaryQuestion": "In Docker Compose, how should an API container talk to a database container, and how is that different from exposing the API to your host browser?",
     "expectedSignals": [
-      "Uses the Compose service name or network alias for container-to-container communication on the Compose network.",
-      "Distinguishes container ports from published host ports.",
-      "Understands why localhost inside one container is not another container or the host service by default.",
-      "Mentions user-defined bridge networks, DNS resolution, and avoiding unnecessary database port publication."
+      { "label": "Uses the Compose service name or network alias for container-to-container communication on the Compose network.", "relatedTrigger": null },
+      { "label": "Distinguishes container ports from published host ports.", "relatedTrigger": null },
+      { "label": "Understands why localhost inside one container is not another container or the host service by default.", "relatedTrigger": null },
+      { "label": "Mentions user-defined bridge networks, DNS resolution, and avoiding unnecessary database port publication.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Configures the API to connect to the database using localhost without considering container boundaries.",
@@ -332,10 +332,10 @@
     "intent": "Evaluate practical judgment around Docker volumes, bind mounts, tmpfs, and data persistence boundaries.",
     "primaryQuestion": "When would you use a Docker volume versus a bind mount for application data, source code, configuration, or database storage?",
     "expectedSignals": [
-      "Explains volumes as Docker-managed persistent storage suitable for container data such as database files.",
-      "Explains bind mounts as host-path mounts useful for development source code, generated artifacts, or explicit host configuration.",
-      "Understands that mounts can hide existing image contents at the target path.",
-      "Considers portability, backup, permissions, host coupling, read-only mounts, and least privilege."
+      { "label": "Explains volumes as Docker-managed persistent storage suitable for container data such as database files.", "relatedTrigger": null },
+      { "label": "Explains bind mounts as host-path mounts useful for development source code, generated artifacts, or explicit host configuration.", "relatedTrigger": null },
+      { "label": "Understands that mounts can hide existing image contents at the target path.", "relatedTrigger": null },
+      { "label": "Considers portability, backup, permissions, host coupling, read-only mounts, and least privilege.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Stores database data only in the container writable layer.",
@@ -396,10 +396,10 @@
     "intent": "Assess whether the candidate can reason about Docker health checks, restart policies, startup timing, and service readiness.",
     "primaryQuestion": "A Compose stack shows a service as running, but users still get errors until dependencies are ready. How would you use health checks, restart policies, and logs to diagnose and improve this?",
     "expectedSignals": [
-      "Separates process running state from application readiness and dependency readiness.",
-      "Designs a health check that validates the actual service path or dependency needed for readiness, not just process existence.",
-      "Explains health check interval, timeout, retries, start period, and how to inspect health output.",
-      "Uses restart policies carefully and avoids hiding crash loops without root-cause investigation."
+      { "label": "Separates process running state from application readiness and dependency readiness.", "relatedTrigger": null },
+      { "label": "Designs a health check that validates the actual service path or dependency needed for readiness, not just process existence.", "relatedTrigger": null },
+      { "label": "Explains health check interval, timeout, retries, start period, and how to inspect health output.", "relatedTrigger": null },
+      { "label": "Uses restart policies carefully and avoids hiding crash loops without root-cause investigation.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Assumes a running container is necessarily ready to serve traffic.",
@@ -461,10 +461,10 @@
     "intent": "Evaluate senior judgment around Docker build secrets, image metadata leakage, dependency fetching, and CI/CD supply-chain controls.",
     "primaryQuestion": "A Docker build needs access to private packages and cloud credentials in CI. How would you pass secrets safely and prevent them from leaking into the final image or build logs?",
     "expectedSignals": [
-      "Avoids ARG and ENV for sensitive values because they can persist in image metadata, layers, history, or logs.",
-      "Uses BuildKit secret mounts or SSH mounts for build-time access and grants secrets only to the specific build step that needs them.",
-      "Keeps final runtime image free of package-manager tokens, credential files, and private keys.",
-      "Adds CI controls such as short-lived tokens, masked logs, image scanning, provenance, cache hygiene, and review of Dockerfile changes."
+      { "label": "Avoids ARG and ENV for sensitive values because they can persist in image metadata, layers, history, or logs.", "relatedTrigger": null },
+      { "label": "Uses BuildKit secret mounts or SSH mounts for build-time access and grants secrets only to the specific build step that needs them.", "relatedTrigger": null },
+      { "label": "Keeps final runtime image free of package-manager tokens, credential files, and private keys.", "relatedTrigger": null },
+      { "label": "Adds CI controls such as short-lived tokens, masked logs, image scanning, provenance, cache hygiene, and review of Dockerfile changes.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Copies .npmrc, cloud credentials, SSH keys, or .env files into the image and deletes them later as the main protection.",
@@ -526,10 +526,10 @@
     "intent": "Assess senior understanding of Docker container hardening, least privilege, rootless mode, capabilities, and operational trade-offs.",
     "primaryQuestion": "How would you harden a Dockerized production service without breaking operability for debugging, logging, and deployments?",
     "expectedSignals": [
-      "Runs the application as a non-root user where possible and understands the difference between container user and host privileges.",
-      "Reduces attack surface with minimal runtime images, fewer packages, read-only filesystems where practical, and no unnecessary tools.",
-      "Considers dropping Linux capabilities, avoiding privileged containers, limiting mounts, and protecting the Docker socket.",
-      "Discusses rootless mode or user namespaces as mitigation options while acknowledging networking, filesystem, or operational constraints."
+      { "label": "Runs the application as a non-root user where possible and understands the difference between container user and host privileges.", "relatedTrigger": null },
+      { "label": "Reduces attack surface with minimal runtime images, fewer packages, read-only filesystems where practical, and no unnecessary tools.", "relatedTrigger": null },
+      { "label": "Considers dropping Linux capabilities, avoiding privileged containers, limiting mounts, and protecting the Docker socket.", "relatedTrigger": null },
+      { "label": "Discusses rootless mode or user namespaces as mitigation options while acknowledging networking, filesystem, or operational constraints.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Runs everything as root or privileged because it is convenient.",
@@ -591,10 +591,10 @@
     "intent": "Verify senior production ownership through a Docker-related incident involving build, runtime, networking, storage, security, or rollout behavior.",
     "primaryQuestion": "Tell me about a serious Docker-related production issue you owned. What was the symptom, root cause, mitigation, permanent fix, and measured outcome?",
     "expectedSignals": [
-      "Frames user impact, timeline, affected services, and blast radius clearly.",
-      "Uses Docker-specific evidence such as image digest, Dockerfile change, container logs, inspect output, health status, network configuration, volumes, restart behavior, or registry/deployment events.",
-      "Separates immediate mitigation from permanent fix and prevention.",
-      "Provides measured outcome such as reduced startup failures, image size, build time, rollback time, incident recurrence, or error rate."
+      { "label": "Frames user impact, timeline, affected services, and blast radius clearly.", "relatedTrigger": null },
+      { "label": "Uses Docker-specific evidence such as image digest, Dockerfile change, container logs, inspect output, health status, network configuration, volumes, restart behavior, or registry/deployment events.", "relatedTrigger": null },
+      { "label": "Separates immediate mitigation from permanent fix and prevention.", "relatedTrigger": null },
+      { "label": "Provides measured outcome such as reduced startup failures, image size, build time, rollback time, incident recurrence, or error rate.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Gives a generic outage story with no Docker-specific signal.",

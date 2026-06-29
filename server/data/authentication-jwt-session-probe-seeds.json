@@ -12,12 +12,12 @@
     "intent": "Check whether the candidate can define JWT accurately, explain its three-part structure, and avoid the common misconception that signed JWT payloads are secret.",
     "primaryQuestion": "What is a JWT, and what are the three parts of a JWT?",
     "expectedSignals": [
-      "Defines JWT as a compact token format for carrying claims between parties, commonly used as a bearer credential in authentication and authorization flows.",
-      "Names the three dot-separated parts: header, payload, and signature.",
-      "Explains that the header usually contains token type and signing algorithm, while the payload contains claims such as sub, iat, exp, iss, aud, roles, or permissions.",
-      "Explains that the signature protects integrity and authenticity by signing the encoded header and payload with a secret or private key.",
-      "States clearly that a normal signed JWT is Base64URL-encoded, not encrypted; anyone with the token can read the header and payload.",
-      "Mentions that the server must validate signature, expiration, issuer, audience, and other expected claims before trusting the token."
+      { "label": "Defines JWT as a compact token format for carrying claims between parties, commonly used as a bearer credential in authentication and authorization flows.", "relatedTrigger": null },
+      { "label": "Names the three dot-separated parts: header, payload, and signature.", "relatedTrigger": null },
+      { "label": "Explains that the header usually contains token type and signing algorithm, while the payload contains claims such as sub, iat, exp, iss, aud, roles, or permissions.", "relatedTrigger": null },
+      { "label": "Explains that the signature protects integrity and authenticity by signing the encoded header and payload with a secret or private key.", "relatedTrigger": null },
+      { "label": "States clearly that a normal signed JWT is Base64URL-encoded, not encrypted; anyone with the token can read the header and payload.", "relatedTrigger": null },
+      { "label": "Mentions that the server must validate signature, expiration, issuer, audience, and other expected claims before trusting the token.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Says the JWT payload is encrypted just because it is not plain text.",
@@ -156,12 +156,12 @@
     "intent": "Evaluate whether the candidate can compare session-based and JWT-based authentication across state, scalability, revocation, storage, and browser security trade-offs.",
     "primaryQuestion": "How are session-based authentication and JWT-based authentication different?",
     "expectedSignals": [
-      "Explains that session auth usually stores a random session ID in a cookie and keeps session state server-side in memory, Redis, database, or another session store.",
-      "Explains that JWT auth often sends a signed bearer token containing claims, allowing the API to validate the token without loading session state on every request.",
-      "Compares revocation: server-side sessions are easy to invalidate centrally, while stateless JWT access tokens remain usable until expiry unless a denylist, token version, or introspection check is added.",
-      "Compares scaling: sessions need shared session storage across replicas, while JWT validation is naturally easier across replicas if signing keys are shared safely.",
-      "Compares client risk: cookies raise CSRF concerns if automatically sent cross-site, while bearer tokens in JavaScript-readable storage are exposed to XSS token theft.",
-      "Notes that both approaches still require authorization checks after authentication."
+      { "label": "Explains that session auth usually stores a random session ID in a cookie and keeps session state server-side in memory, Redis, database, or another session store.", "relatedTrigger": null },
+      { "label": "Explains that JWT auth often sends a signed bearer token containing claims, allowing the API to validate the token without loading session state on every request.", "relatedTrigger": null },
+      { "label": "Compares revocation: server-side sessions are easy to invalidate centrally, while stateless JWT access tokens remain usable until expiry unless a denylist, token version, or introspection check is added.", "relatedTrigger": null },
+      { "label": "Compares scaling: sessions need shared session storage across replicas, while JWT validation is naturally easier across replicas if signing keys are shared safely.", "relatedTrigger": null },
+      { "label": "Compares client risk: cookies raise CSRF concerns if automatically sent cross-site, while bearer tokens in JavaScript-readable storage are exposed to XSS token theft.", "relatedTrigger": null },
+      { "label": "Notes that both approaches still require authorization checks after authentication.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Says JWT is always stateless and therefore always better.",
@@ -300,12 +300,12 @@
     "intent": "Assess whether the candidate can choose session or JWT based on product context, client type, revocation requirements, infrastructure, and security constraints.",
     "primaryQuestion": "When should you use sessions, and when should you use JWTs?",
     "expectedSignals": [
-      "Chooses sessions for traditional same-origin web apps when the server controls login, cookies, logout, idle timeout, and centralized invalidation.",
-      "Mentions sessions are a good fit when revocation, account lockout, admin kill-switches, and simple browser ergonomics matter more than stateless token distribution.",
-      "Chooses JWTs for APIs consumed by mobile apps, SPAs, multiple services, or identity provider flows where a signed portable token is useful.",
-      "Mentions JWT access tokens should usually be short-lived and paired with refresh tokens or re-authentication if long sessions are needed.",
-      "Considers infrastructure: shared session store for sessions versus key management and rotation for JWTs.",
-      "Explains that browser JWT usage often still involves cookies or a backend-for-frontend pattern to reduce XSS exposure."
+      { "label": "Chooses sessions for traditional same-origin web apps when the server controls login, cookies, logout, idle timeout, and centralized invalidation.", "relatedTrigger": null },
+      { "label": "Mentions sessions are a good fit when revocation, account lockout, admin kill-switches, and simple browser ergonomics matter more than stateless token distribution.", "relatedTrigger": null },
+      { "label": "Chooses JWTs for APIs consumed by mobile apps, SPAs, multiple services, or identity provider flows where a signed portable token is useful.", "relatedTrigger": null },
+      { "label": "Mentions JWT access tokens should usually be short-lived and paired with refresh tokens or re-authentication if long sessions are needed.", "relatedTrigger": null },
+      { "label": "Considers infrastructure: shared session store for sessions versus key management and rotation for JWTs.", "relatedTrigger": null },
+      { "label": "Explains that browser JWT usage often still involves cookies or a backend-for-frontend pattern to reduce XSS exposure.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Uses JWT by default because it is modern.",
@@ -444,16 +444,16 @@
     "intent": "Evaluate whether the candidate can design the full Express JWT authentication flow from login to protected routes, refresh, logout, and error handling.",
     "primaryQuestion": "How would you implement JWT authentication in Express? Walk through the full flow.",
     "expectedSignals": [
-      "Starts with user registration or login, validates input, fetches the user, and verifies the password with a slow password hashing algorithm such as bcrypt or Argon2.",
-      "Issues a short-lived access token with minimal claims such as sub, role/scope, iat, exp, iss, and aud, using a strong secret or asymmetric key.",
-      "Optionally issues a longer-lived refresh token stored server-side as a hashed token, token family, jti, or rotation record so it can be revoked.",
-      "Chooses token transport intentionally: Authorization Bearer header, HttpOnly Secure SameSite cookie, or a backend-for-frontend pattern depending on the client.",
-      "Adds authentication middleware that extracts the token, verifies signature and claims, loads or checks the user if needed, attaches a minimal req.user, and calls next.",
-      "Uses protected routes with auth middleware before route handlers and separate authorization middleware for roles, scopes, or resource ownership.",
-      "Implements a refresh endpoint that validates the refresh token, rotates it, issues a new access token, and rejects reuse or revoked tokens.",
-      "Implements logout by clearing client storage and revoking refresh tokens or token families; accepts that existing stateless access tokens live until expiry.",
-      "Handles errors consistently with 401 for missing/invalid/expired credentials and 403 for authenticated users lacking permission.",
-      "Mentions HTTPS, rate limiting login/refresh, safe logging, secret management, CORS/credentials configuration, and tests for middleware failures."
+      { "label": "Starts with user registration or login, validates input, fetches the user, and verifies the password with a slow password hashing algorithm such as bcrypt or Argon2.", "relatedTrigger": null },
+      { "label": "Issues a short-lived access token with minimal claims such as sub, role/scope, iat, exp, iss, and aud, using a strong secret or asymmetric key.", "relatedTrigger": null },
+      { "label": "Optionally issues a longer-lived refresh token stored server-side as a hashed token, token family, jti, or rotation record so it can be revoked.", "relatedTrigger": null },
+      { "label": "Chooses token transport intentionally: Authorization Bearer header, HttpOnly Secure SameSite cookie, or a backend-for-frontend pattern depending on the client.", "relatedTrigger": null },
+      { "label": "Adds authentication middleware that extracts the token, verifies signature and claims, loads or checks the user if needed, attaches a minimal req.user, and calls next.", "relatedTrigger": null },
+      { "label": "Uses protected routes with auth middleware before route handlers and separate authorization middleware for roles, scopes, or resource ownership.", "relatedTrigger": null },
+      { "label": "Implements a refresh endpoint that validates the refresh token, rotates it, issues a new access token, and rejects reuse or revoked tokens.", "relatedTrigger": null },
+      { "label": "Implements logout by clearing client storage and revoking refresh tokens or token families; accepts that existing stateless access tokens live until expiry.", "relatedTrigger": null },
+      { "label": "Handles errors consistently with 401 for missing/invalid/expired credentials and 403 for authenticated users lacking permission.", "relatedTrigger": null },
+      { "label": "Mentions HTTPS, rate limiting login/refresh, safe logging, secret management, CORS/credentials configuration, and tests for middleware failures.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Stores plain-text passwords or compares passwords directly.",
@@ -593,13 +593,13 @@
     "intent": "Check whether the candidate understands the different purposes, lifetimes, storage, and revocation characteristics of access tokens and refresh tokens.",
     "primaryQuestion": "How are access tokens and refresh tokens different in purpose and lifetime?",
     "expectedSignals": [
-      "Explains that an access token is presented to resource APIs to access protected endpoints.",
-      "Explains that a refresh token is presented only to the authorization server or refresh endpoint to obtain a new access token.",
-      "States that access tokens should be short-lived to reduce the damage of theft.",
-      "States that refresh tokens are usually longer-lived, more sensitive, and must be stored and protected more carefully.",
-      "Mentions refresh token rotation, server-side storage, hashing, token family tracking, or reuse detection as practical controls.",
-      "Mentions that refresh tokens should not be sent to every API request.",
-      "Explains that scopes/permissions on access tokens should be limited to what the resource server needs."
+      { "label": "Explains that an access token is presented to resource APIs to access protected endpoints.", "relatedTrigger": null },
+      { "label": "Explains that a refresh token is presented only to the authorization server or refresh endpoint to obtain a new access token.", "relatedTrigger": null },
+      { "label": "States that access tokens should be short-lived to reduce the damage of theft.", "relatedTrigger": null },
+      { "label": "States that refresh tokens are usually longer-lived, more sensitive, and must be stored and protected more carefully.", "relatedTrigger": null },
+      { "label": "Mentions refresh token rotation, server-side storage, hashing, token family tracking, or reuse detection as practical controls.", "relatedTrigger": null },
+      { "label": "Mentions that refresh tokens should not be sent to every API request.", "relatedTrigger": null },
+      { "label": "Explains that scopes/permissions on access tokens should be limited to what the resource server needs.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Uses one long-lived JWT as both access and refresh token.",
@@ -733,12 +733,12 @@
     "intent": "Assess whether the candidate can choose browser token storage with a realistic understanding of localStorage, HttpOnly cookies, XSS, CSRF, CORS, and token lifetimes.",
     "primaryQuestion": "Where should a JWT be stored on the client: localStorage or an HttpOnly cookie? Why?",
     "expectedSignals": [
-      "States that localStorage is accessible to JavaScript, so an XSS bug can read and exfiltrate tokens directly.",
-      "Explains that an HttpOnly cookie cannot be read by JavaScript, reducing direct token theft through XSS.",
-      "Explains that cookies are sent automatically by the browser, so CSRF and cross-site request behavior must be controlled with SameSite, CSRF tokens, origin checks, CORS credentials, and Secure.",
-      "Mentions that for browser apps, a common safer pattern is short-lived access tokens in memory plus a refresh token in an HttpOnly Secure SameSite cookie, or a backend-for-frontend that keeps tokens off the browser entirely.",
-      "Mentions localStorage may be simpler for pure bearer-token APIs but persists across browser restarts and is not a strong storage boundary against XSS.",
-      "Explains that whichever storage is chosen, XSS prevention, CSP, dependency hygiene, and token lifetime remain necessary."
+      { "label": "States that localStorage is accessible to JavaScript, so an XSS bug can read and exfiltrate tokens directly.", "relatedTrigger": null },
+      { "label": "Explains that an HttpOnly cookie cannot be read by JavaScript, reducing direct token theft through XSS.", "relatedTrigger": null },
+      { "label": "Explains that cookies are sent automatically by the browser, so CSRF and cross-site request behavior must be controlled with SameSite, CSRF tokens, origin checks, CORS credentials, and Secure.", "relatedTrigger": null },
+      { "label": "Mentions that for browser apps, a common safer pattern is short-lived access tokens in memory plus a refresh token in an HttpOnly Secure SameSite cookie, or a backend-for-frontend that keeps tokens off the browser entirely.", "relatedTrigger": null },
+      { "label": "Mentions localStorage may be simpler for pure bearer-token APIs but persists across browser restarts and is not a strong storage boundary against XSS.", "relatedTrigger": null },
+      { "label": "Explains that whichever storage is chosen, XSS prevention, CSP, dependency hygiene, and token lifetime remain necessary.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Says localStorage is secure because it is same-origin.",
@@ -877,13 +877,13 @@
     "intent": "Check whether the candidate can protect Express routes with JWT middleware using correct extraction, verification, request augmentation, and error semantics.",
     "primaryQuestion": "How do you protect a route with JWT middleware in Express?",
     "expectedSignals": [
-      "Registers middleware before protected routes, either globally for an authenticated router or route-by-route for specific endpoints.",
-      "Extracts the token from the Authorization: Bearer header or from a configured cookie, with a clear rule for missing or malformed tokens.",
-      "Uses jwt.verify with the correct secret/public key and validates expected claims such as exp, issuer, audience, and algorithm.",
-      "Attaches a minimal trusted identity to req.user, such as userId, roles, scopes, or tokenId, rather than passing the raw decoded payload everywhere.",
-      "Returns 401 for missing, invalid, or expired tokens and calls next only after successful verification.",
-      "Keeps authorization separate by adding role/scope/ownership middleware after authentication where needed.",
-      "Avoids logging full tokens and avoids leaking detailed verification errors to clients."
+      { "label": "Registers middleware before protected routes, either globally for an authenticated router or route-by-route for specific endpoints.", "relatedTrigger": null },
+      { "label": "Extracts the token from the Authorization: Bearer header or from a configured cookie, with a clear rule for missing or malformed tokens.", "relatedTrigger": null },
+      { "label": "Uses jwt.verify with the correct secret/public key and validates expected claims such as exp, issuer, audience, and algorithm.", "relatedTrigger": null },
+      { "label": "Attaches a minimal trusted identity to req.user, such as userId, roles, scopes, or tokenId, rather than passing the raw decoded payload everywhere.", "relatedTrigger": null },
+      { "label": "Returns 401 for missing, invalid, or expired tokens and calls next only after successful verification.", "relatedTrigger": null },
+      { "label": "Keeps authorization separate by adding role/scope/ownership middleware after authentication where needed.", "relatedTrigger": null },
+      { "label": "Avoids logging full tokens and avoids leaking detailed verification errors to clients.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Uses jwt.decode and treats the result as authenticated.",
@@ -1022,12 +1022,12 @@
     "intent": "Verify whether the candidate understands the difference between creating, validating, and merely reading JWTs in common Node.js JWT libraries.",
     "primaryQuestion": "How are jwt.sign(), jwt.verify(), and jwt.decode() different?",
     "expectedSignals": [
-      "Explains jwt.sign creates a token from a payload and signing key, usually with options such as expiresIn, issuer, audience, subject, algorithm, or key id.",
-      "Explains jwt.verify validates the token signature and relevant registered claims, and returns a decoded payload only if verification succeeds.",
-      "Explains jwt.decode parses the token without validating signature, expiration, issuer, or audience, so it must not be used for authentication decisions.",
-      "Mentions that verify can fail with errors such as invalid signature, malformed token, not-before, or expired token.",
-      "Mentions that the algorithm and key selection must be controlled by server configuration, not blindly trusted from token input.",
-      "Uses decode only for non-security tasks such as debugging or reading a kid/header before selecting a verification key, with care."
+      { "label": "Explains jwt.sign creates a token from a payload and signing key, usually with options such as expiresIn, issuer, audience, subject, algorithm, or key id.", "relatedTrigger": null },
+      { "label": "Explains jwt.verify validates the token signature and relevant registered claims, and returns a decoded payload only if verification succeeds.", "relatedTrigger": null },
+      { "label": "Explains jwt.decode parses the token without validating signature, expiration, issuer, or audience, so it must not be used for authentication decisions.", "relatedTrigger": null },
+      { "label": "Mentions that verify can fail with errors such as invalid signature, malformed token, not-before, or expired token.", "relatedTrigger": null },
+      { "label": "Mentions that the algorithm and key selection must be controlled by server configuration, not blindly trusted from token input.", "relatedTrigger": null },
+      { "label": "Uses decode only for non-security tasks such as debugging or reading a kid/header before selecting a verification key, with care.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Says decode verifies the token.",
@@ -1161,12 +1161,12 @@
     "intent": "Evaluate whether the candidate can handle expired JWTs correctly on both API and client sides without unsafe retries or silent failures.",
     "primaryQuestion": "What happens when a JWT is expired? How should the client handle it?",
     "expectedSignals": [
-      "Explains that jwt.verify should reject an expired token based on the exp claim and the server should not authorize the request.",
-      "States that the API should normally return 401 with a consistent error code such as token_expired or invalid_token, without exposing sensitive internals.",
-      "Explains that the client can call a refresh endpoint if it has a valid refresh token, then retry the original request once with the new access token.",
-      "Explains that if refresh fails, the client should clear local auth state and send the user through login again.",
-      "Mentions avoiding infinite refresh loops, coordinating concurrent refresh requests, and handling clock skew carefully.",
-      "Mentions proactive refresh shortly before expiry as an optional UX improvement, while still relying on server validation."
+      { "label": "Explains that jwt.verify should reject an expired token based on the exp claim and the server should not authorize the request.", "relatedTrigger": null },
+      { "label": "States that the API should normally return 401 with a consistent error code such as token_expired or invalid_token, without exposing sensitive internals.", "relatedTrigger": null },
+      { "label": "Explains that the client can call a refresh endpoint if it has a valid refresh token, then retry the original request once with the new access token.", "relatedTrigger": null },
+      { "label": "Explains that if refresh fails, the client should clear local auth state and send the user through login again.", "relatedTrigger": null },
+      { "label": "Mentions avoiding infinite refresh loops, coordinating concurrent refresh requests, and handling clock skew carefully.", "relatedTrigger": null },
+      { "label": "Mentions proactive refresh shortly before expiry as an optional UX improvement, while still relying on server validation.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Allows the client to extend exp locally.",
@@ -1305,13 +1305,13 @@
     "intent": "Check whether the candidate understands what express-session does, where session data is stored, and what production configuration is required.",
     "primaryQuestion": "What is express-session and what is it used for?",
     "expectedSignals": [
-      "Defines express-session as Express middleware for creating and managing server-side login sessions or other per-user session state.",
-      "Explains that the browser receives a session ID cookie, while the session data itself is stored server-side by the configured store.",
-      "Mentions req.session as the request object used to read and mutate session data.",
-      "Mentions core options such as secret, name, resave, saveUninitialized, rolling, cookie.maxAge, httpOnly, secure, and sameSite.",
-      "Warns that the default MemoryStore is for development/debugging and should not be used in production because it does not scale and can leak memory.",
-      "Mentions production stores such as Redis, database-backed stores, or managed stores for multi-instance deployments.",
-      "Mentions regenerating session IDs after login or privilege changes to reduce session fixation risk, and destroying sessions on logout."
+      { "label": "Defines express-session as Express middleware for creating and managing server-side login sessions or other per-user session state.", "relatedTrigger": null },
+      { "label": "Explains that the browser receives a session ID cookie, while the session data itself is stored server-side by the configured store.", "relatedTrigger": null },
+      { "label": "Mentions req.session as the request object used to read and mutate session data.", "relatedTrigger": null },
+      { "label": "Mentions core options such as secret, name, resave, saveUninitialized, rolling, cookie.maxAge, httpOnly, secure, and sameSite.", "relatedTrigger": null },
+      { "label": "Warns that the default MemoryStore is for development/debugging and should not be used in production because it does not scale and can leak memory.", "relatedTrigger": null },
+      { "label": "Mentions production stores such as Redis, database-backed stores, or managed stores for multi-instance deployments.", "relatedTrigger": null },
+      { "label": "Mentions regenerating session IDs after login or privilege changes to reduce session fixation risk, and destroying sessions on logout.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Thinks express-session stores the entire session data in the browser cookie by default.",
@@ -1445,13 +1445,13 @@
     "intent": "Check whether the candidate understands what cookie-parser does and does not do in an Express application.",
     "primaryQuestion": "What is cookie-parser used for?",
     "expectedSignals": [
-      "Defines cookie-parser as middleware that parses the Cookie header and populates req.cookies.",
-      "Explains that when configured with a secret, it can validate signed cookies and expose them in req.signedCookies.",
-      "Explains signed cookies provide tamper detection, not encryption or confidentiality.",
-      "Mentions JSON cookies with j: prefix may be parsed into values, but cookie values are still client-controlled input.",
-      "Distinguishes cookie-parser from body parsers such as express.json and from express-session.",
-      "Mentions that recent express-session versions do not require cookie-parser and using different secrets can cause issues.",
-      "Mentions that setting cookies is done through response headers or res.cookie; cookie-parser mainly reads incoming cookies."
+      { "label": "Defines cookie-parser as middleware that parses the Cookie header and populates req.cookies.", "relatedTrigger": null },
+      { "label": "Explains that when configured with a secret, it can validate signed cookies and expose them in req.signedCookies.", "relatedTrigger": null },
+      { "label": "Explains signed cookies provide tamper detection, not encryption or confidentiality.", "relatedTrigger": null },
+      { "label": "Mentions JSON cookies with j: prefix may be parsed into values, but cookie values are still client-controlled input.", "relatedTrigger": null },
+      { "label": "Distinguishes cookie-parser from body parsers such as express.json and from express-session.", "relatedTrigger": null },
+      { "label": "Mentions that recent express-session versions do not require cookie-parser and using different secrets can cause issues.", "relatedTrigger": null },
+      { "label": "Mentions that setting cookies is done through response headers or res.cookie; cookie-parser mainly reads incoming cookies.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Says cookie-parser encrypts cookies.",
@@ -1585,13 +1585,13 @@
     "intent": "Check whether the candidate understands JWT payload visibility, data minimization, stale claims, and why sensitive data must not be stored in tokens.",
     "primaryQuestion": "Why should you not store sensitive information such as passwords or credit cards in a JWT payload?",
     "expectedSignals": [
-      "Explains that a normal signed JWT payload is Base64URL-encoded and readable by anyone who has the token.",
-      "Explains that signing protects integrity, not confidentiality; encryption would require a different design such as JWE and still needs careful key management.",
-      "Mentions tokens can appear in browser storage, logs, monitoring tools, referrers, support screenshots, crash reports, or network traces.",
-      "Applies data minimization: include only claims needed by the API, such as subject, roles/scopes, issuer, audience, expiration, and token ID.",
-      "Mentions sensitive or frequently changing data should be fetched from the database or authorization service after authentication.",
-      "Explains stale-claim risk: if roles or account status change, long-lived JWT payloads may remain outdated until expiry or revocation.",
-      "Mentions compliance and incident impact for passwords, credit cards, secrets, PII, and session credentials."
+      { "label": "Explains that a normal signed JWT payload is Base64URL-encoded and readable by anyone who has the token.", "relatedTrigger": null },
+      { "label": "Explains that signing protects integrity, not confidentiality; encryption would require a different design such as JWE and still needs careful key management.", "relatedTrigger": null },
+      { "label": "Mentions tokens can appear in browser storage, logs, monitoring tools, referrers, support screenshots, crash reports, or network traces.", "relatedTrigger": null },
+      { "label": "Applies data minimization: include only claims needed by the API, such as subject, roles/scopes, issuer, audience, expiration, and token ID.", "relatedTrigger": null },
+      { "label": "Mentions sensitive or frequently changing data should be fetched from the database or authorization service after authentication.", "relatedTrigger": null },
+      { "label": "Explains stale-claim risk: if roles or account status change, long-lived JWT payloads may remain outdated until expiry or revocation.", "relatedTrigger": null },
+      { "label": "Mentions compliance and incident impact for passwords, credit cards, secrets, PII, and session credentials.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Says JWT payload is safe because the token is signed.",
@@ -1730,14 +1730,14 @@
     "intent": "Evaluate production secret-management maturity for JWT signing keys, including entropy, storage, rotation, separation, and incident handling.",
     "primaryQuestion": "How should JWT_SECRET be protected in production?",
     "expectedSignals": [
-      "Uses a high-entropy secret for HMAC algorithms or a properly protected private key for asymmetric algorithms; never a human-memorable password.",
-      "Stores secrets in a secret manager or protected runtime environment, not in source code, Docker images, frontend bundles, logs, tickets, or shared docs.",
-      "Injects secrets at runtime through deployment infrastructure with least privilege and audited access.",
-      "Uses different secrets or keys per environment and separates access-token signing keys from refresh-token signing keys when both are JWTs.",
-      "Controls allowed algorithms and key IDs server-side; does not let token headers choose arbitrary algorithms or keys.",
-      "Plans rotation with overlapping key versions, kid or key versioning, short token lifetimes, and a tested rollback/compromise runbook.",
-      "Fails fast if required production secrets are missing instead of falling back to a default development secret.",
-      "Avoids exposing JWT_SECRET to the browser; clients verify only with public keys when that architecture requires client-side verification."
+      { "label": "Uses a high-entropy secret for HMAC algorithms or a properly protected private key for asymmetric algorithms; never a human-memorable password.", "relatedTrigger": null },
+      { "label": "Stores secrets in a secret manager or protected runtime environment, not in source code, Docker images, frontend bundles, logs, tickets, or shared docs.", "relatedTrigger": null },
+      { "label": "Injects secrets at runtime through deployment infrastructure with least privilege and audited access.", "relatedTrigger": null },
+      { "label": "Uses different secrets or keys per environment and separates access-token signing keys from refresh-token signing keys when both are JWTs.", "relatedTrigger": null },
+      { "label": "Controls allowed algorithms and key IDs server-side; does not let token headers choose arbitrary algorithms or keys.", "relatedTrigger": null },
+      { "label": "Plans rotation with overlapping key versions, kid or key versioning, short token lifetimes, and a tested rollback/compromise runbook.", "relatedTrigger": null },
+      { "label": "Fails fast if required production secrets are missing instead of falling back to a default development secret.", "relatedTrigger": null },
+      { "label": "Avoids exposing JWT_SECRET to the browser; clients verify only with public keys when that architecture requires client-side verification.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Commits JWT_SECRET to Git or keeps it in a sample .env copied to production.",
@@ -1877,13 +1877,13 @@
     "intent": "Assess whether the candidate understands Passport.js as authentication middleware with strategy-based integration rather than a complete auth product.",
     "primaryQuestion": "What is Passport.js, and what problem does it solve in Express?",
     "expectedSignals": [
-      "Defines Passport.js as authentication middleware for Node.js/Express.",
-      "Explains the strategy pattern: LocalStrategy, JwtStrategy, OAuth/OpenID Connect strategies, SAML, GitHub, Google, and other provider-specific strategies.",
-      "Explains that Passport standardizes credential extraction, verification callback flow, failure handling, and attaching authenticated identity to req.user.",
-      "Mentions session support through serializeUser and deserializeUser when using login sessions.",
-      "Mentions stateless JWT usage typically disables sessions for the JWT strategy and validates tokens per request.",
-      "Clarifies that Passport does not store users, hash passwords, issue tokens, design roles, or replace authorization policies by itself.",
-      "Mentions benefits such as less duplicated auth glue, consistent middleware composition, and integration with many identity providers."
+      { "label": "Defines Passport.js as authentication middleware for Node.js/Express.", "relatedTrigger": null },
+      { "label": "Explains the strategy pattern: LocalStrategy, JwtStrategy, OAuth/OpenID Connect strategies, SAML, GitHub, Google, and other provider-specific strategies.", "relatedTrigger": null },
+      { "label": "Explains that Passport standardizes credential extraction, verification callback flow, failure handling, and attaching authenticated identity to req.user.", "relatedTrigger": null },
+      { "label": "Mentions session support through serializeUser and deserializeUser when using login sessions.", "relatedTrigger": null },
+      { "label": "Mentions stateless JWT usage typically disables sessions for the JWT strategy and validates tokens per request.", "relatedTrigger": null },
+      { "label": "Clarifies that Passport does not store users, hash passwords, issue tokens, design roles, or replace authorization policies by itself.", "relatedTrigger": null },
+      { "label": "Mentions benefits such as less duplicated auth glue, consistent middleware composition, and integration with many identity providers.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Says Passport is an ORM or user database.",
@@ -2022,15 +2022,15 @@
     "intent": "Evaluate whether the candidate can implement logout and revocation in JWT systems despite stateless access tokens, using realistic token lifetime and server-side control strategies.",
     "primaryQuestion": "How do you implement logout when using JWT, given that JWTs cannot be revoked by default?",
     "expectedSignals": [
-      "Explains that a purely stateless signed access token remains valid until exp if the resource server accepts it and no revocation check exists.",
-      "Implements client-side logout by deleting in-memory tokens, local storage entries, or clearing auth cookies, but explains this alone does not invalidate already issued access tokens.",
-      "Uses short-lived access tokens so the residual window after logout is small.",
-      "Revokes refresh tokens on logout by deleting or marking a server-side refresh token record, token family, session record, or device session as revoked.",
-      "Uses refresh token rotation and reuse detection so stolen refresh tokens cannot silently mint access tokens after logout.",
-      "For high-risk systems, adds a denylist keyed by jti until access token expiry, a user tokenVersion/sessionVersion claim, or a server-side session introspection check.",
-      "Supports logout all devices by revoking all refresh token families or incrementing a user/session version.",
-      "Clears HttpOnly cookies with the correct path, domain, SameSite, Secure, and expiry/maxAge settings when cookies are used.",
-      "Acknowledges trade-offs: denylists and introspection add state and lookup cost, while short TTLs improve statelessness but may require robust refresh UX."
+      { "label": "Explains that a purely stateless signed access token remains valid until exp if the resource server accepts it and no revocation check exists.", "relatedTrigger": null },
+      { "label": "Implements client-side logout by deleting in-memory tokens, local storage entries, or clearing auth cookies, but explains this alone does not invalidate already issued access tokens.", "relatedTrigger": null },
+      { "label": "Uses short-lived access tokens so the residual window after logout is small.", "relatedTrigger": null },
+      { "label": "Revokes refresh tokens on logout by deleting or marking a server-side refresh token record, token family, session record, or device session as revoked.", "relatedTrigger": null },
+      { "label": "Uses refresh token rotation and reuse detection so stolen refresh tokens cannot silently mint access tokens after logout.", "relatedTrigger": null },
+      { "label": "For high-risk systems, adds a denylist keyed by jti until access token expiry, a user tokenVersion/sessionVersion claim, or a server-side session introspection check.", "relatedTrigger": null },
+      { "label": "Supports logout all devices by revoking all refresh token families or incrementing a user/session version.", "relatedTrigger": null },
+      { "label": "Clears HttpOnly cookies with the correct path, domain, SameSite, Secure, and expiry/maxAge settings when cookies are used.", "relatedTrigger": null },
+      { "label": "Acknowledges trade-offs: denylists and introspection add state and lookup cost, while short TTLs improve statelessness but may require robust refresh UX.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Says logout is impossible or unnecessary with JWT.",

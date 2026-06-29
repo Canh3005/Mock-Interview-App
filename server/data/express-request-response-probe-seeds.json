@@ -12,12 +12,12 @@
     "intent": "Check whether the candidate can distinguish route parameters, query string parameters, and parsed request body data, and choose the correct place for each kind of API input.",
     "primaryQuestion": "How are req.params, req.query, and req.body different in Express? When should you use each one?",
     "expectedSignals": [
-      "Explains that req.params contains named path parameters declared in the route pattern, such as /users/:id.",
-      "Explains that req.query contains query string values after the question mark, usually used for optional filters, pagination, sorting, search, or feature flags.",
-      "Explains that req.body contains parsed request payload data, usually used for create/update commands such as POST, PUT, or PATCH.",
-      "Mentions that req.body is undefined by default unless body-parsing middleware such as express.json() or express.urlencoded() runs before the route.",
-      "Treats req.params, req.query, and req.body as user-controlled input that must be validated, normalized, and converted to the expected types.",
-      "Uses a concrete example such as GET /users/:id?includePosts=true using params and query, versus POST /users using body."
+      { "label": "Explains that req.params contains named path parameters declared in the route pattern, such as /users/:id.", "relatedTrigger": null },
+      { "label": "Explains that req.query contains query string values after the question mark, usually used for optional filters, pagination, sorting, search, or feature flags.", "relatedTrigger": null },
+      { "label": "Explains that req.body contains parsed request payload data, usually used for create/update commands such as POST, PUT, or PATCH.", "relatedTrigger": null },
+      { "label": "Mentions that req.body is undefined by default unless body-parsing middleware such as express.json() or express.urlencoded() runs before the route.", "relatedTrigger": null },
+      { "label": "Treats req.params, req.query, and req.body as user-controlled input that must be validated, normalized, and converted to the expected types.", "relatedTrigger": null },
+      { "label": "Uses a concrete example such as GET /users/:id?includePosts=true using params and query, versus POST /users using body.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Says req.params, req.query, and req.body are interchangeable.",
@@ -156,12 +156,12 @@
     "intent": "Verify whether the candidate understands HTTP request headers, how Express exposes them, and when to prefer req.get() over directly indexing req.headers.",
     "primaryQuestion": "What is req.headers, and how do you read a specific header in Express?",
     "expectedSignals": [
-      "Defines req.headers as the incoming HTTP request headers object inherited from Node.js IncomingMessage.",
-      "Uses req.get('Header-Name') or req.header('Header-Name') to read one header with case-insensitive matching.",
-      "Mentions that direct access through req.headers uses lower-case header names in Node.js, such as req.headers['authorization'].",
-      "Explains common use cases such as Authorization, Content-Type, Accept-Language, X-Request-Id, and custom client headers.",
-      "Treats client-supplied headers as untrusted and avoids trusting spoofable headers such as X-Forwarded-For unless proxy trust is configured correctly.",
-      "Handles missing headers explicitly instead of assuming a header is always present."
+      { "label": "Defines req.headers as the incoming HTTP request headers object inherited from Node.js IncomingMessage.", "relatedTrigger": null },
+      { "label": "Uses req.get('Header-Name') or req.header('Header-Name') to read one header with case-insensitive matching.", "relatedTrigger": null },
+      { "label": "Mentions that direct access through req.headers uses lower-case header names in Node.js, such as req.headers['authorization'].", "relatedTrigger": null },
+      { "label": "Explains common use cases such as Authorization, Content-Type, Accept-Language, X-Request-Id, and custom client headers.", "relatedTrigger": null },
+      { "label": "Treats client-supplied headers as untrusted and avoids trusting spoofable headers such as X-Forwarded-For unless proxy trust is configured correctly.", "relatedTrigger": null },
+      { "label": "Handles missing headers explicitly instead of assuming a header is always present.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Thinks req.headers only contains custom headers or only response headers.",
@@ -295,13 +295,13 @@
     "intent": "Check whether the candidate can correctly configure body parsing middleware, understand Content-Type matching, and validate parsed body input.",
     "primaryQuestion": "How do you read data from the request body in Express?",
     "expectedSignals": [
-      "Registers body-parsing middleware before routes that need req.body, commonly app.use(express.json()) for JSON payloads.",
-      "Uses express.urlencoded({ extended: true or false }) for application/x-www-form-urlencoded form submissions when needed.",
-      "Reads parsed values from req.body inside route handlers after the parser has run.",
-      "Mentions Content-Type matching: a JSON parser only parses requests whose content type matches the configured type.",
-      "Configures body size limits appropriate to the endpoint to avoid accepting unexpectedly large payloads.",
-      "Validates req.body because parsing does not guarantee correct schema, types, required fields, or safe values.",
-      "Mentions special cases such as raw body verification for webhooks or multipart/form-data requiring different middleware."
+      { "label": "Registers body-parsing middleware before routes that need req.body, commonly app.use(express.json()) for JSON payloads.", "relatedTrigger": null },
+      { "label": "Uses express.urlencoded({ extended: true or false }) for application/x-www-form-urlencoded form submissions when needed.", "relatedTrigger": null },
+      { "label": "Reads parsed values from req.body inside route handlers after the parser has run.", "relatedTrigger": null },
+      { "label": "Mentions Content-Type matching: a JSON parser only parses requests whose content type matches the configured type.", "relatedTrigger": null },
+      { "label": "Configures body size limits appropriate to the endpoint to avoid accepting unexpectedly large payloads.", "relatedTrigger": null },
+      { "label": "Validates req.body because parsing does not guarantee correct schema, types, required fields, or safe values.", "relatedTrigger": null },
+      { "label": "Mentions special cases such as raw body verification for webhooks or multipart/form-data requiring different middleware.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Reads req.body without registering any parser and cannot explain why it is undefined.",
@@ -435,12 +435,12 @@
     "intent": "Evaluate whether the candidate understands common Express response-ending methods and can choose between automatic Express helpers and low-level response termination.",
     "primaryQuestion": "How are res.send(), res.json(), and res.end() different in Express?",
     "expectedSignals": [
-      "Explains that res.send() sends a response body and performs Express conveniences such as setting Content-Type or Content-Length for common body types.",
-      "Explains that res.json() serializes a value with JSON.stringify semantics and sets the JSON content type.",
-      "Explains that res.end() is the lower-level Node response termination method and does not perform the same Express body serialization conveniences.",
-      "Mentions that all three end the response cycle, so route code should not try to send another response afterward.",
-      "Chooses res.json() for API JSON payloads, res.send() for simple strings/HTML/Buffers or generic bodies, and res.end() for cases with no body or after manual streaming/writing.",
-      "Mentions that status and headers should be set before the response is ended."
+      { "label": "Explains that res.send() sends a response body and performs Express conveniences such as setting Content-Type or Content-Length for common body types.", "relatedTrigger": null },
+      { "label": "Explains that res.json() serializes a value with JSON.stringify semantics and sets the JSON content type.", "relatedTrigger": null },
+      { "label": "Explains that res.end() is the lower-level Node response termination method and does not perform the same Express body serialization conveniences.", "relatedTrigger": null },
+      { "label": "Mentions that all three end the response cycle, so route code should not try to send another response afterward.", "relatedTrigger": null },
+      { "label": "Chooses res.json() for API JSON payloads, res.send() for simple strings/HTML/Buffers or generic bodies, and res.end() for cases with no body or after manual streaming/writing.", "relatedTrigger": null },
+      { "label": "Mentions that status and headers should be set before the response is ended.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Thinks res.json() and res.send() always behave identically.",
@@ -579,12 +579,12 @@
     "intent": "Check whether the candidate can set HTTP response status codes correctly and choose meaningful status codes for common API outcomes.",
     "primaryQuestion": "How do you set the HTTP status code in an Express response?",
     "expectedSignals": [
-      "Uses res.status(code) before sending the response body, such as res.status(201).json(createdResource).",
-      "Mentions res.sendStatus(code) as a shortcut that sets the status and sends the standard status message body.",
-      "Understands that status must be set before res.send(), res.json(), res.end(), res.redirect(), or file sending has committed headers.",
-      "Chooses common API statuses correctly, such as 200, 201, 204, 400, 401, 403, 404, 409, 422, and 500 depending on the case.",
-      "Avoids using 200 for errors or 500 for every client-side problem.",
-      "Mentions valid HTTP status range expectations and that invalid codes may throw at the Node layer."
+      { "label": "Uses res.status(code) before sending the response body, such as res.status(201).json(createdResource).", "relatedTrigger": null },
+      { "label": "Mentions res.sendStatus(code) as a shortcut that sets the status and sends the standard status message body.", "relatedTrigger": null },
+      { "label": "Understands that status must be set before res.send(), res.json(), res.end(), res.redirect(), or file sending has committed headers.", "relatedTrigger": null },
+      { "label": "Chooses common API statuses correctly, such as 200, 201, 204, 400, 401, 403, 404, 409, 422, and 500 depending on the case.", "relatedTrigger": null },
+      { "label": "Avoids using 200 for errors or 500 for every client-side problem.", "relatedTrigger": null },
+      { "label": "Mentions valid HTTP status range expectations and that invalid codes may throw at the Node layer.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Calls res.json(...).status(404) after the response was already sent.",
@@ -718,12 +718,12 @@
     "intent": "Verify whether the candidate understands Express response method chaining and the difference between configuring a response and ending it.",
     "primaryQuestion": "Why can you chain res.status(404).json({ ... }) in Express?",
     "expectedSignals": [
-      "Explains that many Express response methods return the response object itself, allowing method chaining.",
-      "Specifically states that res.status(code) sets response.statusCode and returns res.",
-      "Explains that .json(...) then serializes and sends the response, ending the response cycle.",
-      "Understands the order: configuration methods such as status, set, type, or cookie should run before a send/end method.",
-      "Recognizes that chaining is syntactic convenience, equivalent to calling res.status(404); res.json(...).",
-      "Mentions that after json/send/end is called, the handler should not continue to send another response."
+      { "label": "Explains that many Express response methods return the response object itself, allowing method chaining.", "relatedTrigger": null },
+      { "label": "Specifically states that res.status(code) sets response.statusCode and returns res.", "relatedTrigger": null },
+      { "label": "Explains that .json(...) then serializes and sends the response, ending the response cycle.", "relatedTrigger": null },
+      { "label": "Understands the order: configuration methods such as status, set, type, or cookie should run before a send/end method.", "relatedTrigger": null },
+      { "label": "Recognizes that chaining is syntactic convenience, equivalent to calling res.status(404); res.json(...).", "relatedTrigger": null },
+      { "label": "Mentions that after json/send/end is called, the handler should not continue to send another response.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Thinks chaining creates a new response object.",
@@ -857,12 +857,12 @@
     "intent": "Evaluate whether the candidate understands redirect responses, common redirect status codes, and the client/cache/security consequences of choosing permanent versus temporary redirects.",
     "primaryQuestion": "What is res.redirect() used for? How are 301 and 302 redirects different?",
     "expectedSignals": [
-      "Explains that res.redirect() sends an HTTP redirect response with a Location header so the client requests another URL.",
-      "Mentions that Express defaults to 302 Found when no status is provided.",
-      "Explains 301 Moved Permanently as a permanent redirect that clients and search engines may cache and use for canonical URL changes.",
-      "Explains 302 Found as a temporary redirect, commonly used when the destination may change, such as login flows or temporary routing.",
-      "Mentions related method-preserving redirects such as 307 and 308 when preserving POST/PUT semantics matters.",
-      "Warns about open redirect vulnerabilities when redirect targets come from user input."
+      { "label": "Explains that res.redirect() sends an HTTP redirect response with a Location header so the client requests another URL.", "relatedTrigger": null },
+      { "label": "Mentions that Express defaults to 302 Found when no status is provided.", "relatedTrigger": null },
+      { "label": "Explains 301 Moved Permanently as a permanent redirect that clients and search engines may cache and use for canonical URL changes.", "relatedTrigger": null },
+      { "label": "Explains 302 Found as a temporary redirect, commonly used when the destination may change, such as login flows or temporary routing.", "relatedTrigger": null },
+      { "label": "Mentions related method-preserving redirects such as 307 and 308 when preserving POST/PUT semantics matters.", "relatedTrigger": null },
+      { "label": "Warns about open redirect vulnerabilities when redirect targets come from user input.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Uses 301 for login redirects or temporary A/B flows without understanding caching consequences.",
@@ -1001,12 +1001,12 @@
     "intent": "Check whether the candidate understands setting and clearing cookies in Express, cookie attributes, and common security requirements.",
     "primaryQuestion": "What are res.cookie() and res.clearCookie() used for in Express?",
     "expectedSignals": [
-      "Explains that res.cookie(name, value, options) sets a Set-Cookie response header for the client to store a cookie.",
-      "Explains that res.clearCookie(name, options) instructs the client to remove a cookie by sending an expired Set-Cookie header.",
-      "Mentions important cookie options such as httpOnly, secure, sameSite, maxAge, expires, path, domain, signed, and priority where relevant.",
-      "Understands that clearing a cookie usually requires matching key options such as path and domain used when setting it.",
-      "Distinguishes setting cookies from reading cookies, which requires parsing request Cookie headers, commonly through cookie-parser or similar middleware.",
-      "Avoids storing sensitive secrets directly in client-visible cookies and uses httpOnly/secure/sameSite according to the auth model."
+      { "label": "Explains that res.cookie(name, value, options) sets a Set-Cookie response header for the client to store a cookie.", "relatedTrigger": null },
+      { "label": "Explains that res.clearCookie(name, options) instructs the client to remove a cookie by sending an expired Set-Cookie header.", "relatedTrigger": null },
+      { "label": "Mentions important cookie options such as httpOnly, secure, sameSite, maxAge, expires, path, domain, signed, and priority where relevant.", "relatedTrigger": null },
+      { "label": "Understands that clearing a cookie usually requires matching key options such as path and domain used when setting it.", "relatedTrigger": null },
+      { "label": "Distinguishes setting cookies from reading cookies, which requires parsing request Cookie headers, commonly through cookie-parser or similar middleware.", "relatedTrigger": null },
+      { "label": "Avoids storing sensitive secrets directly in client-visible cookies and uses httpOnly/secure/sameSite according to the auth model.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Thinks res.cookie stores data on the server.",
@@ -1140,12 +1140,12 @@
     "intent": "Assess whether the candidate understands request IP and method metadata, including proxy effects and operational use cases.",
     "primaryQuestion": "What information do req.ip and req.method provide in Express?",
     "expectedSignals": [
-      "Explains that req.ip contains the remote IP address Express associates with the request.",
-      "Mentions that req.ip changes behind proxies depending on the trust proxy setting and X-Forwarded-For handling.",
-      "Explains that req.method contains the HTTP method string such as GET, POST, PUT, PATCH, DELETE, or OPTIONS.",
-      "Connects req.method to route matching, logging, metrics, authorization rules, CORS preflight, and method-specific behavior.",
-      "Warns that req.ip should be used carefully for rate limiting or auditing when proxy trust is misconfigured.",
-      "Mentions that IP is not a reliable user identity and can represent NAT, proxies, mobile networks, or load balancers."
+      { "label": "Explains that req.ip contains the remote IP address Express associates with the request.", "relatedTrigger": null },
+      { "label": "Mentions that req.ip changes behind proxies depending on the trust proxy setting and X-Forwarded-For handling.", "relatedTrigger": null },
+      { "label": "Explains that req.method contains the HTTP method string such as GET, POST, PUT, PATCH, DELETE, or OPTIONS.", "relatedTrigger": null },
+      { "label": "Connects req.method to route matching, logging, metrics, authorization rules, CORS preflight, and method-specific behavior.", "relatedTrigger": null },
+      { "label": "Warns that req.ip should be used carefully for rate limiting or auditing when proxy trust is misconfigured.", "relatedTrigger": null },
+      { "label": "Mentions that IP is not a reliable user identity and can represent NAT, proxies, mobile networks, or load balancers.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Treats req.ip as a guaranteed unique user identifier.",
@@ -1284,12 +1284,12 @@
     "intent": "Verify whether the candidate knows how to set response headers and understands timing, overwrite behavior, and common header use cases.",
     "primaryQuestion": "How do you set response headers in Express?",
     "expectedSignals": [
-      "Uses res.set('Header-Name', 'value') or res.header('Header-Name', 'value') to set a response header.",
-      "Mentions passing an object to res.set() to set multiple headers at once.",
-      "Mentions res.append() when adding values to an existing header is desired, and understands res.set() can overwrite/reset header values.",
-      "Sets headers before sending the response body or ending the response.",
-      "Gives examples such as Cache-Control, Content-Type, ETag, Location, Content-Disposition, security headers, or custom request-id headers.",
-      "Avoids manually setting hop-by-hop or invalid headers without understanding HTTP semantics."
+      { "label": "Uses res.set('Header-Name', 'value') or res.header('Header-Name', 'value') to set a response header.", "relatedTrigger": null },
+      { "label": "Mentions passing an object to res.set() to set multiple headers at once.", "relatedTrigger": null },
+      { "label": "Mentions res.append() when adding values to an existing header is desired, and understands res.set() can overwrite/reset header values.", "relatedTrigger": null },
+      { "label": "Sets headers before sending the response body or ending the response.", "relatedTrigger": null },
+      { "label": "Gives examples such as Cache-Control, Content-Type, ETag, Location, Content-Disposition, security headers, or custom request-id headers.", "relatedTrigger": null },
+      { "label": "Avoids manually setting hop-by-hop or invalid headers without understanding HTTP semantics.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Uses req.headers to set response headers.",
@@ -1423,12 +1423,12 @@
     "intent": "Assess whether the candidate understands per-request response locals, template rendering use cases, and safe middleware-to-view data passing.",
     "primaryQuestion": "What is res.locals, and what is it used for?",
     "expectedSignals": [
-      "Defines res.locals as an object for variables scoped to a single request-response cycle.",
-      "Explains that values on res.locals are accessible to templates rendered with res.render().",
-      "Uses it for request-level data such as authenticated user, permissions, flash messages, request id, locale, CSRF token, or feature flags.",
-      "Distinguishes res.locals from app.locals, which is application-wide and shared across requests.",
-      "Mentions that res.locals should not be used as persistent storage or cross-request state.",
-      "Warns against putting unsanitized user-controlled keys or sensitive data into template locals in a way that can cause XSS or data exposure."
+      { "label": "Defines res.locals as an object for variables scoped to a single request-response cycle.", "relatedTrigger": null },
+      { "label": "Explains that values on res.locals are accessible to templates rendered with res.render().", "relatedTrigger": null },
+      { "label": "Uses it for request-level data such as authenticated user, permissions, flash messages, request id, locale, CSRF token, or feature flags.", "relatedTrigger": null },
+      { "label": "Distinguishes res.locals from app.locals, which is application-wide and shared across requests.", "relatedTrigger": null },
+      { "label": "Mentions that res.locals should not be used as persistent storage or cross-request state.", "relatedTrigger": null },
+      { "label": "Warns against putting unsanitized user-controlled keys or sensitive data into template locals in a way that can cause XSS or data exposure.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Thinks res.locals persists globally across all users.",
@@ -1562,12 +1562,12 @@
     "intent": "Evaluate whether the candidate understands URL-related request properties in Express and how mounted routers/middleware rewrite req.url.",
     "primaryQuestion": "How are req.path, req.url, and req.originalUrl different in Express?",
     "expectedSignals": [
-      "Explains that req.path is the path portion of the current request URL without the query string.",
-      "Explains that req.url is inherited from Node.js and represents the current URL used by the active middleware/router, including the query string.",
-      "Explains that Express can rewrite req.url when middleware or routers are mounted, commonly stripping the mount point.",
-      "Explains that req.originalUrl preserves the original requested URL before internal routing rewrites and is available in middleware and routers.",
-      "Mentions req.baseUrl as the mounted path prefix that helps explain originalUrl as baseUrl plus url in router contexts.",
-      "Uses an example such as app.use('/admin', ...) receiving /admin/new?sort=desc where originalUrl is /admin/new?sort=desc, baseUrl is /admin, path is /new, and url is /new?sort=desc."
+      { "label": "Explains that req.path is the path portion of the current request URL without the query string.", "relatedTrigger": null },
+      { "label": "Explains that req.url is inherited from Node.js and represents the current URL used by the active middleware/router, including the query string.", "relatedTrigger": null },
+      { "label": "Explains that Express can rewrite req.url when middleware or routers are mounted, commonly stripping the mount point.", "relatedTrigger": null },
+      { "label": "Explains that req.originalUrl preserves the original requested URL before internal routing rewrites and is available in middleware and routers.", "relatedTrigger": null },
+      { "label": "Mentions req.baseUrl as the mounted path prefix that helps explain originalUrl as baseUrl plus url in router contexts.", "relatedTrigger": null },
+      { "label": "Uses an example such as app.use('/admin', ...) receiving /admin/new?sort=desc where originalUrl is /admin/new?sort=desc, baseUrl is /admin, path is /new, and url is /new?sort=desc.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Says req.path, req.url, and req.originalUrl are always identical.",
@@ -1706,13 +1706,13 @@
     "intent": "Assess whether the candidate can implement file downloads safely using Express helpers while handling paths, authorization, errors, and partially-sent responses.",
     "primaryQuestion": "How do you download a file in Express?",
     "expectedSignals": [
-      "Uses res.download(path[, filename][, options][, callback]) when the desired behavior is attachment-style file download.",
-      "Mentions res.sendFile() as an alternative for sending a file inline or with custom headers when download semantics are not required.",
-      "Validates authorization before sending the file and avoids exposing arbitrary filesystem paths from user input.",
-      "Uses safe path construction, allowlists, storage IDs, or root options instead of concatenating untrusted path segments directly.",
-      "Handles callback errors and knows the response may be partially sent, so error handlers should check res.headersSent.",
-      "Sets or understands headers such as Content-Disposition, Content-Type, Cache-Control, and filename where relevant.",
-      "Considers streaming, large files, CDN/object storage signed URLs, and range requests for production-scale downloads."
+      { "label": "Uses res.download(path[, filename][, options][, callback]) when the desired behavior is attachment-style file download.", "relatedTrigger": null },
+      { "label": "Mentions res.sendFile() as an alternative for sending a file inline or with custom headers when download semantics are not required.", "relatedTrigger": null },
+      { "label": "Validates authorization before sending the file and avoids exposing arbitrary filesystem paths from user input.", "relatedTrigger": null },
+      { "label": "Uses safe path construction, allowlists, storage IDs, or root options instead of concatenating untrusted path segments directly.", "relatedTrigger": null },
+      { "label": "Handles callback errors and knows the response may be partially sent, so error handlers should check res.headersSent.", "relatedTrigger": null },
+      { "label": "Sets or understands headers such as Content-Disposition, Content-Type, Cache-Control, and filename where relevant.", "relatedTrigger": null },
+      { "label": "Considers streaming, large files, CDN/object storage signed URLs, and range requests for production-scale downloads.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Passes req.query.path directly to res.download.",
@@ -1849,13 +1849,13 @@
     "intent": "Check whether the candidate can serve static assets with express.static while considering mount paths, filesystem roots, caching, fallthrough, and exposure risks.",
     "primaryQuestion": "How do you serve static files in Express?",
     "expectedSignals": [
-      "Uses express.static(root, options) as built-in middleware and mounts it with app.use().",
-      "Explains that the root directory is the filesystem directory Express serves from, and that the directory name itself is not part of the URL unless mounted under a virtual prefix.",
-      "Shows a virtual mount path such as app.use('/static', express.static(path.join(__dirname, 'public'))).",
-      "Prefers absolute paths or path.join with a known application directory to avoid surprises from process working directory changes.",
-      "Configures caching carefully, such as long maxAge and immutable only for versioned assets, and shorter/no cache for mutable files.",
-      "Considers dotfiles, directory exposure, fallthrough behavior, SPA fallbacks, and custom 404 handling.",
-      "Mentions that reverse proxy, CDN, or object storage is often better for high-volume static assets in production."
+      { "label": "Uses express.static(root, options) as built-in middleware and mounts it with app.use().", "relatedTrigger": null },
+      { "label": "Explains that the root directory is the filesystem directory Express serves from, and that the directory name itself is not part of the URL unless mounted under a virtual prefix.", "relatedTrigger": null },
+      { "label": "Shows a virtual mount path such as app.use('/static', express.static(path.join(__dirname, 'public'))).", "relatedTrigger": null },
+      { "label": "Prefers absolute paths or path.join with a known application directory to avoid surprises from process working directory changes.", "relatedTrigger": null },
+      { "label": "Configures caching carefully, such as long maxAge and immutable only for versioned assets, and shorter/no cache for mutable files.", "relatedTrigger": null },
+      { "label": "Considers dotfiles, directory exposure, fallthrough behavior, SPA fallbacks, and custom 404 handling.", "relatedTrigger": null },
+      { "label": "Mentions that reverse proxy, CDN, or object storage is often better for high-volume static assets in production.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Serves the whole project root or private upload directory without review.",
@@ -1989,13 +1989,13 @@
     "intent": "Verify whether the candidate understands server-side template rendering in Express, required configuration, and when rendering HTML differs from returning API JSON.",
     "primaryQuestion": "What is res.render() used for? What Express configuration is needed to use it?",
     "expectedSignals": [
-      "Explains that res.render(view, locals[, callback]) renders a server-side template and sends the resulting HTML response unless a callback is used.",
-      "Mentions configuring a view engine with app.set('view engine', 'pug' or 'ejs' or another engine).",
-      "Mentions configuring the views directory with app.set('views', pathToViews) when the default views directory is not sufficient.",
-      "Mentions installing the corresponding template engine package, such as pug, ejs, handlebars, or another Express-compatible engine.",
-      "Explains passing locals to the template through the second argument and/or res.locals for request-scoped values.",
-      "Distinguishes res.render() for HTML pages from res.json() for API responses.",
-      "Mentions callback behavior: with a callback, Express provides the rendered HTML and the handler must send it explicitly."
+      { "label": "Explains that res.render(view, locals[, callback]) renders a server-side template and sends the resulting HTML response unless a callback is used.", "relatedTrigger": null },
+      { "label": "Mentions configuring a view engine with app.set('view engine', 'pug' or 'ejs' or another engine).", "relatedTrigger": null },
+      { "label": "Mentions configuring the views directory with app.set('views', pathToViews) when the default views directory is not sufficient.", "relatedTrigger": null },
+      { "label": "Mentions installing the corresponding template engine package, such as pug, ejs, handlebars, or another Express-compatible engine.", "relatedTrigger": null },
+      { "label": "Explains passing locals to the template through the second argument and/or res.locals for request-scoped values.", "relatedTrigger": null },
+      { "label": "Distinguishes res.render() for HTML pages from res.json() for API responses.", "relatedTrigger": null },
+      { "label": "Mentions callback behavior: with a callback, Express provides the rendered HTML and the handler must send it explicitly.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Uses res.render() expecting JSON output for an API endpoint.",

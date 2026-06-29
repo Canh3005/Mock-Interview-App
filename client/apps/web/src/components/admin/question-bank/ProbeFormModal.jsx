@@ -38,7 +38,7 @@ function _validateProbe({ form, t }) {
   if (!form.competencies.length) issues.push(t('adminQuestionBank.validationCompetencies'));
   if (!form.intent.trim()) issues.push(t('adminQuestionBank.validationIntent'));
   if (!form.primaryQuestion.trim()) issues.push(t('adminQuestionBank.validationPrimaryQuestion'));
-  if (!compactTextList(form.expectedSignals).length) issues.push(t('adminQuestionBank.validationSignals'));
+  if (!compactCompleteObjects(form.expectedSignals, ['label']).length) issues.push(t('adminQuestionBank.validationSignals'));
   if (!compactTextList(form.redFlags).length) issues.push(t('adminQuestionBank.validationRedFlags'));
   if (!compactCompleteObjects(form.scoringHints, ['description']).length) {
     issues.push(t('adminQuestionBank.validationScoringHints'));
@@ -61,7 +61,7 @@ function _payload(form) {
     code: form.code.trim() || null,
     difficulty: Number(form.difficulty),
     techTags: compactTextList(form.techTags),
-    expectedSignals: compactTextList(form.expectedSignals),
+    expectedSignals: compactCompleteObjects(form.expectedSignals, ['label']),
     redFlags: compactTextList(form.redFlags),
     scoringHints: compactCompleteObjects(form.scoringHints, ['description']),
     followUps: compactCompleteObjects(form.followUps, ['question', 'purpose']),
@@ -114,8 +114,27 @@ function GuidanceSection({ form, setField, t }) {
     <FormSection title={t('adminQuestionBank.guidanceSection')}>
       <TextAreaField label={t('adminQuestionBank.intent')} value={form.intent} onChange={(intent) => setField({ intent })} />
       <TextAreaField label={t('adminQuestionBank.primaryQuestion')} value={form.primaryQuestion} onChange={(primaryQuestion) => setField({ primaryQuestion })} />
-      <LineListField label={t('adminQuestionBank.expectedSignals')} values={form.expectedSignals} onChange={(expectedSignals) => setField({ expectedSignals })} />
       <LineListField label={t('adminQuestionBank.redFlags')} values={form.redFlags} onChange={(redFlags) => setField({ redFlags })} />
+    </FormSection>
+  );
+}
+
+function ExpectedSignalsSection({ form, taxonomy, setField, t }) {
+  const _set = (index, patch) => setField({ expectedSignals: updateItem(form.expectedSignals, index, patch) });
+  const triggerOptions = [
+    { key: '', label: t('adminQuestionBank.noRelatedTrigger') },
+    ..._options(taxonomy?.followUpTriggers, []),
+  ];
+  return (
+    <FormSection title={t('adminQuestionBank.expectedSignals')}>
+      {form.expectedSignals.map((signal, index) => (
+        <div key={index} className="grid grid-cols-1 md:grid-cols-[1fr_220px_auto] gap-3 items-end">
+          <TextField label={t('adminQuestionBank.signalLabel')} value={signal.label} onChange={(label) => _set(index, { label })} />
+          <SelectField label={t('adminQuestionBank.relatedTrigger')} value={signal.relatedTrigger ?? ''} options={triggerOptions} onChange={(relatedTrigger) => _set(index, { relatedTrigger: relatedTrigger || null })} />
+          <RemoveButton label={t('adminQuestionBank.remove')} onClick={() => setField({ expectedSignals: removeItem(form.expectedSignals, index) })} />
+        </div>
+      ))}
+      <AddButton label={t('adminQuestionBank.addSignal')} onClick={() => setField({ expectedSignals: [...form.expectedSignals, { label: '', relatedTrigger: null }] })} />
     </FormSection>
   );
 }
@@ -207,6 +226,7 @@ export default function ProbeFormModal({ probe, taxonomy, saving, onClose, onSav
             <MetadataSection form={form} taxonomy={taxonomy} setField={setField} t={t} />
             <LocalizedSection form={form} activeLocale={activeLocale} setActiveLocale={setActiveLocale} setLocaleField={setLocaleField} t={t} />
             <GuidanceSection form={form} setField={setField} t={t} />
+            <ExpectedSignalsSection form={form} taxonomy={taxonomy} setField={setField} t={t} />
             <ScoringSection form={form} setField={setField} t={t} />
             <FollowUpsSection form={form} taxonomy={taxonomy} setField={setField} t={t} />
             <SourcesSection form={form} setField={setField} t={t} />

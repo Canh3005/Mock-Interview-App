@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import type { QuestionProbeFollowUpTrigger } from '../constants/question-bank-taxonomy.constants';
 
 export type SignalStatus = 'covered' | 'unclear' | 'missing';
 export type ClaimVerification = 'verified' | 'not_verified' | 'inflated_risk';
@@ -18,6 +19,7 @@ export type QuestionPracticeFailureCode =
 export interface CatalogItem {
   key: string;
   label: string;
+  relatedTrigger?: QuestionProbeFollowUpTrigger | null;
 }
 
 export interface ProbeSignalResult {
@@ -26,6 +28,7 @@ export interface ProbeSignalResult {
   status: SignalStatus;
   evidenceQuotes: string[];
   feedback: string;
+  relatedTrigger: QuestionProbeFollowUpTrigger | null;
 }
 
 export interface ProbeRedFlagResult {

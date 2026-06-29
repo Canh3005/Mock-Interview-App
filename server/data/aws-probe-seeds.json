@@ -11,10 +11,10 @@
     "intent": "Check whether the candidate understands AWS shared responsibility and can turn it into concrete engineering decisions for a deployed workload.",
     "primaryQuestion": "For a web application running on EC2 with RDS and S3, what is AWS responsible for and what is your team still responsible for?",
     "expectedSignals": [
-      "Separates security of the cloud from security in the cloud.",
-      "Names customer-owned tasks such as IAM permissions, network exposure, patching choices, encryption configuration, backups, logging, and application vulnerabilities.",
-      "Explains that responsibility changes by service model, for example EC2 versus managed database or object storage.",
-      "Connects the answer to Well-Architected pillars such as security, reliability, operational excellence, and cost optimization."
+      { "label": "Separates security of the cloud from security in the cloud.", "relatedTrigger": null },
+      { "label": "Names customer-owned tasks such as IAM permissions, network exposure, patching choices, encryption configuration, backups, logging, and application vulnerabilities.", "relatedTrigger": null },
+      { "label": "Explains that responsibility changes by service model, for example EC2 versus managed database or object storage.", "relatedTrigger": null },
+      { "label": "Connects the answer to Well-Architected pillars such as security, reliability, operational excellence, and cost optimization.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Assumes AWS handles all security because the workload is in the cloud.",
@@ -75,10 +75,10 @@
     "intent": "Assess practical understanding of IAM identities, roles, temporary credentials, least privilege, and policy scope.",
     "primaryQuestion": "How would you give an application running on EC2 permission to read only one S3 bucket without using long-lived access keys?",
     "expectedSignals": [
-      "Uses an IAM role attached through an EC2 instance profile instead of static credentials on disk.",
-      "Scopes the policy to the specific bucket and needed actions such as s3:GetObject and possibly s3:ListBucket.",
-      "Mentions temporary credentials automatically provided to the workload.",
-      "Considers policy conditions, access review, and avoiding broad managed policies in production."
+      { "label": "Uses an IAM role attached through an EC2 instance profile instead of static credentials on disk.", "relatedTrigger": null },
+      { "label": "Scopes the policy to the specific bucket and needed actions such as s3:GetObject and possibly s3:ListBucket.", "relatedTrigger": null },
+      { "label": "Mentions temporary credentials automatically provided to the workload.", "relatedTrigger": null },
+      { "label": "Considers policy conditions, access review, and avoiding broad managed policies in production.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Stores an IAM user's access key and secret key in environment variables or source code as the preferred approach.",
@@ -138,10 +138,10 @@
     "intent": "Evaluate whether the candidate can reason about VPC routing, public and private subnets, internet gateways, and NAT gateways.",
     "primaryQuestion": "Design a VPC with public web entry points and private application instances that need outbound internet access for updates. What routes and gateways are required?",
     "expectedSignals": [
-      "Places public-facing load balancer or bastion-like entry points in public subnets with routes to an internet gateway.",
-      "Places application instances in private subnets without a direct route to an internet gateway.",
-      "Uses a NAT gateway in a public subnet for private subnet outbound IPv4 internet access.",
-      "Explains route table association per subnet and separates routing from security group rules."
+      { "label": "Places public-facing load balancer or bastion-like entry points in public subnets with routes to an internet gateway.", "relatedTrigger": null },
+      { "label": "Places application instances in private subnets without a direct route to an internet gateway.", "relatedTrigger": null },
+      { "label": "Uses a NAT gateway in a public subnet for private subnet outbound IPv4 internet access.", "relatedTrigger": null },
+      { "label": "Explains route table association per subnet and separates routing from security group rules.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Calls a subnet public only because it has a public CIDR range.",
@@ -203,10 +203,10 @@
     "intent": "Assess troubleshooting depth for AWS network reachability issues involving security groups, network ACLs, routes, and target health.",
     "primaryQuestion": "An EC2 instance in a private subnet cannot reach an external package registry, and the ALB health check is failing. How would you debug this?",
     "expectedSignals": [
-      "Checks route tables, NAT gateway presence, NAT subnet route to internet gateway, and subnet associations.",
-      "Verifies security group egress and inbound rules from the ALB security group to the instance port.",
-      "Checks network ACL stateless rules for inbound and outbound ephemeral ports.",
-      "Uses ALB target health reason codes, instance logs, and connectivity tests instead of guessing."
+      { "label": "Checks route tables, NAT gateway presence, NAT subnet route to internet gateway, and subnet associations.", "relatedTrigger": null },
+      { "label": "Verifies security group egress and inbound rules from the ALB security group to the instance port.", "relatedTrigger": null },
+      { "label": "Checks network ACL stateless rules for inbound and outbound ephemeral ports.", "relatedTrigger": null },
+      { "label": "Uses ALB target health reason codes, instance logs, and connectivity tests instead of guessing.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Immediately opens all ports to 0.0.0.0/0 without isolating the failing path.",
@@ -267,10 +267,10 @@
     "intent": "Evaluate whether the candidate can design and operate an EC2 Auto Scaling group behind an Application Load Balancer.",
     "primaryQuestion": "How would you run a stateless API on EC2 so it survives instance failure and scales with traffic?",
     "expectedSignals": [
-      "Uses an Auto Scaling group across multiple subnets and Availability Zones behind an Application Load Balancer.",
-      "Defines launch template content such as AMI, instance type, security groups, user data, and instance profile.",
-      "Configures health checks, grace period, desired/min/max capacity, and scaling policy based on useful metrics.",
-      "Keeps application state outside the instance and plans rolling or immutable deployments."
+      { "label": "Uses an Auto Scaling group across multiple subnets and Availability Zones behind an Application Load Balancer.", "relatedTrigger": null },
+      { "label": "Defines launch template content such as AMI, instance type, security groups, user data, and instance profile.", "relatedTrigger": null },
+      { "label": "Configures health checks, grace period, desired/min/max capacity, and scaling policy based on useful metrics.", "relatedTrigger": null },
+      { "label": "Keeps application state outside the instance and plans rolling or immutable deployments.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Runs a single hand-managed EC2 instance as the production architecture.",
@@ -332,10 +332,10 @@
     "intent": "Check whether the candidate can design safe S3 storage with access control, versioning, lifecycle, and recovery behavior.",
     "primaryQuestion": "How would you store user-uploaded documents in S3 so they are private, recoverable after accidental deletion, and cost-aware over time?",
     "expectedSignals": [
-      "Keeps the bucket private and uses S3 Block Public Access unless public access is intentionally required.",
-      "Uses IAM or application-mediated access instead of public object ACLs.",
-      "Enables versioning to recover overwritten or deleted objects and understands delete markers.",
-      "Uses lifecycle rules to transition or expire old versions and archival data based on access patterns."
+      { "label": "Keeps the bucket private and uses S3 Block Public Access unless public access is intentionally required.", "relatedTrigger": null },
+      { "label": "Uses IAM or application-mediated access instead of public object ACLs.", "relatedTrigger": null },
+      { "label": "Enables versioning to recover overwritten or deleted objects and understands delete markers.", "relatedTrigger": null },
+      { "label": "Uses lifecycle rules to transition or expire old versions and archival data based on access patterns.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Makes the bucket public for convenience.",
@@ -397,10 +397,10 @@
     "intent": "Assess whether the candidate understands Lambda invocation modes, retry behavior, duplicate events, and idempotency.",
     "primaryQuestion": "A Lambda function processes payment events asynchronously. How would you handle retries, duplicate delivery, and failed events safely?",
     "expectedSignals": [
-      "Explains that asynchronous Lambda invocation retries function errors and can deliver the same event more than once.",
-      "Designs idempotency using a stable event or payment id and conditional writes or deduplication records.",
-      "Configures an on-failure destination or dead-letter queue for events that exhaust processing attempts.",
-      "Monitors failures, throttles, event age, and destination delivery failures."
+      { "label": "Explains that asynchronous Lambda invocation retries function errors and can deliver the same event more than once.", "relatedTrigger": null },
+      { "label": "Designs idempotency using a stable event or payment id and conditional writes or deduplication records.", "relatedTrigger": null },
+      { "label": "Configures an on-failure destination or dead-letter queue for events that exhaust processing attempts.", "relatedTrigger": null },
+      { "label": "Monitors failures, throttles, event age, and destination delivery failures.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Assumes Lambda executes exactly once.",
@@ -462,10 +462,10 @@
     "intent": "Evaluate compute platform selection across Lambda, ECS, and EC2 based on workload shape and operational constraints.",
     "primaryQuestion": "For a new image-processing service with bursty traffic and some jobs taking several minutes, how would you choose between Lambda, ECS/Fargate, and EC2?",
     "expectedSignals": [
-      "Compares operational burden, startup latency, execution duration, concurrency, package size, networking, and cost profile.",
-      "Uses Lambda for event-driven bursty tasks when duration and runtime limits fit.",
-      "Uses ECS/Fargate for containerized long-running workers or larger dependencies with less server management.",
-      "Uses EC2 when deep host control, specialized capacity, or steady high utilization justifies the operational cost."
+      { "label": "Compares operational burden, startup latency, execution duration, concurrency, package size, networking, and cost profile.", "relatedTrigger": null },
+      { "label": "Uses Lambda for event-driven bursty tasks when duration and runtime limits fit.", "relatedTrigger": null },
+      { "label": "Uses ECS/Fargate for containerized long-running workers or larger dependencies with less server management.", "relatedTrigger": null },
+      { "label": "Uses EC2 when deep host control, specialized capacity, or steady high utilization justifies the operational cost.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Always chooses one compute service without workload-specific reasoning.",
@@ -527,10 +527,10 @@
     "intent": "Check understanding of RDS availability, read scaling, failover, backups, and operational limits.",
     "primaryQuestion": "How do Multi-AZ deployments and read replicas solve different problems in Amazon RDS?",
     "expectedSignals": [
-      "Explains Multi-AZ as an availability and failover feature for the primary database.",
-      "Explains read replicas as read scaling or reporting offload, not automatic write failover by default.",
-      "Mentions backups, snapshots, recovery objectives, replication lag, and application connection behavior during failover.",
-      "Understands that the Multi-AZ standby is not used for serving normal read traffic in classic deployments."
+      { "label": "Explains Multi-AZ as an availability and failover feature for the primary database.", "relatedTrigger": null },
+      { "label": "Explains read replicas as read scaling or reporting offload, not automatic write failover by default.", "relatedTrigger": null },
+      { "label": "Mentions backups, snapshots, recovery objectives, replication lag, and application connection behavior during failover.", "relatedTrigger": null },
+      { "label": "Understands that the Multi-AZ standby is not used for serving normal read traffic in classic deployments.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Says Multi-AZ doubles read throughput by reading from the standby.",
@@ -590,10 +590,10 @@
     "intent": "Assess query-driven DynamoDB modeling, partition key design, secondary indexes, and hot partition awareness.",
     "primaryQuestion": "How would you model an orders table in DynamoDB when you need to query by customer, by order id, and by order status dashboard?",
     "expectedSignals": [
-      "Starts from access patterns instead of normalizing first.",
-      "Chooses partition and sort keys that distribute load and support primary lookups.",
-      "Uses a global secondary index when querying by status or another access pattern not served by the base key.",
-      "Discusses hot partitions, high-cardinality keys, projected attributes, consistency, and write amplification."
+      { "label": "Starts from access patterns instead of normalizing first.", "relatedTrigger": null },
+      { "label": "Chooses partition and sort keys that distribute load and support primary lookups.", "relatedTrigger": null },
+      { "label": "Uses a global secondary index when querying by status or another access pattern not served by the base key.", "relatedTrigger": null },
+      { "label": "Discusses hot partitions, high-cardinality keys, projected attributes, consistency, and write amplification.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Designs DynamoDB like a relational database with joins as the main query plan.",
@@ -653,10 +653,10 @@
     "intent": "Check whether the candidate understands SQS visibility timeout, deletion, retries, DLQs, and idempotent consumers.",
     "primaryQuestion": "How would you build an SQS consumer that processes jobs reliably without losing messages or doing unsafe duplicate work?",
     "expectedSignals": [
-      "Explains receive, visibility timeout, successful processing, and DeleteMessage.",
-      "Sets visibility timeout based on processing time and extends it for long jobs when needed.",
-      "Uses DLQ with maxReceiveCount for poison messages and diagnostic replay.",
-      "Designs idempotent processing because standard queues can deliver messages more than once."
+      { "label": "Explains receive, visibility timeout, successful processing, and DeleteMessage.", "relatedTrigger": null },
+      { "label": "Sets visibility timeout based on processing time and extends it for long jobs when needed.", "relatedTrigger": null },
+      { "label": "Uses DLQ with maxReceiveCount for poison messages and diagnostic replay.", "relatedTrigger": null },
+      { "label": "Designs idempotent processing because standard queues can deliver messages more than once.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Deletes the message before the business operation succeeds.",
@@ -717,10 +717,10 @@
     "intent": "Evaluate event-driven integration design with EventBridge rules, targets, retry policies, DLQs, and permissions.",
     "primaryQuestion": "How would you use EventBridge to route order-created events to multiple downstream services without tightly coupling the order service to each consumer?",
     "expectedSignals": [
-      "Publishes structured events to an event bus and uses rules or event patterns to select targets.",
-      "Explains target permissions and independent target delivery behavior.",
-      "Configures retry policy and DLQ for undelivered events where appropriate.",
-      "Considers event schema, versioning, idempotent consumers, and observability."
+      { "label": "Publishes structured events to an event bus and uses rules or event patterns to select targets.", "relatedTrigger": null },
+      { "label": "Explains target permissions and independent target delivery behavior.", "relatedTrigger": null },
+      { "label": "Configures retry policy and DLQ for undelivered events where appropriate.", "relatedTrigger": null },
+      { "label": "Considers event schema, versioning, idempotent consumers, and observability.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Uses direct synchronous calls to every consumer while claiming the system is decoupled.",
@@ -782,10 +782,10 @@
     "intent": "Check understanding of ECS services, task definitions, desired count, rolling deployment controls, and health checks.",
     "primaryQuestion": "How does an ECS service keep the desired number of tasks running during a rolling deployment, and what settings affect availability?",
     "expectedSignals": [
-      "Explains task definition revisions and service desired count.",
-      "Understands rolling replacement of old tasks with new tasks.",
-      "Mentions minimumHealthyPercent and maximumPercent effects on how many tasks can stop or start during deployment.",
-      "Connects container health, target group health, capacity, and rollback/monitoring."
+      { "label": "Explains task definition revisions and service desired count.", "relatedTrigger": null },
+      { "label": "Understands rolling replacement of old tasks with new tasks.", "relatedTrigger": null },
+      { "label": "Mentions minimumHealthyPercent and maximumPercent effects on how many tasks can stop or start during deployment.", "relatedTrigger": null },
+      { "label": "Connects container health, target group health, capacity, and rollback/monitoring.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Thinks updating a container image automatically changes all running tasks without a new task definition or deployment.",
@@ -845,10 +845,10 @@
     "intent": "Assess infrastructure-as-code troubleshooting for CloudFormation drift, change sets, and unmanaged console changes.",
     "primaryQuestion": "A CloudFormation stack update would replace a production resource, and you suspect someone changed the resource manually in the console. How would you proceed?",
     "expectedSignals": [
-      "Uses change sets to inspect the planned update before execution.",
-      "Runs drift detection or uses drift-aware change sets where supported to compare template, previous deployment, and actual state.",
-      "Identifies whether to import, update the template, revert the manual change, or plan a controlled replacement.",
-      "Coordinates backup, maintenance window, rollback plan, and ownership of manual changes."
+      { "label": "Uses change sets to inspect the planned update before execution.", "relatedTrigger": null },
+      { "label": "Runs drift detection or uses drift-aware change sets where supported to compare template, previous deployment, and actual state.", "relatedTrigger": null },
+      { "label": "Identifies whether to import, update the template, revert the manual change, or plan a controlled replacement.", "relatedTrigger": null },
+      { "label": "Coordinates backup, maintenance window, rollback plan, and ownership of manual changes.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Executes the stack update blindly in production.",
@@ -909,10 +909,10 @@
     "intent": "Evaluate AWS observability and audit logging design using CloudWatch Logs, metrics, alarms, and CloudTrail.",
     "primaryQuestion": "What would you instrument for an AWS-hosted API so the team can detect user-facing incidents and investigate suspicious account activity?",
     "expectedSignals": [
-      "Uses CloudWatch metrics and alarms for latency, error rate, saturation, throttles, queue depth, and resource health.",
-      "Centralizes application and service logs in CloudWatch Logs with retention and useful fields.",
-      "Uses metric filters or structured logs for application-level signals.",
-      "Uses CloudTrail for AWS account activity, distinguishing management events from data events where needed."
+      { "label": "Uses CloudWatch metrics and alarms for latency, error rate, saturation, throttles, queue depth, and resource health.", "relatedTrigger": null },
+      { "label": "Centralizes application and service logs in CloudWatch Logs with retention and useful fields.", "relatedTrigger": null },
+      { "label": "Uses metric filters or structured logs for application-level signals.", "relatedTrigger": null },
+      { "label": "Uses CloudTrail for AWS account activity, distinguishing management events from data events where needed.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Only logs to local instance files with no retention or aggregation.",
@@ -974,10 +974,10 @@
     "intent": "Check practical handling of application configuration, secrets, rotation, IAM access, and encryption with AWS services.",
     "primaryQuestion": "Where would you store database credentials and non-secret configuration for an AWS application, and how would you control access and rotation?",
     "expectedSignals": [
-      "Uses Secrets Manager for secrets that need lifecycle management and rotation, especially database credentials.",
-      "Uses Systems Manager Parameter Store for hierarchical configuration and less complex secret/config use cases.",
-      "Uses IAM to grant only the application role access to needed parameters or secrets.",
-      "Mentions encryption with KMS, auditing access, versioning/labels where relevant, and avoiding secrets in source code or images."
+      { "label": "Uses Secrets Manager for secrets that need lifecycle management and rotation, especially database credentials.", "relatedTrigger": null },
+      { "label": "Uses Systems Manager Parameter Store for hierarchical configuration and less complex secret/config use cases.", "relatedTrigger": null },
+      { "label": "Uses IAM to grant only the application role access to needed parameters or secrets.", "relatedTrigger": null },
+      { "label": "Mentions encryption with KMS, auditing access, versioning/labels where relevant, and avoiding secrets in source code or images.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Commits credentials to source code or bakes them into container images.",
@@ -1039,10 +1039,10 @@
     "intent": "Assess senior-level judgment around AWS account boundaries, permission guardrails, blast radius, and operational governance.",
     "primaryQuestion": "When would you split workloads across multiple AWS accounts, and what guardrails would you put in place?",
     "expectedSignals": [
-      "Uses accounts as isolation boundaries for environments, teams, compliance scopes, and blast-radius reduction.",
-      "Mentions centralized identity/federation, temporary credentials, least privilege, and MFA.",
-      "Discusses guardrails such as service control policies, permission boundaries, logging/audit aggregation, and network boundaries.",
-      "Considers operational overhead, shared services, deployment pipelines, cost allocation, and incident response."
+      { "label": "Uses accounts as isolation boundaries for environments, teams, compliance scopes, and blast-radius reduction.", "relatedTrigger": null },
+      { "label": "Mentions centralized identity/federation, temporary credentials, least privilege, and MFA.", "relatedTrigger": null },
+      { "label": "Discusses guardrails such as service control policies, permission boundaries, logging/audit aggregation, and network boundaries.", "relatedTrigger": null },
+      { "label": "Considers operational overhead, shared services, deployment pipelines, cost allocation, and incident response.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Keeps all production and development workloads in one account for convenience without compensating controls.",
@@ -1103,10 +1103,10 @@
     "intent": "Check when and how the candidate uses Step Functions for orchestration, retries, catches, timeouts, and stateful workflows.",
     "primaryQuestion": "When would you introduce Step Functions instead of chaining Lambda functions directly, and how would you handle task failures?",
     "expectedSignals": [
-      "Uses Step Functions when workflow state, branching, retries, human-visible execution history, or long orchestration matters.",
-      "Avoids tightly chaining Lambdas through direct invokes for complex workflows.",
-      "Uses Retry for transient failures with backoff and Catch for fallback or compensation paths.",
-      "Considers timeouts, idempotency, payload size, cost per state transition, and observability."
+      { "label": "Uses Step Functions when workflow state, branching, retries, human-visible execution history, or long orchestration matters.", "relatedTrigger": null },
+      { "label": "Avoids tightly chaining Lambdas through direct invokes for complex workflows.", "relatedTrigger": null },
+      { "label": "Uses Retry for transient failures with backoff and Catch for fallback or compensation paths.", "relatedTrigger": null },
+      { "label": "Considers timeouts, idempotency, payload size, cost per state transition, and observability.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Chaining many Lambdas directly with no central workflow visibility.",
@@ -1166,10 +1166,10 @@
     "intent": "Evaluate senior incident response behavior for AWS production issues, including triage, mitigation, evidence, and follow-up.",
     "primaryQuestion": "During a production incident on AWS, error rates spike after a deployment and someone also changed IAM permissions manually. How do you lead the first 30 minutes?",
     "expectedSignals": [
-      "Stabilizes customer impact first with rollback, traffic shifting, scaling, or feature disablement based on evidence.",
-      "Separates deployment regression investigation from IAM/audit investigation while coordinating both workstreams.",
-      "Uses CloudWatch dashboards/logs/alarms and CloudTrail events to build a timeline.",
-      "Communicates status, owner, impact, mitigation, and next checkpoint clearly."
+      { "label": "Stabilizes customer impact first with rollback, traffic shifting, scaling, or feature disablement based on evidence.", "relatedTrigger": null },
+      { "label": "Separates deployment regression investigation from IAM/audit investigation while coordinating both workstreams.", "relatedTrigger": null },
+      { "label": "Uses CloudWatch dashboards/logs/alarms and CloudTrail events to build a timeline.", "relatedTrigger": null },
+      { "label": "Communicates status, owner, impact, mitigation, and next checkpoint clearly.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Starts a broad root-cause debate before mitigation.",
@@ -1231,10 +1231,10 @@
     "intent": "Assess architecture review maturity using AWS Well-Architected thinking across reliability, security, performance, cost, and operations.",
     "primaryQuestion": "You inherit an AWS workload that is reliable but significantly over budget. How would you reduce cost without weakening security or reliability?",
     "expectedSignals": [
-      "Starts with measurement: cost allocation, usage patterns, idle resources, rightsizing, storage lifecycle, data transfer, and reserved or savings options where appropriate.",
-      "Protects non-negotiables such as security controls, backups, disaster recovery requirements, and SLOs.",
-      "Uses Well-Architected trade-off thinking across cost optimization, reliability, performance efficiency, and operational excellence.",
-      "Plans safe experiments, rollback criteria, and before/after metrics instead of one-time cuts."
+      { "label": "Starts with measurement: cost allocation, usage patterns, idle resources, rightsizing, storage lifecycle, data transfer, and reserved or savings options where appropriate.", "relatedTrigger": null },
+      { "label": "Protects non-negotiables such as security controls, backups, disaster recovery requirements, and SLOs.", "relatedTrigger": null },
+      { "label": "Uses Well-Architected trade-off thinking across cost optimization, reliability, performance efficiency, and operational excellence.", "relatedTrigger": null },
+      { "label": "Plans safe experiments, rollback criteria, and before/after metrics instead of one-time cuts.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Cuts redundancy, backups, or security controls first without risk analysis.",

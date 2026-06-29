@@ -11,11 +11,11 @@
     "intent": "Check whether the candidate understands a TypeORM Entity as the persistence mapping between a TypeScript class and a database table, including decorators, columns, primary keys, and schema implications.",
     "primaryQuestion": "What is an Entity in TypeORM, and how do you define one?",
     "expectedSignals": [
-      "Explains that an Entity is a class decorated with @Entity that TypeORM maps to a database table.",
-      "Mentions defining properties with decorators such as @PrimaryGeneratedColumn and @Column.",
-      "Understands that TypeScript types alone do not fully define database schema details such as length, nullability, uniqueness, enum, precision, or column type.",
-      "Shows a small example such as UserEntity with id, email, name, createdAt, and updatedAt.",
-      "Recognizes that entities represent persistence structure and should not automatically become public API response contracts."
+      { "label": "Explains that an Entity is a class decorated with @Entity that TypeORM maps to a database table.", "relatedTrigger": null },
+      { "label": "Mentions defining properties with decorators such as @PrimaryGeneratedColumn and @Column.", "relatedTrigger": null },
+      { "label": "Understands that TypeScript types alone do not fully define database schema details such as length, nullability, uniqueness, enum, precision, or column type.", "relatedTrigger": null },
+      { "label": "Shows a small example such as UserEntity with id, email, name, createdAt, and updatedAt.", "relatedTrigger": null },
+      { "label": "Recognizes that entities represent persistence structure and should not automatically become public API response contracts.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Describes an Entity as just a DTO or plain interface with no runtime decorators.",
@@ -76,11 +76,11 @@
     "intent": "Evaluate whether the candidate understands the Repository pattern in TypeORM and the NestJS wiring required to inject entity-specific repositories into services.",
     "primaryQuestion": "What is the Repository pattern, and how do you inject a Repository into a Service?",
     "expectedSignals": [
-      "Explains that a Repository encapsulates data access operations for one entity type.",
-      "Mentions Repository<User> or similar as the main API for find, create, save, update, delete, and query builder access.",
-      "In NestJS, registers the entity with TypeOrmModule.forFeature([User]) in the owning module.",
-      "Injects the repository using @InjectRepository(User) in the service constructor.",
-      "Understands that repository methods should be used from services or data-access layers, not scattered through controllers."
+      { "label": "Explains that a Repository encapsulates data access operations for one entity type.", "relatedTrigger": null },
+      { "label": "Mentions Repository<User> or similar as the main API for find, create, save, update, delete, and query builder access.", "relatedTrigger": null },
+      { "label": "In NestJS, registers the entity with TypeOrmModule.forFeature([User]) in the owning module.", "relatedTrigger": null },
+      { "label": "Injects the repository using @InjectRepository(User) in the service constructor.", "relatedTrigger": null },
+      { "label": "Understands that repository methods should be used from services or data-access layers, not scattered through controllers.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Manually constructs repositories with new Repository().",
@@ -142,11 +142,11 @@
     "intent": "Check whether the candidate can choose the correct TypeORM read method and understands return shapes, filters, relation loading, and not-found behavior.",
     "primaryQuestion": "What is the difference between find(), findOne(), findOneBy(), and findOneOrFail()?",
     "expectedSignals": [
-      "States that find returns an array and supports find options such as where, relations, order, skip, and take.",
-      "Explains that findOne returns one entity or null using richer find options.",
-      "Explains that findOneBy returns one entity or null using a simpler where condition object.",
-      "Explains that findOneOrFail throws if no row is found and should be handled intentionally.",
-      "Mentions choosing by desired cardinality, options needed, and not-found behavior instead of using one method everywhere."
+      { "label": "States that find returns an array and supports find options such as where, relations, order, skip, and take.", "relatedTrigger": null },
+      { "label": "Explains that findOne returns one entity or null using richer find options.", "relatedTrigger": null },
+      { "label": "Explains that findOneBy returns one entity or null using a simpler where condition object.", "relatedTrigger": null },
+      { "label": "Explains that findOneOrFail throws if no row is found and should be handled intentionally.", "relatedTrigger": null },
+      { "label": "Mentions choosing by desired cardinality, options needed, and not-found behavior instead of using one method everywhere.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Thinks findOne returns an empty object or undefined in current TypeORM versions.",
@@ -208,11 +208,11 @@
     "intent": "Evaluate whether the candidate understands the practical difference between creating entity instances, persisting with entity lifecycle behavior, and executing direct insert operations.",
     "primaryQuestion": "What is the difference between save(), insert(), and create() in TypeORM?",
     "expectedSignals": [
-      "Explains that create builds an entity instance from a plain object but does not write to the database.",
-      "Explains that save persists an entity and can insert or update depending on whether the primary key exists.",
-      "Mentions that save returns an entity and may involve lifecycle hooks, cascades, and extra existence checks depending on usage.",
-      "Explains that insert performs a direct insert operation and does not behave like full entity save.",
-      "Chooses insert for simple bulk/direct insertion when entity lifecycle behavior is not needed, and save when working with entity graphs or upsert-like persistence semantics."
+      { "label": "Explains that create builds an entity instance from a plain object but does not write to the database.", "relatedTrigger": null },
+      { "label": "Explains that save persists an entity and can insert or update depending on whether the primary key exists.", "relatedTrigger": null },
+      { "label": "Mentions that save returns an entity and may involve lifecycle hooks, cascades, and extra existence checks depending on usage.", "relatedTrigger": null },
+      { "label": "Explains that insert performs a direct insert operation and does not behave like full entity save.", "relatedTrigger": null },
+      { "label": "Chooses insert for simple bulk/direct insertion when entity lifecycle behavior is not needed, and save when working with entity graphs or upsert-like persistence semantics.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Believes create writes to the database.",
@@ -274,11 +274,11 @@
     "intent": "Check whether the candidate can model a one-to-many relationship in TypeORM and understands which side owns the foreign key.",
     "primaryQuestion": "How do you define a One-to-Many / Many-to-One relationship in TypeORM?",
     "expectedSignals": [
-      "Uses a concrete example such as User has many Posts and Post belongs to one User.",
-      "Defines @OneToMany on the inverse collection side and @ManyToOne on the owning side.",
-      "Explains that the many-to-one side usually owns the foreign key column in the database.",
-      "Mentions inverse-side callbacks such as user => user.posts and post => post.user.",
-      "Discusses practical options such as nullable, cascade, onDelete, and explicit relation loading when relevant."
+      { "label": "Uses a concrete example such as User has many Posts and Post belongs to one User.", "relatedTrigger": null },
+      { "label": "Defines @OneToMany on the inverse collection side and @ManyToOne on the owning side.", "relatedTrigger": null },
+      { "label": "Explains that the many-to-one side usually owns the foreign key column in the database.", "relatedTrigger": null },
+      { "label": "Mentions inverse-side callbacks such as user => user.posts and post => post.user.", "relatedTrigger": null },
+      { "label": "Discusses practical options such as nullable, cascade, onDelete, and explicit relation loading when relevant.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Puts @OneToMany only and expects TypeORM to create a foreign key without the owning @ManyToOne side.",
@@ -339,11 +339,11 @@
     "intent": "Assess whether the candidate can define a many-to-many relationship with TypeORM and understands join table ownership and when to promote a join table into a real entity.",
     "primaryQuestion": "What is @ManyToMany, and how do you create a join table?",
     "expectedSignals": [
-      "Explains @ManyToMany as a relationship where many rows on each side can relate to many rows on the other side.",
-      "Uses @JoinTable on exactly one owning side to tell TypeORM to create or use a join table.",
-      "Provides a concrete example such as Question and Category or User and Role.",
-      "Mentions optional customization of join table name and join column names.",
-      "Recognizes that if the join needs extra columns such as assignedAt, role, order, or metadata, it should usually become an explicit entity with two many-to-one relations."
+      { "label": "Explains @ManyToMany as a relationship where many rows on each side can relate to many rows on the other side.", "relatedTrigger": null },
+      { "label": "Uses @JoinTable on exactly one owning side to tell TypeORM to create or use a join table.", "relatedTrigger": null },
+      { "label": "Provides a concrete example such as Question and Category or User and Role.", "relatedTrigger": null },
+      { "label": "Mentions optional customization of join table name and join column names.", "relatedTrigger": null },
+      { "label": "Recognizes that if the join needs extra columns such as assignedAt, role, order, or metadata, it should usually become an explicit entity with two many-to-one relations.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Adds @JoinTable on both sides without understanding ownership.",
@@ -404,11 +404,11 @@
     "intent": "Evaluate whether the candidate understands migrations as version-controlled database schema changes and can describe safe generation and execution in TypeORM.",
     "primaryQuestion": "What is a database migration, and how do you generate/run one in TypeORM?",
     "expectedSignals": [
-      "Explains a migration as a versioned, reviewable schema/data change with up and down methods.",
-      "Mentions using a configured DataSource file with TypeORM CLI commands such as migration:generate and migration:run.",
-      "Understands generated migrations should be reviewed before committing or running.",
-      "Distinguishes generating from current entity diff versus manually creating a migration.",
-      "Mentions production concerns such as backups, locks, rollback plan, and avoiding synchronize in production."
+      { "label": "Explains a migration as a versioned, reviewable schema/data change with up and down methods.", "relatedTrigger": null },
+      { "label": "Mentions using a configured DataSource file with TypeORM CLI commands such as migration:generate and migration:run.", "relatedTrigger": null },
+      { "label": "Understands generated migrations should be reviewed before committing or running.", "relatedTrigger": null },
+      { "label": "Distinguishes generating from current entity diff versus manually creating a migration.", "relatedTrigger": null },
+      { "label": "Mentions production concerns such as backups, locks, rollback plan, and avoiding synchronize in production.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Relies on synchronize: true as the production migration strategy.",
@@ -469,11 +469,11 @@
     "intent": "Assess whether the candidate understands transaction atomicity and the correct TypeORM APIs for running multiple database operations as one unit of work.",
     "primaryQuestion": "What is a Transaction, and how do you use it in TypeORM?",
     "expectedSignals": [
-      "Explains a transaction as a set of operations that commit together or roll back together.",
-      "Uses DataSource.transaction or EntityManager.transaction for common transaction scopes.",
-      "States that all operations inside the transaction must use the provided transactional manager or repositories from it.",
-      "Mentions QueryRunner for lower-level manual transaction control when needed.",
-      "Connects transactions to real workflows such as creating an order and updating inventory or wallet balances."
+      { "label": "Explains a transaction as a set of operations that commit together or roll back together.", "relatedTrigger": null },
+      { "label": "Uses DataSource.transaction or EntityManager.transaction for common transaction scopes.", "relatedTrigger": null },
+      { "label": "States that all operations inside the transaction must use the provided transactional manager or repositories from it.", "relatedTrigger": null },
+      { "label": "Mentions QueryRunner for lower-level manual transaction control when needed.", "relatedTrigger": null },
+      { "label": "Connects transactions to real workflows such as creating an order and updating inventory or wallet balances.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Starts a transaction but uses the global repository inside it.",
@@ -534,11 +534,11 @@
     "intent": "Check whether the candidate understands eager and lazy relation loading, the convenience/performance trade-offs, and how to avoid hidden N+1 queries or over-fetching.",
     "primaryQuestion": "What is the difference between eager and lazy loading of relations?",
     "expectedSignals": [
-      "Explains eager loading as automatically loading a relation when using repository find methods if configured on the relation.",
-      "Explains lazy loading as deferring relation access until a Promise-backed relation property is awaited.",
-      "Mentions explicit relation loading through find options or QueryBuilder joins as a common alternative.",
-      "Discusses over-fetching risk with eager relations and hidden N+1 or unexpected queries with lazy relations.",
-      "Recognizes that QueryBuilder does not automatically apply eager loading and requires explicit joins."
+      { "label": "Explains eager loading as automatically loading a relation when using repository find methods if configured on the relation.", "relatedTrigger": null },
+      { "label": "Explains lazy loading as deferring relation access until a Promise-backed relation property is awaited.", "relatedTrigger": null },
+      { "label": "Mentions explicit relation loading through find options or QueryBuilder joins as a common alternative.", "relatedTrigger": null },
+      { "label": "Discusses over-fetching risk with eager relations and hidden N+1 or unexpected queries with lazy relations.", "relatedTrigger": null },
+      { "label": "Recognizes that QueryBuilder does not automatically apply eager loading and requires explicit joins.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Assumes eager loading is always faster.",
@@ -600,11 +600,11 @@
     "intent": "Evaluate whether the candidate knows what QueryBuilder is and can choose it over repository methods when query complexity, joins, aggregations, or precise SQL control require it.",
     "primaryQuestion": "What is QueryBuilder, and when do you prefer it over Repository methods?",
     "expectedSignals": [
-      "Explains QueryBuilder as TypeORM's fluent API for building SQL queries with aliases, joins, where clauses, ordering, pagination, and parameters.",
-      "Prefers simple repository methods for straightforward CRUD and simple filters.",
-      "Uses QueryBuilder for complex joins, conditional filters, aggregations, subqueries, locking, partial selects, or performance-sensitive query shape.",
-      "Mentions parameter binding to avoid SQL injection rather than string interpolation.",
-      "Understands that QueryBuilder can return entities or raw results depending on getMany, getOne, getRawMany, or getRawOne."
+      { "label": "Explains QueryBuilder as TypeORM's fluent API for building SQL queries with aliases, joins, where clauses, ordering, pagination, and parameters.", "relatedTrigger": null },
+      { "label": "Prefers simple repository methods for straightforward CRUD and simple filters.", "relatedTrigger": null },
+      { "label": "Uses QueryBuilder for complex joins, conditional filters, aggregations, subqueries, locking, partial selects, or performance-sensitive query shape.", "relatedTrigger": null },
+      { "label": "Mentions parameter binding to avoid SQL injection rather than string interpolation.", "relatedTrigger": null },
+      { "label": "Understands that QueryBuilder can return entities or raw results depending on getMany, getOne, getRawMany, or getRawOne.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Uses raw string interpolation for user input.",
@@ -666,11 +666,11 @@
     "intent": "Check whether the candidate understands TypeOrmModule.forFeature as module-level repository provider registration in NestJS and why each feature module declares the entities it needs.",
     "primaryQuestion": "What is TypeOrmModule.forFeature(), and why is it needed per module?",
     "expectedSignals": [
-      "Explains that forFeature registers repository providers for selected entities in the current Nest module context.",
-      "Connects forFeature([User]) with @InjectRepository(User) being resolvable in providers of that module.",
-      "Distinguishes forRoot or forRootAsync connection setup from forFeature entity/repository registration.",
-      "Mentions importing another module that exports a service instead of directly reaching across module boundaries.",
-      "Understands that multi-database or named DataSource setups may require passing the data source name consistently."
+      { "label": "Explains that forFeature registers repository providers for selected entities in the current Nest module context.", "relatedTrigger": null },
+      { "label": "Connects forFeature([User]) with @InjectRepository(User) being resolvable in providers of that module.", "relatedTrigger": null },
+      { "label": "Distinguishes forRoot or forRootAsync connection setup from forFeature entity/repository registration.", "relatedTrigger": null },
+      { "label": "Mentions importing another module that exports a service instead of directly reaching across module boundaries.", "relatedTrigger": null },
+      { "label": "Understands that multi-database or named DataSource setups may require passing the data source name consistently.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Registers every entity in AppModule and assumes all repositories are globally injectable.",
@@ -732,11 +732,11 @@
     "intent": "Evaluate whether the candidate can separate API contracts from persistence models and avoid leaking database implementation details or sensitive fields.",
     "primaryQuestion": "What is the difference between a DTO and an Entity?",
     "expectedSignals": [
-      "Explains that an Entity models database persistence with TypeORM decorators and table/column metadata.",
-      "Explains that a DTO models data crossing an application boundary such as request body, response body, or service command.",
-      "Mentions DTOs often carry validation, transformation, and API documentation concerns.",
-      "Explains why returning raw entities can leak internal fields such as passwordHash, soft-delete markers, or internal status columns.",
-      "Recognizes mapping between DTOs and entities as intentional boundary code, not unnecessary duplication in many real systems."
+      { "label": "Explains that an Entity models database persistence with TypeORM decorators and table/column metadata.", "relatedTrigger": null },
+      { "label": "Explains that a DTO models data crossing an application boundary such as request body, response body, or service command.", "relatedTrigger": null },
+      { "label": "Mentions DTOs often carry validation, transformation, and API documentation concerns.", "relatedTrigger": null },
+      { "label": "Explains why returning raw entities can leak internal fields such as passwordHash, soft-delete markers, or internal status columns.", "relatedTrigger": null },
+      { "label": "Recognizes mapping between DTOs and entities as intentional boundary code, not unnecessary duplication in many real systems.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Uses one class as DTO, entity, and response model for all cases without discussing risk.",
@@ -798,11 +798,11 @@
     "intent": "Check whether the candidate understands TypeORM soft delete mechanics, query behavior, restoration, and the business/data-retention implications of keeping deleted rows.",
     "primaryQuestion": "How do you implement soft delete in TypeORM?",
     "expectedSignals": [
-      "Mentions adding @DeleteDateColumn or a deletedAt column to the entity.",
-      "Uses repository.softDelete, softRemove, restore, or recover depending on whether working by criteria or entity instance.",
-      "Explains that soft-deleted rows remain in the database and are normally excluded from standard find results.",
-      "Mentions withDeleted when intentionally querying soft-deleted rows.",
-      "Discusses practical implications such as unique constraints, audit/history, restore behavior, and when hard delete is still required."
+      { "label": "Mentions adding @DeleteDateColumn or a deletedAt column to the entity.", "relatedTrigger": null },
+      { "label": "Uses repository.softDelete, softRemove, restore, or recover depending on whether working by criteria or entity instance.", "relatedTrigger": null },
+      { "label": "Explains that soft-deleted rows remain in the database and are normally excluded from standard find results.", "relatedTrigger": null },
+      { "label": "Mentions withDeleted when intentionally querying soft-deleted rows.", "relatedTrigger": null },
+      { "label": "Discusses practical implications such as unique constraints, audit/history, restore behavior, and when hard delete is still required.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Implements soft delete by manually setting a random boolean but cannot explain query behavior.",
@@ -865,11 +865,11 @@
     "intent": "Check whether the candidate understands common TypeORM column decorators and the database metadata they create.",
     "primaryQuestion": "What are @Column(), @PrimaryGeneratedColumn(), @CreateDateColumn(), and @UpdateDateColumn()?",
     "expectedSignals": [
-      "Explains @Column as mapping a property to a database column with options such as type, nullable, length, default, unique, precision, and select.",
-      "Explains @PrimaryGeneratedColumn as a generated primary key column, commonly increment or uuid depending on configuration.",
-      "Explains @CreateDateColumn as automatically set when the entity is inserted.",
-      "Explains @UpdateDateColumn as automatically updated when the entity is updated through TypeORM persistence operations.",
-      "Mentions choosing explicit database types and options for important fields instead of relying blindly on defaults."
+      { "label": "Explains @Column as mapping a property to a database column with options such as type, nullable, length, default, unique, precision, and select.", "relatedTrigger": null },
+      { "label": "Explains @PrimaryGeneratedColumn as a generated primary key column, commonly increment or uuid depending on configuration.", "relatedTrigger": null },
+      { "label": "Explains @CreateDateColumn as automatically set when the entity is inserted.", "relatedTrigger": null },
+      { "label": "Explains @UpdateDateColumn as automatically updated when the entity is updated through TypeORM persistence operations.", "relatedTrigger": null },
+      { "label": "Mentions choosing explicit database types and options for important fields instead of relying blindly on defaults.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Cannot distinguish a primary key from a normal column.",
@@ -930,11 +930,11 @@
     "intent": "Assess whether the candidate understands synchronize: true, why it is convenient for local development, and why it is dangerous for production schema management.",
     "primaryQuestion": "What does synchronize: true do in TypeORM config, and why is it dangerous in production?",
     "expectedSignals": [
-      "Explains that synchronize makes TypeORM automatically update the database schema to match entity metadata on application startup.",
-      "Recognizes it can be convenient for local experiments or prototypes but should not be the production schema-change mechanism.",
-      "Mentions risks such as unintended column/table changes, data loss, unreviewed DDL, startup-time schema changes, and environment drift.",
-      "Recommends explicit migrations for production with review, testing, backup, rollout, and rollback planning.",
-      "Understands that production schema changes need operational awareness such as locks, long-running migrations, and deployment sequencing."
+      { "label": "Explains that synchronize makes TypeORM automatically update the database schema to match entity metadata on application startup.", "relatedTrigger": null },
+      { "label": "Recognizes it can be convenient for local experiments or prototypes but should not be the production schema-change mechanism.", "relatedTrigger": null },
+      { "label": "Mentions risks such as unintended column/table changes, data loss, unreviewed DDL, startup-time schema changes, and environment drift.", "relatedTrigger": null },
+      { "label": "Recommends explicit migrations for production with review, testing, backup, rollout, and rollback planning.", "relatedTrigger": null },
+      { "label": "Understands that production schema changes need operational awareness such as locks, long-running migrations, and deployment sequencing.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Enables synchronize in production because it is easier.",

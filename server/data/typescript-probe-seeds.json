@@ -11,10 +11,10 @@
     "intent": "Check whether the candidate understands the practical difference between any and unknown and can explain how to keep type safety when handling uncertain data.",
     "primaryQuestion": "What is the difference between any and unknown in TypeScript, and when would you choose unknown over any?",
     "expectedSignals": [
-      "Explains that any disables useful type checking for that value while unknown requires narrowing before use.",
-      "Uses unknown for external or uncertain values such as API responses, catch errors, localStorage, or message payloads.",
-      "Mentions narrowing through typeof, instanceof, property checks, schema parsing, or user-defined type guards.",
-      "Understands that type assertions can bypass safety and should be localized and justified."
+      { "label": "Explains that any disables useful type checking for that value while unknown requires narrowing before use.", "relatedTrigger": null },
+      { "label": "Uses unknown for external or uncertain values such as API responses, catch errors, localStorage, or message payloads.", "relatedTrigger": null },
+      { "label": "Mentions narrowing through typeof, instanceof, property checks, schema parsing, or user-defined type guards.", "relatedTrigger": null },
+      { "label": "Understands that type assertions can bypass safety and should be localized and justified.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Says any and unknown are basically the same.",
@@ -133,10 +133,10 @@
     "intent": "Evaluate whether the candidate can choose between type aliases and interfaces based on extension, declaration merging, unions, and readability.",
     "primaryQuestion": "How do type aliases and interfaces differ in TypeScript, and how would you decide which one to use for a domain model?",
     "expectedSignals": [
-      "Explains that both can describe object shapes for many common cases.",
-      "Mentions interface extension and declaration merging as useful for public object contracts or augmentation.",
-      "Mentions type aliases for unions, intersections, primitives, tuples, mapped or conditional compositions.",
-      "Chooses consistently based on project convention, API surface, and expected evolution."
+      { "label": "Explains that both can describe object shapes for many common cases.", "relatedTrigger": null },
+      { "label": "Mentions interface extension and declaration merging as useful for public object contracts or augmentation.", "relatedTrigger": null },
+      { "label": "Mentions type aliases for unions, intersections, primitives, tuples, mapped or conditional compositions.", "relatedTrigger": null },
+      { "label": "Chooses consistently based on project convention, API surface, and expected evolution.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Claims one is always strictly better for every use case.",
@@ -255,10 +255,10 @@
     "intent": "Check whether the candidate understands union types, control-flow narrowing, and why TypeScript only allows access to fields common to all union members before narrowing.",
     "primaryQuestion": "If a value has type User | Admin, why can TypeScript block access to adminOnlyField, and how would you narrow the value safely?",
     "expectedSignals": [
-      "Explains that a union value may be any member of the union at runtime.",
-      "States that only fields common to all members are safe before narrowing.",
-      "Uses checks such as discriminant fields, in operator, typeof, instanceof, or custom type predicates.",
-      "Avoids unsafe casts unless there is an external invariant and it is documented."
+      { "label": "Explains that a union value may be any member of the union at runtime.", "relatedTrigger": null },
+      { "label": "States that only fields common to all members are safe before narrowing.", "relatedTrigger": null },
+      { "label": "Uses checks such as discriminant fields, in operator, typeof, instanceof, or custom type predicates.", "relatedTrigger": null },
+      { "label": "Avoids unsafe casts unless there is an external invariant and it is documented.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Forces access with as Admin without proving the branch.",
@@ -372,10 +372,10 @@
     "intent": "Assess whether the candidate can reason about optional properties, nullability, strictNullChecks, optional chaining, and defaulting without hiding bugs.",
     "primaryQuestion": "How do optional properties, undefined, null, optional chaining, and nullish coalescing work together in TypeScript?",
     "expectedSignals": [
-      "Distinguishes a missing property from a value explicitly set to undefined or null.",
-      "Explains that strictNullChecks forces handling of possibly null or undefined values.",
-      "Uses optional chaining for safe access and nullish coalescing for defaults that should not treat empty string or zero as missing.",
-      "Mentions exactOptionalPropertyTypes when discussing precise optional property semantics."
+      { "label": "Distinguishes a missing property from a value explicitly set to undefined or null.", "relatedTrigger": null },
+      { "label": "Explains that strictNullChecks forces handling of possibly null or undefined values.", "relatedTrigger": null },
+      { "label": "Uses optional chaining for safe access and nullish coalescing for defaults that should not treat empty string or zero as missing.", "relatedTrigger": null },
+      { "label": "Mentions exactOptionalPropertyTypes when discussing precise optional property semantics.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Uses non-null assertion everywhere to silence errors.",
@@ -494,10 +494,10 @@
     "intent": "Evaluate whether the candidate can debug TypeScript compiler errors by following the data shape and the assignment site instead of suppressing the error.",
     "primaryQuestion": "A TypeScript error says Type 'string | undefined' is not assignable to type 'string'. How would you debug and fix it?",
     "expectedSignals": [
-      "Finds where the value becomes optional or possibly undefined.",
-      "Checks whether the receiving function truly requires a string or should accept missing values.",
-      "Chooses an appropriate fix such as validation, defaulting, early return, type refinement, or API contract change.",
-      "Avoids blindly using as string or non-null assertion as the first fix."
+      { "label": "Finds where the value becomes optional or possibly undefined.", "relatedTrigger": null },
+      { "label": "Checks whether the receiving function truly requires a string or should accept missing values.", "relatedTrigger": null },
+      { "label": "Chooses an appropriate fix such as validation, defaulting, early return, type refinement, or API contract change.", "relatedTrigger": null },
+      { "label": "Avoids blindly using as string or non-null assertion as the first fix.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Immediately adds ! or as string without checking the source.",
@@ -616,10 +616,10 @@
     "intent": "Check whether the candidate can model finite states with literal unions or enums and understand the runtime implications of each choice.",
     "primaryQuestion": "When would you model a finite set of values with a string literal union instead of an enum in TypeScript?",
     "expectedSignals": [
-      "Explains that string literal unions are type-level and usually emit no runtime object.",
-      "Mentions enums can provide a runtime object but add emitted JavaScript and have interop considerations.",
-      "Uses literal unions for simple API statuses, component variants, or discriminants.",
-      "Considers readability, refactoring, external contract compatibility, and project conventions."
+      { "label": "Explains that string literal unions are type-level and usually emit no runtime object.", "relatedTrigger": null },
+      { "label": "Mentions enums can provide a runtime object but add emitted JavaScript and have interop considerations.", "relatedTrigger": null },
+      { "label": "Uses literal unions for simple API statuses, component variants, or discriminants.", "relatedTrigger": null },
+      { "label": "Considers readability, refactoring, external contract compatibility, and project conventions.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Thinks every finite value set must be an enum.",
@@ -738,10 +738,10 @@
     "intent": "Assess whether the candidate can design generic functions that preserve relationships between inputs and outputs without falling back to any.",
     "primaryQuestion": "How would you design a generic helper that returns one property from an object while ensuring the key and return type stay linked?",
     "expectedSignals": [
-      "Uses generics with a key constraint such as K extends keyof T.",
-      "Explains that the return type should be T[K] instead of a broad union or any.",
-      "Understands why unconstrained T cannot be indexed safely.",
-      "Can discuss type inference and when explicit type parameters are or are not needed."
+      { "label": "Uses generics with a key constraint such as K extends keyof T.", "relatedTrigger": null },
+      { "label": "Explains that the return type should be T[K] instead of a broad union or any.", "relatedTrigger": null },
+      { "label": "Understands why unconstrained T cannot be indexed safely.", "relatedTrigger": null },
+      { "label": "Can discuss type inference and when explicit type parameters are or are not needed.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Uses any for the object or key and loses type information.",
@@ -860,10 +860,10 @@
     "intent": "Evaluate whether the candidate can model state machines or API result shapes with discriminated unions and exhaustive handling.",
     "primaryQuestion": "How would you model loading, success, and error states with a discriminated union, and how would you make missing cases visible?",
     "expectedSignals": [
-      "Uses a shared discriminant field such as status, kind, or state with literal values.",
-      "Keeps variant-specific data on the correct branch, such as data only on success and error only on failure.",
-      "Explains switch-based narrowing and access to branch-specific fields.",
-      "Mentions exhaustive checking with never, strict return types, or lint/compiler support."
+      { "label": "Uses a shared discriminant field such as status, kind, or state with literal values.", "relatedTrigger": null },
+      { "label": "Keeps variant-specific data on the correct branch, such as data only on success and error only on failure.", "relatedTrigger": null },
+      { "label": "Explains switch-based narrowing and access to branch-specific fields.", "relatedTrigger": null },
+      { "label": "Mentions exhaustive checking with never, strict return types, or lint/compiler support.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Models state as multiple optional fields that can create impossible combinations.",
@@ -982,10 +982,10 @@
     "intent": "Check whether the candidate can use built-in utility types to derive related shapes while preserving intent and avoiding accidental loose contracts.",
     "primaryQuestion": "How would you use Partial, Pick, Omit, Record, ReturnType, or Awaited to avoid duplicating TypeScript types?",
     "expectedSignals": [
-      "Explains utility types as transformations of existing types.",
-      "Chooses specific utilities for practical examples such as update DTOs, public view models, lookup maps, inferred function returns, or promise unwrapping.",
-      "Mentions risks such as overusing Partial and making required domain fields accidentally optional.",
-      "Understands that derived types should still express clear API boundaries."
+      { "label": "Explains utility types as transformations of existing types.", "relatedTrigger": null },
+      { "label": "Chooses specific utilities for practical examples such as update DTOs, public view models, lookup maps, inferred function returns, or promise unwrapping.", "relatedTrigger": null },
+      { "label": "Mentions risks such as overusing Partial and making required domain fields accidentally optional.", "relatedTrigger": null },
+      { "label": "Understands that derived types should still express clear API boundaries.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Uses Partial for every input type without thinking about required fields.",
@@ -1099,10 +1099,10 @@
     "intent": "Assess whether the candidate understands mapped types, keyof, modifiers, and how to derive systematic object transformations.",
     "primaryQuestion": "What are mapped types in TypeScript, and how would you use them to transform every property of a type?",
     "expectedSignals": [
-      "Explains mapped types as iterating over keys of a type using keyof.",
-      "Uses examples such as readonly, optional, nullable, validation error maps, or form state maps.",
-      "Mentions mapping modifiers like readonly, ?, -readonly, or -?.",
-      "Understands when mapped types improve consistency versus when explicit types are clearer."
+      { "label": "Explains mapped types as iterating over keys of a type using keyof.", "relatedTrigger": null },
+      { "label": "Uses examples such as readonly, optional, nullable, validation error maps, or form state maps.", "relatedTrigger": null },
+      { "label": "Mentions mapping modifiers like readonly, ?, -readonly, or -?.", "relatedTrigger": null },
+      { "label": "Understands when mapped types improve consistency versus when explicit types are clearer.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Cannot connect mapped types to keyof.",
@@ -1221,10 +1221,10 @@
     "intent": "Evaluate whether the candidate can explain conditional types, infer, and distributive behavior over unions without treating them as magic.",
     "primaryQuestion": "How do conditional types work in TypeScript, and what does it mean that they can distribute over unions?",
     "expectedSignals": [
-      "Explains the SomeType extends OtherType ? True : False shape.",
-      "Uses a practical example such as extracting Promise payloads, array elements, or function return types.",
-      "Mentions infer for capturing a type from a matched structure.",
-      "Explains distributive conditional types and how wrapping in tuples can prevent distribution."
+      { "label": "Explains the SomeType extends OtherType ? True : False shape.", "relatedTrigger": null },
+      { "label": "Uses a practical example such as extracting Promise payloads, array elements, or function return types.", "relatedTrigger": null },
+      { "label": "Mentions infer for capturing a type from a matched structure.", "relatedTrigger": null },
+      { "label": "Explains distributive conditional types and how wrapping in tuples can prevent distribution.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Cannot distinguish runtime if statements from type-level conditional types.",
@@ -1338,10 +1338,10 @@
     "intent": "Assess whether the candidate understands that TypeScript types are erased at runtime and can place validation at trust boundaries.",
     "primaryQuestion": "Why are TypeScript types not enough when reading data from an API, localStorage, a queue, or user input, and where would you validate?",
     "expectedSignals": [
-      "Explains that TypeScript checks static code but does not validate external data at runtime.",
-      "Identifies trust boundaries such as HTTP responses, request bodies, localStorage, message queues, and environment variables.",
-      "Uses parsing or schema validation to turn unknown data into validated domain types.",
-      "Discusses error handling, normalization, logging, and backward compatibility for malformed payloads."
+      { "label": "Explains that TypeScript checks static code but does not validate external data at runtime.", "relatedTrigger": null },
+      { "label": "Identifies trust boundaries such as HTTP responses, request bodies, localStorage, message queues, and environment variables.", "relatedTrigger": null },
+      { "label": "Uses parsing or schema validation to turn unknown data into validated domain types.", "relatedTrigger": null },
+      { "label": "Discusses error handling, normalization, logging, and backward compatibility for malformed payloads.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Says TypeScript prevents bad API data from reaching runtime.",
@@ -1460,10 +1460,10 @@
     "intent": "Evaluate practical debugging of generic inference issues where TypeScript infers a type that is too broad, too narrow, or polluted by literals and unions.",
     "primaryQuestion": "A generic function infers the wrong type and downstream code becomes too broad or too narrow. How would you debug the signature?",
     "expectedSignals": [
-      "Inspects the function signature, type parameter positions, constraints, and return type.",
-      "Checks whether inference is coming from the right argument or being widened by arrays, literals, or unions.",
-      "Uses techniques such as overloads, explicit type arguments, const assertions, satisfies, helper parameters, or separating input/output generics when appropriate.",
-      "Avoids fixing inference by replacing the generic with any."
+      { "label": "Inspects the function signature, type parameter positions, constraints, and return type.", "relatedTrigger": null },
+      { "label": "Checks whether inference is coming from the right argument or being widened by arrays, literals, or unions.", "relatedTrigger": null },
+      { "label": "Uses techniques such as overloads, explicit type arguments, const assertions, satisfies, helper parameters, or separating input/output generics when appropriate.", "relatedTrigger": null },
+      { "label": "Avoids fixing inference by replacing the generic with any.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Changes generic parameters to any to make the error disappear.",
@@ -1582,10 +1582,10 @@
     "intent": "Assess judgment around TypeScript strictness settings, migration cost, and risk reduction in an existing codebase.",
     "primaryQuestion": "A team wants to turn on strict TypeScript settings in an existing project. What would you evaluate, and how would you roll it out?",
     "expectedSignals": [
-      "Explains the value of strict checks for nullability, implicit any, this binding, function types, and related correctness risks.",
-      "Assesses current error volume, ownership, test coverage, CI impact, and release risk.",
-      "Plans incremental rollout by package, directory, tsconfig layering, or selected flags.",
-      "Avoids mass suppression and tracks remaining debt with clear owners."
+      { "label": "Explains the value of strict checks for nullability, implicit any, this binding, function types, and related correctness risks.", "relatedTrigger": null },
+      { "label": "Assesses current error volume, ownership, test coverage, CI impact, and release risk.", "relatedTrigger": null },
+      { "label": "Plans incremental rollout by package, directory, tsconfig layering, or selected flags.", "relatedTrigger": null },
+      { "label": "Avoids mass suppression and tracks remaining debt with clear owners.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Turns on strict everywhere without measuring the blast radius.",
@@ -1704,10 +1704,10 @@
     "intent": "Evaluate senior ability to design TypeScript API surfaces that are precise, evolvable, and not overly complex.",
     "primaryQuestion": "How would you design TypeScript types for a public SDK or shared package so consumers get strong inference without a fragile or overly clever API?",
     "expectedSignals": [
-      "Designs stable exported types and avoids leaking internal implementation details.",
-      "Uses generics, overloads, discriminated unions, or conditional types only where they improve consumer ergonomics.",
-      "Considers semantic versioning, backwards compatibility, declaration output, documentation, and examples.",
-      "Tests type behavior with compile-time assertions or consumer-style examples."
+      { "label": "Designs stable exported types and avoids leaking internal implementation details.", "relatedTrigger": null },
+      { "label": "Uses generics, overloads, discriminated unions, or conditional types only where they improve consumer ergonomics.", "relatedTrigger": null },
+      { "label": "Considers semantic versioning, backwards compatibility, declaration output, documentation, and examples.", "relatedTrigger": null },
+      { "label": "Tests type behavior with compile-time assertions or consumer-style examples.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Optimizes for clever type tricks instead of clear consumer experience.",
@@ -1826,10 +1826,10 @@
     "intent": "Assess senior judgment around when advanced type modeling improves safety and when it harms readability, build performance, or team velocity.",
     "primaryQuestion": "How do you decide whether a complex TypeScript type is worth it, versus using simpler types plus runtime checks or tests?",
     "expectedSignals": [
-      "Evaluates risk, frequency of mistakes, API surface size, team familiarity, and maintenance cost.",
-      "Considers compiler performance, editor responsiveness, error readability, and onboarding impact.",
-      "Uses advanced types when they encode meaningful invariants and prevent real bugs.",
-      "Chooses runtime validation or tests for value-level constraints that TypeScript cannot prove."
+      { "label": "Evaluates risk, frequency of mistakes, API surface size, team familiarity, and maintenance cost.", "relatedTrigger": null },
+      { "label": "Considers compiler performance, editor responsiveness, error readability, and onboarding impact.", "relatedTrigger": null },
+      { "label": "Uses advanced types when they encode meaningful invariants and prevent real bugs.", "relatedTrigger": null },
+      { "label": "Chooses runtime validation or tests for value-level constraints that TypeScript cannot prove.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Assumes more advanced types are always better.",
@@ -1948,10 +1948,10 @@
     "intent": "Evaluate senior debugging of TypeScript build and module resolution problems in a multi-package codebase.",
     "primaryQuestion": "A monorepo TypeScript build fails only in CI with stale declarations or module resolution errors. How would you diagnose it?",
     "expectedSignals": [
-      "Checks tsconfig inheritance, paths, moduleResolution, outDir/rootDir, declaration output, and project references.",
-      "Compares local and CI TypeScript versions, package manager lockfile, build cache, and clean build behavior.",
-      "Inspects dependency graph order and whether referenced packages emit declarations before consumers build.",
-      "Uses traceResolution, build verbose output, cache invalidation, and minimal reproduction where useful."
+      { "label": "Checks tsconfig inheritance, paths, moduleResolution, outDir/rootDir, declaration output, and project references.", "relatedTrigger": null },
+      { "label": "Compares local and CI TypeScript versions, package manager lockfile, build cache, and clean build behavior.", "relatedTrigger": null },
+      { "label": "Inspects dependency graph order and whether referenced packages emit declarations before consumers build.", "relatedTrigger": null },
+      { "label": "Uses traceResolution, build verbose output, cache invalidation, and minimal reproduction where useful.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Only reruns CI without collecting evidence.",
@@ -2070,10 +2070,10 @@
     "intent": "Assess senior understanding of declaration files, module augmentation, global augmentation, and safe typing of third-party libraries.",
     "primaryQuestion": "How would you type a third-party JavaScript library or safely augment an existing module in TypeScript?",
     "expectedSignals": [
-      "Distinguishes writing .d.ts declarations, ambient modules, module augmentation, and global augmentation.",
-      "Keeps declarations close to the library's real runtime behavior and examples.",
-      "Avoids broad any declarations that provide false confidence.",
-      "Plans testing through type checks, sample consumer code, and upgrade monitoring."
+      { "label": "Distinguishes writing .d.ts declarations, ambient modules, module augmentation, and global augmentation.", "relatedTrigger": null },
+      { "label": "Keeps declarations close to the library's real runtime behavior and examples.", "relatedTrigger": null },
+      { "label": "Avoids broad any declarations that provide false confidence.", "relatedTrigger": null },
+      { "label": "Plans testing through type checks, sample consumer code, and upgrade monitoring.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Declares the whole module as any and considers the work finished.",
@@ -2192,10 +2192,10 @@
     "intent": "Evaluate senior architecture judgment around keeping TypeScript types, runtime schemas, API contracts, and generated clients consistent.",
     "primaryQuestion": "For a product with frontend and backend TypeScript, how would you keep API contracts, runtime validation, and shared types in sync?",
     "expectedSignals": [
-      "Compares options such as shared packages, OpenAPI/GraphQL generation, schema-first validation, or code-first schema generation.",
-      "Addresses versioning, backwards compatibility, deployment order, and consumer upgrade paths.",
-      "Keeps runtime validation at boundaries instead of relying only on shared compile-time types.",
-      "Uses CI checks, contract tests, generated clients, or schema diffing to prevent drift."
+      { "label": "Compares options such as shared packages, OpenAPI/GraphQL generation, schema-first validation, or code-first schema generation.", "relatedTrigger": null },
+      { "label": "Addresses versioning, backwards compatibility, deployment order, and consumer upgrade paths.", "relatedTrigger": null },
+      { "label": "Keeps runtime validation at boundaries instead of relying only on shared compile-time types.", "relatedTrigger": null },
+      { "label": "Uses CI checks, contract tests, generated clients, or schema diffing to prevent drift.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Assumes a shared TypeScript interface alone validates API traffic.",
@@ -2314,10 +2314,10 @@
     "intent": "Verify senior ownership of a JavaScript-to-TypeScript migration or a large TypeScript strictness improvement.",
     "primaryQuestion": "You mention migrating a codebase to TypeScript or improving TypeScript strictness. What decisions were yours, what changed technically, and how did you measure success?",
     "expectedSignals": [
-      "Separates personal decisions from team execution.",
-      "Describes migration scope, sequencing, tsconfig choices, typing strategy, and suppression policy.",
-      "Mentions tests, CI gates, type coverage, bug reduction, developer workflow, or build-time impacts.",
-      "Explains rollout risk, compatibility plan, and what was intentionally deferred."
+      { "label": "Separates personal decisions from team execution.", "relatedTrigger": null },
+      { "label": "Describes migration scope, sequencing, tsconfig choices, typing strategy, and suppression policy.", "relatedTrigger": null },
+      { "label": "Mentions tests, CI gates, type coverage, bug reduction, developer workflow, or build-time impacts.", "relatedTrigger": null },
+      { "label": "Explains rollout risk, compatibility plan, and what was intentionally deferred.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Says 'we migrated to TypeScript' without naming personal decisions.",

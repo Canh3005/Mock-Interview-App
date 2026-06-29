@@ -323,7 +323,10 @@ export class QuestionProbeCurationService {
       probe.primaryQuestion = dto.primaryQuestion ?? null;
     }
     if (dto.expectedSignals !== undefined) {
-      probe.expectedSignals = dto.expectedSignals;
+      probe.expectedSignals = dto.expectedSignals.map((signal) => ({
+        label: signal.label,
+        relatedTrigger: signal.relatedTrigger ?? null,
+      }));
     }
     if (dto.redFlags !== undefined) probe.redFlags = dto.redFlags;
     if (dto.scoringHints !== undefined) probe.scoringHints = dto.scoringHints;

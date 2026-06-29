@@ -96,11 +96,7 @@ export class QuestionProbeValidationService {
       value: input.primaryQuestion,
       issues,
     });
-    this._validateNonEmptyTextArray({
-      field: 'expectedSignals',
-      value: input.expectedSignals,
-      issues,
-    });
+    this._validateExpectedSignals(input.expectedSignals, issues);
     this._validateNonEmptyTextArray({
       field: 'redFlags',
       value: input.redFlags,
@@ -219,6 +215,39 @@ export class QuestionProbeValidationService {
         value: item.description,
         issues,
       });
+    });
+  }
+
+  private _validateExpectedSignals(
+    value: unknown,
+    issues: ProbeValidationIssue[],
+  ): void {
+    if (!Array.isArray(value) || value.length === 0) {
+      issues.push({
+        field: 'expectedSignals',
+        message: 'expectedSignals must be a non-empty array',
+      });
+      return;
+    }
+
+    value.forEach((item: unknown, index: number): void => {
+      if (!this._isRecord(item)) {
+        issues.push(this._nestedIssue('expectedSignals', index));
+        return;
+      }
+      this._validateNonEmptyText({
+        field: `expectedSignals.${index}.label`,
+        value: item.label,
+        issues,
+      });
+      if (item.relatedTrigger !== null && item.relatedTrigger !== undefined) {
+        this._validateEnumValue({
+          field: `expectedSignals.${index}.relatedTrigger`,
+          value: item.relatedTrigger,
+          allowed: QUESTION_PROBE_FOLLOW_UP_TRIGGERS,
+          issues,
+        });
+      }
     });
   }
 

@@ -11,11 +11,11 @@
     "intent": "Check whether the candidate understands the core Redux data flow and can explain when shared app state belongs in Redux instead of local React state.",
     "primaryQuestion": "How does data flow through a Redux app from a user action to the UI update, and what kind of state would you put in Redux instead of local component state?",
     "expectedSignals": [
-      "Explains dispatching an action that describes what happened.",
-      "Explains reducers calculate the next state from previous state and action.",
-      "Mentions the store notifies subscribers or React-Redux hooks so UI can re-render.",
-      "Distinguishes shared, cross-screen, or workflow state from local input and UI-only state.",
-      "Recognizes Redux is useful for predictability, debugging, and consistent team patterns, not for every state value."
+      { "label": "Explains dispatching an action that describes what happened.", "relatedTrigger": null },
+      { "label": "Explains reducers calculate the next state from previous state and action.", "relatedTrigger": null },
+      { "label": "Mentions the store notifies subscribers or React-Redux hooks so UI can re-render.", "relatedTrigger": null },
+      { "label": "Distinguishes shared, cross-screen, or workflow state from local input and UI-only state.", "relatedTrigger": null },
+      { "label": "Recognizes Redux is useful for predictability, debugging, and consistent team patterns, not for every state value.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Says Redux replaces all React local state.",
@@ -141,11 +141,11 @@
     "intent": "Evaluate whether the candidate understands reducer purity, immutable updates, and why Redux Toolkit allows apparent mutation through Immer.",
     "primaryQuestion": "Why must Redux reducers be pure and immutable, and why is code like state.items.push(item) acceptable inside a Redux Toolkit createSlice reducer?",
     "expectedSignals": [
-      "States that reducers calculate next state from state and action only.",
-      "Explains reducers must not perform side effects such as API calls, timers, random IDs, or DOM work.",
-      "Explains direct mutation breaks change detection, predictable debugging, and time travel.",
-      "Understands Redux Toolkit wraps reducers with Immer so apparent mutation produces immutable updates.",
-      "Can explain that the same mutating code is unsafe in a plain reducer without Immer."
+      { "label": "States that reducers calculate next state from state and action only.", "relatedTrigger": null },
+      { "label": "Explains reducers must not perform side effects such as API calls, timers, random IDs, or DOM work.", "relatedTrigger": null },
+      { "label": "Explains direct mutation breaks change detection, predictable debugging, and time travel.", "relatedTrigger": null },
+      { "label": "Understands Redux Toolkit wraps reducers with Immer so apparent mutation produces immutable updates.", "relatedTrigger": null },
+      { "label": "Can explain that the same mutating code is unsafe in a plain reducer without Immer.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Says mutation is always safe in any Redux reducer.",
@@ -271,11 +271,11 @@
     "intent": "Assess whether the candidate can structure a modern Redux Toolkit feature with slices, typed store setup, and React integration.",
     "primaryQuestion": "How would you implement a new Redux Toolkit feature slice in a TypeScript React app, from state shape to components dispatching actions?",
     "expectedSignals": [
-      "Defines a feature-owned initial state and slice reducers with createSlice.",
-      "Explains generated action creators and reducer registration in configureStore.",
-      "Mentions typed RootState, AppDispatch, and typed useSelector/useDispatch wrappers.",
-      "Keeps domain transitions in reducers and UI event handling in components.",
-      "Considers testable reducer cases and clear action names."
+      { "label": "Defines a feature-owned initial state and slice reducers with createSlice.", "relatedTrigger": null },
+      { "label": "Explains generated action creators and reducer registration in configureStore.", "relatedTrigger": null },
+      { "label": "Mentions typed RootState, AppDispatch, and typed useSelector/useDispatch wrappers.", "relatedTrigger": null },
+      { "label": "Keeps domain transitions in reducers and UI event handling in components.", "relatedTrigger": null },
+      { "label": "Considers testable reducer cases and clear action names.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Manually writes action type strings and switch reducers without reason in new RTK code.",
@@ -401,11 +401,11 @@
     "intent": "Evaluate selector design, React-Redux subscription behavior, and performance awareness with useSelector.",
     "primaryQuestion": "A component using useSelector re-renders after almost every action. How would you design selectors and equality checks to avoid unnecessary renders?",
     "expectedSignals": [
-      "Explains useSelector subscribes to the store and compares selected results by reference equality by default.",
-      "Avoids returning new object or array references from non-memoized selectors.",
-      "Uses multiple focused useSelector calls, shallowEqual, or memoized selectors when appropriate.",
-      "Keeps selectors pure and avoids selecting the entire root state.",
-      "Understands createSelector memoizes derived values when inputs are stable."
+      { "label": "Explains useSelector subscribes to the store and compares selected results by reference equality by default.", "relatedTrigger": null },
+      { "label": "Avoids returning new object or array references from non-memoized selectors.", "relatedTrigger": null },
+      { "label": "Uses multiple focused useSelector calls, shallowEqual, or memoized selectors when appropriate.", "relatedTrigger": null },
+      { "label": "Keeps selectors pure and avoids selecting the entire root state.", "relatedTrigger": null },
+      { "label": "Understands createSelector memoizes derived values when inputs are stable.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Returns state => state from useSelector in a normal component.",
@@ -531,11 +531,11 @@
     "intent": "Assess whether the candidate can model relational client state with normalized structures and avoid deeply nested Redux updates.",
     "primaryQuestion": "How would you model posts, comments, and users in Redux state so updates stay predictable and selectors remain efficient?",
     "expectedSignals": [
-      "Separates entity types into tables keyed by ID.",
-      "Stores relationships by IDs rather than duplicating nested objects.",
-      "Uses ordered ID arrays for display order when needed.",
-      "Explains simpler updates and fewer affected references compared with deeply nested state.",
-      "Mentions createEntityAdapter or reusable entity selectors when appropriate."
+      { "label": "Separates entity types into tables keyed by ID.", "relatedTrigger": null },
+      { "label": "Stores relationships by IDs rather than duplicating nested objects.", "relatedTrigger": null },
+      { "label": "Uses ordered ID arrays for display order when needed.", "relatedTrigger": null },
+      { "label": "Explains simpler updates and fewer affected references compared with deeply nested state.", "relatedTrigger": null },
+      { "label": "Mentions createEntityAdapter or reusable entity selectors when appropriate.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Stores the same user object duplicated inside every post and comment.",
@@ -661,11 +661,11 @@
     "intent": "Evaluate the candidate's judgment on where Redux side effects belong and how to choose between components, thunks, listener middleware, and RTK Query.",
     "primaryQuestion": "Where would you put async logic in a Redux app, and how would you choose between a component effect, createAsyncThunk, listener middleware, and RTK Query?",
     "expectedSignals": [
-      "States reducers must not contain async logic or side effects.",
-      "Uses component effects for UI-local fetching or component-owned lifecycle concerns.",
-      "Uses thunks or createAsyncThunk for store-aware workflows that need dispatch and getState.",
-      "Uses listener middleware for reactive workflows triggered by actions or state changes.",
-      "Uses RTK Query for server-state fetching, caching, loading states, and invalidation."
+      { "label": "States reducers must not contain async logic or side effects.", "relatedTrigger": null },
+      { "label": "Uses component effects for UI-local fetching or component-owned lifecycle concerns.", "relatedTrigger": null },
+      { "label": "Uses thunks or createAsyncThunk for store-aware workflows that need dispatch and getState.", "relatedTrigger": null },
+      { "label": "Uses listener middleware for reactive workflows triggered by actions or state changes.", "relatedTrigger": null },
+      { "label": "Uses RTK Query for server-state fetching, caching, loading states, and invalidation.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Calls APIs directly inside reducers.",
@@ -791,11 +791,11 @@
     "intent": "Assess whether the candidate understands RTK Query as server-state infrastructure, especially cache keys, tags, invalidation, and loading/error states.",
     "primaryQuestion": "How does RTK Query decide whether to use cached data or refetch, and how would you design tags for a posts list and post detail mutation?",
     "expectedSignals": [
-      "Explains query endpoint plus argument forms a distinct cache entry or cache key.",
-      "Understands active subscriptions can receive cached data without another request.",
-      "Uses tagTypes, providesTags, and invalidatesTags to connect queries and mutations.",
-      "Distinguishes broad list invalidation from specific entity invalidation by ID.",
-      "Mentions generated hooks expose data, loading, fetching, success, and error states."
+      { "label": "Explains query endpoint plus argument forms a distinct cache entry or cache key.", "relatedTrigger": null },
+      { "label": "Understands active subscriptions can receive cached data without another request.", "relatedTrigger": null },
+      { "label": "Uses tagTypes, providesTags, and invalidatesTags to connect queries and mutations.", "relatedTrigger": null },
+      { "label": "Distinguishes broad list invalidation from specific entity invalidation by ID.", "relatedTrigger": null },
+      { "label": "Mentions generated hooks expose data, loading, fetching, success, and error states.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Treats RTK Query as only a wrapper around fetch with no cache model.",
@@ -921,11 +921,11 @@
     "intent": "Evaluate practical Redux debugging when UI does not reflect a dispatched action or server mutation.",
     "primaryQuestion": "A Redux action appears in Redux DevTools, but the React screen does not update. How would you debug whether the issue is the action, reducer, selector, or component subscription?",
     "expectedSignals": [
-      "Uses Redux DevTools to inspect action payload and before/after state.",
-      "Checks whether the reducer produced new references for changed data.",
-      "Verifies the selector reads the correct slice and returns a stable, relevant value.",
-      "Checks whether useSelector subscribes to the specific data the component needs.",
-      "Considers RTK Query cache invalidation or stale duplicated state if server data is involved."
+      { "label": "Uses Redux DevTools to inspect action payload and before/after state.", "relatedTrigger": null },
+      { "label": "Checks whether the reducer produced new references for changed data.", "relatedTrigger": null },
+      { "label": "Verifies the selector reads the correct slice and returns a stable, relevant value.", "relatedTrigger": null },
+      { "label": "Checks whether useSelector subscribes to the specific data the component needs.", "relatedTrigger": null },
+      { "label": "Considers RTK Query cache invalidation or stale duplicated state if server data is involved.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Starts rewriting components without confirming state actually changed.",
@@ -1056,11 +1056,11 @@
     "intent": "Evaluate senior judgment for migrating legacy Redux code to Redux Toolkit and RTK Query without destabilizing a production app.",
     "primaryQuestion": "You inherit a large React app with hand-written Redux reducers, action constants, thunks, and duplicated server cache state. How would you migrate toward Redux Toolkit and RTK Query safely?",
     "expectedSignals": [
-      "Plans incremental migration by feature or slice rather than a risky rewrite.",
-      "Keeps the existing store contract working while adding configureStore or RTK slices where possible.",
-      "Prioritizes high-churn or high-bug areas and separates client state from server state.",
-      "Uses tests, Redux DevTools traces, and release monitoring to verify behavior.",
-      "Defines rollback, compatibility, and team adoption steps such as typed hooks and conventions."
+      { "label": "Plans incremental migration by feature or slice rather than a risky rewrite.", "relatedTrigger": null },
+      { "label": "Keeps the existing store contract working while adding configureStore or RTK slices where possible.", "relatedTrigger": null },
+      { "label": "Prioritizes high-churn or high-bug areas and separates client state from server state.", "relatedTrigger": null },
+      { "label": "Uses tests, Redux DevTools traces, and release monitoring to verify behavior.", "relatedTrigger": null },
+      { "label": "Defines rollback, compatibility, and team adoption steps such as typed hooks and conventions.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Proposes a full rewrite without migration boundaries or rollback.",
@@ -1191,11 +1191,11 @@
     "intent": "Assess senior-level Redux architecture across store shape, feature boundaries, derived data, code splitting, testing, and operational debugging.",
     "primaryQuestion": "For a large multi-team React app, how would you design Redux store architecture so features remain isolated, data is derived consistently, and performance is observable?",
     "expectedSignals": [
-      "Defines feature or domain slice ownership with stable public selectors and actions.",
-      "Keeps Redux state minimal and derives filtered, aggregated, or joined values through selectors.",
-      "Normalizes shared relational data and avoids duplicating server state already managed by RTK Query.",
-      "Considers lazy-loaded features, reducer injection or API endpoint injection when appropriate.",
-      "Plans reducer/selector tests, DevTools workflows, render profiling, and conventions for team consistency."
+      { "label": "Defines feature or domain slice ownership with stable public selectors and actions.", "relatedTrigger": null },
+      { "label": "Keeps Redux state minimal and derives filtered, aggregated, or joined values through selectors.", "relatedTrigger": null },
+      { "label": "Normalizes shared relational data and avoids duplicating server state already managed by RTK Query.", "relatedTrigger": null },
+      { "label": "Considers lazy-loaded features, reducer injection or API endpoint injection when appropriate.", "relatedTrigger": null },
+      { "label": "Plans reducer/selector tests, DevTools workflows, render profiling, and conventions for team consistency.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Creates one central slice that every team modifies.",

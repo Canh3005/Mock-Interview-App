@@ -12,12 +12,12 @@
     "intent": "Check whether the candidate can describe the minimal pieces needed to serve HTTP requests with Node.js before using a framework.",
     "primaryQuestion": "How do you create a basic HTTP server in Node.js?",
     "expectedSignals": [
-      "Mentions importing the built-in http module, for example require('http') or import http from 'node:http'.",
-      "Describes using http.createServer with a request listener that receives req and res for every incoming request.",
-      "Explains that the handler should set a status code and optionally headers such as Content-Type before writing the response.",
-      "Mentions ending the response with res.end() or equivalent so the client is not left waiting.",
-      "Mentions calling server.listen(port, callback) to bind the server to a port and start accepting connections.",
-      "Can give a small route-like example using req.method and req.url, while recognizing that this becomes verbose as the API grows."
+      { "label": "Mentions importing the built-in http module, for example require('http') or import http from 'node:http'.", "relatedTrigger": null },
+      { "label": "Describes using http.createServer with a request listener that receives req and res for every incoming request.", "relatedTrigger": null },
+      { "label": "Explains that the handler should set a status code and optionally headers such as Content-Type before writing the response.", "relatedTrigger": null },
+      { "label": "Mentions ending the response with res.end() or equivalent so the client is not left waiting.", "relatedTrigger": null },
+      { "label": "Mentions calling server.listen(port, callback) to bind the server to a port and start accepting connections.", "relatedTrigger": null },
+      { "label": "Can give a small route-like example using req.method and req.url, while recognizing that this becomes verbose as the API grows.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Says Node.js cannot create an HTTP server without Express.",
@@ -140,11 +140,11 @@
     "intent": "Evaluate whether the candidate understands the practical problems Express solves compared with writing all HTTP handling directly.",
     "primaryQuestion": "What problem does Express solve compared with the built-in http module?",
     "expectedSignals": [
-      "Explains that the built-in http module is low-level and requires manually checking methods, paths, headers, body streams, and response formatting.",
-      "Describes Express as a minimal web framework that adds routing, middleware, request/response helpers, and better structure for web APIs.",
-      "Mentions that Express is built on top of Node's HTTP request/response model rather than replacing HTTP itself.",
-      "Gives examples of conveniences such as app.get, app.post, routers, express.json, res.status, res.json, and centralized middleware.",
-      "Recognizes trade-offs: Express reduces boilerplate but developers still need to understand HTTP semantics, validation, errors, and security."
+      { "label": "Explains that the built-in http module is low-level and requires manually checking methods, paths, headers, body streams, and response formatting.", "relatedTrigger": null },
+      { "label": "Describes Express as a minimal web framework that adds routing, middleware, request/response helpers, and better structure for web APIs.", "relatedTrigger": null },
+      { "label": "Mentions that Express is built on top of Node's HTTP request/response model rather than replacing HTTP itself.", "relatedTrigger": null },
+      { "label": "Gives examples of conveniences such as app.get, app.post, routers, express.json, res.status, res.json, and centralized middleware.", "relatedTrigger": null },
+      { "label": "Recognizes trade-offs: Express reduces boilerplate but developers still need to understand HTTP semantics, validation, errors, and security.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Says Express makes Node.js asynchronous or is required for async code.",
@@ -272,12 +272,12 @@
     "intent": "Check whether the candidate can define Express routing as method plus path plus handler matching.",
     "primaryQuestion": "What is routing in Express?",
     "expectedSignals": [
-      "Defines routing as deciding how the app responds to a request for a specific HTTP method and URL path.",
-      "Mentions the route shape app.METHOD(path, handler), such as app.get('/users/:id', handler).",
-      "Explains that method and path both matter, so GET /users and POST /users can execute different handlers.",
-      "Understands that route handlers receive req and res and should send a response or pass control.",
-      "Mentions route parameters, router modules, or route order as practical routing details.",
-      "Recognizes that if no route matches, the app should eventually return a 404 response."
+      { "label": "Defines routing as deciding how the app responds to a request for a specific HTTP method and URL path.", "relatedTrigger": null },
+      { "label": "Mentions the route shape app.METHOD(path, handler), such as app.get('/users/:id', handler).", "relatedTrigger": null },
+      { "label": "Explains that method and path both matter, so GET /users and POST /users can execute different handlers.", "relatedTrigger": null },
+      { "label": "Understands that route handlers receive req and res and should send a response or pass control.", "relatedTrigger": null },
+      { "label": "Mentions route parameters, router modules, or route order as practical routing details.", "relatedTrigger": null },
+      { "label": "Recognizes that if no route matches, the app should eventually return a 404 response.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Defines routing as only naming URLs without mentioning handlers.",
@@ -400,12 +400,12 @@
     "intent": "Evaluate whether the candidate can connect common Express route helpers to HTTP method semantics.",
     "primaryQuestion": "What is the difference between app.get, app.post, app.put, and app.delete?",
     "expectedSignals": [
-      "Explains that each helper registers a route handler for a specific HTTP method.",
-      "Connects app.get to reading or retrieving a representation without intended server-side mutation.",
-      "Connects app.post to creating resources, submitting data, or triggering operations that may not be idempotent.",
-      "Connects app.put to replacing or updating a resource at a known URI, usually with idempotent intent.",
-      "Connects app.delete to removing or deactivating a resource.",
-      "Notes that Express routes by method but does not enforce REST semantics; handler code and API design must do that."
+      { "label": "Explains that each helper registers a route handler for a specific HTTP method.", "relatedTrigger": null },
+      { "label": "Connects app.get to reading or retrieving a representation without intended server-side mutation.", "relatedTrigger": null },
+      { "label": "Connects app.post to creating resources, submitting data, or triggering operations that may not be idempotent.", "relatedTrigger": null },
+      { "label": "Connects app.put to replacing or updating a resource at a known URI, usually with idempotent intent.", "relatedTrigger": null },
+      { "label": "Connects app.delete to removing or deactivating a resource.", "relatedTrigger": null },
+      { "label": "Notes that Express routes by method but does not enforce REST semantics; handler code and API design must do that.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Says all methods are interchangeable because they can all return JSON.",
@@ -533,12 +533,12 @@
     "intent": "Check whether the candidate understands the request and response objects used inside Express route handlers.",
     "primaryQuestion": "What are req and res in an Express route handler?",
     "expectedSignals": [
-      "Explains that req represents the incoming HTTP request and contains data such as method, URL, headers, params, query, body, cookies, and authentication context if middleware adds it.",
-      "Explains that res represents the HTTP response being built and is used to set status, headers, cookies, and send data.",
-      "Mentions common response helpers such as res.status(), res.json(), res.send(), res.redirect(), or res.end().",
-      "Understands that req and res are per-request objects and should not be stored globally for later reuse.",
-      "Mentions that a handler should normally send one final response or delegate control, not send multiple responses.",
-      "Recognizes that Express extends or wraps Node's request and response objects with convenience methods."
+      { "label": "Explains that req represents the incoming HTTP request and contains data such as method, URL, headers, params, query, body, cookies, and authentication context if middleware adds it.", "relatedTrigger": null },
+      { "label": "Explains that res represents the HTTP response being built and is used to set status, headers, cookies, and send data.", "relatedTrigger": null },
+      { "label": "Mentions common response helpers such as res.status(), res.json(), res.send(), res.redirect(), or res.end().", "relatedTrigger": null },
+      { "label": "Understands that req and res are per-request objects and should not be stored globally for later reuse.", "relatedTrigger": null },
+      { "label": "Mentions that a handler should normally send one final response or delegate control, not send multiple responses.", "relatedTrigger": null },
+      { "label": "Recognizes that Express extends or wraps Node's request and response objects with convenience methods.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Thinks req is a database request and res is the returned data object.",
@@ -666,12 +666,12 @@
     "intent": "Verify whether the candidate understands Express middleware as request pipeline functions, not just route handlers.",
     "primaryQuestion": "What is Express middleware?",
     "expectedSignals": [
-      "Defines middleware as a function in the request-response cycle that has access to req, res, and next.",
-      "Explains that middleware can run before route handlers, after earlier middleware, or at route/router/application level depending on registration.",
-      "Mentions common uses such as logging, authentication, authorization, parsing JSON, validation, CORS, rate limiting, and error handling.",
-      "Understands middleware can modify req or res, end the response, or call next to continue.",
-      "Mentions that registration order matters because Express runs matching middleware in sequence.",
-      "Can distinguish normal middleware from error-handling middleware at a high level."
+      { "label": "Defines middleware as a function in the request-response cycle that has access to req, res, and next.", "relatedTrigger": null },
+      { "label": "Explains that middleware can run before route handlers, after earlier middleware, or at route/router/application level depending on registration.", "relatedTrigger": null },
+      { "label": "Mentions common uses such as logging, authentication, authorization, parsing JSON, validation, CORS, rate limiting, and error handling.", "relatedTrigger": null },
+      { "label": "Understands middleware can modify req or res, end the response, or call next to continue.", "relatedTrigger": null },
+      { "label": "Mentions that registration order matters because Express runs matching middleware in sequence.", "relatedTrigger": null },
+      { "label": "Can distinguish normal middleware from error-handling middleware at a high level.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Says middleware is only authentication code.",
@@ -794,12 +794,12 @@
     "intent": "Check whether the candidate understands next() as explicit control transfer in the Express middleware chain.",
     "primaryQuestion": "What does next() do in middleware?",
     "expectedSignals": [
-      "Explains that next() passes control to the next matching middleware or route handler in the Express stack.",
-      "Understands that middleware should call next() only when it has not ended the response and wants processing to continue.",
-      "Mentions next(err) as the way to forward an error to error-handling middleware.",
-      "Recognizes that calling next() more than once can cause confusing flow, duplicate handlers, or duplicate responses.",
-      "Mentions that code after next() may still run unless the function returns or control flow is structured carefully.",
-      "Can describe a practical example such as authentication middleware calling next only after a token is valid."
+      { "label": "Explains that next() passes control to the next matching middleware or route handler in the Express stack.", "relatedTrigger": null },
+      { "label": "Understands that middleware should call next() only when it has not ended the response and wants processing to continue.", "relatedTrigger": null },
+      { "label": "Mentions next(err) as the way to forward an error to error-handling middleware.", "relatedTrigger": null },
+      { "label": "Recognizes that calling next() more than once can cause confusing flow, duplicate handlers, or duplicate responses.", "relatedTrigger": null },
+      { "label": "Mentions that code after next() may still run unless the function returns or control flow is structured carefully.", "relatedTrigger": null },
+      { "label": "Can describe a practical example such as authentication middleware calling next only after a token is valid.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Says next() sends the response to the client.",
@@ -922,12 +922,12 @@
     "intent": "Verify whether the candidate can reason about a hung request caused by middleware that neither ends the response nor passes control.",
     "primaryQuestion": "What happens if middleware does not call next() or send a response?",
     "expectedSignals": [
-      "Explains that the request-response cycle is not completed, so the client keeps waiting until a timeout or connection close.",
-      "States that later matching middleware and route handlers will not run because control was not passed onward.",
-      "Distinguishes this bug from an intentional middleware that sends a response, such as returning 401 for unauthorized access.",
-      "Mentions that the fix is to either send/end a response or call next/next(err) on every code path.",
-      "Recognizes common causes such as missing return in a conditional branch, swallowed async error, or forgot next inside validation/auth middleware.",
-      "Can describe debugging by checking logs, browser/network pending requests, and middleware order."
+      { "label": "Explains that the request-response cycle is not completed, so the client keeps waiting until a timeout or connection close.", "relatedTrigger": null },
+      { "label": "States that later matching middleware and route handlers will not run because control was not passed onward.", "relatedTrigger": null },
+      { "label": "Distinguishes this bug from an intentional middleware that sends a response, such as returning 401 for unauthorized access.", "relatedTrigger": null },
+      { "label": "Mentions that the fix is to either send/end a response or call next/next(err) on every code path.", "relatedTrigger": null },
+      { "label": "Recognizes common causes such as missing return in a conditional branch, swallowed async error, or forgot next inside validation/auth middleware.", "relatedTrigger": null },
+      { "label": "Can describe debugging by checking logs, browser/network pending requests, and middleware order.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Says Express automatically continues to the next route.",
@@ -1050,12 +1050,12 @@
     "intent": "Check whether the candidate can choose the correct Express request data source for path identity, URL options, and payloads.",
     "primaryQuestion": "What is the difference between req.params, req.query, and req.body?",
     "expectedSignals": [
-      "Explains that req.params contains named path parameters declared in the route pattern, such as /users/:id.",
-      "Explains that req.query contains URL query string values after ?, often used for filters, pagination, sorting, search, and optional flags.",
-      "Explains that req.body contains parsed request payload data, commonly used for POST, PUT, and PATCH create/update operations.",
-      "Mentions that req.body depends on body-parsing middleware such as express.json or express.urlencoded registered before the route.",
-      "Treats all three as user-controlled input that requires validation, normalization, and type conversion.",
-      "Can give a concrete example such as GET /users/:id?include=posts using params and query, versus POST /users using body."
+      { "label": "Explains that req.params contains named path parameters declared in the route pattern, such as /users/:id.", "relatedTrigger": null },
+      { "label": "Explains that req.query contains URL query string values after ?, often used for filters, pagination, sorting, search, and optional flags.", "relatedTrigger": null },
+      { "label": "Explains that req.body contains parsed request payload data, commonly used for POST, PUT, and PATCH create/update operations.", "relatedTrigger": null },
+      { "label": "Mentions that req.body depends on body-parsing middleware such as express.json or express.urlencoded registered before the route.", "relatedTrigger": null },
+      { "label": "Treats all three as user-controlled input that requires validation, normalization, and type conversion.", "relatedTrigger": null },
+      { "label": "Can give a concrete example such as GET /users/:id?include=posts using params and query, versus POST /users using body.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Says params, query, and body are interchangeable.",
@@ -1183,12 +1183,12 @@
     "intent": "Verify whether the candidate understands JSON body parsing middleware and its placement in the Express pipeline.",
     "primaryQuestion": "Why do we use express.json()?",
     "expectedSignals": [
-      "Explains that express.json() is built-in middleware for parsing incoming JSON request bodies.",
-      "States that it populates req.body with the parsed JavaScript object when the request has a matching JSON Content-Type.",
-      "Mentions it must be registered before routes that need req.body.",
-      "Distinguishes express.json() from res.json(): one parses incoming request bodies, the other sends JSON responses.",
-      "Mentions handling invalid JSON and considering size limits or validation after parsing.",
-      "Recognizes that parsing does not make input trusted; schema validation and sanitization may still be needed."
+      { "label": "Explains that express.json() is built-in middleware for parsing incoming JSON request bodies.", "relatedTrigger": null },
+      { "label": "States that it populates req.body with the parsed JavaScript object when the request has a matching JSON Content-Type.", "relatedTrigger": null },
+      { "label": "Mentions it must be registered before routes that need req.body.", "relatedTrigger": null },
+      { "label": "Distinguishes express.json() from res.json(): one parses incoming request bodies, the other sends JSON responses.", "relatedTrigger": null },
+      { "label": "Mentions handling invalid JSON and considering size limits or validation after parsing.", "relatedTrigger": null },
+      { "label": "Recognizes that parsing does not make input trusted; schema validation and sanitization may still be needed.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Says express.json() is used to return JSON responses.",
@@ -1316,12 +1316,12 @@
     "intent": "Check whether the candidate can describe basic RESTful API design beyond simply returning JSON.",
     "primaryQuestion": "What makes an API RESTful at a basic level?",
     "expectedSignals": [
-      "Explains that RESTful APIs model resources with stable URIs, such as /users and /users/:id, rather than only action names.",
-      "Connects standard HTTP methods to resource operations, such as GET to read, POST to create, PUT/PATCH to update, and DELETE to remove.",
-      "Mentions stateless requests: each request should carry the information needed to authenticate and process it without relying on conversational server state.",
-      "Mentions using representations such as JSON and appropriate Content-Type headers.",
-      "Mentions meaningful HTTP status codes and predictable error responses.",
-      "Recognizes that basic RESTfulness is not guaranteed just because an endpoint uses Express or returns JSON."
+      { "label": "Explains that RESTful APIs model resources with stable URIs, such as /users and /users/:id, rather than only action names.", "relatedTrigger": null },
+      { "label": "Connects standard HTTP methods to resource operations, such as GET to read, POST to create, PUT/PATCH to update, and DELETE to remove.", "relatedTrigger": null },
+      { "label": "Mentions stateless requests: each request should carry the information needed to authenticate and process it without relying on conversational server state.", "relatedTrigger": null },
+      { "label": "Mentions using representations such as JSON and appropriate Content-Type headers.", "relatedTrigger": null },
+      { "label": "Mentions meaningful HTTP status codes and predictable error responses.", "relatedTrigger": null },
+      { "label": "Recognizes that basic RESTfulness is not guaranteed just because an endpoint uses Express or returns JSON.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Says REST means any API that returns JSON.",
@@ -1449,12 +1449,12 @@
     "intent": "Verify whether the candidate knows common HTTP status codes and can choose them for basic API outcomes.",
     "primaryQuestion": "Which HTTP status codes should a junior backend developer know?",
     "expectedSignals": [
-      "Names common success codes: 200 OK, 201 Created, and 204 No Content, with appropriate use cases.",
-      "Names common client error codes: 400 Bad Request, 401 Unauthorized, 403 Forbidden, 404 Not Found, and often 409 Conflict or 422 Unprocessable Content.",
-      "Names common server error code 500 Internal Server Error and understands it represents unexpected server failure.",
-      "Explains the broad classes: 2xx success, 3xx redirects, 4xx client/request problems, and 5xx server problems.",
-      "Can map practical cases: validation error, missing auth, authenticated but not allowed, missing resource, successful deletion, and created resource.",
-      "Recognizes that returning HTTP 200 for every outcome makes clients and observability worse."
+      { "label": "Names common success codes: 200 OK, 201 Created, and 204 No Content, with appropriate use cases.", "relatedTrigger": null },
+      { "label": "Names common client error codes: 400 Bad Request, 401 Unauthorized, 403 Forbidden, 404 Not Found, and often 409 Conflict or 422 Unprocessable Content.", "relatedTrigger": null },
+      { "label": "Names common server error code 500 Internal Server Error and understands it represents unexpected server failure.", "relatedTrigger": null },
+      { "label": "Explains the broad classes: 2xx success, 3xx redirects, 4xx client/request problems, and 5xx server problems.", "relatedTrigger": null },
+      { "label": "Can map practical cases: validation error, missing auth, authenticated but not allowed, missing resource, successful deletion, and created resource.", "relatedTrigger": null },
+      { "label": "Recognizes that returning HTTP 200 for every outcome makes clients and observability worse.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Returns 200 for errors and puts success false in the body as the only signal.",
@@ -1577,12 +1577,12 @@
     "intent": "Check whether the candidate can return JSON correctly from an Express route while managing status and response lifecycle.",
     "primaryQuestion": "How do you return JSON from an Express route?",
     "expectedSignals": [
-      "Uses res.json(data) to serialize a JavaScript object or array and send a JSON response.",
-      "Mentions setting the status code with res.status(code).json(data), such as res.status(201).json(createdUser).",
-      "Understands that res.json ends the response for that request and later code should not send another response.",
-      "Mentions that Express sets the JSON Content-Type header appropriately.",
-      "Avoids returning sensitive fields such as passwords, tokens, or internal-only data in the response body.",
-      "Can distinguish returning JSON from parsing incoming JSON with express.json()."
+      { "label": "Uses res.json(data) to serialize a JavaScript object or array and send a JSON response.", "relatedTrigger": null },
+      { "label": "Mentions setting the status code with res.status(code).json(data), such as res.status(201).json(createdUser).", "relatedTrigger": null },
+      { "label": "Understands that res.json ends the response for that request and later code should not send another response.", "relatedTrigger": null },
+      { "label": "Mentions that Express sets the JSON Content-Type header appropriately.", "relatedTrigger": null },
+      { "label": "Avoids returning sensitive fields such as passwords, tokens, or internal-only data in the response body.", "relatedTrigger": null },
+      { "label": "Can distinguish returning JSON from parsing incoming JSON with express.json().", "relatedTrigger": null }
     ],
     "redFlags": [
       "Thinks return { ok: true } from the handler automatically sends JSON.",
@@ -1710,12 +1710,12 @@
     "intent": "Check whether the candidate knows how to return a proper 404 for unmatched Express routes.",
     "primaryQuestion": "How do you handle a route that does not exist?",
     "expectedSignals": [
-      "Explains that unmatched routes should return a 404 Not Found response rather than a 500 server error.",
-      "Mentions adding a catch-all 404 middleware or route after all normal routes have been registered.",
-      "Shows the basic shape app.use((req, res) => res.status(404).json({ error: 'Not found' })) or equivalent.",
-      "Understands route order matters: placing the catch-all before real routes would block them.",
-      "Mentions returning a consistent JSON error shape for APIs.",
-      "Can distinguish 404 handling from centralized error-handling middleware for thrown or passed errors."
+      { "label": "Explains that unmatched routes should return a 404 Not Found response rather than a 500 server error.", "relatedTrigger": null },
+      { "label": "Mentions adding a catch-all 404 middleware or route after all normal routes have been registered.", "relatedTrigger": null },
+      { "label": "Shows the basic shape app.use((req, res) => res.status(404).json({ error: 'Not found' })) or equivalent.", "relatedTrigger": null },
+      { "label": "Understands route order matters: placing the catch-all before real routes would block them.", "relatedTrigger": null },
+      { "label": "Mentions returning a consistent JSON error shape for APIs.", "relatedTrigger": null },
+      { "label": "Can distinguish 404 handling from centralized error-handling middleware for thrown or passed errors.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Returns 500 for unknown routes.",
@@ -1843,12 +1843,12 @@
     "intent": "Evaluate whether the candidate understands why CORS appears in browser-to-backend calls and how to configure it safely at a basic level.",
     "primaryQuestion": "What is CORS, and why does it appear when frontend calls backend APIs?",
     "expectedSignals": [
-      "Defines CORS as Cross-Origin Resource Sharing, a browser security mechanism around cross-origin HTTP requests.",
-      "Explains that origins differ by scheme, host, or port, so http://localhost:3000 calling http://localhost:5000 is cross-origin.",
-      "Mentions that browsers enforce same-origin policy for frontend JavaScript and require the server to allow the origin with CORS response headers.",
-      "Mentions common headers or configuration such as Access-Control-Allow-Origin, allowed methods, allowed headers, and credentials handling.",
-      "Explains preflight OPTIONS requests for non-simple requests such as custom headers, JSON content type, or methods like PUT/DELETE.",
-      "Recognizes that CORS is enforced by browsers, not usually by curl or server-to-server requests, and that disabling it broadly can be unsafe."
+      { "label": "Defines CORS as Cross-Origin Resource Sharing, a browser security mechanism around cross-origin HTTP requests.", "relatedTrigger": null },
+      { "label": "Explains that origins differ by scheme, host, or port, so http://localhost:3000 calling http://localhost:5000 is cross-origin.", "relatedTrigger": null },
+      { "label": "Mentions that browsers enforce same-origin policy for frontend JavaScript and require the server to allow the origin with CORS response headers.", "relatedTrigger": null },
+      { "label": "Mentions common headers or configuration such as Access-Control-Allow-Origin, allowed methods, allowed headers, and credentials handling.", "relatedTrigger": null },
+      { "label": "Explains preflight OPTIONS requests for non-simple requests such as custom headers, JSON content type, or methods like PUT/DELETE.", "relatedTrigger": null },
+      { "label": "Recognizes that CORS is enforced by browsers, not usually by curl or server-to-server requests, and that disabling it broadly can be unsafe.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Says CORS is a backend bug unrelated to browser security.",

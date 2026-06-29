@@ -12,11 +12,11 @@
     "intent": "Check whether the candidate can define routing in Express as the mapping between HTTP method, path, and handler, and can show the basic route declaration shape.",
     "primaryQuestion": "What is routing in Express, and how do you define a route?",
     "expectedSignals": [
-      "Defines routing as deciding how an application responds to a client request for a specific HTTP method and URL path.",
-      "Shows the basic shape app.METHOD(path, handler), such as app.get('/users', (req, res) => res.json(...)).",
-      "Explains that a route is matched by both path and HTTP method, not by path alone.",
-      "Mentions that handlers receive req and res, and may also receive next when control should be passed onward.",
-      "Understands that handlers should either send a response or pass control so the request does not hang."
+      { "label": "Defines routing as deciding how an application responds to a client request for a specific HTTP method and URL path.", "relatedTrigger": null },
+      { "label": "Shows the basic shape app.METHOD(path, handler), such as app.get('/users', (req, res) => res.json(...)).", "relatedTrigger": null },
+      { "label": "Explains that a route is matched by both path and HTTP method, not by path alone.", "relatedTrigger": null },
+      { "label": "Mentions that handlers receive req and res, and may also receive next when control should be passed onward.", "relatedTrigger": null },
+      { "label": "Understands that handlers should either send a response or pass control so the request does not hang.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Says routing is only creating URLs without mentioning HTTP methods or handlers.",
@@ -110,12 +110,12 @@
     "intent": "Evaluate whether the candidate can distinguish common Express HTTP method helpers and connect each method to normal REST intent and idempotency expectations.",
     "primaryQuestion": "What is the difference between app.get(), app.post(), app.put(), app.patch(), and app.delete()?",
     "expectedSignals": [
-      "Explains that these helpers register handlers for different HTTP verbs on a path.",
-      "Connects GET to reading data and avoiding state changes.",
-      "Connects POST to creating resources or triggering non-idempotent actions.",
-      "Connects PUT to full replacement or idempotent upsert-style updates depending on the API contract.",
-      "Connects PATCH to partial update and DELETE to deletion or deactivation.",
-      "Mentions that Express does not enforce REST semantics; the application design and handler logic must enforce them."
+      { "label": "Explains that these helpers register handlers for different HTTP verbs on a path.", "relatedTrigger": null },
+      { "label": "Connects GET to reading data and avoiding state changes.", "relatedTrigger": null },
+      { "label": "Connects POST to creating resources or triggering non-idempotent actions.", "relatedTrigger": null },
+      { "label": "Connects PUT to full replacement or idempotent upsert-style updates depending on the API contract.", "relatedTrigger": null },
+      { "label": "Connects PATCH to partial update and DELETE to deletion or deactivation.", "relatedTrigger": null },
+      { "label": "Mentions that Express does not enforce REST semantics; the application design and handler logic must enforce them.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Says these methods are interchangeable because they can all return JSON.",
@@ -209,11 +209,11 @@
     "intent": "Check whether the candidate understands the three core handler parameters and the request-response control flow in Express.",
     "primaryQuestion": "What are req, res, and next in an Express route handler?",
     "expectedSignals": [
-      "Explains req as the request object containing path params, query, body, headers, cookies, method, URL, and other request data.",
-      "Explains res as the response object used to set status, headers, cookies, and send JSON, text, files, redirects, or end the response.",
-      "Explains next as the function that passes control to the next matching middleware or route handler.",
-      "Mentions next(err) for error handling and next('route') for skipping remaining callbacks in the current route when appropriate.",
-      "Understands that once a final response is sent, the handler should not continue into another response path."
+      { "label": "Explains req as the request object containing path params, query, body, headers, cookies, method, URL, and other request data.", "relatedTrigger": null },
+      { "label": "Explains res as the response object used to set status, headers, cookies, and send JSON, text, files, redirects, or end the response.", "relatedTrigger": null },
+      { "label": "Explains next as the function that passes control to the next matching middleware or route handler.", "relatedTrigger": null },
+      { "label": "Mentions next(err) for error handling and next('route') for skipping remaining callbacks in the current route when appropriate.", "relatedTrigger": null },
+      { "label": "Understands that once a final response is sent, the handler should not continue into another response path.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Thinks req and res are plain custom objects created by the developer.",
@@ -307,12 +307,12 @@
     "intent": "Verify whether the candidate can distinguish route parameters from query strings and access them correctly in Express.",
     "primaryQuestion": "What is the difference between a route parameter like :id and a query string like ?id=1, and how do you access each?",
     "expectedSignals": [
-      "Explains that route parameters are named path segments defined in the route path, such as /users/:id.",
-      "Explains that route parameters are read from req.params, such as req.params.id.",
-      "Explains that query strings are key-value options after ?, not part of the route path.",
-      "Explains that query values are read from req.query, such as req.query.page or req.query.id.",
-      "Uses route params for resource identity and query strings for filtering, sorting, pagination, search, or optional modifiers.",
-      "Mentions that both params and query values come from the client and need parsing and validation."
+      { "label": "Explains that route parameters are named path segments defined in the route path, such as /users/:id.", "relatedTrigger": null },
+      { "label": "Explains that route parameters are read from req.params, such as req.params.id.", "relatedTrigger": null },
+      { "label": "Explains that query strings are key-value options after ?, not part of the route path.", "relatedTrigger": null },
+      { "label": "Explains that query values are read from req.query, such as req.query.page or req.query.id.", "relatedTrigger": null },
+      { "label": "Uses route params for resource identity and query strings for filtering, sorting, pagination, search, or optional modifiers.", "relatedTrigger": null },
+      { "label": "Mentions that both params and query values come from the client and need parsing and validation.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Reads /users/:id from req.query.id.",
@@ -407,11 +407,11 @@
     "intent": "Assess whether the candidate understands express.Router as a modular, mountable routing and middleware unit for organizing routes outside the root app.",
     "primaryQuestion": "What is express.Router(), and why use it instead of attaching all routes directly to app?",
     "expectedSignals": [
-      "Defines express.Router() as a modular, mountable router that can contain route handlers and middleware.",
-      "Explains that a router behaves like a mini application for routing and middleware, but is mounted into the main app.",
-      "Shows an example such as const usersRouter = express.Router(); usersRouter.get('/', ...); app.use('/users', usersRouter).",
-      "Connects Router to modular files, feature ownership, testability, and reducing a large app.ts or server.ts file.",
-      "Mentions router-level middleware for feature-specific behavior such as auth, logging, validation, or parameter preloading."
+      { "label": "Defines express.Router() as a modular, mountable router that can contain route handlers and middleware.", "relatedTrigger": null },
+      { "label": "Explains that a router behaves like a mini application for routing and middleware, but is mounted into the main app.", "relatedTrigger": null },
+      { "label": "Shows an example such as const usersRouter = express.Router(); usersRouter.get('/', ...); app.use('/users', usersRouter).", "relatedTrigger": null },
+      { "label": "Connects Router to modular files, feature ownership, testability, and reducing a large app.ts or server.ts file.", "relatedTrigger": null },
+      { "label": "Mentions router-level middleware for feature-specific behavior such as auth, logging, validation, or parameter preloading.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Thinks Router starts a separate HTTP server.",
@@ -505,11 +505,11 @@
     "intent": "Check whether the candidate can group related routes under a common prefix using app.use and express.Router.",
     "primaryQuestion": "How do you group routes by prefix, for example /api/v1/users?",
     "expectedSignals": [
-      "Uses a router for the feature, such as usersRouter.get('/', ...) and usersRouter.get('/:id', ...).",
-      "Mounts the router at a prefix with app.use('/api/v1/users', usersRouter).",
-      "Understands that routes inside the router are relative to the mount path.",
-      "Explains that prefix grouping helps versioning, module ownership, middleware scoping, and avoiding repeated strings.",
-      "Mentions that nested routers can be used for sub-resources when it keeps route ownership clear."
+      { "label": "Uses a router for the feature, such as usersRouter.get('/', ...) and usersRouter.get('/:id', ...).", "relatedTrigger": null },
+      { "label": "Mounts the router at a prefix with app.use('/api/v1/users', usersRouter).", "relatedTrigger": null },
+      { "label": "Understands that routes inside the router are relative to the mount path.", "relatedTrigger": null },
+      { "label": "Explains that prefix grouping helps versioning, module ownership, middleware scoping, and avoiding repeated strings.", "relatedTrigger": null },
+      { "label": "Mentions that nested routers can be used for sub-resources when it keeps route ownership clear.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Repeats /api/v1/users manually on every route in multiple files without recognizing drift risk.",
@@ -603,11 +603,11 @@
     "intent": "Assess whether the candidate can distinguish app.use middleware mounting from app.get GET route registration.",
     "primaryQuestion": "How is app.use() different from app.get()?",
     "expectedSignals": [
-      "Explains app.get(path, handler) registers a route for HTTP GET requests to the path.",
-      "Explains app.use(path?, middleware) mounts middleware or routers for all HTTP methods when the base path matches.",
-      "Mentions that app.use('/api', middleware) also applies to subpaths such as /api/users.",
-      "Mentions that app.use without a path applies to every request reaching that point in the middleware stack.",
-      "Connects app.use to cross-cutting middleware, static files, body parsers, routers, and 404 handlers."
+      { "label": "Explains app.get(path, handler) registers a route for HTTP GET requests to the path.", "relatedTrigger": null },
+      { "label": "Explains app.use(path?, middleware) mounts middleware or routers for all HTTP methods when the base path matches.", "relatedTrigger": null },
+      { "label": "Mentions that app.use('/api', middleware) also applies to subpaths such as /api/users.", "relatedTrigger": null },
+      { "label": "Mentions that app.use without a path applies to every request reaching that point in the middleware stack.", "relatedTrigger": null },
+      { "label": "Connects app.use to cross-cutting middleware, static files, body parsers, routers, and 404 handlers.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Says app.use and app.get are the same except for naming.",
@@ -702,12 +702,12 @@
     "intent": "Evaluate whether the candidate understands wildcard and optional route patterns, their use cases, and Express 4 versus Express 5 syntax differences.",
     "primaryQuestion": "When would you use route wildcards and optional parameters such as * or :id?",
     "expectedSignals": [
-      "Uses wildcard routes for catch-all behavior, SPA fallback, 404 handling, or path-prefix behavior when a broader match is intentionally needed.",
-      "Uses optional parameters when one handler can legitimately support both a route with and without a segment, while keeping the contract clear.",
-      "Explains that overly broad wildcard routes can shadow more specific routes if registered too early.",
-      "Mentions that query strings are often better than optional path segments for filters and optional modifiers.",
-      "Shows version awareness: Express 4 examples often use * or :id?, while Express 5 uses named wildcards and brace-style optional segments such as /*splat, /{*splat}, or /users{/:id}.",
-      "Mentions that wildcard captures and optional params should still be validated before use."
+      { "label": "Uses wildcard routes for catch-all behavior, SPA fallback, 404 handling, or path-prefix behavior when a broader match is intentionally needed.", "relatedTrigger": null },
+      { "label": "Uses optional parameters when one handler can legitimately support both a route with and without a segment, while keeping the contract clear.", "relatedTrigger": null },
+      { "label": "Explains that overly broad wildcard routes can shadow more specific routes if registered too early.", "relatedTrigger": null },
+      { "label": "Mentions that query strings are often better than optional path segments for filters and optional modifiers.", "relatedTrigger": null },
+      { "label": "Shows version awareness: Express 4 examples often use * or :id?, while Express 5 uses named wildcards and brace-style optional segments such as /*splat, /{*splat}, or /users{/:id}.", "relatedTrigger": null },
+      { "label": "Mentions that wildcard captures and optional params should still be validated before use.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Uses a wildcard as a substitute for designing clear routes.",
@@ -802,11 +802,11 @@
     "intent": "Check whether the candidate understands Express routing and middleware as an ordered stack where earlier matching handlers can affect or terminate later matching handlers.",
     "primaryQuestion": "Does route declaration order matter in Express? Why?",
     "expectedSignals": [
-      "States that order matters because Express evaluates middleware and routes in the order they are registered.",
-      "Explains that a matching handler can send a response and terminate the request-response cycle before later routes run.",
-      "Explains that generic routes such as /users/:id or catch-all routes should usually come after more specific routes such as /users/me or /users/search.",
-      "Mentions middleware order: parsers and auth must be registered before routes that need them; error handlers and 404 handlers usually come after routes.",
-      "Can reason through next(), next('route'), and next('router') at a high level when multiple handlers match."
+      { "label": "States that order matters because Express evaluates middleware and routes in the order they are registered.", "relatedTrigger": null },
+      { "label": "Explains that a matching handler can send a response and terminate the request-response cycle before later routes run.", "relatedTrigger": null },
+      { "label": "Explains that generic routes such as /users/:id or catch-all routes should usually come after more specific routes such as /users/me or /users/search.", "relatedTrigger": null },
+      { "label": "Mentions middleware order: parsers and auth must be registered before routes that need them; error handlers and 404 handlers usually come after routes.", "relatedTrigger": null },
+      { "label": "Can reason through next(), next('route'), and next('router') at a high level when multiple handlers match.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Believes Express automatically chooses the most specific route regardless of registration order.",
@@ -901,11 +901,11 @@
     "intent": "Assess whether the candidate can implement a maintainable 404 fallback after all normal routes and before centralized error handling.",
     "primaryQuestion": "How do you handle a route that does not exist in Express?",
     "expectedSignals": [
-      "Adds a catch-all 404 middleware after all known routes have been registered.",
-      "Uses res.status(404).json(...) or res.sendStatus(404) with a consistent API error shape.",
-      "Understands that the 404 handler is for unmatched requests, not exceptions thrown by matched handlers.",
-      "Places centralized error-handling middleware after the 404 handler when using next(err) patterns.",
-      "Mentions that in Express 5 catch-all route patterns should use current syntax such as app.use((req, res) => ...) or a named splat pattern when a route path is needed."
+      { "label": "Adds a catch-all 404 middleware after all known routes have been registered.", "relatedTrigger": null },
+      { "label": "Uses res.status(404).json(...) or res.sendStatus(404) with a consistent API error shape.", "relatedTrigger": null },
+      { "label": "Understands that the 404 handler is for unmatched requests, not exceptions thrown by matched handlers.", "relatedTrigger": null },
+      { "label": "Places centralized error-handling middleware after the 404 handler when using next(err) patterns.", "relatedTrigger": null },
+      { "label": "Mentions that in Express 5 catch-all route patterns should use current syntax such as app.use((req, res) => ...) or a named splat pattern when a route path is needed.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Places the 404 middleware before normal routes.",
@@ -1000,11 +1000,11 @@
     "intent": "Verify whether the candidate understands app.all as path-specific logic that matches every HTTP method, and can choose it appropriately.",
     "primaryQuestion": "What is app.all() used for?",
     "expectedSignals": [
-      "Explains that app.all(path, callbacks) matches all HTTP methods for the given path.",
-      "Uses app.all for path-specific preconditions such as authentication, loading a resource, method-independent logging, or shared checks.",
-      "Understands callbacks do not have to be final endpoints; they can call next() to continue to later matching routes.",
-      "Distinguishes app.all from app.use: app.all is route-style method matching on a path, while app.use mounts middleware by base path and can match subpaths.",
-      "Mentions that app.all can be risky if used too broadly or registered before routes unintentionally."
+      { "label": "Explains that app.all(path, callbacks) matches all HTTP methods for the given path.", "relatedTrigger": null },
+      { "label": "Uses app.all for path-specific preconditions such as authentication, loading a resource, method-independent logging, or shared checks.", "relatedTrigger": null },
+      { "label": "Understands callbacks do not have to be final endpoints; they can call next() to continue to later matching routes.", "relatedTrigger": null },
+      { "label": "Distinguishes app.all from app.use: app.all is route-style method matching on a path, while app.use mounts middleware by base path and can match subpaths.", "relatedTrigger": null },
+      { "label": "Mentions that app.all can be risky if used too broadly or registered before routes unintentionally.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Says app.all means all paths instead of all HTTP methods for a path.",
@@ -1098,11 +1098,11 @@
     "intent": "Check whether the candidate can chain multiple handlers on a single route and reason about next, arrays, preconditions, and final response handling.",
     "primaryQuestion": "How do you chain multiple handlers into one Express route?",
     "expectedSignals": [
-      "Shows route-level middleware with app.get('/path', mw1, mw2, handler) or router.get('/path', [mw1, mw2], handler).",
-      "Explains that each non-final handler should call next() or pass an error with next(err).",
-      "Mentions that arrays and combinations of arrays and functions are valid callback formats.",
-      "Uses handler chains for validation, authentication, authorization, loading resources, and then the final controller.",
-      "Mentions next('route') as an escape hatch for skipping remaining callbacks in the current route when conditional routing is needed."
+      { "label": "Shows route-level middleware with app.get('/path', mw1, mw2, handler) or router.get('/path', [mw1, mw2], handler).", "relatedTrigger": null },
+      { "label": "Explains that each non-final handler should call next() or pass an error with next(err).", "relatedTrigger": null },
+      { "label": "Mentions that arrays and combinations of arrays and functions are valid callback formats.", "relatedTrigger": null },
+      { "label": "Uses handler chains for validation, authentication, authorization, loading resources, and then the final controller.", "relatedTrigger": null },
+      { "label": "Mentions next('route') as an escape hatch for skipping remaining callbacks in the current route when conditional routing is needed.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Writes multiple handlers but none call next, causing the request to hang.",
@@ -1197,12 +1197,12 @@
     "intent": "Evaluate whether the candidate can distinguish application-level middleware from router-level middleware and reason about mount paths, scope, and execution order.",
     "primaryQuestion": "What is the difference between router.use() and app.use() in the context of Express Router?",
     "expectedSignals": [
-      "Explains app.use mounts middleware or routers at the application level, affecting requests that match the app-level mount path.",
-      "Explains router.use mounts middleware within a specific router, affecting requests that are passed into that router and match the router-level path.",
-      "Understands that when a router is mounted, its internal paths are relative to the mount path.",
-      "Mentions that the mount path is stripped from req.url inside mounted middleware, while req.originalUrl and req.baseUrl can help understand the full request context.",
-      "Uses router.use for feature-scoped middleware such as auth for users routes, and app.use for global middleware such as JSON parsing, request logging, CORS, or mounting the router itself.",
-      "Mentions order still matters both at app level and inside the router."
+      { "label": "Explains app.use mounts middleware or routers at the application level, affecting requests that match the app-level mount path.", "relatedTrigger": null },
+      { "label": "Explains router.use mounts middleware within a specific router, affecting requests that are passed into that router and match the router-level path.", "relatedTrigger": null },
+      { "label": "Understands that when a router is mounted, its internal paths are relative to the mount path.", "relatedTrigger": null },
+      { "label": "Mentions that the mount path is stripped from req.url inside mounted middleware, while req.originalUrl and req.baseUrl can help understand the full request context.", "relatedTrigger": null },
+      { "label": "Uses router.use for feature-scoped middleware such as auth for users routes, and app.use for global middleware such as JSON parsing, request logging, CORS, or mounting the router itself.", "relatedTrigger": null },
+      { "label": "Mentions order still matters both at app level and inside the router.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Says router.use and app.use are identical with no scope difference.",
@@ -1297,12 +1297,12 @@
     "intent": "Assess whether the candidate can pass per-request data safely between middleware and handlers without global mutable state or unclear contracts.",
     "primaryQuestion": "How do you pass data from one middleware to the next middleware in Express?",
     "expectedSignals": [
-      "Explains that middleware can attach per-request data to req, such as req.user, req.requestId, or req.validatedBody.",
-      "Mentions res.locals as another per-request place for data intended for downstream response handling or templates.",
-      "Calls next() after attaching data, or next(err) if the data cannot be produced safely.",
-      "Avoids global variables or module-level mutable state for request-specific data.",
-      "In TypeScript, mentions augmenting the Express Request type or using a typed request/context interface instead of relying on any.",
-      "Recognizes that data attached to req or res.locals should have clear ownership, naming, validation, and cleanup expectations."
+      { "label": "Explains that middleware can attach per-request data to req, such as req.user, req.requestId, or req.validatedBody.", "relatedTrigger": null },
+      { "label": "Mentions res.locals as another per-request place for data intended for downstream response handling or templates.", "relatedTrigger": null },
+      { "label": "Calls next() after attaching data, or next(err) if the data cannot be produced safely.", "relatedTrigger": null },
+      { "label": "Avoids global variables or module-level mutable state for request-specific data.", "relatedTrigger": null },
+      { "label": "In TypeScript, mentions augmenting the Express Request type or using a typed request/context interface instead of relying on any.", "relatedTrigger": null },
+      { "label": "Recognizes that data attached to req or res.locals should have clear ownership, naming, validation, and cleanup expectations.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Uses global variables to store the current user or current request data.",
@@ -1397,13 +1397,13 @@
     "intent": "Evaluate whether the candidate can organize Express routes in a larger project using pragmatic MVC or feature-module boundaries without overloading route handlers.",
     "primaryQuestion": "How would you organize routes in a large Express project following an MVC-style structure?",
     "expectedSignals": [
-      "Separates route definitions from controllers, service/business logic, data access, validation, middleware, and app bootstrap.",
-      "Uses feature routers such as users.routes.ts mounted from a central api router or app.ts with prefixes and versions.",
-      "Keeps controllers thin: parse request data, call services, shape responses, and delegate business decisions to services or use cases.",
-      "Keeps database access in repositories/models or data access modules rather than directly in route files.",
-      "Centralizes cross-cutting concerns such as auth, validation, error handling, logging, configuration, and request IDs.",
-      "Chooses abstractions pragmatically: avoids both one giant app file and unnecessary framework-heavy layers for small features.",
-      "Mentions tests for controllers/routes and services, plus consistent error and response contracts."
+      { "label": "Separates route definitions from controllers, service/business logic, data access, validation, middleware, and app bootstrap.", "relatedTrigger": null },
+      { "label": "Uses feature routers such as users.routes.ts mounted from a central api router or app.ts with prefixes and versions.", "relatedTrigger": null },
+      { "label": "Keeps controllers thin: parse request data, call services, shape responses, and delegate business decisions to services or use cases.", "relatedTrigger": null },
+      { "label": "Keeps database access in repositories/models or data access modules rather than directly in route files.", "relatedTrigger": null },
+      { "label": "Centralizes cross-cutting concerns such as auth, validation, error handling, logging, configuration, and request IDs.", "relatedTrigger": null },
+      { "label": "Chooses abstractions pragmatically: avoids both one giant app file and unnecessary framework-heavy layers for small features.", "relatedTrigger": null },
+      { "label": "Mentions tests for controllers/routes and services, plus consistent error and response contracts.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Puts all business logic, SQL, validation, and response shaping inside route handlers.",

@@ -107,7 +107,7 @@ function _createProbe(overrides: Partial<QuestionProbe> = {}): QuestionProbe {
     difficulty: 3,
     intent: 'Assess cache design.',
     primaryQuestion: 'How do you handle cache invalidation?',
-    expectedSignals: ['Trade-off clarity'],
+    expectedSignals: [{ label: 'Trade-off clarity', relatedTrigger: null }],
     redFlags: ['No invalidation plan'],
     scoringHints: [{ scoreBand: 'strong', description: 'Clear trade-offs' }],
     followUps: [

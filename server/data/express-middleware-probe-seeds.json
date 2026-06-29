@@ -12,11 +12,11 @@
     "intent": "Check whether the candidate can define Express middleware as the ordered request-response pipeline and explain what a middleware can do to req, res, and control flow.",
     "primaryQuestion": "What is middleware in Express, and how does it work?",
     "expectedSignals": [
-      "Defines middleware as a function that runs during the request-response cycle and has access to req, res, and next.",
-      "Explains that Express applications are built as an ordered stack of middleware and route handlers.",
-      "Mentions middleware can execute code, read or mutate req and res, end the response, or pass control to the next matching middleware.",
-      "Recognizes that route handlers are also part of the middleware system, not a completely separate mechanism.",
-      "Uses a concrete example such as logging, body parsing, authentication, validation, or error handling."
+      { "label": "Defines middleware as a function that runs during the request-response cycle and has access to req, res, and next.", "relatedTrigger": null },
+      { "label": "Explains that Express applications are built as an ordered stack of middleware and route handlers.", "relatedTrigger": null },
+      { "label": "Mentions middleware can execute code, read or mutate req and res, end the response, or pass control to the next matching middleware.", "relatedTrigger": null },
+      { "label": "Recognizes that route handlers are also part of the middleware system, not a completely separate mechanism.", "relatedTrigger": null },
+      { "label": "Uses a concrete example such as logging, body parsing, authentication, validation, or error handling.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Describes middleware as only a plugin package or only code that runs before routes.",
@@ -109,11 +109,11 @@
     "intent": "Verify whether the candidate knows the standard middleware function signature and can distinguish normal middleware from error-handling middleware.",
     "primaryQuestion": "Which parameters does an Express middleware function receive? What is the standard function signature?",
     "expectedSignals": [
-      "States the standard normal middleware signature as (req, res, next).",
-      "Explains req represents the incoming request, res represents the outgoing response, and next passes control.",
-      "Mentions that names are conventional but the parameter position matters.",
-      "Distinguishes error-handling middleware with the four-argument signature (err, req, res, next).",
-      "Notes that omitting next is acceptable only when the middleware always ends the response or intentionally does not continue."
+      { "label": "States the standard normal middleware signature as (req, res, next).", "relatedTrigger": null },
+      { "label": "Explains req represents the incoming request, res represents the outgoing response, and next passes control.", "relatedTrigger": null },
+      { "label": "Mentions that names are conventional but the parameter position matters.", "relatedTrigger": null },
+      { "label": "Distinguishes error-handling middleware with the four-argument signature (err, req, res, next).", "relatedTrigger": null },
+      { "label": "Notes that omitting next is acceptable only when the middleware always ends the response or intentionally does not continue.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Uses the wrong order such as (res, req, next).",
@@ -206,11 +206,11 @@
     "intent": "Assess whether the candidate understands next() as control transfer and can diagnose hanging requests caused by missing completion paths.",
     "primaryQuestion": "What is next() used for in Express middleware? What happens if you do not call next()?",
     "expectedSignals": [
-      "Explains next() calls the next matching middleware or route handler in the current stack.",
-      "States that middleware must either call next(), send/end the response, or intentionally delegate to an error path.",
-      "Explains that if middleware neither calls next() nor ends the response, the request remains open until the client or server times out.",
-      "Mentions that calling next() after sending a final response can cause duplicate response or headers-already-sent bugs.",
-      "Recognizes special forms such as next('route'), next('router'), and next(err) at a high level."
+      { "label": "Explains next() calls the next matching middleware or route handler in the current stack.", "relatedTrigger": null },
+      { "label": "States that middleware must either call next(), send/end the response, or intentionally delegate to an error path.", "relatedTrigger": null },
+      { "label": "Explains that if middleware neither calls next() nor ends the response, the request remains open until the client or server times out.", "relatedTrigger": null },
+      { "label": "Mentions that calling next() after sending a final response can cause duplicate response or headers-already-sent bugs.", "relatedTrigger": null },
+      { "label": "Recognizes special forms such as next('route'), next('router'), and next(err) at a high level.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Says next() sends the response to the client.",
@@ -303,12 +303,12 @@
     "intent": "Check whether the candidate can classify Express middleware types and give practical examples for each category.",
     "primaryQuestion": "What types of middleware are there in Express? Include application-level, router-level, built-in, third-party, and error-handling middleware.",
     "expectedSignals": [
-      "Names application-level middleware registered on app with app.use() or app.METHOD().",
-      "Names router-level middleware registered on an express.Router instance with router.use() or router.METHOD().",
-      "Names built-in middleware such as express.json(), express.urlencoded(), and express.static().",
-      "Names third-party middleware such as cors, morgan, helmet, cookie-parser, compression, or session middleware.",
-      "Names error-handling middleware and gives the (err, req, res, next) signature.",
-      "Explains that the categories describe where middleware comes from or how it is registered, not mutually exclusive business responsibilities."
+      { "label": "Names application-level middleware registered on app with app.use() or app.METHOD().", "relatedTrigger": null },
+      { "label": "Names router-level middleware registered on an express.Router instance with router.use() or router.METHOD().", "relatedTrigger": null },
+      { "label": "Names built-in middleware such as express.json(), express.urlencoded(), and express.static().", "relatedTrigger": null },
+      { "label": "Names third-party middleware such as cors, morgan, helmet, cookie-parser, compression, or session middleware.", "relatedTrigger": null },
+      { "label": "Names error-handling middleware and gives the (err, req, res, next) signature.", "relatedTrigger": null },
+      { "label": "Explains that the categories describe where middleware comes from or how it is registered, not mutually exclusive business responsibilities.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Can list package names but cannot explain application-level versus router-level.",
@@ -401,11 +401,11 @@
     "intent": "Assess whether the candidate can register middleware with app.use(), understand optional mount paths, and avoid accidentally applying middleware too broadly.",
     "primaryQuestion": "How is app.use() used to register middleware in Express?",
     "expectedSignals": [
-      "Explains app.use(middleware) registers middleware for all HTTP methods on matching requests.",
-      "Explains app.use('/prefix', middleware) mounts middleware only for paths under that prefix.",
-      "Mentions app.use() can receive multiple middleware functions, arrays of middleware, or an express.Router instance.",
-      "Distinguishes app.use() from app.get(), app.post(), or other method-specific route handlers.",
-      "Mentions registration order still controls when the middleware runs."
+      { "label": "Explains app.use(middleware) registers middleware for all HTTP methods on matching requests.", "relatedTrigger": null },
+      { "label": "Explains app.use('/prefix', middleware) mounts middleware only for paths under that prefix.", "relatedTrigger": null },
+      { "label": "Mentions app.use() can receive multiple middleware functions, arrays of middleware, or an express.Router instance.", "relatedTrigger": null },
+      { "label": "Distinguishes app.use() from app.get(), app.post(), or other method-specific route handlers.", "relatedTrigger": null },
+      { "label": "Mentions registration order still controls when the middleware runs.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Thinks app.use() only registers global middleware and cannot be mounted on a path.",
@@ -498,12 +498,12 @@
     "intent": "Evaluate whether the candidate can reason about middleware order and diagnose bugs caused by registering middleware before or after the routes that need it.",
     "primaryQuestion": "Does the order of registering middleware matter in Express? Why?",
     "expectedSignals": [
-      "States that order matters because Express executes matching middleware in the order it is registered.",
-      "Explains parsers such as express.json() must run before routes that read req.body.",
-      "Explains auth and authorization middleware must run before protected handlers.",
-      "Explains a route that sends a response can prevent later normal middleware from running for that request.",
-      "Mentions error-handling middleware is usually registered after routes so it can catch forwarded errors.",
-      "Recognizes that broad middleware registered too early can affect public routes unintentionally."
+      { "label": "States that order matters because Express executes matching middleware in the order it is registered.", "relatedTrigger": null },
+      { "label": "Explains parsers such as express.json() must run before routes that read req.body.", "relatedTrigger": null },
+      { "label": "Explains auth and authorization middleware must run before protected handlers.", "relatedTrigger": null },
+      { "label": "Explains a route that sends a response can prevent later normal middleware from running for that request.", "relatedTrigger": null },
+      { "label": "Mentions error-handling middleware is usually registered after routes so it can catch forwarded errors.", "relatedTrigger": null },
+      { "label": "Recognizes that broad middleware registered too early can affect public routes unintentionally.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Claims Express reorders middleware automatically.",
@@ -596,12 +596,12 @@
     "intent": "Check whether the candidate understands Express built-in body parsing middleware, content types, order, limits, and untrusted input boundaries.",
     "primaryQuestion": "What are express.json() and express.urlencoded() used for?",
     "expectedSignals": [
-      "Explains express.json() parses incoming requests with JSON payloads and populates req.body.",
-      "Explains express.urlencoded() parses application/x-www-form-urlencoded payloads such as HTML form submissions and populates req.body.",
-      "Mentions they only parse requests whose Content-Type matches the configured parser.",
-      "Mentions they must be registered before routes that need req.body.",
-      "Mentions useful options such as limit and extended for urlencoded payloads.",
-      "States parsed req.body is still user-controlled and must be validated before use."
+      { "label": "Explains express.json() parses incoming requests with JSON payloads and populates req.body.", "relatedTrigger": null },
+      { "label": "Explains express.urlencoded() parses application/x-www-form-urlencoded payloads such as HTML form submissions and populates req.body.", "relatedTrigger": null },
+      { "label": "Mentions they only parse requests whose Content-Type matches the configured parser.", "relatedTrigger": null },
+      { "label": "Mentions they must be registered before routes that need req.body.", "relatedTrigger": null },
+      { "label": "Mentions useful options such as limit and extended for urlencoded payloads.", "relatedTrigger": null },
+      { "label": "States parsed req.body is still user-controlled and must be validated before use.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Thinks express.json() parses query strings or path parameters.",
@@ -694,12 +694,12 @@
     "intent": "Evaluate whether the candidate can design and implement custom Express middleware with correct control flow, scoping, error forwarding, and configurability.",
     "primaryQuestion": "How do you write a custom middleware in Express?",
     "expectedSignals": [
-      "Writes or describes a function with the signature (req, res, next).",
-      "Performs a focused concern such as logging, assigning request IDs, checking authentication, validating input, or timing requests.",
-      "Calls next() when the request should continue.",
-      "Ends the response intentionally for rejection paths such as invalid auth or bad input.",
-      "For async work, forwards failures with next(err) in Express 4 or relies on Express 5 promise forwarding where appropriate.",
-      "Mentions configurable middleware as a factory that accepts options and returns (req, res, next)."
+      { "label": "Writes or describes a function with the signature (req, res, next).", "relatedTrigger": null },
+      { "label": "Performs a focused concern such as logging, assigning request IDs, checking authentication, validating input, or timing requests.", "relatedTrigger": null },
+      { "label": "Calls next() when the request should continue.", "relatedTrigger": null },
+      { "label": "Ends the response intentionally for rejection paths such as invalid auth or bad input.", "relatedTrigger": null },
+      { "label": "For async work, forwards failures with next(err) in Express 4 or relies on Express 5 promise forwarding where appropriate.", "relatedTrigger": null },
+      { "label": "Mentions configurable middleware as a factory that accepts options and returns (req, res, next).", "relatedTrigger": null }
     ],
     "redFlags": [
       "Forgets next() in success paths.",
@@ -792,12 +792,12 @@
     "intent": "Check whether the candidate understands which middleware paths terminate the request-response cycle and which are expected to pass control onward.",
     "primaryQuestion": "Which middleware can end the request-response cycle? Which middleware normally does not?",
     "expectedSignals": [
-      "States any middleware can end the cycle if it sends or ends a response with res.send(), res.json(), res.end(), res.redirect(), res.sendStatus(), or similar.",
-      "Recognizes route handlers often terminate the cycle by returning the final response.",
-      "Explains auth, validation, rate-limit, static-file, and error middleware may terminate the cycle on rejection or when they produce a response.",
-      "Explains pass-through middleware such as logging, request IDs, body parsing, cookie parsing, CORS header setup, and metrics usually call next() after preparing data or headers.",
-      "Mentions that some middleware has conditional behavior, such as CORS handling preflight or auth ending only when credentials are invalid.",
-      "Warns against sending a response and then calling next() into normal handlers unless deliberately delegating to an error handler after headers logic."
+      { "label": "States any middleware can end the cycle if it sends or ends a response with res.send(), res.json(), res.end(), res.redirect(), res.sendStatus(), or similar.", "relatedTrigger": null },
+      { "label": "Recognizes route handlers often terminate the cycle by returning the final response.", "relatedTrigger": null },
+      { "label": "Explains auth, validation, rate-limit, static-file, and error middleware may terminate the cycle on rejection or when they produce a response.", "relatedTrigger": null },
+      { "label": "Explains pass-through middleware such as logging, request IDs, body parsing, cookie parsing, CORS header setup, and metrics usually call next() after preparing data or headers.", "relatedTrigger": null },
+      { "label": "Mentions that some middleware has conditional behavior, such as CORS handling preflight or auth ending only when credentials are invalid.", "relatedTrigger": null },
+      { "label": "Warns against sending a response and then calling next() into normal handlers unless deliberately delegating to an error handler after headers logic.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Claims only route handlers can send responses.",
@@ -890,12 +890,12 @@
     "intent": "Evaluate whether the candidate understands the browser same-origin policy, what cors middleware actually changes, and why CORS is not API authentication.",
     "primaryQuestion": "What problem does the cors middleware solve in Express?",
     "expectedSignals": [
-      "Explains CORS as a browser mechanism related to the same-origin policy.",
-      "Explains cors middleware sets response headers such as Access-Control-Allow-Origin so browser JavaScript may read permitted cross-origin responses.",
-      "Mentions preflight OPTIONS requests for non-simple methods, custom headers, or credentialed scenarios.",
-      "Explains common configuration: origin allowlist, methods, allowedHeaders, exposedHeaders, credentials, and maxAge.",
-      "Warns that CORS is enforced by browsers and does not protect APIs from server-to-server, curl, Postman, or malicious direct requests.",
-      "Avoids wildcard origins with credentialed requests and separates CORS policy from authentication and authorization."
+      { "label": "Explains CORS as a browser mechanism related to the same-origin policy.", "relatedTrigger": null },
+      { "label": "Explains cors middleware sets response headers such as Access-Control-Allow-Origin so browser JavaScript may read permitted cross-origin responses.", "relatedTrigger": null },
+      { "label": "Mentions preflight OPTIONS requests for non-simple methods, custom headers, or credentialed scenarios.", "relatedTrigger": null },
+      { "label": "Explains common configuration: origin allowlist, methods, allowedHeaders, exposedHeaders, credentials, and maxAge.", "relatedTrigger": null },
+      { "label": "Warns that CORS is enforced by browsers and does not protect APIs from server-to-server, curl, Postman, or malicious direct requests.", "relatedTrigger": null },
+      { "label": "Avoids wildcard origins with credentialed requests and separates CORS policy from authentication and authorization.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Treats CORS as a complete security layer for APIs.",
@@ -988,12 +988,12 @@
     "intent": "Verify whether the candidate can apply middleware only to selected routes, prefixes, routers, or HTTP methods instead of the entire application.",
     "primaryQuestion": "How do you apply middleware only to certain routes instead of the whole Express app?",
     "expectedSignals": [
-      "Uses route-level middleware such as app.get('/admin', auth, handler) or router.post('/orders', validate, handler).",
-      "Uses path-mounted middleware such as app.use('/admin', auth) for a prefix.",
-      "Uses express.Router() to group feature routes and attach router.use(auth) only inside that group.",
-      "Mentions arrays or multiple middleware functions can be composed for a route.",
-      "Distinguishes route-specific middleware from global app.use(middleware).",
-      "Considers public endpoints such as login, health checks, and webhooks that may need different middleware."
+      { "label": "Uses route-level middleware such as app.get('/admin', auth, handler) or router.post('/orders', validate, handler).", "relatedTrigger": null },
+      { "label": "Uses path-mounted middleware such as app.use('/admin', auth) for a prefix.", "relatedTrigger": null },
+      { "label": "Uses express.Router() to group feature routes and attach router.use(auth) only inside that group.", "relatedTrigger": null },
+      { "label": "Mentions arrays or multiple middleware functions can be composed for a route.", "relatedTrigger": null },
+      { "label": "Distinguishes route-specific middleware from global app.use(middleware).", "relatedTrigger": null },
+      { "label": "Considers public endpoints such as login, health checks, and webhooks that may need different middleware.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Registers all middleware globally because it is simpler.",
@@ -1086,12 +1086,12 @@
     "intent": "Assess whether the candidate can compare application-level and router-level middleware and choose router-level middleware for modular route groups.",
     "primaryQuestion": "What is the difference between application-level middleware and router-level middleware?",
     "expectedSignals": [
-      "Explains application-level middleware is bound to the app instance using app.use() or app.METHOD().",
-      "Explains router-level middleware is bound to an express.Router instance using router.use() or router.METHOD().",
-      "States they work similarly in control flow, but differ in scope and modular organization.",
-      "Mentions router-level middleware runs only when the router is mounted and the request matches the router path.",
-      "Uses examples such as app-level logging or body parsing versus router-level admin auth or users validation.",
-      "Mentions routers help split feature modules and keep route-specific concerns local."
+      { "label": "Explains application-level middleware is bound to the app instance using app.use() or app.METHOD().", "relatedTrigger": null },
+      { "label": "Explains router-level middleware is bound to an express.Router instance using router.use() or router.METHOD().", "relatedTrigger": null },
+      { "label": "States they work similarly in control flow, but differ in scope and modular organization.", "relatedTrigger": null },
+      { "label": "Mentions router-level middleware runs only when the router is mounted and the request matches the router path.", "relatedTrigger": null },
+      { "label": "Uses examples such as app-level logging or body parsing versus router-level admin auth or users validation.", "relatedTrigger": null },
+      { "label": "Mentions routers help split feature modules and keep route-specific concerns local.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Claims router-level middleware runs before all app-level middleware.",
@@ -1184,12 +1184,12 @@
     "intent": "Check whether the candidate knows morgan as HTTP request logging middleware and understands where it fits relative to application logs, privacy, and production observability.",
     "primaryQuestion": "What is morgan and what is it used for in Express?",
     "expectedSignals": [
-      "Defines morgan as HTTP request logger middleware for Node.js and Express.",
-      "Explains it logs request/response information such as method, URL, status code, response time, and content length depending on format.",
-      "Mentions common formats such as dev, combined, common, short, or custom tokens.",
-      "Explains it is useful for local debugging, access logs, latency visibility, and operational troubleshooting.",
-      "Mentions production use should route logs to the app logger or a stream and avoid logging sensitive data.",
-      "Distinguishes request access logs from domain/business/audit logs."
+      { "label": "Defines morgan as HTTP request logger middleware for Node.js and Express.", "relatedTrigger": null },
+      { "label": "Explains it logs request/response information such as method, URL, status code, response time, and content length depending on format.", "relatedTrigger": null },
+      { "label": "Mentions common formats such as dev, combined, common, short, or custom tokens.", "relatedTrigger": null },
+      { "label": "Explains it is useful for local debugging, access logs, latency visibility, and operational troubleshooting.", "relatedTrigger": null },
+      { "label": "Mentions production use should route logs to the app logger or a stream and avoid logging sensitive data.", "relatedTrigger": null },
+      { "label": "Distinguishes request access logs from domain/business/audit logs.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Thinks morgan is an error handler or security middleware.",
@@ -1282,12 +1282,12 @@
     "intent": "Assess whether the candidate understands Helmet as security-header middleware and can explain both its value and its limits.",
     "primaryQuestion": "What is helmet and why should you use it in Express?",
     "expectedSignals": [
-      "Defines Helmet as middleware that helps secure Express apps by setting HTTP response headers.",
-      "Names example protections such as Content-Security-Policy, X-Content-Type-Options, Referrer-Policy, cross-origin policies, frame protection, or HSTS depending on configuration.",
-      "Explains it reduces classes of browser-side risk such as clickjacking, MIME sniffing, overly permissive referrers, and some XSS impact when CSP is configured well.",
-      "Mentions Helmet is not a complete security solution and must be paired with authentication, authorization, validation, rate limiting, TLS, safe cookies, and dependency hygiene.",
-      "Recognizes some headers, especially CSP and HSTS, require context-aware configuration to avoid breaking frontend assets or local development.",
-      "Mentions placement early in the middleware stack for normal responses."
+      { "label": "Defines Helmet as middleware that helps secure Express apps by setting HTTP response headers.", "relatedTrigger": null },
+      { "label": "Names example protections such as Content-Security-Policy, X-Content-Type-Options, Referrer-Policy, cross-origin policies, frame protection, or HSTS depending on configuration.", "relatedTrigger": null },
+      { "label": "Explains it reduces classes of browser-side risk such as clickjacking, MIME sniffing, overly permissive referrers, and some XSS impact when CSP is configured well.", "relatedTrigger": null },
+      { "label": "Mentions Helmet is not a complete security solution and must be paired with authentication, authorization, validation, rate limiting, TLS, safe cookies, and dependency hygiene.", "relatedTrigger": null },
+      { "label": "Recognizes some headers, especially CSP and HSTS, require context-aware configuration to avoid breaking frontend assets or local development.", "relatedTrigger": null },
+      { "label": "Mentions placement early in the middleware stack for normal responses.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Says installing Helmet makes the application secure by itself.",
@@ -1380,12 +1380,12 @@
     "intent": "Check whether the candidate understands the difference between normal middleware continuation and error propagation in Express.",
     "primaryQuestion": "What is the difference between next(err) and next() in Express?",
     "expectedSignals": [
-      "Explains next() continues to the next normal matching middleware or route handler.",
-      "Explains next(err) tells Express the current request is in an error state and skips remaining non-error middleware.",
-      "States errors are handled by error-handling middleware with the signature (err, req, res, next).",
-      "Mentions next(err) is used for synchronous callbacks, async failures, validation errors represented as errors, and centralized error response mapping.",
-      "Mentions Express 5 automatically calls next(value) for rejected promises or thrown errors from promise-returning middleware/handlers.",
-      "Warns that if headers are already sent, the error handler should delegate or avoid trying to send another response."
+      { "label": "Explains next() continues to the next normal matching middleware or route handler.", "relatedTrigger": null },
+      { "label": "Explains next(err) tells Express the current request is in an error state and skips remaining non-error middleware.", "relatedTrigger": null },
+      { "label": "States errors are handled by error-handling middleware with the signature (err, req, res, next).", "relatedTrigger": null },
+      { "label": "Mentions next(err) is used for synchronous callbacks, async failures, validation errors represented as errors, and centralized error response mapping.", "relatedTrigger": null },
+      { "label": "Mentions Express 5 automatically calls next(value) for rejected promises or thrown errors from promise-returning middleware/handlers.", "relatedTrigger": null },
+      { "label": "Warns that if headers are already sent, the error handler should delegate or avoid trying to send another response.", "relatedTrigger": null }
     ],
     "redFlags": [
       "Thinks next(err) sends the error response directly by itself.",

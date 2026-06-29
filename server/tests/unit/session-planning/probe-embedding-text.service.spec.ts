@@ -70,7 +70,7 @@ function _createProbe(overrides: Partial<QuestionProbe> = {}): QuestionProbe {
     difficulty: 3,
     intent: 'Assess backend API ownership.',
     primaryQuestion: 'How did you design a backend API?',
-    expectedSignals: ['Explains trade-offs'],
+    expectedSignals: [{ label: 'Explains trade-offs', relatedTrigger: null }],
     redFlags: ['No concrete ownership'],
     scoringHints: [{ scoreBand: 'strong', description: 'Clear evidence' }],
     followUps: [

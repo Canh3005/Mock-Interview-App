@@ -79,9 +79,10 @@ export class QuestionPracticeScoringResultService {
 
   signalCatalog(attempt: QuestionPracticeAttempt): CatalogItem[] {
     return attempt.probeSnapshot.rubric.expectedSignals.map(
-      (label: string, index: number) => ({
+      (signal, index: number) => ({
         key: `signal_${index + 1}`,
-        label,
+        label: signal.label,
+        relatedTrigger: signal.relatedTrigger,
       }),
     );
   }
@@ -236,6 +237,7 @@ export class QuestionPracticeScoringResultService {
         status: found.status,
         evidenceQuotes: quotes,
         feedback: found.feedback || item.label,
+        relatedTrigger: item.relatedTrigger ?? null,
       };
     });
   }
@@ -359,6 +361,7 @@ export class QuestionPracticeScoringResultService {
       status: 'missing',
       evidenceQuotes: [],
       feedback: 'No clear evidence was found for this signal.',
+      relatedTrigger: item.relatedTrigger ?? null,
     };
   }
 
