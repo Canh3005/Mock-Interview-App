@@ -47,7 +47,6 @@ export type QuestionProbeSeed = Omit<
   intent: string;
   primaryQuestion: string;
   expectedSignals: QuestionProbeExpectedSignal[];
-  redFlags: string[];
   scoringHints: QuestionProbeScoringHint[];
   followUps: QuestionProbeFollowUp[];
   localizedContent: QuestionProbeLocalizedContentMap;
@@ -2519,7 +2518,6 @@ function toSeed({
     intent: requiredContent(blueprint, 'en').displayIntent,
     primaryQuestion: requiredContent(blueprint, 'en').displayQuestion,
     expectedSignals: expectedSignals(blueprint),
-    redFlags: redFlags(blueprint.type),
     scoringHints: scoringHints(blueprint.type),
     followUps: followUps(blueprint.followUpTriggers),
     localizedContent: localizedContent({ role, blueprint }),
@@ -2557,7 +2555,7 @@ function debug(
     content,
     competencies: ['problem_solving', 'system_thinking', 'ownership'],
     techTags,
-    followUpTriggers: ['missing_context', 'missing_metric', 'red_flag'],
+    followUpTriggers: ['missing_context', 'missing_metric'],
   };
 }
 
@@ -2593,7 +2591,7 @@ function cv(
     content,
     competencies: ['ownership', 'impact_measurement', 'technical_fundamentals'],
     techTags,
-    followUpTriggers: ['missing_metric', 'missing_context', 'red_flag'],
+    followUpTriggers: ['missing_metric', 'missing_context'],
   };
 }
 
@@ -2677,33 +2675,6 @@ function expectedSignals(
   }));
 }
 
-function redFlags(type: QuestionProbeType): string[] {
-  const common: string[] = [
-    'Answer stays generic and does not describe a concrete context.',
-    'Candidate claims impact without evidence, baseline, or personal role.',
-    'Candidate ignores risks, trade-offs, or failure modes relevant to the probe.',
-  ];
-  const byType: Record<QuestionProbeType, string[]> = {
-    behavioral: [
-      'Blames others or presents conflict as a personality issue only.',
-    ],
-    technical_depth: [
-      'Only names tools or APIs without explaining how they work.',
-    ],
-    trade_off: [
-      'Presents one option as obviously correct without comparing alternatives.',
-    ],
-    debugging: ['Jumps to a fix before reproducing or narrowing the failure.'],
-    cv_claim_verification: [
-      'Uses "we improved" language while avoiding personal contribution.',
-    ],
-    situational: [
-      'Chooses speed or escalation without explaining user or business impact.',
-    ],
-  };
-  return [...common, ...byType[type]];
-}
-
 function scoringHints(type: QuestionProbeType): QuestionProbeScoringHint[] {
   return [
     {
@@ -2755,13 +2726,6 @@ function followUps(
       trigger: 'vague_answer',
       question: 'Can you walk through the exact steps you personally took?',
       purpose: 'Separate real experience from generic interview language.',
-    },
-    red_flag: {
-      trigger: 'red_flag',
-      question:
-        'What evidence would convince someone skeptical that this answer is accurate?',
-      purpose:
-        'Verify claims that may be inflated, incomplete, or unsupported.',
     },
     missing_personal_contribution: {
       trigger: 'missing_personal_contribution',

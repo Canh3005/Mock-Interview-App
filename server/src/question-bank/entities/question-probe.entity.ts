@@ -31,9 +31,15 @@ export interface QuestionProbeFollowUp {
   purpose: string;
 }
 
+export interface QuestionProbeSignalRequirement {
+  key: string;
+  description: string;
+}
+
 export interface QuestionProbeExpectedSignal {
   label: string;
   relatedTrigger: QuestionProbeFollowUpTrigger | null;
+  requirements?: QuestionProbeSignalRequirement[];
 }
 
 export interface QuestionProbeScoringHint {
@@ -91,9 +97,6 @@ export class QuestionProbe {
 
   @Column({ type: 'jsonb', default: [] })
   expectedSignals!: QuestionProbeExpectedSignal[];
-
-  @Column({ type: 'jsonb', default: [] })
-  redFlags!: string[];
 
   @Column({ type: 'jsonb', default: [] })
   scoringHints!: QuestionProbeScoringHint[];

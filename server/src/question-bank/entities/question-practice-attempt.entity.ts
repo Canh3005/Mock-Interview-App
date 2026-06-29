@@ -43,7 +43,6 @@ export interface QuestionPracticeProbeSnapshot {
   };
   rubric: {
     expectedSignals: QuestionProbeExpectedSignal[];
-    redFlags: string[];
     scoringHints: QuestionProbeScoringHint[];
   };
 }

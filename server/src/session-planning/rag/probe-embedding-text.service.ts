@@ -39,7 +39,6 @@ export class ProbeEmbeddingTextService {
       this._line('Guidance', localized.guidance),
       this._line('Common mistakes', localized.commonMistakes),
       this._line('Expected signals', this._formatExpectedSignals(probe)),
-      this._line('Red flags', probe.redFlags),
       this._line('Scoring hints', this._formatScoringHints(probe)),
       this._line('Follow ups', this._formatFollowUps(probe)),
       this._line('Type', probe.type),

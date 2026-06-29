@@ -14,7 +14,6 @@ export type InterviewState =
   | 'DECIDING_NEXT_ACTION'
   | 'ASKING_REDIRECT'
   | 'ASKING_FOLLOW_UP'
-  | 'CHALLENGING'
   | 'REPHRASING'
   | 'TRANSITIONING_PROBE'
   | 'TRANSITIONING_STAGE'
@@ -26,7 +25,6 @@ export type InterviewTurnType =
   | 'probe_question'
   | 'redirect'
   | 'follow_up'
-  | 'challenge'
   | 'rephrase'
   | 'probe_transition'
   | 'stage_transition'
@@ -43,7 +41,6 @@ export interface InterviewTurn {
   type: InterviewTurnType;
   content: string;
   followUpTrigger?: QuestionProbeFollowUpTrigger;
-  challengeReason?: string;
   timestamp: string;
 }
 
@@ -66,7 +63,6 @@ export interface ActiveProbeSession {
   /** Số lần candidate đã trả lời trong probe này */
   candidateTurnCount: number;
   followUpCount: number;
-  challengeCount: number;
   /** Số lần đã redirect (nhắc trả lời đúng câu hỏi) */
   redirectCount: number;
   rephraseCount: number;
@@ -88,7 +84,6 @@ export interface ProbeRunSummary {
   questionProbeRevision: number;
   candidateTurnCount: number;
   followUpCount: number;
-  challengeCount: number;
   finalBand: ProbeScoringResult['overallBand'];
   finalScoringResult: ProbeScoringResult;
   closeReason: ProbeCloseReason;
@@ -108,7 +103,6 @@ export interface StageProgress {
 export type PolicyAction =
   | 'REDIRECT'
   | 'FOLLOW_UP'
-  | 'CHALLENGE'
   | 'CLOSE_PROBE'
   | 'USE_FALLBACK'
   | 'REPHRASE';
@@ -117,7 +111,6 @@ export interface PolicyDecision {
   action: PolicyAction;
   closeReason?: ProbeCloseReason;
   followUpTrigger?: QuestionProbeFollowUpTrigger;
-  challengeReason?: string;
   hasFallback?: boolean;
 }
 

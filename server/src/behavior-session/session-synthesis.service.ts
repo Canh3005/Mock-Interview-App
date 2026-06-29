@@ -13,7 +13,6 @@ import type {
 import type {
   OverallBand,
   ProbeCvClaimResult,
-  ProbeRedFlagResult,
   ProbeSignalResult,
 } from '../question-bank/types/question-practice-scoring.types';
 import type {
@@ -27,9 +26,6 @@ import type {
   ConsistencyCheck,
   ConsistencyFlag,
   ProbeAuditEntry,
-  ProbeResilienceEntry,
-  ProbeResilienceSummary,
-  ProbeResilienceResult,
   ReadinessBand,
   ReadinessSummary,
   SessionRiskSummary,
@@ -99,8 +95,6 @@ export class SessionSynthesisService {
       stageAllocations: plan.stageAllocations,
       probeAuditTrail,
     });
-    const probeResilience: ProbeResilienceSummary =
-      this._buildProbeResilience(probeAuditTrail);
     const riskSummary: SessionRiskSummary =
       this._buildRiskSummary(probeAuditTrail);
     const communication: CommunicationSummary = this._buildCommunicationSummary(
@@ -124,7 +118,6 @@ export class SessionSynthesisService {
       this._computeCompetencyAggregate(competencyScores);
     const readiness: ReadinessSummary = this._buildReadiness({
       competencyAggregate,
-      resilienceScore: probeResilience.resilienceScore,
       communicationScore: communication.score,
       riskPenalty: riskSummary.riskPenalty,
     });
@@ -142,7 +135,6 @@ export class SessionSynthesisService {
       sessionId: session.id,
       synthesizedAt: new Date().toISOString(),
       probeAuditTrail,
-      probeResilience,
       competencyScores,
       riskSummary,
       communication,
@@ -198,9 +190,8 @@ export class SessionSynthesisService {
       };
       if (log.role === 'USER') {
         existing.candidateAnswerQuotes.push(log.content);
-      } else if (log.turnType === 'follow_up' || log.turnType === 'challenge') {
-        const reason: string =
-          log.followUpTrigger ?? log.challengeReason ?? log.turnType;
+      } else if (log.turnType === 'follow_up') {
+        const reason: string = log.followUpTrigger ?? log.turnType;
         existing.followUpReasons.push(reason);
       }
       result.set(log.probeId, existing);
@@ -223,8 +214,6 @@ export class SessionSynthesisService {
   }): ProbeAuditEntry {
     const signalResults: ProbeSignalResult[] =
       run.finalScoringResult?.signalResults ?? [];
-    const redFlags: ProbeRedFlagResult[] =
-      run.finalScoringResult?.redFlags ?? [];
     const cvClaimResults: ProbeCvClaimResult[] =
       run.finalScoringResult?.cvClaimResults ?? [];
     const score: number = this._computeProbeScore({
@@ -241,14 +230,12 @@ export class SessionSynthesisService {
       score,
       scoreContribution: 0,
       candidateTurnCount: run.candidateTurnCount,
-      challengeCount: run.challengeCount,
       followUpCount: run.followUpCount,
       closeReason: run.closeReason,
       isFallback: run.isFallback,
       candidateAnswerQuotes: logGroup?.candidateAnswerQuotes ?? [],
       followUpReasons: logGroup?.followUpReasons ?? [],
       signalResults,
-      redFlags,
       cvClaimResults,
       improvementSuggestions:
         run.finalScoringResult?.improvementSuggestions ?? [],
@@ -290,35 +277,9 @@ export class SessionSynthesisService {
         });
       });
 
-    probeAuditTrail
-      .filter((e) => {
-        const presentFlags: number = e.redFlags.filter((f) => f.present).length;
-        const nonMissing: number = e.signalResults.filter(
-          (s) => s.status !== 'missing',
-        ).length;
-        return presentFlags >= 2 && nonMissing === 0;
-      })
-      .forEach((e) => {
-        flags.push({
-          type: 'high_risk_low_signal',
-          affectedProbeId: e.questionProbeId,
-          detail: 'Multiple red flags with no covered or unclear signals',
-        });
-      });
-
-    if (
-      probeAuditTrail.length > 0 &&
-      probeAuditTrail.every((e) => e.challengeCount === 0)
-    ) {
-      flags.push({
-        type: 'all_probes_unchallenged',
-        detail: 'No probe was challenged in this session',
-      });
-    }
-
     return {
       flags,
-      hasHighRiskPattern: flags.some((f) => f.type === 'high_risk_low_signal'),
+      hasHighRiskPattern: false,
       hasCoverageGap: flags.some(
         (f) =>
           f.type === 'must_include_stage_skipped' ||
@@ -327,75 +288,22 @@ export class SessionSynthesisService {
     };
   }
 
-  private _buildProbeResilience(
-    probeAuditTrail: ProbeAuditEntry[],
-  ): ProbeResilienceSummary {
-    const entries: ProbeResilienceEntry[] = probeAuditTrail.map((e) => {
-      let result: ProbeResilienceResult;
-      if (e.challengeCount === 0) {
-        result = 'unchallenged';
-      } else if (e.band === 'strong' || e.band === 'solid') {
-        result = 'resilient';
-      } else {
-        result = 'collapsed';
-      }
-      return {
-        questionProbeId: e.questionProbeId,
-        challengeCount: e.challengeCount,
-        finalBand: e.band,
-        result,
-      };
-    });
-
-    const challenged: ProbeResilienceEntry[] = entries.filter(
-      (e) => e.result !== 'unchallenged',
-    );
-    const resilientCount: number = challenged.filter(
-      (e) => e.result === 'resilient',
-    ).length;
-    const collapsedCount: number = challenged.filter(
-      (e) => e.result === 'collapsed',
-    ).length;
-    const challengedProbeCount: number = challenged.length;
-    const resilienceScore: number =
-      challengedProbeCount === 0 ? 0.5 : resilientCount / challengedProbeCount;
-
-    return {
-      entries,
-      challengedProbeCount,
-      resilientCount,
-      collapsedCount,
-      resilienceScore,
-    };
-  }
-
   private _buildRiskSummary(
     probeAuditTrail: ProbeAuditEntry[],
   ): SessionRiskSummary {
-    const presentFlagKeys: string[] = [];
     let cvClaimInflatedCount: number = 0;
     let cvClaimNotVerifiedCount: number = 0;
 
     for (const entry of probeAuditTrail) {
-      entry.redFlags
-        .filter((f) => f.present)
-        .forEach((f) => {
-          presentFlagKeys.push(f.key);
-        });
       for (const claim of entry.cvClaimResults) {
         if (claim.verification === 'inflated_risk') cvClaimInflatedCount++;
         if (claim.verification === 'not_verified') cvClaimNotVerifiedCount++;
       }
     }
 
-    const riskPenalty: number = Math.min(
-      1.0,
-      presentFlagKeys.length * 0.05 + cvClaimInflatedCount * 0.08,
-    );
+    const riskPenalty: number = Math.min(1.0, cvClaimInflatedCount * 0.08);
 
     return {
-      totalRedFlagsPresent: presentFlagKeys.length,
-      presentFlagKeys,
       cvClaimInflatedCount,
       cvClaimNotVerifiedCount,
       riskPenalty,
@@ -408,33 +316,18 @@ export class SessionSynthesisService {
     probeAuditTrail: ProbeAuditEntry[];
   }): CommunicationSummary {
     const totalProbes: number = probeAuditTrail.length;
-    if (totalProbes === 0)
-      return { genericAnswerCount: 0, avgRedFlagRate: 0, score: 100 };
+    if (totalProbes === 0) return { genericAnswerCount: 0, score: 100 };
 
     const genericAnswerCount: number = probeAuditTrail.filter(
       (e) => e.band === 'needs_work' || e.band === 'insufficient_evidence',
     ).length;
 
-    const avgRedFlagRate: number =
-      probeAuditTrail.reduce((sum, e) => {
-        const total: number = e.redFlags.length;
-        const present: number = e.redFlags.filter((f) => f.present).length;
-        return sum + (total === 0 ? 0 : present / total);
-      }, 0) / totalProbes;
-
     const genericRate: number = genericAnswerCount / totalProbes;
     const score: number = Math.round(
-      Math.max(
-        0,
-        Math.min(100, 100 * (1 - avgRedFlagRate * 0.6 - genericRate * 0.4)),
-      ),
+      Math.max(0, Math.min(100, 100 * (1 - genericRate * 0.4))),
     );
 
-    return {
-      genericAnswerCount,
-      avgRedFlagRate: Math.round(avgRedFlagRate * 100) / 100,
-      score,
-    };
+    return { genericAnswerCount, score };
   }
 
   private _buildCompetencyScores({
@@ -518,19 +411,15 @@ export class SessionSynthesisService {
 
   private _buildReadiness({
     competencyAggregate,
-    resilienceScore,
     communicationScore,
     riskPenalty,
   }: {
     competencyAggregate: number;
-    resilienceScore: number;
     communicationScore: number;
     riskPenalty: number;
   }): ReadinessSummary {
     const subTotal: number =
-      competencyAggregate * 0.7 +
-      resilienceScore * 20 +
-      communicationScore * 0.1;
+      competencyAggregate * 0.8 + communicationScore * 0.2;
     const riskMultiplier: number = Math.max(
       0.7,
       Math.min(1.0, 1.0 - riskPenalty * 0.3),
@@ -541,7 +430,6 @@ export class SessionSynthesisService {
 
     return {
       competencyAggregate,
-      resilienceScore,
       communicationScore,
       riskPenalty,
       riskMultiplier: Math.round(riskMultiplier * 100) / 100,

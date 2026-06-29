@@ -4,7 +4,6 @@ import type {
   QuestionProbeLevel,
 } from '../question-bank/constants/question-bank-taxonomy.constants';
 import type { QuestionProbeFollowUp } from '../question-bank/entities/question-probe.entity';
-import type { PressureProfile } from '../session-planning/types/session-plan.types';
 import type {
   ProbeScoringResult,
   ProbeSignalResult,
@@ -36,14 +35,12 @@ export class PolicyEngineService {
   decide({
     scoringResult,
     activeProbe,
-    pressureProfile,
     probeFollowUps,
     level,
     hasFallbackProbe,
   }: {
     scoringResult: ProbeScoringResult;
     activeProbe: ActiveProbeSession;
-    pressureProfile: PressureProfile;
     probeFollowUps: QuestionProbeFollowUp[];
     level: QuestionProbeLevel;
     hasFallbackProbe: boolean;
@@ -93,23 +90,6 @@ export class PolicyEngineService {
     // Step 1b: safety ceiling — tránh LLM hallucination loop
     if (activeProbe.totalTurnCount >= maxTurns) {
       return { action: 'CLOSE_PROBE', closeReason: 'turn_limit_reached' };
-    }
-
-    // Step 2: có red flag → challenge nếu chưa đạt giới hạn
-    const hasRedFlag: boolean = scoringResult.redFlags.some((rf) => rf.present);
-    if (
-      hasRedFlag &&
-      activeProbe.challengeCount < pressureProfile.maxChallengesPerProbe
-    ) {
-      const redFlagFollowUp: QuestionProbeFollowUp | undefined =
-        probeFollowUps.find((f) => f.trigger === 'red_flag');
-      if (redFlagFollowUp) {
-        return {
-          action: 'CHALLENGE',
-          followUpTrigger: 'red_flag',
-          challengeReason: this._firstPresentRedFlagLabel(scoringResult),
-        };
-      }
     }
 
     // Step 3: đã đủ follow-up theo level
@@ -166,8 +146,7 @@ export class PolicyEngineService {
     const gaps: ProbeSignalResult[] = scoringResult.signalResults
       .filter((signal) => signal.status !== 'covered')
       .sort(
-        (left, right) =>
-          this._gapSeverity(right) - this._gapSeverity(left),
+        (left, right) => this._gapSeverity(right) - this._gapSeverity(left),
       );
     if (gaps.length === 0) return null;
 
@@ -200,9 +179,4 @@ export class PolicyEngineService {
     'missing_reflection',
     'vague_answer',
   ];
-
-  private _firstPresentRedFlagLabel(scoringResult: ProbeScoringResult): string {
-    const first = scoringResult.redFlags.find((rf) => rf.present);
-    return first?.label ?? 'red flag detected';
-  }
 }

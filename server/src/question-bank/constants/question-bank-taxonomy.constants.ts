@@ -56,7 +56,6 @@ export const QUESTION_PROBE_FOLLOW_UP_TRIGGERS = [
   'missing_context',
   'missing_tradeoff',
   'vague_answer',
-  'red_flag',
   'missing_personal_contribution',
   'missing_consequence',
   'missing_reflection',
@@ -158,7 +157,6 @@ export const QUESTION_BANK_TAXONOMY: QuestionBankTaxonomy = {
     { key: 'missing_context', label: 'Missing context' },
     { key: 'missing_tradeoff', label: 'Missing trade-off' },
     { key: 'vague_answer', label: 'Vague answer' },
-    { key: 'red_flag', label: 'Red flag' },
     {
       key: 'missing_personal_contribution',
       label: 'Missing personal contribution',

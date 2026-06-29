@@ -71,23 +71,6 @@ function SignalResultList({ signals }) {
   );
 }
 
-function RedFlagList({ redFlags }) {
-  const { t } = useTranslation();
-  const presentFlags = redFlags?.filter((flag) => flag.present) ?? [];
-  if (!presentFlags.length) return null;
-  return (
-    <div className="space-y-3">
-      <h3 className="text-sm font-semibold text-gray-900">{t('questionBank.feedback.redFlags')}</h3>
-      {presentFlags.map((flag) => (
-        <div key={flag.key} className="rounded-lg border border-red-200 bg-red-50 p-3">
-          <p className="mb-2 text-sm leading-6 text-red-700">{flag.feedback}</p>
-          <EvidenceQuotes quotes={flag.evidenceQuotes} />
-        </div>
-      ))}
-    </div>
-  );
-}
-
 function ImprovementList({ suggestions }) {
   const { t } = useTranslation();
   if (!suggestions?.length) return null;
@@ -123,7 +106,6 @@ function FeedbackResultPanel({ attempt }) {
         <p className="text-sm leading-6 text-gray-700">{result.summary}</p>
       </div>
       <SignalResultList signals={result.signalResults} />
-      <RedFlagList redFlags={result.redFlags} />
       <ImprovementList suggestions={result.improvementSuggestions} />
     </div>
   );

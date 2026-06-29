@@ -16,30 +16,42 @@ export type QuestionPracticeFailureCode =
   | 'queue_failed'
   | 'system_error';
 
+/** Subset của QuestionProbeSignalRequirement dùng ở tầng prompt/scoring — không import từ entity để tránh coupling. */
+export interface CatalogItemRequirement {
+  key: string;
+  description: string;
+}
+
 export interface CatalogItem {
   key: string;
   label: string;
   relatedTrigger?: QuestionProbeFollowUpTrigger | null;
+  requirements?: CatalogItemRequirement[];
+}
+
+/**
+ * Shape code build sau khi validate LLM output cho 1 requirement.
+ * `description` được code enrich từ signal.requirements[].description theo key — LLM không cung cấp.
+ */
+export interface ProbeSignalRequirementResult {
+  key: string;
+  description: string;
+  supported: boolean;
+  evidenceQuotes: string[];
+  feedback: string;
 }
 
 export interface ProbeSignalResult {
   key: string;
-  label: string;
   status: SignalStatus;
   evidenceQuotes: string[];
   feedback: string;
   relatedTrigger: QuestionProbeFollowUpTrigger | null;
-}
-
-export interface ProbeRedFlagResult {
-  key: string;
-  label: string;
-  present: boolean;
-  evidenceQuotes: string[];
-  feedback: string;
+  requirementResults?: ProbeSignalRequirementResult[];
 }
 
 export interface ProbeCvClaimResult {
+  key?: string;
   claim: string;
   verification: ClaimVerification;
   evidenceQuotes: string[];
@@ -52,7 +64,6 @@ export interface ProbeScoringResult {
   confidence: ScoringConfidence;
   summary: string;
   signalResults: ProbeSignalResult[];
-  redFlags: ProbeRedFlagResult[];
   cvClaimResults?: ProbeCvClaimResult[];
   improvementSuggestions: string[];
   candidateIntent: CandidateIntent;
@@ -86,24 +97,27 @@ export const ClaimVerificationSchema = z.enum([
 ]);
 export const ScoringConfidenceSchema = z.enum(['high', 'medium', 'low']);
 
+export const LlmRequirementExtractionSchema = z.object({
+  key: z.string().min(1),
+  supported: z.boolean(),
+  evidenceQuotes: z.array(z.string()),
+  feedback: z.string(),
+});
+
 export const LlmSignalExtractionSchema = z.object({
   key: z.string().min(1),
   label: z.string().min(1),
-  status: SignalStatusSchema,
-  evidenceQuotes: z.array(z.string()),
-  feedback: z.string(),
-});
-
-export const LlmRedFlagExtractionSchema = z.object({
-  key: z.string().min(1),
-  label: z.string().min(1),
-  present: z.boolean(),
-  evidenceQuotes: z.array(z.string()),
-  feedback: z.string(),
+  // requirement-enabled signals omit status; default 'missing' keeps output type as SignalStatus (not optional)
+  status: SignalStatusSchema.optional().default('missing'),
+  evidenceQuotes: z.array(z.string()).default([]),
+  requirementResults: z.array(LlmRequirementExtractionSchema).optional(),
+  feedback: z.string().default(''),
 });
 
 export const LlmCvClaimExtractionSchema = z.object({
-  claim: z.string().min(1),
+  key: z.string().optional(),
+  // optional vì format mới dùng key thay vì claim; legacy output vẫn có claim
+  claim: z.string().optional().default(''),
   verification: ClaimVerificationSchema,
   evidenceQuotes: z.array(z.string()),
   feedback: z.string().min(1),
@@ -116,12 +130,11 @@ export const CandidateIntentSchema = z
 export const LlmScoringExtractionSchema = z.object({
   candidateIntent: CandidateIntentSchema,
   signals: z.array(LlmSignalExtractionSchema),
-  redFlags: z.array(LlmRedFlagExtractionSchema),
   cvClaims: z.array(LlmCvClaimExtractionSchema).optional().default([]),
   confidence: ScoringConfidenceSchema,
 });
 
+export type LlmRequirementExtraction = z.infer<typeof LlmRequirementExtractionSchema>;
 export type LlmSignalExtraction = z.infer<typeof LlmSignalExtractionSchema>;
-export type LlmRedFlagExtraction = z.infer<typeof LlmRedFlagExtractionSchema>;
 export type LlmCvClaimExtraction = z.infer<typeof LlmCvClaimExtractionSchema>;
 export type LlmScoringExtraction = z.infer<typeof LlmScoringExtractionSchema>;

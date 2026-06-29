@@ -326,9 +326,9 @@ export class QuestionProbeCurationService {
       probe.expectedSignals = dto.expectedSignals.map((signal) => ({
         label: signal.label,
         relatedTrigger: signal.relatedTrigger ?? null,
+        ...(signal.requirements ? { requirements: signal.requirements } : {}),
       }));
     }
-    if (dto.redFlags !== undefined) probe.redFlags = dto.redFlags;
     if (dto.scoringHints !== undefined) probe.scoringHints = dto.scoringHints;
     if (dto.followUps !== undefined) probe.followUps = dto.followUps;
     if (dto.localizedContent !== undefined) {

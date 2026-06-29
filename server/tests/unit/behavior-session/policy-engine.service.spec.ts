@@ -1,7 +1,5 @@
 import { PolicyEngineService } from '../../../src/behavior-session/policy-engine.service';
-import type {
-  QuestionProbeFollowUpTrigger,
-} from '../../../src/question-bank/constants/question-bank-taxonomy.constants';
+import type { QuestionProbeFollowUpTrigger } from '../../../src/question-bank/constants/question-bank-taxonomy.constants';
 import type { QuestionProbeFollowUp } from '../../../src/question-bank/entities/question-probe.entity';
 import type {
   ProbeScoringResult,
@@ -20,12 +18,9 @@ describe('PolicyEngineService._pickTrigger (via decide)', () => {
     service = new PolicyEngineService();
   });
 
-  function _signal(
-    overrides: Partial<ProbeSignalResult>,
-  ): ProbeSignalResult {
+  function _signal(overrides: Partial<ProbeSignalResult>): ProbeSignalResult {
     return {
       key: 'signal_1',
-      label: 'signal label',
       status: 'covered',
       evidenceQuotes: [],
       feedback: '',

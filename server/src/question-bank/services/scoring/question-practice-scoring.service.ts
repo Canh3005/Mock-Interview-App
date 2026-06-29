@@ -11,13 +11,16 @@ import {
 import { QuestionPracticeScoringResultService } from './question-practice-scoring-result.service';
 import {
   CandidateIntent,
+  CatalogItem,
   LlmScoringExtraction,
   LlmScoringExtractionSchema,
   ProbeScoringResult,
-  CatalogItem,
 } from '../../types/question-practice-scoring.types';
 import type { QuestionProbe } from '../../entities/question-probe.entity';
-import type { QuestionProbeLanguage } from '../../constants/question-bank-taxonomy.constants';
+import type {
+  QuestionProbeLanguage,
+  QuestionProbeLevel,
+} from '../../constants/question-bank-taxonomy.constants';
 import {
   LONG_ANSWER_CHARS,
   MAX_CONTEXT_CHARS,
@@ -54,7 +57,7 @@ export class QuestionPracticeScoringService {
    * @param answerText - Toàn bộ candidate text tích lũy trong probe (tất cả turns)
    * @param language - Ngôn ngữ phỏng vấn, dùng cho feedback locale
    * @param cvClaims - Claims từ CV candidate (optional) để cross-check
-   * @returns ProbeScoringResult với signals, redFlags, overallBand
+   * @returns ProbeScoringResult với signals và overallBand
    * @throws Error nếu LLM extraction fail sau retry
    */
   async scoreForRuntime({
@@ -62,11 +65,17 @@ export class QuestionPracticeScoringService {
     answerText,
     language,
     cvClaims = [],
+    questionText = '',
+    targetLevel,
+    difficulty,
   }: {
     questionProbe: QuestionProbe;
     answerText: string;
     language: QuestionProbeLanguage;
     cvClaims?: string[];
+    questionText?: string;
+    targetLevel: QuestionProbeLevel;
+    difficulty: number | null;
   }): Promise<ProbeScoringResult> {
     // build signal prompt
     const signalCatalog: CatalogItem[] = questionProbe.expectedSignals.map(
@@ -74,21 +83,13 @@ export class QuestionPracticeScoringService {
         key: `signal_${index + 1}`,
         label: signal.label,
         relatedTrigger: signal.relatedTrigger,
+        requirements: signal.requirements,
       }),
     );
-    // build red flag prompt
-    const redFlagCatalog: CatalogItem[] = questionProbe.redFlags.map(
-      (label: string, index: number) => ({
-        key: `red_flag_${index + 1}`,
-        label,
-      }),
-    );
-
     const detectedIntent: CandidateIntent = this._detectIntent(answerText);
     if (detectedIntent !== 'answer') {
       return this.resultService.insufficientEvidenceResultFromRaw({
         signalCatalog,
-        redFlagCatalog,
         language,
         candidateIntent: detectedIntent,
       });
@@ -97,7 +98,6 @@ export class QuestionPracticeScoringService {
     if (!this._isEvaluable(answerText)) {
       return this.resultService.insufficientEvidenceResultFromRaw({
         signalCatalog,
-        redFlagCatalog,
         language,
         candidateIntent: 'answer',
       });
@@ -107,23 +107,30 @@ export class QuestionPracticeScoringService {
       answerText,
       signalCatalog,
     });
+    const cvClaimCatalog: { key: string; claim: string }[] = cvClaims.map(
+      (claim, index) => ({
+        key: `cv_claim_${index + 1}`,
+        claim: claim.slice(0, 800),
+      }),
+    );
     const extraction: LlmScoringExtraction = await this._extractWithRetryRaw({
       intent: questionProbe.intent ?? '',
       type: questionProbe.type ?? '',
+      questionText,
+      targetLevel,
+      difficulty,
       language,
       context,
       signalCatalog,
-      redFlagCatalog,
-      scoringHints: questionProbe.scoringHints,
       cvClaims,
     });
     const baseResult: ProbeScoringResult =
       this.resultService.buildResultFromRaw({
         extraction,
         signalCatalog,
-        redFlagCatalog,
         answerText,
         language,
+        cvClaimCatalog,
       });
     return this._withNarrativeRaw({ result: baseResult, language });
   }
@@ -171,8 +178,6 @@ export class QuestionPracticeScoringService {
   }): Promise<ProbeScoringResult> {
     const signalCatalog: CatalogItem[] =
       this.resultService.signalCatalog(attempt);
-    const redFlagCatalog: CatalogItem[] =
-      this.resultService.redFlagCatalog(attempt);
     const context: string = this._contextForExtraction({
       answerText: attempt.answerText,
       signalCatalog,
@@ -181,7 +186,6 @@ export class QuestionPracticeScoringService {
       attempt,
       context,
       signalCatalog,
-      redFlagCatalog,
     });
     const baseResult: ProbeScoringResult = this.resultService.buildResult({
       attempt,
@@ -194,12 +198,10 @@ export class QuestionPracticeScoringService {
     attempt,
     context,
     signalCatalog,
-    redFlagCatalog,
   }: {
     attempt: QuestionPracticeAttempt;
     context: string;
     signalCatalog: CatalogItem[];
-    redFlagCatalog: CatalogItem[];
   }): Promise<LlmScoringExtraction> {
     let attempts = 0;
     let lastError = '';
@@ -217,14 +219,13 @@ export class QuestionPracticeScoringService {
                     attempt,
                     context,
                     signalCatalog,
-                    redFlagCatalog,
                     lastError,
                   }),
                 },
               ],
             },
           ],
-          config: { maxOutputTokens: 2500 },
+          config: { maxOutputTokens: 2500, temperature: 0.2 },
         });
         const parsed: unknown = JSON.parse(raw);
         return LlmScoringExtractionSchema.parse(parsed);
@@ -239,13 +240,11 @@ export class QuestionPracticeScoringService {
     attempt,
     context,
     signalCatalog,
-    redFlagCatalog,
     lastError,
   }: {
     attempt: QuestionPracticeAttempt;
     context: string;
     signalCatalog: CatalogItem[];
-    redFlagCatalog: CatalogItem[];
     lastError: string;
   }): string {
     const snapshot: QuestionPracticeProbeSnapshot = attempt.probeSnapshot;
@@ -257,10 +256,12 @@ Return JSON only. Do not invent evidence quotes.
 
 Probe intent: ${snapshot.canonical.intent ?? ''}
 Probe type: ${snapshot.canonical.type ?? ''}
+Candidate levels: ${snapshot.canonical.levels.join('/')}
+Probe difficulty: ${snapshot.canonical.difficulty ?? 'unspecified'}/5
 Expected signals: ${JSON.stringify(this._promptCatalog(signalCatalog))}
-Red flags: ${JSON.stringify(redFlagCatalog)}
-Scoring hints: ${JSON.stringify(snapshot.rubric.scoringHints)}
 Feedback language: ${attempt.feedbackLocale}
+
+Question asked: ${snapshot.canonical.primaryQuestion ?? ''}
 
 Candidate answer:
 ${context}
@@ -268,18 +269,22 @@ ${context}
 Schema:
 {
   "candidateIntent": "answer|dont_know|clarification_request",
-  "signals": [{"key": "signal_1", "label": "...", "status": "covered|unclear|missing", "evidenceQuotes": ["exact quote from answer"], "feedback": "..."}],
-  "redFlags": [{"key": "red_flag_1", "label": "...", "present": true, "evidenceQuotes": ["exact quote from answer"], "feedback": "..."}],
-  "cvClaims": [{"claim": "...", "verification": "verified|not_verified|inflated_risk", "evidenceQuotes": ["exact quote from answer"], "feedback": "..."}],
+  "signals": [
+    {"key": "signal_1", "label": "...", "status": "covered|unclear|missing", "evidenceQuotes": ["exact quote"], "feedback": "..."},
+    {"key": "signal_2", "label": "...", "requirementResults": [{"key": "req_key", "supported": true, "evidenceQuotes": ["exact quote"], "feedback": "..."}]}
+  ],
+  "cvClaims": [{"key": "cv_claim_1", "verification": "verified|not_verified|inflated_risk", "evidenceQuotes": ["exact quote from answer"], "feedback": "..."}],
   "confidence": "high|medium|low"
 }
 
 Rules:
 - candidateIntent: "dont_know" if candidate explicitly admits they don't know; "clarification_request" if candidate asks for clarification; otherwise "answer".
-- covered and unclear require exact evidenceQuotes from the answer.
-- missing uses an empty evidenceQuotes array.
-- similarity or topic mention alone is not enough for covered.
-- do not expose raw scoring hints in feedback.
+- For signals WITHOUT requirements: return status, evidenceQuotes, feedback as shown above.
+- For signals WITH requirements: return ONLY requirementResults — do NOT include status or signal-level evidenceQuotes. For each requirement key, return supported, evidenceQuotes, and feedback.
+- supported: true only with an exact quote; supported: false with evidenceQuotes: [] when not supported.
+- similarity or topic mention alone is not enough for covered or supported.
+- cvClaims: use the claim key, not claim text. Return cvClaims: [] when no catalog claim is relevant.
+- verified and inflated_risk require exact evidenceQuotes; without a valid quote, use not_verified.
 ${retryNote}`;
   }
 
@@ -322,20 +327,22 @@ ${retryNote}`;
   private async _extractWithRetryRaw({
     intent,
     type,
+    questionText,
+    targetLevel,
+    difficulty,
     language,
     context,
     signalCatalog,
-    redFlagCatalog,
-    scoringHints,
     cvClaims,
   }: {
     intent: string;
     type: string;
+    questionText: string;
+    targetLevel: string;
+    difficulty: number | null;
     language: string;
     context: string;
     signalCatalog: CatalogItem[];
-    redFlagCatalog: CatalogItem[];
-    scoringHints: { scoreBand: string; description: string }[];
     cvClaims: string[];
   }): Promise<LlmScoringExtraction> {
     let attempts = 0;
@@ -355,11 +362,13 @@ Return JSON only. Do not invent evidence quotes.
 
 Probe intent: ${intent}
 Probe type: ${type}
+Candidate level: ${targetLevel}
+Probe difficulty: ${difficulty ?? 'unspecified'}/5
 Expected signals: ${JSON.stringify(this._promptCatalog(signalCatalog))}
-Red flags: ${JSON.stringify(redFlagCatalog)}
-Scoring hints: ${JSON.stringify(scoringHints)}
 Candidate CV claims to verify: ${JSON.stringify(cvClaimCatalog)}
 Feedback language: ${language}
+
+Question asked: ${questionText}
 
 Candidate answer:
 ${context}
@@ -367,29 +376,32 @@ ${context}
 Schema:
 {
   "candidateIntent": "answer|dont_know|clarification_request",
-  "signals": [{"key": "signal_1", "label": "...", "status": "covered|unclear|missing", "evidenceQuotes": ["exact quote from answer"], "feedback": "..."}],
-  "redFlags": [{"key": "red_flag_1", "label": "...", "present": true, "evidenceQuotes": ["exact quote from answer"], "feedback": "..."}],
-  "cvClaims": [{"claim": "...", "verification": "verified|not_verified|inflated_risk", "evidenceQuotes": ["exact quote from answer"], "feedback": "..."}],
+  "signals": [
+    {"key": "signal_1", "label": "...", "status": "covered|unclear|missing", "evidenceQuotes": ["exact quote"], "feedback": "..."},
+    {"key": "signal_2", "label": "...", "requirementResults": [{"key": "req_key", "supported": true, "evidenceQuotes": ["exact quote"], "feedback": "..."}]}
+  ],
+  "cvClaims": [{"key": "cv_claim_1", "verification": "verified|not_verified|inflated_risk", "evidenceQuotes": ["exact quote from answer"], "feedback": "..."}],
   "confidence": "high|medium|low"
 }
 
 Rules:
 - candidateIntent: "dont_know" if candidate explicitly admits they don't know; "clarification_request" if candidate asks for clarification; otherwise "answer".
-- covered and unclear require exact evidenceQuotes from the answer.
-- missing uses an empty evidenceQuotes array.
-- similarity or topic mention alone is not enough for covered.
-- cvClaims must only reference claims listed in Candidate CV claims to verify.
-- each cvClaims[].claim must match the provided claim text, not a paraphrase.
+- For signals WITHOUT requirements: return status, evidenceQuotes, feedback as shown above.
+- For signals WITH requirements: return ONLY requirementResults — do NOT include status or signal-level evidenceQuotes. For each requirement key, return supported (true only with an exact quote), evidenceQuotes, and feedback. supported: false with evidenceQuotes: [] when the answer does not support that requirement.
+- covered and unclear (legacy signals) require exact evidenceQuotes from the answer.
+- missing (legacy signals) uses an empty evidenceQuotes array.
+- similarity or topic mention alone is not enough for covered or supported.
+- cvClaims must only reference claims listed in Candidate CV claims to verify. Use the claim key, not claim text.
 - return cvClaims: [] when no provided CV claim is relevant to the answer.
 - verified requires exact evidenceQuotes from the answer supporting the provided CV claim.
 - not_verified means the provided CV claim is relevant but the answer lacks support.
 - inflated_risk means the answer contradicts, exaggerates, or materially changes the provided CV claim.
-- do not expose raw scoring hints in feedback.
+- verified and inflated_risk require exact evidenceQuotes; without a valid quote, use not_verified.
 ${retryNote}`;
         const raw: string = await this.groqService.generateJsonContent({
           model: this.model,
           contents: [{ role: 'user', parts: [{ text: prompt }] }],
-          config: { maxOutputTokens: 2500 },
+          config: { maxOutputTokens: 2500, temperature: 0.2 },
         });
         const parsed: unknown = JSON.parse(raw);
         return LlmScoringExtractionSchema.parse(parsed);
@@ -650,13 +662,14 @@ Structured result: ${JSON.stringify(result)}`;
   }
 
   /**
-   * relatedTrigger là metadata nội bộ cho policy engine, không liên quan đến việc
-   * LLM đánh giá coverage — loại khỏi prompt để tránh token thừa và gây nhiễu.
+   * relatedTrigger là metadata nội bộ cho policy engine — loại khỏi prompt.
+   * requirements được giữ lại để LLM biết sub-criteria cần extract evidence cho từng signal.
    */
   private _promptCatalog(
     catalog: CatalogItem[],
-  ): { key: string; label: string }[] {
-    return catalog.map(({ key, label }) => ({ key, label }));
+  ): Array<Omit<CatalogItem, 'relatedTrigger'>> {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    return catalog.map(({ relatedTrigger: _r, ...rest }) => rest);
   }
 
   private _errorMessage(error: unknown): string {

@@ -256,13 +256,7 @@ export class SessionPlanningService {
     const levelKey: string = ['junior', 'mid', 'senior'].includes(targetLevel)
       ? targetLevel
       : 'mid';
-    const base: PressureProfile = { ...PRESSURE_PRESETS[levelKey] };
-    if (depth === 'deep') {
-      base.maxChallengesPerProbe = Math.min(base.maxChallengesPerProbe + 1, 4);
-    } else {
-      base.maxChallengesPerProbe = Math.max(base.maxChallengesPerProbe - 1, 1);
-    }
-    return base;
+    return { ...PRESSURE_PRESETS[levelKey] };
   }
 
   private _allocateDuration({

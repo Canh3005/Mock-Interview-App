@@ -24,7 +24,7 @@ import {
   updateItem,
 } from './questionBankFormData';
 
-const SCORE_BANDS = ['strong', 'average', 'weak'];
+const SCORE_BANDS = ['strong', 'adequate', 'weak'];
 
 function _options(options, fallback) {
   return options?.length ? options : fallback.map((key) => ({ key, label: key }));
@@ -39,7 +39,6 @@ function _validateProbe({ form, t }) {
   if (!form.intent.trim()) issues.push(t('adminQuestionBank.validationIntent'));
   if (!form.primaryQuestion.trim()) issues.push(t('adminQuestionBank.validationPrimaryQuestion'));
   if (!compactCompleteObjects(form.expectedSignals, ['label']).length) issues.push(t('adminQuestionBank.validationSignals'));
-  if (!compactTextList(form.redFlags).length) issues.push(t('adminQuestionBank.validationRedFlags'));
   if (!compactCompleteObjects(form.scoringHints, ['description']).length) {
     issues.push(t('adminQuestionBank.validationScoringHints'));
   }
@@ -62,7 +61,6 @@ function _payload(form) {
     difficulty: Number(form.difficulty),
     techTags: compactTextList(form.techTags),
     expectedSignals: compactCompleteObjects(form.expectedSignals, ['label']),
-    redFlags: compactTextList(form.redFlags),
     scoringHints: compactCompleteObjects(form.scoringHints, ['description']),
     followUps: compactCompleteObjects(form.followUps, ['question', 'purpose']),
     localizedContent: compactLocalizedContent(form.localizedContent),
@@ -114,7 +112,6 @@ function GuidanceSection({ form, setField, t }) {
     <FormSection title={t('adminQuestionBank.guidanceSection')}>
       <TextAreaField label={t('adminQuestionBank.intent')} value={form.intent} onChange={(intent) => setField({ intent })} />
       <TextAreaField label={t('adminQuestionBank.primaryQuestion')} value={form.primaryQuestion} onChange={(primaryQuestion) => setField({ primaryQuestion })} />
-      <LineListField label={t('adminQuestionBank.redFlags')} values={form.redFlags} onChange={(redFlags) => setField({ redFlags })} />
     </FormSection>
   );
 }

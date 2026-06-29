@@ -1,6 +1,5 @@
 import type {
   ProbeCvClaimResult,
-  ProbeRedFlagResult,
   ProbeSignalResult,
 } from '../../question-bank/types/question-practice-scoring.types';
 import type { QuestionProbeStage } from '../../question-bank/constants/question-bank-taxonomy.constants';
@@ -14,13 +13,9 @@ export type ReadinessBand =
   | 'needs_practice'
   | 'not_ready';
 
-export type ProbeResilienceResult = 'resilient' | 'collapsed' | 'unchallenged';
-
 export type ConsistencyFlagType =
   | 'must_include_stage_skipped'
-  | 'no_story_for_probe'
-  | 'high_risk_low_signal'
-  | 'all_probes_unchallenged';
+  | 'no_story_for_probe';
 
 export interface ProbeAuditEntry {
   questionProbeId: string;
@@ -31,32 +26,15 @@ export interface ProbeAuditEntry {
   score: number;
   scoreContribution: number;
   candidateTurnCount: number;
-  challengeCount: number;
   followUpCount: number;
   closeReason: ProbeCloseReason;
   isFallback: boolean;
   candidateAnswerQuotes: string[];
   followUpReasons: string[];
   signalResults: ProbeSignalResult[];
-  redFlags: ProbeRedFlagResult[];
   cvClaimResults: ProbeCvClaimResult[];
   improvementSuggestions: string[];
   summary: string;
-}
-
-export interface ProbeResilienceEntry {
-  questionProbeId: string;
-  challengeCount: number;
-  finalBand: OverallBand;
-  result: ProbeResilienceResult;
-}
-
-export interface ProbeResilienceSummary {
-  entries: ProbeResilienceEntry[];
-  challengedProbeCount: number;
-  resilientCount: number;
-  collapsedCount: number;
-  resilienceScore: number;
 }
 
 export interface CompetencyScoreEntry {
@@ -68,8 +46,6 @@ export interface CompetencyScoreEntry {
 }
 
 export interface SessionRiskSummary {
-  totalRedFlagsPresent: number;
-  presentFlagKeys: string[];
   cvClaimInflatedCount: number;
   cvClaimNotVerifiedCount: number;
   riskPenalty: number;
@@ -77,7 +53,6 @@ export interface SessionRiskSummary {
 
 export interface CommunicationSummary {
   genericAnswerCount: number;
-  avgRedFlagRate: number;
   score: number;
 }
 
@@ -96,7 +71,6 @@ export interface ConsistencyCheck {
 
 export interface ReadinessSummary {
   competencyAggregate: number;
-  resilienceScore: number;
   communicationScore: number;
   riskPenalty: number;
   riskMultiplier: number;
@@ -110,7 +84,6 @@ export interface BehaviorScorecardData {
   sessionId: string;
   synthesizedAt: string;
   probeAuditTrail: ProbeAuditEntry[];
-  probeResilience: ProbeResilienceSummary;
   competencyScores: CompetencyScoreEntry[];
   riskSummary: SessionRiskSummary;
   communication: CommunicationSummary;
