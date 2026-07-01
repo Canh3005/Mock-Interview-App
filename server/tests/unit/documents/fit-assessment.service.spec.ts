@@ -161,4 +161,30 @@ describe('FitAssessmentService', () => {
       ],
     });
   });
+
+  it('excludes project entries when inferring totalYearsExperience from dates', () => {
+    const { cvJson: normalized } = service.normalizeCvJson({
+      skills: ['React'],
+      experience: [
+        {
+          company: 'Acme',
+          title: 'Engineer',
+          type: 'job',
+          startDate: '2022-01',
+          endDate: '2023-01',
+          responsibilities: ['Built features'],
+        },
+        {
+          company: 'University',
+          title: 'Side Project',
+          type: 'project',
+          startDate: '2022-06',
+          endDate: '2022-12',
+          responsibilities: ['Built a side project'],
+        },
+      ],
+    });
+
+    expect(normalized.totalYearsExperience).toBe(1);
+  });
 });

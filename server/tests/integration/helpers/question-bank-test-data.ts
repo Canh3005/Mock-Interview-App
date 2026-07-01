@@ -93,8 +93,7 @@ export function createQuestionProbeEntity(
     difficulty: 3,
     intent: 'Assess ownership',
     primaryQuestion: 'Tell me about ownership.',
-    expectedSignals: ['Clear ownership'],
-    redFlags: ['No ownership'],
+    expectedSignals: [{ label: 'Clear ownership', relatedTrigger: null }],
     scoringHints: [{ scoreBand: 'strong', description: 'Strong evidence' }],
     followUps: [
       {

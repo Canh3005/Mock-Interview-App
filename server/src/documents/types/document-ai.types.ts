@@ -17,6 +17,7 @@ export type Seniority =
 export interface CvExperience {
   company: string;
   title: string;
+  type?: 'job' | 'project';
   startDate?: string;
   endDate?: string;
   responsibilities: string[];

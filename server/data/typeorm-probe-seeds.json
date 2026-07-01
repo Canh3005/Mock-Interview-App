@@ -1,986 +1,3357 @@
 [
   {
     "code": "TYPEORM_JR_TECH_ENTITY_001",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "communication"],
-    "techTags": ["typeorm", "typescript", "schema_design"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "communication"
+    ],
+    "techTags": [
+      "typeorm",
+      "typescript",
+      "schema_design"
+    ],
     "difficulty": 2,
     "intent": "Check whether the candidate understands a TypeORM Entity as the persistence mapping between a TypeScript class and a database table, including decorators, columns, primary keys, and schema implications.",
     "primaryQuestion": "What is an Entity in TypeORM, and how do you define one?",
     "expectedSignals": [
-      "Explains that an Entity is a class decorated with @Entity that TypeORM maps to a database table.",
-      "Mentions defining properties with decorators such as @PrimaryGeneratedColumn and @Column.",
-      "Understands that TypeScript types alone do not fully define database schema details such as length, nullability, uniqueness, enum, precision, or column type.",
-      "Shows a small example such as UserEntity with id, email, name, createdAt, and updatedAt.",
-      "Recognizes that entities represent persistence structure and should not automatically become public API response contracts."
-    ],
-    "redFlags": [
-      "Describes an Entity as just a DTO or plain interface with no runtime decorators.",
-      "Cannot explain where the table name, primary key, or column metadata comes from.",
-      "Assumes every TypeScript property is automatically persisted without a @Column or relation decorator.",
-      "Mixes request validation rules directly into the entity without understanding boundary trade-offs."
+      {
+        "label": "Explains that an Entity is a class decorated with @Entity that TypeORM maps to a database table.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "defines_entity_class",
+            "description": "Defines an entity as a TypeScript class used by TypeORM for persistence"
+          },
+          {
+            "key": "mentions_entity_decorator",
+            "description": "Mentions the @Entity decorator on the class"
+          },
+          {
+            "key": "connects_entity_to_table",
+            "description": "Explains that TypeORM maps the entity to a database table"
+          }
+        ]
+      },
+      {
+        "label": "Mentions defining properties with decorators such as @PrimaryGeneratedColumn and @Column.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "uses_primary_column_decorator",
+            "description": "Uses @PrimaryGeneratedColumn or equivalent to define the primary key"
+          },
+          {
+            "key": "uses_column_decorator",
+            "description": "Uses @Column for persisted scalar properties"
+          },
+          {
+            "key": "uses_date_columns",
+            "description": "Uses @CreateDateColumn or @UpdateDateColumn where timestamp auditing is part of the example"
+          }
+        ]
+      },
+      {
+        "label": "Understands that TypeScript types alone do not fully define database schema details such as length, nullability, uniqueness, enum, precision, or column type.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_column_options",
+            "description": "Mentions database column options such as length, nullable, unique, default, enum, precision, or type"
+          },
+          {
+            "key": "distinguishes_ts_db_types",
+            "description": "Distinguishes TypeScript property types from actual database column definitions"
+          },
+          {
+            "key": "sets_important_constraints",
+            "description": "Sets important database constraints explicitly instead of assuming TypeScript annotations enforce them"
+          }
+        ]
+      },
+      {
+        "label": "Shows a small example such as UserEntity with id, email, name, createdAt, and updatedAt.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "includes_user_id",
+            "description": "Includes an id primary key in the example entity"
+          },
+          {
+            "key": "includes_user_identity_fields",
+            "description": "Includes persisted user fields such as email and displayName or name"
+          },
+          {
+            "key": "includes_audit_timestamps",
+            "description": "Includes createdAt and updatedAt timestamp columns when sketching the entity"
+          }
+        ]
+      },
+      {
+        "label": "Recognizes that entities represent persistence structure and should not automatically become public API response contracts.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "separates_entity_from_api_dto",
+            "description": "Separates persistence entity structure from public request or response DTO contracts"
+          },
+          {
+            "key": "avoids_leaking_internal_fields",
+            "description": "Avoids exposing persistence-only or sensitive fields directly through API responses"
+          },
+          {
+            "key": "keeps_non_persistent_request_fields_out",
+            "description": "Keeps request-only fields out of the entity when they are not persisted"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Defines entity mapping clearly, gives a concrete decorated class example, and distinguishes persistence metadata from TypeScript-only typing and API DTOs." },
-      { "scoreBand": "solid", "description": "Understands @Entity and column decorators but misses some schema options or boundary discussion." },
-      { "scoreBand": "needs_work", "description": "Can repeat decorator names but cannot connect them to table/column mapping." },
-      { "scoreBand": "insufficient_evidence", "description": "Answer does not show practical TypeORM entity knowledge." }
+      {
+        "scoreBand": "strong",
+        "description": "Defines entity mapping clearly, gives a concrete decorated class example, and distinguishes persistence metadata from TypeScript-only typing and API DTOs."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands @Entity and column decorators but misses some schema options or boundary discussion."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can repeat decorator names but cannot connect them to table/column mapping."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not show practical TypeORM entity knowledge."
+      }
     ],
     "followUps": [
-      { "trigger": "vague_answer", "question": "Can you sketch a User entity with id, email, displayName, createdAt, and updatedAt?", "purpose": "Force concrete decorator and column-mapping knowledge." },
-      { "trigger": "missing_context", "question": "Which fields would you keep out of the entity even if they appear in an API request?", "purpose": "Check separation between persistence model and request contract." }
+      {
+        "trigger": "vague_answer",
+        "question": "Can you sketch a User entity with id, email, displayName, createdAt, and updatedAt?",
+        "purpose": "Force concrete decorator and column-mapping knowledge."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Which fields would you keep out of the entity even if they appear in an API request?",
+        "purpose": "Check separation between persistence model and request contract."
+      }
     ],
     "localizedContent": {
       "en": {
         "title": "TypeORM entity basics",
         "displayQuestion": "What is an Entity in TypeORM, and how do you define one?",
         "displayIntent": "Check whether the candidate understands class-to-table mapping with decorators.",
-        "guidance": ["Ask for a concrete entity class example.", "Listen for @Entity, @Column, primary key, schema options, and DTO boundary awareness.", "Push beyond memorizing decorator names into database mapping behavior."],
-        "commonMistakes": ["Treating entities as TypeScript interfaces.", "Assuming all class fields are persisted automatically.", "Using entities as public API DTOs without thinking about exposure."],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth" }
+        "guidance": [
+          "Ask for a concrete entity class example.",
+          "Listen for @Entity, @Column, primary key, schema options, and DTO boundary awareness.",
+          "Push beyond memorizing decorator names into database mapping behavior."
+        ],
+        "commonMistakes": [
+          "Treating entities as TypeScript interfaces.",
+          "Assuming all class fields are persisted automatically.",
+          "Using entities as public API DTOs without thinking about exposure."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "Nền tảng Entity trong TypeORM",
         "displayQuestion": "Entity trong TypeORM là gì, và bạn định nghĩa một Entity như thế nào?",
         "displayIntent": "Kiểm tra hiểu biết về mapping từ class sang table bằng decorator.",
-        "guidance": ["Yêu cầu ví dụ class entity cụ thể.", "Tìm các ý về @Entity, @Column, primary key, schema option và ranh giới với DTO.", "Đào sâu hành vi mapping database, không chỉ nhớ tên decorator."],
-        "commonMistakes": ["Xem entity như TypeScript interface.", "Cho rằng mọi field trong class đều tự được persist.", "Dùng entity làm DTO public API mà không xét rủi ro lộ dữ liệu."],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth" }
+        "guidance": [
+          "Yêu cầu ví dụ class entity cụ thể.",
+          "Tìm các ý về @Entity, @Column, primary key, schema option và ranh giới với DTO.",
+          "Đào sâu hành vi mapping database, không chỉ nhớ tên decorator."
+        ],
+        "commonMistakes": [
+          "Xem entity như TypeScript interface.",
+          "Cho rằng mọi field trong class đều tự được persist.",
+          "Dùng entity làm DTO public API mà không xét rủi ro lộ dữ liệu."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "TypeORM Entity の基礎",
         "displayQuestion": "TypeORM の Entity とは何で、どのように定義しますか。",
         "displayIntent": "decorator による class-to-table mapping の理解を確認する。",
-        "guidance": ["具体的な entity class の例を求める。", "@Entity、@Column、primary key、schema option、DTO との境界を確認する。", "decorator 名の暗記ではなく database mapping の動作まで掘り下げる。"],
-        "commonMistakes": ["entity を TypeScript interface として扱う。", "class field がすべて自動で永続化されると思い込む。", "公開 API の DTO として entity をそのまま使い、データ露出を考えない。"],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth" }
+        "guidance": [
+          "具体的な entity class の例を求める。",
+          "@Entity、@Column、primary key、schema option、DTO との境界を確認する。",
+          "decorator 名の暗記ではなく database mapping の動作まで掘り下げる。"
+        ],
+        "commonMistakes": [
+          "entity を TypeScript interface として扱う。",
+          "class field がすべて自動で永続化されると思い込む。",
+          "公開 API の DTO として entity をそのまま使い、データ露出を考えない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "TypeORM docs: Entities", "url": "https://typeorm.io/docs/entity/entities", "note": "Used for @Entity, @Column, primary generated columns, and special date columns." }
+      {
+        "label": "TypeORM docs: Entities",
+        "url": "https://typeorm.io/docs/entity/entities",
+        "note": "Used for @Entity, @Column, primary generated columns, and special date columns."
+      }
     ],
     "status": "active"
   },
   {
     "code": "TYPEORM_JR_TECH_REPOSITORY_DI_002",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "communication"],
-    "techTags": ["typeorm", "nestjs", "repository_pattern"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "communication"
+    ],
+    "techTags": [
+      "typeorm",
+      "nestjs",
+      "repository_pattern"
+    ],
     "difficulty": 2,
     "intent": "Evaluate whether the candidate understands the Repository pattern in TypeORM and the NestJS wiring required to inject entity-specific repositories into services.",
     "primaryQuestion": "What is the Repository pattern, and how do you inject a Repository into a Service?",
     "expectedSignals": [
-      "Explains that a Repository encapsulates data access operations for one entity type.",
-      "Mentions Repository<User> or similar as the main API for find, create, save, update, delete, and query builder access.",
-      "In NestJS, registers the entity with TypeOrmModule.forFeature([User]) in the owning module.",
-      "Injects the repository using @InjectRepository(User) in the service constructor.",
-      "Understands that repository methods should be used from services or data-access layers, not scattered through controllers."
-    ],
-    "redFlags": [
-      "Manually constructs repositories with new Repository().",
-      "Forgets TypeOrmModule.forFeature and cannot explain why Nest cannot resolve the dependency.",
-      "Injects DataSource everywhere for simple CRUD with no reason.",
-      "Places persistence logic directly in controllers by default."
+      {
+        "label": "Explains that a Repository encapsulates data access operations for one entity type.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "defines_repository_entity_scope",
+            "description": "Defines a repository as data access for one entity type"
+          },
+          {
+            "key": "encapsulates_persistence_operations",
+            "description": "Explains that repository methods encapsulate database persistence operations"
+          },
+          {
+            "key": "separates_repository_from_business_service",
+            "description": "Distinguishes repository data access from service-level business workflow"
+          }
+        ]
+      },
+      {
+        "label": "Mentions Repository<User> or similar as the main API for find, create, save, update, delete, and query builder access.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "uses_repository_generic",
+            "description": "Mentions Repository<User> or an equivalent typed repository"
+          },
+          {
+            "key": "names_common_repository_methods",
+            "description": "Names common methods such as find, create, save, update, delete, or remove"
+          },
+          {
+            "key": "mentions_querybuilder_access",
+            "description": "Mentions query builder access for queries that exceed simple repository methods"
+          }
+        ]
+      },
+      {
+        "label": "In NestJS, registers the entity with TypeOrmModule.forFeature([User]) in the owning module.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "imports_forfeature_in_module",
+            "description": "Imports TypeOrmModule.forFeature([User]) in the module that owns the service"
+          },
+          {
+            "key": "connects_forfeature_to_provider",
+            "description": "Explains that forFeature registers the repository provider in that module context"
+          },
+          {
+            "key": "checks_module_on_di_error",
+            "description": "Checks the owning module imports first when Nest cannot resolve UserRepository"
+          }
+        ]
+      },
+      {
+        "label": "Injects the repository using @InjectRepository(User) in the service constructor.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "uses_injectrepository",
+            "description": "Uses @InjectRepository(User) for constructor injection"
+          },
+          {
+            "key": "types_constructor_param",
+            "description": "Types the constructor parameter as Repository<User> or equivalent"
+          },
+          {
+            "key": "injects_in_service_not_controller",
+            "description": "Injects and uses the repository from a service or data-access layer rather than directly in the controller"
+          }
+        ]
+      },
+      {
+        "label": "Understands that repository methods should be used from services or data-access layers, not scattered through controllers.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "keeps_controllers_thin",
+            "description": "Keeps controllers focused on transport concerns and delegates business logic to services"
+          },
+          {
+            "key": "places_query_logic_in_service",
+            "description": "Places repository calls and business rules in service or data-access code"
+          },
+          {
+            "key": "supports_testability",
+            "description": "Connects the boundary to testability and maintainable dependency injection"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Connects repository responsibility, Nest module registration, @InjectRepository wiring, service-layer usage, and testability." },
-      { "scoreBand": "solid", "description": "Knows the injection syntax but gives limited reasoning about module ownership or responsibility boundaries." },
-      { "scoreBand": "needs_work", "description": "Can name Repository but cannot wire it correctly in NestJS." },
-      { "scoreBand": "insufficient_evidence", "description": "Answer does not demonstrate usable repository or DI knowledge." }
+      {
+        "scoreBand": "strong",
+        "description": "Connects repository responsibility, Nest module registration, @InjectRepository wiring, service-layer usage, and testability."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows the injection syntax but gives limited reasoning about module ownership or responsibility boundaries."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can name Repository but cannot wire it correctly in NestJS."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not demonstrate usable repository or DI knowledge."
+      }
     ],
     "followUps": [
-      { "trigger": "missing_context", "question": "If Nest says it cannot resolve UserRepository in UsersService, what file would you check first and why?", "purpose": "Verify practical NestJS repository provider wiring." },
-      { "trigger": "vague_answer", "question": "What belongs in the service versus directly inside the repository call?", "purpose": "Check responsibility boundaries." }
+      {
+        "trigger": "missing_context",
+        "question": "If Nest says it cannot resolve UserRepository in UsersService, what file would you check first and why?",
+        "purpose": "Verify practical NestJS repository provider wiring."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "What belongs in the service versus directly inside the repository call?",
+        "purpose": "Check responsibility boundaries."
+      }
     ],
     "localizedContent": {
       "en": {
         "title": "Repository pattern and DI",
         "displayQuestion": "What is the Repository pattern, and how do you inject a Repository into a Service?",
         "displayIntent": "Check TypeORM repository responsibility and NestJS dependency injection wiring.",
-        "guidance": ["Ask for TypeOrmModule.forFeature and @InjectRepository details.", "Look for service-layer ownership rather than repository calls from controllers.", "Probe what happens when the provider is not registered."],
-        "commonMistakes": ["Forgetting forFeature.", "Manually constructing repositories.", "Putting database calls directly in controllers."],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth" }
+        "guidance": [
+          "Ask for TypeOrmModule.forFeature and @InjectRepository details.",
+          "Look for service-layer ownership rather than repository calls from controllers.",
+          "Probe what happens when the provider is not registered."
+        ],
+        "commonMistakes": [
+          "Forgetting forFeature.",
+          "Manually constructing repositories.",
+          "Putting database calls directly in controllers."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "Repository pattern và DI",
         "displayQuestion": "Repository pattern là gì, và bạn inject Repository vào Service như thế nào?",
         "displayIntent": "Kiểm tra trách nhiệm của TypeORM Repository và cách wiring dependency injection trong NestJS.",
-        "guidance": ["Hỏi rõ TypeOrmModule.forFeature và @InjectRepository.", "Tìm tín hiệu service sở hữu business flow thay vì controller gọi thẳng database.", "Đào sâu lỗi xảy ra khi provider chưa được đăng ký."],
-        "commonMistakes": ["Quên forFeature.", "Tự new repository.", "Đưa database call trực tiếp vào controller."],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth" }
+        "guidance": [
+          "Hỏi rõ TypeOrmModule.forFeature và @InjectRepository.",
+          "Tìm tín hiệu service sở hữu business flow thay vì controller gọi thẳng database.",
+          "Đào sâu lỗi xảy ra khi provider chưa được đăng ký."
+        ],
+        "commonMistakes": [
+          "Quên forFeature.",
+          "Tự new repository.",
+          "Đưa database call trực tiếp vào controller."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "Repository pattern と DI",
         "displayQuestion": "Repository pattern とは何で、Service に Repository をどのように inject しますか。",
         "displayIntent": "TypeORM Repository の責務と NestJS dependency injection wiring を確認する。",
-        "guidance": ["TypeOrmModule.forFeature と @InjectRepository の説明を求める。", "controller から直接 database を呼ぶのではなく service-layer ownership を確認する。", "provider が登録されていない場合の失敗を掘り下げる。"],
-        "commonMistakes": ["forFeature を忘れる。", "repository を手動で new する。", "database call を controller に直接置く。"],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth" }
+        "guidance": [
+          "TypeOrmModule.forFeature と @InjectRepository の説明を求める。",
+          "controller から直接 database を呼ぶのではなく service-layer ownership を確認する。",
+          "provider が登録されていない場合の失敗を掘り下げる。"
+        ],
+        "commonMistakes": [
+          "forFeature を忘れる。",
+          "repository を手動で new する。",
+          "database call を controller に直接置く。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "TypeORM docs: Repository", "url": "https://typeorm.io/docs/working-with-entity-manager/working-with-repository/", "note": "Used for repository purpose and common operations." },
-      { "label": "NestJS docs: Database", "url": "https://docs.nestjs.com/techniques/database", "note": "Used for TypeOrmModule.forFeature and @InjectRepository integration." }
+      {
+        "label": "TypeORM docs: Repository",
+        "url": "https://typeorm.io/docs/working-with-entity-manager/working-with-repository/",
+        "note": "Used for repository purpose and common operations."
+      },
+      {
+        "label": "NestJS docs: Database",
+        "url": "https://docs.nestjs.com/techniques/database",
+        "note": "Used for TypeOrmModule.forFeature and @InjectRepository integration."
+      }
     ],
     "status": "active"
   },
   {
     "code": "TYPEORM_JR_TECH_FIND_METHODS_003",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "problem_solving", "communication"],
-    "techTags": ["typeorm", "querying", "repository_pattern"],
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving",
+      "communication"
+    ],
+    "techTags": [
+      "typeorm",
+      "querying",
+      "repository_pattern"
+    ],
     "difficulty": 2,
     "intent": "Check whether the candidate can choose the correct TypeORM read method and understands return shapes, filters, relation loading, and not-found behavior.",
     "primaryQuestion": "What is the difference between find(), findOne(), findOneBy(), and findOneOrFail()?",
     "expectedSignals": [
-      "States that find returns an array and supports find options such as where, relations, order, skip, and take.",
-      "Explains that findOne returns one entity or null using richer find options.",
-      "Explains that findOneBy returns one entity or null using a simpler where condition object.",
-      "Explains that findOneOrFail throws if no row is found and should be handled intentionally.",
-      "Mentions choosing by desired cardinality, options needed, and not-found behavior instead of using one method everywhere."
-    ],
-    "redFlags": [
-      "Thinks findOne returns an empty object or undefined in current TypeORM versions.",
-      "Uses find and then takes the first item for single-row lookups without reason.",
-      "Uses findOneOrFail in HTTP handlers without mapping the error to an appropriate response.",
-      "Cannot explain when relations or ordering are needed."
+      {
+        "label": "States that find returns an array and supports find options such as where, relations, order, skip, and take.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "find_returns_array",
+            "description": "States that find returns an array of entities"
+          },
+          {
+            "key": "find_supports_where_relations",
+            "description": "Mentions find options such as where and relations"
+          },
+          {
+            "key": "find_supports_order_pagination",
+            "description": "Mentions order, skip, take, or other list-oriented options"
+          }
+        ]
+      },
+      {
+        "label": "Explains that findOne returns one entity or null using richer find options.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "findone_returns_entity_or_null",
+            "description": "Explains that findOne returns one entity or null"
+          },
+          {
+            "key": "findone_uses_rich_options",
+            "description": "Explains that findOne can use richer find options such as where plus relations or ordering"
+          },
+          {
+            "key": "uses_findone_when_options_needed",
+            "description": "Chooses findOne over findOneBy when relations or richer options are required"
+          }
+        ]
+      },
+      {
+        "label": "Explains that findOneBy returns one entity or null using a simpler where condition object.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "findoneby_returns_entity_or_null",
+            "description": "Explains that findOneBy returns one entity or null"
+          },
+          {
+            "key": "findoneby_simple_where",
+            "description": "Explains that findOneBy uses a simple where condition object"
+          },
+          {
+            "key": "uses_findoneby_for_id_lookup",
+            "description": "Chooses findOneBy for simple primary-key or field lookups when no richer options are needed"
+          }
+        ]
+      },
+      {
+        "label": "Explains that findOneOrFail throws if no row is found and should be handled intentionally.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "findoneorfail_throws",
+            "description": "Explains that findOneOrFail throws when no matching entity exists"
+          },
+          {
+            "key": "handles_not_found",
+            "description": "Mentions converting not-found behavior into an intentional domain or HTTP response"
+          },
+          {
+            "key": "avoids_unhandled_exception",
+            "description": "Avoids letting repository not-found exceptions leak unintentionally"
+          }
+        ]
+      },
+      {
+        "label": "Mentions choosing by desired cardinality, options needed, and not-found behavior instead of using one method everywhere.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "chooses_by_cardinality",
+            "description": "Chooses method based on whether the caller expects many rows or one row"
+          },
+          {
+            "key": "chooses_by_options_needed",
+            "description": "Chooses method based on whether richer relations/order options are needed"
+          },
+          {
+            "key": "chooses_by_not_found_semantics",
+            "description": "Chooses method based on whether missing rows should return null or throw"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Clearly compares cardinality, options shape, null versus thrown error, relation loading, and service-level error mapping." },
-      { "scoreBand": "solid", "description": "Understands most method differences but misses relation options or error-handling implications." },
-      { "scoreBand": "needs_work", "description": "Knows method names but chooses them by habit rather than behavior." },
-      { "scoreBand": "insufficient_evidence", "description": "Answer is too vague to verify practical TypeORM querying knowledge." }
+      {
+        "scoreBand": "strong",
+        "description": "Clearly compares cardinality, options shape, null versus thrown error, relation loading, and service-level error mapping."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands most method differences but misses relation options or error-handling implications."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows method names but chooses them by habit rather than behavior."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague to verify practical TypeORM querying knowledge."
+      }
     ],
     "followUps": [
-      { "trigger": "vague_answer", "question": "Which method would you use for GET /users/:id, and what exactly happens if the user does not exist?", "purpose": "Connect method choice to API behavior." },
-      { "trigger": "missing_context", "question": "When would findOne be more appropriate than findOneBy?", "purpose": "Check awareness of richer find options." }
+      {
+        "trigger": "vague_answer",
+        "question": "Which method would you use for GET /users/:id, and what exactly happens if the user does not exist?",
+        "purpose": "Connect method choice to API behavior."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "When would findOne be more appropriate than findOneBy?",
+        "purpose": "Check awareness of richer find options."
+      }
     ],
     "localizedContent": {
       "en": {
         "title": "TypeORM find method differences",
         "displayQuestion": "What is the difference between find(), findOne(), findOneBy(), and findOneOrFail()?",
         "displayIntent": "Check read-method selection, return values, and not-found handling.",
-        "guidance": ["Compare array versus single result.", "Discuss null versus thrown error.", "Ask about relation loading and richer find options."],
-        "commonMistakes": ["Using find() then taking index 0 for a unique lookup.", "Letting findOneOrFail leak an unhandled error.", "Ignoring relation and ordering requirements."],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth" }
+        "guidance": [
+          "Compare array versus single result.",
+          "Discuss null versus thrown error.",
+          "Ask about relation loading and richer find options."
+        ],
+        "commonMistakes": [
+          "Using find() then taking index 0 for a unique lookup.",
+          "Letting findOneOrFail leak an unhandled error.",
+          "Ignoring relation and ordering requirements."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "Khác nhau giữa các hàm find",
         "displayQuestion": "find(), findOne(), findOneBy() và findOneOrFail() khác nhau như thế nào?",
         "displayIntent": "Kiểm tra cách chọn read method, kiểu dữ liệu trả về và xử lý not-found.",
-        "guidance": ["So sánh array với single result.", "Nói rõ null khác thrown error thế nào.", "Hỏi thêm về load relation và find option phức tạp hơn."],
-        "commonMistakes": ["Dùng find() rồi lấy phần tử đầu cho lookup unique.", "Để findOneOrFail ném lỗi không được map sang response phù hợp.", "Bỏ qua nhu cầu relation và ordering."],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth" }
+        "guidance": [
+          "So sánh array với single result.",
+          "Nói rõ null khác thrown error thế nào.",
+          "Hỏi thêm về load relation và find option phức tạp hơn."
+        ],
+        "commonMistakes": [
+          "Dùng find() rồi lấy phần tử đầu cho lookup unique.",
+          "Để findOneOrFail ném lỗi không được map sang response phù hợp.",
+          "Bỏ qua nhu cầu relation và ordering."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "find 系メソッドの違い",
         "displayQuestion": "find()、findOne()、findOneBy()、findOneOrFail() はどう違いますか。",
         "displayIntent": "read method の選択、戻り値、not-found handling を確認する。",
-        "guidance": ["array と single result を比較する。", "null と thrown error の違いを説明させる。", "relation loading と richer find options について確認する。"],
-        "commonMistakes": ["unique lookup で find() して先頭だけ取る。", "findOneOrFail の例外を適切な response に変換しない。", "relation や ordering の必要性を無視する。"],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth" }
+        "guidance": [
+          "array と single result を比較する。",
+          "null と thrown error の違いを説明させる。",
+          "relation loading と richer find options について確認する。"
+        ],
+        "commonMistakes": [
+          "unique lookup で find() して先頭だけ取る。",
+          "findOneOrFail の例外を適切な response に変換しない。",
+          "relation や ordering の必要性を無視する。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "TypeORM docs: Repository", "url": "https://typeorm.io/docs/working-with-entity-manager/working-with-repository/", "note": "Used for find, findOne, findOneBy, and findOneOrFail repository methods." },
-      { "label": "TypeORM docs: Find Options", "url": "https://typeorm.io/docs/working-with-entity-manager/find-options/", "note": "Used for find options, relations, ordering, pagination, and filtering." }
+      {
+        "label": "TypeORM docs: Repository",
+        "url": "https://typeorm.io/docs/working-with-entity-manager/working-with-repository/",
+        "note": "Used for find, findOne, findOneBy, and findOneOrFail repository methods."
+      },
+      {
+        "label": "TypeORM docs: Find Options",
+        "url": "https://typeorm.io/docs/working-with-entity-manager/find-options/",
+        "note": "Used for find options, relations, ordering, pagination, and filtering."
+      }
     ],
     "status": "active"
   },
   {
     "code": "TYPEORM_JR_TECH_SAVE_INSERT_CREATE_004",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "trade_off_analysis", "problem_solving"],
-    "techTags": ["typeorm", "repository_pattern", "postgresql"],
+    "competencies": [
+      "technical_fundamentals",
+      "trade_off_analysis",
+      "problem_solving"
+    ],
+    "techTags": [
+      "typeorm",
+      "repository_pattern",
+      "postgresql"
+    ],
     "difficulty": 2,
     "intent": "Evaluate whether the candidate understands the practical difference between creating entity instances, persisting with entity lifecycle behavior, and executing direct insert operations.",
     "primaryQuestion": "What is the difference between save(), insert(), and create() in TypeORM?",
     "expectedSignals": [
-      "Explains that create builds an entity instance from a plain object but does not write to the database.",
-      "Explains that save persists an entity and can insert or update depending on whether the primary key exists.",
-      "Mentions that save returns an entity and may involve lifecycle hooks, cascades, and extra existence checks depending on usage.",
-      "Explains that insert performs a direct insert operation and does not behave like full entity save.",
-      "Chooses insert for simple bulk/direct insertion when entity lifecycle behavior is not needed, and save when working with entity graphs or upsert-like persistence semantics."
-    ],
-    "redFlags": [
-      "Believes create writes to the database.",
-      "Uses save for every bulk insert without considering performance or extra queries.",
-      "Uses insert while expecting cascades, subscribers, or hydrated entity behavior identical to save.",
-      "Cannot explain why save might update an existing row."
+      {
+        "label": "Explains that create builds an entity instance from a plain object but does not write to the database.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "create_builds_instance",
+            "description": "Explains that repository.create builds an entity instance from a plain object"
+          },
+          {
+            "key": "create_does_not_commit",
+            "description": "States that create does not write or commit anything to the database"
+          },
+          {
+            "key": "distinguishes_create_from_save",
+            "description": "Distinguishes object construction from persistence"
+          }
+        ]
+      },
+      {
+        "label": "Explains that save persists an entity and can insert or update depending on whether the primary key exists.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "save_persists_entity",
+            "description": "Explains that save writes an entity to the database"
+          },
+          {
+            "key": "save_can_insert_or_update",
+            "description": "Explains that save may insert or update depending on primary key or entity state"
+          },
+          {
+            "key": "save_matches_entity_workflow",
+            "description": "Uses save when working with entity instances or persistence semantics that need entity behavior"
+          }
+        ]
+      },
+      {
+        "label": "Mentions that save returns an entity and may involve lifecycle hooks, cascades, and extra existence checks depending on usage.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "save_returns_entity",
+            "description": "Mentions that save returns the persisted entity"
+          },
+          {
+            "key": "mentions_hooks_cascades",
+            "description": "Mentions lifecycle hooks, cascades, subscribers, or relation graph behavior as save-related considerations"
+          },
+          {
+            "key": "mentions_extra_checks",
+            "description": "Mentions possible extra existence checks or overhead compared with direct insert"
+          }
+        ]
+      },
+      {
+        "label": "Explains that insert performs a direct insert operation and does not behave like full entity save.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "insert_direct_operation",
+            "description": "Explains that insert performs a direct database insert operation"
+          },
+          {
+            "key": "insert_not_full_save",
+            "description": "Explains that insert does not behave like a full entity save with the same lifecycle semantics"
+          },
+          {
+            "key": "insert_suited_bulk_simple",
+            "description": "Chooses insert for simple direct or bulk insertion where entity graph behavior is not required"
+          }
+        ]
+      },
+      {
+        "label": "Chooses insert for simple bulk/direct insertion when entity lifecycle behavior is not needed, and save when working with entity graphs or upsert-like persistence semantics.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "chooses_insert_for_10000_rows",
+            "description": "Chooses insert for importing many simple rows when performance and direct SQL shape matter"
+          },
+          {
+            "key": "chooses_save_for_entity_graphs",
+            "description": "Chooses save when cascades, entity hooks, or entity graph persistence are intentional"
+          },
+          {
+            "key": "states_bulk_tradeoff",
+            "description": "States the trade-off between speed/directness and entity lifecycle behavior"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Accurately separates in-memory construction, entity persistence semantics, direct insert behavior, lifecycle implications, and performance trade-offs." },
-      { "scoreBand": "solid", "description": "Knows the basic difference but misses lifecycle or performance details." },
-      { "scoreBand": "needs_work", "description": "Confuses object creation with persistence or treats save and insert as identical." },
-      { "scoreBand": "insufficient_evidence", "description": "Answer does not show usable TypeORM write-method knowledge." }
+      {
+        "scoreBand": "strong",
+        "description": "Accurately separates in-memory construction, entity persistence semantics, direct insert behavior, lifecycle implications, and performance trade-offs."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows the basic difference but misses lifecycle or performance details."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Confuses object creation with persistence or treats save and insert as identical."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not show usable TypeORM write-method knowledge."
+      }
     ],
     "followUps": [
-      { "trigger": "missing_tradeoff", "question": "For importing 10,000 simple rows, would you use save or insert? What trade-off are you accepting?", "purpose": "Check performance and lifecycle reasoning." },
-      { "trigger": "red_flag", "question": "If repository.create(dto) succeeds, has anything been committed to the database yet?", "purpose": "Catch confusion between instance creation and persistence." }
+      {
+        "trigger": "missing_tradeoff",
+        "question": "For importing 10,000 simple rows, would you use save or insert? What trade-off are you accepting?",
+        "purpose": "Check performance and lifecycle reasoning."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "If repository.create(dto) succeeds, has anything been committed to the database yet?",
+        "purpose": "Catch confusion between instance creation and persistence."
+      }
     ],
     "localizedContent": {
       "en": {
         "title": "save, insert, and create",
         "displayQuestion": "What is the difference between save(), insert(), and create() in TypeORM?",
         "displayIntent": "Check write-method semantics, persistence behavior, and performance trade-offs.",
-        "guidance": ["Separate in-memory entity creation from database writes.", "Discuss insert versus save behavior and lifecycle implications.", "Use a bulk-import or create-user example."],
-        "commonMistakes": ["Thinking create() inserts a row.", "Using save() for every bulk operation.", "Expecting insert() to behave exactly like save()."],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth" }
+        "guidance": [
+          "Separate in-memory entity creation from database writes.",
+          "Discuss insert versus save behavior and lifecycle implications.",
+          "Use a bulk-import or create-user example."
+        ],
+        "commonMistakes": [
+          "Thinking create() inserts a row.",
+          "Using save() for every bulk operation.",
+          "Expecting insert() to behave exactly like save()."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "save, insert và create",
         "displayQuestion": "save(), insert() và create() trong TypeORM khác nhau như thế nào?",
         "displayIntent": "Kiểm tra semantics của write method, hành vi persist và trade-off performance.",
-        "guidance": ["Tách việc tạo entity trong memory khỏi việc ghi database.", "Nói về insert khác save thế nào và ảnh hưởng tới lifecycle.", "Dùng ví dụ bulk import hoặc tạo user."],
-        "commonMistakes": ["Nghĩ create() insert row vào database.", "Dùng save() cho mọi bulk operation.", "Kỳ vọng insert() hoạt động y hệt save()."],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth" }
+        "guidance": [
+          "Tách việc tạo entity trong memory khỏi việc ghi database.",
+          "Nói về insert khác save thế nào và ảnh hưởng tới lifecycle.",
+          "Dùng ví dụ bulk import hoặc tạo user."
+        ],
+        "commonMistakes": [
+          "Nghĩ create() insert row vào database.",
+          "Dùng save() cho mọi bulk operation.",
+          "Kỳ vọng insert() hoạt động y hệt save()."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "save、insert、create",
         "displayQuestion": "TypeORM の save()、insert()、create() はどう違いますか。",
         "displayIntent": "write method の意味、永続化動作、performance trade-off を確認する。",
-        "guidance": ["memory 上の entity 作成と database write を分けて説明させる。", "insert と save の違い、lifecycle への影響を確認する。", "bulk import や user 作成の例を使う。"],
-        "commonMistakes": ["create() が database に insert すると考える。", "すべての bulk operation に save() を使う。", "insert() が save() と完全に同じ動作をすると期待する。"],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth" }
+        "guidance": [
+          "memory 上の entity 作成と database write を分けて説明させる。",
+          "insert と save の違い、lifecycle への影響を確認する。",
+          "bulk import や user 作成の例を使う。"
+        ],
+        "commonMistakes": [
+          "create() が database に insert すると考える。",
+          "すべての bulk operation に save() を使う。",
+          "insert() が save() と完全に同じ動作をすると期待する。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "TypeORM docs: Repository", "url": "https://typeorm.io/docs/working-with-entity-manager/working-with-repository/", "note": "Used for repository create, save, and insert method behavior." },
-      { "label": "TypeORM docs: Insert Query Builder", "url": "https://typeorm.io/docs/query-builder/insert-query-builder/", "note": "Used for direct insert operation context and performance-oriented insert cases." }
+      {
+        "label": "TypeORM docs: Repository",
+        "url": "https://typeorm.io/docs/working-with-entity-manager/working-with-repository/",
+        "note": "Used for repository create, save, and insert method behavior."
+      },
+      {
+        "label": "TypeORM docs: Insert Query Builder",
+        "url": "https://typeorm.io/docs/query-builder/insert-query-builder/",
+        "note": "Used for direct insert operation context and performance-oriented insert cases."
+      }
     ],
     "status": "active"
   },
   {
     "code": "TYPEORM_JR_TECH_ONE_TO_MANY_005",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "communication"],
-    "techTags": ["typeorm", "schema_design", "postgresql"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "communication"
+    ],
+    "techTags": [
+      "typeorm",
+      "schema_design",
+      "postgresql"
+    ],
     "difficulty": 2,
     "intent": "Check whether the candidate can model a one-to-many relationship in TypeORM and understands which side owns the foreign key.",
     "primaryQuestion": "How do you define a One-to-Many / Many-to-One relationship in TypeORM?",
     "expectedSignals": [
-      "Uses a concrete example such as User has many Posts and Post belongs to one User.",
-      "Defines @OneToMany on the inverse collection side and @ManyToOne on the owning side.",
-      "Explains that the many-to-one side usually owns the foreign key column in the database.",
-      "Mentions inverse-side callbacks such as user => user.posts and post => post.user.",
-      "Discusses practical options such as nullable, cascade, onDelete, and explicit relation loading when relevant."
-    ],
-    "redFlags": [
-      "Puts @OneToMany only and expects TypeORM to create a foreign key without the owning @ManyToOne side.",
-      "Cannot identify which table contains the foreign key.",
-      "Turns on cascade broadly without understanding write or delete consequences.",
-      "Assumes relations are always loaded automatically."
+      {
+        "label": "Uses a concrete example such as User has many Posts and Post belongs to one User.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "uses_user_posts_example",
+            "description": "Uses a concrete User and Post example or equivalent parent-child domain"
+          },
+          {
+            "key": "states_user_has_many_posts",
+            "description": "States that one User can have many Posts"
+          },
+          {
+            "key": "states_post_belongs_user",
+            "description": "States that each Post belongs to one User in the example"
+          }
+        ]
+      },
+      {
+        "label": "Defines @OneToMany on the inverse collection side and @ManyToOne on the owning side.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "uses_onetomany_inverse",
+            "description": "Places @OneToMany on the inverse collection side such as User.posts"
+          },
+          {
+            "key": "uses_manytoone_owning",
+            "description": "Places @ManyToOne on the owning side such as Post.user"
+          },
+          {
+            "key": "does_not_treat_onetomany_as_fk_owner",
+            "description": "Does not assume @OneToMany alone creates the foreign key column"
+          }
+        ]
+      },
+      {
+        "label": "Explains that the many-to-one side usually owns the foreign key column in the database.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "identifies_fk_table",
+            "description": "Identifies that the Post table stores the userId foreign key in the User/Post example"
+          },
+          {
+            "key": "explains_many_side_owns_fk",
+            "description": "Explains that the many-to-one side owns the foreign key"
+          },
+          {
+            "key": "connects_fk_to_relation_loading",
+            "description": "Connects the foreign key column to how the relation is joined or loaded"
+          }
+        ]
+      },
+      {
+        "label": "Mentions inverse-side callbacks such as user => user.posts and post => post.user.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "uses_inverse_callback_to_user_posts",
+            "description": "Uses inverse-side callback such as user => user.posts"
+          },
+          {
+            "key": "uses_inverse_callback_to_post_user",
+            "description": "Uses inverse-side callback such as post => post.user"
+          },
+          {
+            "key": "connects_callbacks_to_metadata",
+            "description": "Explains that callbacks tell TypeORM how the two relation properties connect"
+          }
+        ]
+      },
+      {
+        "label": "Discusses practical options such as nullable, cascade, onDelete, and explicit relation loading when relevant.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "considers_nullable_ondelete",
+            "description": "Considers nullable and onDelete behavior for the foreign key"
+          },
+          {
+            "key": "considers_cascade_risk",
+            "description": "Considers cascade only when child lifecycle should truly follow parent operations"
+          },
+          {
+            "key": "mentions_explicit_relation_loading",
+            "description": "Mentions explicit relation loading for endpoints that need posts rather than always loading them"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Models both sides correctly, identifies the owning foreign-key side, and discusses relation options and loading behavior." },
-      { "scoreBand": "solid", "description": "Can write the decorators but misses one detail such as FK ownership or cascade implications." },
-      { "scoreBand": "needs_work", "description": "Knows relation names but cannot map them to database structure." },
-      { "scoreBand": "insufficient_evidence", "description": "Answer is generic and does not show TypeORM relationship modeling ability." }
+      {
+        "scoreBand": "strong",
+        "description": "Models both sides correctly, identifies the owning foreign-key side, and discusses relation options and loading behavior."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Can write the decorators but misses one detail such as FK ownership or cascade implications."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows relation names but cannot map them to database structure."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is generic and does not show TypeORM relationship modeling ability."
+      }
     ],
     "followUps": [
-      { "trigger": "vague_answer", "question": "In User and Post, which table stores the userId foreign key and why?", "purpose": "Verify owning-side and database mapping understanding." },
-      { "trigger": "missing_tradeoff", "question": "When would you avoid cascade on this relationship?", "purpose": "Check practical relation option judgment." }
+      {
+        "trigger": "vague_answer",
+        "question": "In User and Post, which table stores the userId foreign key and why?",
+        "purpose": "Verify owning-side and database mapping understanding."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "When would you avoid cascade on this relationship?",
+        "purpose": "Check practical relation option judgment."
+      }
     ],
     "localizedContent": {
       "en": {
         "title": "One-to-many relationship mapping",
         "displayQuestion": "How do you define a One-to-Many / Many-to-One relationship in TypeORM?",
         "displayIntent": "Check relation decorators, inverse side, and foreign-key ownership.",
-        "guidance": ["Use a User/Post example.", "Ask which side owns the foreign key.", "Probe nullable, cascade, onDelete, and relation loading."],
-        "commonMistakes": ["Only defining @OneToMany.", "Not knowing where the foreign key lives.", "Assuming relations are always preloaded."],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth" }
+        "guidance": [
+          "Use a User/Post example.",
+          "Ask which side owns the foreign key.",
+          "Probe nullable, cascade, onDelete, and relation loading."
+        ],
+        "commonMistakes": [
+          "Only defining @OneToMany.",
+          "Not knowing where the foreign key lives.",
+          "Assuming relations are always preloaded."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "Mapping quan hệ one-to-many",
         "displayQuestion": "Bạn định nghĩa quan hệ One-to-Many / Many-to-One trong TypeORM như thế nào?",
         "displayIntent": "Kiểm tra decorator quan hệ, inverse side và ownership của foreign key.",
-        "guidance": ["Dùng ví dụ User/Post.", "Hỏi bên nào sở hữu foreign key.", "Đào sâu nullable, cascade, onDelete và relation loading."],
-        "commonMistakes": ["Chỉ định nghĩa @OneToMany.", "Không biết foreign key nằm ở bảng nào.", "Cho rằng relation luôn được preload."],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth" }
+        "guidance": [
+          "Dùng ví dụ User/Post.",
+          "Hỏi bên nào sở hữu foreign key.",
+          "Đào sâu nullable, cascade, onDelete và relation loading."
+        ],
+        "commonMistakes": [
+          "Chỉ định nghĩa @OneToMany.",
+          "Không biết foreign key nằm ở bảng nào.",
+          "Cho rằng relation luôn được preload."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "one-to-many relation mapping",
         "displayQuestion": "TypeORM で One-to-Many / Many-to-One relationship をどのように定義しますか。",
         "displayIntent": "relation decorators、inverse side、foreign-key ownership を確認する。",
-        "guidance": ["User/Post の例を使う。", "どちらが foreign key を所有するか質問する。", "nullable、cascade、onDelete、relation loading を掘り下げる。"],
-        "commonMistakes": ["@OneToMany だけを定義する。", "foreign key がどの table にあるか説明できない。", "relation が常に preload されると思い込む。"],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth" }
+        "guidance": [
+          "User/Post の例を使う。",
+          "どちらが foreign key を所有するか質問する。",
+          "nullable、cascade、onDelete、relation loading を掘り下げる。"
+        ],
+        "commonMistakes": [
+          "@OneToMany だけを定義する。",
+          "foreign key がどの table にあるか説明できない。",
+          "relation が常に preload されると思い込む。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "TypeORM docs: Many-to-one / one-to-many relations", "url": "https://typeorm.io/docs/relations/many-to-one-one-to-many-relations", "note": "Used for one-to-many and many-to-one decorator patterns and relation loading examples." }
+      {
+        "label": "TypeORM docs: Many-to-one / one-to-many relations",
+        "url": "https://typeorm.io/docs/relations/many-to-one-one-to-many-relations",
+        "note": "Used for one-to-many and many-to-one decorator patterns and relation loading examples."
+      }
     ],
     "status": "active"
   },
   {
     "code": "TYPEORM_JR_TECH_MANY_TO_MANY_006",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "trade_off_analysis"],
-    "techTags": ["typeorm", "schema_design", "postgresql"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "trade_off_analysis"
+    ],
+    "techTags": [
+      "typeorm",
+      "schema_design",
+      "postgresql"
+    ],
     "difficulty": 2,
     "intent": "Assess whether the candidate can define a many-to-many relationship with TypeORM and understands join table ownership and when to promote a join table into a real entity.",
     "primaryQuestion": "What is @ManyToMany, and how do you create a join table?",
     "expectedSignals": [
-      "Explains @ManyToMany as a relationship where many rows on each side can relate to many rows on the other side.",
-      "Uses @JoinTable on exactly one owning side to tell TypeORM to create or use a join table.",
-      "Provides a concrete example such as Question and Category or User and Role.",
-      "Mentions optional customization of join table name and join column names.",
-      "Recognizes that if the join needs extra columns such as assignedAt, role, order, or metadata, it should usually become an explicit entity with two many-to-one relations."
-    ],
-    "redFlags": [
-      "Adds @JoinTable on both sides without understanding ownership.",
-      "Cannot explain what physical table stores the relationship.",
-      "Uses @ManyToMany for relationships that require extra attributes on the association.",
-      "Assumes deleting one side always deletes the other side safely."
+      {
+        "label": "Explains @ManyToMany as a relationship where many rows on each side can relate to many rows on the other side.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "defines_many_to_many",
+            "description": "Defines many-to-many as many rows on each side relating to many rows on the other side"
+          },
+          {
+            "key": "mentions_join_table_need",
+            "description": "Mentions that a join table represents the relationship in the database"
+          },
+          {
+            "key": "distinguishes_from_one_to_many",
+            "description": "Distinguishes many-to-many from one-to-many ownership with a single foreign key"
+          }
+        ]
+      },
+      {
+        "label": "Uses @JoinTable on exactly one owning side to tell TypeORM to create or use a join table.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "join_table_one_side",
+            "description": "Places @JoinTable on exactly one owning side of the many-to-many relation"
+          },
+          {
+            "key": "explains_join_table_owner",
+            "description": "Explains that @JoinTable tells TypeORM which side owns join table metadata"
+          },
+          {
+            "key": "avoids_jointable_both_sides",
+            "description": "Explains that putting @JoinTable on both sides is incorrect or ambiguous"
+          }
+        ]
+      },
+      {
+        "label": "Provides a concrete example such as Question and Category or User and Role.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "uses_question_category_example",
+            "description": "Uses a concrete example such as Question and Category"
+          },
+          {
+            "key": "or_uses_user_role_example",
+            "description": "Or uses a concrete example such as User and Role"
+          },
+          {
+            "key": "maps_example_to_join_table",
+            "description": "Maps the example to the join table rows connecting both sides"
+          }
+        ]
+      },
+      {
+        "label": "Mentions optional customization of join table name and join column names.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "customizes_join_table_name",
+            "description": "Mentions customizing the join table name when naming conventions require it"
+          },
+          {
+            "key": "customizes_join_columns",
+            "description": "Mentions customizing joinColumn and inverseJoinColumn names"
+          },
+          {
+            "key": "aligns_with_existing_schema",
+            "description": "Connects customization to existing database schema or naming standards"
+          }
+        ]
+      },
+      {
+        "label": "Recognizes that if the join needs extra columns such as assignedAt, role, order, or metadata, it should usually become an explicit entity with two many-to-one relations.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "detects_join_metadata_need",
+            "description": "Recognizes that assignedAt, assignedBy, order, role, or metadata cannot be modeled well as a bare many-to-many join"
+          },
+          {
+            "key": "creates_explicit_join_entity",
+            "description": "Creates an explicit join entity such as UserRole for joins with extra columns"
+          },
+          {
+            "key": "models_two_many_to_one",
+            "description": "Models the explicit join entity with two many-to-one relations back to the original entities"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Defines many-to-many with one owning @JoinTable side, explains the join table, custom naming, and when to model an explicit join entity." },
-      { "scoreBand": "solid", "description": "Can write a basic @ManyToMany but misses custom join table or association-entity trade-offs." },
-      { "scoreBand": "needs_work", "description": "Knows @ManyToMany by name but cannot explain join table structure." },
-      { "scoreBand": "insufficient_evidence", "description": "Answer does not demonstrate practical many-to-many modeling." }
+      {
+        "scoreBand": "strong",
+        "description": "Defines many-to-many with one owning @JoinTable side, explains the join table, custom naming, and when to model an explicit join entity."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Can write a basic @ManyToMany but misses custom join table or association-entity trade-offs."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows @ManyToMany by name but cannot explain join table structure."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not demonstrate practical many-to-many modeling."
+      }
     ],
     "followUps": [
-      { "trigger": "missing_tradeoff", "question": "If UserRole needs assignedAt and assignedBy fields, would you still use @ManyToMany? Why?", "purpose": "Check ability to choose explicit join entity when needed." },
-      { "trigger": "vague_answer", "question": "Which side gets @JoinTable, and what happens if you put it on both sides?", "purpose": "Verify owning-side join table understanding." }
+      {
+        "trigger": "missing_tradeoff",
+        "question": "If UserRole needs assignedAt and assignedBy fields, would you still use @ManyToMany? Why?",
+        "purpose": "Check ability to choose explicit join entity when needed."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "Which side gets @JoinTable, and what happens if you put it on both sides?",
+        "purpose": "Verify owning-side join table understanding."
+      }
     ],
     "localizedContent": {
       "en": {
         "title": "Many-to-many and join tables",
         "displayQuestion": "What is @ManyToMany, and how do you create a join table?",
         "displayIntent": "Check many-to-many mapping, join table ownership, and association-entity trade-offs.",
-        "guidance": ["Use a concrete User/Role or Question/Category example.", "Ask where @JoinTable is placed.", "Probe when extra association fields require a separate entity."],
-        "commonMistakes": ["Putting @JoinTable on both sides.", "Not knowing the physical join table.", "Using @ManyToMany when the relationship has its own data."],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth" }
+        "guidance": [
+          "Use a concrete User/Role or Question/Category example.",
+          "Ask where @JoinTable is placed.",
+          "Probe when extra association fields require a separate entity."
+        ],
+        "commonMistakes": [
+          "Putting @JoinTable on both sides.",
+          "Not knowing the physical join table.",
+          "Using @ManyToMany when the relationship has its own data."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "Many-to-many và join table",
         "displayQuestion": "@ManyToMany là gì, và bạn tạo join table như thế nào?",
         "displayIntent": "Kiểm tra mapping many-to-many, ownership của join table và trade-off khi cần entity trung gian.",
-        "guidance": ["Dùng ví dụ User/Role hoặc Question/Category.", "Hỏi @JoinTable đặt ở đâu.", "Đào sâu trường hợp association có field riêng và cần entity riêng."],
-        "commonMistakes": ["Đặt @JoinTable ở cả hai bên.", "Không biết join table vật lý là gì.", "Dùng @ManyToMany khi relationship có dữ liệu riêng."],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth" }
+        "guidance": [
+          "Dùng ví dụ User/Role hoặc Question/Category.",
+          "Hỏi @JoinTable đặt ở đâu.",
+          "Đào sâu trường hợp association có field riêng và cần entity riêng."
+        ],
+        "commonMistakes": [
+          "Đặt @JoinTable ở cả hai bên.",
+          "Không biết join table vật lý là gì.",
+          "Dùng @ManyToMany khi relationship có dữ liệu riêng."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "many-to-many と join table",
         "displayQuestion": "@ManyToMany とは何で、join table をどのように作りますか。",
         "displayIntent": "many-to-many mapping、join table ownership、association entity の trade-off を確認する。",
-        "guidance": ["User/Role または Question/Category の例を使う。", "@JoinTable をどちらに置くか質問する。", "association に独自 field がある場合に separate entity が必要か掘り下げる。"],
-        "commonMistakes": ["@JoinTable を両側に置く。", "物理的な join table を説明できない。", "relationship 自体にデータがあるのに @ManyToMany を使う。"],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth" }
+        "guidance": [
+          "User/Role または Question/Category の例を使う。",
+          "@JoinTable をどちらに置くか質問する。",
+          "association に独自 field がある場合に separate entity が必要か掘り下げる。"
+        ],
+        "commonMistakes": [
+          "@JoinTable を両側に置く。",
+          "物理的な join table を説明できない。",
+          "relationship 自体にデータがあるのに @ManyToMany を使う。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "TypeORM docs: Many-to-many relations", "url": "https://typeorm.io/docs/relations/many-to-many-relations/", "note": "Used for @ManyToMany, @JoinTable, and explicit join entity guidance." }
+      {
+        "label": "TypeORM docs: Many-to-many relations",
+        "url": "https://typeorm.io/docs/relations/many-to-many-relations/",
+        "note": "Used for @ManyToMany, @JoinTable, and explicit join entity guidance."
+      }
     ],
     "status": "active"
   },
   {
     "code": "TYPEORM_MID_TECH_MIGRATIONS_007",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack", "devops"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "devops"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "ownership", "system_thinking"],
-    "techTags": ["typeorm", "schema_design", "postgresql", "rollback"],
+    "competencies": [
+      "technical_fundamentals",
+      "ownership",
+      "system_thinking"
+    ],
+    "techTags": [
+      "typeorm",
+      "schema_design",
+      "postgresql",
+      "rollback"
+    ],
     "difficulty": 3,
     "intent": "Evaluate whether the candidate understands migrations as version-controlled database schema changes and can describe safe generation and execution in TypeORM.",
     "primaryQuestion": "What is a database migration, and how do you generate/run one in TypeORM?",
     "expectedSignals": [
-      "Explains a migration as a versioned, reviewable schema/data change with up and down methods.",
-      "Mentions using a configured DataSource file with TypeORM CLI commands such as migration:generate and migration:run.",
-      "Understands generated migrations should be reviewed before committing or running.",
-      "Distinguishes generating from current entity diff versus manually creating a migration.",
-      "Mentions production concerns such as backups, locks, rollback plan, and avoiding synchronize in production."
-    ],
-    "redFlags": [
-      "Relies on synchronize: true as the production migration strategy.",
-      "Runs generated migrations blindly without reviewing SQL.",
-      "Cannot explain down/revert behavior or rollback limitations.",
-      "Treats migrations as local-only files that do not need source control."
+      {
+        "label": "Explains a migration as a versioned, reviewable schema/data change with up and down methods.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "defines_versioned_change",
+            "description": "Defines a migration as a versioned database schema or data change"
+          },
+          {
+            "key": "mentions_up_down_methods",
+            "description": "Mentions up and down methods for applying and reverting the change"
+          },
+          {
+            "key": "mentions_reviewable_artifact",
+            "description": "Treats migrations as reviewable code rather than runtime magic"
+          }
+        ]
+      },
+      {
+        "label": "Mentions using a configured DataSource file with TypeORM CLI commands such as migration:generate and migration:run.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "uses_configured_datasource",
+            "description": "Mentions using the configured TypeORM DataSource file for CLI commands"
+          },
+          {
+            "key": "mentions_migration_generate",
+            "description": "Mentions migration:generate for generating a diff from entity metadata"
+          },
+          {
+            "key": "mentions_migration_run",
+            "description": "Mentions migration:run for applying pending migrations"
+          }
+        ]
+      },
+      {
+        "label": "Understands generated migrations should be reviewed before committing or running.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "reviews_generated_sql",
+            "description": "Reviews generated SQL or operations before merging"
+          },
+          {
+            "key": "checks_destructive_changes",
+            "description": "Checks for unintended drops, renames interpreted as drop/add, or data-loss operations"
+          },
+          {
+            "key": "checks_large_table_impact",
+            "description": "Checks lock, rewrite, index build, and runtime impact on large production tables"
+          }
+        ]
+      },
+      {
+        "label": "Distinguishes generating from current entity diff versus manually creating a migration.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "distinguishes_generate",
+            "description": "Explains that generated migrations come from comparing entity metadata with the database/schema state"
+          },
+          {
+            "key": "distinguishes_manual_create",
+            "description": "Explains that manual migrations are written for changes the generator cannot infer safely"
+          },
+          {
+            "key": "chooses_manual_for_data_or_complex_ops",
+            "description": "Chooses manual migration for data backfills, multi-step changes, or production-safe DDL sequencing"
+          }
+        ]
+      },
+      {
+        "label": "Mentions production concerns such as backups, locks, rollback plan, and avoiding synchronize in production.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "plans_backup_rollback",
+            "description": "Plans backup, rollback, and verification before production migration"
+          },
+          {
+            "key": "considers_locks_and_online_ddl",
+            "description": "Considers table locks, long-running DDL, index builds, and deployment sequencing"
+          },
+          {
+            "key": "avoids_synchronize_prod",
+            "description": "Avoids using synchronize as the production schema-change mechanism"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Explains migration purpose, TypeORM CLI flow, DataSource usage, review discipline, production safety, and rollback planning." },
-      { "scoreBand": "solid", "description": "Understands basic generate/run flow but misses production safety or revert details." },
-      { "scoreBand": "needs_work", "description": "Has run a command before but cannot explain what it does or how to validate it." },
-      { "scoreBand": "insufficient_evidence", "description": "Answer does not show reliable migration understanding." }
+      {
+        "scoreBand": "strong",
+        "description": "Explains migration purpose, TypeORM CLI flow, DataSource usage, review discipline, production safety, and rollback planning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands basic generate/run flow but misses production safety or revert details."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Has run a command before but cannot explain what it does or how to validate it."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not show reliable migration understanding."
+      }
     ],
     "followUps": [
-      { "trigger": "missing_context", "question": "What exactly would you review in a generated migration before merging it?", "purpose": "Check migration review discipline." },
-      { "trigger": "missing_tradeoff", "question": "Why might a generated migration be unsafe on a large production table?", "purpose": "Probe production schema-change risk awareness." }
+      {
+        "trigger": "missing_context",
+        "question": "What exactly would you review in a generated migration before merging it?",
+        "purpose": "Check migration review discipline."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "Why might a generated migration be unsafe on a large production table?",
+        "purpose": "Probe production schema-change risk awareness."
+      }
     ],
     "localizedContent": {
       "en": {
         "title": "TypeORM migrations",
         "displayQuestion": "What is a database migration, and how do you generate/run one in TypeORM?",
         "displayIntent": "Check migration purpose, CLI workflow, and production schema-change safety.",
-        "guidance": ["Ask for generate, run, and revert flow.", "Confirm DataSource file usage and migration review.", "Probe why migrations replace synchronize in production."],
-        "commonMistakes": ["Using synchronize in production.", "Committing generated SQL without review.", "Not planning rollback or lock impact."],
-        "labels": { "role": "Backend/Fullstack/DevOps", "level": "Junior/Mid", "type": "technical_depth" }
+        "guidance": [
+          "Ask for generate, run, and revert flow.",
+          "Confirm DataSource file usage and migration review.",
+          "Probe why migrations replace synchronize in production."
+        ],
+        "commonMistakes": [
+          "Using synchronize in production.",
+          "Committing generated SQL without review.",
+          "Not planning rollback or lock impact."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/DevOps",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "Migration trong TypeORM",
         "displayQuestion": "Database migration là gì, và bạn generate/run migration trong TypeORM như thế nào?",
         "displayIntent": "Kiểm tra mục đích migration, CLI workflow và an toàn khi đổi schema production.",
-        "guidance": ["Hỏi flow generate, run và revert.", "Xác nhận cách dùng DataSource file và review migration.", "Đào sâu lý do migration thay cho synchronize ở production."],
-        "commonMistakes": ["Dùng synchronize ở production.", "Commit SQL generate mà không review.", "Không có kế hoạch rollback hoặc đánh giá lock impact."],
-        "labels": { "role": "Backend/Fullstack/DevOps", "level": "Junior/Mid", "type": "technical_depth" }
+        "guidance": [
+          "Hỏi flow generate, run và revert.",
+          "Xác nhận cách dùng DataSource file và review migration.",
+          "Đào sâu lý do migration thay cho synchronize ở production."
+        ],
+        "commonMistakes": [
+          "Dùng synchronize ở production.",
+          "Commit SQL generate mà không review.",
+          "Không có kế hoạch rollback hoặc đánh giá lock impact."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/DevOps",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "TypeORM migration",
         "displayQuestion": "database migration とは何で、TypeORM でどのように generate/run しますか。",
         "displayIntent": "migration の目的、CLI workflow、本番 schema change の安全性を確認する。",
-        "guidance": ["generate、run、revert の流れを質問する。", "DataSource file の使用と migration review を確認する。", "本番で synchronize の代わりに migration を使う理由を掘り下げる。"],
-        "commonMistakes": ["本番で synchronize を使う。", "生成された SQL を review せず commit する。", "rollback や lock impact を考えない。"],
-        "labels": { "role": "Backend/Fullstack/DevOps", "level": "Junior/Mid", "type": "technical_depth" }
+        "guidance": [
+          "generate、run、revert の流れを質問する。",
+          "DataSource file の使用と migration review を確認する。",
+          "本番で synchronize の代わりに migration を使う理由を掘り下げる。"
+        ],
+        "commonMistakes": [
+          "本番で synchronize を使う。",
+          "生成された SQL を review せず commit する。",
+          "rollback や lock impact を考えない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/DevOps",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "TypeORM docs: Migrations", "url": "https://typeorm.io/docs/advanced-topics/migrations", "note": "Used for migration generation, execution, DataSource option, and transaction behavior." }
+      {
+        "label": "TypeORM docs: Migrations",
+        "url": "https://typeorm.io/docs/advanced-topics/migrations",
+        "note": "Used for migration generation, execution, DataSource option, and transaction behavior."
+      }
     ],
     "status": "active"
   },
   {
     "code": "TYPEORM_MID_TECH_TRANSACTIONS_008",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "problem_solving"],
-    "techTags": ["typeorm", "transaction", "consistency", "postgresql"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "problem_solving"
+    ],
+    "techTags": [
+      "typeorm",
+      "transaction",
+      "consistency",
+      "postgresql"
+    ],
     "difficulty": 3,
     "intent": "Assess whether the candidate understands transaction atomicity and the correct TypeORM APIs for running multiple database operations as one unit of work.",
     "primaryQuestion": "What is a Transaction, and how do you use it in TypeORM?",
     "expectedSignals": [
-      "Explains a transaction as a set of operations that commit together or roll back together.",
-      "Uses DataSource.transaction or EntityManager.transaction for common transaction scopes.",
-      "States that all operations inside the transaction must use the provided transactional manager or repositories from it.",
-      "Mentions QueryRunner for lower-level manual transaction control when needed.",
-      "Connects transactions to real workflows such as creating an order and updating inventory or wallet balances."
-    ],
-    "redFlags": [
-      "Starts a transaction but uses the global repository inside it.",
-      "Calls external APIs inside a long database transaction without discussing risk.",
-      "Cannot explain rollback behavior when an exception is thrown.",
-      "Uses transactions as a blanket fix for all consistency problems without considering isolation or locks."
+      {
+        "label": "Explains a transaction as a set of operations that commit together or roll back together.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "defines_atomic_group",
+            "description": "Defines a transaction as a group of database operations that commit together"
+          },
+          {
+            "key": "mentions_rollback",
+            "description": "Mentions rollback if one operation fails"
+          },
+          {
+            "key": "connects_to_consistency",
+            "description": "Connects transactions to preserving consistency across related database writes"
+          }
+        ]
+      },
+      {
+        "label": "Uses DataSource.transaction or EntityManager.transaction for common transaction scopes.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "uses_datasource_transaction",
+            "description": "Uses DataSource.transaction for common scoped transaction work"
+          },
+          {
+            "key": "uses_entitymanager_transaction",
+            "description": "Mentions EntityManager.transaction or equivalent TypeORM transaction helper"
+          },
+          {
+            "key": "keeps_scope_clear",
+            "description": "Keeps the transaction scope limited to the database work that must be atomic"
+          }
+        ]
+      },
+      {
+        "label": "States that all operations inside the transaction must use the provided transactional manager or repositories from it.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "uses_transactional_manager",
+            "description": "States that all queries inside the callback must use the provided transactional manager"
+          },
+          {
+            "key": "uses_repositories_from_manager",
+            "description": "Uses repositories obtained from the transactional manager when repository APIs are needed"
+          },
+          {
+            "key": "avoids_global_repository_inside_tx",
+            "description": "Explains that using this.userRepository inside the transaction may run outside the transaction scope"
+          }
+        ]
+      },
+      {
+        "label": "Mentions QueryRunner for lower-level manual transaction control when needed.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_queryrunner",
+            "description": "Mentions QueryRunner for manual transaction control"
+          },
+          {
+            "key": "mentions_connect_start_commit_rollback_release",
+            "description": "Mentions explicit connect, startTransaction, commit, rollback, and release lifecycle when using QueryRunner"
+          },
+          {
+            "key": "uses_queryrunner_for_advanced_control",
+            "description": "Uses QueryRunner when lower-level connection or transaction control is required"
+          }
+        ]
+      },
+      {
+        "label": "Connects transactions to real workflows such as creating an order and updating inventory or wallet balances.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "uses_order_inventory_example",
+            "description": "Applies a transaction to a workflow such as creating an order and updating inventory"
+          },
+          {
+            "key": "keeps_external_payment_outside",
+            "description": "Avoids holding the database transaction open around a payment provider or other external API call"
+          },
+          {
+            "key": "states_external_side_effect_tradeoff",
+            "description": "Explains the consistency and latency trade-off around external side effects and database transactions"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Explains atomicity, correct transactional manager usage, rollback behavior, QueryRunner use cases, and practical consistency boundaries." },
-      { "scoreBand": "solid", "description": "Understands transaction basics but misses manager scoping or external side-effect risks." },
-      { "scoreBand": "needs_work", "description": "Knows transactions are about safety but cannot use TypeORM APIs correctly." },
-      { "scoreBand": "insufficient_evidence", "description": "Answer lacks enough detail to trust transactional correctness." }
+      {
+        "scoreBand": "strong",
+        "description": "Explains atomicity, correct transactional manager usage, rollback behavior, QueryRunner use cases, and practical consistency boundaries."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands transaction basics but misses manager scoping or external side-effect risks."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows transactions are about safety but cannot use TypeORM APIs correctly."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer lacks enough detail to trust transactional correctness."
+      }
     ],
     "followUps": [
-      { "trigger": "red_flag", "question": "What goes wrong if you use this.userRepository inside dataSource.transaction instead of the transactional manager?", "purpose": "Verify transaction scoping knowledge." },
-      { "trigger": "missing_tradeoff", "question": "Would you call a payment provider inside the database transaction? Why or why not?", "purpose": "Check consistency versus side-effect trade-offs." }
+      {
+        "trigger": "missing_context",
+        "question": "What goes wrong if you use this.userRepository inside dataSource.transaction instead of the transactional manager?",
+        "purpose": "Verify transaction scoping knowledge."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "Would you call a payment provider inside the database transaction? Why or why not?",
+        "purpose": "Check consistency versus side-effect trade-offs."
+      }
     ],
     "localizedContent": {
       "en": {
         "title": "Transactions in TypeORM",
         "displayQuestion": "What is a Transaction, and how do you use it in TypeORM?",
         "displayIntent": "Check atomicity, transactional manager usage, and consistency boundaries.",
-        "guidance": ["Use a multi-step business workflow example.", "Confirm all queries use the transactional manager.", "Discuss QueryRunner and external side-effect risks."],
-        "commonMistakes": ["Using global repositories inside a transaction.", "Opening long transactions around external API calls.", "Ignoring rollback and isolation behavior."],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth" }
+        "guidance": [
+          "Use a multi-step business workflow example.",
+          "Confirm all queries use the transactional manager.",
+          "Discuss QueryRunner and external side-effect risks."
+        ],
+        "commonMistakes": [
+          "Using global repositories inside a transaction.",
+          "Opening long transactions around external API calls.",
+          "Ignoring rollback and isolation behavior."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "Transaction trong TypeORM",
         "displayQuestion": "Transaction là gì, và bạn dùng transaction trong TypeORM như thế nào?",
         "displayIntent": "Kiểm tra atomicity, cách dùng transactional manager và ranh giới consistency.",
-        "guidance": ["Dùng ví dụ business workflow nhiều bước.", "Xác nhận mọi query dùng transactional manager.", "Nói về QueryRunner và rủi ro khi gọi external side effect."],
-        "commonMistakes": ["Dùng global repository bên trong transaction.", "Mở transaction dài quanh external API call.", "Bỏ qua rollback và isolation behavior."],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth" }
+        "guidance": [
+          "Dùng ví dụ business workflow nhiều bước.",
+          "Xác nhận mọi query dùng transactional manager.",
+          "Nói về QueryRunner và rủi ro khi gọi external side effect."
+        ],
+        "commonMistakes": [
+          "Dùng global repository bên trong transaction.",
+          "Mở transaction dài quanh external API call.",
+          "Bỏ qua rollback và isolation behavior."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "TypeORM の transaction",
         "displayQuestion": "Transaction とは何で、TypeORM でどのように使いますか。",
         "displayIntent": "atomicity、transactional manager の使い方、consistency boundary を確認する。",
-        "guidance": ["複数 step の business workflow 例を使う。", "すべての query が transactional manager を使うか確認する。", "QueryRunner と external side effect のリスクを話す。"],
-        "commonMistakes": ["transaction 内で global repository を使う。", "external API call を含めて長い transaction を開く。", "rollback と isolation behavior を無視する。"],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth" }
+        "guidance": [
+          "複数 step の business workflow 例を使う。",
+          "すべての query が transactional manager を使うか確認する。",
+          "QueryRunner と external side effect のリスクを話す。"
+        ],
+        "commonMistakes": [
+          "transaction 内で global repository を使う。",
+          "external API call を含めて長い transaction を開く。",
+          "rollback と isolation behavior を無視する。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "TypeORM docs: Transactions", "url": "https://typeorm.io/docs/advanced-topics/transactions/", "note": "Used for DataSource.transaction, transactional EntityManager, isolation levels, and QueryRunner context." }
+      {
+        "label": "TypeORM docs: Transactions",
+        "url": "https://typeorm.io/docs/advanced-topics/transactions/",
+        "note": "Used for DataSource.transaction, transactional EntityManager, isolation levels, and QueryRunner context."
+      }
     ],
     "status": "active"
   },
   {
     "code": "TYPEORM_JR_TRADE_EAGER_LAZY_009",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "trade_off",
-    "competencies": ["technical_fundamentals", "trade_off_analysis", "problem_solving"],
-    "techTags": ["typeorm", "querying", "performance"],
+    "competencies": [
+      "technical_fundamentals",
+      "trade_off_analysis",
+      "problem_solving"
+    ],
+    "techTags": [
+      "typeorm",
+      "querying",
+      "performance"
+    ],
     "difficulty": 3,
     "intent": "Check whether the candidate understands eager and lazy relation loading, the convenience/performance trade-offs, and how to avoid hidden N+1 queries or over-fetching.",
     "primaryQuestion": "What is the difference between eager and lazy loading of relations?",
     "expectedSignals": [
-      "Explains eager loading as automatically loading a relation when using repository find methods if configured on the relation.",
-      "Explains lazy loading as deferring relation access until a Promise-backed relation property is awaited.",
-      "Mentions explicit relation loading through find options or QueryBuilder joins as a common alternative.",
-      "Discusses over-fetching risk with eager relations and hidden N+1 or unexpected queries with lazy relations.",
-      "Recognizes that QueryBuilder does not automatically apply eager loading and requires explicit joins."
-    ],
-    "redFlags": [
-      "Assumes eager loading is always faster.",
-      "Does not know lazy relations are Promise-based in TypeORM.",
-      "Cannot explain why relation loading can create performance problems.",
-      "Uses eager on every relation to avoid thinking about query shape."
+      {
+        "label": "Explains eager loading as automatically loading a relation when using repository find methods if configured on the relation.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "defines_eager_loading",
+            "description": "Defines eager loading as automatic relation loading when configured on a relation"
+          },
+          {
+            "key": "ties_eager_to_find_methods",
+            "description": "Mentions that eager relations apply to repository find methods"
+          },
+          {
+            "key": "warns_eager_list_overfetch",
+            "description": "Warns that eager loading can over-fetch on high-traffic list endpoints"
+          }
+        ]
+      },
+      {
+        "label": "Explains lazy loading as deferring relation access until a Promise-backed relation property is awaited.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "defines_lazy_loading",
+            "description": "Defines lazy loading as deferring relation query until the relation property is accessed"
+          },
+          {
+            "key": "mentions_promise_relation",
+            "description": "Mentions Promise-backed relation properties"
+          },
+          {
+            "key": "warns_hidden_queries",
+            "description": "Warns about hidden queries, N+1 behavior, or unexpected async access with lazy relations"
+          }
+        ]
+      },
+      {
+        "label": "Mentions explicit relation loading through find options or QueryBuilder joins as a common alternative.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "uses_find_relations_option",
+            "description": "Mentions loading relations explicitly through find options"
+          },
+          {
+            "key": "uses_querybuilder_joins",
+            "description": "Mentions QueryBuilder joins for explicit relation loading"
+          },
+          {
+            "key": "loads_posts_only_when_needed",
+            "description": "Applies explicit loading to load posts for a user only on endpoints that need them"
+          }
+        ]
+      },
+      {
+        "label": "Discusses over-fetching risk with eager relations and hidden N+1 or unexpected queries with lazy relations.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "explains_eager_overfetch",
+            "description": "Explains eager relation over-fetching and payload/query cost"
+          },
+          {
+            "key": "explains_lazy_n_plus_one",
+            "description": "Explains hidden N+1 or unexpected query risk with lazy relations"
+          },
+          {
+            "key": "chooses_loading_per_endpoint",
+            "description": "Chooses relation loading strategy per endpoint or query shape"
+          }
+        ]
+      },
+      {
+        "label": "Recognizes that QueryBuilder does not automatically apply eager loading and requires explicit joins.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "states_qb_no_auto_eager",
+            "description": "States that QueryBuilder does not automatically apply eager relations"
+          },
+          {
+            "key": "uses_explicit_join_qb",
+            "description": "Uses explicit leftJoinAndSelect or equivalent QueryBuilder joins"
+          },
+          {
+            "key": "avoids_surprise_missing_relation",
+            "description": "Accounts for relations being missing unless explicitly joined in QueryBuilder queries"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Compares eager, lazy, and explicit loading with performance, query-shape, N+1, and QueryBuilder caveats." },
-      { "scoreBand": "solid", "description": "Understands eager versus lazy basics but misses one practical performance or QueryBuilder detail." },
-      { "scoreBand": "needs_work", "description": "Knows the terms but cannot reason about generated queries or performance." },
-      { "scoreBand": "insufficient_evidence", "description": "Answer does not show safe relation-loading judgment." }
+      {
+        "scoreBand": "strong",
+        "description": "Compares eager, lazy, and explicit loading with performance, query-shape, N+1, and QueryBuilder caveats."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands eager versus lazy basics but misses one practical performance or QueryBuilder detail."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows the terms but cannot reason about generated queries or performance."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not show safe relation-loading judgment."
+      }
     ],
     "followUps": [
-      { "trigger": "missing_tradeoff", "question": "Why might eager loading a relation on User be harmful for a high-traffic list endpoint?", "purpose": "Probe over-fetching and response-shape judgment." },
-      { "trigger": "vague_answer", "question": "How would you explicitly load posts for a user only on endpoints that need them?", "purpose": "Check concrete relation loading technique." }
+      {
+        "trigger": "missing_tradeoff",
+        "question": "Why might eager loading a relation on User be harmful for a high-traffic list endpoint?",
+        "purpose": "Probe over-fetching and response-shape judgment."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "How would you explicitly load posts for a user only on endpoints that need them?",
+        "purpose": "Check concrete relation loading technique."
+      }
     ],
     "localizedContent": {
       "en": {
         "title": "Eager versus lazy relations",
         "displayQuestion": "What is the difference between eager and lazy loading of relations?",
         "displayIntent": "Check relation-loading behavior and performance trade-offs.",
-        "guidance": ["Compare automatic eager loading, Promise-backed lazy loading, and explicit joins.", "Ask about N+1 and over-fetching.", "Confirm QueryBuilder behavior."],
-        "commonMistakes": ["Making every relation eager.", "Forgetting lazy relations are asynchronous.", "Ignoring hidden query count."],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "trade_off" }
+        "guidance": [
+          "Compare automatic eager loading, Promise-backed lazy loading, and explicit joins.",
+          "Ask about N+1 and over-fetching.",
+          "Confirm QueryBuilder behavior."
+        ],
+        "commonMistakes": [
+          "Making every relation eager.",
+          "Forgetting lazy relations are asynchronous.",
+          "Ignoring hidden query count."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid",
+          "type": "trade_off"
+        }
       },
       "vi": {
         "title": "Eager và lazy relation",
         "displayQuestion": "Eager loading và lazy loading của relations khác nhau như thế nào?",
         "displayIntent": "Kiểm tra hành vi load relation và trade-off performance.",
-        "guidance": ["So sánh eager tự động, lazy dùng Promise và explicit join.", "Hỏi về N+1 và over-fetching.", "Xác nhận behavior khi dùng QueryBuilder."],
-        "commonMistakes": ["Đặt mọi relation thành eager.", "Quên lazy relation là async.", "Bỏ qua số lượng query ẩn."],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "trade_off" }
+        "guidance": [
+          "So sánh eager tự động, lazy dùng Promise và explicit join.",
+          "Hỏi về N+1 và over-fetching.",
+          "Xác nhận behavior khi dùng QueryBuilder."
+        ],
+        "commonMistakes": [
+          "Đặt mọi relation thành eager.",
+          "Quên lazy relation là async.",
+          "Bỏ qua số lượng query ẩn."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid",
+          "type": "trade_off"
+        }
       },
       "ja": {
         "title": "eager relation と lazy relation",
         "displayQuestion": "relation の eager loading と lazy loading はどう違いますか。",
         "displayIntent": "relation loading の動作と performance trade-off を確認する。",
-        "guidance": ["automatic eager loading、Promise-backed lazy loading、explicit joins を比較する。", "N+1 と over-fetching を質問する。", "QueryBuilder の挙動を確認する。"],
-        "commonMistakes": ["すべての relation を eager にする。", "lazy relation が async であることを忘れる。", "隠れた query count を無視する。"],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "trade_off" }
+        "guidance": [
+          "automatic eager loading、Promise-backed lazy loading、explicit joins を比較する。",
+          "N+1 と over-fetching を質問する。",
+          "QueryBuilder の挙動を確認する。"
+        ],
+        "commonMistakes": [
+          "すべての relation を eager にする。",
+          "lazy relation が async であることを忘れる。",
+          "隠れた query count を無視する。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid",
+          "type": "trade_off"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "TypeORM docs: Eager and Lazy Relations", "url": "https://typeorm.io/docs/relations/eager-and-lazy-relations/", "note": "Used for eager relation behavior, lazy promise-based relations, and QueryBuilder caveat." },
-      { "label": "TypeORM docs: Find Options", "url": "https://typeorm.io/docs/working-with-entity-manager/find-options/", "note": "Used for explicit relation loading through find options." }
+      {
+        "label": "TypeORM docs: Eager and Lazy Relations",
+        "url": "https://typeorm.io/docs/relations/eager-and-lazy-relations/",
+        "note": "Used for eager relation behavior, lazy promise-based relations, and QueryBuilder caveat."
+      },
+      {
+        "label": "TypeORM docs: Find Options",
+        "url": "https://typeorm.io/docs/working-with-entity-manager/find-options/",
+        "note": "Used for explicit relation loading through find options."
+      }
     ],
     "status": "active"
   },
   {
     "code": "TYPEORM_JR_TRADE_QUERY_BUILDER_010",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "trade_off",
-    "competencies": ["technical_fundamentals", "trade_off_analysis", "problem_solving"],
-    "techTags": ["typeorm", "querying", "postgresql"],
+    "competencies": [
+      "technical_fundamentals",
+      "trade_off_analysis",
+      "problem_solving"
+    ],
+    "techTags": [
+      "typeorm",
+      "querying",
+      "postgresql"
+    ],
     "difficulty": 3,
     "intent": "Evaluate whether the candidate knows what QueryBuilder is and can choose it over repository methods when query complexity, joins, aggregations, or precise SQL control require it.",
     "primaryQuestion": "What is QueryBuilder, and when do you prefer it over Repository methods?",
     "expectedSignals": [
-      "Explains QueryBuilder as TypeORM's fluent API for building SQL queries with aliases, joins, where clauses, ordering, pagination, and parameters.",
-      "Prefers simple repository methods for straightforward CRUD and simple filters.",
-      "Uses QueryBuilder for complex joins, conditional filters, aggregations, subqueries, locking, partial selects, or performance-sensitive query shape.",
-      "Mentions parameter binding to avoid SQL injection rather than string interpolation.",
-      "Understands that QueryBuilder can return entities or raw results depending on getMany, getOne, getRawMany, or getRawOne."
-    ],
-    "redFlags": [
-      "Uses raw string interpolation for user input.",
-      "Reaches for QueryBuilder for every simple query without reason.",
-      "Cannot explain aliases or parameter binding.",
-      "Does not know the difference between raw result and hydrated entity result."
+      {
+        "label": "Explains QueryBuilder as TypeORM's fluent API for building SQL queries with aliases, joins, where clauses, ordering, pagination, and parameters.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "defines_fluent_query_api",
+            "description": "Defines QueryBuilder as TypeORM's fluent API for building SQL queries"
+          },
+          {
+            "key": "mentions_aliases_joins_where",
+            "description": "Mentions aliases, joins, where clauses, ordering, pagination, or parameters"
+          },
+          {
+            "key": "gives_find_awkwark_example",
+            "description": "Gives a concrete case where find options become awkward and QueryBuilder is clearer"
+          }
+        ]
+      },
+      {
+        "label": "Prefers simple repository methods for straightforward CRUD and simple filters.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "uses_repository_for_simple_crud",
+            "description": "Uses repository methods for straightforward CRUD and simple lookups"
+          },
+          {
+            "key": "avoids_querybuilder_overuse",
+            "description": "Avoids using QueryBuilder for every simple query without need"
+          },
+          {
+            "key": "chooses_by_query_complexity",
+            "description": "Chooses repository or QueryBuilder based on query complexity and readability"
+          }
+        ]
+      },
+      {
+        "label": "Uses QueryBuilder for complex joins, conditional filters, aggregations, subqueries, locking, partial selects, or performance-sensitive query shape.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "uses_qb_for_complex_joins_filters",
+            "description": "Uses QueryBuilder for complex joins and conditional filters"
+          },
+          {
+            "key": "uses_qb_for_aggregations_subqueries",
+            "description": "Uses QueryBuilder for aggregations, subqueries, or locking when needed"
+          },
+          {
+            "key": "uses_qb_for_performance_shape",
+            "description": "Uses QueryBuilder to control selected columns and SQL shape for performance-sensitive queries"
+          }
+        ]
+      },
+      {
+        "label": "Mentions parameter binding to avoid SQL injection rather than string interpolation.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "uses_bound_parameters",
+            "description": "Uses named or positional parameters in QueryBuilder where clauses"
+          },
+          {
+            "key": "avoids_string_interpolation",
+            "description": "Avoids interpolating user-provided search terms directly into SQL strings"
+          },
+          {
+            "key": "handles_like_search_safely",
+            "description": "Safely passes user search terms for LIKE or ILIKE clauses with bound parameters and escaping where needed"
+          }
+        ]
+      },
+      {
+        "label": "Understands that QueryBuilder can return entities or raw results depending on getMany, getOne, getRawMany, or getRawOne.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_getmany_getone",
+            "description": "Mentions getMany or getOne for entity results"
+          },
+          {
+            "key": "mentions_getrawmany_getrawone",
+            "description": "Mentions getRawMany or getRawOne for raw selected results"
+          },
+          {
+            "key": "chooses_result_method_by_select",
+            "description": "Chooses result method based on whether the query selects full entities or raw projections/aggregates"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Balances repository simplicity with QueryBuilder control, covers joins/aggregations/subqueries, safe parameters, and return shapes." },
-      { "scoreBand": "solid", "description": "Knows QueryBuilder is for complex queries but misses security or return-shape detail." },
-      { "scoreBand": "needs_work", "description": "Can call createQueryBuilder but cannot justify when or how to use it safely." },
-      { "scoreBand": "insufficient_evidence", "description": "Answer lacks concrete TypeORM query-building knowledge." }
+      {
+        "scoreBand": "strong",
+        "description": "Balances repository simplicity with QueryBuilder control, covers joins/aggregations/subqueries, safe parameters, and return shapes."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows QueryBuilder is for complex queries but misses security or return-shape detail."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can call createQueryBuilder but cannot justify when or how to use it safely."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer lacks concrete TypeORM query-building knowledge."
+      }
     ],
     "followUps": [
-      { "trigger": "missing_context", "question": "Give an example where find() becomes awkward and QueryBuilder is clearer.", "purpose": "Check practical method selection." },
-      { "trigger": "red_flag", "question": "How do you safely pass a user-provided search term into a QueryBuilder where clause?", "purpose": "Probe parameter binding and injection safety." }
+      {
+        "trigger": "missing_context",
+        "question": "Give an example where find() becomes awkward and QueryBuilder is clearer.",
+        "purpose": "Check practical method selection."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "How do you safely pass a user-provided search term into a QueryBuilder where clause?",
+        "purpose": "Probe parameter binding and injection safety."
+      }
     ],
     "localizedContent": {
       "en": {
         "title": "QueryBuilder use cases",
         "displayQuestion": "What is QueryBuilder, and when do you prefer it over Repository methods?",
         "displayIntent": "Check query-complexity judgment and safe dynamic SQL construction.",
-        "guidance": ["Ask for a concrete complex query example.", "Compare repository methods with QueryBuilder.", "Listen for parameter binding and raw versus entity results."],
-        "commonMistakes": ["String-interpolating user input.", "Using QueryBuilder for every simple CRUD query.", "Confusing raw rows with hydrated entities."],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "trade_off" }
+        "guidance": [
+          "Ask for a concrete complex query example.",
+          "Compare repository methods with QueryBuilder.",
+          "Listen for parameter binding and raw versus entity results."
+        ],
+        "commonMistakes": [
+          "String-interpolating user input.",
+          "Using QueryBuilder for every simple CRUD query.",
+          "Confusing raw rows with hydrated entities."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid",
+          "type": "trade_off"
+        }
       },
       "vi": {
         "title": "Khi nào dùng QueryBuilder",
         "displayQuestion": "QueryBuilder là gì, và khi nào bạn ưu tiên nó hơn Repository methods?",
         "displayIntent": "Kiểm tra judgment về độ phức tạp query và cách dựng SQL động an toàn.",
-        "guidance": ["Yêu cầu ví dụ query phức tạp cụ thể.", "So sánh repository methods với QueryBuilder.", "Tìm ý về parameter binding và raw result khác entity result."],
-        "commonMistakes": ["Nối chuỗi input của user vào SQL.", "Dùng QueryBuilder cho mọi CRUD đơn giản.", "Nhầm raw rows với hydrated entities."],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "trade_off" }
+        "guidance": [
+          "Yêu cầu ví dụ query phức tạp cụ thể.",
+          "So sánh repository methods với QueryBuilder.",
+          "Tìm ý về parameter binding và raw result khác entity result."
+        ],
+        "commonMistakes": [
+          "Nối chuỗi input của user vào SQL.",
+          "Dùng QueryBuilder cho mọi CRUD đơn giản.",
+          "Nhầm raw rows với hydrated entities."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid",
+          "type": "trade_off"
+        }
       },
       "ja": {
         "title": "QueryBuilder の使いどころ",
         "displayQuestion": "QueryBuilder とは何で、Repository methods よりいつ優先して使いますか。",
         "displayIntent": "query complexity の判断と安全な dynamic SQL construction を確認する。",
-        "guidance": ["具体的な complex query の例を求める。", "repository methods と QueryBuilder を比較する。", "parameter binding と raw/entity result の違いを確認する。"],
-        "commonMistakes": ["user input を文字列連結で SQL に入れる。", "簡単な CRUD すべてに QueryBuilder を使う。", "raw rows と hydrated entities を混同する。"],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "trade_off" }
+        "guidance": [
+          "具体的な complex query の例を求める。",
+          "repository methods と QueryBuilder を比較する。",
+          "parameter binding と raw/entity result の違いを確認する。"
+        ],
+        "commonMistakes": [
+          "user input を文字列連結で SQL に入れる。",
+          "簡単な CRUD すべてに QueryBuilder を使う。",
+          "raw rows と hydrated entities を混同する。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid",
+          "type": "trade_off"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "TypeORM docs: Select Query Builder", "url": "https://typeorm.io/docs/query-builder/select-query-builder/", "note": "Used for QueryBuilder aliases, parameters, joins, and result methods." },
-      { "label": "TypeORM docs: Find Options", "url": "https://typeorm.io/docs/working-with-entity-manager/find-options/", "note": "Used for repository find options comparison." }
+      {
+        "label": "TypeORM docs: Select Query Builder",
+        "url": "https://typeorm.io/docs/query-builder/select-query-builder/",
+        "note": "Used for QueryBuilder aliases, parameters, joins, and result methods."
+      },
+      {
+        "label": "TypeORM docs: Find Options",
+        "url": "https://typeorm.io/docs/working-with-entity-manager/find-options/",
+        "note": "Used for repository find options comparison."
+      }
     ],
     "status": "active"
   },
   {
     "code": "TYPEORM_JR_TECH_FOR_FEATURE_011",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "problem_solving"],
-    "techTags": ["typeorm", "nestjs", "dependency_injection"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "problem_solving"
+    ],
+    "techTags": [
+      "typeorm",
+      "nestjs",
+      "dependency_injection"
+    ],
     "difficulty": 2,
     "intent": "Check whether the candidate understands TypeOrmModule.forFeature as module-level repository provider registration in NestJS and why each feature module declares the entities it needs.",
     "primaryQuestion": "What is TypeOrmModule.forFeature(), and why is it needed per module?",
     "expectedSignals": [
-      "Explains that forFeature registers repository providers for selected entities in the current Nest module context.",
-      "Connects forFeature([User]) with @InjectRepository(User) being resolvable in providers of that module.",
-      "Distinguishes forRoot or forRootAsync connection setup from forFeature entity/repository registration.",
-      "Mentions importing another module that exports a service instead of directly reaching across module boundaries.",
-      "Understands that multi-database or named DataSource setups may require passing the data source name consistently."
-    ],
-    "redFlags": [
-      "Registers every entity in AppModule and assumes all repositories are globally injectable.",
-      "Cannot distinguish forRoot from forFeature.",
-      "Injects a repository in a module that never imported TypeOrmModule.forFeature for that entity.",
-      "Solves module visibility errors by making everything global."
+      {
+        "label": "Explains that forFeature registers repository providers for selected entities in the current Nest module context.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "defines_forfeature",
+            "description": "Explains that TypeOrmModule.forFeature registers repositories for selected entities"
+          },
+          {
+            "key": "mentions_module_context",
+            "description": "Mentions that registration applies to the current Nest module context"
+          },
+          {
+            "key": "connects_to_repository_provider",
+            "description": "Connects forFeature to repository providers Nest can inject"
+          }
+        ]
+      },
+      {
+        "label": "Connects forFeature([User]) with @InjectRepository(User) being resolvable in providers of that module.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "uses_forfeature_user_module",
+            "description": "States that the module containing UsersService must import TypeOrmModule.forFeature([User])"
+          },
+          {
+            "key": "connects_to_injectrepository",
+            "description": "Connects forFeature([User]) to @InjectRepository(User) resolution"
+          },
+          {
+            "key": "checks_provider_module_scope",
+            "description": "Checks provider/module scope when repository injection fails"
+          }
+        ]
+      },
+      {
+        "label": "Distinguishes forRoot or forRootAsync connection setup from forFeature entity/repository registration.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "defines_forroot_connection",
+            "description": "Explains forRoot or forRootAsync as database connection/DataSource setup"
+          },
+          {
+            "key": "defines_forfeature_repository_registration",
+            "description": "Explains forFeature as entity/repository registration for a feature module"
+          },
+          {
+            "key": "avoids_using_forroot_for_each_feature",
+            "description": "Avoids reconfiguring the database connection in every feature module"
+          }
+        ]
+      },
+      {
+        "label": "Mentions importing another module that exports a service instead of directly reaching across module boundaries.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "uses_module_exports",
+            "description": "Uses module exports/imports to share services across module boundaries"
+          },
+          {
+            "key": "avoids_cross_module_repository_reach",
+            "description": "Avoids directly reaching into another module's repository without proper module ownership"
+          },
+          {
+            "key": "keeps_service_boundary",
+            "description": "Keeps cross-feature operations behind exported services when appropriate"
+          }
+        ]
+      },
+      {
+        "label": "Understands that multi-database or named DataSource setups may require passing the data source name consistently.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_named_datasource",
+            "description": "Mentions named DataSource or multi-database setups"
+          },
+          {
+            "key": "passes_datasource_to_forfeature",
+            "description": "Passes the correct data source name to forFeature when required"
+          },
+          {
+            "key": "passes_datasource_to_injectrepository",
+            "description": "Passes the same data source name to @InjectRepository when required"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Explains provider registration, module visibility, forRoot versus forFeature, repository tokens, and feature-module boundaries." },
-      { "scoreBand": "solid", "description": "Knows the syntax but misses one detail such as provider visibility or named data sources." },
-      { "scoreBand": "needs_work", "description": "Has seen forFeature but cannot explain why dependency resolution fails without it." },
-      { "scoreBand": "insufficient_evidence", "description": "Answer does not show NestJS TypeORM module wiring knowledge." }
+      {
+        "scoreBand": "strong",
+        "description": "Explains provider registration, module visibility, forRoot versus forFeature, repository tokens, and feature-module boundaries."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows the syntax but misses one detail such as provider visibility or named data sources."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Has seen forFeature but cannot explain why dependency resolution fails without it."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not show NestJS TypeORM module wiring knowledge."
+      }
     ],
     "followUps": [
-      { "trigger": "vague_answer", "question": "UsersService injects Repository<User>. Which module must import TypeOrmModule.forFeature([User])?", "purpose": "Force concrete module ownership reasoning." },
-      { "trigger": "missing_context", "question": "How is TypeOrmModule.forRoot different from TypeOrmModule.forFeature?", "purpose": "Verify connection setup versus repository registration distinction." }
+      {
+        "trigger": "vague_answer",
+        "question": "UsersService injects Repository<User>. Which module must import TypeOrmModule.forFeature([User])?",
+        "purpose": "Force concrete module ownership reasoning."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "How is TypeOrmModule.forRoot different from TypeOrmModule.forFeature?",
+        "purpose": "Verify connection setup versus repository registration distinction."
+      }
     ],
     "localizedContent": {
       "en": {
         "title": "TypeOrmModule.forFeature",
         "displayQuestion": "What is TypeOrmModule.forFeature(), and why is it needed per module?",
         "displayIntent": "Check NestJS module-level repository provider registration.",
-        "guidance": ["Ask how @InjectRepository is resolved.", "Compare forRoot and forFeature.", "Probe module boundaries and provider visibility."],
-        "commonMistakes": ["Assuming repositories are globally visible.", "Putting all entities in AppModule by habit.", "Making modules global to hide wiring mistakes."],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth" }
+        "guidance": [
+          "Ask how @InjectRepository is resolved.",
+          "Compare forRoot and forFeature.",
+          "Probe module boundaries and provider visibility."
+        ],
+        "commonMistakes": [
+          "Assuming repositories are globally visible.",
+          "Putting all entities in AppModule by habit.",
+          "Making modules global to hide wiring mistakes."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "TypeOrmModule.forFeature",
         "displayQuestion": "TypeOrmModule.forFeature() là gì, và vì sao mỗi module cần khai báo riêng?",
         "displayIntent": "Kiểm tra cách đăng ký repository provider theo module trong NestJS.",
-        "guidance": ["Hỏi @InjectRepository được resolve như thế nào.", "So sánh forRoot và forFeature.", "Đào sâu module boundary và provider visibility."],
-        "commonMistakes": ["Cho rằng repository nào cũng visible toàn app.", "Nhét mọi entity vào AppModule theo thói quen.", "Biến module thành global để che lỗi wiring."],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth" }
+        "guidance": [
+          "Hỏi @InjectRepository được resolve như thế nào.",
+          "So sánh forRoot và forFeature.",
+          "Đào sâu module boundary và provider visibility."
+        ],
+        "commonMistakes": [
+          "Cho rằng repository nào cũng visible toàn app.",
+          "Nhét mọi entity vào AppModule theo thói quen.",
+          "Biến module thành global để che lỗi wiring."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "TypeOrmModule.forFeature",
         "displayQuestion": "TypeOrmModule.forFeature() とは何で、なぜ module ごとに必要ですか。",
         "displayIntent": "NestJS module-level repository provider registration を確認する。",
-        "guidance": ["@InjectRepository がどのように resolve されるか質問する。", "forRoot と forFeature を比較する。", "module boundary と provider visibility を掘り下げる。"],
-        "commonMistakes": ["repository が app 全体で global に見えると思い込む。", "習慣で全 entity を AppModule に入れる。", "wiring mistake を隠すために module を global にする。"],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth" }
+        "guidance": [
+          "@InjectRepository がどのように resolve されるか質問する。",
+          "forRoot と forFeature を比較する。",
+          "module boundary と provider visibility を掘り下げる。"
+        ],
+        "commonMistakes": [
+          "repository が app 全体で global に見えると思い込む。",
+          "習慣で全 entity を AppModule に入れる。",
+          "wiring mistake を隠すために module を global にする。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "NestJS docs: Database", "url": "https://docs.nestjs.com/techniques/database", "note": "Used for TypeOrmModule.forFeature and @InjectRepository repository injection." },
-      { "label": "NestJS docs: Dynamic modules", "url": "https://docs.nestjs.com/fundamentals/dynamic-modules", "note": "Used for forRoot versus forFeature dynamic module configuration framing." }
+      {
+        "label": "NestJS docs: Database",
+        "url": "https://docs.nestjs.com/techniques/database",
+        "note": "Used for TypeOrmModule.forFeature and @InjectRepository repository injection."
+      },
+      {
+        "label": "NestJS docs: Dynamic modules",
+        "url": "https://docs.nestjs.com/fundamentals/dynamic-modules",
+        "note": "Used for forRoot versus forFeature dynamic module configuration framing."
+      }
     ],
     "status": "active"
   },
   {
     "code": "TYPEORM_JR_TECH_DTO_ENTITY_012",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "communication"],
-    "techTags": ["typeorm", "nestjs", "rest", "schema_design"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "communication"
+    ],
+    "techTags": [
+      "typeorm",
+      "nestjs",
+      "rest",
+      "schema_design"
+    ],
     "difficulty": 2,
     "intent": "Evaluate whether the candidate can separate API contracts from persistence models and avoid leaking database implementation details or sensitive fields.",
     "primaryQuestion": "What is the difference between a DTO and an Entity?",
     "expectedSignals": [
-      "Explains that an Entity models database persistence with TypeORM decorators and table/column metadata.",
-      "Explains that a DTO models data crossing an application boundary such as request body, response body, or service command.",
-      "Mentions DTOs often carry validation, transformation, and API documentation concerns.",
-      "Explains why returning raw entities can leak internal fields such as passwordHash, soft-delete markers, or internal status columns.",
-      "Recognizes mapping between DTOs and entities as intentional boundary code, not unnecessary duplication in many real systems."
-    ],
-    "redFlags": [
-      "Uses one class as DTO, entity, and response model for all cases without discussing risk.",
-      "Stores request-only fields directly on the entity.",
-      "Returns raw entities containing sensitive or internal fields.",
-      "Claims DTOs are useless because TypeScript types already exist."
+      {
+        "label": "Explains that an Entity models database persistence with TypeORM decorators and table/column metadata.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "entity_models_persistence",
+            "description": "Explains that an entity models database persistence"
+          },
+          {
+            "key": "mentions_typeorm_decorators",
+            "description": "Mentions TypeORM decorators such as @Entity and @Column"
+          },
+          {
+            "key": "mentions_table_column_metadata",
+            "description": "Mentions table and column metadata as part of entity definition"
+          }
+        ]
+      },
+      {
+        "label": "Explains that a DTO models data crossing an application boundary such as request body, response body, or service command.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "dto_models_boundary_data",
+            "description": "Explains that DTOs model data crossing API or application boundaries"
+          },
+          {
+            "key": "distinguishes_request_response_dto",
+            "description": "Distinguishes request DTOs, response DTOs, and service command shapes where relevant"
+          },
+          {
+            "key": "keeps_dto_independent_from_table",
+            "description": "Allows DTO shape to differ from database table shape"
+          }
+        ]
+      },
+      {
+        "label": "Mentions DTOs often carry validation, transformation, and API documentation concerns.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_validation",
+            "description": "Mentions validation concerns on DTOs"
+          },
+          {
+            "key": "mentions_transformation",
+            "description": "Mentions transformation or serialization concerns on DTOs"
+          },
+          {
+            "key": "mentions_api_docs",
+            "description": "Mentions API documentation/schema concerns when relevant"
+          }
+        ]
+      },
+      {
+        "label": "Explains why returning raw entities can leak internal fields such as passwordHash, soft-delete markers, or internal status columns.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "identifies_sensitive_fields",
+            "description": "Identifies sensitive fields such as passwordHash or tokens that must not be exposed"
+          },
+          {
+            "key": "identifies_internal_persistence_fields",
+            "description": "Identifies internal fields such as deletedAt, internal status, audit flags, or version columns"
+          },
+          {
+            "key": "uses_response_dto_mapping",
+            "description": "Maps entities to response DTOs to avoid leaking persistence details"
+          }
+        ]
+      },
+      {
+        "label": "Recognizes mapping between DTOs and entities as intentional boundary code, not unnecessary duplication in many real systems.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "defends_boundary_mapping",
+            "description": "Explains why DTO/entity mapping can be intentional boundary code"
+          },
+          {
+            "key": "knows_when_reuse_ok",
+            "description": "Explains when reusing a class shape is acceptable for small or internal cases"
+          },
+          {
+            "key": "knows_when_reuse_risky",
+            "description": "Explains when reuse is too risky because persistence fields, validation, or public contracts diverge"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Clearly separates persistence, request validation, response shaping, security, and mapping responsibilities with concrete examples." },
-      { "scoreBand": "solid", "description": "Understands the basic distinction but misses security or response-contract implications." },
-      { "scoreBand": "needs_work", "description": "Can define DTO and Entity but does not know why separation matters." },
-      { "scoreBand": "insufficient_evidence", "description": "Answer risks conflating API and persistence boundaries." }
+      {
+        "scoreBand": "strong",
+        "description": "Clearly separates persistence, request validation, response shaping, security, and mapping responsibilities with concrete examples."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands the basic distinction but misses security or response-contract implications."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can define DTO and Entity but does not know why separation matters."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer risks conflating API and persistence boundaries."
+      }
     ],
     "followUps": [
-      { "trigger": "missing_context", "question": "Which UserEntity fields would you never expose in a UserResponseDto?", "purpose": "Check data exposure and API contract reasoning." },
-      { "trigger": "missing_tradeoff", "question": "When is it acceptable to reuse a class shape, and when is the risk too high?", "purpose": "Assess pragmatic boundary judgment rather than dogma." }
+      {
+        "trigger": "missing_context",
+        "question": "Which UserEntity fields would you never expose in a UserResponseDto?",
+        "purpose": "Check data exposure and API contract reasoning."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "When is it acceptable to reuse a class shape, and when is the risk too high?",
+        "purpose": "Assess pragmatic boundary judgment rather than dogma."
+      }
     ],
     "localizedContent": {
       "en": {
         "title": "DTO versus Entity",
         "displayQuestion": "What is the difference between a DTO and an Entity?",
         "displayIntent": "Check API boundary and persistence model separation.",
-        "guidance": ["Ask for request DTO, response DTO, and entity examples.", "Listen for validation, persistence metadata, and sensitive field exposure.", "Probe mapping trade-offs."],
-        "commonMistakes": ["Returning raw entities from public APIs.", "Putting request-only fields on entities.", "Treating DTOs as pointless duplication."],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth" }
+        "guidance": [
+          "Ask for request DTO, response DTO, and entity examples.",
+          "Listen for validation, persistence metadata, and sensitive field exposure.",
+          "Probe mapping trade-offs."
+        ],
+        "commonMistakes": [
+          "Returning raw entities from public APIs.",
+          "Putting request-only fields on entities.",
+          "Treating DTOs as pointless duplication."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "DTO khác Entity",
         "displayQuestion": "DTO và Entity khác nhau như thế nào?",
         "displayIntent": "Kiểm tra ranh giới giữa API contract và persistence model.",
-        "guidance": ["Hỏi ví dụ request DTO, response DTO và entity.", "Tìm ý về validation, persistence metadata và lộ field nhạy cảm.", "Đào sâu trade-off khi mapping."],
-        "commonMistakes": ["Trả raw entity qua public API.", "Đưa field chỉ thuộc request vào entity.", "Xem DTO là duplication vô ích."],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth" }
+        "guidance": [
+          "Hỏi ví dụ request DTO, response DTO và entity.",
+          "Tìm ý về validation, persistence metadata và lộ field nhạy cảm.",
+          "Đào sâu trade-off khi mapping."
+        ],
+        "commonMistakes": [
+          "Trả raw entity qua public API.",
+          "Đưa field chỉ thuộc request vào entity.",
+          "Xem DTO là duplication vô ích."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "DTO と Entity の違い",
         "displayQuestion": "DTO と Entity はどう違いますか。",
         "displayIntent": "API boundary と persistence model の分離を確認する。",
-        "guidance": ["request DTO、response DTO、entity の例を求める。", "validation、persistence metadata、sensitive field exposure を確認する。", "mapping の trade-off を掘り下げる。"],
-        "commonMistakes": ["public API で raw entity を返す。", "request-only field を entity に置く。", "DTO を無意味な duplication と考える。"],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth" }
+        "guidance": [
+          "request DTO、response DTO、entity の例を求める。",
+          "validation、persistence metadata、sensitive field exposure を確認する。",
+          "mapping の trade-off を掘り下げる。"
+        ],
+        "commonMistakes": [
+          "public API で raw entity を返す。",
+          "request-only field を entity に置く。",
+          "DTO を無意味な duplication と考える。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "TypeORM docs: Entities", "url": "https://typeorm.io/docs/entity/entities", "note": "Used for entity persistence mapping concepts." },
-      { "label": "NestJS docs: Validation", "url": "https://docs.nestjs.com/techniques/validation", "note": "Used for DTO validation and request-boundary concepts." }
+      {
+        "label": "TypeORM docs: Entities",
+        "url": "https://typeorm.io/docs/entity/entities",
+        "note": "Used for entity persistence mapping concepts."
+      },
+      {
+        "label": "NestJS docs: Validation",
+        "url": "https://docs.nestjs.com/techniques/validation",
+        "note": "Used for DTO validation and request-boundary concepts."
+      }
     ],
     "status": "active"
   },
   {
     "code": "TYPEORM_MID_TECH_SOFT_DELETE_013",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "trade_off_analysis"],
-    "techTags": ["typeorm", "postgresql", "schema_design"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "trade_off_analysis"
+    ],
+    "techTags": [
+      "typeorm",
+      "postgresql",
+      "schema_design"
+    ],
     "difficulty": 3,
     "intent": "Check whether the candidate understands TypeORM soft delete mechanics, query behavior, restoration, and the business/data-retention implications of keeping deleted rows.",
     "primaryQuestion": "How do you implement soft delete in TypeORM?",
     "expectedSignals": [
-      "Mentions adding @DeleteDateColumn or a deletedAt column to the entity.",
-      "Uses repository.softDelete, softRemove, restore, or recover depending on whether working by criteria or entity instance.",
-      "Explains that soft-deleted rows remain in the database and are normally excluded from standard find results.",
-      "Mentions withDeleted when intentionally querying soft-deleted rows.",
-      "Discusses practical implications such as unique constraints, audit/history, restore behavior, and when hard delete is still required."
-    ],
-    "redFlags": [
-      "Implements soft delete by manually setting a random boolean but cannot explain query behavior.",
-      "Forgets that unique constraints can still conflict with soft-deleted rows.",
-      "Assumes soft delete satisfies all privacy or retention requirements.",
-      "Cannot describe how to restore a soft-deleted record."
+      {
+        "label": "Mentions adding @DeleteDateColumn or a deletedAt column to the entity.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "uses_deletedatecolumn",
+            "description": "Mentions @DeleteDateColumn for TypeORM-managed soft delete timestamp"
+          },
+          {
+            "key": "or_uses_deletedat_column",
+            "description": "Mentions a deletedAt column as the persistence marker"
+          },
+          {
+            "key": "connects_column_to_soft_delete",
+            "description": "Explains that setting the delete timestamp marks the row as deleted without removing it"
+          }
+        ]
+      },
+      {
+        "label": "Uses repository.softDelete, softRemove, restore, or recover depending on whether working by criteria or entity instance.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "uses_softdelete_by_criteria",
+            "description": "Uses softDelete for criteria-based soft deletion"
+          },
+          {
+            "key": "uses_softremove_entity",
+            "description": "Uses softRemove when working with entity instances"
+          },
+          {
+            "key": "uses_restore_or_recover",
+            "description": "Mentions restore or recover for undoing soft delete depending on criteria versus entity instance"
+          }
+        ]
+      },
+      {
+        "label": "Explains that soft-deleted rows remain in the database and are normally excluded from standard find results.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "states_rows_remain",
+            "description": "States that soft-deleted rows remain physically present in the database"
+          },
+          {
+            "key": "states_default_find_excludes",
+            "description": "States that standard find results normally exclude soft-deleted rows"
+          },
+          {
+            "key": "connects_to_audit_restore",
+            "description": "Connects retaining rows to audit, restore, or historical needs"
+          }
+        ]
+      },
+      {
+        "label": "Mentions withDeleted when intentionally querying soft-deleted rows.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "mentions_withdeleted",
+            "description": "Mentions withDeleted when querying soft-deleted rows intentionally"
+          },
+          {
+            "key": "uses_admin_audit_case",
+            "description": "Applies withDeleted to a case such as an admin audit screen"
+          },
+          {
+            "key": "limits_soft_deleted_exposure",
+            "description": "Avoids exposing soft-deleted rows in normal user-facing queries unintentionally"
+          }
+        ]
+      },
+      {
+        "label": "Discusses practical implications such as unique constraints, audit/history, restore behavior, and when hard delete is still required.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "discusses_unique_constraint_issue",
+            "description": "Explains how a unique email constraint can still block a new user after the old row is soft-deleted"
+          },
+          {
+            "key": "discusses_restore_behavior",
+            "description": "Considers restore behavior and conflicts with newer records"
+          },
+          {
+            "key": "knows_when_hard_delete_required",
+            "description": "Recognizes cases where hard delete, anonymization, or retention policy is still required"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Explains DeleteDateColumn, softDelete/softRemove/restore/recover, default query filtering, withDeleted, and business constraints." },
-      { "scoreBand": "solid", "description": "Knows DeleteDateColumn and softDelete but misses restore, withDeleted, or unique-constraint implications." },
-      { "scoreBand": "needs_work", "description": "Knows the term soft delete but cannot implement it reliably in TypeORM." },
-      { "scoreBand": "insufficient_evidence", "description": "Answer lacks enough detail for production use of soft delete." }
+      {
+        "scoreBand": "strong",
+        "description": "Explains DeleteDateColumn, softDelete/softRemove/restore/recover, default query filtering, withDeleted, and business constraints."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows DeleteDateColumn and softDelete but misses restore, withDeleted, or unique-constraint implications."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows the term soft delete but cannot implement it reliably in TypeORM."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer lacks enough detail for production use of soft delete."
+      }
     ],
     "followUps": [
-      { "trigger": "missing_tradeoff", "question": "What problem can a unique email constraint cause after a user is soft-deleted?", "purpose": "Check database constraint and retention reasoning." },
-      { "trigger": "vague_answer", "question": "How would you query including soft-deleted rows for an admin audit screen?", "purpose": "Verify withDeleted and intentional query behavior." }
+      {
+        "trigger": "missing_tradeoff",
+        "question": "What problem can a unique email constraint cause after a user is soft-deleted?",
+        "purpose": "Check database constraint and retention reasoning."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "How would you query including soft-deleted rows for an admin audit screen?",
+        "purpose": "Verify withDeleted and intentional query behavior."
+      }
     ],
     "localizedContent": {
       "en": {
         "title": "Soft delete in TypeORM",
         "displayQuestion": "How do you implement soft delete in TypeORM?",
         "displayIntent": "Check soft-delete mechanics, query behavior, and data-retention trade-offs.",
-        "guidance": ["Ask for DeleteDateColumn and repository methods.", "Probe default filtering and withDeleted.", "Discuss unique constraints, restore, and hard-delete requirements."],
-        "commonMistakes": ["Thinking soft delete removes the row.", "Ignoring unique constraint conflicts.", "Assuming soft delete satisfies privacy deletion requirements."],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth" }
+        "guidance": [
+          "Ask for DeleteDateColumn and repository methods.",
+          "Probe default filtering and withDeleted.",
+          "Discuss unique constraints, restore, and hard-delete requirements."
+        ],
+        "commonMistakes": [
+          "Thinking soft delete removes the row.",
+          "Ignoring unique constraint conflicts.",
+          "Assuming soft delete satisfies privacy deletion requirements."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "Soft delete trong TypeORM",
         "displayQuestion": "Bạn implement soft delete trong TypeORM như thế nào?",
         "displayIntent": "Kiểm tra cơ chế soft delete, query behavior và trade-off về data retention.",
-        "guidance": ["Hỏi về DeleteDateColumn và repository methods.", "Đào sâu default filtering và withDeleted.", "Nói về unique constraint, restore và yêu cầu hard delete."],
-        "commonMistakes": ["Nghĩ soft delete xoá row khỏi database.", "Bỏ qua conflict với unique constraint.", "Cho rằng soft delete luôn đáp ứng yêu cầu xoá dữ liệu riêng tư."],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth" }
+        "guidance": [
+          "Hỏi về DeleteDateColumn và repository methods.",
+          "Đào sâu default filtering và withDeleted.",
+          "Nói về unique constraint, restore và yêu cầu hard delete."
+        ],
+        "commonMistakes": [
+          "Nghĩ soft delete xoá row khỏi database.",
+          "Bỏ qua conflict với unique constraint.",
+          "Cho rằng soft delete luôn đáp ứng yêu cầu xoá dữ liệu riêng tư."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "TypeORM の soft delete",
         "displayQuestion": "TypeORM で soft delete をどのように実装しますか。",
         "displayIntent": "soft-delete mechanics、query behavior、data-retention trade-off を確認する。",
-        "guidance": ["DeleteDateColumn と repository methods を質問する。", "default filtering と withDeleted を掘り下げる。", "unique constraint、restore、hard delete requirement を話す。"],
-        "commonMistakes": ["soft delete が row を物理削除すると考える。", "unique constraint conflict を無視する。", "soft delete が privacy deletion requirement を常に満たすと思い込む。"],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth" }
+        "guidance": [
+          "DeleteDateColumn と repository methods を質問する。",
+          "default filtering と withDeleted を掘り下げる。",
+          "unique constraint、restore、hard delete requirement を話す。"
+        ],
+        "commonMistakes": [
+          "soft delete が row を物理削除すると考える。",
+          "unique constraint conflict を無視する。",
+          "soft delete が privacy deletion requirement を常に満たすと思い込む。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "TypeORM docs: Entities", "url": "https://typeorm.io/docs/entity/entities", "note": "Used for @DeleteDateColumn behavior." },
-      { "label": "TypeORM docs: Delete Query Builder", "url": "https://typeorm.io/docs/query-builder/delete-query-builder/", "note": "Used for softDelete and restore query builder operations." },
-      { "label": "TypeORM docs: Repository", "url": "https://typeorm.io/docs/working-with-entity-manager/working-with-repository/", "note": "Used for repository softDelete, softRemove, restore, and recover method concepts." }
+      {
+        "label": "TypeORM docs: Entities",
+        "url": "https://typeorm.io/docs/entity/entities",
+        "note": "Used for @DeleteDateColumn behavior."
+      },
+      {
+        "label": "TypeORM docs: Delete Query Builder",
+        "url": "https://typeorm.io/docs/query-builder/delete-query-builder/",
+        "note": "Used for softDelete and restore query builder operations."
+      },
+      {
+        "label": "TypeORM docs: Repository",
+        "url": "https://typeorm.io/docs/working-with-entity-manager/working-with-repository/",
+        "note": "Used for repository softDelete, softRemove, restore, and recover method concepts."
+      }
     ],
     "status": "active"
   },
   {
     "code": "TYPEORM_JR_TECH_COLUMNS_014",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "communication"],
-    "techTags": ["typeorm", "schema_design", "typescript"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "communication"
+    ],
+    "techTags": [
+      "typeorm",
+      "schema_design",
+      "typescript"
+    ],
     "difficulty": 2,
     "intent": "Check whether the candidate understands common TypeORM column decorators and the database metadata they create.",
     "primaryQuestion": "What are @Column(), @PrimaryGeneratedColumn(), @CreateDateColumn(), and @UpdateDateColumn()?",
     "expectedSignals": [
-      "Explains @Column as mapping a property to a database column with options such as type, nullable, length, default, unique, precision, and select.",
-      "Explains @PrimaryGeneratedColumn as a generated primary key column, commonly increment or uuid depending on configuration.",
-      "Explains @CreateDateColumn as automatically set when the entity is inserted.",
-      "Explains @UpdateDateColumn as automatically updated when the entity is updated through TypeORM persistence operations.",
-      "Mentions choosing explicit database types and options for important fields instead of relying blindly on defaults."
-    ],
-    "redFlags": [
-      "Cannot distinguish a primary key from a normal column.",
-      "Assumes CreateDateColumn and UpdateDateColumn are manually maintained in every service method.",
-      "Uses varchar/text/number defaults without thinking about length, precision, or database type.",
-      "Believes decorators only affect TypeScript and not database schema."
+      {
+        "label": "Explains @Column as mapping a property to a database column with options such as type, nullable, length, default, unique, precision, and select.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "defines_column_mapping",
+            "description": "Explains that @Column maps an entity property to a database column"
+          },
+          {
+            "key": "mentions_common_column_options",
+            "description": "Mentions options such as type, nullable, length, default, unique, precision, or select"
+          },
+          {
+            "key": "uses_unique_email_example",
+            "description": "Can define a unique email column in the example"
+          }
+        ]
+      },
+      {
+        "label": "Explains @PrimaryGeneratedColumn as a generated primary key column, commonly increment or uuid depending on configuration.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "defines_primary_generated",
+            "description": "Explains @PrimaryGeneratedColumn as a generated primary key column"
+          },
+          {
+            "key": "mentions_increment_uuid",
+            "description": "Mentions increment or uuid generation strategies"
+          },
+          {
+            "key": "uses_uuid_primary_example",
+            "description": "Can define a UUID primary key when asked"
+          }
+        ]
+      },
+      {
+        "label": "Explains @CreateDateColumn as automatically set when the entity is inserted.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "defines_createdatecolumn",
+            "description": "Explains that @CreateDateColumn stores the creation timestamp"
+          },
+          {
+            "key": "mentions_insert_time",
+            "description": "Mentions it is set automatically when the entity is inserted"
+          },
+          {
+            "key": "distinguishes_from_manual_date",
+            "description": "Distinguishes automatic create timestamp from manually assigned date fields"
+          }
+        ]
+      },
+      {
+        "label": "Explains @UpdateDateColumn as automatically updated when the entity is updated through TypeORM persistence operations.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "defines_updatedatecolumn",
+            "description": "Explains that @UpdateDateColumn stores the last update timestamp"
+          },
+          {
+            "key": "mentions_typeorm_update",
+            "description": "Mentions it is updated through TypeORM persistence operations"
+          },
+          {
+            "key": "distinguishes_create_update_timestamps",
+            "description": "Distinguishes createdAt from updatedAt semantics"
+          }
+        ]
+      },
+      {
+        "label": "Mentions choosing explicit database types and options for important fields instead of relying blindly on defaults.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "sets_explicit_type_when_needed",
+            "description": "Sets explicit database type when default inference is not precise enough"
+          },
+          {
+            "key": "sets_precision_nullable",
+            "description": "Sets precision, nullable, length, or default intentionally for important fields"
+          },
+          {
+            "key": "avoids_blind_defaults",
+            "description": "Avoids relying blindly on TypeORM defaults for money, enums, timestamps, or constrained fields"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Explains each decorator, common options, generated key strategies, automatic timestamps, and schema-design implications." },
-      { "scoreBand": "solid", "description": "Knows the main decorator purpose but misses one important option or timestamp nuance." },
-      { "scoreBand": "needs_work", "description": "Can list decorators but cannot connect them to database columns." },
-      { "scoreBand": "insufficient_evidence", "description": "Answer does not show enough TypeORM decorator knowledge." }
+      {
+        "scoreBand": "strong",
+        "description": "Explains each decorator, common options, generated key strategies, automatic timestamps, and schema-design implications."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows the main decorator purpose but misses one important option or timestamp nuance."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can list decorators but cannot connect them to database columns."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not show enough TypeORM decorator knowledge."
+      }
     ],
     "followUps": [
-      { "trigger": "vague_answer", "question": "How would you define a UUID primary key and a unique email column?", "purpose": "Force concrete decorator options." },
-      { "trigger": "missing_context", "question": "When would you explicitly set column type, precision, or nullable instead of relying on defaults?", "purpose": "Check schema-design judgment." }
+      {
+        "trigger": "vague_answer",
+        "question": "How would you define a UUID primary key and a unique email column?",
+        "purpose": "Force concrete decorator options."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "When would you explicitly set column type, precision, or nullable instead of relying on defaults?",
+        "purpose": "Check schema-design judgment."
+      }
     ],
     "localizedContent": {
       "en": {
         "title": "Common column decorators",
         "displayQuestion": "What are @Column(), @PrimaryGeneratedColumn(), @CreateDateColumn(), and @UpdateDateColumn()?",
         "displayIntent": "Check core TypeORM column decorators and schema metadata.",
-        "guidance": ["Ask for each decorator's purpose.", "Probe common column options and primary key strategy.", "Discuss automatic timestamp behavior."],
-        "commonMistakes": ["Treating decorators as TypeScript-only.", "Not knowing generated primary key strategies.", "Ignoring column type and nullability options."],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth" }
+        "guidance": [
+          "Ask for each decorator's purpose.",
+          "Probe common column options and primary key strategy.",
+          "Discuss automatic timestamp behavior."
+        ],
+        "commonMistakes": [
+          "Treating decorators as TypeScript-only.",
+          "Not knowing generated primary key strategies.",
+          "Ignoring column type and nullability options."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "Các column decorator phổ biến",
         "displayQuestion": "@Column(), @PrimaryGeneratedColumn(), @CreateDateColumn() và @UpdateDateColumn() là gì?",
         "displayIntent": "Kiểm tra các column decorator cốt lõi của TypeORM và metadata schema.",
-        "guidance": ["Hỏi mục đích của từng decorator.", "Đào sâu option column phổ biến và chiến lược primary key.", "Nói về hành vi automatic timestamp."],
-        "commonMistakes": ["Xem decorator chỉ là TypeScript-only.", "Không biết các strategy primary key generated.", "Bỏ qua option column type và nullability."],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth" }
+        "guidance": [
+          "Hỏi mục đích của từng decorator.",
+          "Đào sâu option column phổ biến và chiến lược primary key.",
+          "Nói về hành vi automatic timestamp."
+        ],
+        "commonMistakes": [
+          "Xem decorator chỉ là TypeScript-only.",
+          "Không biết các strategy primary key generated.",
+          "Bỏ qua option column type và nullability."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "よく使う column decorator",
         "displayQuestion": "@Column()、@PrimaryGeneratedColumn()、@CreateDateColumn()、@UpdateDateColumn() とは何ですか。",
         "displayIntent": "TypeORM の core column decorators と schema metadata を確認する。",
-        "guidance": ["各 decorator の目的を質問する。", "一般的な column options と primary key strategy を掘り下げる。", "automatic timestamp の動作を話す。"],
-        "commonMistakes": ["decorator を TypeScript-only と考える。", "generated primary key strategies を知らない。", "column type と nullability options を無視する。"],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid", "type": "technical_depth" }
+        "guidance": [
+          "各 decorator の目的を質問する。",
+          "一般的な column options と primary key strategy を掘り下げる。",
+          "automatic timestamp の動作を話す。"
+        ],
+        "commonMistakes": [
+          "decorator を TypeScript-only と考える。",
+          "generated primary key strategies を知らない。",
+          "column type と nullability options を無視する。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "TypeORM docs: Entities", "url": "https://typeorm.io/docs/entity/entities", "note": "Used for @Column, @PrimaryGeneratedColumn, @CreateDateColumn, and @UpdateDateColumn behavior." }
+      {
+        "label": "TypeORM docs: Entities",
+        "url": "https://typeorm.io/docs/entity/entities",
+        "note": "Used for @Column, @PrimaryGeneratedColumn, @CreateDateColumn, and @UpdateDateColumn behavior."
+      }
     ],
     "status": "active"
   },
   {
     "code": "TYPEORM_JR_TRADE_SYNCHRONIZE_015",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack", "devops"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "devops"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "trade_off",
-    "competencies": ["technical_fundamentals", "trade_off_analysis", "ownership"],
-    "techTags": ["typeorm", "schema_design", "postgresql", "rollback"],
+    "competencies": [
+      "technical_fundamentals",
+      "trade_off_analysis",
+      "ownership"
+    ],
+    "techTags": [
+      "typeorm",
+      "schema_design",
+      "postgresql",
+      "rollback"
+    ],
     "difficulty": 3,
     "intent": "Assess whether the candidate understands synchronize: true, why it is convenient for local development, and why it is dangerous for production schema management.",
     "primaryQuestion": "What does synchronize: true do in TypeORM config, and why is it dangerous in production?",
     "expectedSignals": [
-      "Explains that synchronize makes TypeORM automatically update the database schema to match entity metadata on application startup.",
-      "Recognizes it can be convenient for local experiments or prototypes but should not be the production schema-change mechanism.",
-      "Mentions risks such as unintended column/table changes, data loss, unreviewed DDL, startup-time schema changes, and environment drift.",
-      "Recommends explicit migrations for production with review, testing, backup, rollout, and rollback planning.",
-      "Understands that production schema changes need operational awareness such as locks, long-running migrations, and deployment sequencing."
-    ],
-    "redFlags": [
-      "Enables synchronize in production because it is easier.",
-      "Cannot explain the difference between synchronize and migrations.",
-      "Assumes ORM schema sync can always infer safe data transformations.",
-      "Ignores data loss, locking, and review risks."
+      {
+        "label": "Explains that synchronize makes TypeORM automatically update the database schema to match entity metadata on application startup.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "defines_synchronize_schema_sync",
+            "description": "Explains that synchronize updates the database schema to match entity metadata"
+          },
+          {
+            "key": "mentions_app_startup",
+            "description": "Mentions that this happens on application startup"
+          },
+          {
+            "key": "connects_rename_to_schema_change",
+            "description": "Explains that renaming an entity property can trigger schema changes automatically"
+          }
+        ]
+      },
+      {
+        "label": "Recognizes it can be convenient for local experiments or prototypes but should not be the production schema-change mechanism.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "allows_local_prototype_use",
+            "description": "Recognizes synchronize can be convenient for local development, experiments, or throwaway prototypes"
+          },
+          {
+            "key": "rejects_prod_default",
+            "description": "States it should not be the production schema-change mechanism"
+          },
+          {
+            "key": "distinguishes_environment_risk",
+            "description": "Distinguishes local convenience from production safety requirements"
+          }
+        ]
+      },
+      {
+        "label": "Mentions risks such as unintended column/table changes, data loss, unreviewed DDL, startup-time schema changes, and environment drift.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "mentions_data_loss_risk",
+            "description": "Mentions data loss or unintended drops/additions as a synchronize risk"
+          },
+          {
+            "key": "mentions_unreviewed_ddl",
+            "description": "Mentions unreviewed DDL running at application startup"
+          },
+          {
+            "key": "mentions_environment_drift",
+            "description": "Mentions environment drift or startup behavior differing between environments"
+          }
+        ]
+      },
+      {
+        "label": "Recommends explicit migrations for production with review, testing, backup, rollout, and rollback planning.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "recommends_migrations_prod",
+            "description": "Recommends explicit migrations for production schema changes"
+          },
+          {
+            "key": "requires_review_testing_backup",
+            "description": "Requires review, testing, backup, and verification before production migration"
+          },
+          {
+            "key": "plans_rollout_rollback",
+            "description": "Plans rollout and rollback rather than letting app startup mutate schema"
+          }
+        ]
+      },
+      {
+        "label": "Understands that production schema changes need operational awareness such as locks, long-running migrations, and deployment sequencing.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "considers_locking",
+            "description": "Considers locks, index builds, table rewrites, or long-running migration impact"
+          },
+          {
+            "key": "considers_deployment_sequence",
+            "description": "Considers application deployment order and backward-compatible schema changes"
+          },
+          {
+            "key": "considers_large_table_strategy",
+            "description": "Considers special strategy for large tables such as phased nullable columns, backfills, or online index creation"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Explains startup schema synchronization, appropriate local use, concrete production risks, and migration-based operational discipline." },
-      { "scoreBand": "solid", "description": "Knows synchronize should be off in production but misses some risk details or migration process." },
-      { "scoreBand": "needs_work", "description": "Has heard it is dangerous but cannot explain why." },
-      { "scoreBand": "insufficient_evidence", "description": "Answer suggests unsafe production schema management." }
+      {
+        "scoreBand": "strong",
+        "description": "Explains startup schema synchronization, appropriate local use, concrete production risks, and migration-based operational discipline."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows synchronize should be off in production but misses some risk details or migration process."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Has heard it is dangerous but cannot explain why."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer suggests unsafe production schema management."
+      }
     ],
     "followUps": [
-      { "trigger": "missing_consequence", "question": "What could happen if you rename an entity property while synchronize is enabled against production?", "purpose": "Check concrete data-loss and schema-drift reasoning." },
-      { "trigger": "missing_tradeoff", "question": "When, if ever, would you allow synchronize: true?", "purpose": "Assess pragmatic environment-specific judgment." }
+      {
+        "trigger": "missing_consequence",
+        "question": "What could happen if you rename an entity property while synchronize is enabled against production?",
+        "purpose": "Check concrete data-loss and schema-drift reasoning."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "When, if ever, would you allow synchronize: true?",
+        "purpose": "Assess pragmatic environment-specific judgment."
+      }
     ],
     "localizedContent": {
       "en": {
         "title": "synchronize true risk",
         "displayQuestion": "What does synchronize: true do in TypeORM config, and why is it dangerous in production?",
         "displayIntent": "Check schema synchronization behavior and production migration judgment.",
-        "guidance": ["Ask what happens at application startup.", "Probe concrete production risks.", "Compare with reviewed migrations and rollback planning."],
-        "commonMistakes": ["Using synchronize as production migration strategy.", "Assuming schema sync is always safe.", "Ignoring data loss and lock risks."],
-        "labels": { "role": "Backend/Fullstack/DevOps", "level": "Junior/Mid", "type": "trade_off" }
+        "guidance": [
+          "Ask what happens at application startup.",
+          "Probe concrete production risks.",
+          "Compare with reviewed migrations and rollback planning."
+        ],
+        "commonMistakes": [
+          "Using synchronize as production migration strategy.",
+          "Assuming schema sync is always safe.",
+          "Ignoring data loss and lock risks."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/DevOps",
+          "level": "Junior/Mid",
+          "type": "trade_off"
+        }
       },
       "vi": {
         "title": "Rủi ro synchronize true",
         "displayQuestion": "synchronize: true trong TypeORM config làm gì, và vì sao nó nguy hiểm ở production?",
         "displayIntent": "Kiểm tra hành vi schema synchronization và judgment về migration production.",
-        "guidance": ["Hỏi điều gì xảy ra khi app startup.", "Đào sâu rủi ro production cụ thể.", "So sánh với migration được review và rollback plan."],
-        "commonMistakes": ["Dùng synchronize làm chiến lược migration production.", "Cho rằng schema sync luôn an toàn.", "Bỏ qua rủi ro mất dữ liệu và lock."],
-        "labels": { "role": "Backend/Fullstack/DevOps", "level": "Junior/Mid", "type": "trade_off" }
+        "guidance": [
+          "Hỏi điều gì xảy ra khi app startup.",
+          "Đào sâu rủi ro production cụ thể.",
+          "So sánh với migration được review và rollback plan."
+        ],
+        "commonMistakes": [
+          "Dùng synchronize làm chiến lược migration production.",
+          "Cho rằng schema sync luôn an toàn.",
+          "Bỏ qua rủi ro mất dữ liệu và lock."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/DevOps",
+          "level": "Junior/Mid",
+          "type": "trade_off"
+        }
       },
       "ja": {
         "title": "synchronize true のリスク",
         "displayQuestion": "TypeORM config の synchronize: true は何を行い、なぜ production では危険ですか。",
         "displayIntent": "schema synchronization の動作と production migration judgment を確認する。",
-        "guidance": ["application startup 時に何が起きるか質問する。", "具体的な production risk を掘り下げる。", "reviewed migration と rollback planning と比較する。"],
-        "commonMistakes": ["synchronize を production migration strategy として使う。", "schema sync が常に安全だと思い込む。", "data loss と lock risk を無視する。"],
-        "labels": { "role": "Backend/Fullstack/DevOps", "level": "Junior/Mid", "type": "trade_off" }
+        "guidance": [
+          "application startup 時に何が起きるか質問する。",
+          "具体的な production risk を掘り下げる。",
+          "reviewed migration と rollback planning と比較する。"
+        ],
+        "commonMistakes": [
+          "synchronize を production migration strategy として使う。",
+          "schema sync が常に安全だと思い込む。",
+          "data loss と lock risk を無視する。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/DevOps",
+          "level": "Junior/Mid",
+          "type": "trade_off"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "TypeORM docs: FAQ", "url": "https://typeorm.io/docs/help/faq/", "note": "Used for synchronize option behavior and schema update approaches." },
-      { "label": "TypeORM docs: Migrations", "url": "https://typeorm.io/docs/advanced-topics/migrations", "note": "Used for migration-based production schema management." }
+      {
+        "label": "TypeORM docs: FAQ",
+        "url": "https://typeorm.io/docs/help/faq/",
+        "note": "Used for synchronize option behavior and schema update approaches."
+      },
+      {
+        "label": "TypeORM docs: Migrations",
+        "url": "https://typeorm.io/docs/advanced-topics/migrations",
+        "note": "Used for migration-based production schema management."
+      }
     ],
     "status": "active"
   }

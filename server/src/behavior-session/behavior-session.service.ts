@@ -245,12 +245,19 @@ export class BehaviorSessionService {
         probe: currentProbe,
         personalizedQuestion: activeProbe.plannedProbe.personalizedQuestion,
       });
+      const questionText: string =
+        activeProbe.plannedProbe.personalizedQuestion ??
+        currentProbe.primaryQuestion ??
+        '';
       const scoringResult: ProbeScoringResult =
         await this.scoringService.scoreForRuntime({
           questionProbe: currentProbe,
           answerText: cumulativeAnswer,
           language: plan.language,
           cvClaims,
+          questionText,
+          targetLevel: plan.targetLevel,
+          difficulty: currentProbe.difficulty,
         });
       console.log('Scoring result:', scoringResult);
       activeProbe.previousBand =
@@ -262,7 +269,6 @@ export class BehaviorSessionService {
       const decision: PolicyDecision = this.policyEngine.decide({
         scoringResult,
         activeProbe,
-        pressureProfile: plan.pressureProfile,
         probeFollowUps: currentProbe.followUps,
         level: plan.targetLevel,
         hasFallbackProbe: hasFallback,
@@ -577,8 +583,7 @@ export class BehaviorSessionService {
         priority: CLAIM_PRIORITY_ORDER[claim.verificationPriority] ?? 0,
       }))
       .filter(
-        (item) =>
-          item.relevance > 0 || probe.type === 'cv_claim_verification',
+        (item) => item.relevance > 0 || probe.type === 'cv_claim_verification',
       )
       .sort(
         (left, right) =>
@@ -683,7 +688,6 @@ export class BehaviorSessionService {
       type: log.turnType ?? 'probe_question',
       content: log.content,
       followUpTrigger: log.followUpTrigger ?? undefined,
-      challengeReason: log.challengeReason ?? undefined,
       timestamp:
         log.timestamp instanceof Date
           ? log.timestamp.toISOString()

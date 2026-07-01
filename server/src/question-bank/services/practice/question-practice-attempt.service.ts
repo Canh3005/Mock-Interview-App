@@ -137,7 +137,6 @@ export class QuestionPracticeAttemptService {
       },
       rubric: {
         expectedSignals: probe.expectedSignals,
-        redFlags: probe.redFlags,
         scoringHints: probe.scoringHints,
       },
     };

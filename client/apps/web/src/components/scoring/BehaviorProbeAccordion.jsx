@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { ChevronDown, ChevronUp, CheckCircle2, AlertTriangle, MinusCircle, XCircle } from 'lucide-react'
+import { ChevronDown, ChevronUp, CheckCircle2, MinusCircle, XCircle } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 const SIGNAL_ICON = {
@@ -34,28 +34,6 @@ function _ProbeSignals({ signalResults }) {
         </li>
       ))}
     </ul>
-  )
-}
-
-function _ProbeRedFlags({ redFlags }) {
-  const { t } = useTranslation()
-  const present = redFlags?.filter((f) => f.present) ?? []
-  if (!present.length) return null
-  return (
-    <div className="mt-3 pt-3 border-t border-slate-800">
-      <p className="text-[10px] font-semibold text-red-400 uppercase tracking-wider mb-1.5 flex items-center gap-1">
-        <AlertTriangle className="w-3 h-3" />
-        {t('behaviorScorecard.redFlagLabel')}
-      </p>
-      <ul className="flex flex-col gap-1">
-        {present.map((f, i) => (
-          <li key={i} className="text-xs text-red-300 flex items-start gap-1.5">
-            <AlertTriangle className="w-3 h-3 text-red-400 shrink-0 mt-0.5" />
-            <span>{f.label}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
   )
 }
 
@@ -96,7 +74,6 @@ function _ProbeBody({ probe }) {
         </div>
       )}
       <_ProbeSignals signalResults={probe.signalResults} />
-      <_ProbeRedFlags redFlags={probe.redFlags} />
       <_ProbeNotes notes={probe.improvementSuggestions} />
     </div>
   )

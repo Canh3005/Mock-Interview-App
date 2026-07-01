@@ -1,60 +1,173 @@
 [
   {
     "code": "CV4_GEN_SCALE_001",
-    "stages": ["stage_4_cv_deep_dive"],
+    "stages": [
+      "stage_4_cv_deep_dive"
+    ],
     "roleFamilies": [],
     "levels": [],
     "type": "cv_claim_verification",
-    "competencies": ["system_thinking", "impact_measurement"],
+    "competencies": [
+      "system_thinking",
+      "impact_measurement"
+    ],
     "techTags": [],
     "difficulty": 3,
     "conversationDepth": "mid",
     "intent": "Verify that the candidate actually understood the bottleneck behind the performance or scale improvement they claimed, not just that they ran a fix.",
     "primaryQuestion": "Before implementing the improvement you mentioned, how did you identify and confirm the actual bottleneck? Walk me through your diagnostic process.",
     "expectedSignals": [
-      "Describes a concrete diagnostic step: profiling, metrics dashboard, log analysis, load test",
-      "Can name the specific metric or signal that led to the diagnosis",
-      "Distinguishes between hypothesis and confirmed root cause",
-      "Mentions verifying the improvement with before/after measurement"
-    ],
-    "redFlags": [
-      "Cannot explain how the bottleneck was found — just says 'we optimized it'",
-      "Describes the solution without being able to explain why that solution addressed the root cause",
-      "No mention of measurement or validation after the fix"
+      {
+        "label": "Describes a concrete diagnostic step: profiling, metrics dashboard, log analysis, load test",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "names_diagnostic_method",
+            "description": "Names a concrete diagnostic method such as profiling, metrics dashboard, log analysis, tracing, or load test"
+          },
+          {
+            "key": "states_diagnostic_sequence",
+            "description": "Describes the sequence used to narrow the bottleneck rather than jumping straight to the fix"
+          },
+          {
+            "key": "states_personal_role",
+            "description": "States which part of the diagnostic work the candidate personally led"
+          }
+        ]
+      },
+      {
+        "label": "Can name the specific metric or signal that led to the diagnosis",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "names_bottleneck_metric",
+            "description": "Names the exact metric, trace span, log pattern, profile result, or load-test signal that identified the bottleneck"
+          },
+          {
+            "key": "states_baseline_value",
+            "description": "Provides the baseline value or observed threshold where possible"
+          },
+          {
+            "key": "explains_metric_relevance",
+            "description": "Explains why that signal pointed to the real bottleneck instead of another component"
+          }
+        ]
+      },
+      {
+        "label": "Distinguishes between hypothesis and confirmed root cause",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "states_initial_hypothesis",
+            "description": "States the initial hypothesis or suspected cause"
+          },
+          {
+            "key": "states_confirmation_evidence",
+            "description": "States what evidence confirmed or disproved the hypothesis"
+          },
+          {
+            "key": "avoids_after_the_fact_story",
+            "description": "Avoids presenting the final answer as obvious without explaining how it was confirmed"
+          }
+        ]
+      },
+      {
+        "label": "Mentions verifying the improvement with before/after measurement",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "provides_before_after_measurement",
+            "description": "Provides before and after measurement for the improvement"
+          },
+          {
+            "key": "uses_same_baseline_method",
+            "description": "Uses a comparable baseline and measurement method before and after the change"
+          },
+          {
+            "key": "connects_metric_to_user_impact",
+            "description": "Connects measured improvement to latency, throughput, reliability, cost, or user-visible impact"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Specific diagnostic tool or signal, clear root cause hypothesis, confirmed with measurable before/after result" },
-      { "scoreBand": "adequate", "description": "Logical explanation of diagnosis but missing concrete metrics or validation step" },
-      { "scoreBand": "weak", "description": "Vague description of the problem; cannot explain the diagnostic process" }
+      {
+        "scoreBand": "strong",
+        "description": "Specific diagnostic tool or signal, clear root cause hypothesis, confirmed with measurable before/after result"
+      },
+      {
+        "scoreBand": "adequate",
+        "description": "Logical explanation of diagnosis but missing concrete metrics or validation step"
+      },
+      {
+        "scoreBand": "weak",
+        "description": "Vague description of the problem; cannot explain the diagnostic process"
+      }
     ],
     "followUps": [
-      { "trigger": "missing_metric", "question": "What was the actual before and after measurement? What baseline did you use?", "purpose": "Verify the impact was measurable, not assumed" },
-      { "trigger": "vague_answer", "question": "What specific tool or signal told you this was the bottleneck and not something else?", "purpose": "Distinguish genuine diagnosis from guesswork" },
-      { "trigger": "missing_personal_contribution", "question": "What part of the diagnosis did you personally lead?", "purpose": "Separate individual contribution from team effort" }
+      {
+        "trigger": "missing_metric",
+        "question": "What was the actual before and after measurement? What baseline did you use?",
+        "purpose": "Verify the impact was measurable, not assumed"
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "What specific tool or signal told you this was the bottleneck and not something else?",
+        "purpose": "Distinguish genuine diagnosis from guesswork"
+      },
+      {
+        "trigger": "missing_personal_contribution",
+        "question": "What part of the diagnosis did you personally lead?",
+        "purpose": "Separate individual contribution from team effort"
+      }
     ],
     "localizedContent": {
       "en": {
         "title": "Diagnosing the bottleneck behind a claimed improvement",
         "displayQuestion": "Before implementing the improvement you mentioned, how did you identify and confirm the actual bottleneck?",
         "displayIntent": "Verify that the candidate truly understood the root cause, not just applied a fix.",
-        "guidance": ["Walk through the diagnostic steps in order.", "Name the tool, metric, or signal that confirmed the bottleneck.", "Include the before/after measurement."],
-        "commonMistakes": ["Describing the fix without explaining how the root cause was identified.", "Saying the team 'noticed it was slow' without a concrete signal.", "No validation step after the change."],
+        "guidance": [
+          "Walk through the diagnostic steps in order.",
+          "Name the tool, metric, or signal that confirmed the bottleneck.",
+          "Include the before/after measurement."
+        ],
+        "commonMistakes": [
+          "Describing the fix without explaining how the root cause was identified.",
+          "Saying the team 'noticed it was slow' without a concrete signal.",
+          "No validation step after the change."
+        ],
         "labels": {}
       },
       "vi": {
         "title": "Chẩn đoán bottleneck đằng sau cải tiến đã khai",
         "displayQuestion": "Trước khi implement cải tiến bạn đề cập, bạn đã xác định và xác nhận bottleneck thực sự như thế nào?",
         "displayIntent": "Kiểm tra ứng viên có thực sự hiểu nguyên nhân gốc rễ hay chỉ apply fix mà không hiểu.",
-        "guidance": ["Mô tả các bước chẩn đoán theo thứ tự.", "Nêu tool, metric hoặc signal xác nhận bottleneck.", "Bao gồm kết quả đo trước và sau."],
-        "commonMistakes": ["Mô tả fix mà không giải thích cách tìm ra root cause.", "Nói team 'thấy chậm' mà không có signal cụ thể.", "Không có bước validation sau khi thay đổi."],
+        "guidance": [
+          "Mô tả các bước chẩn đoán theo thứ tự.",
+          "Nêu tool, metric hoặc signal xác nhận bottleneck.",
+          "Bao gồm kết quả đo trước và sau."
+        ],
+        "commonMistakes": [
+          "Mô tả fix mà không giải thích cách tìm ra root cause.",
+          "Nói team 'thấy chậm' mà không có signal cụ thể.",
+          "Không có bước validation sau khi thay đổi."
+        ],
         "labels": {}
       },
       "ja": {
         "title": "改善の背後にあるボトルネックの診断",
         "displayQuestion": "言及した改善を実装する前に、実際のボトルネックをどのように特定・確認しましたか？",
         "displayIntent": "修正を適用しただけでなく、真に根本原因を理解していたかを確認する。",
-        "guidance": ["診断ステップを順番に説明する。", "ボトルネックを確認したツール・メトリクス・シグナルを具体的に挙げる。", "変更前後の測定結果を含める。"],
-        "commonMistakes": ["根本原因をどう特定したかを説明せずに修正だけ説明する。", "具体的なシグナルなしに「遅いと気づいた」と言う。", "変更後の検証ステップがない。"],
+        "guidance": [
+          "診断ステップを順番に説明する。",
+          "ボトルネックを確認したツール・メトリクス・シグナルを具体的に挙げる。",
+          "変更前後の測定結果を含める。"
+        ],
+        "commonMistakes": [
+          "根本原因をどう特定したかを説明せずに修正だけ説明する。",
+          "具体的なシグナルなしに「遅いと気づいた」と言う。",
+          "変更後の検証ステップがない。"
+        ],
         "labels": {}
       }
     },
@@ -62,61 +175,173 @@
   },
   {
     "code": "CV4_GEN_OWN_001",
-    "stages": ["stage_4_cv_deep_dive"],
+    "stages": [
+      "stage_4_cv_deep_dive"
+    ],
     "roleFamilies": [],
     "levels": [],
     "type": "cv_claim_verification",
-    "competencies": ["ownership", "communication"],
+    "competencies": [
+      "ownership",
+      "communication"
+    ],
     "techTags": [],
     "difficulty": 3,
     "conversationDepth": "mid",
     "intent": "Distinguish what the candidate personally owned from what was a team effort, and whether they can articulate the boundary clearly.",
     "primaryQuestion": "For the project you mentioned — which decisions were entirely yours to make, and which ones required team or stakeholder alignment before you could proceed?",
     "expectedSignals": [
-      "Can name specific decisions they made independently vs. collaboratively",
-      "Explains what criteria determined whether something needed sign-off",
-      "Does not overstate individual ownership — acknowledges team involvement where appropriate",
-      "Can give an example of a time they pushed back or changed direction based on input"
-    ],
-    "redFlags": [
-      "Claims all decisions were theirs alone across the whole project",
-      "Cannot distinguish between tasks they executed vs. decisions they owned",
-      "Uses 'we' for all actions with no clarity on personal contribution",
-      "Cannot name a single decision that required stakeholder input"
+      {
+        "label": "Can name specific decisions they made independently vs. collaboratively",
+        "relatedTrigger": "missing_personal_contribution",
+        "requirements": [
+          {
+            "key": "names_independent_decision",
+            "description": "Names a specific project decision the candidate personally owned"
+          },
+          {
+            "key": "names_collaborative_decision",
+            "description": "Names a decision that required team or stakeholder alignment"
+          },
+          {
+            "key": "distinguishes_decision_scope",
+            "description": "Distinguishes decision scope instead of claiming ownership over everything"
+          }
+        ]
+      },
+      {
+        "label": "Explains what criteria determined whether something needed sign-off",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "states_signoff_criteria",
+            "description": "Explains which criteria required sign-off, such as risk, cost, customer impact, security, timeline, or architecture boundary"
+          },
+          {
+            "key": "names_stakeholders",
+            "description": "Names who needed to align or approve for high-impact decisions"
+          },
+          {
+            "key": "connects_criteria_to_example",
+            "description": "Applies the criteria to at least one concrete decision from the project"
+          }
+        ]
+      },
+      {
+        "label": "Does not overstate individual ownership — acknowledges team involvement where appropriate",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "states_own_role_precisely",
+            "description": "States the candidate's specific role in reaching the decision"
+          },
+          {
+            "key": "acknowledges_team_input",
+            "description": "Acknowledges input from teammates, reviewers, managers, PMs, or other stakeholders"
+          },
+          {
+            "key": "avoids_we_only_or_i_only",
+            "description": "Avoids both vague 'we did it' and exaggerated 'I alone did it' narratives"
+          }
+        ]
+      },
+      {
+        "label": "Can give an example of a time they pushed back or changed direction based on input",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "describes_pushback_or_change",
+            "description": "Describes a concrete moment of pushback, disagreement, or direction change"
+          },
+          {
+            "key": "states_input_received",
+            "description": "States what input, data, or stakeholder concern affected the decision"
+          },
+          {
+            "key": "states_final_outcome",
+            "description": "Explains what changed and why the final direction was chosen"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Clear ownership boundary with concrete examples; honest about what required alignment" },
-      { "scoreBand": "adequate", "description": "Can distinguish personal vs. team decisions but examples are general" },
-      { "scoreBand": "weak", "description": "Blurry ownership; either overclaims or cannot specify personal contribution" }
+      {
+        "scoreBand": "strong",
+        "description": "Clear ownership boundary with concrete examples; honest about what required alignment"
+      },
+      {
+        "scoreBand": "adequate",
+        "description": "Can distinguish personal vs. team decisions but examples are general"
+      },
+      {
+        "scoreBand": "weak",
+        "description": "Blurry ownership; either overclaims or cannot specify personal contribution"
+      }
     ],
     "followUps": [
-      { "trigger": "missing_personal_contribution", "question": "Give me a specific decision you made that changed the direction of this project.", "purpose": "Force a concrete example of individual decision-making" },
-      { "trigger": "vague_answer", "question": "Who else was involved in that decision, and what was your specific role in reaching it?", "purpose": "Clarify the candidate's actual contribution" },
-      { "trigger": "missing_context", "question": "Was there ever a point where you disagreed with the team's direction? What did you do?", "purpose": "Test whether ownership includes pushing back, not just executing" }
+      {
+        "trigger": "missing_personal_contribution",
+        "question": "Give me a specific decision you made that changed the direction of this project.",
+        "purpose": "Force a concrete example of individual decision-making"
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "Who else was involved in that decision, and what was your specific role in reaching it?",
+        "purpose": "Clarify the candidate's actual contribution"
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Was there ever a point where you disagreed with the team's direction? What did you do?",
+        "purpose": "Test whether ownership includes pushing back, not just executing"
+      }
     ],
     "localizedContent": {
       "en": {
         "title": "Ownership boundaries on a claimed project",
         "displayQuestion": "Which decisions on the project you mentioned were entirely yours, and which required team or stakeholder alignment?",
         "displayIntent": "Understand the real scope of the candidate's ownership and decision-making authority.",
-        "guidance": ["Name specific decisions you made independently.", "Be honest about what required sign-off.", "Distinguish executing tasks from owning decisions."],
-        "commonMistakes": ["Claiming all decisions were yours.", "Using 'we' without explaining your personal contribution.", "Unable to name a decision that required buy-in from others."],
+        "guidance": [
+          "Name specific decisions you made independently.",
+          "Be honest about what required sign-off.",
+          "Distinguish executing tasks from owning decisions."
+        ],
+        "commonMistakes": [
+          "Claiming all decisions were yours.",
+          "Using 'we' without explaining your personal contribution.",
+          "Unable to name a decision that required buy-in from others."
+        ],
         "labels": {}
       },
       "vi": {
         "title": "Ranh giới ownership trong dự án đã khai",
         "displayQuestion": "Trong dự án bạn đề cập, quyết định nào hoàn toàn là của bạn và quyết định nào cần căn chỉnh với team hoặc stakeholder?",
         "displayIntent": "Hiểu rõ phạm vi ownership thực sự và quyền quyết định của ứng viên.",
-        "guidance": ["Nêu tên các quyết định cụ thể bạn tự đưa ra.", "Thành thật về những gì cần sign-off.", "Phân biệt giữa thực thi task và sở hữu quyết định."],
-        "commonMistakes": ["Khai mọi quyết định đều là của mình.", "Dùng 'chúng tôi' mà không nêu đóng góp cá nhân.", "Không nêu được quyết định nào cần sự đồng ý của người khác."],
+        "guidance": [
+          "Nêu tên các quyết định cụ thể bạn tự đưa ra.",
+          "Thành thật về những gì cần sign-off.",
+          "Phân biệt giữa thực thi task và sở hữu quyết định."
+        ],
+        "commonMistakes": [
+          "Khai mọi quyết định đều là của mình.",
+          "Dùng 'chúng tôi' mà không nêu đóng góp cá nhân.",
+          "Không nêu được quyết định nào cần sự đồng ý của người khác."
+        ],
         "labels": {}
       },
       "ja": {
         "title": "担当プロジェクトにおけるオーナーシップの境界",
         "displayQuestion": "言及したプロジェクトで、完全にあなた自身の判断だった決定と、チームやステークホルダーの合意が必要だった決定はどれですか？",
         "displayIntent": "候補者の実際のオーナーシップ範囲と意思決定権限を理解する。",
-        "guidance": ["独自に下した具体的な判断を挙げる。", "承認が必要だったことは正直に述べる。", "タスクの実行と意思決定のオーナーシップを区別する。"],
-        "commonMistakes": ["すべての決定が自分のものだったと主張する。", "個人の貢献を明確にせず「私たち」を使う。", "他者の同意が必要だった決定を一つも挙げられない。"],
+        "guidance": [
+          "独自に下した具体的な判断を挙げる。",
+          "承認が必要だったことは正直に述べる。",
+          "タスクの実行と意思決定のオーナーシップを区別する。"
+        ],
+        "commonMistakes": [
+          "すべての決定が自分のものだったと主張する。",
+          "個人の貢献を明確にせず「私たち」を使う。",
+          "他者の同意が必要だった決定を一つも挙げられない。"
+        ],
         "labels": {}
       }
     },
@@ -124,60 +349,173 @@
   },
   {
     "code": "CV4_GEN_OWN_002",
-    "stages": ["stage_4_cv_deep_dive"],
+    "stages": [
+      "stage_4_cv_deep_dive"
+    ],
     "roleFamilies": [],
     "levels": [],
     "type": "cv_claim_verification",
-    "competencies": ["ownership", "impact_measurement"],
+    "competencies": [
+      "ownership",
+      "impact_measurement"
+    ],
     "techTags": [],
     "difficulty": 3,
     "conversationDepth": "mid",
     "intent": "Verify the candidate has a concrete feedback loop between shipping a change and knowing it worked as intended.",
     "primaryQuestion": "After you shipped the feature or change you mentioned, how did you verify it actually had the impact you expected? What did you monitor?",
     "expectedSignals": [
-      "Names a specific metric, event, or signal they tracked post-ship",
-      "Describes monitoring period — not just one data point",
-      "Can distinguish expected vs. unexpected outcomes",
-      "Mentions a rollback plan or canary deploy if relevant"
-    ],
-    "redFlags": [
-      "Shipped and moved on with no post-ship verification",
-      "Relies entirely on QA or another team for validation",
-      "Cannot describe what 'success' looked like in measurable terms"
+      {
+        "label": "Names a specific metric, event, or signal they tracked post-ship",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "names_postship_signal",
+            "description": "Names the exact metric, event, dashboard, or business signal tracked after shipping"
+          },
+          {
+            "key": "states_success_threshold",
+            "description": "States what value, trend, or threshold counted as success"
+          },
+          {
+            "key": "connects_signal_to_goal",
+            "description": "Connects the monitored signal to the intended feature or change impact"
+          }
+        ]
+      },
+      {
+        "label": "Describes monitoring period — not just one data point",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "states_monitoring_duration",
+            "description": "States how long the candidate monitored after rollout"
+          },
+          {
+            "key": "checks_trend_not_one_point",
+            "description": "Looks at a trend or repeated samples rather than a single point"
+          },
+          {
+            "key": "defines_stability_point",
+            "description": "Explains when the change was considered stable"
+          }
+        ]
+      },
+      {
+        "label": "Can distinguish expected vs. unexpected outcomes",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "states_expected_outcome",
+            "description": "States the expected outcome before shipping"
+          },
+          {
+            "key": "mentions_unexpected_outcome",
+            "description": "Mentions any unexpected result, regression, neutral result, or secondary effect"
+          },
+          {
+            "key": "states_wrong_direction_response",
+            "description": "Explains what they would have done if the metric moved in the wrong direction"
+          }
+        ]
+      },
+      {
+        "label": "Mentions a rollback plan or canary deploy if relevant",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "mentions_rollback_or_canary",
+            "description": "Mentions rollback, canary, feature flag, staged rollout, or kill switch when relevant"
+          },
+          {
+            "key": "defines_rollback_trigger",
+            "description": "Defines what signal would trigger rollback or pause"
+          },
+          {
+            "key": "ties_plan_to_risk",
+            "description": "Ties rollback or canary strategy to the risk of the shipped change"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Specific metric tracked, defined success criteria before shipping, monitoring window described" },
-      { "scoreBand": "adequate", "description": "Mentions monitoring but without specific metrics or criteria" },
-      { "scoreBand": "weak", "description": "No post-ship tracking or relies solely on user complaints to detect issues" }
+      {
+        "scoreBand": "strong",
+        "description": "Specific metric tracked, defined success criteria before shipping, monitoring window described"
+      },
+      {
+        "scoreBand": "adequate",
+        "description": "Mentions monitoring but without specific metrics or criteria"
+      },
+      {
+        "scoreBand": "weak",
+        "description": "No post-ship tracking or relies solely on user complaints to detect issues"
+      }
     ],
     "followUps": [
-      { "trigger": "missing_metric", "question": "What specific number or signal told you the feature was working as expected?", "purpose": "Push for concrete measurement" },
-      { "trigger": "missing_consequence", "question": "What would you have done if the metric had moved in the wrong direction?", "purpose": "Test whether the candidate had a contingency plan" },
-      { "trigger": "vague_answer", "question": "How long did you monitor before you considered it stable?", "purpose": "Verify the monitoring was sustained, not just a one-time check" }
+      {
+        "trigger": "missing_metric",
+        "question": "What specific number or signal told you the feature was working as expected?",
+        "purpose": "Push for concrete measurement"
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "What would you have done if the metric had moved in the wrong direction?",
+        "purpose": "Test whether the candidate had a contingency plan"
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "How long did you monitor before you considered it stable?",
+        "purpose": "Verify the monitoring was sustained, not just a one-time check"
+      }
     ],
     "localizedContent": {
       "en": {
         "title": "Post-ship impact verification",
         "displayQuestion": "After you shipped the feature or change you mentioned, how did you verify it had the expected impact?",
         "displayIntent": "Verify the candidate closes the feedback loop after shipping, not just deploys and moves on.",
-        "guidance": ["Name the metric or signal you tracked.", "Describe your monitoring window.", "Mention what you would have done if the outcome was unexpected."],
-        "commonMistakes": ["Shipping without a plan to verify impact.", "Relying entirely on user complaints to detect failures.", "Defining success only in vague terms like 'it worked'."],
+        "guidance": [
+          "Name the metric or signal you tracked.",
+          "Describe your monitoring window.",
+          "Mention what you would have done if the outcome was unexpected."
+        ],
+        "commonMistakes": [
+          "Shipping without a plan to verify impact.",
+          "Relying entirely on user complaints to detect failures.",
+          "Defining success only in vague terms like 'it worked'."
+        ],
         "labels": {}
       },
       "vi": {
         "title": "Kiểm tra impact sau khi ship",
         "displayQuestion": "Sau khi ship tính năng hoặc thay đổi bạn đề cập, bạn đã verify nó có impact như kỳ vọng như thế nào?",
         "displayIntent": "Kiểm tra ứng viên có feedback loop sau khi ship hay chỉ deploy và chuyển sang việc tiếp theo.",
-        "guidance": ["Nêu metric hoặc signal bạn theo dõi.", "Mô tả khoảng thời gian monitoring.", "Đề cập kế hoạch nếu kết quả không như mong đợi."],
-        "commonMistakes": ["Ship mà không có kế hoạch verify impact.", "Phụ thuộc hoàn toàn vào user complaint để phát hiện lỗi.", "Định nghĩa thành công chỉ bằng 'nó hoạt động'."],
+        "guidance": [
+          "Nêu metric hoặc signal bạn theo dõi.",
+          "Mô tả khoảng thời gian monitoring.",
+          "Đề cập kế hoạch nếu kết quả không như mong đợi."
+        ],
+        "commonMistakes": [
+          "Ship mà không có kế hoạch verify impact.",
+          "Phụ thuộc hoàn toàn vào user complaint để phát hiện lỗi.",
+          "Định nghĩa thành công chỉ bằng 'nó hoạt động'."
+        ],
         "labels": {}
       },
       "ja": {
         "title": "リリース後のインパクト検証",
         "displayQuestion": "言及した機能や変更をリリースした後、期待通りのインパクトがあったことをどのように確認しましたか？",
         "displayIntent": "候補者がデプロイ後にフィードバックループを閉じているか、単にリリースして次に進むだけかを確認する。",
-        "guidance": ["追跡したメトリクスやシグナルを具体的に挙げる。", "モニタリング期間を説明する。", "結果が予期しないものだった場合の対処法を述べる。"],
-        "commonMistakes": ["インパクトを検証する計画なしにリリースする。", "障害検知をユーザーの苦情だけに依存する。", "「うまくいった」などの曖昧な言葉でのみ成功を定義する。"],
+        "guidance": [
+          "追跡したメトリクスやシグナルを具体的に挙げる。",
+          "モニタリング期間を説明する。",
+          "結果が予期しないものだった場合の対処法を述べる。"
+        ],
+        "commonMistakes": [
+          "インパクトを検証する計画なしにリリースする。",
+          "障害検知をユーザーの苦情だけに依存する。",
+          "「うまくいった」などの曖昧な言葉でのみ成功を定義する。"
+        ],
         "labels": {}
       }
     },
@@ -185,60 +523,176 @@
   },
   {
     "code": "CV4_GEN_ARCH_001",
-    "stages": ["stage_4_cv_deep_dive"],
+    "stages": [
+      "stage_4_cv_deep_dive"
+    ],
     "roleFamilies": [],
-    "levels": ["mid", "senior"],
+    "levels": [
+      "mid",
+      "senior"
+    ],
     "type": "cv_claim_verification",
-    "competencies": ["system_thinking", "trade_off_analysis"],
+    "competencies": [
+      "system_thinking",
+      "trade_off_analysis"
+    ],
     "techTags": [],
     "difficulty": 3,
     "conversationDepth": "deep",
     "intent": "Verify that architecture decisions claimed on the CV were made deliberately with trade-offs considered, not just adopted from a tutorial or senior colleague.",
     "primaryQuestion": "Walk me through the key trade-off you had to make in the system or feature you designed. What were the realistic alternatives and why did you choose this path?",
     "expectedSignals": [
-      "Names at least two concrete alternatives that were genuinely considered",
-      "Explains the criterion that drove the final choice: cost, latency, maintainability, team skill, timeline",
-      "Acknowledges what was given up with the chosen approach",
-      "Decision is grounded in the specific constraints of their context, not generic best practice"
-    ],
-    "redFlags": [
-      "Only one option was ever considered — no real trade-off analysis",
-      "The reason for the decision is 'it is the industry standard' or 'the team already knew it'",
-      "Cannot articulate what was sacrificed or what risk was accepted"
+      {
+        "label": "Names at least two concrete alternatives that were genuinely considered",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "names_option_a",
+            "description": "Names one concrete design alternative that was considered"
+          },
+          {
+            "key": "names_option_b",
+            "description": "Names at least one other realistic alternative"
+          },
+          {
+            "key": "shows_alternatives_were_real",
+            "description": "Shows the alternatives were genuinely evaluated, not invented after the fact"
+          }
+        ]
+      },
+      {
+        "label": "Explains the criterion that drove the final choice: cost, latency, maintainability, team skill, timeline",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "states_decision_criteria",
+            "description": "States the criteria used to choose, such as cost, latency, maintainability, risk, team skill, or timeline"
+          },
+          {
+            "key": "ties_criteria_to_context",
+            "description": "Ties the criteria to project constraints rather than generic preference"
+          },
+          {
+            "key": "explains_why_chosen_won",
+            "description": "Explains why the chosen path won against the alternatives"
+          }
+        ]
+      },
+      {
+        "label": "Acknowledges what was given up with the chosen approach",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "states_tradeoff_cost",
+            "description": "States the downside or cost accepted by choosing this design"
+          },
+          {
+            "key": "states_new_problem_created",
+            "description": "Explains what problem, limitation, or maintenance burden the choice created"
+          },
+          {
+            "key": "avoids_perfect_solution_story",
+            "description": "Avoids presenting the chosen approach as having no downside"
+          }
+        ]
+      },
+      {
+        "label": "Decision is grounded in the specific constraints of their context, not generic best practice",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "names_specific_constraint",
+            "description": "Names the specific constraint that shaped the decision"
+          },
+          {
+            "key": "connects_constraint_to_choice",
+            "description": "Connects that constraint directly to why one option was better"
+          },
+          {
+            "key": "reflects_on_decision_today",
+            "description": "Can reflect on whether the trade-off still looks right in hindsight"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Concrete alternatives, explicit criterion for the choice, acknowledged downside, grounded in actual constraints" },
-      { "scoreBand": "adequate", "description": "Can name an alternative and a reason but the trade-off is shallow" },
-      { "scoreBand": "weak", "description": "Only one option considered; decision was made by someone else or based solely on familiarity" }
+      {
+        "scoreBand": "strong",
+        "description": "Concrete alternatives, explicit criterion for the choice, acknowledged downside, grounded in actual constraints"
+      },
+      {
+        "scoreBand": "adequate",
+        "description": "Can name an alternative and a reason but the trade-off is shallow"
+      },
+      {
+        "scoreBand": "weak",
+        "description": "Only one option considered; decision was made by someone else or based solely on familiarity"
+      }
     ],
     "followUps": [
-      { "trigger": "missing_tradeoff", "question": "What did you give up by going with this design? What problem does that now create?", "purpose": "Force acknowledgment of the downside" },
-      { "trigger": "missing_context", "question": "What specific constraint in your situation made Option A better than Option B?", "purpose": "Verify the decision was context-specific, not generic" },
-      { "trigger": "missing_reflection", "question": "Looking back, do you still think this was the right trade-off? Why or why not?", "purpose": "Test self-awareness and depth of understanding" }
+      {
+        "trigger": "missing_tradeoff",
+        "question": "What did you give up by going with this design? What problem does that now create?",
+        "purpose": "Force acknowledgment of the downside"
+      },
+      {
+        "trigger": "missing_context",
+        "question": "What specific constraint in your situation made Option A better than Option B?",
+        "purpose": "Verify the decision was context-specific, not generic"
+      },
+      {
+        "trigger": "missing_reflection",
+        "question": "Looking back, do you still think this was the right trade-off? Why or why not?",
+        "purpose": "Test self-awareness and depth of understanding"
+      }
     ],
     "localizedContent": {
       "en": {
         "title": "Trade-off in an architecture or design decision",
         "displayQuestion": "Walk me through the key trade-off in the system or feature you designed. What alternatives did you consider and why did you choose this path?",
         "displayIntent": "Verify the design decision was deliberate and trade-offs were genuinely analyzed.",
-        "guidance": ["Name at least two alternatives you considered.", "Explain the criterion that drove your choice.", "Acknowledge what you gave up."],
-        "commonMistakes": ["Claiming there was only one option.", "Justifying the choice with 'it is standard practice'.", "Unable to name what risk or cost was accepted."],
+        "guidance": [
+          "Name at least two alternatives you considered.",
+          "Explain the criterion that drove your choice.",
+          "Acknowledge what you gave up."
+        ],
+        "commonMistakes": [
+          "Claiming there was only one option.",
+          "Justifying the choice with 'it is standard practice'.",
+          "Unable to name what risk or cost was accepted."
+        ],
         "labels": {}
       },
       "vi": {
         "title": "Trade-off trong quyết định kiến trúc hoặc thiết kế",
         "displayQuestion": "Hãy trình bày trade-off chính trong hệ thống hoặc tính năng bạn thiết kế. Bạn đã cân nhắc những phương án nào và tại sao chọn hướng này?",
         "displayIntent": "Xác minh quyết định thiết kế có chủ đích và các trade-off được phân tích thực sự.",
-        "guidance": ["Nêu ít nhất hai phương án bạn đã cân nhắc.", "Giải thích tiêu chí dẫn đến lựa chọn của bạn.", "Thừa nhận những gì bạn đã đánh đổi."],
-        "commonMistakes": ["Khai chỉ có một phương án.", "Biện minh lựa chọn bằng 'đó là best practice'.", "Không nêu được rủi ro hoặc chi phí đã chấp nhận."],
+        "guidance": [
+          "Nêu ít nhất hai phương án bạn đã cân nhắc.",
+          "Giải thích tiêu chí dẫn đến lựa chọn của bạn.",
+          "Thừa nhận những gì bạn đã đánh đổi."
+        ],
+        "commonMistakes": [
+          "Khai chỉ có một phương án.",
+          "Biện minh lựa chọn bằng 'đó là best practice'.",
+          "Không nêu được rủi ro hoặc chi phí đã chấp nhận."
+        ],
         "labels": {}
       },
       "ja": {
         "title": "アーキテクチャや設計判断におけるトレードオフ",
         "displayQuestion": "設計したシステムや機能の主要なトレードオフについて説明してください。どのような代替案を検討し、なぜこの方向を選んだのですか？",
         "displayIntent": "設計判断が意図的であり、トレードオフが真に分析されていたことを確認する。",
-        "guidance": ["検討した代替案を少なくとも2つ挙げる。", "選択を導いた基準を説明する。", "諦めたものを認める。"],
-        "commonMistakes": ["選択肢が一つしかなかったと主張する。", "「標準的な方法だから」という理由で正当化する。", "受け入れたリスクやコストを言えない。"],
+        "guidance": [
+          "検討した代替案を少なくとも2つ挙げる。",
+          "選択を導いた基準を説明する。",
+          "諦めたものを認める。"
+        ],
+        "commonMistakes": [
+          "選択肢が一つしかなかったと主張する。",
+          "「標準的な方法だから」という理由で正当化する。",
+          "受け入れたリスクやコストを言えない。"
+        ],
         "labels": {}
       }
     },
@@ -246,59 +700,168 @@
   },
   {
     "code": "CV4_GEN_ARCH_002",
-    "stages": ["stage_4_cv_deep_dive"],
+    "stages": [
+      "stage_4_cv_deep_dive"
+    ],
     "roleFamilies": [],
     "levels": [],
     "type": "cv_claim_verification",
-    "competencies": ["system_thinking", "learning_agility"],
+    "competencies": [
+      "system_thinking",
+      "learning_agility"
+    ],
     "techTags": [],
     "difficulty": 3,
     "conversationDepth": "mid",
     "intent": "Probe the candidate's self-awareness about the limitations of a past design decision and their ability to learn from it.",
     "primaryQuestion": "Looking back at the design or approach you described — what would you do differently now, and what constraint forced the original decision?",
     "expectedSignals": [
-      "Can name a specific aspect they would change",
-      "Explains what constraint (time, team size, knowledge, tooling) forced the original approach",
-      "The reflection is honest and specific, not just 'I would use the latest tech'",
-      "Shows ability to separate 'right given context at the time' from 'ideal in hindsight'"
-    ],
-    "redFlags": [
-      "Claims the original design was perfect with nothing to change",
-      "Reflection is entirely about using newer or trendier technology with no actual reasoning",
-      "Cannot articulate what the constraint was at the time"
+      {
+        "label": "Can name a specific aspect they would change",
+        "relatedTrigger": "missing_reflection",
+        "requirements": [
+          {
+            "key": "names_specific_change",
+            "description": "Names a specific design, process, tooling, data model, or architecture choice they would change now"
+          },
+          {
+            "key": "explains_problem_avoided",
+            "description": "Explains what problem would have been avoided by making that change earlier"
+          },
+          {
+            "key": "avoids_latest_tech_only",
+            "description": "Avoids saying only that they would use a newer technology without connecting it to the actual problem"
+          }
+        ]
+      },
+      {
+        "label": "Explains what constraint (time, team size, knowledge, tooling) forced the original approach",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "names_original_constraint",
+            "description": "Names the original constraint such as time, team size, knowledge, tooling, budget, or delivery pressure"
+          },
+          {
+            "key": "explains_constraint_effect",
+            "description": "Explains how that constraint forced or justified the original approach"
+          },
+          {
+            "key": "checks_if_constraint_changed",
+            "description": "Reflects on whether the constraint was still valid when the design became painful"
+          }
+        ]
+      },
+      {
+        "label": "The reflection is honest and specific, not just 'I would use the latest tech'",
+        "relatedTrigger": "missing_reflection",
+        "requirements": [
+          {
+            "key": "states_own_learning",
+            "description": "States what the candidate learned from the design outcome"
+          },
+          {
+            "key": "mentions_specific_failure_mode",
+            "description": "Mentions a concrete failure mode, maintenance pain, cost, or missed assumption"
+          },
+          {
+            "key": "shows_accountability",
+            "description": "Shows accountability for the original decision without rewriting history"
+          }
+        ]
+      },
+      {
+        "label": "Shows ability to separate 'right given context at the time' from 'ideal in hindsight'",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "evaluates_original_context",
+            "description": "Evaluates whether the original choice was reasonable given context at the time"
+          },
+          {
+            "key": "describes_hindsight_ideal",
+            "description": "Describes what the ideal approach would be with today's knowledge or constraints"
+          },
+          {
+            "key": "separates_context_from_regret",
+            "description": "Separates a thoughtful hindsight improvement from simple regret or blame"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Specific change named with honest reasoning; clearly separates original constraint from ideal design" },
-      { "scoreBand": "adequate", "description": "Acknowledges something to improve but reasoning is shallow" },
-      { "scoreBand": "weak", "description": "Nothing to change, or reflection is purely about tech trends with no depth" }
+      {
+        "scoreBand": "strong",
+        "description": "Specific change named with honest reasoning; clearly separates original constraint from ideal design"
+      },
+      {
+        "scoreBand": "adequate",
+        "description": "Acknowledges something to improve but reasoning is shallow"
+      },
+      {
+        "scoreBand": "weak",
+        "description": "Nothing to change, or reflection is purely about tech trends with no depth"
+      }
     ],
     "followUps": [
-      { "trigger": "missing_reflection", "question": "What specific problem would have been avoided if you had made that change from the start?", "purpose": "Verify the reflection is grounded in real consequences" },
-      { "trigger": "missing_context", "question": "Was the original constraint still valid when the design became a problem?", "purpose": "Test understanding of how constraints evolve over time" }
+      {
+        "trigger": "missing_reflection",
+        "question": "What specific problem would have been avoided if you had made that change from the start?",
+        "purpose": "Verify the reflection is grounded in real consequences"
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Was the original constraint still valid when the design became a problem?",
+        "purpose": "Test understanding of how constraints evolve over time"
+      }
     ],
     "localizedContent": {
       "en": {
         "title": "Reflection on a past design decision",
         "displayQuestion": "Looking back at the design or approach you described — what would you do differently now, and what constraint forced the original decision?",
         "displayIntent": "Assess self-awareness and the ability to learn from past technical decisions.",
-        "guidance": ["Name something specific you would change.", "Explain the constraint that made the original choice reasonable.", "Avoid just saying 'I would use newer tech'."],
-        "commonMistakes": ["Claiming nothing would change.", "Reflections that are only about technology trends.", "Unable to explain what forced the original decision."],
+        "guidance": [
+          "Name something specific you would change.",
+          "Explain the constraint that made the original choice reasonable.",
+          "Avoid just saying 'I would use newer tech'."
+        ],
+        "commonMistakes": [
+          "Claiming nothing would change.",
+          "Reflections that are only about technology trends.",
+          "Unable to explain what forced the original decision."
+        ],
         "labels": {}
       },
       "vi": {
         "title": "Nhìn lại quyết định thiết kế trong quá khứ",
         "displayQuestion": "Nhìn lại thiết kế hoặc cách tiếp cận bạn đã mô tả — bạn sẽ làm gì khác đi bây giờ, và ràng buộc nào đã bắt buộc quyết định ban đầu?",
         "displayIntent": "Đánh giá khả năng tự nhận thức và học hỏi từ các quyết định kỹ thuật trong quá khứ.",
-        "guidance": ["Nêu cụ thể điều bạn sẽ thay đổi.", "Giải thích ràng buộc khiến lựa chọn ban đầu có lý.", "Tránh chỉ nói 'tôi sẽ dùng tech mới hơn'."],
-        "commonMistakes": ["Khai không có gì cần thay đổi.", "Reflection chỉ về xu hướng công nghệ.", "Không giải thích được điều gì đã bắt buộc quyết định ban đầu."],
+        "guidance": [
+          "Nêu cụ thể điều bạn sẽ thay đổi.",
+          "Giải thích ràng buộc khiến lựa chọn ban đầu có lý.",
+          "Tránh chỉ nói 'tôi sẽ dùng tech mới hơn'."
+        ],
+        "commonMistakes": [
+          "Khai không có gì cần thay đổi.",
+          "Reflection chỉ về xu hướng công nghệ.",
+          "Không giải thích được điều gì đã bắt buộc quyết định ban đầu."
+        ],
         "labels": {}
       },
       "ja": {
         "title": "過去の設計判断への振り返り",
         "displayQuestion": "説明した設計やアプローチを振り返って、今なら何を変えますか？また、元の判断を強いた制約は何でしたか？",
         "displayIntent": "自己認識と過去の技術的判断から学ぶ能力を評価する。",
-        "guidance": ["具体的に変えたいことを挙げる。", "元の選択を妥当にした制約を説明する。", "「新しい技術を使う」とだけ言うのは避ける。"],
-        "commonMistakes": ["何も変えることはないと主張する。", "テクノロジートレンドのみについて述べる。", "元の判断を強いたものを説明できない。"],
+        "guidance": [
+          "具体的に変えたいことを挙げる。",
+          "元の選択を妥当にした制約を説明する。",
+          "「新しい技術を使う」とだけ言うのは避ける。"
+        ],
+        "commonMistakes": [
+          "何も変えることはないと主張する。",
+          "テクノロジートレンドのみについて述べる。",
+          "元の判断を強いたものを説明できない。"
+        ],
         "labels": {}
       }
     },
@@ -306,60 +869,173 @@
   },
   {
     "code": "CV4_GEN_DEBUG_001",
-    "stages": ["stage_4_cv_deep_dive"],
+    "stages": [
+      "stage_4_cv_deep_dive"
+    ],
     "roleFamilies": [],
     "levels": [],
     "type": "cv_claim_verification",
-    "competencies": ["problem_solving", "technical_fundamentals"],
+    "competencies": [
+      "problem_solving",
+      "technical_fundamentals"
+    ],
     "techTags": [],
     "difficulty": 3,
     "conversationDepth": "mid",
     "intent": "Verify the candidate has a structured debugging approach and can apply it under pressure, not just stumble toward a fix.",
     "primaryQuestion": "Walk me through a production issue you handled from the moment you were alerted. What was your first action and how did you narrow down the cause?",
     "expectedSignals": [
-      "Starts with a triage step: impact assessment, checking logs/metrics/alerts",
-      "Describes a systematic narrowing process, not random trial and error",
-      "Can name the signal or log entry that identified the root cause",
-      "Mentions communication: who was informed and when"
-    ],
-    "redFlags": [
-      "Jumped straight to a fix without a diagnostic step",
-      "Could not describe the signal that identified the cause — just 'tried things'",
-      "Did not communicate status to the team or stakeholders during the incident"
+      {
+        "label": "Starts with a triage step: impact assessment, checking logs/metrics/alerts",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "states_first_action",
+            "description": "States the first action after being alerted"
+          },
+          {
+            "key": "assesses_impact",
+            "description": "Assesses user impact, severity, scope, or blast radius before jumping to fixes"
+          },
+          {
+            "key": "checks_first_signal",
+            "description": "Names the first metric, log, alert, or dashboard checked and what it indicated"
+          }
+        ]
+      },
+      {
+        "label": "Describes a systematic narrowing process, not random trial and error",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "states_debugging_steps",
+            "description": "Describes ordered debugging steps used to narrow the issue"
+          },
+          {
+            "key": "rules_out_alternatives",
+            "description": "Explains what hypotheses or components were ruled out"
+          },
+          {
+            "key": "avoids_random_fixing",
+            "description": "Avoids a story of changing things randomly until symptoms disappeared"
+          }
+        ]
+      },
+      {
+        "label": "Can name the signal or log entry that identified the root cause",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "names_root_cause_signal",
+            "description": "Names the concrete log entry, metric, trace, alert, or error pattern that identified root cause"
+          },
+          {
+            "key": "distinguishes_symptom_root_cause",
+            "description": "Distinguishes root cause from symptom"
+          },
+          {
+            "key": "states_when_confident",
+            "description": "States when the candidate became confident they had identified the cause"
+          }
+        ]
+      },
+      {
+        "label": "Mentions communication: who was informed and when",
+        "relatedTrigger": "missing_personal_contribution",
+        "requirements": [
+          {
+            "key": "states_incident_role",
+            "description": "States whether the candidate debugged, coordinated, communicated, or owned mitigation"
+          },
+          {
+            "key": "names_audience_informed",
+            "description": "Names who was informed, such as team, lead, support, PM, customer, or incident channel"
+          },
+          {
+            "key": "states_communication_timing",
+            "description": "States when updates were sent during triage, mitigation, and resolution"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Structured triage, systematic narrowing with named signals, communication plan, root cause identified before fixing" },
-      { "scoreBand": "adequate", "description": "Logical process but missing either the signal identification or communication step" },
-      { "scoreBand": "weak", "description": "Describes the fix without a diagnostic process; cannot explain how they found the cause" }
+      {
+        "scoreBand": "strong",
+        "description": "Structured triage, systematic narrowing with named signals, communication plan, root cause identified before fixing"
+      },
+      {
+        "scoreBand": "adequate",
+        "description": "Logical process but missing either the signal identification or communication step"
+      },
+      {
+        "scoreBand": "weak",
+        "description": "Describes the fix without a diagnostic process; cannot explain how they found the cause"
+      }
     ],
     "followUps": [
-      { "trigger": "missing_context", "question": "What was the first metric or log you looked at, and what did it tell you?", "purpose": "Force a concrete diagnostic signal" },
-      { "trigger": "vague_answer", "question": "At what point did you know the root cause and not just the symptom?", "purpose": "Distinguish symptom from root cause understanding" },
-      { "trigger": "missing_personal_contribution", "question": "What was your specific role in the incident — were you the one debugging, communicating, or coordinating?", "purpose": "Clarify the candidate's actual contribution" }
+      {
+        "trigger": "missing_context",
+        "question": "What was the first metric or log you looked at, and what did it tell you?",
+        "purpose": "Force a concrete diagnostic signal"
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "At what point did you know the root cause and not just the symptom?",
+        "purpose": "Distinguish symptom from root cause understanding"
+      },
+      {
+        "trigger": "missing_personal_contribution",
+        "question": "What was your specific role in the incident — were you the one debugging, communicating, or coordinating?",
+        "purpose": "Clarify the candidate's actual contribution"
+      }
     ],
     "localizedContent": {
       "en": {
         "title": "Debugging a production incident",
         "displayQuestion": "Walk me through a production issue you handled from the moment you were alerted. What was your first action and how did you narrow down the cause?",
         "displayIntent": "Verify structured debugging and production incident handling ability.",
-        "guidance": ["Start with what alerted you and your immediate triage.", "Describe how you narrowed down the cause step by step.", "Name the signal that confirmed the root cause."],
-        "commonMistakes": ["Jumping straight to a fix without diagnosing.", "Describing the fix without explaining how the root cause was found.", "No mention of communication during the incident."],
+        "guidance": [
+          "Start with what alerted you and your immediate triage.",
+          "Describe how you narrowed down the cause step by step.",
+          "Name the signal that confirmed the root cause."
+        ],
+        "commonMistakes": [
+          "Jumping straight to a fix without diagnosing.",
+          "Describing the fix without explaining how the root cause was found.",
+          "No mention of communication during the incident."
+        ],
         "labels": {}
       },
       "vi": {
         "title": "Debug một production incident",
         "displayQuestion": "Hãy kể từ lúc bạn nhận được alert cho đến khi resolve incident. Hành động đầu tiên của bạn là gì và bạn đã thu hẹp nguyên nhân như thế nào?",
         "displayIntent": "Kiểm tra quy trình debug có cấu trúc và khả năng xử lý production incident.",
-        "guidance": ["Bắt đầu từ signal cảnh báo và bước triage đầu tiên.", "Mô tả cách bạn thu hẹp nguyên nhân từng bước.", "Nêu signal xác nhận root cause."],
-        "commonMistakes": ["Nhảy thẳng vào fix mà không chẩn đoán.", "Mô tả fix mà không giải thích cách tìm ra root cause.", "Không đề cập việc communicate trong incident."],
+        "guidance": [
+          "Bắt đầu từ signal cảnh báo và bước triage đầu tiên.",
+          "Mô tả cách bạn thu hẹp nguyên nhân từng bước.",
+          "Nêu signal xác nhận root cause."
+        ],
+        "commonMistakes": [
+          "Nhảy thẳng vào fix mà không chẩn đoán.",
+          "Mô tả fix mà không giải thích cách tìm ra root cause.",
+          "Không đề cập việc communicate trong incident."
+        ],
         "labels": {}
       },
       "ja": {
         "title": "本番インシデントのデバッグ",
         "displayQuestion": "アラートを受けた瞬間から対応完了まで、本番で対処したインシデントを説明してください。最初の行動は何で、どのように原因を絞り込みましたか？",
         "displayIntent": "構造的なデバッグと本番インシデント対応能力を確認する。",
-        "guidance": ["アラートと最初のトリアージから始める。", "原因を段階的に絞り込む過程を説明する。", "根本原因を確認したシグナルを挙げる。"],
-        "commonMistakes": ["診断なしに修正に飛びつく。", "根本原因をどう見つけたか説明せずに修正だけ説明する。", "インシデント中のコミュニケーションを言及しない。"],
+        "guidance": [
+          "アラートと最初のトリアージから始める。",
+          "原因を段階的に絞り込む過程を説明する。",
+          "根本原因を確認したシグナルを挙げる。"
+        ],
+        "commonMistakes": [
+          "診断なしに修正に飛びつく。",
+          "根本原因をどう見つけたか説明せずに修正だけ説明する。",
+          "インシデント中のコミュニケーションを言及しない。"
+        ],
         "labels": {}
       }
     },
@@ -367,60 +1043,176 @@
   },
   {
     "code": "CV4_GEN_MIG_001",
-    "stages": ["stage_4_cv_deep_dive"],
+    "stages": [
+      "stage_4_cv_deep_dive"
+    ],
     "roleFamilies": [],
-    "levels": ["mid", "senior"],
+    "levels": [
+      "mid",
+      "senior"
+    ],
     "type": "cv_claim_verification",
-    "competencies": ["system_thinking", "ownership"],
+    "competencies": [
+      "system_thinking",
+      "ownership"
+    ],
     "techTags": [],
     "difficulty": 4,
     "conversationDepth": "deep",
     "intent": "Verify the candidate managed migration risk deliberately — not just executed the migration and hoped for the best.",
     "primaryQuestion": "In the migration you described, how did you manage rollback risk and data integrity? What was your contingency plan if it failed partway through?",
     "expectedSignals": [
-      "Has a concrete rollback strategy: blue-green, feature flag, dual-write, or explicit rollback script",
-      "Describes how data integrity was verified during and after the migration",
-      "Can name the point of no return — the step after which rollback was no longer safe",
-      "Tested the rollback plan, not just the migration path"
-    ],
-    "redFlags": [
-      "No rollback plan — just 'we could restore from backup'",
-      "Cannot describe how data integrity was verified during the migration",
-      "The point of no return was never identified or considered"
+      {
+        "label": "Has a concrete rollback strategy: blue-green, feature flag, dual-write, or explicit rollback script",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "names_rollback_strategy",
+            "description": "Names the rollback strategy used, such as feature flag, blue-green, dual-write, shadow table, backup restore, or rollback script"
+          },
+          {
+            "key": "states_when_rollback_used",
+            "description": "Explains when and how the rollback path would be executed"
+          },
+          {
+            "key": "defines_point_of_no_return",
+            "description": "Names the step after which a clean rollback was no longer safe or simple"
+          }
+        ]
+      },
+      {
+        "label": "Describes how data integrity was verified during and after the migration",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "states_integrity_checks",
+            "description": "Describes checks such as row counts, checksums, samples, reconciliation queries, or application invariants"
+          },
+          {
+            "key": "checks_during_migration",
+            "description": "Verifies data during migration, not only at the end"
+          },
+          {
+            "key": "checks_after_migration",
+            "description": "Verifies data and application behavior after migration completes"
+          }
+        ]
+      },
+      {
+        "label": "Can name the point of no return — the step after which rollback was no longer safe",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "identifies_irreversible_step",
+            "description": "Identifies the irreversible or high-risk step in the migration"
+          },
+          {
+            "key": "explains_why_not_safe",
+            "description": "Explains why rollback after that point could lose data, corrupt state, or break compatibility"
+          },
+          {
+            "key": "plans_before_crossing_point",
+            "description": "Plans validation, communication, or backup before crossing the point of no return"
+          }
+        ]
+      },
+      {
+        "label": "Tested the rollback plan, not just the migration path",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "tested_rollback_path",
+            "description": "States that rollback was tested in staging, rehearsal, or controlled environment"
+          },
+          {
+            "key": "tested_failure_scenario",
+            "description": "Tests what happens if migration fails partway through"
+          },
+          {
+            "key": "balances_speed_risk",
+            "description": "Explains the trade-off between migration speed, downtime, and data-loss risk"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Explicit rollback strategy, data integrity verification steps, point of no return identified, rollback tested" },
-      { "scoreBand": "adequate", "description": "Has a rollback plan but did not test it or could not describe integrity checks" },
-      { "scoreBand": "weak", "description": "No real rollback plan; relied on backup or luck" }
+      {
+        "scoreBand": "strong",
+        "description": "Explicit rollback strategy, data integrity verification steps, point of no return identified, rollback tested"
+      },
+      {
+        "scoreBand": "adequate",
+        "description": "Has a rollback plan but did not test it or could not describe integrity checks"
+      },
+      {
+        "scoreBand": "weak",
+        "description": "No real rollback plan; relied on backup or luck"
+      }
     ],
     "followUps": [
-      { "trigger": "missing_context", "question": "At what point in the migration was a clean rollback no longer possible?", "purpose": "Test awareness of the point of no return" },
-      { "trigger": "vague_answer", "question": "How did you verify the data was consistent after the migration completed?", "purpose": "Verify data integrity checks were real, not assumed" },
-      { "trigger": "missing_tradeoff", "question": "How did you balance migration speed against the risk of downtime or data loss?", "purpose": "Probe the trade-off between pace and safety" }
+      {
+        "trigger": "missing_context",
+        "question": "At what point in the migration was a clean rollback no longer possible?",
+        "purpose": "Test awareness of the point of no return"
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "How did you verify the data was consistent after the migration completed?",
+        "purpose": "Verify data integrity checks were real, not assumed"
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "How did you balance migration speed against the risk of downtime or data loss?",
+        "purpose": "Probe the trade-off between pace and safety"
+      }
     ],
     "localizedContent": {
       "en": {
         "title": "Rollback risk and data integrity in a migration",
         "displayQuestion": "How did you manage rollback risk and data integrity in the migration you described? What was your contingency plan?",
         "displayIntent": "Verify the migration was managed with deliberate risk control, not just executed.",
-        "guidance": ["Describe your rollback strategy specifically.", "Explain how data integrity was verified.", "Name the point where rollback was no longer safe."],
-        "commonMistakes": ["Rollback plan is just 'restore from backup'.", "No description of data integrity verification.", "Rollback plan was never tested."],
+        "guidance": [
+          "Describe your rollback strategy specifically.",
+          "Explain how data integrity was verified.",
+          "Name the point where rollback was no longer safe."
+        ],
+        "commonMistakes": [
+          "Rollback plan is just 'restore from backup'.",
+          "No description of data integrity verification.",
+          "Rollback plan was never tested."
+        ],
         "labels": {}
       },
       "vi": {
         "title": "Rủi ro rollback và toàn vẹn dữ liệu trong migration",
         "displayQuestion": "Trong migration bạn đã mô tả, bạn quản lý rủi ro rollback và toàn vẹn dữ liệu như thế nào? Kế hoạch dự phòng của bạn là gì?",
         "displayIntent": "Kiểm tra migration được quản lý có kiểm soát rủi ro có chủ đích, không chỉ thực thi.",
-        "guidance": ["Mô tả cụ thể chiến lược rollback.", "Giải thích cách verify toàn vẹn dữ liệu.", "Nêu điểm không thể rollback an toàn nữa."],
-        "commonMistakes": ["Kế hoạch rollback chỉ là 'restore từ backup'.", "Không mô tả cách verify tính toàn vẹn dữ liệu.", "Kế hoạch rollback chưa bao giờ được test."],
+        "guidance": [
+          "Mô tả cụ thể chiến lược rollback.",
+          "Giải thích cách verify toàn vẹn dữ liệu.",
+          "Nêu điểm không thể rollback an toàn nữa."
+        ],
+        "commonMistakes": [
+          "Kế hoạch rollback chỉ là 'restore từ backup'.",
+          "Không mô tả cách verify tính toàn vẹn dữ liệu.",
+          "Kế hoạch rollback chưa bao giờ được test."
+        ],
         "labels": {}
       },
       "ja": {
         "title": "マイグレーションにおけるロールバックリスクとデータ整合性",
         "displayQuestion": "説明したマイグレーションで、ロールバックリスクとデータ整合性をどのように管理しましたか？コンティンジェンシープランは何でしたか？",
         "displayIntent": "マイグレーションが単に実行されただけでなく、意図的なリスク管理のもとで行われたことを確認する。",
-        "guidance": ["ロールバック戦略を具体的に説明する。", "データ整合性の検証方法を説明する。", "安全なロールバックができなくなる分岐点を挙げる。"],
-        "commonMistakes": ["ロールバック計画が「バックアップから復元する」だけ。", "データ整合性の検証について説明しない。", "ロールバック計画がテストされていない。"],
+        "guidance": [
+          "ロールバック戦略を具体的に説明する。",
+          "データ整合性の検証方法を説明する。",
+          "安全なロールバックができなくなる分岐点を挙げる。"
+        ],
+        "commonMistakes": [
+          "ロールバック計画が「バックアップから復元する」だけ。",
+          "データ整合性の検証について説明しない。",
+          "ロールバック計画がテストされていない。"
+        ],
         "labels": {}
       }
     },
@@ -428,60 +1220,173 @@
   },
   {
     "code": "CV4_GEN_COLLAB_001",
-    "stages": ["stage_4_cv_deep_dive"],
+    "stages": [
+      "stage_4_cv_deep_dive"
+    ],
     "roleFamilies": [],
     "levels": [],
     "type": "cv_claim_verification",
-    "competencies": ["collaboration", "communication"],
+    "competencies": [
+      "collaboration",
+      "communication"
+    ],
     "techTags": [],
     "difficulty": 3,
     "conversationDepth": "mid",
     "intent": "Verify the candidate can navigate technical disagreements productively without either capitulating immediately or ignoring others' input.",
     "primaryQuestion": "Was there a point on this project where you and the team disagreed on the technical approach? How was it resolved?",
     "expectedSignals": [
-      "Describes a real disagreement with a specific technical question at stake",
-      "Explains the process: data, prototyping, escalation, or structured discussion",
-      "Outcome is not just 'I convinced them' or 'I deferred to seniority'",
-      "Can describe what changed their mind or what evidence settled it"
-    ],
-    "redFlags": [
-      "Claims there were no disagreements — the team always agreed",
-      "Resolution was always 'the senior decided' with no independent input",
-      "Describes a conflict but cannot explain what resolved it technically"
+      {
+        "label": "Describes a real disagreement with a specific technical question at stake",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "states_disagreement_topic",
+            "description": "States the specific technical question or design decision under disagreement"
+          },
+          {
+            "key": "states_two_positions",
+            "description": "Describes the two or more technical positions being considered"
+          },
+          {
+            "key": "avoids_vague_conflict_story",
+            "description": "Avoids a generic people-conflict story with no technical decision at stake"
+          }
+        ]
+      },
+      {
+        "label": "Explains the process: data, prototyping, escalation, or structured discussion",
+        "relatedTrigger": "missing_personal_contribution",
+        "requirements": [
+          {
+            "key": "states_own_position",
+            "description": "States the candidate's own position and reasoning"
+          },
+          {
+            "key": "describes_resolution_process",
+            "description": "Describes how the disagreement was resolved using data, prototype, discussion, RFC, review, or escalation"
+          },
+          {
+            "key": "states_personal_supporting_action",
+            "description": "States what the candidate did to support or test their position"
+          }
+        ]
+      },
+      {
+        "label": "Outcome is not just 'I convinced them' or 'I deferred to seniority'",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "states_final_decision",
+            "description": "States the final technical decision"
+          },
+          {
+            "key": "explains_why_resolution_was_valid",
+            "description": "Explains why the resolution was accepted beyond authority or persuasion"
+          },
+          {
+            "key": "mentions_compromise_if_any",
+            "description": "Mentions compromise, phased approach, or changed scope if that was the real outcome"
+          }
+        ]
+      },
+      {
+        "label": "Can describe what changed their mind or what evidence settled it",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "names_deciding_evidence",
+            "description": "Names the data, prototype result, production constraint, or stakeholder requirement that settled the disagreement"
+          },
+          {
+            "key": "states_mind_change",
+            "description": "States whether the candidate changed their mind, others changed theirs, or the team found a third option"
+          },
+          {
+            "key": "reflects_on_learning",
+            "description": "Reflects on what the disagreement taught about technical decision-making"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Real technical disagreement, evidence-based resolution, candidate had independent position and defended it constructively" },
-      { "scoreBand": "adequate", "description": "Describes a disagreement but resolution is vague or purely hierarchical" },
-      { "scoreBand": "weak", "description": "No real disagreements, or candidate always deferred without contributing technically" }
+      {
+        "scoreBand": "strong",
+        "description": "Real technical disagreement, evidence-based resolution, candidate had independent position and defended it constructively"
+      },
+      {
+        "scoreBand": "adequate",
+        "description": "Describes a disagreement but resolution is vague or purely hierarchical"
+      },
+      {
+        "scoreBand": "weak",
+        "description": "No real disagreements, or candidate always deferred without contributing technically"
+      }
     ],
     "followUps": [
-      { "trigger": "vague_answer", "question": "What specifically were you and the team disagreeing about — what were the two technical positions?", "purpose": "Force the candidate to articulate the actual technical disagreement" },
-      { "trigger": "missing_personal_contribution", "question": "What was your own position and how did you support it?", "purpose": "Ensure the candidate had an independent technical stance" },
-      { "trigger": "missing_context", "question": "What changed your mind or theirs — was it data, a prototype, or something else?", "purpose": "Identify what actually resolved the disagreement" }
+      {
+        "trigger": "vague_answer",
+        "question": "What specifically were you and the team disagreeing about — what were the two technical positions?",
+        "purpose": "Force the candidate to articulate the actual technical disagreement"
+      },
+      {
+        "trigger": "missing_personal_contribution",
+        "question": "What was your own position and how did you support it?",
+        "purpose": "Ensure the candidate had an independent technical stance"
+      },
+      {
+        "trigger": "missing_context",
+        "question": "What changed your mind or theirs — was it data, a prototype, or something else?",
+        "purpose": "Identify what actually resolved the disagreement"
+      }
     ],
     "localizedContent": {
       "en": {
         "title": "Resolving a technical disagreement with the team",
         "displayQuestion": "Was there a point where you and the team disagreed on the technical approach for this project? How was it resolved?",
         "displayIntent": "Verify the candidate can navigate technical disagreements productively.",
-        "guidance": ["Describe the specific technical question you disagreed on.", "Explain your own position and how you defended it.", "Describe what resolved it — data, prototype, or discussion."],
-        "commonMistakes": ["Claiming no disagreements ever happened.", "Resolution was always 'the senior decided'.", "Unable to explain what technically settled the disagreement."],
+        "guidance": [
+          "Describe the specific technical question you disagreed on.",
+          "Explain your own position and how you defended it.",
+          "Describe what resolved it — data, prototype, or discussion."
+        ],
+        "commonMistakes": [
+          "Claiming no disagreements ever happened.",
+          "Resolution was always 'the senior decided'.",
+          "Unable to explain what technically settled the disagreement."
+        ],
         "labels": {}
       },
       "vi": {
         "title": "Giải quyết bất đồng kỹ thuật với team",
         "displayQuestion": "Có lúc nào bạn và team không đồng ý về cách tiếp cận kỹ thuật cho dự án này không? Nó được giải quyết như thế nào?",
         "displayIntent": "Kiểm tra ứng viên có thể xử lý bất đồng kỹ thuật một cách hiệu quả.",
-        "guidance": ["Mô tả câu hỏi kỹ thuật cụ thể mà bạn không đồng ý.", "Giải thích quan điểm của bạn và cách bạn bảo vệ nó.", "Mô tả điều gì đã giải quyết — dữ liệu, prototype, hay thảo luận."],
-        "commonMistakes": ["Khai không bao giờ có bất đồng.", "Giải quyết luôn là 'senior quyết định'.", "Không giải thích được điều gì về mặt kỹ thuật đã giải quyết bất đồng."],
+        "guidance": [
+          "Mô tả câu hỏi kỹ thuật cụ thể mà bạn không đồng ý.",
+          "Giải thích quan điểm của bạn và cách bạn bảo vệ nó.",
+          "Mô tả điều gì đã giải quyết — dữ liệu, prototype, hay thảo luận."
+        ],
+        "commonMistakes": [
+          "Khai không bao giờ có bất đồng.",
+          "Giải quyết luôn là 'senior quyết định'.",
+          "Không giải thích được điều gì về mặt kỹ thuật đã giải quyết bất đồng."
+        ],
         "labels": {}
       },
       "ja": {
         "title": "チームとの技術的な意見の相違の解決",
         "displayQuestion": "このプロジェクトで技術的なアプローチについてチームと意見が合わなかった時がありましたか？どのように解決しましたか？",
         "displayIntent": "候補者が技術的な意見の相違を生産的に処理できるかを確認する。",
-        "guidance": ["意見が合わなかった具体的な技術的問題を説明する。", "自分の立場とその主張方法を説明する。", "何が解決に導いたか — データ、プロトタイプ、議論 — を説明する。"],
-        "commonMistakes": ["意見の相違が一度もなかったと主張する。", "いつも「シニアが決めた」という解決方法。", "技術的に何が意見の相違を解決したか説明できない。"],
+        "guidance": [
+          "意見が合わなかった具体的な技術的問題を説明する。",
+          "自分の立場とその主張方法を説明する。",
+          "何が解決に導いたか — データ、プロトタイプ、議論 — を説明する。"
+        ],
+        "commonMistakes": [
+          "意見の相違が一度もなかったと主張する。",
+          "いつも「シニアが決めた」という解決方法。",
+          "技術的に何が意見の相違を解決したか説明できない。"
+        ],
         "labels": {}
       }
     },
@@ -489,59 +1394,168 @@
   },
   {
     "code": "CV4_GEN_IMPACT_001",
-    "stages": ["stage_4_cv_deep_dive"],
+    "stages": [
+      "stage_4_cv_deep_dive"
+    ],
     "roleFamilies": [],
     "levels": [],
     "type": "cv_claim_verification",
-    "competencies": ["impact_measurement", "communication"],
+    "competencies": [
+      "impact_measurement",
+      "communication"
+    ],
     "techTags": [],
     "difficulty": 3,
     "conversationDepth": "mid",
     "intent": "Verify the candidate can translate a technical change into business or user impact and communicate it beyond the engineering team.",
     "primaryQuestion": "How did you communicate the technical decision or result you described to non-technical stakeholders? What did you emphasize?",
     "expectedSignals": [
-      "Translates technical outcome into user or business terms: reliability, speed, cost, revenue, risk",
-      "Adjusts language for the audience — does not recite technical specs to non-engineers",
-      "Mentions a specific audience: PM, executive, customer",
-      "Can describe what question the stakeholder was actually trying to answer"
-    ],
-    "redFlags": [
-      "Communication was only within the engineering team — no non-technical stakeholders involved",
-      "Describes the technical implementation without any translation to business impact",
-      "Uses jargon with a non-technical audience without noticing it"
+      {
+        "label": "Translates technical outcome into user or business terms: reliability, speed, cost, revenue, risk",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "states_business_framing",
+            "description": "Frames the technical result in user, business, reliability, cost, revenue, or risk terms"
+          },
+          {
+            "key": "avoids_raw_technical_only",
+            "description": "Avoids only reciting implementation details to a non-technical audience"
+          },
+          {
+            "key": "gives_message_example",
+            "description": "Gives a concrete example of the message or phrasing used"
+          }
+        ]
+      },
+      {
+        "label": "Adjusts language for the audience — does not recite technical specs to non-engineers",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "uses_audience_language",
+            "description": "Uses language appropriate for the stakeholder's background"
+          },
+          {
+            "key": "chooses_relevant_detail_level",
+            "description": "Chooses the right level of detail instead of dumping technical specs"
+          },
+          {
+            "key": "explains_tradeoff_plainly",
+            "description": "Explains risks, trade-offs, or impact in terms the stakeholder can act on"
+          }
+        ]
+      },
+      {
+        "label": "Mentions a specific audience: PM, executive, customer",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "names_stakeholder",
+            "description": "Names the non-technical stakeholder or audience"
+          },
+          {
+            "key": "states_stakeholder_concern",
+            "description": "States what that stakeholder cared about most"
+          },
+          {
+            "key": "connects_message_to_audience",
+            "description": "Connects the chosen framing to that stakeholder's concern"
+          }
+        ]
+      },
+      {
+        "label": "Can describe what question the stakeholder was actually trying to answer",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "identifies_underlying_question",
+            "description": "Identifies the business or product question behind the stakeholder discussion"
+          },
+          {
+            "key": "answers_decision_need",
+            "description": "Explains what decision the stakeholder needed to make from the information"
+          },
+          {
+            "key": "mentions_followup_or_outcome",
+            "description": "Mentions whether the communication led to alignment, approval, customer expectation setting, or a next action"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Clear audience-aware translation, business/user framing, specific stakeholder named, stakeholder's concern addressed" },
-      { "scoreBand": "adequate", "description": "Some translation attempt but still technical-heavy or audience not specified" },
-      { "scoreBand": "weak", "description": "No non-technical communication; candidate only reported to engineers" }
+      {
+        "scoreBand": "strong",
+        "description": "Clear audience-aware translation, business/user framing, specific stakeholder named, stakeholder's concern addressed"
+      },
+      {
+        "scoreBand": "adequate",
+        "description": "Some translation attempt but still technical-heavy or audience not specified"
+      },
+      {
+        "scoreBand": "weak",
+        "description": "No non-technical communication; candidate only reported to engineers"
+      }
     ],
     "followUps": [
-      { "trigger": "missing_context", "question": "Who was the non-technical stakeholder you communicated this to, and what did they care about most?", "purpose": "Force the candidate to identify the audience's actual concern" },
-      { "trigger": "vague_answer", "question": "How did you frame it in terms they would understand — can you give me a specific example of the message?", "purpose": "Test ability to reframe technical outcomes in business terms" }
+      {
+        "trigger": "missing_context",
+        "question": "Who was the non-technical stakeholder you communicated this to, and what did they care about most?",
+        "purpose": "Force the candidate to identify the audience's actual concern"
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "How did you frame it in terms they would understand — can you give me a specific example of the message?",
+        "purpose": "Test ability to reframe technical outcomes in business terms"
+      }
     ],
     "localizedContent": {
       "en": {
         "title": "Communicating technical results to non-technical stakeholders",
         "displayQuestion": "How did you communicate the technical decision or result you described to non-technical stakeholders? What did you emphasize?",
         "displayIntent": "Verify the candidate can translate technical work into business impact and communicate it clearly to a non-engineering audience.",
-        "guidance": ["Name the specific stakeholder and their concern.", "Explain how you translated the technical outcome into business terms.", "Avoid technical jargon when describing what you communicated."],
-        "commonMistakes": ["Only communicating within the engineering team.", "Describing the technical implementation instead of the impact.", "Using jargon with a non-technical audience."],
+        "guidance": [
+          "Name the specific stakeholder and their concern.",
+          "Explain how you translated the technical outcome into business terms.",
+          "Avoid technical jargon when describing what you communicated."
+        ],
+        "commonMistakes": [
+          "Only communicating within the engineering team.",
+          "Describing the technical implementation instead of the impact.",
+          "Using jargon with a non-technical audience."
+        ],
         "labels": {}
       },
       "vi": {
         "title": "Truyền đạt kết quả kỹ thuật cho stakeholder không kỹ thuật",
         "displayQuestion": "Bạn đã truyền đạt quyết định hoặc kết quả kỹ thuật bạn đề cập cho stakeholder không kỹ thuật như thế nào? Bạn nhấn mạnh vào điều gì?",
         "displayIntent": "Kiểm tra ứng viên có thể dịch công việc kỹ thuật sang tác động kinh doanh và truyền đạt rõ ràng cho audience không phải kỹ sư.",
-        "guidance": ["Nêu tên stakeholder cụ thể và mối quan tâm của họ.", "Giải thích cách bạn chuyển đổi kết quả kỹ thuật sang ngôn ngữ kinh doanh.", "Tránh jargon kỹ thuật khi mô tả điều bạn đã truyền đạt."],
-        "commonMistakes": ["Chỉ communicate trong team kỹ thuật.", "Mô tả implementation thay vì impact.", "Dùng jargon với audience không kỹ thuật."],
+        "guidance": [
+          "Nêu tên stakeholder cụ thể và mối quan tâm của họ.",
+          "Giải thích cách bạn chuyển đổi kết quả kỹ thuật sang ngôn ngữ kinh doanh.",
+          "Tránh jargon kỹ thuật khi mô tả điều bạn đã truyền đạt."
+        ],
+        "commonMistakes": [
+          "Chỉ communicate trong team kỹ thuật.",
+          "Mô tả implementation thay vì impact.",
+          "Dùng jargon với audience không kỹ thuật."
+        ],
         "labels": {}
       },
       "ja": {
         "title": "非技術系ステークホルダーへの技術的成果の伝達",
         "displayQuestion": "説明した技術的判断や成果を非技術系ステークホルダーにどのように伝えましたか？何を強調しましたか？",
         "displayIntent": "候補者が技術的な作業をビジネスインパクトに変換し、エンジニアリング以外のオーディエンスに明確に伝えられるかを確認する。",
-        "guidance": ["特定のステークホルダーとその関心事を挙げる。", "技術的成果をビジネス用語に変換した方法を説明する。", "伝えた内容を説明する際に技術的な専門用語を避ける。"],
-        "commonMistakes": ["エンジニアリングチーム内だけでコミュニケーションする。", "インパクトではなく技術的実装を説明する。", "非技術系オーディエンスに専門用語を使う。"],
+        "guidance": [
+          "特定のステークホルダーとその関心事を挙げる。",
+          "技術的成果をビジネス用語に変換した方法を説明する。",
+          "伝えた内容を説明する際に技術的な専門用語を避ける。"
+        ],
+        "commonMistakes": [
+          "エンジニアリングチーム内だけでコミュニケーションする。",
+          "インパクトではなく技術的実装を説明する。",
+          "非技術系オーディエンスに専門用語を使う。"
+        ],
         "labels": {}
       }
     },
@@ -549,60 +1563,182 @@
   },
   {
     "code": "CV4_DB_PG_001",
-    "stages": ["stage_4_cv_deep_dive"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["mid", "senior"],
+    "stages": [
+      "stage_4_cv_deep_dive"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "mid",
+      "senior"
+    ],
     "type": "cv_claim_verification",
-    "competencies": ["system_thinking", "problem_solving"],
-    "techTags": ["postgresql", "mysql"],
+    "competencies": [
+      "system_thinking",
+      "problem_solving"
+    ],
+    "techTags": [
+      "postgresql",
+      "mysql"
+    ],
     "difficulty": 4,
     "conversationDepth": "deep",
     "intent": "Verify the candidate executed a database schema change or query optimization on a live production system safely, with migration strategy and monitoring in place.",
     "primaryQuestion": "Walk me through how you ran the database schema change or query optimization you mentioned in production. How did you avoid downtime or data issues?",
     "expectedSignals": [
-      "Names a specific migration strategy: online DDL, expand-contract, shadow table",
-      "Describes lock behavior and why the chosen approach avoids or minimizes table locks",
-      "Had a validation step before and after the migration",
-      "Staged rollout: ran on a replica or staging environment first"
-    ],
-    "redFlags": [
-      "Ran ALTER TABLE on a large live table with no lock consideration",
-      "No validation step — assumed it worked",
-      "No mention of testing on a non-production environment first"
+      {
+        "label": "Names a specific migration strategy: online DDL, expand-contract, shadow table",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "names_db_migration_strategy",
+            "description": "Names the concrete strategy used, such as online DDL, expand-contract, shadow table, backfill, or maintenance window"
+          },
+          {
+            "key": "explains_strategy_fit",
+            "description": "Explains why the strategy fit the table size, traffic, and risk profile"
+          },
+          {
+            "key": "compares_to_maintenance_window",
+            "description": "Explains why this approach was chosen instead of a simple maintenance window if relevant"
+          }
+        ]
+      },
+      {
+        "label": "Describes lock behavior and why the chosen approach avoids or minimizes table locks",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "states_table_size",
+            "description": "States table size or scale context where lock behavior mattered"
+          },
+          {
+            "key": "describes_lock_waits",
+            "description": "Describes expected lock behavior, lock wait risk, or online operation behavior"
+          },
+          {
+            "key": "explains_lock_mitigation",
+            "description": "Explains how the chosen approach minimized downtime or blocked writes/reads"
+          }
+        ]
+      },
+      {
+        "label": "Had a validation step before and after the migration",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "validates_before",
+            "description": "Describes pre-migration validation such as schema check, query plan baseline, dry run, or backup verification"
+          },
+          {
+            "key": "validates_after",
+            "description": "Describes post-migration validation such as row counts, query performance, errors, or data consistency checks"
+          },
+          {
+            "key": "ties_validation_to_data_safety",
+            "description": "Connects validation to avoiding data issues or confirming query optimization worked"
+          }
+        ]
+      },
+      {
+        "label": "Staged rollout: ran on a replica or staging environment first",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_rehearsal_environment",
+            "description": "Mentions staging, replica, canary, shadow traffic, or dry-run environment"
+          },
+          {
+            "key": "states_rollout_sequence",
+            "description": "States the sequence from test/rehearsal to production rollout"
+          },
+          {
+            "key": "monitors_after_rollout",
+            "description": "Monitors query latency, errors, locks, replication lag, or resource usage after rollout"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Named migration strategy, explicit lock handling, staged rollout, pre/post validation" },
-      { "scoreBand": "adequate", "description": "Had a migration plan but gaps in lock awareness or validation steps" },
-      { "scoreBand": "weak", "description": "No real migration strategy; relied on low-traffic windows and hope" }
+      {
+        "scoreBand": "strong",
+        "description": "Named migration strategy, explicit lock handling, staged rollout, pre/post validation"
+      },
+      {
+        "scoreBand": "adequate",
+        "description": "Had a migration plan but gaps in lock awareness or validation steps"
+      },
+      {
+        "scoreBand": "weak",
+        "description": "No real migration strategy; relied on low-traffic windows and hope"
+      }
     ],
     "followUps": [
-      { "trigger": "missing_context", "question": "How large was the table, and did you consider lock wait times before running the migration?", "purpose": "Check awareness of locking impact at scale" },
-      { "trigger": "missing_tradeoff", "question": "Why did you choose this migration approach over running it during a maintenance window?", "purpose": "Test understanding of trade-offs between downtime and online migration" },
-      { "trigger": "vague_answer", "question": "What did you check after the migration to confirm queries were performing as expected?", "purpose": "Verify post-migration validation happened" }
+      {
+        "trigger": "missing_context",
+        "question": "How large was the table, and did you consider lock wait times before running the migration?",
+        "purpose": "Check awareness of locking impact at scale"
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "Why did you choose this migration approach over running it during a maintenance window?",
+        "purpose": "Test understanding of trade-offs between downtime and online migration"
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "What did you check after the migration to confirm queries were performing as expected?",
+        "purpose": "Verify post-migration validation happened"
+      }
     ],
     "localizedContent": {
       "en": {
         "title": "Safe database schema change in production",
         "displayQuestion": "Walk me through how you ran the database schema change or query optimization you mentioned in production. How did you avoid downtime or data issues?",
         "displayIntent": "Verify that production database changes were executed with a safe migration strategy.",
-        "guidance": ["Name the migration strategy you used.", "Explain how you handled locking.", "Describe your pre/post validation."],
-        "commonMistakes": ["Running ALTER TABLE on a large live table without considering locks.", "No validation after the migration.", "No testing on a non-production environment first."],
+        "guidance": [
+          "Name the migration strategy you used.",
+          "Explain how you handled locking.",
+          "Describe your pre/post validation."
+        ],
+        "commonMistakes": [
+          "Running ALTER TABLE on a large live table without considering locks.",
+          "No validation after the migration.",
+          "No testing on a non-production environment first."
+        ],
         "labels": {}
       },
       "vi": {
         "title": "Thay đổi schema database an toàn trên production",
         "displayQuestion": "Hãy mô tả cách bạn thực hiện thay đổi schema database hoặc tối ưu query trên production. Bạn tránh downtime hoặc vấn đề dữ liệu như thế nào?",
         "displayIntent": "Kiểm tra các thay đổi database production được thực hiện với chiến lược migration an toàn.",
-        "guidance": ["Nêu tên chiến lược migration bạn dùng.", "Giải thích cách bạn xử lý locking.", "Mô tả bước validation trước và sau."],
-        "commonMistakes": ["Chạy ALTER TABLE trên bảng lớn live mà không xem xét locks.", "Không validate sau khi migration.", "Không test trên môi trường non-production trước."],
+        "guidance": [
+          "Nêu tên chiến lược migration bạn dùng.",
+          "Giải thích cách bạn xử lý locking.",
+          "Mô tả bước validation trước và sau."
+        ],
+        "commonMistakes": [
+          "Chạy ALTER TABLE trên bảng lớn live mà không xem xét locks.",
+          "Không validate sau khi migration.",
+          "Không test trên môi trường non-production trước."
+        ],
         "labels": {}
       },
       "ja": {
         "title": "本番での安全なデータベーススキーマ変更",
         "displayQuestion": "本番で実行したデータベーススキーマ変更やクエリ最適化をどのように行いましたか？ダウンタイムやデータ問題をどのように回避しましたか？",
         "displayIntent": "本番データベースの変更が安全なマイグレーション戦略で実行されたことを確認する。",
-        "guidance": ["使用したマイグレーション戦略を挙げる。", "ロック処理の方法を説明する。", "事前・事後の検証を説明する。"],
-        "commonMistakes": ["ロックを考慮せず大きなライブテーブルにALTER TABLEを実行する。", "マイグレーション後の検証をしない。", "非本番環境での事前テストをしない。"],
+        "guidance": [
+          "使用したマイグレーション戦略を挙げる。",
+          "ロック処理の方法を説明する。",
+          "事前・事後の検証を説明する。"
+        ],
+        "commonMistakes": [
+          "ロックを考慮せず大きなライブテーブルにALTER TABLEを実行する。",
+          "マイグレーション後の検証をしない。",
+          "非本番環境での事前テストをしない。"
+        ],
         "labels": {}
       }
     },
@@ -610,60 +1746,181 @@
   },
   {
     "code": "CV4_CACHE_REDIS_001",
-    "stages": ["stage_4_cv_deep_dive"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["mid", "senior"],
+    "stages": [
+      "stage_4_cv_deep_dive"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "mid",
+      "senior"
+    ],
     "type": "cv_claim_verification",
-    "competencies": ["system_thinking", "trade_off_analysis"],
-    "techTags": ["redis"],
+    "competencies": [
+      "system_thinking",
+      "trade_off_analysis"
+    ],
+    "techTags": [
+      "redis"
+    ],
     "difficulty": 4,
     "conversationDepth": "deep",
     "intent": "Verify the candidate built a cache layer with deliberate invalidation strategy, not just added Redis and hoped data stayed fresh.",
     "primaryQuestion": "How did you design the cache invalidation strategy for the feature you built with Redis? What event or condition triggered an invalidation?",
     "expectedSignals": [
-      "Names a specific invalidation strategy: TTL, event-driven, write-through, cache-aside",
-      "Explains why this strategy fits their use case: read-heavy, write frequency, consistency requirements",
-      "Describes what stale data would look like and the accepted staleness window",
-      "Mentions edge cases: cold start, cache stampede, or race conditions on invalidation"
-    ],
-    "redFlags": [
-      "Invalidation strategy is only TTL with no write-side coordination",
-      "No consideration of what happens when the cache is cold (empty after deploy or eviction)",
-      "Cache serves stale data in cases where it would cause a correctness issue"
+      {
+        "label": "Names a specific invalidation strategy: TTL, event-driven, write-through, cache-aside",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "names_cache_strategy",
+            "description": "Names the actual cache strategy such as TTL, event-driven invalidation, write-through, write-behind, or cache-aside"
+          },
+          {
+            "key": "states_invalidation_trigger",
+            "description": "States the event, write path, deployment, or condition that invalidated the cache"
+          },
+          {
+            "key": "describes_cache_state_after_deploy",
+            "description": "Explains what happens to cache state after deployment if relevant"
+          }
+        ]
+      },
+      {
+        "label": "Explains why this strategy fits their use case: read-heavy, write frequency, consistency requirements",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "states_read_write_pattern",
+            "description": "States read frequency, write frequency, and traffic pattern for the cached data"
+          },
+          {
+            "key": "states_consistency_need",
+            "description": "States consistency requirements and acceptable freshness"
+          },
+          {
+            "key": "connects_strategy_to_pattern",
+            "description": "Explains why the chosen invalidation strategy fits those constraints"
+          }
+        ]
+      },
+      {
+        "label": "Describes what stale data would look like and the accepted staleness window",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "describes_stale_data_case",
+            "description": "Describes what stale data would mean to users or business behavior"
+          },
+          {
+            "key": "states_staleness_window",
+            "description": "States the acceptable staleness window"
+          },
+          {
+            "key": "explains_window_decision",
+            "description": "Explains how the staleness window was chosen"
+          }
+        ]
+      },
+      {
+        "label": "Mentions edge cases: cold start, cache stampede, or race conditions on invalidation",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "handles_cache_stampede",
+            "description": "Mentions protection against cache stampede or thundering herd on cache miss"
+          },
+          {
+            "key": "handles_cold_start",
+            "description": "Mentions cold start behavior after deploy, flush, or cache miss surge"
+          },
+          {
+            "key": "handles_invalidation_race",
+            "description": "Mentions race conditions between writes, reads, and invalidation events"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Named strategy, consistency requirement explained, staleness window defined, cold start or race condition handled" },
-      { "scoreBand": "adequate", "description": "Has a strategy but edge cases like cache stampede or cold start were not considered" },
-      { "scoreBand": "weak", "description": "TTL only with no write coordination; cache correctness not analyzed" }
+      {
+        "scoreBand": "strong",
+        "description": "Named strategy, consistency requirement explained, staleness window defined, cold start or race condition handled"
+      },
+      {
+        "scoreBand": "adequate",
+        "description": "Has a strategy but edge cases like cache stampede or cold start were not considered"
+      },
+      {
+        "scoreBand": "weak",
+        "description": "TTL only with no write coordination; cache correctness not analyzed"
+      }
     ],
     "followUps": [
-      { "trigger": "missing_tradeoff", "question": "When a cache miss happens under high load, what prevents multiple requests from all hitting the database simultaneously?", "purpose": "Check awareness of cache stampede / thundering herd" },
-      { "trigger": "missing_context", "question": "What was the acceptable staleness window for this data, and how did you decide it?", "purpose": "Verify the consistency requirement was explicit and deliberate" },
-      { "trigger": "vague_answer", "question": "What happens to your cache state immediately after a deployment?", "purpose": "Check cold start handling" }
+      {
+        "trigger": "missing_tradeoff",
+        "question": "When a cache miss happens under high load, what prevents multiple requests from all hitting the database simultaneously?",
+        "purpose": "Check awareness of cache stampede / thundering herd"
+      },
+      {
+        "trigger": "missing_context",
+        "question": "What was the acceptable staleness window for this data, and how did you decide it?",
+        "purpose": "Verify the consistency requirement was explicit and deliberate"
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "What happens to your cache state immediately after a deployment?",
+        "purpose": "Check cold start handling"
+      }
     ],
     "localizedContent": {
       "en": {
         "title": "Cache invalidation strategy for a Redis feature",
         "displayQuestion": "How did you design the cache invalidation strategy for the Redis feature you built? What triggered an invalidation?",
         "displayIntent": "Verify the cache layer was built with a deliberate invalidation strategy, not just TTL.",
-        "guidance": ["Name your invalidation strategy explicitly.", "Explain the staleness window and why it is acceptable.", "Describe how you handle cold start or cache stampede."],
-        "commonMistakes": ["Only using TTL with no write-side coordination.", "No handling of cold start after deploy.", "Stale data can cause correctness issues without awareness."],
+        "guidance": [
+          "Name your invalidation strategy explicitly.",
+          "Explain the staleness window and why it is acceptable.",
+          "Describe how you handle cold start or cache stampede."
+        ],
+        "commonMistakes": [
+          "Only using TTL with no write-side coordination.",
+          "No handling of cold start after deploy.",
+          "Stale data can cause correctness issues without awareness."
+        ],
         "labels": {}
       },
       "vi": {
         "title": "Chiến lược cache invalidation cho tính năng Redis",
         "displayQuestion": "Bạn thiết kế chiến lược cache invalidation cho tính năng Redis như thế nào? Điều gì kích hoạt invalidation?",
         "displayIntent": "Kiểm tra cache layer được xây dựng với chiến lược invalidation có chủ đích, không chỉ dùng TTL.",
-        "guidance": ["Nêu rõ chiến lược invalidation của bạn.", "Giải thích khoảng thời gian staleness và tại sao chấp nhận được.", "Mô tả cách xử lý cold start hoặc cache stampede."],
-        "commonMistakes": ["Chỉ dùng TTL mà không có write-side coordination.", "Không xử lý cold start sau deploy.", "Dữ liệu stale có thể gây vấn đề correctness mà không nhận ra."],
+        "guidance": [
+          "Nêu rõ chiến lược invalidation của bạn.",
+          "Giải thích khoảng thời gian staleness và tại sao chấp nhận được.",
+          "Mô tả cách xử lý cold start hoặc cache stampede."
+        ],
+        "commonMistakes": [
+          "Chỉ dùng TTL mà không có write-side coordination.",
+          "Không xử lý cold start sau deploy.",
+          "Dữ liệu stale có thể gây vấn đề correctness mà không nhận ra."
+        ],
         "labels": {}
       },
       "ja": {
         "title": "Redis機能のキャッシュ無効化戦略",
         "displayQuestion": "構築したRedis機能のキャッシュ無効化戦略をどのように設計しましたか？何が無効化をトリガーしましたか？",
         "displayIntent": "キャッシュレイヤーがTTLだけでなく意図的な無効化戦略で構築されたことを確認する。",
-        "guidance": ["無効化戦略を明示的に挙げる。", "許容する staleness ウィンドウとその理由を説明する。", "コールドスタートやキャッシュスタンピードの処理を説明する。"],
-        "commonMistakes": ["ライトサイドの調整なしにTTLのみを使用する。", "デプロイ後のコールドスタートを処理しない。", "古いデータが正確性の問題を引き起こす可能性を認識しない。"],
+        "guidance": [
+          "無効化戦略を明示的に挙げる。",
+          "許容する staleness ウィンドウとその理由を説明する。",
+          "コールドスタートやキャッシュスタンピードの処理を説明する。"
+        ],
+        "commonMistakes": [
+          "ライトサイドの調整なしにTTLのみを使用する。",
+          "デプロイ後のコールドスタートを処理しない。",
+          "古いデータが正確性の問題を引き起こす可能性を認識しない。"
+        ],
         "labels": {}
       }
     },
@@ -671,60 +1928,178 @@
   },
   {
     "code": "CV4_AUTH_JWT_001",
-    "stages": ["stage_4_cv_deep_dive"],
-    "roleFamilies": ["backend", "fullstack"],
+    "stages": [
+      "stage_4_cv_deep_dive"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
     "levels": [],
     "type": "cv_claim_verification",
-    "competencies": ["technical_fundamentals", "system_thinking"],
-    "techTags": ["jwt"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking"
+    ],
+    "techTags": [
+      "jwt"
+    ],
     "difficulty": 3,
     "conversationDepth": "mid",
     "intent": "Verify the candidate implemented an authentication flow with proper understanding of token lifecycle, not just copied a tutorial.",
     "primaryQuestion": "Walk me through the token lifecycle in the authentication flow you implemented — from login to expiry. How did you handle token refresh and revocation?",
     "expectedSignals": [
-      "Describes access token and refresh token separation: short-lived access, long-lived refresh",
-      "Explains token storage: where access and refresh tokens are stored and why",
-      "Describes the refresh flow: when it is triggered, how it is secured",
-      "Has a revocation mechanism: token blacklist, refresh token rotation, or short TTL"
-    ],
-    "redFlags": [
-      "Long-lived access tokens with no refresh mechanism",
-      "Tokens stored in localStorage with no awareness of XSS risk",
-      "No revocation strategy — tokens are valid until they expire regardless of logout"
+      {
+        "label": "Describes access token and refresh token separation: short-lived access, long-lived refresh",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "distinguishes_access_refresh",
+            "description": "Distinguishes access tokens from refresh tokens"
+          },
+          {
+            "key": "states_access_token_ttl",
+            "description": "States that access tokens are short-lived"
+          },
+          {
+            "key": "states_refresh_token_role",
+            "description": "States that refresh tokens are longer-lived and used to obtain new access tokens"
+          }
+        ]
+      },
+      {
+        "label": "Explains token storage: where access and refresh tokens are stored and why",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "states_refresh_storage",
+            "description": "States where refresh tokens are stored on client and server side if applicable"
+          },
+          {
+            "key": "explains_storage_choice",
+            "description": "Explains why that storage location was chosen, including XSS/CSRF or mobile/web constraints"
+          },
+          {
+            "key": "states_access_storage",
+            "description": "States where access tokens are stored or held during requests"
+          }
+        ]
+      },
+      {
+        "label": "Describes the refresh flow: when it is triggered, how it is secured",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "states_refresh_trigger",
+            "description": "Describes when refresh is triggered, such as access expiry or near-expiry"
+          },
+          {
+            "key": "states_refresh_validation",
+            "description": "Explains how the refresh token is validated and tied to a user/session/device"
+          },
+          {
+            "key": "protects_refresh_endpoint",
+            "description": "Explains security controls such as rotation, secure cookies, TLS, CSRF protection, or reuse detection"
+          }
+        ]
+      },
+      {
+        "label": "Has a revocation mechanism: token blacklist, refresh token rotation, or short TTL",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "states_revocation_mechanism",
+            "description": "Names revocation mechanism such as blacklist, refresh token rotation, session store, password-change invalidation, or short TTL"
+          },
+          {
+            "key": "handles_stolen_refresh_token",
+            "description": "Explains how damage is limited if a refresh token is stolen"
+          },
+          {
+            "key": "handles_password_change",
+            "description": "Explains what happens to existing tokens after password change or account compromise"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Correct access/refresh separation, secure storage decision justified, refresh flow described, revocation strategy present" },
-      { "scoreBand": "adequate", "description": "Has access/refresh tokens but storage or revocation is not fully thought through" },
-      { "scoreBand": "weak", "description": "Single long-lived token; storage or revocation not considered" }
+      {
+        "scoreBand": "strong",
+        "description": "Correct access/refresh separation, secure storage decision justified, refresh flow described, revocation strategy present"
+      },
+      {
+        "scoreBand": "adequate",
+        "description": "Has access/refresh tokens but storage or revocation is not fully thought through"
+      },
+      {
+        "scoreBand": "weak",
+        "description": "Single long-lived token; storage or revocation not considered"
+      }
     ],
     "followUps": [
-      { "trigger": "missing_context", "question": "Where did you store the refresh token and why did you choose that storage location?", "purpose": "Test awareness of XSS vs. CSRF trade-off in token storage" },
-      { "trigger": "missing_tradeoff", "question": "If a user's refresh token is stolen, how does your system limit the damage?", "purpose": "Test revocation and rotation awareness" },
-      { "trigger": "vague_answer", "question": "What happens to existing tokens when a user changes their password?", "purpose": "Check if revocation handles credential change scenarios" }
+      {
+        "trigger": "missing_context",
+        "question": "Where did you store the refresh token and why did you choose that storage location?",
+        "purpose": "Test awareness of XSS vs. CSRF trade-off in token storage"
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "If a user's refresh token is stolen, how does your system limit the damage?",
+        "purpose": "Test revocation and rotation awareness"
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "What happens to existing tokens when a user changes their password?",
+        "purpose": "Check if revocation handles credential change scenarios"
+      }
     ],
     "localizedContent": {
       "en": {
         "title": "JWT token lifecycle and revocation",
         "displayQuestion": "Walk me through the token lifecycle in the authentication flow you implemented — from login to expiry. How did you handle refresh and revocation?",
         "displayIntent": "Verify the authentication flow was implemented with correct understanding of token security.",
-        "guidance": ["Describe access token and refresh token separately.", "Explain where each is stored and why.", "Describe your revocation strategy."],
-        "commonMistakes": ["Using a single long-lived access token.", "Storing tokens in localStorage without considering XSS.", "No revocation on logout or credential change."],
+        "guidance": [
+          "Describe access token and refresh token separately.",
+          "Explain where each is stored and why.",
+          "Describe your revocation strategy."
+        ],
+        "commonMistakes": [
+          "Using a single long-lived access token.",
+          "Storing tokens in localStorage without considering XSS.",
+          "No revocation on logout or credential change."
+        ],
         "labels": {}
       },
       "vi": {
         "title": "Vòng đời JWT token và revocation",
         "displayQuestion": "Hãy mô tả vòng đời token trong auth flow bạn implement — từ login đến hết hạn. Bạn xử lý token refresh và revocation như thế nào?",
         "displayIntent": "Kiểm tra auth flow được implement với hiểu biết đúng về bảo mật token.",
-        "guidance": ["Mô tả riêng access token và refresh token.", "Giải thích mỗi cái được lưu ở đâu và tại sao.", "Mô tả chiến lược revocation của bạn."],
-        "commonMistakes": ["Dùng một access token tồn tại lâu duy nhất.", "Lưu token trong localStorage mà không xem xét XSS.", "Không revoke khi logout hoặc thay đổi credential."],
+        "guidance": [
+          "Mô tả riêng access token và refresh token.",
+          "Giải thích mỗi cái được lưu ở đâu và tại sao.",
+          "Mô tả chiến lược revocation của bạn."
+        ],
+        "commonMistakes": [
+          "Dùng một access token tồn tại lâu duy nhất.",
+          "Lưu token trong localStorage mà không xem xét XSS.",
+          "Không revoke khi logout hoặc thay đổi credential."
+        ],
         "labels": {}
       },
       "ja": {
         "title": "JWTトークンのライフサイクルと失効",
         "displayQuestion": "実装した認証フローにおけるトークンのライフサイクルをログインから有効期限切れまで説明してください。リフレッシュと失効をどのように処理しましたか？",
         "displayIntent": "認証フローがトークンセキュリティを正しく理解して実装されたことを確認する。",
-        "guidance": ["アクセストークンとリフレッシュトークンを別々に説明する。", "それぞれの保存場所とその理由を説明する。", "失効戦略を説明する。"],
-        "commonMistakes": ["単一の長期アクセストークンを使用する。", "XSSを考慮せずlocalStorageにトークンを保存する。", "ログアウトや認証情報変更時に失効させない。"],
+        "guidance": [
+          "アクセストークンとリフレッシュトークンを別々に説明する。",
+          "それぞれの保存場所とその理由を説明する。",
+          "失効戦略を説明する。"
+        ],
+        "commonMistakes": [
+          "単一の長期アクセストークンを使用する。",
+          "XSSを考慮せずlocalStorageにトークンを保存する。",
+          "ログアウトや認証情報変更時に失効させない。"
+        ],
         "labels": {}
       }
     },
@@ -732,60 +2107,182 @@
   },
   {
     "code": "CV4_MSG_IDEM_001",
-    "stages": ["stage_4_cv_deep_dive"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["mid", "senior"],
+    "stages": [
+      "stage_4_cv_deep_dive"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "mid",
+      "senior"
+    ],
     "type": "cv_claim_verification",
-    "competencies": ["system_thinking", "problem_solving"],
-    "techTags": ["bullmq", "kafka"],
+    "competencies": [
+      "system_thinking",
+      "problem_solving"
+    ],
+    "techTags": [
+      "bullmq",
+      "kafka"
+    ],
     "difficulty": 4,
     "conversationDepth": "deep",
     "intent": "Verify the candidate built an async message processing system with idempotency guarantees, not just fire-and-forget.",
     "primaryQuestion": "In the async or queue-based system you built, how did you ensure a message was processed exactly once? How did you handle duplicate deliveries?",
     "expectedSignals": [
-      "Names an idempotency key strategy: natural ID from the event, deduplication key, database unique constraint",
-      "Describes what happens on retry: the handler detects the duplicate and skips or no-ops safely",
-      "Understands at-least-once delivery as the default and designs the handler accordingly",
-      "Mentions monitoring: dead-letter queues, failed message counts, retry exhaustion alerts"
-    ],
-    "redFlags": [
-      "Assumed at-most-once delivery — no duplicate handling",
-      "No idempotency key — same message processed twice produces different state",
-      "Retry exhaustion has no dead-letter queue or alert"
+      {
+        "label": "Names an idempotency key strategy: natural ID from the event, deduplication key, database unique constraint",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "names_idempotency_key",
+            "description": "Names the idempotency key used for this message type"
+          },
+          {
+            "key": "states_key_storage",
+            "description": "States where the key is stored to detect duplicates, such as database table, unique constraint, Redis, or message log"
+          },
+          {
+            "key": "explains_key_uniqueness",
+            "description": "Explains why the key uniquely represents the business operation"
+          }
+        ]
+      },
+      {
+        "label": "Describes what happens on retry: the handler detects the duplicate and skips or no-ops safely",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "describes_retry_path",
+            "description": "Describes what happens when the same message is delivered again"
+          },
+          {
+            "key": "detects_duplicate",
+            "description": "Explains how the handler detects the duplicate before repeating side effects"
+          },
+          {
+            "key": "noops_or_returns_existing_result",
+            "description": "Explains whether duplicate handling no-ops, returns existing result, or resumes safely"
+          }
+        ]
+      },
+      {
+        "label": "Understands at-least-once delivery as the default and designs the handler accordingly",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "states_at_least_once_default",
+            "description": "States that at-least-once delivery and duplicate attempts are normal in many queue systems"
+          },
+          {
+            "key": "rejects_true_exactly_once_claim",
+            "description": "Avoids claiming true exactly-once processing without explaining storage and side-effect boundaries"
+          },
+          {
+            "key": "explains_exactly_once_tradeoff",
+            "description": "Explains the trade-off between at-least-once delivery, idempotent handling, and exactly-once semantics"
+          }
+        ]
+      },
+      {
+        "label": "Mentions monitoring: dead-letter queues, failed message counts, retry exhaustion alerts",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "mentions_dead_letter_queue",
+            "description": "Mentions dead-letter queue or equivalent failure sink"
+          },
+          {
+            "key": "monitors_failed_retry_counts",
+            "description": "Monitors failed message counts, retry exhaustion, or duplicate detection rate"
+          },
+          {
+            "key": "states_after_max_retries",
+            "description": "Explains what happens to a message after maximum retries fail"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Named idempotency strategy, at-least-once delivery assumed and handled, dead-letter queue present, duplicate handling tested" },
-      { "scoreBand": "adequate", "description": "Has idempotency awareness but dead-letter handling or monitoring is not described" },
-      { "scoreBand": "weak", "description": "No idempotency strategy; assumed messages arrive exactly once" }
+      {
+        "scoreBand": "strong",
+        "description": "Named idempotency strategy, at-least-once delivery assumed and handled, dead-letter queue present, duplicate handling tested"
+      },
+      {
+        "scoreBand": "adequate",
+        "description": "Has idempotency awareness but dead-letter handling or monitoring is not described"
+      },
+      {
+        "scoreBand": "weak",
+        "description": "No idempotency strategy; assumed messages arrive exactly once"
+      }
     ],
     "followUps": [
-      { "trigger": "missing_context", "question": "What is your idempotency key for this message type, and where is it stored to detect duplicates?", "purpose": "Force a concrete idempotency implementation detail" },
-      { "trigger": "missing_tradeoff", "question": "What is the trade-off between at-least-once and exactly-once delivery in your system?", "purpose": "Test understanding of delivery semantics trade-offs" },
-      { "trigger": "vague_answer", "question": "What happens to a message after it fails the maximum number of retries?", "purpose": "Check dead-letter queue or failure handling" }
+      {
+        "trigger": "missing_context",
+        "question": "What is your idempotency key for this message type, and where is it stored to detect duplicates?",
+        "purpose": "Force a concrete idempotency implementation detail"
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "What is the trade-off between at-least-once and exactly-once delivery in your system?",
+        "purpose": "Test understanding of delivery semantics trade-offs"
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "What happens to a message after it fails the maximum number of retries?",
+        "purpose": "Check dead-letter queue or failure handling"
+      }
     ],
     "localizedContent": {
       "en": {
         "title": "Idempotency in an async message processing system",
         "displayQuestion": "In the async or queue-based system you built, how did you ensure a message was processed exactly once? How did you handle duplicate deliveries?",
         "displayIntent": "Verify the async system was built with idempotency guarantees, not just fire-and-forget.",
-        "guidance": ["Name your idempotency key and where it is stored.", "Explain what happens on a duplicate delivery.", "Describe your dead-letter queue or failure handling."],
-        "commonMistakes": ["Assuming messages arrive exactly once — no duplicate handling.", "No idempotency key — same message twice causes double processing.", "No dead-letter queue for exhausted retries."],
+        "guidance": [
+          "Name your idempotency key and where it is stored.",
+          "Explain what happens on a duplicate delivery.",
+          "Describe your dead-letter queue or failure handling."
+        ],
+        "commonMistakes": [
+          "Assuming messages arrive exactly once — no duplicate handling.",
+          "No idempotency key — same message twice causes double processing.",
+          "No dead-letter queue for exhausted retries."
+        ],
         "labels": {}
       },
       "vi": {
         "title": "Idempotency trong hệ thống xử lý message bất đồng bộ",
         "displayQuestion": "Trong hệ thống async hoặc queue-based bạn đã xây dựng, bạn đảm bảo một message được xử lý đúng một lần như thế nào? Bạn xử lý duplicate delivery ra sao?",
         "displayIntent": "Kiểm tra hệ thống async được xây dựng với idempotency guarantees, không chỉ fire-and-forget.",
-        "guidance": ["Nêu idempotency key của bạn và nơi lưu trữ.", "Giải thích điều gì xảy ra khi nhận duplicate delivery.", "Mô tả dead-letter queue hoặc xử lý failure của bạn."],
-        "commonMistakes": ["Giả sử message đến đúng một lần — không xử lý duplicate.", "Không có idempotency key — cùng message hai lần gây double processing.", "Không có dead-letter queue cho retry exhausted."],
+        "guidance": [
+          "Nêu idempotency key của bạn và nơi lưu trữ.",
+          "Giải thích điều gì xảy ra khi nhận duplicate delivery.",
+          "Mô tả dead-letter queue hoặc xử lý failure của bạn."
+        ],
+        "commonMistakes": [
+          "Giả sử message đến đúng một lần — không xử lý duplicate.",
+          "Không có idempotency key — cùng message hai lần gây double processing.",
+          "Không có dead-letter queue cho retry exhausted."
+        ],
         "labels": {}
       },
       "ja": {
         "title": "非同期メッセージ処理システムにおけるべき等性",
         "displayQuestion": "構築した非同期またはキューベースのシステムで、メッセージが正確に一度処理されることをどのように保証しましたか？重複配信をどのように処理しましたか？",
         "displayIntent": "非同期システムがfire-and-forgetだけでなく、べき等性の保証を持って構築されたことを確認する。",
-        "guidance": ["べき等性キーとその保存場所を挙げる。", "重複配信時の動作を説明する。", "デッドレターキューまたは失敗処理を説明する。"],
-        "commonMistakes": ["メッセージが正確に一度届くと仮定し重複処理しない。", "べき等性キーなし — 同じメッセージが2回来ると二重処理が発生する。", "リトライ上限到達時のデッドレターキューがない。"],
+        "guidance": [
+          "べき等性キーとその保存場所を挙げる。",
+          "重複配信時の動作を説明する。",
+          "デッドレターキューまたは失敗処理を説明する。"
+        ],
+        "commonMistakes": [
+          "メッセージが正確に一度届くと仮定し重複処理しない。",
+          "べき等性キーなし — 同じメッセージが2回来ると二重処理が発生する。",
+          "リトライ上限到達時のデッドレターキューがない。"
+        ],
         "labels": {}
       }
     },
@@ -793,60 +2290,182 @@
   },
   {
     "code": "CV4_API_VERSION_001",
-    "stages": ["stage_4_cv_deep_dive"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["mid", "senior"],
+    "stages": [
+      "stage_4_cv_deep_dive"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "mid",
+      "senior"
+    ],
     "type": "cv_claim_verification",
-    "competencies": ["system_thinking", "trade_off_analysis"],
-    "techTags": ["rest", "graphql"],
+    "competencies": [
+      "system_thinking",
+      "trade_off_analysis"
+    ],
+    "techTags": [
+      "rest",
+      "graphql"
+    ],
     "difficulty": 4,
     "conversationDepth": "deep",
     "intent": "Verify the candidate designed an API with backward compatibility in mind, not just shipped v1 and broke clients on v2.",
     "primaryQuestion": "In the API you designed, how did you handle backward compatibility when you needed to make a breaking change? What was your versioning strategy?",
     "expectedSignals": [
-      "Describes a versioning approach: URL path, header, or semantic versioning with deprecation window",
-      "Explains what makes a change 'breaking' vs. additive",
-      "Has a deprecation plan: client communication, sunset date, migration path",
-      "Mentions monitoring: which clients are still calling deprecated endpoints"
-    ],
-    "redFlags": [
-      "No versioning strategy — just changed the API and told clients to update",
-      "Cannot define what constitutes a breaking change",
-      "Deprecated endpoints removed without monitoring who was still using them"
+      {
+        "label": "Describes a versioning approach: URL path, header, or semantic versioning with deprecation window",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "names_versioning_strategy",
+            "description": "Names the versioning strategy used, such as URL path, header, media type, or semantic versioning"
+          },
+          {
+            "key": "states_breaking_change_trigger",
+            "description": "States the specific change that required versioning"
+          },
+          {
+            "key": "mentions_deprecation_window",
+            "description": "Mentions a deprecation or migration window when old clients must keep working"
+          }
+        ]
+      },
+      {
+        "label": "Explains what makes a change 'breaking' vs. additive",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "defines_additive_change",
+            "description": "Explains additive compatible changes such as optional response fields or non-breaking endpoints"
+          },
+          {
+            "key": "defines_breaking_change",
+            "description": "Explains breaking changes such as removing/renaming fields, changing meaning, stricter validation, or incompatible error behavior"
+          },
+          {
+            "key": "applies_to_actual_api",
+            "description": "Applies breaking/additive distinction to the API they designed"
+          }
+        ]
+      },
+      {
+        "label": "Has a deprecation plan: client communication, sunset date, migration path",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "communicates_deprecation",
+            "description": "Explains how API consumers were told about the deprecation"
+          },
+          {
+            "key": "sets_sunset_date",
+            "description": "States sunset date, support window, or removal criteria"
+          },
+          {
+            "key": "provides_migration_path",
+            "description": "Provides migration docs, examples, compatibility mode, or client support path"
+          }
+        ]
+      },
+      {
+        "label": "Mentions monitoring: which clients are still calling deprecated endpoints",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "tracks_deprecated_usage",
+            "description": "Tracks which clients, tokens, apps, or versions still call deprecated endpoints"
+          },
+          {
+            "key": "uses_usage_before_removal",
+            "description": "Uses usage data before removing old API behavior"
+          },
+          {
+            "key": "alerts_on_legacy_traffic",
+            "description": "Mentions monitoring, dashboards, logs, or alerts for legacy version traffic"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Versioning strategy named, breaking vs. additive change defined, deprecation window with client communication, usage monitored" },
-      { "scoreBand": "adequate", "description": "Has versioning but deprecation process or client migration was not described" },
-      { "scoreBand": "weak", "description": "No versioning; breaking changes made without backward compatibility consideration" }
+      {
+        "scoreBand": "strong",
+        "description": "Versioning strategy named, breaking vs. additive change defined, deprecation window with client communication, usage monitored"
+      },
+      {
+        "scoreBand": "adequate",
+        "description": "Has versioning but deprecation process or client migration was not described"
+      },
+      {
+        "scoreBand": "weak",
+        "description": "No versioning; breaking changes made without backward compatibility consideration"
+      }
     ],
     "followUps": [
-      { "trigger": "missing_context", "question": "How did you communicate the deprecation to API consumers and give them time to migrate?", "purpose": "Check whether deprecation had a real process" },
-      { "trigger": "missing_metric", "question": "How did you know which clients were still calling the old version before you removed it?", "purpose": "Verify usage monitoring before removing deprecated endpoints" },
-      { "trigger": "vague_answer", "question": "What specific change triggered the need for a new API version?", "purpose": "Force candidate to name a concrete breaking change they managed" }
+      {
+        "trigger": "missing_context",
+        "question": "How did you communicate the deprecation to API consumers and give them time to migrate?",
+        "purpose": "Check whether deprecation had a real process"
+      },
+      {
+        "trigger": "missing_metric",
+        "question": "How did you know which clients were still calling the old version before you removed it?",
+        "purpose": "Verify usage monitoring before removing deprecated endpoints"
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "What specific change triggered the need for a new API version?",
+        "purpose": "Force candidate to name a concrete breaking change they managed"
+      }
     ],
     "localizedContent": {
       "en": {
         "title": "API versioning and backward compatibility",
         "displayQuestion": "How did you handle backward compatibility when you needed to make a breaking API change? What was your versioning strategy?",
         "displayIntent": "Verify the API was designed with backward compatibility and a real deprecation strategy.",
-        "guidance": ["Name your versioning strategy.", "Explain what makes a change breaking vs. additive.", "Describe your deprecation and migration process."],
-        "commonMistakes": ["No versioning — just changed the API and told clients to update.", "Cannot define what a breaking change is.", "Removed deprecated endpoints without monitoring usage."],
+        "guidance": [
+          "Name your versioning strategy.",
+          "Explain what makes a change breaking vs. additive.",
+          "Describe your deprecation and migration process."
+        ],
+        "commonMistakes": [
+          "No versioning — just changed the API and told clients to update.",
+          "Cannot define what a breaking change is.",
+          "Removed deprecated endpoints without monitoring usage."
+        ],
         "labels": {}
       },
       "vi": {
         "title": "API versioning và backward compatibility",
         "displayQuestion": "Khi cần thực hiện breaking change trên API, bạn xử lý backward compatibility như thế nào? Chiến lược versioning của bạn là gì?",
         "displayIntent": "Kiểm tra API được thiết kế với backward compatibility và chiến lược deprecation thực sự.",
-        "guidance": ["Nêu chiến lược versioning của bạn.", "Giải thích điều gì làm cho một thay đổi là breaking vs. additive.", "Mô tả quy trình deprecation và migration."],
-        "commonMistakes": ["Không có versioning — chỉ thay đổi API và bảo client cập nhật.", "Không định nghĩa được breaking change là gì.", "Xóa deprecated endpoints mà không monitor usage."],
+        "guidance": [
+          "Nêu chiến lược versioning của bạn.",
+          "Giải thích điều gì làm cho một thay đổi là breaking vs. additive.",
+          "Mô tả quy trình deprecation và migration."
+        ],
+        "commonMistakes": [
+          "Không có versioning — chỉ thay đổi API và bảo client cập nhật.",
+          "Không định nghĩa được breaking change là gì.",
+          "Xóa deprecated endpoints mà không monitor usage."
+        ],
         "labels": {}
       },
       "ja": {
         "title": "APIバージョニングと後方互換性",
         "displayQuestion": "APIに破壊的変更が必要な場合、後方互換性をどのように処理しましたか？バージョニング戦略は何でしたか？",
         "displayIntent": "APIが後方互換性と実際の非推奨戦略を持って設計されたことを確認する。",
-        "guidance": ["バージョニング戦略を挙げる。", "破壊的変更と追加変更の違いを説明する。", "非推奨化とマイグレーションのプロセスを説明する。"],
-        "commonMistakes": ["バージョニングなし — APIを変更してクライアントに更新を指示するだけ。", "破壊的変更が何かを定義できない。", "使用状況をモニタリングせずに非推奨エンドポイントを削除する。"],
+        "guidance": [
+          "バージョニング戦略を挙げる。",
+          "破壊的変更と追加変更の違いを説明する。",
+          "非推奨化とマイグレーションのプロセスを説明する。"
+        ],
+        "commonMistakes": [
+          "バージョニングなし — APIを変更してクライアントに更新を指示するだけ。",
+          "破壊的変更が何かを定義できない。",
+          "使用状況をモニタリングせずに非推奨エンドポイントを削除する。"
+        ],
         "labels": {}
       }
     },
@@ -854,60 +2473,175 @@
   },
   {
     "code": "CV4_SR_CAPACITY_001",
-    "stages": ["stage_4_cv_deep_dive"],
+    "stages": [
+      "stage_4_cv_deep_dive"
+    ],
     "roleFamilies": [],
-    "levels": ["senior"],
+    "levels": [
+      "senior"
+    ],
     "type": "cv_claim_verification",
-    "competencies": ["system_thinking", "impact_measurement"],
+    "competencies": [
+      "system_thinking",
+      "impact_measurement"
+    ],
     "techTags": [],
     "difficulty": 4,
     "conversationDepth": "deep",
     "intent": "Verify the senior candidate made data-driven capacity planning decisions and did not simply over-provision reactively.",
     "primaryQuestion": "Describe a capacity planning decision you made — how did you estimate future load, and what actions did you take before hitting the limit?",
     "expectedSignals": [
-      "Uses actual metrics as the starting point: current usage, growth rate, seasonal pattern",
-      "Names the specific resource constrained: CPU, memory, DB connections, disk, network",
-      "Describes actions taken proactively: scaling, sharding, rate limiting, or architectural change",
-      "Has a trigger threshold — knows when to act, not just what to do"
-    ],
-    "redFlags": [
-      "Capacity planning was purely reactive — only scaled after the system was already overloaded",
-      "No metrics-based projection — estimated load was a guess",
-      "Could not name the specific resource that would be the bottleneck first"
+      {
+        "label": "Uses actual metrics as the starting point: current usage, growth rate, seasonal pattern",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "states_current_utilization",
+            "description": "States current resource utilization or traffic baseline when planning began"
+          },
+          {
+            "key": "states_growth_rate",
+            "description": "States assumed growth rate, forecast, or seasonal traffic pattern"
+          },
+          {
+            "key": "uses_real_metrics_not_guess",
+            "description": "Bases planning on real metrics instead of intuition alone"
+          }
+        ]
+      },
+      {
+        "label": "Names the specific resource constrained: CPU, memory, DB connections, disk, network",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "names_first_constraint",
+            "description": "Names the first constrained resource expected to hit a limit"
+          },
+          {
+            "key": "explains_why_resource_constrained",
+            "description": "Explains why that resource was the limiting factor"
+          },
+          {
+            "key": "distinguishes_from_other_resources",
+            "description": "Distinguishes the constraint from other possible bottlenecks such as CPU, memory, DB, disk, network, or connection pool"
+          }
+        ]
+      },
+      {
+        "label": "Describes actions taken proactively: scaling, sharding, rate limiting, or architectural change",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "states_proactive_action",
+            "description": "Describes the action taken before hitting the limit"
+          },
+          {
+            "key": "ties_action_to_constraint",
+            "description": "Ties the action directly to the identified constrained resource"
+          },
+          {
+            "key": "states_consequence_if_no_action",
+            "description": "Explains what would have happened if the change had not been made in time"
+          }
+        ]
+      },
+      {
+        "label": "Has a trigger threshold — knows when to act, not just what to do",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "defines_action_threshold",
+            "description": "Defines the threshold that triggered action or escalation"
+          },
+          {
+            "key": "connects_threshold_to_slo",
+            "description": "Connects the threshold to SLO, capacity headroom, user impact, or operational risk"
+          },
+          {
+            "key": "monitors_after_action",
+            "description": "Monitors whether the action restored headroom or delayed the limit"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Metrics-driven projection, named bottleneck resource, proactive action with trigger threshold, outcome measured" },
-      { "scoreBand": "adequate", "description": "Has a projection method but trigger threshold or outcome measurement is missing" },
-      { "scoreBand": "weak", "description": "Reactive scaling only; no proactive estimation or planning" }
+      {
+        "scoreBand": "strong",
+        "description": "Metrics-driven projection, named bottleneck resource, proactive action with trigger threshold, outcome measured"
+      },
+      {
+        "scoreBand": "adequate",
+        "description": "Has a projection method but trigger threshold or outcome measurement is missing"
+      },
+      {
+        "scoreBand": "weak",
+        "description": "Reactive scaling only; no proactive estimation or planning"
+      }
     ],
     "followUps": [
-      { "trigger": "missing_metric", "question": "What was your current resource utilization when you started planning, and what growth rate did you assume?", "purpose": "Force a data-based starting point" },
-      { "trigger": "missing_context", "question": "Which resource did you identify as the first constraint you would hit?", "purpose": "Test ability to identify the binding constraint" },
-      { "trigger": "missing_consequence", "question": "What would have happened if you had not made this change when you did?", "purpose": "Verify the decision had real consequences and urgency" }
+      {
+        "trigger": "missing_metric",
+        "question": "What was your current resource utilization when you started planning, and what growth rate did you assume?",
+        "purpose": "Force a data-based starting point"
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Which resource did you identify as the first constraint you would hit?",
+        "purpose": "Test ability to identify the binding constraint"
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "What would have happened if you had not made this change when you did?",
+        "purpose": "Verify the decision had real consequences and urgency"
+      }
     ],
     "localizedContent": {
       "en": {
         "title": "Capacity planning for a production system",
         "displayQuestion": "Describe a capacity planning decision you made. How did you estimate future load and act before hitting the limit?",
         "displayIntent": "Verify capacity planning was proactive and data-driven, not purely reactive.",
-        "guidance": ["Start with the actual metrics and growth rate you used.", "Name the specific resource you identified as the bottleneck.", "Describe the trigger threshold that drove your action."],
-        "commonMistakes": ["Only scaling reactively after the system was already overloaded.", "Estimating load without a data-based projection.", "Unable to name the first resource that would become the bottleneck."],
+        "guidance": [
+          "Start with the actual metrics and growth rate you used.",
+          "Name the specific resource you identified as the bottleneck.",
+          "Describe the trigger threshold that drove your action."
+        ],
+        "commonMistakes": [
+          "Only scaling reactively after the system was already overloaded.",
+          "Estimating load without a data-based projection.",
+          "Unable to name the first resource that would become the bottleneck."
+        ],
         "labels": {}
       },
       "vi": {
         "title": "Capacity planning cho hệ thống production",
         "displayQuestion": "Mô tả một quyết định capacity planning bạn đã thực hiện. Bạn ước tính load tương lai như thế nào và hành động trước khi chạm giới hạn?",
         "displayIntent": "Kiểm tra capacity planning được thực hiện chủ động và dựa trên dữ liệu, không chỉ phản ứng.",
-        "guidance": ["Bắt đầu với metrics và tốc độ tăng trưởng thực tế bạn đã dùng.", "Nêu resource cụ thể bạn xác định là bottleneck.", "Mô tả ngưỡng trigger dẫn đến hành động của bạn."],
-        "commonMistakes": ["Chỉ scale khi hệ thống đã quá tải.", "Ước tính load mà không có projection dựa trên dữ liệu.", "Không thể nêu resource đầu tiên trở thành bottleneck."],
+        "guidance": [
+          "Bắt đầu với metrics và tốc độ tăng trưởng thực tế bạn đã dùng.",
+          "Nêu resource cụ thể bạn xác định là bottleneck.",
+          "Mô tả ngưỡng trigger dẫn đến hành động của bạn."
+        ],
+        "commonMistakes": [
+          "Chỉ scale khi hệ thống đã quá tải.",
+          "Ước tính load mà không có projection dựa trên dữ liệu.",
+          "Không thể nêu resource đầu tiên trở thành bottleneck."
+        ],
         "labels": {}
       },
       "ja": {
         "title": "本番システムのキャパシティプランニング",
         "displayQuestion": "あなたが行ったキャパシティプランニングの決定を説明してください。将来の負荷をどのように見積もり、限界に達する前に何をしましたか？",
         "displayIntent": "キャパシティプランニングが事後対応ではなく、データ駆動で積極的に行われたことを確認する。",
-        "guidance": ["使用した実際のメトリクスと成長率から始める。", "ボトルネックと特定した具体的なリソースを挙げる。", "行動を促したトリガーしきい値を説明する。"],
-        "commonMistakes": ["システムがすでに過負荷になってからのみスケールする。", "データに基づく予測なしに負荷を見積もる。", "最初のボトルネックになるリソースを特定できない。"],
+        "guidance": [
+          "使用した実際のメトリクスと成長率から始める。",
+          "ボトルネックと特定した具体的なリソースを挙げる。",
+          "行動を促したトリガーしきい値を説明する。"
+        ],
+        "commonMistakes": [
+          "システムがすでに過負荷になってからのみスケールする。",
+          "データに基づく予測なしに負荷を見積もる。",
+          "最初のボトルネックになるリソースを特定できない。"
+        ],
         "labels": {}
       }
     },
@@ -915,60 +2649,176 @@
   },
   {
     "code": "CV4_SR_TECH_DEBT_001",
-    "stages": ["stage_4_cv_deep_dive"],
+    "stages": [
+      "stage_4_cv_deep_dive"
+    ],
     "roleFamilies": [],
-    "levels": ["mid", "senior"],
+    "levels": [
+      "mid",
+      "senior"
+    ],
     "type": "cv_claim_verification",
-    "competencies": ["ownership", "trade_off_analysis"],
+    "competencies": [
+      "ownership",
+      "trade_off_analysis"
+    ],
     "techTags": [],
     "difficulty": 4,
     "conversationDepth": "deep",
     "intent": "Verify the candidate has a real framework for prioritizing technical debt paydown against feature delivery, not just ad-hoc refactoring.",
     "primaryQuestion": "How did you prioritize paying down technical debt in the system you worked on? How did you make the case for it and get time allocated for it?",
     "expectedSignals": [
-      "Has a concrete criterion for prioritizing debt: incident frequency, onboarding drag, velocity blocker",
-      "Made a business case to non-engineers using measurable impact: deploy frequency, bug rate, delivery time",
-      "Got time allocated explicitly — not just squeezed debt into spare cycles",
-      "Can name a specific piece of debt they eliminated and the outcome"
-    ],
-    "redFlags": [
-      "Technical debt was addressed only when it caused a production issue",
-      "Never made a case for debt paydown — it was never prioritized",
-      "Cannot name the outcome or improvement that resulted from paying down the debt"
+      {
+        "label": "Has a concrete criterion for prioritizing debt: incident frequency, onboarding drag, velocity blocker",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "names_debt_prioritization_criterion",
+            "description": "Names the criterion used to prioritize the debt, such as incident frequency, onboarding drag, delivery slowdown, or operational risk"
+          },
+          {
+            "key": "explains_system_consequence",
+            "description": "Explains what would have happened if the debt remained unaddressed"
+          },
+          {
+            "key": "distinguishes_annoyance_from_risk",
+            "description": "Distinguishes annoying cleanup from debt with measurable risk or cost"
+          }
+        ]
+      },
+      {
+        "label": "Made a business case to non-engineers using measurable impact: deploy frequency, bug rate, delivery time",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "states_business_metric",
+            "description": "Names the metric used to show business or delivery impact"
+          },
+          {
+            "key": "translates_debt_to_non_engineers",
+            "description": "Explains the debt in terms non-engineers could evaluate"
+          },
+          {
+            "key": "connects_metric_to_priority",
+            "description": "Connects the measured impact to why the debt deserved time"
+          }
+        ]
+      },
+      {
+        "label": "Got time allocated explicitly — not just squeezed debt into spare cycles",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "names_decision_maker",
+            "description": "Names who needed to approve or allocate time"
+          },
+          {
+            "key": "states_argument_that_worked",
+            "description": "States the argument or framing that convinced stakeholders"
+          },
+          {
+            "key": "mentions_explicit_allocation",
+            "description": "Mentions explicit allocation through roadmap, sprint capacity, milestone, or dedicated initiative"
+          }
+        ]
+      },
+      {
+        "label": "Can name a specific piece of debt they eliminated and the outcome",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "names_specific_debt_removed",
+            "description": "Names the specific debt removed, refactored, migrated, or paid down"
+          },
+          {
+            "key": "states_before_after_outcome",
+            "description": "States the before/after outcome or metric after addressing the debt"
+          },
+          {
+            "key": "connects_outcome_to_original_case",
+            "description": "Connects the result back to the original business case"
+          }
+        ]
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Concrete prioritization criterion, business case made in measurable terms, time explicitly allocated, outcome measured" },
-      { "scoreBand": "adequate", "description": "Managed to address debt but could not describe the business case or allocation process clearly" },
-      { "scoreBand": "weak", "description": "Debt only addressed reactively; no framework or deliberate prioritization" }
+      {
+        "scoreBand": "strong",
+        "description": "Concrete prioritization criterion, business case made in measurable terms, time explicitly allocated, outcome measured"
+      },
+      {
+        "scoreBand": "adequate",
+        "description": "Managed to address debt but could not describe the business case or allocation process clearly"
+      },
+      {
+        "scoreBand": "weak",
+        "description": "Debt only addressed reactively; no framework or deliberate prioritization"
+      }
     ],
     "followUps": [
-      { "trigger": "missing_metric", "question": "What specific metric did you use to show the business impact of that technical debt?", "purpose": "Force a measurable framing of the debt's cost" },
-      { "trigger": "missing_context", "question": "Who did you need to convince to allocate time for this, and what argument worked?", "purpose": "Test ability to make a business case for technical work" },
-      { "trigger": "missing_consequence", "question": "What would have happened to the system if you had not addressed this debt?", "purpose": "Verify the urgency was real and the outcome was meaningful" }
+      {
+        "trigger": "missing_metric",
+        "question": "What specific metric did you use to show the business impact of that technical debt?",
+        "purpose": "Force a measurable framing of the debt's cost"
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Who did you need to convince to allocate time for this, and what argument worked?",
+        "purpose": "Test ability to make a business case for technical work"
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "What would have happened to the system if you had not addressed this debt?",
+        "purpose": "Verify the urgency was real and the outcome was meaningful"
+      }
     ],
     "localizedContent": {
       "en": {
         "title": "Prioritizing and making the case for technical debt paydown",
         "displayQuestion": "How did you prioritize paying down technical debt in your system? How did you make the case and get time allocated for it?",
         "displayIntent": "Verify the candidate has a real framework for technical debt prioritization, not just ad-hoc refactoring.",
-        "guidance": ["Name the criterion you used to prioritize which debt to address.", "Explain how you made the business case in measurable terms.", "Describe the outcome after the debt was addressed."],
-        "commonMistakes": ["Only addressing debt reactively after incidents.", "No business case made — debt was never formally prioritized.", "Unable to name the measured improvement after addressing the debt."],
+        "guidance": [
+          "Name the criterion you used to prioritize which debt to address.",
+          "Explain how you made the business case in measurable terms.",
+          "Describe the outcome after the debt was addressed."
+        ],
+        "commonMistakes": [
+          "Only addressing debt reactively after incidents.",
+          "No business case made — debt was never formally prioritized.",
+          "Unable to name the measured improvement after addressing the debt."
+        ],
         "labels": {}
       },
       "vi": {
         "title": "Ưu tiên và đề xuất trả nợ kỹ thuật",
         "displayQuestion": "Bạn ưu tiên trả nợ kỹ thuật trong hệ thống bạn làm việc như thế nào? Bạn đã đề xuất và được phân bổ thời gian như thế nào?",
         "displayIntent": "Kiểm tra ứng viên có framework thực sự để ưu tiên technical debt, không chỉ refactor ad-hoc.",
-        "guidance": ["Nêu tiêu chí bạn dùng để ưu tiên debt cần giải quyết.", "Giải thích cách bạn trình bày business case bằng số liệu.", "Mô tả kết quả sau khi giải quyết debt."],
-        "commonMistakes": ["Chỉ giải quyết debt khi có incident.", "Không có business case — debt chưa bao giờ được ưu tiên chính thức.", "Không thể nêu cải tiến đo được sau khi giải quyết debt."],
+        "guidance": [
+          "Nêu tiêu chí bạn dùng để ưu tiên debt cần giải quyết.",
+          "Giải thích cách bạn trình bày business case bằng số liệu.",
+          "Mô tả kết quả sau khi giải quyết debt."
+        ],
+        "commonMistakes": [
+          "Chỉ giải quyết debt khi có incident.",
+          "Không có business case — debt chưa bao giờ được ưu tiên chính thức.",
+          "Không thể nêu cải tiến đo được sau khi giải quyết debt."
+        ],
         "labels": {}
       },
       "ja": {
         "title": "技術的負債の返済の優先順位付けと説得",
         "displayQuestion": "担当システムの技術的負債の返済をどのように優先順位付けしましたか？どのように説得し、時間を確保しましたか？",
         "displayIntent": "候補者がその場しのぎのリファクタリングだけでなく、技術的負債の優先順位付けの実際のフレームワークを持っていることを確認する。",
-        "guidance": ["どの負債に対処するかを優先するために使った基準を挙げる。", "ビジネスケースを数値で説明した方法を述べる。", "負債に対処した後の成果を説明する。"],
-        "commonMistakes": ["インシデント後にのみ負債に対処する。", "ビジネスケースが作られず、負債が正式に優先されたことがない。", "負債に対処した後の測定可能な改善を挙げられない。"],
+        "guidance": [
+          "どの負債に対処するかを優先するために使った基準を挙げる。",
+          "ビジネスケースを数値で説明した方法を述べる。",
+          "負債に対処した後の成果を説明する。"
+        ],
+        "commonMistakes": [
+          "インシデント後にのみ負債に対処する。",
+          "ビジネスケースが作られず、負債が正式に優先されたことがない。",
+          "負債に対処した後の測定可能な改善を挙げられない。"
+        ],
         "labels": {}
       }
     },

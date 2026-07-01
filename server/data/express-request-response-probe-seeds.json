@@ -1,30 +1,117 @@
 [
   {
     "code": "EXPRESS_REQ_RES_JR_TECH_PARAMS_QUERY_BODY_001",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "communication", "problem_solving"],
-    "techTags": ["express", "nodejs", "rest"],
+    "competencies": [
+      "technical_fundamentals",
+      "communication",
+      "problem_solving"
+    ],
+    "techTags": [
+      "express",
+      "nodejs",
+      "rest"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Check whether the candidate can distinguish route parameters, query string parameters, and parsed request body data, and choose the correct place for each kind of API input.",
     "primaryQuestion": "How are req.params, req.query, and req.body different in Express? When should you use each one?",
     "expectedSignals": [
-      "Explains that req.params contains named path parameters declared in the route pattern, such as /users/:id.",
-      "Explains that req.query contains query string values after the question mark, usually used for optional filters, pagination, sorting, search, or feature flags.",
-      "Explains that req.body contains parsed request payload data, usually used for create/update commands such as POST, PUT, or PATCH.",
-      "Mentions that req.body is undefined by default unless body-parsing middleware such as express.json() or express.urlencoded() runs before the route.",
-      "Treats req.params, req.query, and req.body as user-controlled input that must be validated, normalized, and converted to the expected types.",
-      "Uses a concrete example such as GET /users/:id?includePosts=true using params and query, versus POST /users using body."
-    ],
-    "redFlags": [
-      "Says req.params, req.query, and req.body are interchangeable.",
-      "Uses req.body for GET filters or req.query for required resource identity without explaining the API design trade-off.",
-      "Assumes values from req.query or req.params already have the correct numeric or boolean type.",
-      "Forgets that body parsers are required before req.body is populated.",
-      "Trusts any of these values without validation."
+      {
+        "label": "Explains that req.params contains named path parameters declared in the route pattern, such as /users/:id.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "defines_req_params_route_pattern_values",
+            "description": "Explains req.params as named values declared in the route pattern."
+          },
+          {
+            "key": "uses_users_id_param_example",
+            "description": "Uses an example such as /users/:id."
+          }
+        ]
+      },
+      {
+        "label": "Explains that req.query contains query string values after the question mark, usually used for optional filters, pagination, sorting, search, or feature flags.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "defines_req_query_values",
+            "description": "Explains req.query as values from the URL query string after ?."
+          },
+          {
+            "key": "mentions_query_optional_modifiers",
+            "description": "Mentions filters, pagination, sorting, search, or optional flags."
+          }
+        ]
+      },
+      {
+        "label": "Explains that req.body contains parsed request payload data, usually used for create/update commands such as POST, PUT, or PATCH.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "defines_req_body_payload",
+            "description": "Explains req.body as parsed request payload data."
+          },
+          {
+            "key": "connects_body_to_create_update_methods",
+            "description": "Connects req.body to POST, PUT, or PATCH create/update commands."
+          }
+        ]
+      },
+      {
+        "label": "Mentions that req.body is undefined by default unless body-parsing middleware such as express.json() or express.urlencoded() runs before the route.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_body_parser_required",
+            "description": "Mentions express.json(), express.urlencoded(), or body-parsing middleware."
+          },
+          {
+            "key": "places_body_parser_before_route",
+            "description": "States the parser must run before the route that reads req.body."
+          }
+        ]
+      },
+      {
+        "label": "Treats req.params, req.query, and req.body as user-controlled input that must be validated, normalized, and converted to the expected types.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "treats_all_request_inputs_untrusted",
+            "description": "States params, query, and body are user-controlled input."
+          },
+          {
+            "key": "requires_validation_normalization_type_conversion",
+            "description": "Mentions validation, normalization, and type conversion."
+          }
+        ]
+      },
+      {
+        "label": "Uses a concrete example such as GET /users/:id?includePosts=true using params and query, versus POST /users using body.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "maps_get_path_and_query_example",
+            "description": "Maps a GET path/query example to req.params and req.query."
+          },
+          {
+            "key": "maps_post_create_example_to_body",
+            "description": "Maps a POST create example to req.body."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -145,30 +232,116 @@
   },
   {
     "code": "EXPRESS_REQ_RES_JR_TECH_HEADERS_002",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "communication"],
-    "techTags": ["express", "nodejs", "rest"],
+    "competencies": [
+      "technical_fundamentals",
+      "communication"
+    ],
+    "techTags": [
+      "express",
+      "nodejs",
+      "rest"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Verify whether the candidate understands HTTP request headers, how Express exposes them, and when to prefer req.get() over directly indexing req.headers.",
     "primaryQuestion": "What is req.headers, and how do you read a specific header in Express?",
     "expectedSignals": [
-      "Defines req.headers as the incoming HTTP request headers object inherited from Node.js IncomingMessage.",
-      "Uses req.get('Header-Name') or req.header('Header-Name') to read one header with case-insensitive matching.",
-      "Mentions that direct access through req.headers uses lower-case header names in Node.js, such as req.headers['authorization'].",
-      "Explains common use cases such as Authorization, Content-Type, Accept-Language, X-Request-Id, and custom client headers.",
-      "Treats client-supplied headers as untrusted and avoids trusting spoofable headers such as X-Forwarded-For unless proxy trust is configured correctly.",
-      "Handles missing headers explicitly instead of assuming a header is always present."
-    ],
-    "redFlags": [
-      "Thinks req.headers only contains custom headers or only response headers.",
-      "Reads headers with case-sensitive direct property names such as req.headers.Authorization.",
-      "Trusts Authorization or X-Forwarded-* headers without validation or proxy context.",
-      "Crashes when a header is missing.",
-      "Confuses request headers with response headers set by res.set()."
+      {
+        "label": "Defines req.headers as the incoming HTTP request headers object inherited from Node.js IncomingMessage.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "defines_req_headers_object",
+            "description": "Defines req.headers as the incoming HTTP request headers object."
+          },
+          {
+            "key": "mentions_node_incoming_message_origin",
+            "description": "Mentions it comes from or is based on Node.js IncomingMessage."
+          }
+        ]
+      },
+      {
+        "label": "Uses req.get('Header-Name') or req.header('Header-Name') to read one header with case-insensitive matching.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "uses_req_get_or_header",
+            "description": "Uses req.get('Header-Name') or req.header('Header-Name')."
+          },
+          {
+            "key": "mentions_case_insensitive_header_lookup",
+            "description": "Mentions case-insensitive header matching."
+          }
+        ]
+      },
+      {
+        "label": "Mentions that direct access through req.headers uses lower-case header names in Node.js, such as req.headers['authorization'].",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_lowercase_direct_header_names",
+            "description": "Mentions direct req.headers access uses lower-case names."
+          },
+          {
+            "key": "uses_authorization_direct_access_example",
+            "description": "Uses an example such as req.headers['authorization']."
+          }
+        ]
+      },
+      {
+        "label": "Explains common use cases such as Authorization, Content-Type, Accept-Language, X-Request-Id, and custom client headers.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "names_auth_content_type_language_headers",
+            "description": "Mentions Authorization, Content-Type, or Accept-Language."
+          },
+          {
+            "key": "names_request_id_or_custom_headers",
+            "description": "Mentions X-Request-Id or custom client headers."
+          }
+        ]
+      },
+      {
+        "label": "Treats client-supplied headers as untrusted and avoids trusting spoofable headers such as X-Forwarded-For unless proxy trust is configured correctly.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "treats_headers_as_untrusted",
+            "description": "States client-supplied headers are untrusted."
+          },
+          {
+            "key": "warns_x_forwarded_for_requires_proxy_trust",
+            "description": "Warns about spoofable headers such as X-Forwarded-For unless proxy trust is configured."
+          }
+        ]
+      },
+      {
+        "label": "Handles missing headers explicitly instead of assuming a header is always present.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "checks_missing_header",
+            "description": "Mentions checking for a missing header."
+          },
+          {
+            "key": "returns_or_delegates_clear_error_for_missing_required_header",
+            "description": "Mentions returning a clear error or handling absence explicitly for required headers."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -193,11 +366,6 @@
         "trigger": "missing_context",
         "question": "How would you read the Authorization header, and what would you do if it is missing?",
         "purpose": "Check practical access and error handling."
-      },
-      {
-        "trigger": "red_flag",
-        "question": "Why is req.headers.Authorization usually not the safest direct property access pattern in Node.js?",
-        "purpose": "Check header name normalization knowledge."
       }
     ],
     "localizedContent": {
@@ -284,31 +452,131 @@
   },
   {
     "code": "EXPRESS_REQ_RES_JR_TECH_BODY_READING_003",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "problem_solving", "ownership"],
-    "techTags": ["express", "nodejs", "rest"],
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving",
+      "ownership"
+    ],
+    "techTags": [
+      "express",
+      "nodejs",
+      "rest"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Check whether the candidate can correctly configure body parsing middleware, understand Content-Type matching, and validate parsed body input.",
     "primaryQuestion": "How do you read data from the request body in Express?",
     "expectedSignals": [
-      "Registers body-parsing middleware before routes that need req.body, commonly app.use(express.json()) for JSON payloads.",
-      "Uses express.urlencoded({ extended: true or false }) for application/x-www-form-urlencoded form submissions when needed.",
-      "Reads parsed values from req.body inside route handlers after the parser has run.",
-      "Mentions Content-Type matching: a JSON parser only parses requests whose content type matches the configured type.",
-      "Configures body size limits appropriate to the endpoint to avoid accepting unexpectedly large payloads.",
-      "Validates req.body because parsing does not guarantee correct schema, types, required fields, or safe values.",
-      "Mentions special cases such as raw body verification for webhooks or multipart/form-data requiring different middleware."
-    ],
-    "redFlags": [
-      "Reads req.body without registering any parser and cannot explain why it is undefined.",
-      "Registers express.json() after the routes that need it.",
-      "Uses JSON parsing for multipart file uploads without explaining multer or another multipart parser.",
-      "Trusts parsed body data without validation.",
-      "Leaves public endpoints with overly broad or unlimited body size limits."
+      {
+        "label": "Registers body-parsing middleware before routes that need req.body, commonly app.use(express.json()) for JSON payloads.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "registers_body_parser_before_routes",
+            "description": "States body-parsing middleware must be registered before routes reading req.body."
+          },
+          {
+            "key": "uses_express_json_for_json_payloads",
+            "description": "Mentions app.use(express.json()) for JSON payloads."
+          }
+        ]
+      },
+      {
+        "label": "Uses express.urlencoded({ extended: true or false }) for application/x-www-form-urlencoded form submissions when needed.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "uses_express_urlencoded",
+            "description": "Mentions express.urlencoded(...)."
+          },
+          {
+            "key": "connects_urlencoded_to_form_submissions",
+            "description": "Connects urlencoded parser to application/x-www-form-urlencoded forms."
+          }
+        ]
+      },
+      {
+        "label": "Reads parsed values from req.body inside route handlers after the parser has run.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "reads_values_from_req_body",
+            "description": "Mentions reading parsed values from req.body."
+          },
+          {
+            "key": "qualifies_after_parser_has_run",
+            "description": "Clarifies this happens after matching parser middleware has run."
+          }
+        ]
+      },
+      {
+        "label": "Mentions Content-Type matching: a JSON parser only parses requests whose content type matches the configured type.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_content_type_matching",
+            "description": "Mentions body parsers match by Content-Type."
+          },
+          {
+            "key": "explains_json_parser_not_all_payloads",
+            "description": "Explains express.json only parses matching JSON content types."
+          }
+        ]
+      },
+      {
+        "label": "Configures body size limits appropriate to the endpoint to avoid accepting unexpectedly large payloads.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "mentions_body_size_limit",
+            "description": "Mentions configuring body size limits."
+          },
+          {
+            "key": "connects_limit_to_endpoint_risk",
+            "description": "Connects limits to endpoint needs and avoiding unexpectedly large payloads."
+          }
+        ]
+      },
+      {
+        "label": "Validates req.body because parsing does not guarantee correct schema, types, required fields, or safe values.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "states_parsing_not_validation",
+            "description": "States parsing does not validate schema or safety."
+          },
+          {
+            "key": "requires_schema_types_required_fields_validation",
+            "description": "Mentions validating schema, types, required fields, and allowed values."
+          }
+        ]
+      },
+      {
+        "label": "Mentions special cases such as raw body verification for webhooks or multipart/form-data requiring different middleware.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "mentions_raw_body_webhook_verification",
+            "description": "Mentions raw body handling for webhook signature verification."
+          },
+          {
+            "key": "mentions_multipart_requires_different_middleware",
+            "description": "Mentions multipart/form-data requiring different middleware."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -424,30 +692,116 @@
   },
   {
     "code": "EXPRESS_REQ_RES_JR_TECH_SEND_JSON_END_004",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "communication"],
-    "techTags": ["express", "nodejs", "rest"],
+    "competencies": [
+      "technical_fundamentals",
+      "communication"
+    ],
+    "techTags": [
+      "express",
+      "nodejs",
+      "rest"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Evaluate whether the candidate understands common Express response-ending methods and can choose between automatic Express helpers and low-level response termination.",
     "primaryQuestion": "How are res.send(), res.json(), and res.end() different in Express?",
     "expectedSignals": [
-      "Explains that res.send() sends a response body and performs Express conveniences such as setting Content-Type or Content-Length for common body types.",
-      "Explains that res.json() serializes a value with JSON.stringify semantics and sets the JSON content type.",
-      "Explains that res.end() is the lower-level Node response termination method and does not perform the same Express body serialization conveniences.",
-      "Mentions that all three end the response cycle, so route code should not try to send another response afterward.",
-      "Chooses res.json() for API JSON payloads, res.send() for simple strings/HTML/Buffers or generic bodies, and res.end() for cases with no body or after manual streaming/writing.",
-      "Mentions that status and headers should be set before the response is ended."
-    ],
-    "redFlags": [
-      "Thinks res.json() and res.send() always behave identically.",
-      "Uses res.end(object) expecting Express to serialize it to JSON.",
-      "Attempts to call res.json() after res.end() or res.send().",
-      "Does not understand that sending a response ends the request-response cycle.",
-      "Sets headers after the body has already been sent."
+      {
+        "label": "Explains that res.send() sends a response body and performs Express conveniences such as setting Content-Type or Content-Length for common body types.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "defines_res_send",
+            "description": "Explains res.send() sends a response body."
+          },
+          {
+            "key": "mentions_send_content_type_or_length_convenience",
+            "description": "Mentions Express conveniences such as Content-Type or Content-Length for common body types."
+          }
+        ]
+      },
+      {
+        "label": "Explains that res.json() serializes a value with JSON.stringify semantics and sets the JSON content type.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "defines_res_json_serialization",
+            "description": "Explains res.json() serializes values as JSON."
+          },
+          {
+            "key": "mentions_json_content_type",
+            "description": "Mentions that res.json sets the JSON Content-Type."
+          }
+        ]
+      },
+      {
+        "label": "Explains that res.end() is the lower-level Node response termination method and does not perform the same Express body serialization conveniences.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "defines_res_end_low_level_termination",
+            "description": "Explains res.end() as lower-level response termination."
+          },
+          {
+            "key": "contrasts_end_with_express_serialization_helpers",
+            "description": "Explains res.end() does not perform the same body serialization conveniences as res.json/res.send."
+          }
+        ]
+      },
+      {
+        "label": "Mentions that all three end the response cycle, so route code should not try to send another response afterward.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "states_all_three_end_response",
+            "description": "States res.send, res.json, and res.end all end the response cycle."
+          },
+          {
+            "key": "warns_no_second_response",
+            "description": "Warns not to send another response afterward."
+          }
+        ]
+      },
+      {
+        "label": "Chooses res.json() for API JSON payloads, res.send() for simple strings/HTML/Buffers or generic bodies, and res.end() for cases with no body or after manual streaming/writing.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "chooses_json_for_api_payloads",
+            "description": "Chooses res.json() for API JSON payloads."
+          },
+          {
+            "key": "chooses_send_or_end_for_appropriate_cases",
+            "description": "Chooses res.send for strings/HTML/Buffers or res.end for no body/manual streaming cases."
+          }
+        ]
+      },
+      {
+        "label": "Mentions that status and headers should be set before the response is ended.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "sets_status_before_end",
+            "description": "Mentions setting status before ending the response."
+          },
+          {
+            "key": "sets_headers_before_end",
+            "description": "Mentions setting headers before ending the response."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -472,11 +826,6 @@
         "trigger": "vague_answer",
         "question": "What would happen if you call res.end({ ok: true }) compared with res.json({ ok: true })?",
         "purpose": "Check serialization and low-level response understanding."
-      },
-      {
-        "trigger": "red_flag",
-        "question": "Can you set another header after res.send() has already sent the response? Why?",
-        "purpose": "Probe response lifecycle and headers-sent reasoning."
       }
     ],
     "localizedContent": {
@@ -568,30 +917,117 @@
   },
   {
     "code": "EXPRESS_REQ_RES_JR_TECH_STATUS_CODE_005",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "problem_solving", "communication"],
-    "techTags": ["express", "nodejs", "rest"],
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving",
+      "communication"
+    ],
+    "techTags": [
+      "express",
+      "nodejs",
+      "rest"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Check whether the candidate can set HTTP response status codes correctly and choose meaningful status codes for common API outcomes.",
     "primaryQuestion": "How do you set the HTTP status code in an Express response?",
     "expectedSignals": [
-      "Uses res.status(code) before sending the response body, such as res.status(201).json(createdResource).",
-      "Mentions res.sendStatus(code) as a shortcut that sets the status and sends the standard status message body.",
-      "Understands that status must be set before res.send(), res.json(), res.end(), res.redirect(), or file sending has committed headers.",
-      "Chooses common API statuses correctly, such as 200, 201, 204, 400, 401, 403, 404, 409, 422, and 500 depending on the case.",
-      "Avoids using 200 for errors or 500 for every client-side problem.",
-      "Mentions valid HTTP status range expectations and that invalid codes may throw at the Node layer."
-    ],
-    "redFlags": [
-      "Calls res.json(...).status(404) after the response was already sent.",
-      "Always returns 200 with an error field in the body.",
-      "Uses 500 for validation failures, not-found resources, or authorization failures.",
-      "Does not distinguish res.status() from res.sendStatus().",
-      "Sets statusCode directly in inconsistent places without understanding when headers are sent."
+      {
+        "label": "Uses res.status(code) before sending the response body, such as res.status(201).json(createdResource).",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "uses_res_status_before_body",
+            "description": "Uses res.status(code) before sending the response body."
+          },
+          {
+            "key": "gives_created_resource_status_example",
+            "description": "Gives an example such as res.status(201).json(createdResource)."
+          }
+        ]
+      },
+      {
+        "label": "Mentions res.sendStatus(code) as a shortcut that sets the status and sends the standard status message body.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_res_send_status",
+            "description": "Mentions res.sendStatus(code)."
+          },
+          {
+            "key": "explains_send_status_sets_status_and_body",
+            "description": "Explains it sets the status and sends the standard status message body."
+          }
+        ]
+      },
+      {
+        "label": "Understands that status must be set before res.send(), res.json(), res.end(), res.redirect(), or file sending has committed headers.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "sets_status_before_send_methods",
+            "description": "States status must be set before send/json/end/redirect/file sending."
+          },
+          {
+            "key": "connects_to_headers_committed",
+            "description": "Explains status cannot be changed after headers are committed."
+          }
+        ]
+      },
+      {
+        "label": "Chooses common API statuses correctly, such as 200, 201, 204, 400, 401, 403, 404, 409, 422, and 500 depending on the case.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "maps_success_status_codes",
+            "description": "Maps common success statuses such as 200, 201, and 204 to cases."
+          },
+          {
+            "key": "maps_error_status_codes",
+            "description": "Maps common error statuses such as 400, 401, 403, 404, 409, 422, and 500 to cases."
+          }
+        ]
+      },
+      {
+        "label": "Avoids using 200 for errors or 500 for every client-side problem.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "avoids_200_for_errors",
+            "description": "Avoids returning 200 for error outcomes."
+          },
+          {
+            "key": "avoids_500_for_client_errors",
+            "description": "Avoids using 500 for validation, auth, missing resource, or other client-side problems."
+          }
+        ]
+      },
+      {
+        "label": "Mentions valid HTTP status range expectations and that invalid codes may throw at the Node layer.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_valid_status_code_range",
+            "description": "Mentions status codes must be valid HTTP status codes."
+          },
+          {
+            "key": "mentions_invalid_code_can_throw",
+            "description": "Mentions invalid codes may throw at the Node/response layer."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -616,11 +1052,6 @@
         "trigger": "missing_context",
         "question": "What status would you use for a successful create, a validation error, and a missing resource?",
         "purpose": "Check practical status-code selection."
-      },
-      {
-        "trigger": "red_flag",
-        "question": "Why is res.json({ error }).status(404) wrong?",
-        "purpose": "Check response lifecycle ordering."
       }
     ],
     "localizedContent": {
@@ -707,30 +1138,116 @@
   },
   {
     "code": "EXPRESS_REQ_RES_JR_TECH_RESPONSE_CHAINING_006",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "communication"],
-    "techTags": ["express", "nodejs", "rest"],
+    "competencies": [
+      "technical_fundamentals",
+      "communication"
+    ],
+    "techTags": [
+      "express",
+      "nodejs",
+      "rest"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Verify whether the candidate understands Express response method chaining and the difference between configuring a response and ending it.",
     "primaryQuestion": "Why can you chain res.status(404).json({ ... }) in Express?",
     "expectedSignals": [
-      "Explains that many Express response methods return the response object itself, allowing method chaining.",
-      "Specifically states that res.status(code) sets response.statusCode and returns res.",
-      "Explains that .json(...) then serializes and sends the response, ending the response cycle.",
-      "Understands the order: configuration methods such as status, set, type, or cookie should run before a send/end method.",
-      "Recognizes that chaining is syntactic convenience, equivalent to calling res.status(404); res.json(...).",
-      "Mentions that after json/send/end is called, the handler should not continue to send another response."
-    ],
-    "redFlags": [
-      "Thinks chaining creates a new response object.",
-      "Believes every res method is safely chainable after the response is sent.",
-      "Cannot explain why status must come before json.",
-      "Calls res.json(...).status(404) and expects the status to change.",
-      "Continues execution and sends a second response after a chained send."
+      {
+        "label": "Explains that many Express response methods return the response object itself, allowing method chaining.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "states_response_methods_return_res",
+            "description": "Explains many Express response methods return the response object."
+          },
+          {
+            "key": "connects_return_res_to_chaining",
+            "description": "Connects returning res to method chaining."
+          }
+        ]
+      },
+      {
+        "label": "Specifically states that res.status(code) sets response.statusCode and returns res.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "states_res_status_sets_status_code",
+            "description": "States res.status(code) sets response.statusCode."
+          },
+          {
+            "key": "states_res_status_returns_res",
+            "description": "States res.status(code) returns res."
+          }
+        ]
+      },
+      {
+        "label": "Explains that .json(...) then serializes and sends the response, ending the response cycle.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "states_json_serializes_and_sends",
+            "description": "Explains .json(...) serializes and sends the response."
+          },
+          {
+            "key": "states_json_ends_response_cycle",
+            "description": "States .json(...) ends the response cycle."
+          }
+        ]
+      },
+      {
+        "label": "Understands the order: configuration methods such as status, set, type, or cookie should run before a send/end method.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "places_configuration_methods_before_send",
+            "description": "Explains status, set, type, or cookie should run before send/json/end."
+          },
+          {
+            "key": "distinguishes_configuring_from_ending_response",
+            "description": "Distinguishes configuring response state from ending the response."
+          }
+        ]
+      },
+      {
+        "label": "Recognizes that chaining is syntactic convenience, equivalent to calling res.status(404); res.json(...).",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "recognizes_chaining_as_syntax_convenience",
+            "description": "Recognizes chaining is syntactic convenience."
+          },
+          {
+            "key": "can_rewrite_chain_as_separate_statements",
+            "description": "Can rewrite res.status(...).json(...) as separate statements."
+          }
+        ]
+      },
+      {
+        "label": "Mentions that after json/send/end is called, the handler should not continue to send another response.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "states_no_second_response_after_send",
+            "description": "States no second response should be sent after json/send/end."
+          },
+          {
+            "key": "mentions_duplicate_or_headers_sent_error",
+            "description": "Mentions duplicate response or headers-already-sent problems."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -755,11 +1272,6 @@
         "trigger": "vague_answer",
         "question": "Rewrite res.status(404).json({ error: 'not found' }) as two separate statements.",
         "purpose": "Check whether the candidate sees chaining as returned-object convenience."
-      },
-      {
-        "trigger": "red_flag",
-        "question": "Why does the order matter between res.status(404).json(...) and res.json(...).status(404)?",
-        "purpose": "Check final response commit timing."
       }
     ],
     "localizedContent": {
@@ -846,30 +1358,118 @@
   },
   {
     "code": "EXPRESS_REQ_RES_MID_TRADE_REDIRECT_007",
-    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack",
+      "stage_3_domain_knowledge"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "trade_off",
-    "competencies": ["technical_fundamentals", "trade_off_analysis", "system_thinking"],
-    "techTags": ["express", "nodejs", "rest"],
+    "competencies": [
+      "technical_fundamentals",
+      "trade_off_analysis",
+      "system_thinking"
+    ],
+    "techTags": [
+      "express",
+      "nodejs",
+      "rest"
+    ],
     "difficulty": 3,
     "conversationDepth": "mid",
     "intent": "Evaluate whether the candidate understands redirect responses, common redirect status codes, and the client/cache/security consequences of choosing permanent versus temporary redirects.",
     "primaryQuestion": "What is res.redirect() used for? How are 301 and 302 redirects different?",
     "expectedSignals": [
-      "Explains that res.redirect() sends an HTTP redirect response with a Location header so the client requests another URL.",
-      "Mentions that Express defaults to 302 Found when no status is provided.",
-      "Explains 301 Moved Permanently as a permanent redirect that clients and search engines may cache and use for canonical URL changes.",
-      "Explains 302 Found as a temporary redirect, commonly used when the destination may change, such as login flows or temporary routing.",
-      "Mentions related method-preserving redirects such as 307 and 308 when preserving POST/PUT semantics matters.",
-      "Warns about open redirect vulnerabilities when redirect targets come from user input."
-    ],
-    "redFlags": [
-      "Uses 301 for login redirects or temporary A/B flows without understanding caching consequences.",
-      "Cannot explain that redirects are HTTP responses rather than server-side forwarding.",
-      "Builds redirects from unvalidated user-controlled returnUrl values.",
-      "Assumes all redirect statuses preserve the original HTTP method.",
-      "Does not know that Express defaults to 302."
+      {
+        "label": "Explains that res.redirect() sends an HTTP redirect response with a Location header so the client requests another URL.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "defines_res_redirect_location_header",
+            "description": "Explains res.redirect sends a redirect response with a Location header."
+          },
+          {
+            "key": "connects_redirect_to_client_followup_request",
+            "description": "Explains the client requests another URL after the redirect."
+          }
+        ]
+      },
+      {
+        "label": "Mentions that Express defaults to 302 Found when no status is provided.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "mentions_default_302",
+            "description": "Mentions Express defaults to 302 Found when no status is provided."
+          },
+          {
+            "key": "distinguishes_default_from_explicit_status",
+            "description": "Recognizes a specific redirect status can be provided explicitly."
+          }
+        ]
+      },
+      {
+        "label": "Explains 301 Moved Permanently as a permanent redirect that clients and search engines may cache and use for canonical URL changes.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "defines_301_permanent",
+            "description": "Explains 301 Moved Permanently as a permanent redirect."
+          },
+          {
+            "key": "mentions_cache_seo_canonical_effect",
+            "description": "Mentions clients/search engines may cache it and use it for canonical URL changes."
+          }
+        ]
+      },
+      {
+        "label": "Explains 302 Found as a temporary redirect, commonly used when the destination may change, such as login flows or temporary routing.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "defines_302_temporary",
+            "description": "Explains 302 Found as a temporary redirect."
+          },
+          {
+            "key": "uses_login_or_temporary_destination_example",
+            "description": "Uses examples such as login flows or temporary routing."
+          }
+        ]
+      },
+      {
+        "label": "Mentions related method-preserving redirects such as 307 and 308 when preserving POST/PUT semantics matters.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "mentions_307_or_308",
+            "description": "Mentions 307 or 308 redirects."
+          },
+          {
+            "key": "connects_307_308_to_method_preservation",
+            "description": "Explains they matter when preserving POST/PUT method semantics."
+          }
+        ]
+      },
+      {
+        "label": "Warns about open redirect vulnerabilities when redirect targets come from user input.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "warns_open_redirect",
+            "description": "Warns about open redirect vulnerabilities."
+          },
+          {
+            "key": "connects_risk_to_user_controlled_target",
+            "description": "Connects the risk to redirect targets coming from user input."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -894,11 +1494,6 @@
         "trigger": "missing_tradeoff",
         "question": "Why is 301 usually a bad choice for a temporary login redirect?",
         "purpose": "Check caching and permanence reasoning."
-      },
-      {
-        "trigger": "red_flag",
-        "question": "How would you prevent an open redirect when using a returnUrl query parameter?",
-        "purpose": "Check redirect security awareness."
       }
     ],
     "localizedContent": {
@@ -990,30 +1585,119 @@
   },
   {
     "code": "EXPRESS_REQ_RES_MID_TECH_COOKIES_008",
-    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
-    "roleFamilies": ["backend", "fullstack", "security"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack",
+      "stage_3_domain_knowledge"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "security"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "ownership"],
-    "techTags": ["express", "nodejs", "security"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "ownership"
+    ],
+    "techTags": [
+      "express",
+      "nodejs",
+      "security"
+    ],
     "difficulty": 3,
     "conversationDepth": "mid",
     "intent": "Check whether the candidate understands setting and clearing cookies in Express, cookie attributes, and common security requirements.",
     "primaryQuestion": "What are res.cookie() and res.clearCookie() used for in Express?",
     "expectedSignals": [
-      "Explains that res.cookie(name, value, options) sets a Set-Cookie response header for the client to store a cookie.",
-      "Explains that res.clearCookie(name, options) instructs the client to remove a cookie by sending an expired Set-Cookie header.",
-      "Mentions important cookie options such as httpOnly, secure, sameSite, maxAge, expires, path, domain, signed, and priority where relevant.",
-      "Understands that clearing a cookie usually requires matching key options such as path and domain used when setting it.",
-      "Distinguishes setting cookies from reading cookies, which requires parsing request Cookie headers, commonly through cookie-parser or similar middleware.",
-      "Avoids storing sensitive secrets directly in client-visible cookies and uses httpOnly/secure/sameSite according to the auth model."
-    ],
-    "redFlags": [
-      "Thinks res.cookie stores data on the server.",
-      "Thinks res.clearCookie can delete any cookie regardless of path or domain.",
-      "Stores passwords, raw access tokens, or sensitive profile data in plain cookies.",
-      "Forgets httpOnly, secure, and sameSite for authentication-related cookies.",
-      "Confuses signed cookies with encrypted cookies."
+      {
+        "label": "Explains that res.cookie(name, value, options) sets a Set-Cookie response header for the client to store a cookie.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "defines_res_cookie_set_cookie_header",
+            "description": "Explains res.cookie sets a Set-Cookie response header."
+          },
+          {
+            "key": "connects_cookie_header_to_client_storage",
+            "description": "Explains the client stores the cookie."
+          }
+        ]
+      },
+      {
+        "label": "Explains that res.clearCookie(name, options) instructs the client to remove a cookie by sending an expired Set-Cookie header.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "defines_res_clear_cookie",
+            "description": "Explains res.clearCookie instructs the client to remove a cookie."
+          },
+          {
+            "key": "mentions_expired_set_cookie_header",
+            "description": "Mentions sending an expired Set-Cookie header."
+          }
+        ]
+      },
+      {
+        "label": "Mentions important cookie options such as httpOnly, secure, sameSite, maxAge, expires, path, domain, signed, and priority where relevant.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "mentions_security_cookie_options",
+            "description": "Mentions httpOnly, secure, sameSite, or signed options."
+          },
+          {
+            "key": "mentions_lifetime_scope_cookie_options",
+            "description": "Mentions maxAge, expires, path, domain, priority, or similar scope/lifetime options."
+          }
+        ]
+      },
+      {
+        "label": "Understands that clearing a cookie usually requires matching key options such as path and domain used when setting it.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "states_clear_cookie_must_match_scope",
+            "description": "States clearing usually must match cookie scope options."
+          },
+          {
+            "key": "mentions_path_or_domain_matching",
+            "description": "Mentions matching path and/or domain."
+          }
+        ]
+      },
+      {
+        "label": "Distinguishes setting cookies from reading cookies, which requires parsing request Cookie headers, commonly through cookie-parser or similar middleware.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "distinguishes_setting_from_reading_cookie",
+            "description": "Distinguishes response cookie setting from request cookie reading."
+          },
+          {
+            "key": "mentions_cookie_parser_for_reading",
+            "description": "Mentions Cookie header parsing via cookie-parser or similar middleware."
+          }
+        ]
+      },
+      {
+        "label": "Avoids storing sensitive secrets directly in client-visible cookies and uses httpOnly/secure/sameSite according to the auth model.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "avoids_client_visible_secret_storage",
+            "description": "Warns against storing sensitive secrets directly in client-visible cookies."
+          },
+          {
+            "key": "connects_cookie_security_attrs_to_auth_model",
+            "description": "Connects httpOnly, secure, and sameSite choices to the auth model."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1129,30 +1813,119 @@
   },
   {
     "code": "EXPRESS_REQ_RES_MID_TECH_IP_METHOD_009",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack", "devops"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "devops"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "impact_measurement"],
-    "techTags": ["express", "nodejs", "logging", "security"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "impact_measurement"
+    ],
+    "techTags": [
+      "express",
+      "nodejs",
+      "logging",
+      "security"
+    ],
     "difficulty": 3,
     "conversationDepth": "mid",
     "intent": "Assess whether the candidate understands request IP and method metadata, including proxy effects and operational use cases.",
     "primaryQuestion": "What information do req.ip and req.method provide in Express?",
     "expectedSignals": [
-      "Explains that req.ip contains the remote IP address Express associates with the request.",
-      "Mentions that req.ip changes behind proxies depending on the trust proxy setting and X-Forwarded-For handling.",
-      "Explains that req.method contains the HTTP method string such as GET, POST, PUT, PATCH, DELETE, or OPTIONS.",
-      "Connects req.method to route matching, logging, metrics, authorization rules, CORS preflight, and method-specific behavior.",
-      "Warns that req.ip should be used carefully for rate limiting or auditing when proxy trust is misconfigured.",
-      "Mentions that IP is not a reliable user identity and can represent NAT, proxies, mobile networks, or load balancers."
-    ],
-    "redFlags": [
-      "Treats req.ip as a guaranteed unique user identifier.",
-      "Ignores trust proxy and blindly trusts X-Forwarded-For from the public internet.",
-      "Thinks req.method is the route path or controller name.",
-      "Uses req.method for security decisions without route and authorization context.",
-      "Cannot explain why req.ip may be a load balancer IP in production."
+      {
+        "label": "Explains that req.ip contains the remote IP address Express associates with the request.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "defines_req_ip",
+            "description": "Explains req.ip as the remote IP address Express associates with the request."
+          },
+          {
+            "key": "qualifies_associated_ip_not_guaranteed_user_identity",
+            "description": "Qualifies that it is the address Express associates with the request, not guaranteed user identity."
+          }
+        ]
+      },
+      {
+        "label": "Mentions that req.ip changes behind proxies depending on the trust proxy setting and X-Forwarded-For handling.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_trust_proxy_setting",
+            "description": "Mentions Express trust proxy configuration."
+          },
+          {
+            "key": "mentions_x_forwarded_for_handling",
+            "description": "Mentions X-Forwarded-For handling behind proxies/load balancers."
+          }
+        ]
+      },
+      {
+        "label": "Explains that req.method contains the HTTP method string such as GET, POST, PUT, PATCH, DELETE, or OPTIONS.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "defines_req_method",
+            "description": "Explains req.method as the HTTP method string."
+          },
+          {
+            "key": "names_common_http_methods",
+            "description": "Names methods such as GET, POST, PUT, PATCH, DELETE, or OPTIONS."
+          }
+        ]
+      },
+      {
+        "label": "Connects req.method to route matching, logging, metrics, authorization rules, CORS preflight, and method-specific behavior.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "connects_method_to_routing_and_behavior",
+            "description": "Connects req.method to route matching, auth rules, CORS preflight, or method-specific behavior."
+          },
+          {
+            "key": "connects_method_to_logging_metrics",
+            "description": "Connects req.method to useful logging, metrics, or telemetry."
+          }
+        ]
+      },
+      {
+        "label": "Warns that req.ip should be used carefully for rate limiting or auditing when proxy trust is misconfigured.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "warns_req_ip_rate_limit_audit_proxy_risk",
+            "description": "Warns about using req.ip for rate limiting or auditing when proxy trust is wrong."
+          },
+          {
+            "key": "mentions_spoofing_or_load_balancer_address_risk",
+            "description": "Mentions spoofing risk or seeing the load balancer/proxy address."
+          }
+        ]
+      },
+      {
+        "label": "Mentions that IP is not a reliable user identity and can represent NAT, proxies, mobile networks, or load balancers.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "states_ip_not_user_identity",
+            "description": "States IP address is not a reliable user identity."
+          },
+          {
+            "key": "mentions_nat_proxy_mobile_lb",
+            "description": "Mentions NAT, proxies, mobile networks, or load balancers."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1273,30 +2046,118 @@
   },
   {
     "code": "EXPRESS_REQ_RES_JR_TECH_RESPONSE_HEADERS_010",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack", "security"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "security"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking"],
-    "techTags": ["express", "nodejs", "rest", "security"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking"
+    ],
+    "techTags": [
+      "express",
+      "nodejs",
+      "rest",
+      "security"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Verify whether the candidate knows how to set response headers and understands timing, overwrite behavior, and common header use cases.",
     "primaryQuestion": "How do you set response headers in Express?",
     "expectedSignals": [
-      "Uses res.set('Header-Name', 'value') or res.header('Header-Name', 'value') to set a response header.",
-      "Mentions passing an object to res.set() to set multiple headers at once.",
-      "Mentions res.append() when adding values to an existing header is desired, and understands res.set() can overwrite/reset header values.",
-      "Sets headers before sending the response body or ending the response.",
-      "Gives examples such as Cache-Control, Content-Type, ETag, Location, Content-Disposition, security headers, or custom request-id headers.",
-      "Avoids manually setting hop-by-hop or invalid headers without understanding HTTP semantics."
-    ],
-    "redFlags": [
-      "Uses req.headers to set response headers.",
-      "Sets headers after res.send() or res.json() has already committed the response.",
-      "Confuses request header reading with response header writing.",
-      "Overwrites Set-Cookie or multi-value headers unintentionally.",
-      "Adds security headers blindly without understanding their effect."
+      {
+        "label": "Uses res.set('Header-Name', 'value') or res.header('Header-Name', 'value') to set a response header.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "uses_res_set_or_header",
+            "description": "Uses res.set('Header-Name', 'value') or res.header(...)."
+          },
+          {
+            "key": "identifies_response_header_setting",
+            "description": "Clearly states these set response headers."
+          }
+        ]
+      },
+      {
+        "label": "Mentions passing an object to res.set() to set multiple headers at once.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_res_set_object_syntax",
+            "description": "Mentions passing an object to res.set()."
+          },
+          {
+            "key": "uses_multi_header_example",
+            "description": "Applies it to setting multiple headers such as Cache-Control and X-Request-Id."
+          }
+        ]
+      },
+      {
+        "label": "Mentions res.append() when adding values to an existing header is desired, and understands res.set() can overwrite/reset header values.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_res_append",
+            "description": "Mentions res.append() for adding values to an existing header."
+          },
+          {
+            "key": "mentions_res_set_overwrite_behavior",
+            "description": "Mentions res.set() can overwrite or reset header values."
+          }
+        ]
+      },
+      {
+        "label": "Sets headers before sending the response body or ending the response.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "sets_headers_before_body",
+            "description": "States headers must be set before sending the body."
+          },
+          {
+            "key": "connects_to_headers_committed",
+            "description": "Explains headers are committed once the response starts/ends."
+          }
+        ]
+      },
+      {
+        "label": "Gives examples such as Cache-Control, Content-Type, ETag, Location, Content-Disposition, security headers, or custom request-id headers.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "names_caching_content_location_headers",
+            "description": "Names examples such as Cache-Control, Content-Type, ETag, Location, or Content-Disposition."
+          },
+          {
+            "key": "names_security_or_custom_trace_headers",
+            "description": "Names security headers or custom request/correlation ID headers."
+          }
+        ]
+      },
+      {
+        "label": "Avoids manually setting hop-by-hop or invalid headers without understanding HTTP semantics.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "warns_hop_by_hop_headers",
+            "description": "Warns against casually setting hop-by-hop headers."
+          },
+          {
+            "key": "warns_invalid_header_semantics",
+            "description": "Mentions understanding HTTP semantics before setting unusual or invalid headers."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1321,11 +2182,6 @@
         "trigger": "missing_context",
         "question": "How would you set Cache-Control and X-Request-Id in the same response?",
         "purpose": "Check multi-header syntax."
-      },
-      {
-        "trigger": "red_flag",
-        "question": "What happens if you try to set a header after res.json() has already sent the response?",
-        "purpose": "Check response commit timing."
       }
     ],
     "localizedContent": {
@@ -1412,30 +2268,116 @@
   },
   {
     "code": "EXPRESS_REQ_RES_MID_TECH_RES_LOCALS_011",
-    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["mid"],
+    "stages": [
+      "stage_2_tech_stack",
+      "stage_3_domain_knowledge"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "collaboration"],
-    "techTags": ["express", "nodejs"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "collaboration"
+    ],
+    "techTags": [
+      "express",
+      "nodejs"
+    ],
     "difficulty": 3,
     "conversationDepth": "mid",
     "intent": "Assess whether the candidate understands per-request response locals, template rendering use cases, and safe middleware-to-view data passing.",
     "primaryQuestion": "What is res.locals, and what is it used for?",
     "expectedSignals": [
-      "Defines res.locals as an object for variables scoped to a single request-response cycle.",
-      "Explains that values on res.locals are accessible to templates rendered with res.render().",
-      "Uses it for request-level data such as authenticated user, permissions, flash messages, request id, locale, CSRF token, or feature flags.",
-      "Distinguishes res.locals from app.locals, which is application-wide and shared across requests.",
-      "Mentions that res.locals should not be used as persistent storage or cross-request state.",
-      "Warns against putting unsanitized user-controlled keys or sensitive data into template locals in a way that can cause XSS or data exposure."
-    ],
-    "redFlags": [
-      "Thinks res.locals persists globally across all users.",
-      "Uses res.locals as a database or cache.",
-      "Cannot distinguish res.locals from app.locals.",
-      "Stores large sensitive objects or secrets in locals without considering rendering exposure.",
-      "Does not know its main connection to server-side templates."
+      {
+        "label": "Defines res.locals as an object for variables scoped to a single request-response cycle.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "defines_res_locals_request_scope",
+            "description": "Defines res.locals as an object scoped to one request-response cycle."
+          },
+          {
+            "key": "distinguishes_from_global_state",
+            "description": "Indicates it is not global or persistent state."
+          }
+        ]
+      },
+      {
+        "label": "Explains that values on res.locals are accessible to templates rendered with res.render().",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "connects_res_locals_to_res_render",
+            "description": "Explains res.locals values are available to templates rendered with res.render()."
+          },
+          {
+            "key": "mentions_template_locals_usage",
+            "description": "Mentions template/view locals usage."
+          }
+        ]
+      },
+      {
+        "label": "Uses it for request-level data such as authenticated user, permissions, flash messages, request id, locale, CSRF token, or feature flags.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "names_auth_user_permission_request_data",
+            "description": "Names authenticated user, permissions, request id, locale, or CSRF token."
+          },
+          {
+            "key": "names_flash_or_feature_flag_locals",
+            "description": "Mentions flash messages, feature flags, or other request-level template values."
+          }
+        ]
+      },
+      {
+        "label": "Distinguishes res.locals from app.locals, which is application-wide and shared across requests.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "distinguishes_res_locals_from_app_locals",
+            "description": "Distinguishes res.locals from app.locals."
+          },
+          {
+            "key": "states_app_locals_application_wide",
+            "description": "States app.locals is application-wide and shared across requests."
+          }
+        ]
+      },
+      {
+        "label": "Mentions that res.locals should not be used as persistent storage or cross-request state.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "rejects_persistent_storage_use",
+            "description": "Warns not to use res.locals as persistent storage."
+          },
+          {
+            "key": "rejects_cross_request_state_use",
+            "description": "Warns not to use res.locals for cross-request state."
+          }
+        ]
+      },
+      {
+        "label": "Warns against putting unsanitized user-controlled keys or sensitive data into template locals in a way that can cause XSS or data exposure.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "warns_unsanitized_user_controlled_template_data",
+            "description": "Warns against unsafe user-controlled values in template locals."
+          },
+          {
+            "key": "mentions_xss_or_sensitive_data_exposure",
+            "description": "Mentions XSS or sensitive data exposure risks."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1460,11 +2402,6 @@
         "trigger": "missing_context",
         "question": "How would auth middleware expose the current user to later templates without using a global variable?",
         "purpose": "Check middleware-to-template data flow."
-      },
-      {
-        "trigger": "red_flag",
-        "question": "Why is res.locals safer for request data than app.locals, but still not a place for secrets you render accidentally?",
-        "purpose": "Check scope and exposure reasoning."
       }
     ],
     "localizedContent": {
@@ -1551,30 +2488,116 @@
   },
   {
     "code": "EXPRESS_REQ_RES_MID_TECH_PATH_URL_ORIGINAL_012",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "problem_solving", "system_thinking"],
-    "techTags": ["express", "nodejs", "rest"],
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving",
+      "system_thinking"
+    ],
+    "techTags": [
+      "express",
+      "nodejs",
+      "rest"
+    ],
     "difficulty": 3,
     "conversationDepth": "mid",
     "intent": "Evaluate whether the candidate understands URL-related request properties in Express and how mounted routers/middleware rewrite req.url.",
     "primaryQuestion": "How are req.path, req.url, and req.originalUrl different in Express?",
     "expectedSignals": [
-      "Explains that req.path is the path portion of the current request URL without the query string.",
-      "Explains that req.url is inherited from Node.js and represents the current URL used by the active middleware/router, including the query string.",
-      "Explains that Express can rewrite req.url when middleware or routers are mounted, commonly stripping the mount point.",
-      "Explains that req.originalUrl preserves the original requested URL before internal routing rewrites and is available in middleware and routers.",
-      "Mentions req.baseUrl as the mounted path prefix that helps explain originalUrl as baseUrl plus url in router contexts.",
-      "Uses an example such as app.use('/admin', ...) receiving /admin/new?sort=desc where originalUrl is /admin/new?sort=desc, baseUrl is /admin, path is /new, and url is /new?sort=desc."
-    ],
-    "redFlags": [
-      "Says req.path, req.url, and req.originalUrl are always identical.",
-      "Ignores query string differences.",
-      "Cannot explain why mounted routers may see a shortened req.url.",
-      "Uses req.url for audit logging when originalUrl is needed.",
-      "Uses string splitting instead of URL-aware properties when Express already provides them."
+      {
+        "label": "Explains that req.path is the path portion of the current request URL without the query string.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "defines_req_path",
+            "description": "Explains req.path as the path portion of the current URL."
+          },
+          {
+            "key": "states_req_path_excludes_query",
+            "description": "States req.path excludes the query string."
+          }
+        ]
+      },
+      {
+        "label": "Explains that req.url is inherited from Node.js and represents the current URL used by the active middleware/router, including the query string.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "defines_req_url_current_router_url",
+            "description": "Explains req.url as the current URL used by active middleware/router."
+          },
+          {
+            "key": "states_req_url_includes_query",
+            "description": "States req.url includes the query string."
+          }
+        ]
+      },
+      {
+        "label": "Explains that Express can rewrite req.url when middleware or routers are mounted, commonly stripping the mount point.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_req_url_rewritten_in_mounted_middleware",
+            "description": "Explains Express can rewrite req.url in mounted middleware/routers."
+          },
+          {
+            "key": "mentions_mount_point_stripping",
+            "description": "Mentions the mount path can be stripped from req.url."
+          }
+        ]
+      },
+      {
+        "label": "Explains that req.originalUrl preserves the original requested URL before internal routing rewrites and is available in middleware and routers.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "defines_req_original_url",
+            "description": "Explains req.originalUrl preserves the original requested URL."
+          },
+          {
+            "key": "connects_original_url_to_logging_client_request",
+            "description": "Connects originalUrl to logging the exact client-requested URL."
+          }
+        ]
+      },
+      {
+        "label": "Mentions req.baseUrl as the mounted path prefix that helps explain originalUrl as baseUrl plus url in router contexts.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_req_base_url",
+            "description": "Mentions req.baseUrl."
+          },
+          {
+            "key": "explains_original_url_as_base_url_plus_url",
+            "description": "Explains originalUrl in router contexts as baseUrl plus url."
+          }
+        ]
+      },
+      {
+        "label": "Uses an example such as app.use('/admin', ...) receiving /admin/new?sort=desc where originalUrl is /admin/new?sort=desc, baseUrl is /admin, path is /new, and url is /new?sort=desc.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "uses_mounted_admin_example",
+            "description": "Uses a mounted path example such as /admin/new?sort=desc."
+          },
+          {
+            "key": "maps_example_to_original_base_path_url",
+            "description": "Correctly maps originalUrl, baseUrl, path, and url in that example."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1695,31 +2718,132 @@
   },
   {
     "code": "EXPRESS_REQ_RES_MID_TECH_FILE_DOWNLOAD_013",
-    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
-    "roleFamilies": ["backend", "fullstack", "security"],
-    "levels": ["mid"],
+    "stages": [
+      "stage_2_tech_stack",
+      "stage_3_domain_knowledge"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "security"
+    ],
+    "levels": [
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "problem_solving", "ownership"],
-    "techTags": ["express", "nodejs", "security"],
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving",
+      "ownership"
+    ],
+    "techTags": [
+      "express",
+      "nodejs",
+      "security"
+    ],
     "difficulty": 3,
     "conversationDepth": "mid",
     "intent": "Assess whether the candidate can implement file downloads safely using Express helpers while handling paths, authorization, errors, and partially-sent responses.",
     "primaryQuestion": "How do you download a file in Express?",
     "expectedSignals": [
-      "Uses res.download(path[, filename][, options][, callback]) when the desired behavior is attachment-style file download.",
-      "Mentions res.sendFile() as an alternative for sending a file inline or with custom headers when download semantics are not required.",
-      "Validates authorization before sending the file and avoids exposing arbitrary filesystem paths from user input.",
-      "Uses safe path construction, allowlists, storage IDs, or root options instead of concatenating untrusted path segments directly.",
-      "Handles callback errors and knows the response may be partially sent, so error handlers should check res.headersSent.",
-      "Sets or understands headers such as Content-Disposition, Content-Type, Cache-Control, and filename where relevant.",
-      "Considers streaming, large files, CDN/object storage signed URLs, and range requests for production-scale downloads."
-    ],
-    "redFlags": [
-      "Passes req.query.path directly to res.download.",
-      "Performs authorization after starting the download.",
-      "Ignores callback errors or tries to send a JSON error after a partial file response.",
-      "Serves private files from a static public directory.",
-      "Loads large files fully into memory before sending without a reason."
+      {
+        "label": "Uses res.download(path[, filename][, options][, callback]) when the desired behavior is attachment-style file download.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "uses_res_download",
+            "description": "Uses res.download(path[, filename][, options][, callback])."
+          },
+          {
+            "key": "connects_download_to_attachment_semantics",
+            "description": "Explains res.download is for attachment-style file downloads."
+          }
+        ]
+      },
+      {
+        "label": "Mentions res.sendFile() as an alternative for sending a file inline or with custom headers when download semantics are not required.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_res_send_file_alternative",
+            "description": "Mentions res.sendFile() as an alternative."
+          },
+          {
+            "key": "distinguishes_inline_or_custom_header_file_send",
+            "description": "Explains sendFile can be used for inline file sending or custom header cases."
+          }
+        ]
+      },
+      {
+        "label": "Validates authorization before sending the file and avoids exposing arbitrary filesystem paths from user input.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "checks_authorization_before_file_send",
+            "description": "Mentions checking authorization before sending the file."
+          },
+          {
+            "key": "avoids_user_controlled_filesystem_paths",
+            "description": "Warns against exposing arbitrary filesystem paths from user input."
+          }
+        ]
+      },
+      {
+        "label": "Uses safe path construction, allowlists, storage IDs, or root options instead of concatenating untrusted path segments directly.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "uses_safe_path_construction_or_root",
+            "description": "Mentions safe path construction, allowlists, storage IDs, or root options."
+          },
+          {
+            "key": "rejects_untrusted_path_concatenation",
+            "description": "Warns against concatenating untrusted path segments directly."
+          }
+        ]
+      },
+      {
+        "label": "Handles callback errors and knows the response may be partially sent, so error handlers should check res.headersSent.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "handles_download_callback_errors",
+            "description": "Mentions handling errors in the download/send file callback."
+          },
+          {
+            "key": "checks_headers_sent_for_partial_response",
+            "description": "Mentions checking res.headersSent because the response may be partially sent."
+          }
+        ]
+      },
+      {
+        "label": "Sets or understands headers such as Content-Disposition, Content-Type, Cache-Control, and filename where relevant.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_content_disposition_filename",
+            "description": "Mentions Content-Disposition or filename behavior."
+          },
+          {
+            "key": "mentions_content_type_or_cache_control",
+            "description": "Mentions Content-Type or Cache-Control for file responses."
+          }
+        ]
+      },
+      {
+        "label": "Considers streaming, large files, CDN/object storage signed URLs, and range requests for production-scale downloads.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_streaming_or_range_requests",
+            "description": "Mentions streaming or range requests for large files."
+          },
+          {
+            "key": "mentions_cdn_object_storage_signed_urls",
+            "description": "Mentions CDN/object storage or signed URLs for production-scale downloads."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1740,11 +2864,6 @@
       }
     ],
     "followUps": [
-      {
-        "trigger": "red_flag",
-        "question": "Why is res.download(req.query.path) dangerous?",
-        "purpose": "Check path traversal and authorization risk awareness."
-      },
       {
         "trigger": "missing_context",
         "question": "What should your callback do if an error occurs after headers have already been sent?",
@@ -1838,31 +2957,135 @@
   },
   {
     "code": "EXPRESS_REQ_RES_MID_TECH_STATIC_FILES_014",
-    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
-    "roleFamilies": ["backend", "fullstack", "devops", "security"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack",
+      "stage_3_domain_knowledge"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "devops",
+      "security"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "trade_off_analysis"],
-    "techTags": ["express", "nodejs", "rest", "security"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "trade_off_analysis"
+    ],
+    "techTags": [
+      "express",
+      "nodejs",
+      "rest",
+      "security"
+    ],
     "difficulty": 3,
     "conversationDepth": "mid",
     "intent": "Check whether the candidate can serve static assets with express.static while considering mount paths, filesystem roots, caching, fallthrough, and exposure risks.",
     "primaryQuestion": "How do you serve static files in Express?",
     "expectedSignals": [
-      "Uses express.static(root, options) as built-in middleware and mounts it with app.use().",
-      "Explains that the root directory is the filesystem directory Express serves from, and that the directory name itself is not part of the URL unless mounted under a virtual prefix.",
-      "Shows a virtual mount path such as app.use('/static', express.static(path.join(__dirname, 'public'))).",
-      "Prefers absolute paths or path.join with a known application directory to avoid surprises from process working directory changes.",
-      "Configures caching carefully, such as long maxAge and immutable only for versioned assets, and shorter/no cache for mutable files.",
-      "Considers dotfiles, directory exposure, fallthrough behavior, SPA fallbacks, and custom 404 handling.",
-      "Mentions that reverse proxy, CDN, or object storage is often better for high-volume static assets in production."
-    ],
-    "redFlags": [
-      "Serves the whole project root or private upload directory without review.",
-      "Assumes express.static performs authorization for private files.",
-      "Caches mutable non-versioned files for a long time.",
-      "Uses relative paths without understanding the process working directory.",
-      "Relies on Express alone for heavy static traffic where a CDN or reverse proxy should be considered."
+      {
+        "label": "Uses express.static(root, options) as built-in middleware and mounts it with app.use().",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "uses_express_static",
+            "description": "Uses express.static(root, options)."
+          },
+          {
+            "key": "mounts_static_with_app_use",
+            "description": "Mentions mounting static middleware with app.use()."
+          }
+        ]
+      },
+      {
+        "label": "Explains that the root directory is the filesystem directory Express serves from, and that the directory name itself is not part of the URL unless mounted under a virtual prefix.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "defines_static_root_directory",
+            "description": "Explains root as the filesystem directory served from."
+          },
+          {
+            "key": "distinguishes_filesystem_dir_from_url_prefix",
+            "description": "Explains the directory name is not automatically part of the URL unless mounted under a prefix."
+          }
+        ]
+      },
+      {
+        "label": "Shows a virtual mount path such as app.use('/static', express.static(path.join(__dirname, 'public'))).",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "shows_virtual_static_mount",
+            "description": "Shows a virtual mount path such as app.use('/static', express.static(...))."
+          },
+          {
+            "key": "uses_path_join_public_example",
+            "description": "Uses a safe path example such as path.join(__dirname, 'public')."
+          }
+        ]
+      },
+      {
+        "label": "Prefers absolute paths or path.join with a known application directory to avoid surprises from process working directory changes.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "prefers_absolute_or_known_base_path",
+            "description": "Prefers absolute paths or path.join with a known app directory."
+          },
+          {
+            "key": "mentions_cwd_surprise_risk",
+            "description": "Mentions avoiding surprises from process working directory changes."
+          }
+        ]
+      },
+      {
+        "label": "Configures caching carefully, such as long maxAge and immutable only for versioned assets, and shorter/no cache for mutable files.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "uses_long_cache_for_versioned_assets",
+            "description": "Mentions long maxAge/immutable for versioned or fingerprinted assets."
+          },
+          {
+            "key": "uses_short_or_no_cache_for_mutable_files",
+            "description": "Mentions shorter or no cache for mutable files."
+          }
+        ]
+      },
+      {
+        "label": "Considers dotfiles, directory exposure, fallthrough behavior, SPA fallbacks, and custom 404 handling.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "mentions_dotfiles_directory_exposure_fallthrough",
+            "description": "Mentions dotfiles, directory exposure, or fallthrough behavior."
+          },
+          {
+            "key": "mentions_spa_fallback_or_custom_404",
+            "description": "Mentions SPA fallbacks or custom 404 handling."
+          }
+        ]
+      },
+      {
+        "label": "Mentions that reverse proxy, CDN, or object storage is often better for high-volume static assets in production.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "mentions_reverse_proxy_or_cdn",
+            "description": "Mentions reverse proxy or CDN for static assets."
+          },
+          {
+            "key": "mentions_object_storage_for_high_volume_assets",
+            "description": "Mentions object storage or external asset serving for production scale."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1887,11 +3110,6 @@
         "trigger": "missing_tradeoff",
         "question": "Which assets would you serve with immutable long-term cache headers, and which would you avoid caching that way?",
         "purpose": "Check cache invalidation reasoning."
-      },
-      {
-        "trigger": "red_flag",
-        "question": "What can go wrong if you serve your repository root as static content?",
-        "purpose": "Check exposure risk awareness."
       }
     ],
     "localizedContent": {
@@ -1978,31 +3196,131 @@
   },
   {
     "code": "EXPRESS_REQ_RES_MID_TECH_RENDER_015",
-    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack",
+      "stage_3_domain_knowledge"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "communication"],
-    "techTags": ["express", "nodejs"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "communication"
+    ],
+    "techTags": [
+      "express",
+      "nodejs"
+    ],
     "difficulty": 3,
     "conversationDepth": "mid",
     "intent": "Verify whether the candidate understands server-side template rendering in Express, required configuration, and when rendering HTML differs from returning API JSON.",
     "primaryQuestion": "What is res.render() used for? What Express configuration is needed to use it?",
     "expectedSignals": [
-      "Explains that res.render(view, locals[, callback]) renders a server-side template and sends the resulting HTML response unless a callback is used.",
-      "Mentions configuring a view engine with app.set('view engine', 'pug' or 'ejs' or another engine).",
-      "Mentions configuring the views directory with app.set('views', pathToViews) when the default views directory is not sufficient.",
-      "Mentions installing the corresponding template engine package, such as pug, ejs, handlebars, or another Express-compatible engine.",
-      "Explains passing locals to the template through the second argument and/or res.locals for request-scoped values.",
-      "Distinguishes res.render() for HTML pages from res.json() for API responses.",
-      "Mentions callback behavior: with a callback, Express provides the rendered HTML and the handler must send it explicitly."
-    ],
-    "redFlags": [
-      "Uses res.render() expecting JSON output for an API endpoint.",
-      "Forgets to configure view engine or install the template engine package.",
-      "Cannot explain where Express looks for templates.",
-      "Puts unsanitized user input into templates without considering escaping and XSS.",
-      "Provides a callback to res.render() but forgets to send the rendered HTML."
+      {
+        "label": "Explains that res.render(view, locals[, callback]) renders a server-side template and sends the resulting HTML response unless a callback is used.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "defines_res_render_template_html",
+            "description": "Explains res.render renders a server-side template to HTML."
+          },
+          {
+            "key": "mentions_callback_changes_send_behavior",
+            "description": "Mentions it sends the response unless a callback is used."
+          }
+        ]
+      },
+      {
+        "label": "Mentions configuring a view engine with app.set('view engine', 'pug' or 'ejs' or another engine).",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_app_set_view_engine",
+            "description": "Mentions configuring app.set('view engine', ...)."
+          },
+          {
+            "key": "names_template_engine_examples",
+            "description": "Names engines such as pug, ejs, handlebars, or similar."
+          }
+        ]
+      },
+      {
+        "label": "Mentions configuring the views directory with app.set('views', pathToViews) when the default views directory is not sufficient.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_app_set_views_directory",
+            "description": "Mentions app.set('views', pathToViews)."
+          },
+          {
+            "key": "connects_views_dir_to_template_lookup",
+            "description": "Explains it controls where Express looks for templates."
+          }
+        ]
+      },
+      {
+        "label": "Mentions installing the corresponding template engine package, such as pug, ejs, handlebars, or another Express-compatible engine.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_template_engine_package_install",
+            "description": "Mentions installing the corresponding template engine package."
+          },
+          {
+            "key": "names_engine_package_examples",
+            "description": "Names examples such as pug, ejs, handlebars, or another Express-compatible engine."
+          }
+        ]
+      },
+      {
+        "label": "Explains passing locals to the template through the second argument and/or res.locals for request-scoped values.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "passes_locals_second_argument",
+            "description": "Mentions passing locals through the second argument to res.render."
+          },
+          {
+            "key": "uses_res_locals_for_request_scoped_values",
+            "description": "Mentions res.locals for request-scoped template values."
+          }
+        ]
+      },
+      {
+        "label": "Distinguishes res.render() for HTML pages from res.json() for API responses.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "states_render_for_html_pages",
+            "description": "States res.render is for HTML pages/server-side templates."
+          },
+          {
+            "key": "states_json_for_api_responses",
+            "description": "States res.json is for API JSON responses."
+          }
+        ]
+      },
+      {
+        "label": "Mentions callback behavior: with a callback, Express provides the rendered HTML and the handler must send it explicitly.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_render_callback_receives_html",
+            "description": "Mentions the callback receives rendered HTML."
+          },
+          {
+            "key": "states_handler_must_send_when_callback_used",
+            "description": "States the handler must explicitly send the response when using a callback."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {

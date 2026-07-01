@@ -96,16 +96,7 @@ export class QuestionProbeValidationService {
       value: input.primaryQuestion,
       issues,
     });
-    this._validateNonEmptyTextArray({
-      field: 'expectedSignals',
-      value: input.expectedSignals,
-      issues,
-    });
-    this._validateNonEmptyTextArray({
-      field: 'redFlags',
-      value: input.redFlags,
-      issues,
-    });
+    this._validateExpectedSignals(input.expectedSignals, issues);
   }
 
   private _validateEnumArray({
@@ -219,6 +210,68 @@ export class QuestionProbeValidationService {
         value: item.description,
         issues,
       });
+    });
+  }
+
+  private _validateExpectedSignals(
+    value: unknown,
+    issues: ProbeValidationIssue[],
+  ): void {
+    if (!Array.isArray(value) || value.length === 0) {
+      issues.push({
+        field: 'expectedSignals',
+        message: 'expectedSignals must be a non-empty array',
+      });
+      return;
+    }
+
+    value.forEach((item: unknown, index: number): void => {
+      if (!this._isRecord(item)) {
+        issues.push(this._nestedIssue('expectedSignals', index));
+        return;
+      }
+      this._validateNonEmptyText({
+        field: `expectedSignals.${index}.label`,
+        value: item.label,
+        issues,
+      });
+      if (item.relatedTrigger !== null && item.relatedTrigger !== undefined) {
+        this._validateEnumValue({
+          field: `expectedSignals.${index}.relatedTrigger`,
+          value: item.relatedTrigger,
+          allowed: QUESTION_PROBE_FOLLOW_UP_TRIGGERS,
+          issues,
+        });
+      }
+      if (Array.isArray(item.requirements)) {
+        const seenKeys = new Set<string>();
+        item.requirements.forEach((req: unknown, reqIdx: number): void => {
+          if (!this._isRecord(req)) {
+            issues.push(this._nestedIssue(`expectedSignals.${index}.requirements`, reqIdx));
+            return;
+          }
+          this._validateNonEmptyText({
+            field: `expectedSignals.${index}.requirements.${reqIdx}.key`,
+            value: req.key,
+            issues,
+          });
+          this._validateNonEmptyText({
+            field: `expectedSignals.${index}.requirements.${reqIdx}.description`,
+            value: req.description,
+            issues,
+          });
+          if (typeof req.key === 'string' && req.key.trim()) {
+            const k = req.key.trim();
+            if (seenKeys.has(k)) {
+              issues.push({
+                field: `expectedSignals.${index}.requirements.${reqIdx}.key`,
+                message: `Duplicate requirement key "${k}" within signal ${index}`,
+              });
+            }
+            seenKeys.add(k);
+          }
+        });
+      }
     });
   }
 

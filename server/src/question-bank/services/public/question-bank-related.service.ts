@@ -26,6 +26,21 @@ export class QuestionBankRelatedService {
     if (relatedLimit === 0) return [];
     const qb: SelectQueryBuilder<QuestionProbe> = this.probeRepository
       .createQueryBuilder('probe')
+      .select([
+        'probe.id',
+        'probe.code',
+        'probe.type',
+        'probe.roleFamilies',
+        'probe.levels',
+        'probe.competencies',
+        'probe.techTags',
+        'probe.topicTags',
+        'probe.difficulty',
+        'probe.primaryQuestion',
+        'probe.intent',
+        'probe.localizedContent',
+        'probe.publishedAt',
+      ])
       .where('probe.status = :status', { status: 'active' })
       .andWhere('probe.id != :probeId', { probeId: probe.id });
 
@@ -63,6 +78,13 @@ export class QuestionBankRelatedService {
       clause: 'probe.techTags && :relatedTechTags',
       value: probe.techTags,
       paramsKey: 'relatedTechTags',
+      overlapClauses,
+      params,
+    });
+    this._addOverlapClause({
+      clause: 'probe.topicTags && :relatedTopicTags',
+      value: probe.topicTags ?? [],
+      paramsKey: 'relatedTopicTags',
       overlapClauses,
       params,
     });
@@ -158,6 +180,8 @@ export class QuestionBankRelatedService {
       this._overlapCount(source.roleFamilies, candidate.roleFamilies) * 3;
     score += this._overlapCount(source.levels, candidate.levels) * 2;
     score += this._overlapCount(source.techTags, candidate.techTags) * 2;
+    score +=
+      this._overlapCount(source.topicTags ?? [], candidate.topicTags ?? []) * 2;
     const distance: number = this._difficultyDistance({ source, candidate });
     if (distance === 0) score += 1;
     if (distance === 1) score += 0.5;

@@ -38,8 +38,7 @@ export class ProbeEmbeddingTextService {
       this._line('Localized intent', localized.displayIntent),
       this._line('Guidance', localized.guidance),
       this._line('Common mistakes', localized.commonMistakes),
-      this._line('Expected signals', probe.expectedSignals),
-      this._line('Red flags', probe.redFlags),
+      this._line('Expected signals', this._formatExpectedSignals(probe)),
       this._line('Scoring hints', this._formatScoringHints(probe)),
       this._line('Follow ups', this._formatFollowUps(probe)),
       this._line('Type', probe.type),
@@ -72,6 +71,10 @@ export class ProbeEmbeddingTextService {
     return probe.scoringHints.map(
       (hint) => `${hint.scoreBand}: ${hint.description}`,
     );
+  }
+
+  private _formatExpectedSignals(probe: QuestionProbe): string[] {
+    return probe.expectedSignals.map((signal) => signal.label);
   }
 
   private _formatFollowUps(probe: QuestionProbe): string[] {

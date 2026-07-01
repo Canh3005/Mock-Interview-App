@@ -44,6 +44,44 @@ export class QuestionProbeFollowUpInputDto {
   purpose!: string;
 }
 
+export class QuestionProbeSignalRequirementInputDto {
+  @ApiProperty({ example: 'read_benefit' })
+  @IsString()
+  @IsNotEmpty()
+  key!: string;
+
+  @ApiProperty({ example: 'Mentions that indexes improve read performance.' })
+  @IsString()
+  @IsNotEmpty()
+  description!: string;
+}
+
+export class QuestionProbeExpectedSignalInputDto {
+  @ApiProperty({ example: 'Names a concrete metric or baseline.' })
+  @IsString()
+  @IsNotEmpty()
+  label!: string;
+
+  @ApiProperty({
+    enum: QUESTION_PROBE_FOLLOW_UP_TRIGGERS,
+    required: false,
+    nullable: true,
+  })
+  @IsOptional()
+  @IsIn(QUESTION_PROBE_FOLLOW_UP_TRIGGERS)
+  relatedTrigger?: QuestionProbeFollowUpTrigger | null;
+
+  @ApiProperty({
+    required: false,
+    type: [QuestionProbeSignalRequirementInputDto],
+  })
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => QuestionProbeSignalRequirementInputDto)
+  requirements?: QuestionProbeSignalRequirementInputDto[];
+}
+
 export class QuestionProbeScoringHintInputDto {
   @ApiProperty({ example: 'strong' })
   @IsString()
@@ -139,17 +177,15 @@ export class QuestionProbeDraftDto {
   @IsString()
   primaryQuestion?: string | null;
 
-  @ApiProperty({ required: false, example: ['Specific situation'] })
+  @ApiProperty({
+    required: false,
+    type: [QuestionProbeExpectedSignalInputDto],
+  })
   @IsOptional()
   @IsArray()
-  @IsString({ each: true })
-  expectedSignals?: string[];
-
-  @ApiProperty({ required: false, example: ['No concrete action'] })
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  redFlags?: string[];
+  @ValidateNested({ each: true })
+  @Type(() => QuestionProbeExpectedSignalInputDto)
+  expectedSignals?: QuestionProbeExpectedSignalInputDto[];
 
   @ApiProperty({ required: false, type: [QuestionProbeScoringHintInputDto] })
   @IsOptional()

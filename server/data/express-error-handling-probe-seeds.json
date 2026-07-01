@@ -1,28 +1,122 @@
 [
   {
     "code": "EXPRESS_ERROR_JR_TECH_HANDLER_SIGNATURE_001",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "communication"],
-    "techTags": ["express", "nodejs", "rest"],
+    "competencies": [
+      "technical_fundamentals",
+      "communication"
+    ],
+    "techTags": [
+      "express",
+      "nodejs",
+      "rest"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Check whether the candidate understands the special Express error-handling middleware signature and how it differs from normal middleware.",
     "primaryQuestion": "How is the signature of Express error-handling middleware different from normal middleware?",
     "expectedSignals": [
-      "States that normal middleware usually has the signature (req, res, next), while error-handling middleware has (err, req, res, next).",
-      "Explains that the first parameter is the error object or value passed by Express.",
-      "Mentions that Express uses this four-argument function shape to route errors to error handlers.",
-      "Understands that an error handler can inspect err, log it, map it to an HTTP response, or pass it onward with next(err).",
-      "Notes that the handler should still either send a response or delegate, otherwise the request can hang."
-    ],
-    "redFlags": [
-      "Says an error handler has the same signature as normal middleware.",
-      "Places err after req or omits next entirely without understanding Express detection.",
-      "Thinks error handlers run for every request even when no error is present.",
-      "Cannot explain what the err parameter represents."
+      {
+        "label": "States that normal middleware usually has the signature (req, res, next), while error-handling middleware has (err, req, res, next).",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "shows_normal_signature",
+            "description": "Writes or describes normal middleware as (req, res, next)."
+          },
+          {
+            "key": "shows_error_signature",
+            "description": "Writes the error middleware signature as (err, req, res, next)."
+          },
+          {
+            "key": "highlights_extra_first_argument",
+            "description": "Identifies err as the extra first argument that distinguishes error middleware."
+          }
+        ]
+      },
+      {
+        "label": "Explains that the first parameter is the error object or value passed by Express.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "defines_err_parameter",
+            "description": "Explains that err is the error object or rejected value passed through the pipeline."
+          },
+          {
+            "key": "connects_err_to_next_err",
+            "description": "Connects err to values passed by next(err), thrown synchronous errors, or rejected promises."
+          },
+          {
+            "key": "does_not_treat_err_as_request",
+            "description": "Does not confuse the first argument with req or another request value."
+          }
+        ]
+      },
+      {
+        "label": "Mentions that Express uses this four-argument function shape to route errors to error handlers.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_four_argument_detection",
+            "description": "States that Express recognizes error handlers by the four-argument function shape."
+          },
+          {
+            "key": "explains_error_path_only",
+            "description": "Explains that this handler runs when an error is passed, not on every successful request."
+          },
+          {
+            "key": "distinguishes_from_normal_middleware",
+            "description": "Separates error middleware dispatch from normal middleware dispatch."
+          }
+        ]
+      },
+      {
+        "label": "Understands that an error handler can inspect err, log it, map it to an HTTP response, or pass it onward with next(err).",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "inspects_and_classifies_error",
+            "description": "Mentions reading err fields to classify or map the error."
+          },
+          {
+            "key": "logs_server_side_detail",
+            "description": "Mentions logging diagnostic details server-side."
+          },
+          {
+            "key": "maps_or_delegates_error",
+            "description": "Either maps the error to an HTTP response or passes it onward with next(err)."
+          }
+        ]
+      },
+      {
+        "label": "Notes that the handler should still either send a response or delegate, otherwise the request can hang.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "sends_or_delegates",
+            "description": "States that the error handler must send or end the response, or delegate to another error handler."
+          },
+          {
+            "key": "recognizes_hanging_request",
+            "description": "Explains that doing neither leaves the request unresolved."
+          },
+          {
+            "key": "keeps_single_completion_path",
+            "description": "Avoids both sending a final response and continuing into another normal response path."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -133,28 +227,121 @@
   },
   {
     "code": "EXPRESS_ERROR_JR_TECH_FOUR_ARGS_002",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "problem_solving"],
-    "techTags": ["express", "nodejs"],
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving"
+    ],
+    "techTags": [
+      "express",
+      "nodejs"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Verify whether the candidate knows why Express error-handling middleware must preserve four declared parameters even when some parameters are unused.",
     "primaryQuestion": "Why must Express error-handling middleware have exactly four parameters: err, req, res, next?",
     "expectedSignals": [
-      "Explains that Express distinguishes error-handling middleware from normal middleware by the declared four-argument function shape.",
-      "States that err must be the first argument and represents the error passed through the request pipeline.",
-      "Mentions that omitting next or another unused argument can make Express treat the function as normal middleware instead of an error handler.",
-      "Understands that unused arguments should still be kept, often with an underscore naming convention if lint rules allow it.",
-      "Mentions that minification, wrappers, or default/rest parameters can be risky if they change the function arity Express observes."
-    ],
-    "redFlags": [
-      "Says four parameters are only a style preference.",
-      "Removes next because it is not currently used and cannot explain the consequence.",
-      "Thinks TypeScript types alone decide whether Express treats a function as an error handler.",
-      "Uses an async wrapper that hides the error-handler arity without testing it."
+      {
+        "label": "Explains that Express distinguishes error-handling middleware from normal middleware by the declared four-argument function shape.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "states_arity_based_detection",
+            "description": "Explains that Express detects error handlers by their declared function arity."
+          },
+          {
+            "key": "requires_four_declared_arguments",
+            "description": "Says the middleware must declare err, req, res, and next."
+          },
+          {
+            "key": "contrasts_normal_middleware_arity",
+            "description": "Contrasts this with normal three-argument middleware."
+          }
+        ]
+      },
+      {
+        "label": "States that err must be the first argument and represents the error passed through the request pipeline.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "places_err_first",
+            "description": "Keeps err as the first parameter, before req and res."
+          },
+          {
+            "key": "describes_err_origin",
+            "description": "Describes err as the value forwarded from next(err), thrown errors, or promise rejections."
+          },
+          {
+            "key": "keeps_parameter_order_correct",
+            "description": "Does not reorder parameters in a way Express or readers would misinterpret."
+          }
+        ]
+      },
+      {
+        "label": "Mentions that omitting next or another unused argument can make Express treat the function as normal middleware instead of an error handler.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "identifies_omitted_next_risk",
+            "description": "Explains that defining (err, req, res) can lose the four-argument shape."
+          },
+          {
+            "key": "explains_dispatch_consequence",
+            "description": "States that Express may not call it as an error handler."
+          },
+          {
+            "key": "preserves_unused_parameters",
+            "description": "Keeps unused req, res, or next parameters declared when needed."
+          }
+        ]
+      },
+      {
+        "label": "Understands that unused arguments should still be kept, often with an underscore naming convention if lint rules allow it.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "keeps_unused_next_declared",
+            "description": "Keeps next in the signature even when not used by the handler body."
+          },
+          {
+            "key": "uses_underscore_convention",
+            "description": "Mentions naming unused parameters like _next if lint configuration supports it."
+          },
+          {
+            "key": "balances_lint_and_express_behavior",
+            "description": "Solves lint warnings without changing Express runtime behavior."
+          }
+        ]
+      },
+      {
+        "label": "Mentions that minification, wrappers, or default/rest parameters can be risky if they change the function arity Express observes.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_wrapper_arity_risk",
+            "description": "Notes that wrappers can accidentally expose the wrong function length."
+          },
+          {
+            "key": "mentions_default_or_rest_parameter_risk",
+            "description": "Recognizes default/rest parameters may affect observed arity."
+          },
+          {
+            "key": "keeps_error_handler_export_shape_safe",
+            "description": "Recommends preserving a clear four-argument function at registration time."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -176,7 +363,7 @@
     ],
     "followUps": [
       {
-        "trigger": "red_flag",
+        "trigger": "missing_consequence",
         "question": "What can happen if you define the handler as (err, req, res) and omit next?",
         "purpose": "Check arity-based detection knowledge."
       },
@@ -265,28 +452,123 @@
   },
   {
     "code": "EXPRESS_ERROR_JR_TECH_TRIGGER_NEXT_ERR_003",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "problem_solving", "communication"],
-    "techTags": ["express", "nodejs", "rest"],
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving",
+      "communication"
+    ],
+    "techTags": [
+      "express",
+      "nodejs",
+      "rest"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Check whether the candidate understands how Express enters the error-handling path and the difference between next() and next(err).",
     "primaryQuestion": "How do you trigger Express error-handling middleware? Should you use next() or next(err)?",
     "expectedSignals": [
-      "States that next(err) triggers the error-handling path and skips normal non-error middleware and route handlers.",
-      "States that next() without an error continues the normal middleware chain.",
-      "Mentions that throwing a synchronous error inside a route or middleware also triggers Express error handling.",
-      "Mentions that in Express 5 a rejected Promise from a handler is forwarded automatically, while Express 4 needs explicit forwarding.",
-      "Understands that passing any value except the special string 'route' to next is treated as an error."
-    ],
-    "redFlags": [
-      "Uses next() after catching an error and expects the error handler to run.",
-      "Sends an error response in every route instead of delegating consistent errors.",
-      "Calls next(err) after already sending a normal response without guarding control flow.",
-      "Cannot distinguish skipping normal handlers from continuing the normal chain."
+      {
+        "label": "States that next(err) triggers the error-handling path and skips normal non-error middleware and route handlers.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "uses_next_err_for_error_path",
+            "description": "States that next(err) switches the request into the error-handling path."
+          },
+          {
+            "key": "mentions_skipping_normal_handlers",
+            "description": "Explains that remaining normal middleware and route handlers are skipped."
+          },
+          {
+            "key": "connects_to_error_middleware",
+            "description": "Says Express looks for matching four-argument error middleware."
+          }
+        ]
+      },
+      {
+        "label": "States that next() without an error continues the normal middleware chain.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "uses_next_for_normal_flow",
+            "description": "States that next() continues the normal chain without entering error handling."
+          },
+          {
+            "key": "explains_caught_error_next_problem",
+            "description": "Explains that calling next() after catching an error loses the error path."
+          },
+          {
+            "key": "distinguishes_normal_and_error_flow",
+            "description": "Clearly separates normal continuation from error delegation."
+          }
+        ]
+      },
+      {
+        "label": "Mentions that throwing a synchronous error inside a route or middleware also triggers Express error handling.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_sync_throw_capture",
+            "description": "States that Express catches synchronous throws inside route or middleware execution."
+          },
+          {
+            "key": "limits_to_request_execution",
+            "description": "Keeps the claim scoped to code running in the request handler call stack."
+          },
+          {
+            "key": "connects_throw_to_error_handler",
+            "description": "Explains that the thrown error reaches the error middleware."
+          }
+        ]
+      },
+      {
+        "label": "Mentions that in Express 5 a rejected Promise from a handler is forwarded automatically, while Express 4 needs explicit forwarding.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "states_express5_promise_forwarding",
+            "description": "Mentions Express 5 automatic forwarding of rejected handler promises."
+          },
+          {
+            "key": "states_express4_manual_forwarding",
+            "description": "Mentions Express 4 requires try/catch, .catch(next), or a wrapper/package."
+          },
+          {
+            "key": "does_not_treat_versions_as_identical",
+            "description": "Avoids claiming Express 4 and Express 5 behave the same for async handlers."
+          }
+        ]
+      },
+      {
+        "label": "Understands that passing any value except the special string 'route' to next is treated as an error.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_next_value_error_rule",
+            "description": "States that next(value) generally treats value as an error."
+          },
+          {
+            "key": "recognizes_route_exception",
+            "description": "Names the special 'route' string exception."
+          },
+          {
+            "key": "avoids_passing_non_errors_accidentally",
+            "description": "Does not pass arbitrary values to next unless intending the error path."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -313,9 +595,14 @@
         "purpose": "Check error-chain skipping behavior."
       },
       {
-        "trigger": "red_flag",
+        "trigger": "missing_consequence",
         "question": "If you catch an error and call next() with no argument, what response path will Express take?",
         "purpose": "Expose misunderstanding between normal and error flow."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Besides next(err), which thrown or rejected errors reach Express error middleware in Express 4 versus Express 5?",
+        "purpose": "Check synchronous throw and version-specific promise forwarding."
       }
     ],
     "localizedContent": {
@@ -397,28 +684,123 @@
   },
   {
     "code": "EXPRESS_ERROR_MID_TECH_SYNC_ASYNC_004",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["mid", "senior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "mid",
+      "senior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "problem_solving", "system_thinking"],
-    "techTags": ["express", "nodejs", "javascript"],
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving",
+      "system_thinking"
+    ],
+    "techTags": [
+      "express",
+      "nodejs",
+      "javascript"
+    ],
     "difficulty": 3,
     "conversationDepth": "mid",
     "intent": "Evaluate whether the candidate understands the different handling paths for synchronous errors, callback-based asynchronous errors, and promise-based errors in Express.",
     "primaryQuestion": "How are synchronous errors and asynchronous errors handled differently in Express?",
     "expectedSignals": [
-      "Explains that Express catches synchronous exceptions thrown during route or middleware execution.",
-      "Explains that asynchronous callback errors must be passed to next(err) because the original synchronous call stack has already returned.",
-      "Mentions that promise rejections are automatically forwarded in Express 5, but not in Express 4 without a wrapper or explicit catch.",
-      "Distinguishes errors thrown inside setTimeout, callbacks, event listeners, or background jobs from errors thrown directly in the handler body.",
-      "Uses concrete patterns such as fs callbacks calling next(err), try/catch around awaited work in Express 4, or Promise.resolve(fn).catch(next)."
-    ],
-    "redFlags": [
-      "Assumes Express catches every error anywhere in the process.",
-      "Throws inside a timer or callback and expects Express to catch it automatically.",
-      "Does not distinguish Express 4 from Express 5 promise behavior.",
-      "Uses process-level handlers as a substitute for request-level error handling."
+      {
+        "label": "Explains that Express catches synchronous exceptions thrown during route or middleware execution.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "states_sync_throw_auto_caught",
+            "description": "Says synchronous exceptions thrown inside handler execution reach Express error handling."
+          },
+          {
+            "key": "ties_to_current_call_stack",
+            "description": "Explains this works while Express still controls the current call stack."
+          },
+          {
+            "key": "does_not_overgeneralize_to_process",
+            "description": "Does not claim Express catches every process-level exception."
+          }
+        ]
+      },
+      {
+        "label": "Explains that asynchronous callback errors must be passed to next(err) because the original synchronous call stack has already returned.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "states_callback_must_call_next_err",
+            "description": "Says callback-style async errors should be forwarded with next(err)."
+          },
+          {
+            "key": "explains_async_boundary",
+            "description": "Explains that the original Express call stack has returned by the time the callback runs."
+          },
+          {
+            "key": "uses_fs_readfile_example",
+            "description": "Can show fs.readFile callback error forwarding to next(err)."
+          }
+        ]
+      },
+      {
+        "label": "Mentions that promise rejections are automatically forwarded in Express 5, but not in Express 4 without a wrapper or explicit catch.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "states_express5_rejection_behavior",
+            "description": "Mentions automatic rejected promise forwarding in Express 5."
+          },
+          {
+            "key": "states_express4_wrapper_need",
+            "description": "Mentions Express 4 needs explicit .catch(next), try/catch, or a wrapper."
+          },
+          {
+            "key": "connects_to_unhandled_rejection_risk",
+            "description": "Explains that missing forwarding in Express 4 can become an unhandled rejection."
+          }
+        ]
+      },
+      {
+        "label": "Distinguishes errors thrown inside setTimeout, callbacks, event listeners, or background jobs from errors thrown directly in the handler body.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "distinguishes_timer_errors",
+            "description": "Explains why a setTimeout throw is outside the original handler call stack."
+          },
+          {
+            "key": "distinguishes_event_or_background_errors",
+            "description": "Mentions event emitters or background jobs need their own error handling."
+          },
+          {
+            "key": "does_not_expect_express_to_catch_all_async",
+            "description": "Avoids assuming Express catches asynchronous work started from a route automatically."
+          }
+        ]
+      },
+      {
+        "label": "Uses concrete patterns such as fs callbacks calling next(err), try/catch around awaited work in Express 4, or Promise.resolve(fn).catch(next).",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "shows_callback_next_err_pattern",
+            "description": "Shows callback code that calls next(err) when err is present."
+          },
+          {
+            "key": "shows_await_try_catch_pattern",
+            "description": "Shows try/catch around awaited work for Express 4 handlers."
+          },
+          {
+            "key": "mentions_promise_wrapper_pattern",
+            "description": "Mentions Promise.resolve(fn(...)).catch(next) or equivalent reusable wrapper."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -534,28 +916,124 @@
   },
   {
     "code": "EXPRESS_ERROR_MID_DEBUG_ASYNC_THROW_V4_005",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["mid", "senior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "mid",
+      "senior"
+    ],
     "type": "debugging",
-    "competencies": ["problem_solving", "technical_fundamentals", "ownership"],
-    "techTags": ["express", "nodejs", "javascript", "debugging"],
+    "competencies": [
+      "problem_solving",
+      "technical_fundamentals",
+      "ownership"
+    ],
+    "techTags": [
+      "express",
+      "nodejs",
+      "javascript",
+      "debugging"
+    ],
     "difficulty": 3,
     "conversationDepth": "mid",
     "intent": "Assess whether the candidate can diagnose and fix unhandled promise rejections from async route handlers in Express 4.",
     "primaryQuestion": "If an async route handler throws an error, does Express 4 catch it automatically? How would you handle it?",
     "expectedSignals": [
-      "States that Express 4 does not automatically catch rejected promises or thrown errors from async route handlers.",
-      "Explains that the error becomes a rejected Promise unless it is caught and passed to next(err).",
-      "Shows a try/catch around await and calls next(err) in the catch block.",
-      "Mentions reusable wrappers such as asyncHandler(fn) returning (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next).",
-      "Mentions package-based approaches such as express-async-errors or express-async-handler, while noting version and project policy considerations."
-    ],
-    "redFlags": [
-      "Claims Express 4 automatically handles async/await errors like Express 5.",
-      "Adds process.on('unhandledRejection') and considers the route fixed.",
-      "Swallows the error in catch and returns a success response.",
-      "Forgets next in the async handler signature and cannot pass the error onward."
+      {
+        "label": "States that Express 4 does not automatically catch rejected promises or thrown errors from async route handlers.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "states_no_auto_catch_in_express4",
+            "description": "Clearly says Express 4 does not automatically forward async handler rejections."
+          },
+          {
+            "key": "contrasts_with_express5",
+            "description": "Avoids applying Express 5 behavior to Express 4."
+          },
+          {
+            "key": "connects_to_lost_route_error",
+            "description": "Explains the route error will not reach centralized middleware unless forwarded."
+          }
+        ]
+      },
+      {
+        "label": "Explains that the error becomes a rejected Promise unless it is caught and passed to next(err).",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "describes_rejected_promise_state",
+            "description": "Explains that throwing in an async function produces a rejected Promise."
+          },
+          {
+            "key": "requires_catch_and_next_err",
+            "description": "States that the rejection must be caught and passed to next(err)."
+          },
+          {
+            "key": "rejects_process_handler_as_route_fix",
+            "description": "Explains why process-level unhandledRejection is not a replacement for request-level forwarding."
+          }
+        ]
+      },
+      {
+        "label": "Shows a try/catch around await and calls next(err) in the catch block.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "wraps_await_in_try_catch",
+            "description": "Shows awaited route work inside a try block."
+          },
+          {
+            "key": "calls_next_err_in_catch",
+            "description": "Calls next(err) in the catch block."
+          },
+          {
+            "key": "declares_next_parameter",
+            "description": "Includes next in the async route handler signature."
+          }
+        ]
+      },
+      {
+        "label": "Mentions reusable wrappers such as asyncHandler(fn) returning (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next).",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "defines_async_handler_wrapper",
+            "description": "Shows or describes a reusable asyncHandler(fn) wrapper."
+          },
+          {
+            "key": "wraps_returned_promise",
+            "description": "Uses Promise.resolve or equivalent to catch returned promise rejections."
+          },
+          {
+            "key": "passes_next_into_wrapped_handler",
+            "description": "Preserves req, res, and next when invoking the wrapped handler."
+          }
+        ]
+      },
+      {
+        "label": "Mentions package-based approaches such as express-async-errors or express-async-handler, while noting version and project policy considerations.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "names_package_based_options",
+            "description": "Mentions express-async-errors, express-async-handler, or a comparable project-level option."
+          },
+          {
+            "key": "mentions_version_compatibility",
+            "description": "Considers Express version compatibility and whether Express 5 makes the package unnecessary."
+          },
+          {
+            "key": "mentions_project_policy_tradeoff",
+            "description": "Treats adding a package as a deliberate dependency and maintenance decision."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -582,7 +1060,7 @@
         "purpose": "Verify practical implementation knowledge."
       },
       {
-        "trigger": "red_flag",
+        "trigger": "missing_consequence",
         "question": "Why is process.on('unhandledRejection') not a good replacement for calling next(err) in a route?",
         "purpose": "Separate request-level error handling from process-level safety nets."
       }
@@ -671,28 +1149,123 @@
   },
   {
     "code": "EXPRESS_ERROR_MID_TECH_ASYNC_ERRORS_PACKAGE_006",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["mid", "senior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "mid",
+      "senior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "trade_off_analysis", "problem_solving"],
-    "techTags": ["express", "nodejs", "javascript"],
+    "competencies": [
+      "technical_fundamentals",
+      "trade_off_analysis",
+      "problem_solving"
+    ],
+    "techTags": [
+      "express",
+      "nodejs",
+      "javascript"
+    ],
     "difficulty": 3,
     "conversationDepth": "mid",
     "intent": "Evaluate whether the candidate understands what express-async-errors solves and the trade-offs of patch-based async error handling in Express 4 applications.",
     "primaryQuestion": "What problem does the express-async-errors package solve?",
     "expectedSignals": [
-      "Explains that express-async-errors lets errors thrown from async Express route handlers or middleware reach the normal Express error handler in Express 4-style apps.",
-      "Mentions that it works by patching Express router/layer behavior so returned rejected promises are forwarded.",
-      "States that it reduces repetitive try/catch or async wrapper boilerplate in route handlers.",
-      "Mentions that the app still needs a centralized error handler registered after routes.",
-      "Notes trade-offs: monkey patching, dependency maintenance, version compatibility, and that Express 5 has built-in promise rejection forwarding."
-    ],
-    "redFlags": [
-      "Thinks the package creates error responses automatically without an error handler.",
-      "Uses it together with ad hoc per-route catches inconsistently and produces double next calls.",
-      "Does not know it is mainly an Express 4 async/await pain-point workaround.",
-      "Cannot discuss the risk of patching framework internals."
+      {
+        "label": "Explains that express-async-errors lets errors thrown from async Express route handlers or middleware reach the normal Express error handler in Express 4-style apps.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "defines_package_problem",
+            "description": "States that the package forwards async route errors to Express error handling."
+          },
+          {
+            "key": "scopes_to_express4_style_apps",
+            "description": "Frames the need around Express 4-style async handler behavior."
+          },
+          {
+            "key": "connects_to_normal_error_handler",
+            "description": "Explains that forwarded errors still go to the usual centralized error middleware."
+          }
+        ]
+      },
+      {
+        "label": "Mentions that it works by patching Express router/layer behavior so returned rejected promises are forwarded.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "mentions_router_layer_patching",
+            "description": "States that the package patches Express router/layer behavior."
+          },
+          {
+            "key": "explains_rejected_promise_forwarding",
+            "description": "Explains that returned rejected promises are forwarded to next."
+          },
+          {
+            "key": "recognizes_monkey_patch_nature",
+            "description": "Recognizes this as monkey patching rather than ordinary middleware configuration."
+          }
+        ]
+      },
+      {
+        "label": "States that it reduces repetitive try/catch or async wrapper boilerplate in route handlers.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "identifies_boilerplate_removed",
+            "description": "Explains that per-route try/catch or asyncHandler wrappers become less repetitive."
+          },
+          {
+            "key": "keeps_route_code_readable",
+            "description": "Connects the package to simpler async route handler code."
+          },
+          {
+            "key": "does_not_hide_need_for_error_design",
+            "description": "Does not treat reduced boilerplate as a complete error handling strategy."
+          }
+        ]
+      },
+      {
+        "label": "Mentions that the app still needs a centralized error handler registered after routes.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "still_registers_error_middleware",
+            "description": "States that app.use((err, req, res, next) => ...) is still required."
+          },
+          {
+            "key": "places_handler_after_routes",
+            "description": "Places the centralized handler after routes and 404 handling."
+          },
+          {
+            "key": "formats_response_consistently",
+            "description": "Explains that the handler still maps errors to consistent client responses."
+          }
+        ]
+      },
+      {
+        "label": "Notes trade-offs: monkey patching, dependency maintenance, version compatibility, and that Express 5 has built-in promise rejection forwarding.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "weighs_monkey_patch_risk",
+            "description": "Considers the risk of patching framework internals in production."
+          },
+          {
+            "key": "weighs_dependency_and_compatibility",
+            "description": "Considers package maintenance and compatibility with the Express version."
+          },
+          {
+            "key": "mentions_express5_builtin_forwarding",
+            "description": "Notes that Express 5 has built-in promise rejection forwarding."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -808,30 +1381,143 @@
   },
   {
     "code": "EXPRESS_ERROR_MID_TECH_CENTRALIZED_HANDLER_007",
-    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["mid", "senior"],
+    "stages": [
+      "stage_2_tech_stack",
+      "stage_3_domain_knowledge"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "mid",
+      "senior"
+    ],
     "type": "technical_depth",
-    "competencies": ["system_thinking", "technical_fundamentals", "ownership"],
-    "techTags": ["express", "nodejs", "rest", "logging"],
+    "competencies": [
+      "system_thinking",
+      "technical_fundamentals",
+      "ownership"
+    ],
+    "techTags": [
+      "express",
+      "nodejs",
+      "rest",
+      "logging"
+    ],
     "difficulty": 3,
     "conversationDepth": "mid",
     "intent": "Assess whether the candidate can design a centralized Express error handler that produces a consistent API error contract without leaking internals.",
     "primaryQuestion": "How would you create a centralized error handler that returns a consistent response format?",
     "expectedSignals": [
-      "Registers a single error-handling middleware after routes and 404 handling.",
-      "Normalizes errors into a consistent response envelope such as { error: { code, message, requestId } }.",
-      "Maps known application errors to status codes and safe public messages.",
-      "Logs internal details server-side while hiding stack traces and sensitive data from clients in production.",
-      "Handles res.headersSent by delegating to Express default error handling or the next error handler.",
-      "Includes operational fields such as request ID, error code, validation details when safe, and environment-specific stack output only when appropriate."
-    ],
-    "redFlags": [
-      "Copies err.stack directly into production responses.",
-      "Creates different ad hoc error shapes in every route.",
-      "Does not handle headersSent or duplicate response paths.",
-      "Returns 500 for every known client-side validation or auth error.",
-      "Logs sensitive request bodies, credentials, tokens, or personally identifiable data without filtering."
+      {
+        "label": "Registers a single error-handling middleware after routes and 404 handling.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "uses_four_arg_error_middleware",
+            "description": "Registers middleware with err, req, res, next signature."
+          },
+          {
+            "key": "places_after_routes_and_404",
+            "description": "Places it after normal routes and 404 handling."
+          },
+          {
+            "key": "acts_as_final_response_mapper",
+            "description": "Uses it as the central place to map errors into HTTP responses."
+          }
+        ]
+      },
+      {
+        "label": "Normalizes errors into a consistent response envelope such as { error: { code, message, requestId } }.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "defines_error_envelope",
+            "description": "Provides a stable envelope such as error.code, error.message, and requestId."
+          },
+          {
+            "key": "keeps_shape_consistent_across_errors",
+            "description": "Uses the same shape for validation, not-found, auth, and unexpected errors."
+          },
+          {
+            "key": "includes_request_id_when_available",
+            "description": "Includes request or correlation id for support and tracing."
+          }
+        ]
+      },
+      {
+        "label": "Maps known application errors to status codes and safe public messages.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "maps_validation_and_not_found",
+            "description": "Maps validation and not-found errors to appropriate client status codes."
+          },
+          {
+            "key": "maps_unexpected_to_500",
+            "description": "Maps unknown failures to a safe 500-style response."
+          },
+          {
+            "key": "uses_safe_public_messages",
+            "description": "Returns client-safe messages instead of raw internal error text."
+          }
+        ]
+      },
+      {
+        "label": "Logs internal details server-side while hiding stack traces and sensitive data from clients in production.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "logs_internal_stack_and_context",
+            "description": "Logs stack, cause, request id, and relevant safe context server-side."
+          },
+          {
+            "key": "hides_stack_in_production",
+            "description": "Avoids returning stack traces in production responses."
+          },
+          {
+            "key": "redacts_sensitive_client_data",
+            "description": "Does not expose secrets, tokens, SQL details, or sensitive user data to clients."
+          }
+        ]
+      },
+      {
+        "label": "Handles res.headersSent by delegating to Express default error handling or the next error handler.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "checks_headers_sent",
+            "description": "Checks res.headersSent before attempting to write an error response."
+          },
+          {
+            "key": "delegates_if_response_started",
+            "description": "Calls next(err) or delegates when headers have already been sent."
+          },
+          {
+            "key": "avoids_second_error_response",
+            "description": "Avoids causing duplicate writes or headers-already-sent errors."
+          }
+        ]
+      },
+      {
+        "label": "Includes operational fields such as request ID, error code, validation details when safe, and environment-specific stack output only when appropriate.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "includes_safe_validation_details",
+            "description": "Includes field-level validation details only when safe for clients."
+          },
+          {
+            "key": "includes_stable_error_code",
+            "description": "Uses stable machine-readable error codes."
+          },
+          {
+            "key": "gates_debug_fields_by_environment",
+            "description": "Only includes debug fields like stack traces in local or explicitly safe environments."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -858,7 +1544,7 @@
         "purpose": "Check concrete response format and status mapping."
       },
       {
-        "trigger": "red_flag",
+        "trigger": "missing_consequence",
         "question": "What should your handler do if res.headersSent is already true?",
         "purpose": "Verify response lifecycle safety."
       }
@@ -947,30 +1633,144 @@
   },
   {
     "code": "EXPRESS_ERROR_MID_TRADE_OPERATIONAL_PROGRAMMER_008",
-    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
-    "roleFamilies": ["backend", "fullstack", "devops"],
-    "levels": ["mid", "senior"],
+    "stages": [
+      "stage_2_tech_stack",
+      "stage_3_domain_knowledge"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "devops"
+    ],
+    "levels": [
+      "mid",
+      "senior"
+    ],
     "type": "trade_off",
-    "competencies": ["system_thinking", "trade_off_analysis", "ownership", "problem_solving"],
-    "techTags": ["express", "nodejs", "logging"],
+    "competencies": [
+      "system_thinking",
+      "trade_off_analysis",
+      "ownership",
+      "problem_solving"
+    ],
+    "techTags": [
+      "express",
+      "nodejs",
+      "logging"
+    ],
     "difficulty": 3,
     "conversationDepth": "mid",
     "intent": "Evaluate whether the candidate can classify errors by recoverability and choose appropriate Express and process-level handling strategies.",
     "primaryQuestion": "What is the difference between operational errors and programmer errors?",
     "expectedSignals": [
-      "Defines operational errors as expected runtime failures that a well-written program must handle, such as validation failures, unauthorized access, missing resources, timeouts, rate limits, or downstream service failures.",
-      "Defines programmer errors as bugs in code such as TypeError, invariant violations, wrong assumptions, undefined access, bad state mutation, or incorrect API usage.",
-      "Explains that operational errors can usually be converted into controlled HTTP responses and metrics.",
-      "Explains that programmer errors should be logged with high severity and may require process restart because the application state can be unreliable.",
-      "Mentions using custom error classes or flags such as isOperational to avoid treating all errors as equal.",
-      "Connects classification to alerting, retries, response safety, and whether to continue serving traffic."
-    ],
-    "redFlags": [
-      "Treats every error as a 500 and continues normally.",
-      "Exposes programmer error internals to clients.",
-      "Retries programmer bugs as if they were transient operational failures.",
-      "Crashes the process for every user validation error.",
-      "Cannot give concrete examples of each category."
+      {
+        "label": "Defines operational errors as expected runtime failures that a well-written program must handle, such as validation failures, unauthorized access, missing resources, timeouts, rate limits, or downstream service failures.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "defines_expected_runtime_failures",
+            "description": "Defines operational errors as expected runtime conditions a robust app handles."
+          },
+          {
+            "key": "gives_http_api_examples",
+            "description": "Includes examples such as validation, auth, not found, timeout, rate limit, or downstream failure."
+          },
+          {
+            "key": "classifies_invalid_body_and_timeout",
+            "description": "Can classify invalid request body and database timeout as operational-style failures."
+          }
+        ]
+      },
+      {
+        "label": "Defines programmer errors as bugs in code such as TypeError, invariant violations, wrong assumptions, undefined access, bad state mutation, or incorrect API usage.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "defines_code_defect",
+            "description": "Defines programmer errors as bugs caused by incorrect code or broken assumptions."
+          },
+          {
+            "key": "gives_typeerror_or_invariant_examples",
+            "description": "Includes examples such as TypeError, undefined access, bad state mutation, or invariant violation."
+          },
+          {
+            "key": "classifies_undefined_property_error",
+            "description": "Can classify Cannot read properties of undefined as a programmer error."
+          }
+        ]
+      },
+      {
+        "label": "Explains that operational errors can usually be converted into controlled HTTP responses and metrics.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "maps_operational_to_http_status",
+            "description": "Maps known operational errors to controlled status codes and client-safe responses."
+          },
+          {
+            "key": "records_metrics_for_operational_errors",
+            "description": "Mentions metrics for rates, timeouts, validation failures, or downstream failures."
+          },
+          {
+            "key": "keeps_response_predictable",
+            "description": "Treats operational failures as expected paths with a stable API contract."
+          }
+        ]
+      },
+      {
+        "label": "Explains that programmer errors should be logged with high severity and may require process restart because the application state can be unreliable.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "logs_programmer_errors_high_severity",
+            "description": "Logs programmer errors as high-severity bugs requiring investigation."
+          },
+          {
+            "key": "explains_state_may_be_corrupt",
+            "description": "Explains that an uncaught programmer error can leave process state unreliable."
+          },
+          {
+            "key": "justifies_restart_policy",
+            "description": "Explains why restart under a process manager or orchestrator may be safer."
+          }
+        ]
+      },
+      {
+        "label": "Mentions using custom error classes or flags such as isOperational to avoid treating all errors as equal.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "uses_error_classification_metadata",
+            "description": "Mentions custom error classes, status codes, codes, or isOperational flags."
+          },
+          {
+            "key": "avoids_flattening_all_errors",
+            "description": "Does not treat every thrown error as the same severity and response type."
+          },
+          {
+            "key": "supports_error_handler_decision",
+            "description": "Uses the metadata to help the centralized handler decide response and logging behavior."
+          }
+        ]
+      },
+      {
+        "label": "Connects classification to alerting, retries, response safety, and whether to continue serving traffic.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "connects_to_alerting",
+            "description": "Explains which classes should page or alert versus become normal metrics."
+          },
+          {
+            "key": "connects_to_retry_policy",
+            "description": "Considers retries for transient operational failures but not arbitrary programmer bugs."
+          },
+          {
+            "key": "connects_to_traffic_continuation",
+            "description": "Discusses whether the service can safely continue serving after the error."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1086,28 +1886,122 @@
   },
   {
     "code": "EXPRESS_ERROR_JR_TECH_NOT_FOUND_009",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking"],
-    "techTags": ["express", "nodejs", "rest"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking"
+    ],
+    "techTags": [
+      "express",
+      "nodejs",
+      "rest"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Check whether the candidate can handle unmatched routes with a 404 middleware and place it correctly relative to routes and error handlers.",
     "primaryQuestion": "How do you handle 404 errors for routes that do not exist in Express?",
     "expectedSignals": [
-      "Explains that a 404 is handled by a catch-all normal middleware registered after all routes.",
-      "Mentions either sending a consistent 404 response directly or creating a NotFoundError and passing it to next(err).",
-      "Places the 404 handler before the centralized error handler if it delegates via next(err).",
-      "Understands that 404 is not thrown automatically as an exception by Express for unmatched routes.",
-      "Keeps API response format consistent with the centralized error contract."
-    ],
-    "redFlags": [
-      "Places the 404 handler before real routes, causing valid routes to be shadowed.",
-      "Assumes the global error handler automatically receives unmatched routes without a 404 middleware.",
-      "Returns 500 for every unknown route.",
-      "Uses a broad wildcard route too early and breaks static files or mounted routers."
+      {
+        "label": "Explains that a 404 is handled by a catch-all normal middleware registered after all routes.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "uses_catch_all_after_routes",
+            "description": "Registers a catch-all normal middleware after all known routes."
+          },
+          {
+            "key": "places_after_api_router",
+            "description": "Places it after app.use('/api', router) or equivalent route mounting."
+          },
+          {
+            "key": "avoids_shadowing_routes",
+            "description": "Does not register the 404 handler before real routes."
+          }
+        ]
+      },
+      {
+        "label": "Mentions either sending a consistent 404 response directly or creating a NotFoundError and passing it to next(err).",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "can_send_direct_404",
+            "description": "Describes sending res.status(404).json(...) directly as one valid pattern."
+          },
+          {
+            "key": "can_delegate_not_found_error",
+            "description": "Describes next(new NotFoundError()) as another valid pattern."
+          },
+          {
+            "key": "explains_direct_vs_delegate_tradeoff",
+            "description": "Explains the trade-off between simpler direct response and centralized error formatting."
+          }
+        ]
+      },
+      {
+        "label": "Places the 404 handler before the centralized error handler if it delegates via next(err).",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "orders_404_before_error_handler",
+            "description": "Places the 404 generator before final error-handling middleware."
+          },
+          {
+            "key": "lets_next_err_reach_error_mapper",
+            "description": "Ensures next(new NotFoundError()) reaches the centralized mapper."
+          },
+          {
+            "key": "keeps_final_error_handler_last",
+            "description": "Keeps the final error handler near the end of the stack."
+          }
+        ]
+      },
+      {
+        "label": "Understands that 404 is not thrown automatically as an exception by Express for unmatched routes.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "states_unmatched_route_falls_through",
+            "description": "Explains that unmatched requests fall through the middleware stack."
+          },
+          {
+            "key": "does_not_expect_auto_notfound_throw",
+            "description": "Does not expect Express to automatically throw a NotFoundError."
+          },
+          {
+            "key": "creates_explicit_notfound_behavior",
+            "description": "Adds explicit 404 handling behavior in the app."
+          }
+        ]
+      },
+      {
+        "label": "Keeps API response format consistent with the centralized error contract.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "uses_same_error_envelope",
+            "description": "Returns the same error envelope used for other API errors."
+          },
+          {
+            "key": "uses_stable_notfound_code",
+            "description": "Uses a stable code/message for unmatched-route errors."
+          },
+          {
+            "key": "avoids_html_for_json_api",
+            "description": "Does not return an unrelated HTML fallback for a JSON API unless intentionally separated."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1223,28 +2117,122 @@
   },
   {
     "code": "EXPRESS_ERROR_JR_TECH_MIDDLEWARE_POSITION_010",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking"],
-    "techTags": ["express", "nodejs", "rest"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking"
+    ],
+    "techTags": [
+      "express",
+      "nodejs",
+      "rest"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Verify whether the candidate understands where to register error-handling middleware in an Express application file.",
     "primaryQuestion": "Where should error-handling middleware be placed in app.js?",
     "expectedSignals": [
-      "States that error-handling middleware should be registered after normal middleware and after route handlers.",
-      "Mentions that body parsers, request logging, auth setup, routers, and 404 handling usually come before the global error handler.",
-      "Explains that Express executes middleware in registration order, so an error handler placed too early cannot catch errors from later routes in the intended way.",
-      "Mentions that multiple error handlers can be chained for logging, transformation, and final response, but order still matters.",
-      "Understands that route-specific error handlers can exist, but a final global handler should be near the end."
-    ],
-    "redFlags": [
-      "Places the global error handler before routers.",
-      "Assumes Express searches the whole app for an error handler regardless of registration order.",
-      "Registers 404 handling after the final error response handler and expects it to run.",
-      "Mixes normal middleware and error middleware without understanding their separate signatures."
+      {
+        "label": "States that error-handling middleware should be registered after normal middleware and after route handlers.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "places_error_handler_after_routes",
+            "description": "States that the global error handler belongs after normal routes."
+          },
+          {
+            "key": "places_after_normal_middleware",
+            "description": "Places it after standard middleware that route handling depends on."
+          },
+          {
+            "key": "keeps_four_arg_handler_near_end",
+            "description": "Keeps the final four-argument handler near the end of app setup."
+          }
+        ]
+      },
+      {
+        "label": "Mentions that body parsers, request logging, auth setup, routers, and 404 handling usually come before the global error handler.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "orders_parser_logger_auth_router",
+            "description": "Gives an order including express.json, logging, auth setup, and routers."
+          },
+          {
+            "key": "orders_404_before_final_error_handler",
+            "description": "Places 404 handling before the final error handler."
+          },
+          {
+            "key": "answers_typical_stack_order",
+            "description": "Can state the typical order requested in the follow-up."
+          }
+        ]
+      },
+      {
+        "label": "Explains that Express executes middleware in registration order, so an error handler placed too early cannot catch errors from later routes in the intended way.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "states_registration_order_matters",
+            "description": "Explains that middleware runs in registration order."
+          },
+          {
+            "key": "explains_too_early_error_handler_problem",
+            "description": "Explains why an error handler registered before routes is not the intended final catch point."
+          },
+          {
+            "key": "connects_order_to_error_flow",
+            "description": "Connects next(err) to the next matching error handler after the point of error."
+          }
+        ]
+      },
+      {
+        "label": "Mentions that multiple error handlers can be chained for logging, transformation, and final response, but order still matters.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "allows_multiple_error_handlers",
+            "description": "Mentions separate error handlers for logging, mapping, or final response."
+          },
+          {
+            "key": "orders_logging_before_response",
+            "description": "Explains logging/transformation should happen before final response when chained."
+          },
+          {
+            "key": "uses_next_err_between_handlers",
+            "description": "Mentions passing errors onward with next(err) when chaining."
+          }
+        ]
+      },
+      {
+        "label": "Understands that route-specific error handlers can exist, but a final global handler should be near the end.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "recognizes_route_specific_error_handling",
+            "description": "Allows route or router-level error handlers for scoped cases."
+          },
+          {
+            "key": "keeps_global_fallback",
+            "description": "Still keeps a final global handler for unhandled application errors."
+          },
+          {
+            "key": "does_not_replace_global_with_scattered_handlers",
+            "description": "Does not rely only on ad hoc per-route error responses."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1360,30 +2348,146 @@
   },
   {
     "code": "EXPRESS_ERROR_MID_TECH_LOGGING_EXPOSURE_011",
-    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
-    "roleFamilies": ["backend", "fullstack", "devops", "security"],
-    "levels": ["mid", "senior"],
+    "stages": [
+      "stage_2_tech_stack",
+      "stage_3_domain_knowledge"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "devops",
+      "security"
+    ],
+    "levels": [
+      "mid",
+      "senior"
+    ],
     "type": "technical_depth",
-    "competencies": ["ownership", "technical_fundamentals", "impact_measurement", "communication"],
-    "techTags": ["express", "nodejs", "logging", "owasp"],
+    "competencies": [
+      "ownership",
+      "technical_fundamentals",
+      "impact_measurement",
+      "communication"
+    ],
+    "techTags": [
+      "express",
+      "nodejs",
+      "logging",
+      "owasp"
+    ],
     "difficulty": 3,
     "conversationDepth": "mid",
     "intent": "Assess whether the candidate can log enough information for debugging while returning safe, sanitized error responses to clients.",
     "primaryQuestion": "How do you log errors in Express without exposing details to the client?",
     "expectedSignals": [
-      "Uses a structured logger in the centralized error handler or a dedicated logging error middleware.",
-      "Logs server-side fields such as request ID, method, path, status, safe user identifier, error code, stack, cause, and relevant metadata.",
-      "Returns a sanitized client response with a stable error code and generic message for unexpected errors.",
-      "Avoids logging or returning secrets, authorization headers, cookies, tokens, passwords, full PII, or large raw request bodies.",
-      "Uses environment-aware behavior: stack traces may be visible in local development but not in production.",
-      "Mentions correlation IDs, tracing, metrics, and alerting for high-severity or high-rate failures."
-    ],
-    "redFlags": [
-      "Returns err.message and err.stack directly to production clients for all errors.",
-      "Logs complete headers and body without redaction.",
-      "Suppresses logging to avoid exposing details, leaving no debugging trail.",
-      "Logs the same error many times at every layer and creates noisy alerts.",
-      "Does not include request context, making logs hard to correlate."
+      {
+        "label": "Uses a structured logger in the centralized error handler or a dedicated logging error middleware.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "uses_structured_logger",
+            "description": "Mentions structured logging rather than only console.log strings."
+          },
+          {
+            "key": "places_logging_in_error_pipeline",
+            "description": "Logs in the centralized error handler or a dedicated error-logging middleware."
+          },
+          {
+            "key": "keeps_logging_separate_from_client_response",
+            "description": "Separates server-side diagnostics from what is returned to the client."
+          }
+        ]
+      },
+      {
+        "label": "Logs server-side fields such as request ID, method, path, status, safe user identifier, error code, stack, cause, and relevant metadata.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "logs_request_correlation_fields",
+            "description": "Includes request id, method, path, and status or route information."
+          },
+          {
+            "key": "logs_safe_error_fields",
+            "description": "Includes error code, stack, cause, and safe metadata for investigation."
+          },
+          {
+            "key": "uses_safe_user_identifier",
+            "description": "Uses a safe user id or tenant id instead of raw sensitive profile data."
+          }
+        ]
+      },
+      {
+        "label": "Returns a sanitized client response with a stable error code and generic message for unexpected errors.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "returns_stable_public_code",
+            "description": "Returns a machine-readable code clients can handle."
+          },
+          {
+            "key": "uses_generic_unexpected_message",
+            "description": "Uses a generic public message for unexpected server failures."
+          },
+          {
+            "key": "does_not_echo_internal_log_details",
+            "description": "Does not copy stack traces or private diagnostic metadata into the response."
+          }
+        ]
+      },
+      {
+        "label": "Avoids logging or returning secrets, authorization headers, cookies, tokens, passwords, full PII, or large raw request bodies.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "redacts_credentials_and_tokens",
+            "description": "Avoids logging authorization headers, cookies, tokens, passwords, and secrets."
+          },
+          {
+            "key": "minimizes_pii",
+            "description": "Avoids full PII dumps unless explicitly safe and necessary."
+          },
+          {
+            "key": "avoids_large_raw_body_logging",
+            "description": "Explains why full request bodies on public endpoints can expose sensitive data and inflate logs."
+          }
+        ]
+      },
+      {
+        "label": "Uses environment-aware behavior: stack traces may be visible in local development but not in production.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "allows_local_debug_detail",
+            "description": "Allows more detail such as stack traces in local development when appropriate."
+          },
+          {
+            "key": "hides_production_stack",
+            "description": "Does not expose stack traces or internal details in production client responses."
+          },
+          {
+            "key": "uses_configuration_not_ad_hoc_checks",
+            "description": "Ties exposure behavior to environment/configuration rather than ad hoc route decisions."
+          }
+        ]
+      },
+      {
+        "label": "Mentions correlation IDs, tracing, metrics, and alerting for high-severity or high-rate failures.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "mentions_correlation_id_or_trace",
+            "description": "Mentions correlation ids or traces for following a request across services."
+          },
+          {
+            "key": "records_error_metrics",
+            "description": "Mentions error counts, rates, status classes, or endpoint-level metrics."
+          },
+          {
+            "key": "alerts_on_severity_or_rate",
+            "description": "Mentions alerting for high-severity errors or elevated error rates."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1410,7 +2514,7 @@
         "purpose": "Probe operational observability detail."
       },
       {
-        "trigger": "red_flag",
+        "trigger": "missing_consequence",
         "question": "Why is logging the full request body dangerous on public API endpoints?",
         "purpose": "Check privacy and security awareness."
       }
@@ -1499,30 +2603,145 @@
   },
   {
     "code": "EXPRESS_ERROR_SR_SITUATIONAL_PROCESS_EVENTS_012",
-    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
-    "roleFamilies": ["backend", "fullstack", "devops"],
-    "levels": ["mid", "senior"],
+    "stages": [
+      "stage_2_tech_stack",
+      "stage_3_domain_knowledge"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "devops"
+    ],
+    "levels": [
+      "mid",
+      "senior"
+    ],
     "type": "situational",
-    "competencies": ["ownership", "system_thinking", "problem_solving", "impact_measurement"],
-    "techTags": ["express", "nodejs", "logging", "alerting"],
+    "competencies": [
+      "ownership",
+      "system_thinking",
+      "problem_solving",
+      "impact_measurement"
+    ],
+    "techTags": [
+      "express",
+      "nodejs",
+      "logging",
+      "alerting"
+    ],
     "difficulty": 4,
     "conversationDepth": "deep",
     "intent": "Evaluate whether the candidate understands Node.js process-level error events and how they relate to Express request-level error handling.",
     "primaryQuestion": "What are process.on('uncaughtException') and process.on('unhandledRejection') used for?",
     "expectedSignals": [
-      "Explains that uncaughtException fires when an exception reaches the event loop without being caught.",
-      "Explains that unhandledRejection fires when a Promise is rejected without a handler within the event loop turn.",
-      "States that these are process-level safety nets for logging, metrics, cleanup, and controlled shutdown, not normal Express request error handling.",
-      "Mentions that after an uncaught exception the process may be in an unsafe state and should usually stop accepting traffic and restart under a process manager or orchestrator.",
-      "Mentions that unhandled rejections should be fixed at the source by catching or forwarding to next(err), not ignored globally.",
-      "Discusses graceful shutdown steps such as stop readiness, server.close, cleanup connections, flush logs, and exit with an appropriate code."
-    ],
-    "redFlags": [
-      "Uses process.on handlers as the main way to send HTTP error responses.",
-      "Continues serving traffic indefinitely after uncaughtException.",
-      "Suppresses unhandled rejections globally without fixing the rejected promise.",
-      "Performs long async recovery inside uncaughtException and assumes the app is healthy.",
-      "Does not alert or restart after fatal process-level failures."
+      {
+        "label": "Explains that uncaughtException fires when an exception reaches the event loop without being caught.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "defines_uncaught_exception",
+            "description": "Defines uncaughtException as an exception that reaches the event loop uncaught."
+          },
+          {
+            "key": "places_at_process_level",
+            "description": "Explains that this is a Node process event, not Express middleware."
+          },
+          {
+            "key": "does_not_use_for_normal_route_errors",
+            "description": "Does not present it as the normal route error handling path."
+          }
+        ]
+      },
+      {
+        "label": "Explains that unhandledRejection fires when a Promise is rejected without a handler within the event loop turn.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "defines_unhandled_rejection",
+            "description": "Defines unhandledRejection as a promise rejection without a handler in time."
+          },
+          {
+            "key": "connects_to_missing_catch",
+            "description": "Connects it to missing catch/await handling in promise code."
+          },
+          {
+            "key": "distinguishes_from_next_err",
+            "description": "Separates process event behavior from Express next(err) request handling."
+          }
+        ]
+      },
+      {
+        "label": "States that these are process-level safety nets for logging, metrics, cleanup, and controlled shutdown, not normal Express request error handling.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "frames_as_safety_net",
+            "description": "Frames these events as last-resort safety nets."
+          },
+          {
+            "key": "mentions_logging_metrics_cleanup",
+            "description": "Mentions logging, metrics, cleanup, or shutdown as appropriate uses."
+          },
+          {
+            "key": "rejects_substitute_for_request_error_handling",
+            "description": "Explains they should not replace route-level catch/next(err)."
+          }
+        ]
+      },
+      {
+        "label": "Mentions that after an uncaught exception the process may be in an unsafe state and should usually stop accepting traffic and restart under a process manager or orchestrator.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "explains_unsafe_process_state",
+            "description": "Explains why uncaught exceptions can leave in-memory state unreliable."
+          },
+          {
+            "key": "stops_accepting_traffic",
+            "description": "Mentions making the service unready or stopping new traffic."
+          },
+          {
+            "key": "restarts_under_supervisor",
+            "description": "Mentions restart via process manager, container orchestrator, or supervisor."
+          }
+        ]
+      },
+      {
+        "label": "Mentions that unhandled rejections should be fixed at the source by catching or forwarding to next(err), not ignored globally.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "fixes_rejection_at_source",
+            "description": "States that the missing catch/await/next(err) should be fixed where the promise is created."
+          },
+          {
+            "key": "forwards_route_rejections_to_next",
+            "description": "For Express route promises, forwards errors to next(err) or Express 5 handling."
+          },
+          {
+            "key": "does_not_ignore_globally",
+            "description": "Does not swallow or treat global unhandledRejection logging as a complete fix."
+          }
+        ]
+      },
+      {
+        "label": "Discusses graceful shutdown steps such as stop readiness, server.close, cleanup connections, flush logs, and exit with an appropriate code.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "marks_service_unready",
+            "description": "Stops readiness or otherwise removes the process from traffic."
+          },
+          {
+            "key": "closes_server_and_resources",
+            "description": "Mentions server.close and cleanup of database, queues, or external connections."
+          },
+          {
+            "key": "flushes_logs_and_exits",
+            "description": "Flushes logs/metrics and exits with an appropriate code for restart."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1549,7 +2768,7 @@
         "purpose": "Check shutdown and traffic-draining judgment."
       },
       {
-        "trigger": "red_flag",
+        "trigger": "missing_consequence",
         "question": "Why should unhandledRejection not be treated as a substitute for next(err) in Express routes?",
         "purpose": "Check request-level versus process-level separation."
       }
@@ -1638,30 +2857,142 @@
   },
   {
     "code": "EXPRESS_ERROR_MID_TECH_CUSTOM_ERROR_CLASS_013",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["mid", "senior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "mid",
+      "senior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "communication"],
-    "techTags": ["express", "nodejs", "typescript", "javascript"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "communication"
+    ],
+    "techTags": [
+      "express",
+      "nodejs",
+      "typescript",
+      "javascript"
+    ],
     "difficulty": 3,
     "conversationDepth": "mid",
     "intent": "Check whether the candidate can design custom Error classes that carry HTTP and application metadata safely through Express error handling.",
     "primaryQuestion": "How do you create a custom Error class in Node.js or Express?",
     "expectedSignals": [
-      "Extends the built-in Error class and calls super(message).",
-      "Sets useful fields such as name, statusCode or status, code, isOperational, details, and cause when appropriate.",
-      "Uses Object.setPrototypeOf(this, ClassName.prototype) in TypeScript/transpiled environments if needed to preserve instanceof behavior.",
-      "Uses Error.captureStackTrace when available to keep stack traces clean.",
-      "Separates safe public message and internal details so the error handler can avoid leaking implementation data.",
-      "Shows concrete subclasses such as BadRequestError, UnauthorizedError, NotFoundError, or ValidationError."
-    ],
-    "redFlags": [
-      "Throws plain strings or arbitrary objects instead of Error instances.",
-      "Stores secrets or raw database errors directly in public message fields.",
-      "Does not call super(message), losing stack and message behavior.",
-      "Creates many custom classes without a consistent base shape used by the error handler.",
-      "Relies on HTTP status text alone and loses application-specific error codes."
+      {
+        "label": "Extends the built-in Error class and calls super(message).",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "extends_error_class",
+            "description": "Defines the custom class as extending the built-in Error class."
+          },
+          {
+            "key": "calls_super_message",
+            "description": "Calls super(message) so Error initializes message and stack behavior."
+          },
+          {
+            "key": "does_not_throw_plain_string",
+            "description": "Avoids throwing strings or plain objects as the main error pattern."
+          }
+        ]
+      },
+      {
+        "label": "Sets useful fields such as name, statusCode or status, code, isOperational, details, and cause when appropriate.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "sets_error_name",
+            "description": "Sets name or class-specific identity for diagnostics."
+          },
+          {
+            "key": "sets_status_and_code",
+            "description": "Sets status/statusCode and a stable application error code when appropriate."
+          },
+          {
+            "key": "sets_operational_details_cause",
+            "description": "Uses isOperational, details, or cause when useful for the error handler."
+          }
+        ]
+      },
+      {
+        "label": "Uses Object.setPrototypeOf(this, ClassName.prototype) in TypeScript/transpiled environments if needed to preserve instanceof behavior.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_prototype_fix",
+            "description": "Mentions Object.setPrototypeOf when transpilation can break Error subclass prototypes."
+          },
+          {
+            "key": "preserves_instanceof",
+            "description": "Explains that the goal is preserving instanceof checks."
+          },
+          {
+            "key": "scopes_to_ts_or_transpiled_cases",
+            "description": "Keeps this as a TypeScript/transpilation concern rather than mandatory in every runtime."
+          }
+        ]
+      },
+      {
+        "label": "Uses Error.captureStackTrace when available to keep stack traces clean.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_capture_stack_trace",
+            "description": "Mentions Error.captureStackTrace when available."
+          },
+          {
+            "key": "keeps_constructor_out_of_stack",
+            "description": "Explains that it can remove constructor frames from the stack."
+          },
+          {
+            "key": "handles_runtime_availability",
+            "description": "Recognizes the method is runtime-specific and should be guarded or optional."
+          }
+        ]
+      },
+      {
+        "label": "Separates safe public message and internal details so the error handler can avoid leaking implementation data.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "separates_public_message",
+            "description": "Keeps a client-safe message distinct from internal diagnostic details."
+          },
+          {
+            "key": "keeps_sensitive_details_internal",
+            "description": "Avoids exposing SQL, stack, secrets, or internal implementation details through the error."
+          },
+          {
+            "key": "supports_error_handler_redaction",
+            "description": "Provides fields that help the centralized handler decide what is safe to return."
+          }
+        ]
+      },
+      {
+        "label": "Shows concrete subclasses such as BadRequestError, UnauthorizedError, NotFoundError, or ValidationError.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "names_client_error_subclasses",
+            "description": "Shows subclasses such as BadRequestError, UnauthorizedError, NotFoundError, or ValidationError."
+          },
+          {
+            "key": "maps_subclass_to_status_code",
+            "description": "Associates subclasses with appropriate HTTP status codes."
+          },
+          {
+            "key": "keeps_subclasses_semantic",
+            "description": "Uses subclasses to clarify error meaning rather than only changing class names."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1777,30 +3108,141 @@
   },
   {
     "code": "EXPRESS_ERROR_MID_TECH_EXPRESS5_ASYNC_014",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["mid", "senior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "mid",
+      "senior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "problem_solving", "trade_off_analysis"],
-    "techTags": ["express", "nodejs", "javascript"],
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving",
+      "trade_off_analysis"
+    ],
+    "techTags": [
+      "express",
+      "nodejs",
+      "javascript"
+    ],
     "difficulty": 3,
     "conversationDepth": "mid",
     "intent": "Assess whether the candidate understands Express 5 improvements to promise-based async error handling and what still remains the developer's responsibility.",
     "primaryQuestion": "What did Express 5 improve about async error handling compared with Express 4?",
     "expectedSignals": [
-      "States that route handlers and middleware returning Promises in Express 5 automatically call next(rejectedValue) when they reject or throw.",
-      "Contrasts this with Express 4, where async/await handler errors require try/catch, a wrapper, or a package.",
-      "Explains that this reduces boilerplate and lost unhandled promise rejections in request handlers.",
-      "Mentions that a centralized error handler is still required to format responses consistently.",
-      "Notes that errors outside the request lifecycle, such as background jobs, timers, streams, and event emitters, still need explicit handling.",
-      "Mentions migration caution: test route matching, middleware behavior, and error response contracts when upgrading."
-    ],
-    "redFlags": [
-      "Claims Express 5 catches every asynchronous error anywhere in the process.",
-      "Removes all error handlers because Express 5 forwards promises automatically.",
-      "Assumes Express 4 already had identical behavior.",
-      "Ignores migration testing for route behavior and error contracts.",
-      "Forgets that async work started but not returned or awaited can still escape request handling."
+      {
+        "label": "States that route handlers and middleware returning Promises in Express 5 automatically call next(rejectedValue) when they reject or throw.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "states_express5_auto_next_on_rejection",
+            "description": "States that Express 5 forwards rejected handler promises to next."
+          },
+          {
+            "key": "includes_async_throw_case",
+            "description": "Includes errors thrown inside async handlers as rejected promises."
+          },
+          {
+            "key": "scopes_to_route_or_middleware_promises",
+            "description": "Scopes the behavior to route handlers and middleware returning promises."
+          }
+        ]
+      },
+      {
+        "label": "Contrasts this with Express 4, where async/await handler errors require try/catch, a wrapper, or a package.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "states_express4_manual_handling",
+            "description": "Explains that Express 4 requires try/catch, .catch(next), wrapper, or package."
+          },
+          {
+            "key": "does_not_confuse_versions",
+            "description": "Does not claim Express 4 has the same promise forwarding behavior."
+          },
+          {
+            "key": "mentions_upgrade_context",
+            "description": "Frames the behavior as an Express 5 improvement over Express 4."
+          }
+        ]
+      },
+      {
+        "label": "Explains that this reduces boilerplate and lost unhandled promise rejections in request handlers.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "reduces_try_catch_boilerplate",
+            "description": "Explains that less per-route try/catch or wrapper code is needed."
+          },
+          {
+            "key": "reduces_lost_rejection_risk",
+            "description": "Connects automatic forwarding to fewer unhandled promise rejections in request handlers."
+          },
+          {
+            "key": "keeps_error_flow_consistent",
+            "description": "Explains that async errors more consistently reach the Express error pipeline."
+          }
+        ]
+      },
+      {
+        "label": "Mentions that a centralized error handler is still required to format responses consistently.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "still_requires_error_middleware",
+            "description": "States that app.use((err, req, res, next) => ...) is still needed."
+          },
+          {
+            "key": "separates_forwarding_from_formatting",
+            "description": "Explains that Express 5 forwards errors but does not design the API response contract."
+          },
+          {
+            "key": "keeps_status_mapping_centralized",
+            "description": "Uses the handler to map errors to status codes and safe response bodies."
+          }
+        ]
+      },
+      {
+        "label": "Notes that errors outside the request lifecycle, such as background jobs, timers, streams, and event emitters, still need explicit handling.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "excludes_background_jobs",
+            "description": "States that background jobs started from a route are not automatically caught by Express 5 later."
+          },
+          {
+            "key": "excludes_timers_streams_events",
+            "description": "Mentions timers, streams, or event emitters need explicit error handling."
+          },
+          {
+            "key": "does_not_overstate_express5_scope",
+            "description": "Avoids saying Express 5 catches every async error in the process."
+          }
+        ]
+      },
+      {
+        "label": "Mentions migration caution: test route matching, middleware behavior, and error response contracts when upgrading.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "tests_error_response_contracts",
+            "description": "Tests known error responses before and after upgrading."
+          },
+          {
+            "key": "tests_route_matching_changes",
+            "description": "Mentions route matching or path syntax regression tests."
+          },
+          {
+            "key": "tests_middleware_behavior",
+            "description": "Checks middleware ordering and async error behavior during migration."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1827,7 +3269,7 @@
         "purpose": "Check separation between forwarding and formatting."
       },
       {
-        "trigger": "red_flag",
+        "trigger": "missing_consequence",
         "question": "Will Express 5 catch an error thrown in a background job started from a route after the response is sent?",
         "purpose": "Probe request-lifecycle boundary knowledge."
       }
@@ -1916,30 +3358,141 @@
   },
   {
     "code": "EXPRESS_ERROR_MID_DEBUG_RETURN_NEXT_ERR_015",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["mid", "senior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "mid",
+      "senior"
+    ],
     "type": "debugging",
-    "competencies": ["problem_solving", "technical_fundamentals", "communication"],
-    "techTags": ["express", "nodejs", "debugging"],
+    "competencies": [
+      "problem_solving",
+      "technical_fundamentals",
+      "communication"
+    ],
+    "techTags": [
+      "express",
+      "nodejs",
+      "debugging"
+    ],
     "difficulty": 3,
     "conversationDepth": "mid",
     "intent": "Check whether the candidate understands why return next(err) is often used to stop fall-through control flow after delegating an error.",
     "primaryQuestion": "When should you use return next(err) instead of just next(err)?",
     "expectedSignals": [
-      "Explains that next(err) delegates the error but does not automatically stop the current JavaScript function from continuing.",
-      "Uses return next(err) when there is code after the call or when inside a conditional branch to avoid fall-through.",
-      "Connects this to preventing duplicate responses, extra database work, or both success and error paths running.",
-      "Mentions that if next(err) is the final statement in the function, return is not strictly required but is often used for clarity.",
-      "Understands that return next(err) does not mean Express waits for a return value; it is a control-flow guard in the current handler.",
-      "Mentions similar discipline after res.status(...).json(...) or res.redirect(...) when more code follows."
-    ],
-    "redFlags": [
-      "Thinks next(err) automatically exits the current function.",
-      "Calls next(err) and then continues to send a response.",
-      "Believes return next(err) changes the error handler's response value.",
-      "Uses return inconsistently and creates hard-to-follow branches.",
-      "Does not connect the issue to 'Cannot set headers after they are sent' bugs."
+      {
+        "label": "Explains that next(err) delegates the error but does not automatically stop the current JavaScript function from continuing.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "states_next_err_delegates_only",
+            "description": "Explains that next(err) passes the error to Express but does not by itself stop JavaScript execution."
+          },
+          {
+            "key": "distinguishes_express_flow_from_js_flow",
+            "description": "Separates Express error delegation from the current function's control flow."
+          },
+          {
+            "key": "answers_return_value_question",
+            "description": "Clarifies that Express is not using the returned value from return next(err)."
+          }
+        ]
+      },
+      {
+        "label": "Uses return next(err) when there is code after the call or when inside a conditional branch to avoid fall-through.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "uses_return_before_later_code",
+            "description": "Uses return next(err) when code follows the delegation call."
+          },
+          {
+            "key": "uses_return_in_conditional_error_branch",
+            "description": "Uses return to prevent a conditional error branch from falling through to success logic."
+          },
+          {
+            "key": "can_show_missing_return_example",
+            "description": "Can show a route where missing return causes later code to run."
+          }
+        ]
+      },
+      {
+        "label": "Connects this to preventing duplicate responses, extra database work, or both success and error paths running.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "prevents_duplicate_response",
+            "description": "Connects missing return to sending both error and success responses."
+          },
+          {
+            "key": "prevents_extra_side_effects",
+            "description": "Mentions avoiding unnecessary database work or side effects after an error path."
+          },
+          {
+            "key": "prevents_success_after_error",
+            "description": "Explains that success-path code should not run after delegating an error."
+          }
+        ]
+      },
+      {
+        "label": "Mentions that if next(err) is the final statement in the function, return is not strictly required but is often used for clarity.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "recognizes_final_statement_case",
+            "description": "States that return is not strictly required when next(err) is the last statement."
+          },
+          {
+            "key": "mentions_clarity_convention",
+            "description": "Mentions still using return for readability or consistent style."
+          },
+          {
+            "key": "avoids_overstating_return_requirement",
+            "description": "Does not claim return next(err) is always required for Express to handle the error."
+          }
+        ]
+      },
+      {
+        "label": "Understands that return next(err) does not mean Express waits for a return value; it is a control-flow guard in the current handler.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "states_return_is_js_control_flow",
+            "description": "Explains that return exits the current handler function."
+          },
+          {
+            "key": "states_express_ignores_return_value",
+            "description": "Explains Express does not use the return value of next(err)."
+          },
+          {
+            "key": "separates_from_async_await_semantics",
+            "description": "Does not confuse return next(err) with awaiting Express processing."
+          }
+        ]
+      },
+      {
+        "label": "Mentions similar discipline after res.status(...).json(...) or res.redirect(...) when more code follows.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "uses_return_after_json_response",
+            "description": "Mentions returning after res.status(...).json(...) when later code exists."
+          },
+          {
+            "key": "uses_return_after_redirect",
+            "description": "Mentions returning after res.redirect when later code exists."
+          },
+          {
+            "key": "connects_to_single_final_response",
+            "description": "Frames the pattern as ensuring one final response path per request."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {

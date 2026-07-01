@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { QuestionProbeLanguage } from '../constants/question-bank-taxonomy.constants';
 import {
+  QuestionProbeExpectedSignal,
   QuestionProbeLocalizedContent,
   QuestionProbeScoringHint,
 } from './question-probe.entity';
@@ -41,8 +42,7 @@ export interface QuestionPracticeProbeSnapshot {
     difficulty: number | null;
   };
   rubric: {
-    expectedSignals: string[];
-    redFlags: string[];
+    expectedSignals: QuestionProbeExpectedSignal[];
     scoringHints: QuestionProbeScoringHint[];
   };
 }

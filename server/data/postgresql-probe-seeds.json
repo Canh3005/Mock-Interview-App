@@ -1,27 +1,122 @@
 [
   {
     "code": "PG_JR_TECH_SCHEMA_KEYS_001",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack", "data"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "data"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "communication"],
-    "techTags": ["postgresql", "schema_design", "consistency"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "communication"
+    ],
+    "techTags": [
+      "postgresql",
+      "schema_design",
+      "consistency"
+    ],
     "difficulty": 2,
     "intent": "Check whether the candidate can design a basic relational PostgreSQL schema with correct keys, constraints, and data integrity boundaries.",
     "primaryQuestion": "How would you design PostgreSQL tables for users, orders, and order_items so that relationships and data integrity are enforced by the database?",
     "expectedSignals": [
-      "Defines primary keys, foreign keys, and appropriate NOT NULL constraints.",
-      "Explains one-to-many relationships between users and orders, and orders and order_items.",
-      "Uses numeric or integer types carefully for money, quantities, and identifiers.",
-      "Mentions uniqueness rules such as unique email or order number when required by the domain.",
-      "Separates application validation from database constraints and explains why both matter."
-    ],
-    "redFlags": [
-      "Stores nested order item arrays in one text column as the default model for transactional data.",
-      "Relies only on application code for referential integrity.",
-      "Cannot explain why a foreign key protects against orphaned records.",
-      "Uses floating point types for money without discussing rounding risk."
+      {
+        "label": "Defines primary keys, foreign keys, and appropriate NOT NULL constraints.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "defines_primary_keys",
+            "description": "Defines primary keys for users, orders, and order_items or equivalent core tables"
+          },
+          {
+            "key": "defines_foreign_keys",
+            "description": "Defines foreign keys from orders to users and from order_items to orders"
+          },
+          {
+            "key": "uses_not_null_constraints",
+            "description": "Uses NOT NULL constraints for required relationship and domain fields"
+          }
+        ]
+      },
+      {
+        "label": "Explains one-to-many relationships between users and orders, and orders and order_items.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "models_user_orders_relationship",
+            "description": "Explains that one user can have many orders while each order belongs to one user"
+          },
+          {
+            "key": "models_order_items_relationship",
+            "description": "Explains that one order can have many order_items while each item belongs to one order"
+          },
+          {
+            "key": "addresses_delete_behavior",
+            "description": "Mentions a domain decision for delete or restrict behavior instead of leaving orphaned rows"
+          }
+        ]
+      },
+      {
+        "label": "Uses numeric or integer types carefully for money, quantities, and identifiers.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "uses_numeric_for_money",
+            "description": "Uses NUMERIC/DECIMAL or integer minor units for money rather than floating point"
+          },
+          {
+            "key": "uses_integer_for_quantities",
+            "description": "Uses integer or appropriately constrained numeric types for quantities"
+          },
+          {
+            "key": "explains_precision_risk",
+            "description": "Explains rounding or precision risk when using floating point for money"
+          }
+        ]
+      },
+      {
+        "label": "Mentions uniqueness rules such as unique email or order number when required by the domain.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "defines_unique_email",
+            "description": "Defines a unique email or account identifier when the domain requires one account per value"
+          },
+          {
+            "key": "defines_unique_order_number",
+            "description": "Defines a unique order number or external reference when the domain exposes one"
+          },
+          {
+            "key": "connects_uniqueness_to_domain",
+            "description": "Explains that uniqueness constraints protect business invariants, not just query convenience"
+          }
+        ]
+      },
+      {
+        "label": "Separates application validation from database constraints and explains why both matter.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "separates_validation_layers",
+            "description": "Distinguishes user-facing or service validation from database-enforced constraints"
+          },
+          {
+            "key": "explains_database_enforcement",
+            "description": "Explains that PostgreSQL constraints still protect data when bugs, concurrency, or alternate writers bypass application code"
+          },
+          {
+            "key": "keeps_domain_feedback_in_app",
+            "description": "Mentions that application validation still gives clearer error messages or earlier feedback"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -51,6 +146,11 @@
         "trigger": "vague_answer",
         "question": "Which constraints would you put directly in the database instead of only in service code?",
         "purpose": "Force concrete database integrity decisions."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "How would you choose data types for money and quantities, and what precision risk are you avoiding?",
+        "purpose": "Check practical reasoning about numeric precision and domain constraints."
       }
     ],
     "localizedContent": {
@@ -68,7 +168,11 @@
           "Skipping foreign keys because the application can validate data.",
           "Using vague id columns without defining ownership and uniqueness."
         ],
-        "labels": { "role": "Backend/Fullstack/Data", "level": "Junior", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "Thiết kế schema quan hệ và constraint",
@@ -84,7 +188,11 @@
           "Bỏ foreign key vì nghĩ application đã validate đủ.",
           "Nói chung chung về id mà không làm rõ ownership và uniqueness."
         ],
-        "labels": { "role": "Backend/Fullstack/Data", "level": "Junior", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "リレーショナルスキーマと制約",
@@ -100,7 +208,11 @@
           "アプリケーションで検証するから外部キーは不要だと考える。",
           "所有関係や一意性を曖昧にしたまま id を置く。"
         ],
-        "labels": { "role": "Backend/Fullstack/Data", "level": "Junior", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
@@ -119,27 +231,121 @@
   },
   {
     "code": "PG_JR_TECH_INDEX_BASICS_002",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack", "data"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "data"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "trade_off_analysis", "communication"],
-    "techTags": ["postgresql", "indexing"],
+    "competencies": [
+      "technical_fundamentals",
+      "trade_off_analysis",
+      "communication"
+    ],
+    "techTags": [
+      "postgresql",
+      "indexing"
+    ],
     "difficulty": 2,
     "intent": "Evaluate whether the candidate understands what indexes do in PostgreSQL, when a B-tree index helps, and why indexes are not free.",
     "primaryQuestion": "When would you add a B-tree index in PostgreSQL, and what costs or trade-offs would you consider before adding it?",
     "expectedSignals": [
-      "Explains that indexes help PostgreSQL find matching rows without scanning the whole table for selective predicates.",
-      "Mentions common B-tree use cases such as equality, range filters, joins, and ordered lookups.",
-      "Recognizes write overhead, storage cost, and maintenance cost.",
-      "Connects index usefulness to query pattern and selectivity.",
-      "Mentions checking plans or usage instead of indexing every column."
-    ],
-    "redFlags": [
-      "Says every column should be indexed.",
-      "Cannot explain why an index can slow inserts or updates.",
-      "Assumes an index is always used once it exists.",
-      "Ignores query predicates and data distribution."
+      {
+        "label": "Explains that indexes help PostgreSQL find matching rows without scanning the whole table for selective predicates.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "explains_index_lookup",
+            "description": "Explains that an index lets PostgreSQL locate matching rows through an ordered access structure instead of scanning every row"
+          },
+          {
+            "key": "mentions_selective_predicates",
+            "description": "Connects index value to predicates that match a small enough portion of the table"
+          },
+          {
+            "key": "contrasts_with_sequential_scan",
+            "description": "Contrasts index access with a sequential scan at a practical level"
+          }
+        ]
+      },
+      {
+        "label": "Mentions common B-tree use cases such as equality, range filters, joins, and ordered lookups.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "mentions_equality_filters",
+            "description": "Mentions equality filters such as WHERE user_id = ? or status = ?"
+          },
+          {
+            "key": "mentions_range_or_ordering",
+            "description": "Mentions range filters or ORDER BY patterns that B-tree indexes can support"
+          },
+          {
+            "key": "mentions_join_keys",
+            "description": "Mentions indexes on join keys or foreign-key lookup columns when relevant"
+          }
+        ]
+      },
+      {
+        "label": "Recognizes write overhead, storage cost, and maintenance cost.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "mentions_write_overhead",
+            "description": "Mentions slower inserts, updates, deletes, or index maintenance on writes"
+          },
+          {
+            "key": "mentions_storage_cost",
+            "description": "Mentions additional storage or index size cost"
+          },
+          {
+            "key": "mentions_operational_maintenance",
+            "description": "Mentions ongoing maintenance, bloat, vacuum, or rebuild considerations"
+          }
+        ]
+      },
+      {
+        "label": "Connects index usefulness to query pattern and selectivity.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "identifies_query_pattern",
+            "description": "Names the actual WHERE, JOIN, or ORDER BY pattern the index is meant to support"
+          },
+          {
+            "key": "mentions_data_distribution",
+            "description": "Mentions selectivity, cardinality, or skew in the indexed column values"
+          },
+          {
+            "key": "explains_low_selectivity_risk",
+            "description": "Explains why an index may not help when most rows match the predicate"
+          }
+        ]
+      },
+      {
+        "label": "Mentions checking plans or usage instead of indexing every column.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "uses_explain_plan",
+            "description": "Mentions checking EXPLAIN or EXPLAIN ANALYZE before or after adding an index"
+          },
+          {
+            "key": "validates_performance_change",
+            "description": "Mentions comparing latency, rows scanned, or plan shape before and after the index"
+          },
+          {
+            "key": "rejects_index_every_column",
+            "description": "Avoids indexing every column and ties index choice to observed workload"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -169,6 +375,11 @@
         "trigger": "vague_answer",
         "question": "Would an index on status help if 95% of rows have status = 'active'? Why or why not?",
         "purpose": "Probe selectivity and planner reasoning."
+      },
+      {
+        "trigger": "missing_metric",
+        "question": "What evidence would you check to know whether the new index actually improved the query?",
+        "purpose": "Check plan and measurement discipline before adding indexes broadly."
       }
     ],
     "localizedContent": {
@@ -186,7 +397,11 @@
           "Ignoring update and storage overhead.",
           "Not considering selectivity or query plans."
         ],
-        "labels": { "role": "Backend/Fullstack/Data", "level": "Junior", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "Nền tảng B-tree index",
@@ -202,7 +417,11 @@
           "Bỏ qua overhead khi update và chi phí storage.",
           "Không xét selectivity hoặc query plan."
         ],
-        "labels": { "role": "Backend/Fullstack/Data", "level": "Junior", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "B-tree インデックスの基礎",
@@ -218,7 +437,11 @@
           "更新コストとストレージコストを無視する。",
           "選択度や実行計画を考慮しない。"
         ],
-        "labels": { "role": "Backend/Fullstack/Data", "level": "Junior", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
@@ -237,27 +460,121 @@
   },
   {
     "code": "PG_JR_DEBUG_SLOW_QUERY_003",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack", "data"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "data"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "debugging",
-    "competencies": ["problem_solving", "technical_fundamentals", "communication"],
-    "techTags": ["postgresql", "indexing"],
+    "competencies": [
+      "problem_solving",
+      "technical_fundamentals",
+      "communication"
+    ],
+    "techTags": [
+      "postgresql",
+      "indexing"
+    ],
     "difficulty": 2,
     "intent": "Assess whether the candidate can investigate a slow PostgreSQL query using basic evidence instead of guessing.",
     "primaryQuestion": "A PostgreSQL endpoint became slow after the table grew from 10,000 to 5 million rows. How would you investigate the query before changing code?",
     "expectedSignals": [
-      "Starts by identifying the exact SQL, parameters, timing, and row counts.",
-      "Uses EXPLAIN or EXPLAIN ANALYZE carefully to inspect scan type, joins, estimates, and actual rows.",
-      "Checks whether useful indexes exist and whether predicates match those indexes.",
-      "Considers statistics freshness and ANALYZE when estimates look wrong.",
-      "Avoids changing production queries blindly without measuring."
-    ],
-    "redFlags": [
-      "Immediately rewrites the endpoint without looking at the SQL plan.",
-      "Adds random indexes without knowing the query predicates.",
-      "Cannot distinguish estimated rows from actual rows.",
-      "Runs EXPLAIN ANALYZE on dangerous write statements without safeguards."
+      {
+        "label": "Starts by identifying the exact SQL, parameters, timing, and row counts.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "captures_exact_sql",
+            "description": "Captures the exact SQL statement or ORM-generated query being executed"
+          },
+          {
+            "key": "captures_parameters",
+            "description": "Captures representative bind parameters because plan choice can depend on values"
+          },
+          {
+            "key": "captures_baseline_metrics",
+            "description": "Captures baseline latency, row counts, table size, or frequency before changing anything"
+          }
+        ]
+      },
+      {
+        "label": "Uses EXPLAIN or EXPLAIN ANALYZE carefully to inspect scan type, joins, estimates, and actual rows.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "uses_explain_analyze",
+            "description": "Mentions EXPLAIN or EXPLAIN ANALYZE to inspect the execution plan"
+          },
+          {
+            "key": "reads_scan_and_join_types",
+            "description": "Looks at scan type, join type, and where the expensive plan node is"
+          },
+          {
+            "key": "compares_estimated_actual_rows",
+            "description": "Compares estimated rows with actual rows to spot bad estimates"
+          }
+        ]
+      },
+      {
+        "label": "Checks whether useful indexes exist and whether predicates match those indexes.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "lists_existing_indexes",
+            "description": "Checks existing indexes on the table instead of assuming an index is missing"
+          },
+          {
+            "key": "matches_predicates_to_indexes",
+            "description": "Compares WHERE, JOIN, and ORDER BY predicates with index columns and order"
+          },
+          {
+            "key": "checks_expression_or_partial_index_fit",
+            "description": "Considers whether expression or partial indexes match the actual predicate shape"
+          }
+        ]
+      },
+      {
+        "label": "Considers statistics freshness and ANALYZE when estimates look wrong.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "notices_estimate_mismatch",
+            "description": "Recognizes that large gaps between estimated and actual rows can indicate stale or weak statistics"
+          },
+          {
+            "key": "mentions_analyze",
+            "description": "Mentions ANALYZE or autovacuum/analyze behavior to refresh planner statistics"
+          },
+          {
+            "key": "considers_data_distribution",
+            "description": "Considers skewed data distribution or correlation as a reason estimates can be wrong"
+          }
+        ]
+      },
+      {
+        "label": "Avoids changing production queries blindly without measuring.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "measures_before_after",
+            "description": "Defines before-and-after performance or plan metrics for any proposed fix"
+          },
+          {
+            "key": "avoids_random_indexes",
+            "description": "Avoids adding random indexes without tying them to the slow query and observed plan"
+          },
+          {
+            "key": "mentions_safe_rollout",
+            "description": "Mentions testing, rollback, or production-safety checks before changing a hot query"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -287,6 +604,11 @@
         "trigger": "missing_metric",
         "question": "What baseline and success metric would you capture before and after the fix?",
         "purpose": "Check measurement discipline."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Which query predicates and existing index definitions would you compare first?",
+        "purpose": "Check whether the candidate ties index decisions to the actual query shape."
       }
     ],
     "localizedContent": {
@@ -304,7 +626,11 @@
           "Ignoring parameter values and data distribution.",
           "Treating EXPLAIN cost as wall-clock time."
         ],
-        "labels": { "role": "Backend/Fullstack/Data", "level": "Junior", "type": "debugging" }
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Junior",
+          "type": "debugging"
+        }
       },
       "vi": {
         "title": "Debug query PostgreSQL chậm",
@@ -320,7 +646,11 @@
           "Bỏ qua parameter value và phân bố dữ liệu.",
           "Hiểu nhầm EXPLAIN cost là thời gian thực."
         ],
-        "labels": { "role": "Backend/Fullstack/Data", "level": "Junior", "type": "debugging" }
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Junior",
+          "type": "debugging"
+        }
       },
       "ja": {
         "title": "遅いクエリのデバッグ",
@@ -336,7 +666,11 @@
           "パラメータ値とデータ分布を無視する。",
           "EXPLAIN の cost を実時間と誤解する。"
         ],
-        "labels": { "role": "Backend/Fullstack/Data", "level": "Junior", "type": "debugging" }
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Junior",
+          "type": "debugging"
+        }
       }
     },
     "sourceReferences": [
@@ -355,27 +689,121 @@
   },
   {
     "code": "PG_JR_TECH_TRANSACTIONS_004",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "problem_solving"],
-    "techTags": ["postgresql", "transaction", "consistency"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "problem_solving"
+    ],
+    "techTags": [
+      "postgresql",
+      "transaction",
+      "consistency"
+    ],
     "difficulty": 2,
     "intent": "Check whether the candidate understands PostgreSQL transactions, commit and rollback behavior, and how transactions protect multi-step writes.",
     "primaryQuestion": "Why would you wrap multiple related PostgreSQL writes in a transaction, and what should happen if one step fails?",
     "expectedSignals": [
-      "Explains atomicity: all related writes commit together or roll back together.",
-      "Uses a concrete example such as money transfer, inventory reservation, or order creation.",
-      "Mentions BEGIN, COMMIT, ROLLBACK, or equivalent ORM transaction APIs.",
-      "Recognizes that external side effects such as emails or payment calls need careful ordering.",
-      "Mentions keeping transactions reasonably short to avoid locks and contention."
-    ],
-    "redFlags": [
-      "Thinks each SQL statement in a workflow automatically shares one transaction.",
-      "Ignores rollback when a later step fails.",
-      "Performs long network calls inside a transaction without recognizing the risk.",
-      "Cannot explain partial write failure."
+      {
+        "label": "Explains atomicity: all related writes commit together or roll back together.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "explains_all_or_nothing",
+            "description": "Explains that a transaction makes related writes commit together or roll back together"
+          },
+          {
+            "key": "mentions_rollback_on_failure",
+            "description": "Mentions rollback when any required step fails"
+          },
+          {
+            "key": "connects_to_consistent_state",
+            "description": "Connects atomicity to avoiding partial or inconsistent database state"
+          }
+        ]
+      },
+      {
+        "label": "Uses a concrete example such as money transfer, inventory reservation, or order creation.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "provides_multi_step_example",
+            "description": "Gives a concrete workflow with multiple related writes"
+          },
+          {
+            "key": "identifies_failure_point",
+            "description": "Names what could fail in the middle of that workflow"
+          },
+          {
+            "key": "states_protected_invariant",
+            "description": "Explains which invariant the transaction protects in the example"
+          }
+        ]
+      },
+      {
+        "label": "Mentions BEGIN, COMMIT, ROLLBACK, or equivalent ORM transaction APIs.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "mentions_begin_commit",
+            "description": "Mentions BEGIN and COMMIT or an equivalent ORM transaction wrapper"
+          },
+          {
+            "key": "mentions_rollback",
+            "description": "Mentions ROLLBACK or equivalent error handling when the transaction fails"
+          },
+          {
+            "key": "places_writes_inside_boundary",
+            "description": "Makes clear which writes are inside the transaction boundary"
+          }
+        ]
+      },
+      {
+        "label": "Recognizes that external side effects such as emails or payment calls need careful ordering.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "separates_database_commit",
+            "description": "Separates database commit from non-transactional side effects such as emails or payment calls"
+          },
+          {
+            "key": "orders_side_effects_safely",
+            "description": "Explains why sending external side effects before commit can create inconsistent user-visible state"
+          },
+          {
+            "key": "mentions_recovery_or_outbox",
+            "description": "Mentions retry, recovery, or an outbox-style pattern when side effects must happen after commit"
+          }
+        ]
+      },
+      {
+        "label": "Mentions keeping transactions reasonably short to avoid locks and contention.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "mentions_lock_duration",
+            "description": "Mentions that long transactions can hold locks or keep row versions alive longer"
+          },
+          {
+            "key": "mentions_contention_risk",
+            "description": "Mentions contention, blocking, or deadlock risk from slow transaction work"
+          },
+          {
+            "key": "keeps_external_calls_outside",
+            "description": "Avoids doing slow network calls or user interaction inside an open database transaction"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -405,6 +833,11 @@
         "trigger": "vague_answer",
         "question": "What bad state could happen if order and order_items are inserted without one transaction?",
         "purpose": "Force a concrete failure scenario."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "What can go wrong if a transaction stays open while the service calls an external API?",
+        "purpose": "Probe lock, contention, and side-effect boundary reasoning."
       }
     ],
     "localizedContent": {
@@ -422,7 +855,11 @@
           "Keeping a transaction open during slow external calls.",
           "Not defining what failure means for the workflow."
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "Ranh giới transaction",
@@ -438,7 +875,11 @@
           "Giữ transaction mở trong lúc gọi external service chậm.",
           "Không định nghĩa failure của workflow."
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "トランザクション境界",
@@ -454,7 +895,11 @@
           "遅い外部呼び出し中にトランザクションを開いたままにする。",
           "ワークフロー上の失敗を定義しない。"
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
@@ -473,27 +918,120 @@
   },
   {
     "code": "PG_JR_DEBUG_UNIQUE_CONFLICT_005",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
     "type": "debugging",
-    "competencies": ["problem_solving", "technical_fundamentals", "ownership"],
-    "techTags": ["postgresql", "consistency"],
+    "competencies": [
+      "problem_solving",
+      "technical_fundamentals",
+      "ownership"
+    ],
+    "techTags": [
+      "postgresql",
+      "consistency"
+    ],
     "difficulty": 2,
     "intent": "Assess practical debugging of duplicate-key and upsert behavior in PostgreSQL.",
     "primaryQuestion": "An insert fails with a duplicate key error on a PostgreSQL unique constraint. How would you debug it and decide between rejecting, updating, or making the operation idempotent?",
     "expectedSignals": [
-      "Identifies the exact unique constraint and conflicting key value.",
-      "Distinguishes data-quality bugs from expected duplicate requests.",
-      "Mentions ON CONFLICT DO NOTHING or DO UPDATE when appropriate.",
-      "Considers idempotency keys for retryable APIs or payment-like flows.",
-      "Avoids hiding real consistency issues with a blanket catch-and-ignore."
-    ],
-    "redFlags": [
-      "Drops the unique constraint to make the error disappear.",
-      "Catches all database errors and returns success.",
-      "Uses upsert without understanding which columns should change.",
-      "Cannot explain why the constraint exists."
+      {
+        "label": "Identifies the exact unique constraint and conflicting key value.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "reads_constraint_name",
+            "description": "Identifies the specific unique constraint or index named in the error"
+          },
+          {
+            "key": "finds_conflicting_value",
+            "description": "Finds the conflicting key value or row causing the duplicate"
+          },
+          {
+            "key": "maps_constraint_to_invariant",
+            "description": "Explains what business or data invariant that constraint protects"
+          }
+        ]
+      },
+      {
+        "label": "Distinguishes data-quality bugs from expected duplicate requests.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "classifies_expected_duplicate",
+            "description": "Identifies cases where a duplicate is an expected retry or repeated client request"
+          },
+          {
+            "key": "classifies_data_bug",
+            "description": "Identifies cases where the duplicate indicates bad input, corrupted state, or a workflow bug"
+          },
+          {
+            "key": "chooses_domain_response",
+            "description": "Connects the classification to reject, return existing result, or repair data"
+          }
+        ]
+      },
+      {
+        "label": "Mentions ON CONFLICT DO NOTHING or DO UPDATE when appropriate.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "uses_do_nothing_selectively",
+            "description": "Uses ON CONFLICT DO NOTHING only when silently ignoring the duplicate is correct for the domain"
+          },
+          {
+            "key": "defines_do_update_semantics",
+            "description": "Defines which columns may be updated when using ON CONFLICT DO UPDATE"
+          },
+          {
+            "key": "preserves_unique_invariant",
+            "description": "Keeps the unique constraint as the source of truth instead of bypassing it"
+          }
+        ]
+      },
+      {
+        "label": "Considers idempotency keys for retryable APIs or payment-like flows.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "uses_idempotency_key",
+            "description": "Uses a client request id, payment id, or operation id as an idempotency key for retryable creates"
+          },
+          {
+            "key": "stores_request_outcome",
+            "description": "Stores or retrieves the prior outcome so a retry can return the same logical result"
+          },
+          {
+            "key": "backs_idempotency_with_unique_constraint",
+            "description": "Backs the idempotency key with a unique constraint or index in PostgreSQL"
+          }
+        ]
+      },
+      {
+        "label": "Avoids hiding real consistency issues with a blanket catch-and-ignore.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "rejects_blanket_ignore",
+            "description": "Rejects catching every duplicate key error and returning success without checking meaning"
+          },
+          {
+            "key": "surfaces_unexpected_conflicts",
+            "description": "Surfaces or investigates conflicts that indicate broken invariants or unexpected state"
+          },
+          {
+            "key": "logs_enough_context",
+            "description": "Mentions logging enough constraint and request context to debug unexpected conflicts"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -523,6 +1061,11 @@
         "trigger": "missing_context",
         "question": "For a retryable create-order API, what would you use as the idempotency key?",
         "purpose": "Connect PostgreSQL uniqueness to API-level correctness."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "What details from the duplicate-key error would you inspect first?",
+        "purpose": "Force concrete debugging steps before choosing an upsert strategy."
       }
     ],
     "localizedContent": {
@@ -540,7 +1083,11 @@
           "Using upsert without defining update semantics.",
           "Ignoring retries and duplicate client submissions."
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior", "type": "debugging" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "debugging"
+        }
       },
       "vi": {
         "title": "Debug duplicate key và upsert",
@@ -556,7 +1103,11 @@
           "Dùng upsert mà không định nghĩa rõ field nào được update.",
           "Bỏ qua retry và request duplicate từ client."
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior", "type": "debugging" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "debugging"
+        }
       },
       "ja": {
         "title": "重複キーと upsert のデバッグ",
@@ -572,7 +1123,11 @@
           "更新すべきカラムを決めずに upsert する。",
           "リトライやクライアントの重複送信を無視する。"
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior", "type": "debugging" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "debugging"
+        }
       }
     },
     "sourceReferences": [
@@ -591,27 +1146,122 @@
   },
   {
     "code": "PG_MID_TECH_MVCC_SNAPSHOTS_006",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack", "data"],
-    "levels": ["mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "data"
+    ],
+    "levels": [
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "communication"],
-    "techTags": ["postgresql", "transaction", "consistency"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "communication"
+    ],
+    "techTags": [
+      "postgresql",
+      "transaction",
+      "consistency"
+    ],
     "difficulty": 3,
     "intent": "Evaluate whether the candidate understands PostgreSQL MVCC, snapshots, tuple versions, and the practical impact on concurrent reads and writes.",
     "primaryQuestion": "Explain PostgreSQL MVCC in practical terms. What does a transaction snapshot see, and why do reads and writes usually avoid blocking each other?",
     "expectedSignals": [
-      "Explains that PostgreSQL keeps multiple row versions visible to different transaction snapshots.",
-      "Connects snapshots to transaction isolation and visibility rules.",
-      "Mentions that readers do not usually block writers and writers do not usually block readers under MVCC.",
-      "Recognizes that old row versions eventually need cleanup through VACUUM.",
-      "Can describe an update as creating a new tuple version rather than modifying the visible row in place."
-    ],
-    "redFlags": [
-      "Describes MVCC as table-level locking.",
-      "Cannot explain why a long transaction can keep old row versions visible.",
-      "Says reads always see the latest committed data regardless of isolation level.",
-      "Ignores cleanup and bloat implications."
+      {
+        "label": "Explains that PostgreSQL keeps multiple row versions visible to different transaction snapshots.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "explains_row_versions",
+            "description": "Explains that PostgreSQL can keep more than one physical version of a logical row"
+          },
+          {
+            "key": "connects_versions_to_snapshots",
+            "description": "Connects row versions to what a transaction snapshot is allowed to see"
+          },
+          {
+            "key": "avoids_lock_only_explanation",
+            "description": "Avoids describing MVCC as only table or row locking"
+          }
+        ]
+      },
+      {
+        "label": "Connects snapshots to transaction isolation and visibility rules.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "explains_snapshot_visibility",
+            "description": "Explains that a snapshot determines which committed row versions are visible"
+          },
+          {
+            "key": "mentions_isolation_effect",
+            "description": "Mentions that isolation level affects when snapshots are taken or reused"
+          },
+          {
+            "key": "uses_concurrent_transaction_example",
+            "description": "Uses a two-transaction example to explain committed and uncommitted visibility"
+          }
+        ]
+      },
+      {
+        "label": "Mentions that readers do not usually block writers and writers do not usually block readers under MVCC.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "explains_nonblocking_reads",
+            "description": "Explains that readers can continue by seeing an older visible row version"
+          },
+          {
+            "key": "explains_nonblocking_writes",
+            "description": "Explains that writers can create a new row version rather than replacing the reader-visible version immediately"
+          },
+          {
+            "key": "mentions_lock_exceptions",
+            "description": "Mentions that some conflicts or explicit locks can still block"
+          }
+        ]
+      },
+      {
+        "label": "Recognizes that old row versions eventually need cleanup through VACUUM.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_vacuum_cleanup",
+            "description": "Mentions VACUUM as the process that cleans up dead or obsolete row versions"
+          },
+          {
+            "key": "connects_long_transactions_to_bloat",
+            "description": "Explains why long-running transactions can prevent cleanup and contribute to bloat"
+          },
+          {
+            "key": "mentions_storage_impact",
+            "description": "Mentions table or index bloat, disk growth, or performance impact from retained versions"
+          }
+        ]
+      },
+      {
+        "label": "Can describe an update as creating a new tuple version rather than modifying the visible row in place.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "describes_update_as_new_tuple",
+            "description": "Describes UPDATE as creating a new tuple version for the changed row"
+          },
+          {
+            "key": "describes_old_version_visibility",
+            "description": "Explains that older snapshots may still see the old tuple version"
+          },
+          {
+            "key": "connects_to_visibility_metadata",
+            "description": "Mentions visibility metadata, transaction ids, or commit state at a practical level"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -658,7 +1308,11 @@
           "Ignoring transaction snapshots.",
           "Forgetting VACUUM and bloat."
         ],
-        "labels": { "role": "Backend/Fullstack/Data", "level": "Mid-level", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "Snapshot trong MVCC",
@@ -674,7 +1328,11 @@
           "Bỏ qua transaction snapshot.",
           "Quên VACUUM và bloat."
         ],
-        "labels": { "role": "Backend/Fullstack/Data", "level": "Mid-level", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "MVCC スナップショット",
@@ -690,7 +1348,11 @@
           "トランザクションスナップショットを無視する。",
           "VACUUM と bloat を忘れる。"
         ],
-        "labels": { "role": "Backend/Fullstack/Data", "level": "Mid-level", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
@@ -709,27 +1371,122 @@
   },
   {
     "code": "PG_MID_TECH_ISOLATION_007",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack", "data"],
-    "levels": ["mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "data"
+    ],
+    "levels": [
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "problem_solving"],
-    "techTags": ["postgresql", "transaction", "consistency"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "problem_solving"
+    ],
+    "techTags": [
+      "postgresql",
+      "transaction",
+      "consistency"
+    ],
     "difficulty": 3,
     "intent": "Check whether the candidate can reason about PostgreSQL isolation levels, anomalies, and retry requirements.",
     "primaryQuestion": "How do Read Committed, Repeatable Read, and Serializable differ in PostgreSQL, and when would you choose a stricter isolation level?",
     "expectedSignals": [
-      "Knows Read Committed is PostgreSQL's default and each statement sees a fresh committed snapshot.",
-      "Explains that Repeatable Read uses a stable transaction snapshot.",
-      "Explains Serializable prevents serialization anomalies but requires retry handling.",
-      "Connects isolation choice to business invariants such as double booking or financial consistency.",
-      "Mentions performance or contention trade-offs when increasing isolation."
-    ],
-    "redFlags": [
-      "Claims Read Uncommitted allows dirty reads in PostgreSQL.",
-      "Cannot describe what changes between two SELECTs in the same transaction.",
-      "Uses Serializable without planning for serialization failures and retries.",
-      "Chooses isolation levels by habit instead of invariants."
+      {
+        "label": "Knows Read Committed is PostgreSQL's default and each statement sees a fresh committed snapshot.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "names_read_committed_default",
+            "description": "States that Read Committed is PostgreSQL's default isolation level"
+          },
+          {
+            "key": "explains_statement_snapshot",
+            "description": "Explains that each statement sees a fresh snapshot of committed data"
+          },
+          {
+            "key": "recognizes_no_dirty_reads",
+            "description": "Recognizes that PostgreSQL does not expose dirty reads even if Read Uncommitted is requested"
+          }
+        ]
+      },
+      {
+        "label": "Explains that Repeatable Read uses a stable transaction snapshot.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "explains_transaction_snapshot",
+            "description": "Explains that Repeatable Read keeps a stable snapshot for the transaction"
+          },
+          {
+            "key": "contrasts_with_read_committed",
+            "description": "Contrasts stable transaction visibility with Read Committed's per-statement visibility"
+          },
+          {
+            "key": "mentions_phantom_or_snapshot_effect",
+            "description": "Mentions practical effects such as repeated reads not seeing newly committed rows in the same transaction"
+          }
+        ]
+      },
+      {
+        "label": "Explains Serializable prevents serialization anomalies but requires retry handling.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "explains_serializable_goal",
+            "description": "Explains that Serializable aims to make concurrent transactions behave as if run in a serial order"
+          },
+          {
+            "key": "mentions_serialization_failure",
+            "description": "Mentions serialization failures or errors when PostgreSQL cannot safely serialize the transactions"
+          },
+          {
+            "key": "requires_retry_logic",
+            "description": "States that the application must retry failed Serializable transactions safely"
+          }
+        ]
+      },
+      {
+        "label": "Connects isolation choice to business invariants such as double booking or financial consistency.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "names_business_invariant",
+            "description": "Names the invariant that needs protection, such as no double booking or no negative balance"
+          },
+          {
+            "key": "connects_anomaly_to_risk",
+            "description": "Explains what anomaly could break that invariant under weaker isolation"
+          },
+          {
+            "key": "chooses_isolation_by_risk",
+            "description": "Chooses stricter isolation based on correctness risk rather than habit"
+          }
+        ]
+      },
+      {
+        "label": "Mentions performance or contention trade-offs when increasing isolation.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "mentions_retry_cost",
+            "description": "Mentions extra retry cost or transaction restarts at stricter isolation"
+          },
+          {
+            "key": "mentions_contention_or_abort_risk",
+            "description": "Mentions contention, blocking, or abort risk under high concurrency"
+          },
+          {
+            "key": "balances_correctness_and_throughput",
+            "description": "Balances stronger correctness guarantees against latency or throughput impact"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -759,6 +1516,11 @@
         "trigger": "missing_tradeoff",
         "question": "What must the application do when a Serializable transaction fails with a serialization error?",
         "purpose": "Verify retry discipline."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "What business invariant would make you choose Serializable instead of Read Committed?",
+        "purpose": "Force isolation choice to be tied to a concrete correctness risk."
       }
     ],
     "localizedContent": {
@@ -776,7 +1538,11 @@
           "Forgetting that stricter isolation may require retries.",
           "Choosing isolation without naming the invariant."
         ],
-        "labels": { "role": "Backend/Fullstack/Data", "level": "Mid-level", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "Lựa chọn isolation level",
@@ -792,7 +1558,11 @@
           "Quên isolation chặt hơn có thể cần retry.",
           "Chọn isolation mà không nêu invariant cần bảo vệ."
         ],
-        "labels": { "role": "Backend/Fullstack/Data", "level": "Mid-level", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "分離レベルの選択",
@@ -808,7 +1578,11 @@
           "厳しい分離レベルでは retry が必要になり得ることを忘れる。",
           "守るべき不変条件を言わずに分離レベルを選ぶ。"
         ],
-        "labels": { "role": "Backend/Fullstack/Data", "level": "Mid-level", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
@@ -822,27 +1596,121 @@
   },
   {
     "code": "PG_MID_TRADE_COMPOSITE_PARTIAL_INDEX_008",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack", "data"],
-    "levels": ["mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "data"
+    ],
+    "levels": [
+      "mid"
+    ],
     "type": "trade_off",
-    "competencies": ["trade_off_analysis", "technical_fundamentals", "system_thinking"],
-    "techTags": ["postgresql", "indexing"],
+    "competencies": [
+      "trade_off_analysis",
+      "technical_fundamentals",
+      "system_thinking"
+    ],
+    "techTags": [
+      "postgresql",
+      "indexing"
+    ],
     "difficulty": 3,
     "intent": "Evaluate the candidate's ability to choose between single-column, composite, partial, and covering indexes for real query patterns.",
     "primaryQuestion": "Given frequent queries on orders by customer_id, status, and created_at, how would you decide between separate indexes, a composite index, and a partial index?",
     "expectedSignals": [
-      "Starts from actual query predicates, sort order, cardinality, and frequency.",
-      "Explains composite index column order and leftmost-prefix implications.",
-      "Considers partial indexes for common predicates such as status = 'open' when selective and stable.",
-      "Mentions INCLUDE or index-only scans when covering a read-heavy query is useful.",
-      "Weighs write overhead, storage, and maintenance against read latency."
-    ],
-    "redFlags": [
-      "Creates every possible index combination.",
-      "Ignores column order in composite indexes.",
-      "Uses a partial index without ensuring queries include the predicate.",
-      "Cannot discuss write overhead on a hot orders table."
+      {
+        "label": "Starts from actual query predicates, sort order, cardinality, and frequency.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "identifies_query_shapes",
+            "description": "Identifies the actual WHERE, ORDER BY, LIMIT, and JOIN patterns being optimized"
+          },
+          {
+            "key": "mentions_cardinality_selectivity",
+            "description": "Mentions cardinality, selectivity, or value distribution for customer_id, status, and created_at"
+          },
+          {
+            "key": "mentions_query_frequency",
+            "description": "Considers how often the query runs and whether it is latency-sensitive"
+          }
+        ]
+      },
+      {
+        "label": "Explains composite index column order and leftmost-prefix implications.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "explains_column_order",
+            "description": "Explains why the order of columns in a composite index matters"
+          },
+          {
+            "key": "explains_leftmost_prefix",
+            "description": "Explains leftmost-prefix behavior or which query predicates can use the index effectively"
+          },
+          {
+            "key": "connects_order_by_to_index",
+            "description": "Connects index order to ORDER BY created_at DESC or similar sorting needs"
+          }
+        ]
+      },
+      {
+        "label": "Considers partial indexes for common predicates such as status = 'open' when selective and stable.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "identifies_partial_predicate",
+            "description": "Defines the partial index predicate, such as WHERE status = 'open'"
+          },
+          {
+            "key": "checks_predicate_selectivity",
+            "description": "Explains that the predicate should be selective enough to reduce index size and scan work"
+          },
+          {
+            "key": "ensures_query_implies_predicate",
+            "description": "Mentions that queries must include or imply the partial-index predicate for PostgreSQL to use it"
+          }
+        ]
+      },
+      {
+        "label": "Mentions INCLUDE or index-only scans when covering a read-heavy query is useful.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "mentions_include_columns",
+            "description": "Mentions INCLUDE columns or covering indexes for read-heavy query projections"
+          },
+          {
+            "key": "explains_index_only_scan_goal",
+            "description": "Explains that index-only scans can avoid heap reads when visibility conditions allow"
+          },
+          {
+            "key": "keeps_covering_index_targeted",
+            "description": "Limits covering indexes to important query shapes instead of adding every selected column"
+          }
+        ]
+      },
+      {
+        "label": "Weighs write overhead, storage, and maintenance against read latency.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "mentions_write_overhead",
+            "description": "Mentions slower inserts, updates, or deletes from maintaining additional indexes"
+          },
+          {
+            "key": "mentions_storage_maintenance",
+            "description": "Mentions storage, bloat, or maintenance cost of overlapping indexes"
+          },
+          {
+            "key": "balances_against_read_latency",
+            "description": "Balances those costs against measured read-latency improvement"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -872,6 +1740,11 @@
         "trigger": "vague_answer",
         "question": "How do you verify that a partial index is actually being used?",
         "purpose": "Check plan validation and predicate implication."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Which exact query shapes and data distribution would you ask for before choosing the index?",
+        "purpose": "Anchor the index decision in workload and selectivity."
       }
     ],
     "localizedContent": {
@@ -889,7 +1762,11 @@
           "Ignoring predicate selectivity.",
           "Using partial indexes that queries cannot match."
         ],
-        "labels": { "role": "Backend/Fullstack/Data", "level": "Mid-level", "type": "trade_off" }
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Mid-level",
+          "type": "trade_off"
+        }
       },
       "vi": {
         "title": "Composite index và partial index",
@@ -905,7 +1782,11 @@
           "Bỏ qua selectivity của predicate.",
           "Dùng partial index mà query không match được predicate."
         ],
-        "labels": { "role": "Backend/Fullstack/Data", "level": "Mid-level", "type": "trade_off" }
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Mid-level",
+          "type": "trade_off"
+        }
       },
       "ja": {
         "title": "複合インデックスと部分インデックス",
@@ -921,7 +1802,11 @@
           "predicate の選択度を無視する。",
           "クエリが条件に合わない partial index を作る。"
         ],
-        "labels": { "role": "Backend/Fullstack/Data", "level": "Mid-level", "type": "trade_off" }
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Mid-level",
+          "type": "trade_off"
+        }
       }
     },
     "sourceReferences": [
@@ -940,27 +1825,121 @@
   },
   {
     "code": "PG_MID_DEBUG_EXPLAIN_ANALYZE_009",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack", "data"],
-    "levels": ["mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "data"
+    ],
+    "levels": [
+      "mid"
+    ],
     "type": "debugging",
-    "competencies": ["problem_solving", "technical_fundamentals", "impact_measurement"],
-    "techTags": ["postgresql", "indexing"],
+    "competencies": [
+      "problem_solving",
+      "technical_fundamentals",
+      "impact_measurement"
+    ],
+    "techTags": [
+      "postgresql",
+      "indexing"
+    ],
     "difficulty": 3,
     "intent": "Assess plan-reading skill for PostgreSQL performance issues, especially actual versus estimated rows and join choices.",
     "primaryQuestion": "You run EXPLAIN ANALYZE and see a nested loop over millions of rows with actual rows far above estimates. How would you interpret that and what fixes would you evaluate?",
     "expectedSignals": [
-      "Distinguishes estimated rows, actual rows, loops, planning time, and execution time.",
-      "Recognizes cardinality misestimation and stale or insufficient statistics as possible causes.",
-      "Evaluates indexes, query predicates, join order, and extended statistics where relevant.",
-      "Considers VACUUM ANALYZE or ANALYZE when statistics are stale.",
-      "Validates improvements with before/after plans and timings."
-    ],
-    "redFlags": [
-      "Treats every nested loop as bad without context.",
-      "Only looks at the top total cost and ignores actual rows and loops.",
-      "Disables planner options as the first fix.",
-      "Does not verify the fix with a new plan."
+      {
+        "label": "Distinguishes estimated rows, actual rows, loops, planning time, and execution time.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "distinguishes_estimated_actual_rows",
+            "description": "Distinguishes planner estimated rows from actual rows observed during execution"
+          },
+          {
+            "key": "explains_loops_value",
+            "description": "Explains what loops means for repeated execution of a plan node"
+          },
+          {
+            "key": "separates_planning_execution_time",
+            "description": "Separates planning time from execution time when interpreting the plan"
+          }
+        ]
+      },
+      {
+        "label": "Recognizes cardinality misestimation and stale or insufficient statistics as possible causes.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "identifies_cardinality_misestimation",
+            "description": "Recognizes that actual rows far above estimates indicate cardinality misestimation"
+          },
+          {
+            "key": "mentions_stale_statistics",
+            "description": "Mentions stale or insufficient statistics as a possible reason for bad estimates"
+          },
+          {
+            "key": "mentions_skew_or_correlation",
+            "description": "Mentions skewed values or correlated columns that basic statistics may not capture"
+          }
+        ]
+      },
+      {
+        "label": "Evaluates indexes, query predicates, join order, and extended statistics where relevant.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "checks_predicates_and_indexes",
+            "description": "Checks whether predicates and join keys match useful indexes"
+          },
+          {
+            "key": "evaluates_join_choice",
+            "description": "Evaluates whether nested loop, hash join, or merge join fits the actual row counts"
+          },
+          {
+            "key": "considers_extended_statistics",
+            "description": "Considers extended statistics for correlated columns or multi-column estimates"
+          }
+        ]
+      },
+      {
+        "label": "Considers VACUUM ANALYZE or ANALYZE when statistics are stale.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "mentions_analyze",
+            "description": "Mentions running ANALYZE or VACUUM ANALYZE to refresh planner statistics"
+          },
+          {
+            "key": "checks_autovacuum_analyze",
+            "description": "Checks whether autovacuum or auto-analyze is keeping up with table changes"
+          },
+          {
+            "key": "avoids_unrelated_fix_first",
+            "description": "Avoids changing planner settings before validating statistics and data shape"
+          }
+        ]
+      },
+      {
+        "label": "Validates improvements with before/after plans and timings.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "compares_before_after_plans",
+            "description": "Compares the old and new EXPLAIN ANALYZE plans after a proposed fix"
+          },
+          {
+            "key": "compares_execution_metrics",
+            "description": "Compares execution time, rows processed, buffers, or loops before and after"
+          },
+          {
+            "key": "uses_representative_parameters",
+            "description": "Validates with representative parameters and data volume, not only a toy case"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -990,6 +1969,11 @@
         "trigger": "missing_metric",
         "question": "Which before/after metrics would convince you the fix worked?",
         "purpose": "Confirm measurement and validation."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Which predicates, joins, or column correlations would you inspect before changing the query?",
+        "purpose": "Probe whether the candidate explains the plan symptom through the actual data shape."
       }
     ],
     "localizedContent": {
@@ -1007,7 +1991,11 @@
           "Ignoring row-estimate mismatch.",
           "Changing planner settings before understanding the data."
         ],
-        "labels": { "role": "Backend/Fullstack/Data", "level": "Mid-level", "type": "debugging" }
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Mid-level",
+          "type": "debugging"
+        }
       },
       "vi": {
         "title": "Đọc EXPLAIN ANALYZE",
@@ -1023,7 +2011,11 @@
           "Bỏ qua mismatch giữa estimated rows và actual rows.",
           "Đổi planner setting trước khi hiểu dữ liệu."
         ],
-        "labels": { "role": "Backend/Fullstack/Data", "level": "Mid-level", "type": "debugging" }
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Mid-level",
+          "type": "debugging"
+        }
       },
       "ja": {
         "title": "EXPLAIN ANALYZE を読む",
@@ -1039,7 +2031,11 @@
           "推定行数と実行行数のずれを無視する。",
           "データを理解する前に planner 設定を変える。"
         ],
-        "labels": { "role": "Backend/Fullstack/Data", "level": "Mid-level", "type": "debugging" }
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Mid-level",
+          "type": "debugging"
+        }
       }
     },
     "sourceReferences": [
@@ -1058,27 +2054,122 @@
   },
   {
     "code": "PG_MID_TECH_JSONB_GIN_010",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack", "data"],
-    "levels": ["mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "data"
+    ],
+    "levels": [
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "trade_off_analysis", "system_thinking"],
-    "techTags": ["postgresql", "schema_design", "indexing"],
+    "competencies": [
+      "technical_fundamentals",
+      "trade_off_analysis",
+      "system_thinking"
+    ],
+    "techTags": [
+      "postgresql",
+      "schema_design",
+      "indexing"
+    ],
     "difficulty": 3,
     "intent": "Check whether the candidate can use JSONB appropriately in PostgreSQL and choose indexing strategies for semi-structured data.",
     "primaryQuestion": "When would you store data in JSONB in PostgreSQL, and how would you index and query it without turning the schema into an unmaintainable blob?",
     "expectedSignals": [
-      "Uses JSONB for flexible or semi-structured attributes, not core relational invariants.",
-      "Distinguishes json and jsonb at a practical level, especially storage and indexing behavior.",
-      "Mentions GIN indexes and operator choices such as containment or key existence.",
-      "Considers generated columns or expression indexes for frequently queried paths.",
-      "Discusses validation, migration, and query-performance trade-offs."
-    ],
-    "redFlags": [
-      "Stores all application data in one JSONB column by default.",
-      "Cannot explain how to index common JSONB predicates.",
-      "Ignores type validation and schema evolution.",
-      "Assumes JSONB queries perform like normal typed columns automatically."
+      {
+        "label": "Uses JSONB for flexible or semi-structured attributes, not core relational invariants.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "uses_jsonb_for_flexible_attributes",
+            "description": "Uses JSONB for optional, variable, or semi-structured attributes"
+          },
+          {
+            "key": "keeps_core_fields_relational",
+            "description": "Keeps core identifiers, relationships, and required fields as typed relational columns"
+          },
+          {
+            "key": "explains_integrity_boundary",
+            "description": "Explains why important invariants should still be enforced with schema constraints where possible"
+          }
+        ]
+      },
+      {
+        "label": "Distinguishes json and jsonb at a practical level, especially storage and indexing behavior.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "distinguishes_storage_behavior",
+            "description": "Distinguishes json text preservation from jsonb's parsed binary storage behavior at a practical level"
+          },
+          {
+            "key": "mentions_indexing_support",
+            "description": "Mentions that jsonb supports useful indexing and operators for querying document content"
+          },
+          {
+            "key": "mentions_order_or_duplicate_loss",
+            "description": "Mentions practical differences such as key order or duplicate-key handling when relevant"
+          }
+        ]
+      },
+      {
+        "label": "Mentions GIN indexes and operator choices such as containment or key existence.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "mentions_gin_index",
+            "description": "Mentions GIN indexes for JSONB document search"
+          },
+          {
+            "key": "mentions_containment_operator",
+            "description": "Mentions containment queries with @> or equivalent JSONB operator use"
+          },
+          {
+            "key": "matches_operator_to_index",
+            "description": "Connects operator choice and index type or operator class to the query being optimized"
+          }
+        ]
+      },
+      {
+        "label": "Considers generated columns or expression indexes for frequently queried paths.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "identifies_frequent_json_path",
+            "description": "Identifies the JSONB path or key that is queried frequently enough to optimize"
+          },
+          {
+            "key": "uses_expression_index",
+            "description": "Considers an expression index on a specific JSONB path or extracted value"
+          },
+          {
+            "key": "uses_generated_column_when_helpful",
+            "description": "Considers a generated column when the extracted value needs typing, constraints, or simpler indexing"
+          }
+        ]
+      },
+      {
+        "label": "Discusses validation, migration, and query-performance trade-offs.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "mentions_validation_strategy",
+            "description": "Mentions application validation, CHECK constraints, generated columns, or schema validation for JSONB shape"
+          },
+          {
+            "key": "mentions_schema_evolution",
+            "description": "Mentions migration or versioning concerns as JSONB shape evolves"
+          },
+          {
+            "key": "balances_flexibility_performance",
+            "description": "Balances JSONB flexibility against query performance, indexing complexity, and maintainability"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1108,6 +2199,11 @@
         "trigger": "vague_answer",
         "question": "What kind of GIN index would help a containment query on a JSONB document?",
         "purpose": "Verify concrete indexing knowledge."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Which JSONB path is queried often enough that you would promote it to an expression index or generated column?",
+        "purpose": "Tie JSONB indexing decisions to a concrete access pattern."
       }
     ],
     "localizedContent": {
@@ -1125,7 +2221,11 @@
           "Ignoring validation and migration.",
           "Assuming every JSONB predicate is fast without an index."
         ],
-        "labels": { "role": "Backend/Fullstack/Data", "level": "Mid-level", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "Thiết kế và index JSONB",
@@ -1141,7 +2241,11 @@
           "Bỏ qua validation và migration.",
           "Nghĩ mọi JSONB predicate đều nhanh dù không có index."
         ],
-        "labels": { "role": "Backend/Fullstack/Data", "level": "Mid-level", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "JSONB 設計とインデックス",
@@ -1157,7 +2261,11 @@
           "検証と migration を無視する。",
           "インデックスなしでも JSONB 条件はすべて速いと思う。"
         ],
-        "labels": { "role": "Backend/Fullstack/Data", "level": "Mid-level", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
@@ -1176,27 +2284,120 @@
   },
   {
     "code": "PG_MID_TECH_WINDOW_CTE_011",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack", "data"],
-    "levels": ["mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "data"
+    ],
+    "levels": [
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "problem_solving", "communication"],
-    "techTags": ["postgresql"],
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving",
+      "communication"
+    ],
+    "techTags": [
+      "postgresql"
+    ],
     "difficulty": 3,
     "intent": "Evaluate whether the candidate can reason about PostgreSQL window functions and CTEs for analytical queries without confusing row cardinality.",
     "primaryQuestion": "How would you use PostgreSQL window functions and CTEs to return the latest order per customer while also keeping each customer's total order count?",
     "expectedSignals": [
-      "Uses ROW_NUMBER or DISTINCT ON appropriately for latest row per group.",
-      "Understands that window functions calculate across related rows without collapsing result rows.",
-      "Uses COUNT(*) OVER (PARTITION BY customer_id) or an equivalent aggregate join.",
-      "Explains CTE readability and materialization or inlining considerations in modern PostgreSQL.",
-      "Considers deterministic ordering when timestamps tie."
-    ],
-    "redFlags": [
-      "Uses GROUP BY and then expects non-grouped row columns to remain available.",
-      "Confuses PARTITION BY with table partitioning.",
-      "Does not handle ties or deterministic ordering.",
-      "Assumes every CTE is always an optimization barrier in all PostgreSQL versions."
+      {
+        "label": "Uses ROW_NUMBER or DISTINCT ON appropriately for latest row per group.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "uses_row_number_partition",
+            "description": "Uses ROW_NUMBER with PARTITION BY customer_id and ORDER BY created_at or an equivalent top-per-group pattern"
+          },
+          {
+            "key": "uses_distinct_on_correctly",
+            "description": "Recognizes DISTINCT ON as a PostgreSQL-specific alternative when ordered correctly"
+          },
+          {
+            "key": "filters_to_latest_row",
+            "description": "Filters or selects exactly one latest row per customer after ranking or ordering"
+          }
+        ]
+      },
+      {
+        "label": "Understands that window functions calculate across related rows without collapsing result rows.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "explains_window_row_preservation",
+            "description": "Explains that window functions add values while preserving row-level result cardinality"
+          },
+          {
+            "key": "contrasts_with_group_by",
+            "description": "Contrasts window functions with GROUP BY collapsing rows into groups"
+          },
+          {
+            "key": "uses_partition_by_correctly",
+            "description": "Uses PARTITION BY to define related rows without confusing it with table partitioning"
+          }
+        ]
+      },
+      {
+        "label": "Uses COUNT(*) OVER (PARTITION BY customer_id) or an equivalent aggregate join.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "uses_count_over_partition",
+            "description": "Uses COUNT(*) OVER (PARTITION BY customer_id) to attach total order count to each customer row"
+          },
+          {
+            "key": "keeps_latest_row_and_count",
+            "description": "Keeps both the latest order fields and the total count in the final result"
+          },
+          {
+            "key": "accepts_aggregate_join_alternative",
+            "description": "Can use an aggregate subquery or CTE joined back when it preserves the required result shape"
+          }
+        ]
+      },
+      {
+        "label": "Explains CTE readability and materialization or inlining considerations in modern PostgreSQL.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "uses_cte_for_readability",
+            "description": "Uses a CTE to make ranking or intermediate query steps easier to read"
+          },
+          {
+            "key": "mentions_materialization_inlining",
+            "description": "Mentions materialization versus inlining behavior in modern PostgreSQL at a practical level"
+          },
+          {
+            "key": "validates_cte_performance",
+            "description": "Mentions checking the plan if the CTE affects optimization or performance"
+          }
+        ]
+      },
+      {
+        "label": "Considers deterministic ordering when timestamps tie.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "identifies_tie_case",
+            "description": "Recognizes that multiple orders can share the same created_at timestamp"
+          },
+          {
+            "key": "adds_stable_tiebreaker",
+            "description": "Adds a deterministic tie-breaker such as order_id DESC to the ORDER BY"
+          },
+          {
+            "key": "explains_repeatable_result",
+            "description": "Explains that deterministic ordering prevents unstable latest-order results"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1226,6 +2427,11 @@
         "trigger": "missing_context",
         "question": "If two orders have the same created_at, how would you make the latest-order result deterministic?",
         "purpose": "Probe practical SQL correctness."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "When could a CTE make this query easier to read but still require checking the execution plan?",
+        "purpose": "Probe readability versus optimization reasoning."
       }
     ],
     "localizedContent": {
@@ -1243,7 +2449,11 @@
           "Forgetting tie-breakers.",
           "Confusing window partitions with table partitions."
         ],
-        "labels": { "role": "Backend/Fullstack/Data", "level": "Mid-level", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "Window function và CTE",
@@ -1259,7 +2469,11 @@
           "Quên tie-breaker.",
           "Nhầm window partition với table partition."
         ],
-        "labels": { "role": "Backend/Fullstack/Data", "level": "Mid-level", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "Window function と CTE",
@@ -1275,7 +2489,11 @@
           "tie-breaker を忘れる。",
           "window partition と table partition を混同する。"
         ],
-        "labels": { "role": "Backend/Fullstack/Data", "level": "Mid-level", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Mid-level",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
@@ -1294,27 +2512,122 @@
   },
   {
     "code": "PG_MID_DEBUG_LOCKS_DEADLOCK_012",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack", "devops"],
-    "levels": ["mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "devops"
+    ],
+    "levels": [
+      "mid"
+    ],
     "type": "debugging",
-    "competencies": ["problem_solving", "technical_fundamentals", "ownership"],
-    "techTags": ["postgresql", "transaction", "consistency"],
+    "competencies": [
+      "problem_solving",
+      "technical_fundamentals",
+      "ownership"
+    ],
+    "techTags": [
+      "postgresql",
+      "transaction",
+      "consistency"
+    ],
     "difficulty": 3,
     "intent": "Assess whether the candidate can debug lock waits and deadlocks in PostgreSQL without making concurrency worse.",
     "primaryQuestion": "A production request hangs and logs show PostgreSQL lock waits or a deadlock. How would you identify the blocking transaction and prevent the issue from recurring?",
     "expectedSignals": [
-      "Checks pg_stat_activity, pg_locks, blocked and blocking process IDs, query text, and transaction age.",
-      "Differentiates lock wait, long transaction, and deadlock symptoms.",
-      "Explains consistent lock ordering and shorter transactions as prevention strategies.",
-      "Mentions SELECT FOR UPDATE or row-locking behavior when relevant.",
-      "Considers timeouts, retry handling, and safe termination only after impact analysis."
-    ],
-    "redFlags": [
-      "Kills random database sessions without identifying blockers.",
-      "Retries deadlocked transactions immediately without backoff or root-cause work.",
-      "Cannot explain how inconsistent lock ordering causes deadlocks.",
-      "Ignores long idle-in-transaction sessions."
+      {
+        "label": "Checks pg_stat_activity, pg_locks, blocked and blocking process IDs, query text, and transaction age.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "checks_pg_stat_activity",
+            "description": "Uses pg_stat_activity to inspect sessions, query text, wait events, state, and transaction age"
+          },
+          {
+            "key": "checks_pg_locks",
+            "description": "Uses pg_locks or a blocker query to identify blocked and blocking processes"
+          },
+          {
+            "key": "captures_blocker_context",
+            "description": "Captures blocker PID, blocking query, relation, lock mode, and transaction age before acting"
+          }
+        ]
+      },
+      {
+        "label": "Differentiates lock wait, long transaction, and deadlock symptoms.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "distinguishes_lock_wait",
+            "description": "Distinguishes a request waiting on a lock from general slowness"
+          },
+          {
+            "key": "identifies_long_transaction",
+            "description": "Recognizes idle-in-transaction or long-running transactions as possible blockers"
+          },
+          {
+            "key": "distinguishes_deadlock",
+            "description": "Explains that a deadlock is a cycle PostgreSQL detects and aborts, not just any long wait"
+          }
+        ]
+      },
+      {
+        "label": "Explains consistent lock ordering and shorter transactions as prevention strategies.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "uses_consistent_lock_order",
+            "description": "Explains that acquiring locks in a consistent order reduces deadlock cycles"
+          },
+          {
+            "key": "shortens_transaction_scope",
+            "description": "Keeps transactions short and avoids unnecessary work while locks are held"
+          },
+          {
+            "key": "moves_external_work_outside",
+            "description": "Moves slow external calls or user waits outside lock-holding transactions"
+          }
+        ]
+      },
+      {
+        "label": "Mentions SELECT FOR UPDATE or row-locking behavior when relevant.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_select_for_update",
+            "description": "Mentions SELECT FOR UPDATE or equivalent row locking when reserving or modifying rows"
+          },
+          {
+            "key": "explains_row_lock_conflict",
+            "description": "Explains how row locks can block concurrent updates to the same rows"
+          },
+          {
+            "key": "uses_locking_intentionally",
+            "description": "Uses row locking intentionally with clear scope instead of accidentally broad locks"
+          }
+        ]
+      },
+      {
+        "label": "Considers timeouts, retry handling, and safe termination only after impact analysis.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "mentions_lock_or_statement_timeout",
+            "description": "Mentions lock_timeout, statement_timeout, or application-level timeout behavior"
+          },
+          {
+            "key": "uses_retry_with_backoff",
+            "description": "Mentions retrying deadlocked or serialization-failed work safely with backoff where appropriate"
+          },
+          {
+            "key": "terminates_sessions_carefully",
+            "description": "Only terminates sessions after identifying impact and understanding rollback consequences"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1344,6 +2657,11 @@
         "trigger": "missing_tradeoff",
         "question": "Why can updating rows in a consistent order reduce deadlocks?",
         "purpose": "Probe root-cause prevention."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "How would you tell whether the blocker is a deadlock, a long transaction, or a row lock wait?",
+        "purpose": "Force concrete diagnosis instead of generic lock advice."
       }
     ],
     "localizedContent": {
@@ -1361,7 +2679,11 @@
           "Ignoring idle-in-transaction connections.",
           "Fixing symptoms without changing lock ordering or transaction scope."
         ],
-        "labels": { "role": "Backend/Fullstack/DevOps", "level": "Mid-level", "type": "debugging" }
+        "labels": {
+          "role": "Backend/Fullstack/DevOps",
+          "level": "Mid-level",
+          "type": "debugging"
+        }
       },
       "vi": {
         "title": "Lock wait và deadlock",
@@ -1377,7 +2699,11 @@
           "Bỏ qua connection idle-in-transaction.",
           "Chỉ chữa triệu chứng mà không sửa lock ordering hoặc transaction scope."
         ],
-        "labels": { "role": "Backend/Fullstack/DevOps", "level": "Mid-level", "type": "debugging" }
+        "labels": {
+          "role": "Backend/Fullstack/DevOps",
+          "level": "Mid-level",
+          "type": "debugging"
+        }
       },
       "ja": {
         "title": "ロック待ちとデッドロック",
@@ -1393,7 +2719,11 @@
           "idle-in-transaction 接続を無視する。",
           "lock ordering や transaction scope を直さず症状だけ処理する。"
         ],
-        "labels": { "role": "Backend/Fullstack/DevOps", "level": "Mid-level", "type": "debugging" }
+        "labels": {
+          "role": "Backend/Fullstack/DevOps",
+          "level": "Mid-level",
+          "type": "debugging"
+        }
       }
     },
     "sourceReferences": [
@@ -1412,27 +2742,122 @@
   },
   {
     "code": "PG_MID_TRADE_PARTITIONING_013",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "data", "devops"],
-    "levels": ["mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "data",
+      "devops"
+    ],
+    "levels": [
+      "mid"
+    ],
     "type": "trade_off",
-    "competencies": ["trade_off_analysis", "system_thinking", "technical_fundamentals"],
-    "techTags": ["postgresql", "schema_design", "indexing"],
+    "competencies": [
+      "trade_off_analysis",
+      "system_thinking",
+      "technical_fundamentals"
+    ],
+    "techTags": [
+      "postgresql",
+      "schema_design",
+      "indexing"
+    ],
     "difficulty": 3,
     "intent": "Evaluate whether the candidate can decide when PostgreSQL table partitioning is useful and when it adds unnecessary operational complexity.",
     "primaryQuestion": "When would you partition a large PostgreSQL table, and how would you choose between range, list, and hash partitioning?",
     "expectedSignals": [
-      "Connects partitioning to query pruning, data lifecycle management, and very large tables.",
-      "Chooses range partitioning for time-series or date-bounded data when queries filter by time.",
-      "Chooses list partitioning for discrete tenant, region, or category groups when appropriate.",
-      "Chooses hash partitioning for spreading data when natural ranges or lists are not suitable.",
-      "Mentions operational costs such as partition maintenance, indexes per partition, and query patterns that do not prune."
-    ],
-    "redFlags": [
-      "Partitions every large table without query-pattern justification.",
-      "Uses partitioning as a replacement for normal indexing.",
-      "Ignores partition key choice and pruning.",
-      "Does not mention maintenance and migration cost."
+      {
+        "label": "Connects partitioning to query pruning, data lifecycle management, and very large tables.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_partition_pruning",
+            "description": "Connects partitioning benefit to partition pruning for queries that filter on the partition key"
+          },
+          {
+            "key": "mentions_lifecycle_management",
+            "description": "Mentions lifecycle operations such as dropping old partitions for retention"
+          },
+          {
+            "key": "limits_to_large_tables",
+            "description": "Frames partitioning as useful for very large or operationally difficult tables, not every table"
+          }
+        ]
+      },
+      {
+        "label": "Chooses range partitioning for time-series or date-bounded data when queries filter by time.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "chooses_range_for_time",
+            "description": "Chooses range partitioning for time-series, events, logs, or date-bounded data"
+          },
+          {
+            "key": "matches_time_filter_queries",
+            "description": "Explains that common queries should filter on the time partition key for pruning"
+          },
+          {
+            "key": "uses_range_for_retention",
+            "description": "Connects range partitions to efficient retention deletes by dropping old partitions"
+          }
+        ]
+      },
+      {
+        "label": "Chooses list partitioning for discrete tenant, region, or category groups when appropriate.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "chooses_list_for_discrete_values",
+            "description": "Chooses list partitioning for a small set of discrete values such as region or category"
+          },
+          {
+            "key": "mentions_tenant_or_region_fit",
+            "description": "Uses tenant, region, or similar discrete grouping as a realistic list partition example"
+          },
+          {
+            "key": "avoids_unbounded_list_growth",
+            "description": "Recognizes that list partitioning is awkward when values grow without operational control"
+          }
+        ]
+      },
+      {
+        "label": "Chooses hash partitioning for spreading data when natural ranges or lists are not suitable.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "chooses_hash_for_distribution",
+            "description": "Chooses hash partitioning to spread data when no natural range or discrete list key fits"
+          },
+          {
+            "key": "mentions_pruning_limitations",
+            "description": "Mentions that hash partitioning may not help queries unless they filter on the hash key"
+          },
+          {
+            "key": "considers_repartitioning_cost",
+            "description": "Considers operational cost if the number or distribution of partitions must change later"
+          }
+        ]
+      },
+      {
+        "label": "Mentions operational costs such as partition maintenance, indexes per partition, and query patterns that do not prune.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "mentions_partition_maintenance",
+            "description": "Mentions creating, attaching, detaching, or dropping partitions as ongoing maintenance"
+          },
+          {
+            "key": "mentions_indexes_per_partition",
+            "description": "Mentions index management and storage cost across partitions"
+          },
+          {
+            "key": "mentions_non_pruning_queries",
+            "description": "Explains that queries not filtering on the partition key may scan many partitions"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1462,6 +2887,11 @@
         "trigger": "missing_context",
         "question": "How would monthly range partitions help with retention deletes for event data?",
         "purpose": "Probe lifecycle and operational reasoning."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "Give one case where list partitioning fits better than range partitioning.",
+        "purpose": "Check whether the candidate can map partition type to data shape."
       }
     ],
     "localizedContent": {
@@ -1479,7 +2909,11 @@
           "Treating partitioning as a universal performance fix.",
           "Ignoring partition management overhead."
         ],
-        "labels": { "role": "Backend/Data/DevOps", "level": "Mid-level", "type": "trade_off" }
+        "labels": {
+          "role": "Backend/Data/DevOps",
+          "level": "Mid-level",
+          "type": "trade_off"
+        }
       },
       "vi": {
         "title": "Trade-off khi partition table",
@@ -1495,7 +2929,11 @@
           "Xem partitioning như cách tăng performance cho mọi tình huống.",
           "Bỏ qua overhead quản lý partition."
         ],
-        "labels": { "role": "Backend/Data/DevOps", "level": "Mid-level", "type": "trade_off" }
+        "labels": {
+          "role": "Backend/Data/DevOps",
+          "level": "Mid-level",
+          "type": "trade_off"
+        }
       },
       "ja": {
         "title": "テーブル partitioning のトレードオフ",
@@ -1511,7 +2949,11 @@
           "partitioning を万能な性能改善策と考える。",
           "partition 管理の overhead を無視する。"
         ],
-        "labels": { "role": "Backend/Data/DevOps", "level": "Mid-level", "type": "trade_off" }
+        "labels": {
+          "role": "Backend/Data/DevOps",
+          "level": "Mid-level",
+          "type": "trade_off"
+        }
       }
     },
     "sourceReferences": [
@@ -1530,27 +2972,121 @@
   },
   {
     "code": "PG_MID_DEBUG_VACUUM_BLOAT_014",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "data", "devops"],
-    "levels": ["mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "data",
+      "devops"
+    ],
+    "levels": [
+      "mid"
+    ],
     "type": "debugging",
-    "competencies": ["problem_solving", "technical_fundamentals", "impact_measurement"],
-    "techTags": ["postgresql", "indexing"],
+    "competencies": [
+      "problem_solving",
+      "technical_fundamentals",
+      "impact_measurement"
+    ],
+    "techTags": [
+      "postgresql",
+      "indexing"
+    ],
     "difficulty": 3,
     "intent": "Assess whether the candidate can connect PostgreSQL MVCC, VACUUM, autovacuum, statistics, and table bloat to production symptoms.",
     "primaryQuestion": "A PostgreSQL table with heavy updates keeps getting slower and disk usage grows even after deletes. How would you investigate VACUUM, autovacuum, and bloat?",
     "expectedSignals": [
-      "Connects MVCC dead tuples to the need for VACUUM cleanup.",
-      "Checks autovacuum activity, table stats, dead tuple counts, and long-running transactions.",
-      "Distinguishes VACUUM, VACUUM FULL, and ANALYZE at a practical level.",
-      "Considers table-specific autovacuum tuning for high-churn tables.",
-      "Measures bloat and query impact before invasive maintenance."
-    ],
-    "redFlags": [
-      "Runs VACUUM FULL in production without discussing locks or downtime.",
-      "Does not know deletes do not immediately shrink table files in the simple case.",
-      "Ignores long transactions or replication slots that can delay cleanup.",
-      "Confuses ANALYZE statistics refresh with reclaiming dead tuples."
+      {
+        "label": "Connects MVCC dead tuples to the need for VACUUM cleanup.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "connects_updates_to_dead_tuples",
+            "description": "Explains that updates and deletes leave dead tuples under MVCC"
+          },
+          {
+            "key": "mentions_vacuum_reclaims_space",
+            "description": "Mentions VACUUM cleanup or reuse of space from dead tuples"
+          },
+          {
+            "key": "explains_files_may_not_shrink",
+            "description": "Explains that deleting rows does not necessarily shrink table files immediately"
+          }
+        ]
+      },
+      {
+        "label": "Checks autovacuum activity, table stats, dead tuple counts, and long-running transactions.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "checks_table_vacuum_stats",
+            "description": "Checks table stats such as last vacuum, last autovacuum, n_dead_tup, and update/delete counts"
+          },
+          {
+            "key": "checks_long_transactions",
+            "description": "Checks long-running or idle-in-transaction sessions that can prevent cleanup"
+          },
+          {
+            "key": "checks_autovacuum_progress",
+            "description": "Checks whether autovacuum is running, blocked, or falling behind"
+          }
+        ]
+      },
+      {
+        "label": "Distinguishes VACUUM, VACUUM FULL, and ANALYZE at a practical level.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "distinguishes_vacuum",
+            "description": "Explains regular VACUUM cleanup and space reuse without treating it as a full table rewrite"
+          },
+          {
+            "key": "distinguishes_vacuum_full",
+            "description": "Explains that VACUUM FULL rewrites and locks the table more invasively"
+          },
+          {
+            "key": "distinguishes_analyze",
+            "description": "Explains that ANALYZE refreshes planner statistics rather than reclaiming dead tuples"
+          }
+        ]
+      },
+      {
+        "label": "Considers table-specific autovacuum tuning for high-churn tables.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "identifies_high_churn_table",
+            "description": "Identifies heavy update/delete volume as a reason default autovacuum thresholds may be too slow"
+          },
+          {
+            "key": "mentions_autovacuum_thresholds",
+            "description": "Mentions table-level autovacuum scale factor, threshold, or cost settings"
+          },
+          {
+            "key": "validates_tuning_with_stats",
+            "description": "Uses dead tuple counts, vacuum frequency, or latency impact to validate tuning"
+          }
+        ]
+      },
+      {
+        "label": "Measures bloat and query impact before invasive maintenance.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "measures_bloat",
+            "description": "Measures or estimates table and index bloat before choosing an invasive fix"
+          },
+          {
+            "key": "measures_query_impact",
+            "description": "Measures query latency, scan size, or index/table size impact from bloat"
+          },
+          {
+            "key": "plans_safe_maintenance",
+            "description": "Plans safer maintenance options, timing, or rollback before disruptive operations"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1580,6 +3116,11 @@
         "trigger": "vague_answer",
         "question": "What would you check to see whether a long transaction is preventing cleanup?",
         "purpose": "Probe operational debugging detail."
+      },
+      {
+        "trigger": "missing_metric",
+        "question": "Which table stats would tell you autovacuum is not keeping up?",
+        "purpose": "Check whether the candidate can tune from evidence instead of guessing."
       }
     ],
     "localizedContent": {
@@ -1597,7 +3138,11 @@
           "Ignoring long-running transactions.",
           "Confusing ANALYZE with tuple cleanup."
         ],
-        "labels": { "role": "Backend/Data/DevOps", "level": "Mid-level", "type": "debugging" }
+        "labels": {
+          "role": "Backend/Data/DevOps",
+          "level": "Mid-level",
+          "type": "debugging"
+        }
       },
       "vi": {
         "title": "VACUUM, autovacuum và bloat",
@@ -1613,7 +3158,11 @@
           "Bỏ qua long-running transaction.",
           "Nhầm ANALYZE với cleanup dead tuple."
         ],
-        "labels": { "role": "Backend/Data/DevOps", "level": "Mid-level", "type": "debugging" }
+        "labels": {
+          "role": "Backend/Data/DevOps",
+          "level": "Mid-level",
+          "type": "debugging"
+        }
       },
       "ja": {
         "title": "VACUUM、autovacuum、bloat",
@@ -1629,7 +3178,11 @@
           "長時間 transaction を無視する。",
           "ANALYZE と dead tuple cleanup を混同する。"
         ],
-        "labels": { "role": "Backend/Data/DevOps", "level": "Mid-level", "type": "debugging" }
+        "labels": {
+          "role": "Backend/Data/DevOps",
+          "level": "Mid-level",
+          "type": "debugging"
+        }
       }
     },
     "sourceReferences": [
@@ -1648,27 +3201,123 @@
   },
   {
     "code": "PG_SR_TRADE_REPLICATION_HA_015",
-    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
-    "roleFamilies": ["backend", "data", "devops"],
-    "levels": ["senior"],
+    "stages": [
+      "stage_2_tech_stack",
+      "stage_3_domain_knowledge"
+    ],
+    "roleFamilies": [
+      "backend",
+      "data",
+      "devops"
+    ],
+    "levels": [
+      "senior"
+    ],
     "type": "trade_off",
-    "competencies": ["trade_off_analysis", "system_thinking", "impact_measurement", "communication"],
-    "techTags": ["postgresql", "consistency"],
+    "competencies": [
+      "trade_off_analysis",
+      "system_thinking",
+      "impact_measurement",
+      "communication"
+    ],
+    "techTags": [
+      "postgresql",
+      "consistency"
+    ],
     "difficulty": 4,
     "intent": "Evaluate senior-level reasoning about PostgreSQL replication options, HA, read scaling, lag, and operational risk.",
     "primaryQuestion": "How would you design PostgreSQL replication for high availability and read scaling, and what trade-offs would you watch around replica lag and failover?",
     "expectedSignals": [
-      "Distinguishes physical streaming replication from logical replication use cases.",
-      "Explains read replicas, failover, recovery objectives, and promotion risk.",
-      "Mentions replica lag and the effect on read-after-write consistency.",
-      "Considers monitoring WAL, replication slots, replication delay, and connection routing.",
-      "Discusses backup, restore testing, and application behavior during failover."
-    ],
-    "redFlags": [
-      "Assumes replicas are always perfectly current.",
-      "Uses replicas for critical read-after-write paths without consistency strategy.",
-      "Designs failover without testing restore or client reconnect behavior.",
-      "Cannot distinguish logical and physical replication."
+      {
+        "label": "Distinguishes physical streaming replication from logical replication use cases.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "explains_physical_replication",
+            "description": "Explains physical streaming replication as WAL-based byte-level replication for standby or HA use cases"
+          },
+          {
+            "key": "explains_logical_replication",
+            "description": "Explains logical replication as row/change-level replication for selected tables or integration use cases"
+          },
+          {
+            "key": "chooses_by_use_case",
+            "description": "Connects the replication type to HA, read scaling, migration, CDC, or selective replication needs"
+          }
+        ]
+      },
+      {
+        "label": "Explains read replicas, failover, recovery objectives, and promotion risk.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "explains_read_replica_role",
+            "description": "Explains how replicas can serve reads while the primary handles writes"
+          },
+          {
+            "key": "mentions_rpo_rto",
+            "description": "Mentions recovery point objective, recovery time objective, or acceptable data loss and downtime"
+          },
+          {
+            "key": "mentions_promotion_risk",
+            "description": "Mentions promotion, split-brain, stale data, or client reconnection risk during failover"
+          }
+        ]
+      },
+      {
+        "label": "Mentions replica lag and the effect on read-after-write consistency.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "mentions_replica_lag",
+            "description": "Mentions replication lag as expected in asynchronous read replicas"
+          },
+          {
+            "key": "explains_read_after_write_risk",
+            "description": "Explains that a user may not see their own write when reading immediately from a lagging replica"
+          },
+          {
+            "key": "proposes_consistency_strategy",
+            "description": "Proposes reading from primary, session stickiness, lag-aware routing, or delayed reads for sensitive paths"
+          }
+        ]
+      },
+      {
+        "label": "Considers monitoring WAL, replication slots, replication delay, and connection routing.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "monitors_replication_lag",
+            "description": "Monitors lag in time, bytes, LSN distance, or replay delay"
+          },
+          {
+            "key": "monitors_wal_or_slots",
+            "description": "Monitors WAL retention, replication slots, or sender/receiver health where relevant"
+          },
+          {
+            "key": "monitors_routing_health",
+            "description": "Monitors connection routing, pooler state, or read/write endpoint health during topology changes"
+          }
+        ]
+      },
+      {
+        "label": "Discusses backup, restore testing, and application behavior during failover.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_backup_restore_testing",
+            "description": "Mentions tested backups and restore drills, not only live replicas"
+          },
+          {
+            "key": "handles_application_failover",
+            "description": "Explains how the application reconnects, routes writes, or handles in-flight requests during failover"
+          },
+          {
+            "key": "mentions_post_failover_validation",
+            "description": "Mentions validating data consistency, replication state, or topology after failover"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1698,6 +3347,16 @@
         "trigger": "missing_tradeoff",
         "question": "How would your API handle a user writing to primary and immediately reading from a lagging replica?",
         "purpose": "Probe read-after-write consistency strategy."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "When would you choose logical replication instead of physical streaming replication?",
+        "purpose": "Check whether replication choices are tied to concrete use cases."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "How would the application reconnect and route traffic during a primary failover?",
+        "purpose": "Probe failover behavior beyond database setup."
       }
     ],
     "localizedContent": {
@@ -1715,7 +3374,11 @@
           "Ignoring failover testing.",
           "Missing application behavior during topology changes."
         ],
-        "labels": { "role": "Backend/Data/DevOps", "level": "Senior", "type": "trade_off" }
+        "labels": {
+          "role": "Backend/Data/DevOps",
+          "level": "Senior",
+          "type": "trade_off"
+        }
       },
       "vi": {
         "title": "Replication, HA và replica lag",
@@ -1731,7 +3394,11 @@
           "Bỏ qua failover testing.",
           "Không xét hành vi application khi topology thay đổi."
         ],
-        "labels": { "role": "Backend/Data/DevOps", "level": "Senior", "type": "trade_off" }
+        "labels": {
+          "role": "Backend/Data/DevOps",
+          "level": "Senior",
+          "type": "trade_off"
+        }
       },
       "ja": {
         "title": "Replication、HA、replica lag",
@@ -1747,7 +3414,11 @@
           "failover testing を無視する。",
           "topology 変更時の application 動作を考えない。"
         ],
-        "labels": { "role": "Backend/Data/DevOps", "level": "Senior", "type": "trade_off" }
+        "labels": {
+          "role": "Backend/Data/DevOps",
+          "level": "Senior",
+          "type": "trade_off"
+        }
       }
     },
     "sourceReferences": [
@@ -1766,27 +3437,122 @@
   },
   {
     "code": "PG_SR_TECH_LOGICAL_REPLICATION_CDC_016",
-    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
-    "roleFamilies": ["backend", "data", "devops"],
-    "levels": ["senior"],
+    "stages": [
+      "stage_2_tech_stack",
+      "stage_3_domain_knowledge"
+    ],
+    "roleFamilies": [
+      "backend",
+      "data",
+      "devops"
+    ],
+    "levels": [
+      "senior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "ownership"],
-    "techTags": ["postgresql", "consistency"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "ownership"
+    ],
+    "techTags": [
+      "postgresql",
+      "consistency"
+    ],
     "difficulty": 4,
     "intent": "Check deep understanding of PostgreSQL logical replication, CDC pipelines, replication slots, WAL retention, and operational failure modes.",
     "primaryQuestion": "How does PostgreSQL logical replication or CDC use replication slots, and what can go wrong if a consumer falls behind?",
     "expectedSignals": [
-      "Explains that logical replication streams changes based on publications, subscriptions, decoding, and replication identity.",
-      "Knows replication slots retain WAL needed by consumers until consumed or advanced.",
-      "Identifies disk growth and retained dead tuples or WAL pressure as lag-related risks.",
-      "Mentions monitoring slot lag, confirmed flush LSN, restart LSN, and consumer health.",
-      "Considers initial snapshot, schema changes, deletes without proper replica identity, and backfill strategy."
-    ],
-    "redFlags": [
-      "Creates replication slots without monitoring retention.",
-      "Does not know a lagging slot can cause disk pressure.",
-      "Ignores schema evolution and delete/update identity requirements.",
-      "Treats CDC as exactly-once without downstream idempotency."
+      {
+        "label": "Explains that logical replication streams changes based on publications, subscriptions, decoding, and replication identity.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "mentions_publications_subscriptions",
+            "description": "Mentions publications and subscriptions or an equivalent CDC producer-consumer setup"
+          },
+          {
+            "key": "mentions_logical_decoding",
+            "description": "Explains logical decoding or change stream extraction from WAL at a practical level"
+          },
+          {
+            "key": "mentions_replica_identity",
+            "description": "Mentions replica identity as important for updates and deletes in logical replication"
+          }
+        ]
+      },
+      {
+        "label": "Knows replication slots retain WAL needed by consumers until consumed or advanced.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "explains_slot_retention",
+            "description": "Explains that a replication slot retains WAL needed by its consumer"
+          },
+          {
+            "key": "connects_consumption_to_lsn",
+            "description": "Connects consumer progress to confirmed flush LSN, restart LSN, or equivalent progress markers"
+          },
+          {
+            "key": "mentions_drop_or_advance_risk",
+            "description": "Mentions the risk of dropping or advancing a slot without a recovery plan"
+          }
+        ]
+      },
+      {
+        "label": "Identifies disk growth and retained dead tuples or WAL pressure as lag-related risks.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "mentions_wal_disk_growth",
+            "description": "Mentions WAL disk growth or storage pressure when a consumer falls behind"
+          },
+          {
+            "key": "mentions_cleanup_pressure",
+            "description": "Mentions cleanup, vacuum, or retained data pressure related to replication lag"
+          },
+          {
+            "key": "mentions_primary_impact",
+            "description": "Explains that an unhealthy downstream consumer can create operational risk on the primary"
+          }
+        ]
+      },
+      {
+        "label": "Mentions monitoring slot lag, confirmed flush LSN, restart LSN, and consumer health.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "monitors_slot_lag",
+            "description": "Monitors replication slot lag or bytes retained"
+          },
+          {
+            "key": "monitors_lsn_progress",
+            "description": "Monitors confirmed flush LSN, restart LSN, or equivalent consumer progress"
+          },
+          {
+            "key": "monitors_consumer_health",
+            "description": "Monitors consumer uptime, throughput, errors, and replay delay"
+          }
+        ]
+      },
+      {
+        "label": "Considers initial snapshot, schema changes, deletes without proper replica identity, and backfill strategy.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "plans_initial_snapshot",
+            "description": "Plans initial snapshot or bootstrap behavior before streaming ongoing changes"
+          },
+          {
+            "key": "handles_schema_changes",
+            "description": "Considers how schema changes are coordinated with CDC consumers"
+          },
+          {
+            "key": "handles_delete_identity",
+            "description": "Handles deletes and updates correctly when replica identity or primary keys are missing"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1816,6 +3582,16 @@
         "trigger": "missing_tradeoff",
         "question": "How would you handle a CDC consumer that is down for several hours while WAL keeps growing?",
         "purpose": "Probe incident and recovery strategy."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "What roles do publications, subscriptions, and replica identity play in logical replication?",
+        "purpose": "Check concrete logical replication mechanics."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "What can break in a CDC pipeline when schema changes or deletes happen?",
+        "purpose": "Probe CDC edge cases beyond steady-state streaming."
       }
     ],
     "localizedContent": {
@@ -1833,7 +3609,11 @@
           "Ignoring replica identity for updates and deletes.",
           "Assuming downstream delivery is automatically exactly-once."
         ],
-        "labels": { "role": "Backend/Data/DevOps", "level": "Senior", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Data/DevOps",
+          "level": "Senior",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "Logical replication và CDC slot",
@@ -1849,7 +3629,11 @@
           "Bỏ qua replica identity cho update và delete.",
           "Giả định downstream tự động exactly-once."
         ],
-        "labels": { "role": "Backend/Data/DevOps", "level": "Senior", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Data/DevOps",
+          "level": "Senior",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "Logical replication と CDC slot",
@@ -1865,7 +3649,11 @@
           "update/delete の replica identity を無視する。",
           "downstream delivery が自動的に exactly-once だと思う。"
         ],
-        "labels": { "role": "Backend/Data/DevOps", "level": "Senior", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Data/DevOps",
+          "level": "Senior",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
@@ -1884,27 +3672,120 @@
   },
   {
     "code": "PG_SR_TRADE_CONNECTION_POOLING_017",
-    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
-    "roleFamilies": ["backend", "devops"],
-    "levels": ["senior"],
+    "stages": [
+      "stage_2_tech_stack",
+      "stage_3_domain_knowledge"
+    ],
+    "roleFamilies": [
+      "backend",
+      "devops"
+    ],
+    "levels": [
+      "senior"
+    ],
     "type": "trade_off",
-    "competencies": ["trade_off_analysis", "system_thinking", "impact_measurement"],
-    "techTags": ["postgresql"],
+    "competencies": [
+      "trade_off_analysis",
+      "system_thinking",
+      "impact_measurement"
+    ],
+    "techTags": [
+      "postgresql"
+    ],
     "difficulty": 4,
     "intent": "Evaluate ability to design PostgreSQL connection management for high-throughput applications and understand pooling trade-offs.",
     "primaryQuestion": "Your service opens too many PostgreSQL connections under load. How would you design connection pooling, and what trade-offs exist between session and transaction pooling?",
     "expectedSignals": [
-      "Explains why too many PostgreSQL connections increase memory, scheduling, and contention overhead.",
-      "Uses application pool sizing and external poolers such as PgBouncer where appropriate.",
-      "Distinguishes session pooling from transaction pooling and the impact on session state.",
-      "Mentions prepared statements, temporary tables, LISTEN/NOTIFY, advisory locks, and SET LOCAL/session settings as compatibility concerns.",
-      "Defines metrics such as active connections, wait time, pool saturation, query latency, and error rates."
-    ],
-    "redFlags": [
-      "Only raises max_connections without considering database capacity.",
-      "Uses transaction pooling while relying on session state unknowingly.",
-      "Ignores pool exhaustion and queueing behavior.",
-      "Does not coordinate app pool size across replicas and service instances."
+      {
+        "label": "Explains why too many PostgreSQL connections increase memory, scheduling, and contention overhead.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "mentions_memory_overhead",
+            "description": "Mentions memory overhead or backend process cost from too many PostgreSQL connections"
+          },
+          {
+            "key": "mentions_scheduling_contention",
+            "description": "Mentions CPU scheduling, lock contention, or context-switch overhead from excessive connections"
+          },
+          {
+            "key": "rejects_max_connections_only",
+            "description": "Avoids treating max_connections increases as the only solution"
+          }
+        ]
+      },
+      {
+        "label": "Uses application pool sizing and external poolers such as PgBouncer where appropriate.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "sizes_app_pools_globally",
+            "description": "Sizes application pools across all service instances against a database-wide connection budget"
+          },
+          {
+            "key": "mentions_external_pooler",
+            "description": "Mentions PgBouncer or an external pooler when app-level pools alone are insufficient"
+          },
+          {
+            "key": "accounts_for_queueing",
+            "description": "Accounts for pool wait queues or backpressure instead of opening unlimited connections"
+          }
+        ]
+      },
+      {
+        "label": "Distinguishes session pooling from transaction pooling and the impact on session state.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "explains_session_pooling",
+            "description": "Explains that session pooling keeps a client bound to one server connection for the session"
+          },
+          {
+            "key": "explains_transaction_pooling",
+            "description": "Explains that transaction pooling reuses server connections between transactions"
+          },
+          {
+            "key": "connects_mode_to_session_state",
+            "description": "Connects pool mode choice to whether the application relies on session state"
+          }
+        ]
+      },
+      {
+        "label": "Mentions prepared statements, temporary tables, LISTEN/NOTIFY, advisory locks, and SET LOCAL/session settings as compatibility concerns.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "mentions_prepared_statement_risk",
+            "description": "Mentions prepared statement or server-side statement cache issues under transaction pooling"
+          },
+          {
+            "key": "mentions_session_feature_risk",
+            "description": "Mentions temporary tables, LISTEN/NOTIFY, advisory locks, or session variables as compatibility concerns"
+          },
+          {
+            "key": "distinguishes_set_local",
+            "description": "Distinguishes transaction-scoped SET LOCAL from persistent session settings where relevant"
+          }
+        ]
+      },
+      {
+        "label": "Defines metrics such as active connections, wait time, pool saturation, query latency, and error rates.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "monitors_active_connections",
+            "description": "Monitors active, idle, and waiting connections across app and database pools"
+          },
+          {
+            "key": "monitors_pool_saturation",
+            "description": "Monitors pool saturation, queue wait time, or timeout rate"
+          },
+          {
+            "key": "monitors_latency_errors",
+            "description": "Monitors query latency, connection errors, and database CPU or memory impact"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1951,7 +3832,11 @@
           "Ignoring session state in transaction pooling.",
           "Sizing each application instance independently without a global budget."
         ],
-        "labels": { "role": "Backend/DevOps", "level": "Senior", "type": "trade_off" }
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Senior",
+          "type": "trade_off"
+        }
       },
       "vi": {
         "title": "Trade-off connection pooling",
@@ -1967,7 +3852,11 @@
           "Bỏ qua session state khi dùng transaction pooling.",
           "Size từng instance riêng lẻ mà không có global budget."
         ],
-        "labels": { "role": "Backend/DevOps", "level": "Senior", "type": "trade_off" }
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Senior",
+          "type": "trade_off"
+        }
       },
       "ja": {
         "title": "Connection pooling のトレードオフ",
@@ -1983,7 +3872,11 @@
           "transaction pooling で session state を無視する。",
           "全体予算なしに instance ごとに pool size を決める。"
         ],
-        "labels": { "role": "Backend/DevOps", "level": "Senior", "type": "trade_off" }
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Senior",
+          "type": "trade_off"
+        }
       }
     },
     "sourceReferences": [
@@ -2002,27 +3895,123 @@
   },
   {
     "code": "PG_SR_TRADE_MULTI_TENANT_RLS_018",
-    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
-    "roleFamilies": ["backend", "security", "data"],
-    "levels": ["senior"],
+    "stages": [
+      "stage_2_tech_stack",
+      "stage_3_domain_knowledge"
+    ],
+    "roleFamilies": [
+      "backend",
+      "security",
+      "data"
+    ],
+    "levels": [
+      "senior"
+    ],
     "type": "trade_off",
-    "competencies": ["trade_off_analysis", "system_thinking", "ownership"],
-    "techTags": ["postgresql", "schema_design", "consistency"],
+    "competencies": [
+      "trade_off_analysis",
+      "system_thinking",
+      "ownership"
+    ],
+    "techTags": [
+      "postgresql",
+      "schema_design",
+      "consistency"
+    ],
     "difficulty": 4,
     "intent": "Assess senior design reasoning around multi-tenant PostgreSQL schemas, tenant isolation, indexing, and Row Level Security.",
     "primaryQuestion": "How would you design PostgreSQL data isolation for a multi-tenant SaaS product, and when would you use tenant_id columns, separate schemas/databases, or Row Level Security?",
     "expectedSignals": [
-      "Compares shared-table tenant_id, schema-per-tenant, and database-per-tenant trade-offs.",
-      "Considers data isolation, operational complexity, migrations, backups, and noisy-neighbor risk.",
-      "Uses composite indexes including tenant_id for tenant-scoped queries.",
-      "Explains Row Level Security policies as defense-in-depth, not a substitute for application authorization.",
-      "Mentions testing policies and preventing bypass through privileged roles or unsafe connection settings."
-    ],
-    "redFlags": [
-      "Only filters by tenant_id in application code with no defense-in-depth.",
-      "Adds RLS without understanding roles, policies, or bypass behavior.",
-      "Ignores migration and backup complexity of separate schemas or databases.",
-      "Forgets tenant_id in indexes on shared tables."
+      {
+        "label": "Compares shared-table tenant_id, schema-per-tenant, and database-per-tenant trade-offs.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "compares_shared_table",
+            "description": "Compares shared-table tenant_id design for operational simplicity and shared-resource risk"
+          },
+          {
+            "key": "compares_schema_per_tenant",
+            "description": "Compares schema-per-tenant design for isolation and migration complexity"
+          },
+          {
+            "key": "compares_database_per_tenant",
+            "description": "Compares database-per-tenant design for stronger isolation and higher operational cost"
+          }
+        ]
+      },
+      {
+        "label": "Considers data isolation, operational complexity, migrations, backups, and noisy-neighbor risk.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "discusses_isolation_level",
+            "description": "Discusses how strongly each tenant model isolates data and failure domains"
+          },
+          {
+            "key": "discusses_migration_backup_cost",
+            "description": "Discusses migration, backup, restore, and provisioning complexity across tenants"
+          },
+          {
+            "key": "discusses_noisy_neighbor",
+            "description": "Discusses noisy-neighbor performance risk and resource management"
+          }
+        ]
+      },
+      {
+        "label": "Uses composite indexes including tenant_id for tenant-scoped queries.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "includes_tenant_id_in_indexes",
+            "description": "Includes tenant_id in composite indexes for tenant-scoped queries on shared tables"
+          },
+          {
+            "key": "matches_tenant_query_patterns",
+            "description": "Matches index column order to common tenant-scoped WHERE and ORDER BY patterns"
+          },
+          {
+            "key": "prevents_cross_tenant_scan",
+            "description": "Explains that omitting tenant_id can cause inefficient scans or unsafe query patterns"
+          }
+        ]
+      },
+      {
+        "label": "Explains Row Level Security policies as defense-in-depth, not a substitute for application authorization.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "explains_rls_policy_role",
+            "description": "Explains that RLS policies restrict row visibility or modification inside PostgreSQL"
+          },
+          {
+            "key": "frames_rls_as_defense_in_depth",
+            "description": "Frames RLS as defense-in-depth rather than the only authorization layer"
+          },
+          {
+            "key": "keeps_application_authorization",
+            "description": "Keeps explicit application authorization and tenant scoping in service logic"
+          }
+        ]
+      },
+      {
+        "label": "Mentions testing policies and preventing bypass through privileged roles or unsafe connection settings.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "tests_rls_cross_tenant_access",
+            "description": "Mentions tests that prove one tenant cannot read or write another tenant's rows"
+          },
+          {
+            "key": "mentions_role_bypass_risk",
+            "description": "Mentions owner, superuser, bypass RLS, or privileged-role behavior as a risk to manage"
+          },
+          {
+            "key": "controls_connection_context",
+            "description": "Mentions safely setting tenant context, roles, or session variables so policies cannot be bypassed accidentally"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -2049,9 +4038,14 @@
         "purpose": "Probe operational trade-off reasoning."
       },
       {
-        "trigger": "red_flag",
+        "trigger": "vague_answer",
         "question": "How would you test that an RLS policy cannot leak another tenant's rows?",
         "purpose": "Check security verification."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Which tenant-scoped query would need tenant_id in a composite index, and why?",
+        "purpose": "Tie multi-tenant isolation to concrete query and index design."
       }
     ],
     "localizedContent": {
@@ -2069,7 +4063,11 @@
           "Ignoring tenant_id in composite indexes.",
           "Adding RLS without role and policy testing."
         ],
-        "labels": { "role": "Backend/Security/Data", "level": "Senior", "type": "trade_off" }
+        "labels": {
+          "role": "Backend/Security/Data",
+          "level": "Senior",
+          "type": "trade_off"
+        }
       },
       "vi": {
         "title": "Multi-tenant isolation và RLS",
@@ -2085,7 +4083,11 @@
           "Quên tenant_id trong composite index.",
           "Thêm RLS mà không test role và policy."
         ],
-        "labels": { "role": "Backend/Security/Data", "level": "Senior", "type": "trade_off" }
+        "labels": {
+          "role": "Backend/Security/Data",
+          "level": "Senior",
+          "type": "trade_off"
+        }
       },
       "ja": {
         "title": "Multi-tenant isolation と RLS",
@@ -2101,7 +4103,11 @@
           "複合インデックスで tenant_id を忘れる。",
           "role と policy のテストなしに RLS を追加する。"
         ],
-        "labels": { "role": "Backend/Security/Data", "level": "Senior", "type": "trade_off" }
+        "labels": {
+          "role": "Backend/Security/Data",
+          "level": "Senior",
+          "type": "trade_off"
+        }
       }
     },
     "sourceReferences": [
@@ -2120,27 +4126,123 @@
   },
   {
     "code": "PG_SR_DEBUG_MIGRATION_LOCKS_019",
-    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
-    "roleFamilies": ["backend", "devops"],
-    "levels": ["senior"],
+    "stages": [
+      "stage_2_tech_stack",
+      "stage_3_domain_knowledge"
+    ],
+    "roleFamilies": [
+      "backend",
+      "devops"
+    ],
+    "levels": [
+      "senior"
+    ],
     "type": "debugging",
-    "competencies": ["problem_solving", "ownership", "impact_measurement", "communication"],
-    "techTags": ["postgresql", "schema_design", "rollback"],
+    "competencies": [
+      "problem_solving",
+      "ownership",
+      "impact_measurement",
+      "communication"
+    ],
+    "techTags": [
+      "postgresql",
+      "schema_design",
+      "rollback"
+    ],
     "difficulty": 4,
     "intent": "Assess senior operational judgment for PostgreSQL schema migrations on large production tables.",
     "primaryQuestion": "A migration that adds a column, backfills data, and creates an index on a large PostgreSQL table is causing lock waits. How would you redesign and safely roll it out?",
     "expectedSignals": [
-      "Separates metadata change, backfill, constraint validation, and index creation into safe phases.",
-      "Uses CREATE INDEX CONCURRENTLY when appropriate and understands its trade-offs.",
-      "Avoids long transactions and large blocking backfills; batches work with progress tracking.",
-      "Considers NOT VALID constraints followed by VALIDATE CONSTRAINT for large tables where applicable.",
-      "Defines rollback, observability, lock timeout, statement timeout, and deployment coordination."
-    ],
-    "redFlags": [
-      "Runs a large backfill and index creation in one transaction during peak traffic.",
-      "Uses regular CREATE INDEX on a hot table without discussing locks.",
-      "Does not know how to monitor blocking or migration progress.",
-      "Has no rollback or retry plan for partial migration failure."
+      {
+        "label": "Separates metadata change, backfill, constraint validation, and index creation into safe phases.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "separates_schema_metadata",
+            "description": "Separates lightweight metadata changes from long-running data changes where possible"
+          },
+          {
+            "key": "separates_backfill_phase",
+            "description": "Runs backfill as a controlled phase rather than one huge blocking transaction"
+          },
+          {
+            "key": "separates_index_constraint_validation",
+            "description": "Separates index creation and constraint validation into safe rollout phases"
+          }
+        ]
+      },
+      {
+        "label": "Uses CREATE INDEX CONCURRENTLY when appropriate and understands its trade-offs.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "uses_create_index_concurrently",
+            "description": "Uses CREATE INDEX CONCURRENTLY for hot tables when avoiding write blocking is important"
+          },
+          {
+            "key": "mentions_concurrent_index_limits",
+            "description": "Mentions limitations such as longer runtime, extra work, failure cleanup, or transaction restrictions"
+          },
+          {
+            "key": "compares_regular_index_locking",
+            "description": "Compares concurrent index creation with regular CREATE INDEX lock behavior"
+          }
+        ]
+      },
+      {
+        "label": "Avoids long transactions and large blocking backfills; batches work with progress tracking.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "batches_backfill",
+            "description": "Batches backfill work by primary key, time range, or small chunks"
+          },
+          {
+            "key": "avoids_long_transactions",
+            "description": "Avoids one long transaction that holds locks and bloats the table"
+          },
+          {
+            "key": "tracks_backfill_progress",
+            "description": "Tracks progress, rate, error count, or remaining rows during the backfill"
+          }
+        ]
+      },
+      {
+        "label": "Considers NOT VALID constraints followed by VALIDATE CONSTRAINT for large tables where applicable.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "uses_not_valid_constraint",
+            "description": "Considers adding applicable constraints as NOT VALID to avoid immediate full-table validation impact"
+          },
+          {
+            "key": "validates_constraint_later",
+            "description": "Plans a later VALIDATE CONSTRAINT phase after data is backfilled or cleaned"
+          },
+          {
+            "key": "understands_existing_new_rows",
+            "description": "Explains the distinction between existing rows and new writes when using NOT VALID constraints"
+          }
+        ]
+      },
+      {
+        "label": "Defines rollback, observability, lock timeout, statement timeout, and deployment coordination.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "sets_lock_statement_timeouts",
+            "description": "Uses lock_timeout, statement_timeout, or equivalent safeguards during migration steps"
+          },
+          {
+            "key": "monitors_locks_progress",
+            "description": "Monitors lock waits, index build progress, backfill throughput, and error rates"
+          },
+          {
+            "key": "defines_rollback_coordination",
+            "description": "Defines rollback or pause strategy and coordinates deploys with application compatibility"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -2170,6 +4272,16 @@
         "trigger": "missing_metric",
         "question": "What would you monitor during the backfill and index build?",
         "purpose": "Probe rollout observability."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Which migration steps would you split into separate deploy phases, and why?",
+        "purpose": "Check phased rollout design instead of one large migration."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "When would NOT VALID plus VALIDATE CONSTRAINT help on a large table?",
+        "purpose": "Probe constraint validation mechanics."
       }
     ],
     "localizedContent": {
@@ -2187,7 +4299,11 @@
           "Creating indexes non-concurrently on hot tables.",
           "Running backfills without progress tracking or throttling."
         ],
-        "labels": { "role": "Backend/DevOps", "level": "Senior", "type": "debugging" }
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Senior",
+          "type": "debugging"
+        }
       },
       "vi": {
         "title": "Migration production an toàn",
@@ -2203,7 +4319,11 @@
           "Tạo index non-concurrently trên bảng hot.",
           "Backfill không có progress tracking hoặc throttling."
         ],
-        "labels": { "role": "Backend/DevOps", "level": "Senior", "type": "debugging" }
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Senior",
+          "type": "debugging"
+        }
       },
       "ja": {
         "title": "安全な本番 migration",
@@ -2219,7 +4339,11 @@
           "hot table に non-concurrent index を作る。",
           "progress tracking や throttling なしに backfill する。"
         ],
-        "labels": { "role": "Backend/DevOps", "level": "Senior", "type": "debugging" }
+        "labels": {
+          "role": "Backend/DevOps",
+          "level": "Senior",
+          "type": "debugging"
+        }
       }
     },
     "sourceReferences": [
@@ -2238,27 +4362,125 @@
   },
   {
     "code": "PG_SR_TRADE_CONSISTENCY_PATTERNS_020",
-    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["senior"],
+    "stages": [
+      "stage_2_tech_stack",
+      "stage_3_domain_knowledge"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "senior"
+    ],
     "type": "trade_off",
-    "competencies": ["trade_off_analysis", "system_thinking", "ownership", "problem_solving"],
-    "techTags": ["postgresql", "transaction", "consistency", "idempotency", "outbox_pattern"],
+    "competencies": [
+      "trade_off_analysis",
+      "system_thinking",
+      "ownership",
+      "problem_solving"
+    ],
+    "techTags": [
+      "postgresql",
+      "transaction",
+      "consistency",
+      "idempotency",
+      "outbox_pattern"
+    ],
     "difficulty": 4,
     "intent": "Evaluate senior-level ability to combine PostgreSQL constraints, transactions, locks, idempotency, and outbox-style patterns for correctness under concurrency.",
     "primaryQuestion": "How would you design a PostgreSQL-backed workflow that creates an order, charges payment asynchronously, and publishes an event without losing consistency under retries and failures?",
     "expectedSignals": [
-      "Uses a transaction for the local state transition and durable outbox/event record.",
-      "Uses idempotency keys and unique constraints to make retries safe.",
-      "Separates external payment side effects from the database transaction and models state transitions explicitly.",
-      "Discusses row locks, optimistic concurrency, or status preconditions to prevent double processing.",
-      "Plans for outbox polling, exactly-once illusion, at-least-once delivery, and idempotent consumers."
-    ],
-    "redFlags": [
-      "Calls payment provider inside a long database transaction without considering failure modes.",
-      "Publishes events before COMMIT with no recovery strategy.",
-      "Relies on best-effort retries without unique constraints or idempotency.",
-      "Assumes distributed exactly-once delivery without designing for duplicates."
+      {
+        "label": "Uses a transaction for the local state transition and durable outbox/event record.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "wraps_local_state_transaction",
+            "description": "Uses a PostgreSQL transaction for the local order state transition"
+          },
+          {
+            "key": "writes_durable_outbox",
+            "description": "Writes an outbox or event record in the same transaction as the state change"
+          },
+          {
+            "key": "explains_commit_publish_failure",
+            "description": "Explains how the outbox recovers when commit succeeds but external publishing fails"
+          }
+        ]
+      },
+      {
+        "label": "Uses idempotency keys and unique constraints to make retries safe.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "uses_client_idempotency_key",
+            "description": "Uses a client request id, payment id, or operation id for idempotent retries"
+          },
+          {
+            "key": "backs_retries_with_unique_constraints",
+            "description": "Backs idempotency and external references with PostgreSQL unique constraints"
+          },
+          {
+            "key": "returns_prior_result_on_retry",
+            "description": "Returns or reconstructs the original logical result when the same operation is retried"
+          }
+        ]
+      },
+      {
+        "label": "Separates external payment side effects from the database transaction and models state transitions explicitly.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "keeps_payment_outside_db_transaction",
+            "description": "Avoids holding a database transaction open while calling the payment provider"
+          },
+          {
+            "key": "models_order_states",
+            "description": "Models explicit states such as pending_payment, paid, failed, or published"
+          },
+          {
+            "key": "handles_payment_failure_ordering",
+            "description": "Explains what happens when payment succeeds or fails around database state changes"
+          }
+        ]
+      },
+      {
+        "label": "Discusses row locks, optimistic concurrency, or status preconditions to prevent double processing.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "uses_row_lock_or_precondition",
+            "description": "Uses row locks, status preconditions, or optimistic concurrency to claim work safely"
+          },
+          {
+            "key": "prevents_double_charge",
+            "description": "Explains how the design prevents double charging or double order processing"
+          },
+          {
+            "key": "handles_concurrent_workers",
+            "description": "Handles multiple workers or retry attempts racing on the same order"
+          }
+        ]
+      },
+      {
+        "label": "Plans for outbox polling, exactly-once illusion, at-least-once delivery, and idempotent consumers.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "explains_at_least_once_delivery",
+            "description": "Explains that outbox publishing is typically at-least-once and duplicates are possible"
+          },
+          {
+            "key": "rejects_exactly_once_assumption",
+            "description": "Avoids assuming distributed exactly-once delivery without duplicate handling"
+          },
+          {
+            "key": "requires_idempotent_consumers",
+            "description": "Requires consumers to deduplicate or process repeated events idempotently"
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -2288,6 +4510,11 @@
         "trigger": "missing_tradeoff",
         "question": "Which unique constraints would you add to make client retries and worker retries safe?",
         "purpose": "Connect idempotency design to PostgreSQL constraints."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "How would you prevent two workers from charging or publishing the same order twice?",
+        "purpose": "Probe concurrency control for duplicate processing."
       }
     ],
     "localizedContent": {
@@ -2305,7 +4532,11 @@
           "Relying on retries without idempotency keys.",
           "Holding database transactions open during external calls."
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Senior", "type": "trade_off" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Senior",
+          "type": "trade_off"
+        }
       },
       "vi": {
         "title": "Consistency khi retry và phát event",
@@ -2321,7 +4552,11 @@
           "Dựa vào retry nhưng không có idempotency key.",
           "Giữ transaction database mở khi gọi external service."
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Senior", "type": "trade_off" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Senior",
+          "type": "trade_off"
+        }
       },
       "ja": {
         "title": "Retry と event 下の consistency",
@@ -2337,7 +4572,11 @@
           "idempotency key なしに retry に頼る。",
           "外部呼び出し中に database transaction を開いたままにする。"
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Senior", "type": "trade_off" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Senior",
+          "type": "trade_off"
+        }
       }
     },
     "sourceReferences": [

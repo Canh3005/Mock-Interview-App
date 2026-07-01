@@ -4,8 +4,10 @@ import type {
   QuestionProbeLevel,
 } from '../question-bank/constants/question-bank-taxonomy.constants';
 import type { QuestionProbeFollowUp } from '../question-bank/entities/question-probe.entity';
-import type { PressureProfile } from '../session-planning/types/session-plan.types';
-import type { ProbeScoringResult } from '../question-bank/types/question-practice-scoring.types';
+import type {
+  ProbeScoringResult,
+  ProbeSignalResult,
+} from '../question-bank/types/question-practice-scoring.types';
 import type {
   ActiveProbeSession,
   PolicyDecision,
@@ -33,14 +35,12 @@ export class PolicyEngineService {
   decide({
     scoringResult,
     activeProbe,
-    pressureProfile,
     probeFollowUps,
     level,
     hasFallbackProbe,
   }: {
     scoringResult: ProbeScoringResult;
     activeProbe: ActiveProbeSession;
-    pressureProfile: PressureProfile;
     probeFollowUps: QuestionProbeFollowUp[];
     level: QuestionProbeLevel;
     hasFallbackProbe: boolean;
@@ -92,23 +92,6 @@ export class PolicyEngineService {
       return { action: 'CLOSE_PROBE', closeReason: 'turn_limit_reached' };
     }
 
-    // Step 2: có red flag → challenge nếu chưa đạt giới hạn
-    const hasRedFlag: boolean = scoringResult.redFlags.some((rf) => rf.present);
-    if (
-      hasRedFlag &&
-      activeProbe.challengeCount < pressureProfile.maxChallengesPerProbe
-    ) {
-      const redFlagFollowUp: QuestionProbeFollowUp | undefined =
-        probeFollowUps.find((f) => f.trigger === 'red_flag');
-      if (redFlagFollowUp) {
-        return {
-          action: 'CHALLENGE',
-          followUpTrigger: 'red_flag',
-          challengeReason: this._firstPresentRedFlagLabel(scoringResult),
-        };
-      }
-    }
-
     // Step 3: đã đủ follow-up theo level
     if (activeProbe.followUpCount >= maxFollowUps) {
       return { action: 'CLOSE_PROBE', closeReason: 'max_follow_ups_reached' };
@@ -138,7 +121,14 @@ export class PolicyEngineService {
 
   /**
    * Chọn trigger phù hợp nhất từ signal gaps của probe.
-   * Priority: missing_tradeoff (cho technical) > missing_metric > missing_context > vague_answer.
+   *
+   * Ưu tiên trigger gắn trực tiếp với signal đang thiếu (relatedTrigger trên
+   * expectedSignals của probe), severity nặng hơn (missing > unclear) đi trước,
+   * cùng severity thì theo thứ tự signal xuất hiện trong probe.
+   *
+   * Fallback về LEGACY_TRIGGER_PRIORITY khi không có signal nào gắn relatedTrigger
+   * (probe chưa được gắn tag) hoặc relatedTrigger đó không có follow-up tương ứng —
+   * giữ đúng hành vi cũ cho probe chưa migrate dữ liệu.
    *
    * @returns trigger nếu probe có follow-up tương ứng, null nếu không tìm được
    */
@@ -153,22 +143,22 @@ export class PolicyEngineService {
       probeFollowUps.map((f) => f.trigger),
     );
 
-    const priority: QuestionProbeFollowUpTrigger[] = [
-      'missing_tradeoff',
-      'missing_metric',
-      'missing_personal_contribution',
-      'missing_consequence',
-      'missing_context',
-      'missing_reflection',
-      'vague_answer',
-    ];
+    const gaps: ProbeSignalResult[] = scoringResult.signalResults
+      .filter((signal) => signal.status !== 'covered')
+      .sort(
+        (left, right) => this._gapSeverity(right) - this._gapSeverity(left),
+      );
+    if (gaps.length === 0) return null;
 
-    const notCovered: boolean = scoringResult.signalResults.some(
-      (s) => s.status !== 'covered',
-    );
-    if (!notCovered) return null;
+    const targetedTrigger: QuestionProbeFollowUpTrigger | undefined = gaps
+      .map((gap) => gap.relatedTrigger)
+      .find(
+        (trigger): trigger is QuestionProbeFollowUpTrigger =>
+          trigger !== null && availableTriggers.has(trigger),
+      );
+    if (targetedTrigger !== undefined) return targetedTrigger;
 
-    for (const trigger of priority) {
+    for (const trigger of this._legacyTriggerPriority) {
       if (availableTriggers.has(trigger)) {
         return trigger;
       }
@@ -176,8 +166,17 @@ export class PolicyEngineService {
     return null;
   }
 
-  private _firstPresentRedFlagLabel(scoringResult: ProbeScoringResult): string {
-    const first = scoringResult.redFlags.find((rf) => rf.present);
-    return first?.label ?? 'red flag detected';
+  private _gapSeverity(signal: ProbeSignalResult): number {
+    return signal.status === 'missing' ? 2 : 1;
   }
+
+  private readonly _legacyTriggerPriority: QuestionProbeFollowUpTrigger[] = [
+    'missing_tradeoff',
+    'missing_metric',
+    'missing_personal_contribution',
+    'missing_consequence',
+    'missing_context',
+    'missing_reflection',
+    'vague_answer',
+  ];
 }

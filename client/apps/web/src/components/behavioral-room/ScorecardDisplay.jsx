@@ -74,21 +74,6 @@ function AccordionStage({ stageKey, data }) {
             </div>
           )}
 
-          {data?.red_flags?.length > 0 && (
-            <div>
-              <p className="text-xs text-red-400 font-semibold mb-1 flex items-center gap-1">
-                <AlertTriangle className="w-3 h-3" /> {t('scoring.legacy.redFlags')}
-              </p>
-              <ul className="flex flex-col gap-1">
-                {data.red_flags.map((f, i) => (
-                  <li key={i} className="text-xs text-slate-400 flex gap-2">
-                    <span className="text-red-400 flex-shrink-0">–</span>
-                    {f}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
         </div>
       )}
     </div>

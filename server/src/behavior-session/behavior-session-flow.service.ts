@@ -176,7 +176,6 @@ export class BehaviorSessionFlowService {
       startedAt: new Date().toISOString(),
       candidateTurnCount: 0,
       followUpCount: 0,
-      challengeCount: 0,
       redirectCount: 0,
       rephraseCount: 0,
       totalTurnCount: 0,
@@ -251,6 +250,7 @@ export class BehaviorSessionFlowService {
       const redirectText: string = await this.probeRenderer.buildRedirectText({
         language: plan.language,
         lastCandidateAnswer: lastAnswer,
+        currentQuestion: probe.localizedContent[plan.language]?.displayQuestion,
         personaPolicy: plan.personaPolicy,
       });
       return [
@@ -291,37 +291,6 @@ export class BehaviorSessionFlowService {
           stageKey: allocation.stage,
           probeId: probe.id,
           followUpTrigger: decision.followUpTrigger,
-        }),
-      ];
-    }
-
-    if (decision.action === 'CHALLENGE' && decision.followUpTrigger) {
-      activeProbe.challengeCount++;
-      activeProbe.totalTurnCount++;
-      session.interviewState = 'CHALLENGING';
-      const challengeFollowUp = probe.followUps.find(
-        (f) => f.trigger === 'red_flag',
-      );
-      const renderedText: string = await this.probeRenderer.getOrRenderFollowUp(
-        {
-          probeId: probe.id,
-          trigger: 'red_flag',
-          rawFollowUpText: challengeFollowUp?.question ?? '',
-          stageName: this.stageDisplayName(allocation.stage, plan.language),
-          personaPolicy: plan.personaPolicy,
-          language: plan.language,
-          renderedFollowUps: session.renderedFollowUps ?? {},
-          lastCandidateAnswer: lastAnswer,
-        },
-      );
-      return [
-        await this.saveTurn({
-          session,
-          content: renderedText,
-          type: 'challenge',
-          stageKey: allocation.stage,
-          probeId: probe.id,
-          challengeReason: decision.challengeReason,
         }),
       ];
     }
@@ -376,7 +345,6 @@ export class BehaviorSessionFlowService {
     stageKey,
     probeId,
     followUpTrigger,
-    challengeReason,
     isCandidate = false,
   }: {
     session: BehavioralSession;
@@ -385,7 +353,6 @@ export class BehaviorSessionFlowService {
     stageKey: QuestionProbeStage | null;
     probeId: string | null;
     followUpTrigger?: string;
-    challengeReason?: string;
     isCandidate?: boolean;
   }): Promise<InterviewTurn> {
     const turnIndex: number = session.globalTurnCounter;
@@ -402,7 +369,6 @@ export class BehaviorSessionFlowService {
       turnType: type,
       followUpTrigger:
         (followUpTrigger as BehavioralStageLog['followUpTrigger']) ?? null,
-      challengeReason: challengeReason ?? null,
       probeTurnIndex: session.activeProbeSession?.candidateTurnCount ?? 0,
       globalTurnIndex: turnIndex,
     });
@@ -438,7 +404,6 @@ export class BehaviorSessionFlowService {
       questionProbeRevision: activeProbe.plannedProbe.questionProbeRevision,
       candidateTurnCount: activeProbe.candidateTurnCount,
       followUpCount: activeProbe.followUpCount,
-      challengeCount: activeProbe.challengeCount,
       finalBand: scoringResult.overallBand,
       finalScoringResult: scoringResult,
       closeReason: decision.closeReason ?? 'no_new_evidence',
@@ -496,7 +461,6 @@ export class BehaviorSessionFlowService {
       questionProbeRevision: activeProbe.plannedProbe.questionProbeRevision,
       candidateTurnCount: activeProbe.candidateTurnCount,
       followUpCount: activeProbe.followUpCount,
-      challengeCount: activeProbe.challengeCount,
       finalBand: scoringResult.overallBand,
       finalScoringResult: scoringResult,
       closeReason: 'fallback_triggered',
@@ -622,7 +586,6 @@ export class BehaviorSessionFlowService {
       type: log.turnType ?? 'probe_question',
       content: log.content,
       followUpTrigger: log.followUpTrigger ?? undefined,
-      challengeReason: log.challengeReason ?? undefined,
       timestamp: log.timestamp.toISOString(),
     };
   }

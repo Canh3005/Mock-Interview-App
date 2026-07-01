@@ -9,6 +9,7 @@ describe('QuestionBankDetailService', () => {
   let probeRepository: { findOne: jest.Mock; increment: jest.Mock };
   let projectionService: QuestionBankPublicProjectionService;
   let relatedService: { findRelatedQuestions: jest.Mock };
+  let redis: { get: jest.Mock; set: jest.Mock };
 
   beforeEach(() => {
     probeRepository = {
@@ -19,10 +20,15 @@ describe('QuestionBankDetailService', () => {
     relatedService = {
       findRelatedQuestions: jest.fn(() => Promise.resolve([])),
     };
+    redis = {
+      get: jest.fn(() => Promise.resolve(null)),
+      set: jest.fn(() => Promise.resolve('OK')),
+    };
     service = new QuestionBankDetailService(
       probeRepository as unknown as Repository<QuestionProbe>,
       projectionService,
       relatedService as unknown as QuestionBankRelatedService,
+      redis as unknown as import('ioredis').default,
     );
   });
 
@@ -107,7 +113,7 @@ function _createProbe(overrides: Partial<QuestionProbe> = {}): QuestionProbe {
     difficulty: 3,
     intent: 'Assess cache design.',
     primaryQuestion: 'How do you handle cache invalidation?',
-    expectedSignals: ['Trade-off clarity'],
+    expectedSignals: [{ label: 'Trade-off clarity', relatedTrigger: null }],
     redFlags: ['No invalidation plan'],
     scoringHints: [{ scoreBand: 'strong', description: 'Clear trade-offs' }],
     followUps: [

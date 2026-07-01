@@ -83,6 +83,7 @@ export class FitAssessmentService {
         title: cleanText(exp.title),
         responsibilities: dedupeStrings(exp.responsibilities ?? []),
       };
+      if (exp.type === 'project') normalized.type = 'project';
       if (exp.startDate) normalized.startDate = cleanText(exp.startDate);
       if (exp.endDate) normalized.endDate = cleanText(exp.endDate);
       if (exp.achievements?.length) {
@@ -395,6 +396,14 @@ export class FitAssessmentService {
 
     const { signals: guardedSignals, upgradedIds } =
       this.applySkillPresenceGuardrail(signals, cvJson);
+    const nonMissingRequiredSkillKeys = new Set<string>();
+    for (const signal of guardedSignals) {
+      if (signal.source !== 'required_skill' || signal.status === 'missing') {
+        continue;
+      }
+      nonMissingRequiredSkillKeys.add(signal.requirementId);
+      nonMissingRequiredSkillKeys.add(canonicalize(signal.requirement));
+    }
 
     return {
       confidence: this.normalizeConfidence(rubric.confidence),
@@ -408,13 +417,15 @@ export class FitAssessmentService {
           explanation: cleanText(gap.explanation),
           practiceSuggestion: cleanText(gap.practiceSuggestion ?? ''),
         }))
-        .filter(
-          (gap) =>
-            !(
-              gap.category === 'missing_required_skill' &&
-              upgradedIds.has(gap.relatedRequirement)
-            ),
-        ),
+        .filter((gap) => {
+          if (gap.category !== 'missing_required_skill') return true;
+          const related = cleanText(gap.relatedRequirement);
+          return !(
+            upgradedIds.has(related) ||
+            nonMissingRequiredSkillKeys.has(related) ||
+            nonMissingRequiredSkillKeys.has(canonicalize(related))
+          );
+        }),
       riskFlags: (rubric.riskFlags ?? []).map((flag) => ({
         code: this.normalizeRiskCode(flag.code),
         severity: this.normalizeSeverity(flag.severity),
@@ -608,6 +619,7 @@ export class FitAssessmentService {
     let totalMonths = 0;
     let valid = false;
     for (const exp of experience) {
+      if (exp.type === 'project') continue;
       const parseDate = (s?: string): Date | undefined => {
         if (!s) return undefined;
         const iso = s.match(/^(\d{4})-(\d{2})$/);

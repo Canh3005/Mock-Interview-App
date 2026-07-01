@@ -40,7 +40,7 @@ export const PERSONA_PRESETS: Record<string, PersonaPolicy> = {
 };
 
 export const PRESSURE_PRESETS: Record<string, PressureProfile> = {
-  junior: { level: 'low', maxChallengesPerProbe: 1 },
-  mid: { level: 'medium', maxChallengesPerProbe: 2 },
-  senior: { level: 'high', maxChallengesPerProbe: 3 },
+  junior: { level: 'low' },
+  mid: { level: 'medium' },
+  senior: { level: 'high' },
 };

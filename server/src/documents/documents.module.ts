@@ -8,6 +8,7 @@ import { DocumentsService } from './documents.service';
 import { DocumentsAiService } from './documents.ai.service';
 import { DocumentContextService } from './document-context.service';
 import { FitAssessmentService } from './fit-assessment.service';
+import { FitRubricPipelineService } from './fit-rubric-pipeline.service';
 import { BehaviorCalibrationAiService } from './behavior-calibration.ai.service';
 import { BehaviorCalibrationService } from './behavior-calibration.service';
 import { DOCUMENT_PARSING_QUEUE } from '../jobs/jobs.constants';
@@ -16,6 +17,7 @@ import { CandidateClaim } from './entities/candidate-claim.entity';
 import { RiskHypothesis } from './entities/risk-hypothesis.entity';
 import { SessionClaimOutcome } from './entities/session-claim-outcome.entity';
 import { SessionRiskOutcome } from './entities/session-risk-outcome.entity';
+import { FitAssessmentRecord } from './entities/fit-assessment-record.entity';
 import { UserCv } from '../users/entities/user-cv.entity';
 import { JdAnalysis } from '../users/entities/jd-analysis.entity';
 import { UserProfile } from '../users/entities/user-profile.entity';
@@ -30,6 +32,7 @@ import { UserProfile } from '../users/entities/user-profile.entity';
       RiskHypothesis,
       SessionClaimOutcome,
       SessionRiskOutcome,
+      FitAssessmentRecord,
       UserProfile,
     ]),
     BullModule.registerQueueAsync({ name: DOCUMENT_PARSING_QUEUE }),
@@ -51,6 +54,7 @@ import { UserProfile } from '../users/entities/user-profile.entity';
     DocumentsAiService,
     DocumentContextService,
     FitAssessmentService,
+    FitRubricPipelineService,
     BehaviorCalibrationAiService,
     BehaviorCalibrationService,
   ],
@@ -59,6 +63,7 @@ import { UserProfile } from '../users/entities/user-profile.entity';
     DocumentsAiService,
     DocumentContextService,
     FitAssessmentService,
+    FitRubricPipelineService,
     BehaviorCalibrationService,
   ],
 })

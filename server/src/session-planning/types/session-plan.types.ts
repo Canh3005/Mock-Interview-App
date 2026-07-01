@@ -33,7 +33,6 @@ export interface PersonaPolicy {
 
 export interface PressureProfile {
   level: 'low' | 'medium' | 'high';
-  maxChallengesPerProbe: number;
 }
 
 export interface PlannedProbe {

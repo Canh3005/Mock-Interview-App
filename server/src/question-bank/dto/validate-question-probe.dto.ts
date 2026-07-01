@@ -19,6 +19,7 @@ import {
   QUESTION_PROBE_ROLE_FAMILIES,
   QUESTION_PROBE_STAGES,
   QUESTION_PROBE_TYPES,
+  QuestionProbeFollowUpTrigger,
 } from '../constants/question-bank-taxonomy.constants';
 
 export class QuestionProbeLocalizedContentDto {
@@ -67,6 +68,41 @@ export class QuestionProbeFollowUpDto {
   @IsString()
   @IsNotEmpty()
   purpose!: string;
+}
+
+export class QuestionProbeSignalRequirementDto {
+  @ApiProperty({ example: 'read_benefit' })
+  @IsString()
+  @IsNotEmpty()
+  key!: string;
+
+  @ApiProperty({ example: 'Mentions that indexes improve read performance.' })
+  @IsString()
+  @IsNotEmpty()
+  description!: string;
+}
+
+export class QuestionProbeExpectedSignalDto {
+  @ApiProperty({ example: 'Names a concrete metric or baseline.' })
+  @IsString()
+  @IsNotEmpty()
+  label!: string;
+
+  @ApiProperty({
+    enum: QUESTION_PROBE_FOLLOW_UP_TRIGGERS,
+    required: false,
+    nullable: true,
+  })
+  @IsOptional()
+  @IsIn(QUESTION_PROBE_FOLLOW_UP_TRIGGERS)
+  relatedTrigger?: QuestionProbeFollowUpTrigger | null;
+
+  @ApiProperty({ required: false, type: [QuestionProbeSignalRequirementDto] })
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => QuestionProbeSignalRequirementDto)
+  requirements?: QuestionProbeSignalRequirementDto[];
 }
 
 export class QuestionProbeScoringHintDto {
@@ -132,15 +168,11 @@ export class ValidateQuestionProbeDto {
   @IsNotEmpty()
   primaryQuestion!: string;
 
-  @ApiProperty({ example: ['Specific situation', 'Personal contribution'] })
+  @ApiProperty({ type: [QuestionProbeExpectedSignalDto] })
   @IsArray()
-  @IsString({ each: true })
-  expectedSignals!: string[];
-
-  @ApiProperty({ example: ['Blames others', 'No concrete action'] })
-  @IsArray()
-  @IsString({ each: true })
-  redFlags!: string[];
+  @ValidateNested({ each: true })
+  @Type(() => QuestionProbeExpectedSignalDto)
+  expectedSignals!: QuestionProbeExpectedSignalDto[];
 
   @ApiProperty({ type: [QuestionProbeScoringHintDto] })
   @IsArray()

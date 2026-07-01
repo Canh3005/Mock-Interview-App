@@ -338,7 +338,6 @@ describe('ProbeSelectorService', () => {
       heuristicProbe?.selectionScore ?? 0,
     );
   });
-
 });
 
 function _localized(title: string, displayQuestion: string) {
@@ -366,7 +365,7 @@ function _createProbe(overrides: Partial<QuestionProbe> = {}): QuestionProbe {
     difficulty: 4,
     intent: 'Assess backend fundamentals.',
     primaryQuestion: 'How do you debug async Node.js behavior?',
-    expectedSignals: ['Explains the event loop clearly'],
+    expectedSignals: [{ label: 'Explains the event loop clearly', relatedTrigger: null }],
     redFlags: ['Only repeats buzzwords'],
     scoringHints: [{ scoreBand: 'strong', description: 'Clear reasoning' }],
     followUps: [

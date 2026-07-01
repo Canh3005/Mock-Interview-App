@@ -1,28 +1,104 @@
 [
   {
     "code": "REST_API_DESIGN_JR_TECH_DEFINITION_CONSTRAINTS_001",
-    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack",
+      "stage_3_domain_knowledge"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "communication", "system_thinking"],
-    "techTags": ["rest", "http", "api_design"],
+    "competencies": [
+      "technical_fundamentals",
+      "communication",
+      "system_thinking"
+    ],
+    "techTags": [
+      "rest",
+      "http",
+      "api_design"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Check whether the candidate can define REST as an architectural style and explain the major constraints beyond simply saying HTTP JSON API.",
     "primaryQuestion": "What is REST, and what are the constraints of REST?",
     "expectedSignals": [
-      "Defines REST as an architectural style for networked systems built around resources, representations, uniform interfaces, and standard protocol semantics.",
-      "Distinguishes REST from a concrete protocol or library; HTTP is the most common implementation context, but REST itself is a style.",
-      "Names the core REST constraints: client-server separation, statelessness, cacheability, uniform interface, layered system, and optional code-on-demand.",
-      "Explains uniform interface through resource identifiers, representations, self-descriptive messages, and hypermedia as the engine of application state at a conceptual level.",
-      "Connects the constraints to practical API properties such as scalability, evolvability, independent client/server development, and intermediary support."
-    ],
-    "redFlags": [
-      "Says REST simply means using GET, POST, PUT, and DELETE with JSON.",
-      "Cannot name or explain statelessness, cacheability, or uniform interface.",
-      "Treats REST as a strict URL naming convention only.",
-      "Claims every HTTP API is automatically RESTful regardless of resource modeling and method semantics."
+      {
+        "label": "Defines REST as an architectural style for networked systems built around resources, representations, uniform interfaces, and standard protocol semantics.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "defines_rest_as_architectural_style",
+            "description": "States that REST is an architectural style rather than only JSON over HTTP."
+          },
+          {
+            "key": "mentions_resources_representations_uniform_interface",
+            "description": "Connects REST to resources, representations, uniform interface, and protocol semantics."
+          }
+        ]
+      },
+      {
+        "label": "Distinguishes REST from a concrete protocol or library; HTTP is the most common implementation context, but REST itself is a style.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "separates_rest_from_http_or_library",
+            "description": "Explains that REST is not a specific framework, route library, or protocol implementation."
+          },
+          {
+            "key": "places_http_as_common_context",
+            "description": "Acknowledges HTTP as the usual REST API context without reducing REST to HTTP endpoints."
+          }
+        ]
+      },
+      {
+        "label": "Names the core REST constraints: client-server separation, statelessness, cacheability, uniform interface, layered system, and optional code-on-demand.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "names_major_rest_constraints",
+            "description": "Names most core constraints: client-server, stateless, cacheable, uniform interface, layered system, and optional code-on-demand."
+          },
+          {
+            "key": "does_not_replace_constraints_with_crud_only",
+            "description": "Avoids treating CRUD routes alone as the full definition of REST constraints."
+          }
+        ]
+      },
+      {
+        "label": "Explains uniform interface through resource identifiers, representations, self-descriptive messages, and hypermedia as the engine of application state at a conceptual level.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "breaks_down_uniform_interface",
+            "description": "Explains uniform interface using resource identifiers, representations, and self-descriptive messages."
+          },
+          {
+            "key": "mentions_hypermedia_conceptually",
+            "description": "Mentions hypermedia/HATEOAS at a conceptual level without needing deep implementation detail."
+          }
+        ]
+      },
+      {
+        "label": "Connects the constraints to practical API properties such as scalability, evolvability, independent client/server development, and intermediary support.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "connects_constraints_to_scalability_or_intermediaries",
+            "description": "Explains how statelessness, cacheability, or layering supports scaling, caches, proxies, or gateways."
+          },
+          {
+            "key": "connects_constraints_to_evolvability",
+            "description": "Explains how uniform contracts and client-server separation support independent evolution."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -138,28 +214,105 @@
   },
   {
     "code": "REST_API_DESIGN_JR_TECH_STATELESS_002",
-    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack",
+      "stage_3_domain_knowledge"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "problem_solving"],
-    "techTags": ["rest", "http", "authentication", "session"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "problem_solving"
+    ],
+    "techTags": [
+      "rest",
+      "http",
+      "authentication",
+      "session"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Verify whether the candidate understands stateless REST requests, including the difference between application state on the client and resource state on the server.",
     "primaryQuestion": "What does stateless mean in REST?",
     "expectedSignals": [
-      "Explains that each request must contain enough information for the server to understand and process it without relying on server-side conversational session state from previous requests.",
-      "Clarifies that the server can still store resource state such as users, orders, and tokens; statelessness is about request context, not having no database.",
-      "Mentions that authentication context is sent with each request, for example through a bearer token, cookie, or signed credential, and then verified server-side.",
-      "Connects statelessness to horizontal scaling, load balancing, retry behavior, and simpler failure recovery.",
-      "Acknowledges trade-offs such as larger requests, repeated authentication checks, and careful token/session invalidation design."
-    ],
-    "redFlags": [
-      "Says stateless means the API cannot use a database.",
-      "Thinks the server must never remember anything about users or resources.",
-      "Relies on hidden in-memory session variables for request correctness without explaining sticky sessions or trade-offs.",
-      "Cannot explain how authentication works if every request is independent."
+      {
+        "label": "Explains that each request must contain enough information for the server to understand and process it without relying on server-side conversational session state from previous requests.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "defines_stateless_request_self_containment",
+            "description": "States that each request must carry the context needed to process it."
+          },
+          {
+            "key": "excludes_server_conversational_session_dependency",
+            "description": "Explains that the server should not depend on prior conversational request state to understand the next request."
+          }
+        ]
+      },
+      {
+        "label": "Clarifies that the server can still store resource state such as users, orders, and tokens; statelessness is about request context, not having no database.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "distinguishes_resource_state_from_session_state",
+            "description": "Separates persisted resource state from per-client conversational session state."
+          },
+          {
+            "key": "allows_database_or_token_storage",
+            "description": "Clarifies that stateless REST can still use databases, users, orders, tokens, or other stored resources."
+          }
+        ]
+      },
+      {
+        "label": "Mentions that authentication context is sent with each request, for example through a bearer token, cookie, or signed credential, and then verified server-side.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_auth_context_per_request",
+            "description": "States that credentials or auth context are provided on each request."
+          },
+          {
+            "key": "gives_auth_context_examples",
+            "description": "Gives examples such as bearer tokens, cookies, signed credentials, or API keys and server-side verification."
+          }
+        ]
+      },
+      {
+        "label": "Connects statelessness to horizontal scaling, load balancing, retry behavior, and simpler failure recovery.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "connects_statelessness_to_scaling",
+            "description": "Explains why stateless handling works better with multiple instances or load balancers."
+          },
+          {
+            "key": "connects_statelessness_to_retries_or_recovery",
+            "description": "Mentions retry behavior, failover, or simpler recovery when no instance-local session is required."
+          }
+        ]
+      },
+      {
+        "label": "Acknowledges trade-offs such as larger requests, repeated authentication checks, and careful token/session invalidation design.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "mentions_repeated_context_or_auth_cost",
+            "description": "Mentions costs such as larger requests or repeated auth verification."
+          },
+          {
+            "key": "mentions_invalidation_or_revocation_design",
+            "description": "Acknowledges token/session invalidation, revocation, expiry, or credential rotation complexity."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -181,7 +334,7 @@
     ],
     "followUps": [
       {
-        "trigger": "red_flag",
+        "trigger": "missing_context",
         "question": "If REST is stateless, can the server still store a user record in a database? Why?",
         "purpose": "Correct confusion between resource state and session state."
       },
@@ -275,29 +428,119 @@
   },
   {
     "code": "REST_API_DESIGN_JR_TECH_USERS_CRUD_URLS_003",
-    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack",
+      "stage_3_domain_knowledge"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "communication", "problem_solving"],
-    "techTags": ["rest", "http", "api_design", "crud"],
+    "competencies": [
+      "technical_fundamentals",
+      "communication",
+      "problem_solving"
+    ],
+    "techTags": [
+      "rest",
+      "http",
+      "api_design",
+      "crud"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Assess whether the candidate can design a resource-oriented CRUD URL set for users and map HTTP methods to resource operations correctly.",
     "primaryQuestion": "How would you design URLs for a users resource with full CRUD support?",
     "expectedSignals": [
-      "Uses a collection resource such as GET /users for listing and POST /users for creation.",
-      "Uses an item resource such as GET /users/:id for retrieval, PUT or PATCH /users/:id for update, and DELETE /users/:id for deletion.",
-      "Keeps actions out of URLs for normal CRUD and lets HTTP methods express the operation.",
-      "Uses query parameters for filtering, searching, sorting, field selection, and pagination rather than inventing action paths.",
-      "Handles nested resources carefully, for example GET /users/:id/orders when orders are scoped to a user, while avoiding overly deep URL hierarchies.",
-      "Mentions appropriate status codes such as 201 for creation, 200 for read/update with body, 204 for successful delete with no body, 400 for invalid input, and 404 for missing resources."
-    ],
-    "redFlags": [
-      "Designs CRUD as /getUsers, /createUser, /updateUser, and /deleteUser.",
-      "Uses POST for every operation without explaining why.",
-      "Puts filters and pagination into path segments instead of query parameters.",
-      "Creates deeply nested routes that expose database structure rather than resource relationships."
+      {
+        "label": "Uses a collection resource such as GET /users for listing and POST /users for creation.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "models_users_collection_resource",
+            "description": "Uses /users as the collection resource."
+          },
+          {
+            "key": "maps_get_and_post_collection",
+            "description": "Maps GET /users to list and POST /users to create."
+          }
+        ]
+      },
+      {
+        "label": "Uses an item resource such as GET /users/:id for retrieval, PUT or PATCH /users/:id for update, and DELETE /users/:id for deletion.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "models_user_item_resource",
+            "description": "Uses /users/:id or an equivalent stable item URI for a single user."
+          },
+          {
+            "key": "maps_item_methods_to_read_update_delete",
+            "description": "Maps GET, PUT/PATCH, and DELETE on the item URI to retrieve, update, and delete."
+          }
+        ]
+      },
+      {
+        "label": "Keeps actions out of URLs for normal CRUD and lets HTTP methods express the operation.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "avoids_crud_action_verbs_in_paths",
+            "description": "Avoids paths such as /getUsers, /createUser, or /deleteUser for normal CRUD."
+          },
+          {
+            "key": "uses_http_method_for_operation",
+            "description": "Explains that HTTP methods express the CRUD operation."
+          }
+        ]
+      },
+      {
+        "label": "Uses query parameters for filtering, searching, sorting, field selection, and pagination rather than inventing action paths.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "uses_query_params_for_collection_modifiers",
+            "description": "Places search, filters, sorting, fields, page, or limit in query parameters."
+          },
+          {
+            "key": "keeps_modifiers_on_collection_endpoint",
+            "description": "Avoids creating action paths such as /users/searchByEmail for ordinary list modifiers."
+          }
+        ]
+      },
+      {
+        "label": "Handles nested resources carefully, for example GET /users/:id/orders when orders are scoped to a user, while avoiding overly deep URL hierarchies.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "uses_nested_resource_when_scope_is_real",
+            "description": "Uses nested URLs when the child resource is naturally scoped by the parent."
+          },
+          {
+            "key": "avoids_overly_deep_hierarchies",
+            "description": "Mentions avoiding deeply nested paths when a query parameter or top-level resource is clearer."
+          }
+        ]
+      },
+      {
+        "label": "Mentions appropriate status codes such as 201 for creation, 200 for read/update with body, 204 for successful delete with no body, 400 for invalid input, and 404 for missing resources.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "maps_success_status_codes",
+            "description": "Uses appropriate success codes such as 201, 200, or 204 for create/read/update/delete cases."
+          },
+          {
+            "key": "maps_client_error_status_codes",
+            "description": "Mentions client error codes such as 400 for invalid input and 404 for missing resources."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -413,29 +656,118 @@
   },
   {
     "code": "REST_API_DESIGN_JR_TECH_ROUTE_NAMING_004",
-    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack",
+      "stage_3_domain_knowledge"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "communication", "collaboration"],
-    "techTags": ["rest", "http", "api_design"],
+    "competencies": [
+      "technical_fundamentals",
+      "communication",
+      "collaboration"
+    ],
+    "techTags": [
+      "rest",
+      "http",
+      "api_design"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Evaluate whether the candidate knows common REST route naming conventions and can explain the reason behind consistency rules.",
     "primaryQuestion": "What are common REST API route naming rules such as plural nouns, lowercase paths, and avoiding verbs?",
     "expectedSignals": [
-      "Uses nouns for resources rather than action verbs, for example /users rather than /getUsers.",
-      "Uses plural names for collections and stable item identifiers for single resources, for example /users/:id.",
-      "Keeps paths lowercase, readable, predictable, and consistent, commonly using hyphens when a separator is needed.",
-      "Uses query parameters for optional modifiers such as filters, search, sort, pagination, expansion, and field selection.",
-      "Avoids exposing internal implementation details such as table names, service names, or storage layout.",
-      "Recognizes exceptions for domain actions that are not simple CRUD, and models them deliberately as subresources or command endpoints when needed."
-    ],
-    "redFlags": [
-      "Uses inconsistent singular and plural forms without a rule.",
-      "Uses verbs in every path even for basic resource operations.",
-      "Mixes uppercase, snake_case, camelCase, and hyphenated paths arbitrarily.",
-      "Treats naming conventions as more important than correct method semantics and backward compatibility."
+      {
+        "label": "Uses nouns for resources rather than action verbs, for example /users rather than /getUsers.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "uses_resource_nouns",
+            "description": "Uses noun-based paths for resources."
+          },
+          {
+            "key": "rewrites_action_verb_examples",
+            "description": "Can rewrite action paths such as /getUsers into resource-oriented routes."
+          }
+        ]
+      },
+      {
+        "label": "Uses plural names for collections and stable item identifiers for single resources, for example /users/:id.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "uses_plural_collection_names",
+            "description": "Uses plural names such as /users for collections."
+          },
+          {
+            "key": "uses_stable_item_identifiers",
+            "description": "Uses stable identifiers such as /users/:id for individual resources."
+          }
+        ]
+      },
+      {
+        "label": "Keeps paths lowercase, readable, predictable, and consistent, commonly using hyphens when a separator is needed.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "keeps_paths_lowercase_readable",
+            "description": "Mentions lowercase, readable, predictable paths."
+          },
+          {
+            "key": "uses_consistent_word_separator",
+            "description": "Mentions a consistent separator such as hyphens when multi-word path segments are needed."
+          }
+        ]
+      },
+      {
+        "label": "Uses query parameters for optional modifiers such as filters, search, sort, pagination, expansion, and field selection.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "uses_query_params_for_optional_modifiers",
+            "description": "Uses query parameters for filters, search, sort, pagination, expansion, or field selection."
+          },
+          {
+            "key": "keeps_optional_modifiers_out_of_path_names",
+            "description": "Avoids baking every optional modifier into separate route paths."
+          }
+        ]
+      },
+      {
+        "label": "Avoids exposing internal implementation details such as table names, service names, or storage layout.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "hides_internal_table_or_service_names",
+            "description": "Avoids route names based on database tables, service classes, or storage internals."
+          },
+          {
+            "key": "models_public_domain_resources",
+            "description": "Uses stable public domain concepts instead of implementation-specific names."
+          }
+        ]
+      },
+      {
+        "label": "Recognizes exceptions for domain actions that are not simple CRUD, and models them deliberately as subresources or command endpoints when needed.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "recognizes_non_crud_domain_actions",
+            "description": "Acknowledges actions such as suspend, approve, publish, or reset that do not fit pure CRUD neatly."
+          },
+          {
+            "key": "models_actions_deliberately",
+            "description": "Suggests deliberate modeling such as subresources, state transitions, or command endpoints without making the whole API RPC-style."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -551,29 +883,119 @@
   },
   {
     "code": "REST_API_DESIGN_JR_TECH_STATUS_CODES_005",
-    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack",
+      "stage_3_domain_knowledge"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "problem_solving", "communication"],
-    "techTags": ["rest", "http", "status_codes", "errors"],
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving",
+      "communication"
+    ],
+    "techTags": [
+      "rest",
+      "http",
+      "status_codes",
+      "errors"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Check whether the candidate can choose appropriate HTTP status codes for common success, client error, auth, and server error scenarios.",
     "primaryQuestion": "Which HTTP status codes should be used for created successfully, not found, server error, and unauthorized situations?",
     "expectedSignals": [
-      "Uses 201 Created when a resource is successfully created, ideally with Location header or the created representation when appropriate.",
-      "Uses 404 Not Found when the target resource does not exist or should not be revealed.",
-      "Uses 500 Internal Server Error for unexpected server failures, while recognizing more specific 5xx codes may be appropriate for gateway or dependency failures.",
-      "Distinguishes 401 Unauthorized as unauthenticated or invalid credentials from 403 Forbidden as authenticated but not allowed.",
-      "Mentions common adjacent codes: 200 OK, 204 No Content, 400 Bad Request, 409 Conflict, 422 Unprocessable Content, 429 Too Many Requests.",
-      "Explains that response body should provide a stable error code/message for clients without leaking internals."
-    ],
-    "redFlags": [
-      "Returns 200 for errors and puts success false in the body.",
-      "Confuses 401 and 403.",
-      "Uses 500 for validation failures or user mistakes.",
-      "Leaks stack traces or database errors in client-facing responses."
+      {
+        "label": "Uses 201 Created when a resource is successfully created, ideally with Location header or the created representation when appropriate.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "uses_201_for_resource_creation",
+            "description": "Uses 201 Created for successful resource creation."
+          },
+          {
+            "key": "mentions_location_or_created_representation",
+            "description": "Mentions returning a Location header or created representation when appropriate."
+          }
+        ]
+      },
+      {
+        "label": "Uses 404 Not Found when the target resource does not exist or should not be revealed.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "uses_404_for_missing_resource",
+            "description": "Uses 404 when the target resource does not exist."
+          },
+          {
+            "key": "mentions_not_revealing_hidden_resources",
+            "description": "Mentions that 404 can be used when existence should not be revealed."
+          }
+        ]
+      },
+      {
+        "label": "Uses 500 Internal Server Error for unexpected server failures, while recognizing more specific 5xx codes may be appropriate for gateway or dependency failures.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "uses_500_for_unexpected_server_failure",
+            "description": "Uses 500 for unexpected server-side failures."
+          },
+          {
+            "key": "mentions_specific_5xx_when_applicable",
+            "description": "Recognizes cases for more specific 5xx codes such as gateway or dependency failures."
+          }
+        ]
+      },
+      {
+        "label": "Distinguishes 401 Unauthorized as unauthenticated or invalid credentials from 403 Forbidden as authenticated but not allowed.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "defines_401_as_authentication_failure",
+            "description": "Explains 401 as missing, invalid, or unauthenticated credentials."
+          },
+          {
+            "key": "defines_403_as_authorization_failure",
+            "description": "Explains 403 as authenticated but not permitted for the requested action."
+          }
+        ]
+      },
+      {
+        "label": "Mentions common adjacent codes: 200 OK, 204 No Content, 400 Bad Request, 409 Conflict, 422 Unprocessable Content, 429 Too Many Requests.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "names_common_success_and_client_error_codes",
+            "description": "Mentions adjacent codes such as 200, 204, 400, 409, 422, or 429."
+          },
+          {
+            "key": "maps_adjacent_codes_to_scenarios",
+            "description": "Connects at least some adjacent codes to concrete scenarios such as validation, conflict, or rate limiting."
+          }
+        ]
+      },
+      {
+        "label": "Explains that response body should provide a stable error code/message for clients without leaking internals.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "uses_stable_client_error_body",
+            "description": "Mentions stable machine-readable error code and human-readable message for clients."
+          },
+          {
+            "key": "avoids_leaking_internal_details",
+            "description": "Warns against exposing stack traces, SQL errors, or sensitive internals in error responses."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -595,7 +1017,7 @@
     ],
     "followUps": [
       {
-        "trigger": "red_flag",
+        "trigger": "missing_consequence",
         "question": "What is the difference between 401 and 403 in an authenticated API?",
         "purpose": "Check auth status code precision."
       },
@@ -689,29 +1111,121 @@
   },
   {
     "code": "REST_API_DESIGN_MID_TRADE_POST_PUT_PATCH_006",
-    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior", "mid", "senior"],
+    "stages": [
+      "stage_2_tech_stack",
+      "stage_3_domain_knowledge"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior",
+      "mid",
+      "senior"
+    ],
     "type": "trade_off",
-    "competencies": ["technical_fundamentals", "trade_off_analysis", "problem_solving"],
-    "techTags": ["rest", "http", "put", "patch", "post"],
+    "competencies": [
+      "technical_fundamentals",
+      "trade_off_analysis",
+      "problem_solving"
+    ],
+    "techTags": [
+      "rest",
+      "http",
+      "put",
+      "patch",
+      "post"
+    ],
     "difficulty": 3,
     "conversationDepth": "mid",
     "intent": "Evaluate whether the candidate can distinguish POST, PUT, and PATCH by semantics, idempotency, resource target, and update behavior.",
     "primaryQuestion": "What is the difference between POST, PUT, and PATCH, and when would you use each?",
     "expectedSignals": [
-      "Explains POST as submitting data to a collection or processing endpoint where the server decides the result, commonly used for create when the server assigns the id.",
-      "Explains PUT as replacing or creating the full representation at a known resource URI and being idempotent when used correctly.",
-      "Explains PATCH as applying a partial modification to an existing resource and notes that idempotency depends on the patch document and server semantics.",
-      "Mentions that PUT usually requires the full resource representation or a clearly documented replacement contract.",
-      "Mentions partial update formats such as JSON Merge Patch or JSON Patch when precision matters.",
-      "Gives examples such as POST /users, PUT /users/:id, and PATCH /users/:id."
-    ],
-    "redFlags": [
-      "Says POST, PUT, and PATCH are interchangeable.",
-      "Uses PATCH for full replacement without documenting behavior.",
-      "Says PATCH is always idempotent or never idempotent without nuance.",
-      "Uses PUT for non-idempotent commands such as incrementing a counter without a stable replacement semantics."
+      {
+        "label": "Explains POST as submitting data to a collection or processing endpoint where the server decides the result, commonly used for create when the server assigns the id.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "defines_post_collection_or_processing_semantics",
+            "description": "Explains POST as submitting data to a collection or processing endpoint where the server decides the resulting resource/action."
+          },
+          {
+            "key": "uses_post_for_server_assigned_create",
+            "description": "Connects POST to creation when the server assigns the new resource id."
+          }
+        ]
+      },
+      {
+        "label": "Explains PUT as replacing or creating the full representation at a known resource URI and being idempotent when used correctly.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "defines_put_known_resource_replacement",
+            "description": "Explains PUT as replacing or creating a representation at a known resource URI."
+          },
+          {
+            "key": "connects_put_to_idempotent_retries",
+            "description": "States that correctly implemented PUT is idempotent and safe to retry for intended state."
+          }
+        ]
+      },
+      {
+        "label": "Explains PATCH as applying a partial modification to an existing resource and notes that idempotency depends on the patch document and server semantics.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "defines_patch_partial_update",
+            "description": "Explains PATCH as a partial modification rather than full replacement."
+          },
+          {
+            "key": "qualifies_patch_idempotency",
+            "description": "Notes that PATCH may or may not be idempotent depending on the patch document and server behavior."
+          }
+        ]
+      },
+      {
+        "label": "Mentions that PUT usually requires the full resource representation or a clearly documented replacement contract.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "states_put_full_representation_expectation",
+            "description": "States that PUT usually expects the full resource representation."
+          },
+          {
+            "key": "warns_partial_put_can_clear_fields",
+            "description": "Explains that sending only changed fields with PUT can unintentionally remove or reset omitted fields unless documented otherwise."
+          }
+        ]
+      },
+      {
+        "label": "Mentions partial update formats such as JSON Merge Patch or JSON Patch when precision matters.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "names_partial_update_format",
+            "description": "Mentions JSON Merge Patch, JSON Patch, or another documented partial update format."
+          },
+          {
+            "key": "connects_format_to_precision",
+            "description": "Explains why a formal patch format helps define partial update semantics precisely."
+          }
+        ]
+      },
+      {
+        "label": "Gives examples such as POST /users, PUT /users/:id, and PATCH /users/:id.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "gives_post_users_example",
+            "description": "Uses a concrete POST /users style example for creation."
+          },
+          {
+            "key": "gives_put_patch_item_examples",
+            "description": "Uses concrete PUT /users/:id and PATCH /users/:id style examples for item updates."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -827,29 +1341,120 @@
   },
   {
     "code": "REST_API_DESIGN_MID_TRADE_VERSIONING_007",
-    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["mid", "senior"],
+    "stages": [
+      "stage_2_tech_stack",
+      "stage_3_domain_knowledge"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "mid",
+      "senior"
+    ],
     "type": "trade_off",
-    "competencies": ["trade_off_analysis", "system_thinking", "communication", "ownership"],
-    "techTags": ["rest", "api_design", "versioning", "compatibility"],
+    "competencies": [
+      "trade_off_analysis",
+      "system_thinking",
+      "communication",
+      "ownership"
+    ],
+    "techTags": [
+      "rest",
+      "api_design",
+      "versioning",
+      "compatibility"
+    ],
     "difficulty": 3,
     "conversationDepth": "mid",
     "intent": "Assess whether the candidate understands API versioning as a compatibility strategy and can compare versioning approaches with operational trade-offs.",
     "primaryQuestion": "What is API versioning, and what are common ways to version a REST API?",
     "expectedSignals": [
-      "Defines API versioning as a strategy for evolving contracts while protecting existing clients from breaking changes.",
-      "Distinguishes breaking changes from non-breaking additive changes and mentions deprecation policy.",
-      "Describes URI path versioning such as /v1/users, header versioning, media type versioning, query parameter versioning, and hostname/subdomain versioning.",
-      "Compares trade-offs: path versions are visible and easy to route, headers/media types are cleaner but less discoverable, query parameters are simple but often less preferred for major versions.",
-      "Mentions contract documentation, changelogs, sunset dates, monitoring client adoption, and compatibility tests.",
-      "Avoids versioning every small change and recommends stable contracts plus additive evolution when possible."
-    ],
-    "redFlags": [
-      "Versions only because the code changed internally.",
-      "Breaks existing clients without deprecation or migration path.",
-      "Cannot distinguish additive fields from breaking response changes.",
-      "Mixes multiple versioning strategies inconsistently across endpoints."
+      {
+        "label": "Defines API versioning as a strategy for evolving contracts while protecting existing clients from breaking changes.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "defines_versioning_as_contract_evolution",
+            "description": "Defines versioning as a way to evolve API contracts over time."
+          },
+          {
+            "key": "connects_versioning_to_client_compatibility",
+            "description": "Explains that versioning protects existing clients from breaking changes."
+          }
+        ]
+      },
+      {
+        "label": "Distinguishes breaking changes from non-breaking additive changes and mentions deprecation policy.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "distinguishes_breaking_from_additive_changes",
+            "description": "Separates breaking changes from non-breaking additive changes."
+          },
+          {
+            "key": "mentions_deprecation_policy",
+            "description": "Mentions deprecation windows, migration guidance, or compatibility policy."
+          }
+        ]
+      },
+      {
+        "label": "Describes URI path versioning such as /v1/users, header versioning, media type versioning, query parameter versioning, and hostname/subdomain versioning.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "names_path_versioning",
+            "description": "Describes URI path versioning such as /v1/users."
+          },
+          {
+            "key": "names_alternative_versioning_strategies",
+            "description": "Mentions header, media type, query parameter, hostname, or subdomain versioning."
+          }
+        ]
+      },
+      {
+        "label": "Compares trade-offs: path versions are visible and easy to route, headers/media types are cleaner but less discoverable, query parameters are simple but often less preferred for major versions.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "compares_path_versioning_tradeoffs",
+            "description": "Explains path versioning trade-offs such as visibility, routing simplicity, and URL permanence."
+          },
+          {
+            "key": "compares_header_or_query_tradeoffs",
+            "description": "Explains trade-offs of headers/media types or query parameters such as discoverability, cleanliness, and client tooling."
+          }
+        ]
+      },
+      {
+        "label": "Mentions contract documentation, changelogs, sunset dates, monitoring client adoption, and compatibility tests.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "mentions_contract_docs_and_changelog",
+            "description": "Mentions OpenAPI/contract docs, changelogs, or migration notes."
+          },
+          {
+            "key": "mentions_sunset_and_adoption_monitoring",
+            "description": "Mentions sunset dates, client adoption monitoring, traffic metrics, or compatibility tests."
+          }
+        ]
+      },
+      {
+        "label": "Avoids versioning every small change and recommends stable contracts plus additive evolution when possible.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "avoids_versioning_every_minor_change",
+            "description": "States that small additive changes do not always require a new major version."
+          },
+          {
+            "key": "prefers_stable_additive_evolution",
+            "description": "Recommends stable contracts and backward-compatible additions when possible."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -965,29 +1570,120 @@
   },
   {
     "code": "REST_API_DESIGN_MID_TECH_PAGINATION_008",
-    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior", "mid", "senior"],
+    "stages": [
+      "stage_2_tech_stack",
+      "stage_3_domain_knowledge"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior",
+      "mid",
+      "senior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "problem_solving"],
-    "techTags": ["rest", "pagination", "database", "api_design"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "problem_solving"
+    ],
+    "techTags": [
+      "rest",
+      "pagination",
+      "database",
+      "api_design"
+    ],
     "difficulty": 3,
     "conversationDepth": "mid",
     "intent": "Evaluate whether the candidate can design REST pagination with clear parameters, metadata, stable ordering, and performance awareness.",
     "primaryQuestion": "How would you implement pagination in a REST API?",
     "expectedSignals": [
-      "Describes offset/page pagination using parameters such as page and limit or offset and limit, including total count when feasible.",
-      "Describes cursor/keyset pagination using cursor and limit for high-volume or frequently changing datasets.",
-      "Explains the need for deterministic sorting, stable tie-breakers, maximum page size, and validation of pagination parameters.",
-      "Includes response metadata such as nextCursor, previousCursor, page, limit, total, hasNext, or links depending on the strategy.",
-      "Mentions performance trade-offs: large offsets can be slow and inconsistent under concurrent writes, while cursors are more complex but scale better.",
-      "Covers client behavior such as preserving filters/sort in links and handling empty pages."
-    ],
-    "redFlags": [
-      "Returns all rows and lets the frontend paginate.",
-      "Uses offset pagination for very large changing tables without discussing consistency or performance.",
-      "Does not enforce maximum limit.",
-      "Returns pagination metadata that does not match the actual filters and sort."
+      {
+        "label": "Describes offset/page pagination using parameters such as page and limit or offset and limit, including total count when feasible.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "describes_offset_or_page_parameters",
+            "description": "Describes page/limit or offset/limit parameters."
+          },
+          {
+            "key": "mentions_total_count_when_feasible",
+            "description": "Mentions total count or page metadata when feasible and not too expensive."
+          }
+        ]
+      },
+      {
+        "label": "Describes cursor/keyset pagination using cursor and limit for high-volume or frequently changing datasets.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "describes_cursor_or_keyset_parameters",
+            "description": "Describes cursor/keyset pagination using cursor and limit or a last-seen key."
+          },
+          {
+            "key": "connects_cursor_to_large_or_changing_data",
+            "description": "Explains why cursor pagination helps with high-volume or frequently changing datasets."
+          }
+        ]
+      },
+      {
+        "label": "Explains the need for deterministic sorting, stable tie-breakers, maximum page size, and validation of pagination parameters.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "requires_stable_sort_and_tiebreaker",
+            "description": "Mentions deterministic sorting and a stable tie-breaker such as id when sort values can repeat."
+          },
+          {
+            "key": "validates_limit_and_page_params",
+            "description": "Mentions maximum page size and validation of page, offset, cursor, or limit parameters."
+          }
+        ]
+      },
+      {
+        "label": "Includes response metadata such as nextCursor, previousCursor, page, limit, total, hasNext, or links depending on the strategy.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "includes_pagination_metadata",
+            "description": "Includes metadata such as page, limit, total, hasNext, nextCursor, previousCursor, or links."
+          },
+          {
+            "key": "matches_metadata_to_strategy",
+            "description": "Uses metadata appropriate to offset/page or cursor pagination rather than mixing contracts carelessly."
+          }
+        ]
+      },
+      {
+        "label": "Mentions performance trade-offs: large offsets can be slow and inconsistent under concurrent writes, while cursors are more complex but scale better.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "explains_large_offset_cost",
+            "description": "Mentions that large offsets can become slow or inconsistent under concurrent writes."
+          },
+          {
+            "key": "explains_cursor_complexity_and_scale",
+            "description": "Mentions that cursors are more complex but scale and remain more consistent for changing data."
+          }
+        ]
+      },
+      {
+        "label": "Covers client behavior such as preserving filters/sort in links and handling empty pages.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "preserves_filters_and_sort_in_navigation",
+            "description": "Mentions preserving filters and sort criteria in next/previous links or cursor state."
+          },
+          {
+            "key": "handles_empty_or_end_pages",
+            "description": "Mentions empty result pages, end-of-list behavior, or hasNext false."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1103,29 +1799,120 @@
   },
   {
     "code": "REST_API_DESIGN_MID_TECH_RESPONSE_FORMAT_009",
-    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior", "mid", "senior"],
+    "stages": [
+      "stage_2_tech_stack",
+      "stage_3_domain_knowledge"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior",
+      "mid",
+      "senior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "communication", "system_thinking"],
-    "techTags": ["rest", "http", "api_contract", "errors"],
+    "competencies": [
+      "technical_fundamentals",
+      "communication",
+      "system_thinking"
+    ],
+    "techTags": [
+      "rest",
+      "http",
+      "api_contract",
+      "errors"
+    ],
     "difficulty": 3,
     "conversationDepth": "mid",
     "intent": "Assess whether the candidate can describe a consistent REST response contract for success, errors, metadata, and traceability without over-wrapping HTTP semantics.",
     "primaryQuestion": "What should a standard response format for a REST API look like?",
     "expectedSignals": [
-      "Defines a consistent success shape such as data plus optional meta and links for collection responses.",
-      "Defines a consistent error shape with stable machine-readable code, human-readable message, optional field errors, requestId or traceId, and no sensitive internals.",
-      "Uses HTTP status codes as the primary success/error signal instead of always returning 200 with success flags.",
-      "Mentions response consistency across endpoints while allowing exceptions such as 204 No Content, file downloads, streaming, or problem details.",
-      "Includes metadata for pagination, filtering, sorting, and timestamps where useful.",
-      "Mentions content type, versioning considerations, backward compatibility, and documentation in OpenAPI."
-    ],
-    "redFlags": [
-      "Always returns 200 and encodes the real status only in the body.",
-      "Leaks stack traces, SQL errors, or internal service names in errors.",
-      "Changes response shape endpoint by endpoint without documentation.",
-      "Wraps every response mechanically, including 204 or binary streams, without considering HTTP semantics."
+      {
+        "label": "Defines a consistent success shape such as data plus optional meta and links for collection responses.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "defines_success_data_shape",
+            "description": "Defines a consistent success response using data or a similarly clear payload field."
+          },
+          {
+            "key": "adds_meta_or_links_for_collections",
+            "description": "Mentions optional meta and links for collections where useful."
+          }
+        ]
+      },
+      {
+        "label": "Defines a consistent error shape with stable machine-readable code, human-readable message, optional field errors, requestId or traceId, and no sensitive internals.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "defines_machine_readable_error_contract",
+            "description": "Includes stable error code and human-readable message."
+          },
+          {
+            "key": "includes_field_errors_trace_and_no_internals",
+            "description": "Mentions field errors, requestId/traceId, and avoiding sensitive internals."
+          }
+        ]
+      },
+      {
+        "label": "Uses HTTP status codes as the primary success/error signal instead of always returning 200 with success flags.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "uses_http_status_as_primary_signal",
+            "description": "States that HTTP status code should carry the primary success/error semantics."
+          },
+          {
+            "key": "rejects_always_200_error_contract",
+            "description": "Avoids returning 200 for all errors with only a success flag in the body."
+          }
+        ]
+      },
+      {
+        "label": "Mentions response consistency across endpoints while allowing exceptions such as 204 No Content, file downloads, streaming, or problem details.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "values_consistency_across_endpoints",
+            "description": "Explains why consistent response shapes help clients."
+          },
+          {
+            "key": "allows_http_semantic_exceptions",
+            "description": "Mentions exceptions such as 204, file downloads, streaming, or RFC problem details."
+          }
+        ]
+      },
+      {
+        "label": "Includes metadata for pagination, filtering, sorting, and timestamps where useful.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "includes_collection_metadata",
+            "description": "Mentions metadata for pagination, filtering, sorting, counts, or cursors."
+          },
+          {
+            "key": "uses_metadata_when_useful_not_everywhere",
+            "description": "Keeps metadata purposeful instead of forcing it into every response."
+          }
+        ]
+      },
+      {
+        "label": "Mentions content type, versioning considerations, backward compatibility, and documentation in OpenAPI.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "mentions_content_type_and_openapi",
+            "description": "Mentions content type and documenting the contract in OpenAPI or similar."
+          },
+          {
+            "key": "mentions_versioning_and_backward_compatibility",
+            "description": "Mentions keeping response changes backward compatible or versioned."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1241,29 +2028,120 @@
   },
   {
     "code": "REST_API_DESIGN_JR_TECH_CORS_010",
-    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack",
+      "stage_3_domain_knowledge"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "problem_solving", "system_thinking"],
-    "techTags": ["rest", "http", "cors", "browser_security", "express"],
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving",
+      "system_thinking"
+    ],
+    "techTags": [
+      "rest",
+      "http",
+      "cors",
+      "browser_security",
+      "express"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Verify whether the candidate understands CORS as a browser-enforced cross-origin policy and can configure it safely for REST APIs.",
     "primaryQuestion": "What is CORS, and why does a REST API need to handle it?",
     "expectedSignals": [
-      "Defines CORS as Cross-Origin Resource Sharing, a browser mechanism that controls whether frontend JavaScript from one origin can read responses from another origin.",
-      "Explains origin as scheme, host, and port, and distinguishes CORS from server-to-server access control.",
-      "Mentions preflight OPTIONS requests for non-simple methods, custom headers, credentials, or content types.",
-      "Describes key headers such as Access-Control-Allow-Origin, Allow-Methods, Allow-Headers, Allow-Credentials, and Vary: Origin.",
-      "Explains safe configuration: allow only trusted origins, be careful with credentials, and avoid wildcard origins with cookies or authorization-sensitive APIs.",
-      "Mentions Express implementation with the cors middleware or explicit middleware, including route-specific policies."
-    ],
-    "redFlags": [
-      "Says CORS is an authentication or authorization mechanism.",
-      "Thinks CORS protects the API from all clients, including curl or backend services.",
-      "Uses wildcard origins and credentials together without understanding the risk.",
-      "Ignores OPTIONS preflight handling."
+      {
+        "label": "Defines CORS as Cross-Origin Resource Sharing, a browser mechanism that controls whether frontend JavaScript from one origin can read responses from another origin.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "defines_cors_browser_read_control",
+            "description": "Defines CORS as browser-enforced cross-origin response read control."
+          },
+          {
+            "key": "connects_cors_to_frontend_javascript",
+            "description": "Explains the browser JavaScript scenario of one origin calling another origin."
+          }
+        ]
+      },
+      {
+        "label": "Explains origin as scheme, host, and port, and distinguishes CORS from server-to-server access control.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "defines_origin_components",
+            "description": "Defines origin using scheme, host, and port."
+          },
+          {
+            "key": "separates_cors_from_direct_api_access_control",
+            "description": "States that CORS does not stop backend services, curl, Postman, or direct clients from calling the API."
+          }
+        ]
+      },
+      {
+        "label": "Mentions preflight OPTIONS requests for non-simple methods, custom headers, credentials, or content types.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_preflight_options",
+            "description": "Mentions browser preflight OPTIONS requests."
+          },
+          {
+            "key": "names_preflight_triggers",
+            "description": "Names triggers such as non-simple methods, custom headers, credentials, Authorization, or content types."
+          }
+        ]
+      },
+      {
+        "label": "Describes key headers such as Access-Control-Allow-Origin, Allow-Methods, Allow-Headers, Allow-Credentials, and Vary: Origin.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "names_access_control_allow_origin",
+            "description": "Mentions Access-Control-Allow-Origin."
+          },
+          {
+            "key": "names_other_cors_headers",
+            "description": "Mentions headers such as Allow-Methods, Allow-Headers, Allow-Credentials, or Vary: Origin."
+          }
+        ]
+      },
+      {
+        "label": "Explains safe configuration: allow only trusted origins, be careful with credentials, and avoid wildcard origins with cookies or authorization-sensitive APIs.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "uses_trusted_origin_allowlist",
+            "description": "Recommends allowing only trusted origins for sensitive APIs."
+          },
+          {
+            "key": "warns_wildcard_with_credentials",
+            "description": "Warns against wildcard origins with cookies, credentials, or authorization-sensitive APIs."
+          }
+        ]
+      },
+      {
+        "label": "Mentions Express implementation with the cors middleware or explicit middleware, including route-specific policies.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_express_cors_middleware",
+            "description": "Mentions using the cors package or explicit middleware in Express."
+          },
+          {
+            "key": "mentions_route_specific_cors_policy",
+            "description": "Mentions that CORS policy can be app-wide or route-specific depending on endpoint sensitivity."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1285,7 +2163,7 @@
     ],
     "followUps": [
       {
-        "trigger": "red_flag",
+        "trigger": "missing_consequence",
         "question": "Can a backend service bypass CORS by calling the API directly? What does that imply?",
         "purpose": "Check browser-only enforcement understanding."
       },
@@ -1379,29 +2257,121 @@
   },
   {
     "code": "REST_API_DESIGN_JR_TECH_EXPRESS_VALIDATION_011",
-    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack",
+      "stage_3_domain_knowledge"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "problem_solving", "system_thinking"],
-    "techTags": ["express", "rest", "validation", "zod", "joi", "express_validator"],
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving",
+      "system_thinking"
+    ],
+    "techTags": [
+      "express",
+      "rest",
+      "validation",
+      "zod",
+      "joi",
+      "express_validator"
+    ],
     "difficulty": 2,
     "conversationDepth": "mid",
     "intent": "Check whether the candidate can validate Express request bodies safely using common validation libraries and return consistent client errors.",
     "primaryQuestion": "How do you validate a request body in Express using tools such as express-validator, Joi, or Zod?",
     "expectedSignals": [
-      "Treats req.body as untrusted input even after express.json parses it.",
-      "Describes registering express.json before routes that need req.body and handling JSON parse errors.",
-      "Shows a validation middleware pattern that checks required fields, types, formats, lengths, enum values, and unknown fields before controller logic.",
-      "Compares library styles: express-validator uses route-level validation chains, Joi/Zod use schemas and parse/validate results.",
-      "Returns 400 or 422 with a consistent error response containing field-level errors rather than allowing invalid data into business logic.",
-      "Mentions sharing schemas/types where appropriate, sanitization when needed, and avoiding mutation surprises."
-    ],
-    "redFlags": [
-      "Only checks required fields manually inside controllers.",
-      "Trusts req.body because it came from JSON parser.",
-      "Lets validation exceptions crash the process or become 500 responses.",
-      "Uses TypeScript types alone as runtime validation."
+      {
+        "label": "Treats req.body as untrusted input even after express.json parses it.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "states_req_body_untrusted_after_parse",
+            "description": "States that parsed req.body is still client-controlled and untrusted."
+          },
+          {
+            "key": "distinguishes_runtime_validation_from_types",
+            "description": "Explains that TypeScript types or interfaces do not validate runtime request data."
+          }
+        ]
+      },
+      {
+        "label": "Describes registering express.json before routes that need req.body and handling JSON parse errors.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "places_json_parser_before_routes",
+            "description": "States that express.json must be registered before routes that read req.body."
+          },
+          {
+            "key": "handles_syntax_parse_errors_separately",
+            "description": "Mentions handling syntactically invalid JSON separately from schema validation failures."
+          }
+        ]
+      },
+      {
+        "label": "Shows a validation middleware pattern that checks required fields, types, formats, lengths, enum values, and unknown fields before controller logic.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "validates_required_types_and_formats",
+            "description": "Checks required fields, types, formats, length/range, enums, or unknown fields."
+          },
+          {
+            "key": "runs_validation_before_controller_logic",
+            "description": "Places validation middleware before controller/business logic."
+          }
+        ]
+      },
+      {
+        "label": "Compares library styles: express-validator uses route-level validation chains, Joi/Zod use schemas and parse/validate results.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "describes_express_validator_chain_style",
+            "description": "Mentions express-validator route-level validation chains or result extraction."
+          },
+          {
+            "key": "describes_schema_parser_style",
+            "description": "Mentions Joi/Zod schema parsing or validation result handling."
+          }
+        ]
+      },
+      {
+        "label": "Returns 400 or 422 with a consistent error response containing field-level errors rather than allowing invalid data into business logic.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "uses_client_error_for_validation_failure",
+            "description": "Uses 400 or 422 for body validation failures."
+          },
+          {
+            "key": "returns_field_level_errors",
+            "description": "Returns a consistent error response with field-level details instead of passing invalid data onward."
+          }
+        ]
+      },
+      {
+        "label": "Mentions sharing schemas/types where appropriate, sanitization when needed, and avoiding mutation surprises.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_schema_or_type_reuse",
+            "description": "Mentions sharing schemas or inferred types where appropriate."
+          },
+          {
+            "key": "mentions_sanitization_and_mutation_care",
+            "description": "Mentions sanitization/normalization when needed and avoids surprising mutation of req.body."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1423,7 +2393,7 @@
     ],
     "followUps": [
       {
-        "trigger": "red_flag",
+        "trigger": "missing_consequence",
         "question": "Why are TypeScript interfaces not enough to validate req.body at runtime?",
         "purpose": "Check compile-time versus runtime validation understanding."
       },
@@ -1522,29 +2492,121 @@
   },
   {
     "code": "REST_API_DESIGN_JR_TRADE_ROUTES_CONTROLLERS_012",
-    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack",
+      "stage_3_domain_knowledge"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "trade_off",
-    "competencies": ["system_thinking", "technical_fundamentals", "collaboration", "communication"],
-    "techTags": ["express", "rest", "architecture", "controllers", "routes"],
+    "competencies": [
+      "system_thinking",
+      "technical_fundamentals",
+      "collaboration",
+      "communication"
+    ],
+    "techTags": [
+      "express",
+      "rest",
+      "architecture",
+      "controllers",
+      "routes"
+    ],
     "difficulty": 2,
     "conversationDepth": "mid",
     "intent": "Evaluate whether the candidate understands route/controller separation in Express and can avoid both controller bloat and unnecessary abstraction.",
     "primaryQuestion": "Why should routes and controllers be separated into different files?",
     "expectedSignals": [
-      "Explains that route files should define HTTP method, path, middleware composition, and controller binding.",
-      "Explains that controllers should translate HTTP input/output and delegate business logic to services or use cases.",
-      "Connects separation to readability, testability, reuse of middleware, consistent error handling, and team ownership.",
-      "Mentions that large route files become hard to scan, while large controllers with business logic become hard to test.",
-      "Acknowledges that tiny prototypes may keep things together initially, but growing systems benefit from explicit boundaries.",
-      "Describes a practical folder layout such as routes/users.routes.ts, controllers/users.controller.ts, services/users.service.ts, and validators/users.schema.ts."
-    ],
-    "redFlags": [
-      "Puts all business logic, validation, database calls, and response formatting directly in route handlers.",
-      "Creates layers that only pass arguments through without a clear responsibility.",
-      "Cannot explain what belongs in routes versus controllers versus services.",
-      "Uses separation only as folder aesthetics rather than behavior and testability."
+      {
+        "label": "Explains that route files should define HTTP method, path, middleware composition, and controller binding.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "assigns_http_mapping_to_routes",
+            "description": "States that route files define method, path, and middleware composition."
+          },
+          {
+            "key": "binds_routes_to_controllers",
+            "description": "Explains that routes bind HTTP endpoints to controller functions."
+          }
+        ]
+      },
+      {
+        "label": "Explains that controllers should translate HTTP input/output and delegate business logic to services or use cases.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "assigns_http_translation_to_controllers",
+            "description": "States that controllers translate request input and response output."
+          },
+          {
+            "key": "delegates_business_logic_to_services",
+            "description": "Explains that business logic should be delegated to services/use cases rather than kept in controllers."
+          }
+        ]
+      },
+      {
+        "label": "Connects separation to readability, testability, reuse of middleware, consistent error handling, and team ownership.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "connects_separation_to_readability_and_testability",
+            "description": "Explains how separation improves scanning and unit testing."
+          },
+          {
+            "key": "connects_separation_to_reuse_or_error_handling",
+            "description": "Mentions middleware reuse, consistent error handling, or clearer ownership."
+          }
+        ]
+      },
+      {
+        "label": "Mentions that large route files become hard to scan, while large controllers with business logic become hard to test.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "identifies_route_file_bloat",
+            "description": "Mentions large route files becoming hard to scan or reason about."
+          },
+          {
+            "key": "identifies_controller_business_logic_bloat",
+            "description": "Mentions controllers with business logic becoming hard to test and maintain."
+          }
+        ]
+      },
+      {
+        "label": "Acknowledges that tiny prototypes may keep things together initially, but growing systems benefit from explicit boundaries.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "allows_small_prototype_simplicity",
+            "description": "Acknowledges that tiny prototypes can keep route and controller together initially."
+          },
+          {
+            "key": "explains_when_boundaries_pay_off",
+            "description": "Explains that explicit boundaries become valuable as code, tests, or teams grow."
+          }
+        ]
+      },
+      {
+        "label": "Describes a practical folder layout such as routes/users.routes.ts, controllers/users.controller.ts, services/users.service.ts, and validators/users.schema.ts.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "gives_routes_controllers_services_layout",
+            "description": "Gives a concrete folder/file layout separating routes, controllers, and services."
+          },
+          {
+            "key": "includes_validation_or_schema_location",
+            "description": "Mentions where validators or schemas can live in the layout."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1660,29 +2722,123 @@
   },
   {
     "code": "REST_API_DESIGN_MID_TECH_RATE_LIMITING_013",
-    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
-    "roleFamilies": ["backend", "fullstack", "devops", "security"],
-    "levels": ["mid", "senior"],
+    "stages": [
+      "stage_2_tech_stack",
+      "stage_3_domain_knowledge"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "devops",
+      "security"
+    ],
+    "levels": [
+      "mid",
+      "senior"
+    ],
     "type": "technical_depth",
-    "competencies": ["system_thinking", "problem_solving", "ownership", "impact_measurement"],
-    "techTags": ["rest", "rate_limiting", "express", "redis", "security"],
+    "competencies": [
+      "system_thinking",
+      "problem_solving",
+      "ownership",
+      "impact_measurement"
+    ],
+    "techTags": [
+      "rest",
+      "rate_limiting",
+      "express",
+      "redis",
+      "security"
+    ],
     "difficulty": 3,
     "conversationDepth": "mid",
     "intent": "Assess whether the candidate can explain rate limiting and design a practical implementation for REST APIs, including identity, algorithms, distributed state, and client behavior.",
     "primaryQuestion": "What is rate limiting in a REST API, and how would you implement it?",
     "expectedSignals": [
-      "Defines rate limiting as controlling how many requests a client, user, token, IP, tenant, or route can make within a time window to protect availability and fairness.",
-      "Mentions algorithms such as fixed window, sliding window, token bucket, or leaky bucket and explains basic trade-offs.",
-      "Describes Express implementation using middleware such as express-rate-limit for simple cases or Redis-backed storage for multi-instance deployments.",
-      "Uses appropriate keys such as authenticated user id, API key, tenant, IP, route, or a combination, with care around proxies and trust proxy settings.",
-      "Returns 429 Too Many Requests and useful headers such as Retry-After and rate limit remaining/reset information.",
-      "Mentions different limits per endpoint, exemptions or higher tiers for trusted clients, observability, alerting, and avoiding process-local counters in distributed systems."
-    ],
-    "redFlags": [
-      "Uses only in-memory counters while running many API instances behind a load balancer.",
-      "Applies one global limit to every endpoint and user without considering fairness.",
-      "Blocks legitimate traffic without returning 429 or client guidance.",
-      "Trusts X-Forwarded-For without understanding proxy configuration."
+      {
+        "label": "Defines rate limiting as controlling how many requests a client, user, token, IP, tenant, or route can make within a time window to protect availability and fairness.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "defines_rate_limit_window_and_subject",
+            "description": "Defines limiting requests per time window for a subject such as user, token, IP, tenant, or route."
+          },
+          {
+            "key": "connects_to_availability_and_fairness",
+            "description": "Explains protection goals such as availability, abuse control, fairness, or cost control."
+          }
+        ]
+      },
+      {
+        "label": "Mentions algorithms such as fixed window, sliding window, token bucket, or leaky bucket and explains basic trade-offs.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "names_rate_limit_algorithms",
+            "description": "Mentions algorithms such as fixed window, sliding window, token bucket, or leaky bucket."
+          },
+          {
+            "key": "explains_algorithm_tradeoffs",
+            "description": "Explains basic trade-offs such as burst handling, accuracy, memory cost, or implementation simplicity."
+          }
+        ]
+      },
+      {
+        "label": "Describes Express implementation using middleware such as express-rate-limit for simple cases or Redis-backed storage for multi-instance deployments.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "mentions_express_rate_limit_middleware",
+            "description": "Mentions implementing rate limiting as Express middleware such as express-rate-limit."
+          },
+          {
+            "key": "uses_shared_store_for_multi_instance",
+            "description": "Mentions Redis or another shared store for multi-instance deployments."
+          }
+        ]
+      },
+      {
+        "label": "Uses appropriate keys such as authenticated user id, API key, tenant, IP, route, or a combination, with care around proxies and trust proxy settings.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "chooses_rate_limit_identity_key",
+            "description": "Chooses keys such as user id, API key, tenant, IP, route, or a combination."
+          },
+          {
+            "key": "mentions_proxy_and_trust_proxy_care",
+            "description": "Mentions proxy headers, IP spoofing risk, or trust proxy configuration when using IP-based limits."
+          }
+        ]
+      },
+      {
+        "label": "Returns 429 Too Many Requests and useful headers such as Retry-After and rate limit remaining/reset information.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "returns_429_for_limit_exceeded",
+            "description": "Uses 429 Too Many Requests when the limit is exceeded."
+          },
+          {
+            "key": "includes_retry_or_limit_headers",
+            "description": "Mentions Retry-After or remaining/reset rate limit headers for client behavior."
+          }
+        ]
+      },
+      {
+        "label": "Mentions different limits per endpoint, exemptions or higher tiers for trusted clients, observability, alerting, and avoiding process-local counters in distributed systems.",
+        "relatedTrigger": "missing_metric",
+        "requirements": [
+          {
+            "key": "mentions_endpoint_or_tier_specific_limits",
+            "description": "Mentions different limits by endpoint risk, client tier, or trusted exemptions."
+          },
+          {
+            "key": "mentions_observability_and_distributed_counter_risk",
+            "description": "Mentions metrics, alerts, and avoiding process-local counters in distributed deployments."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1803,29 +2959,120 @@
   },
   {
     "code": "REST_API_DESIGN_MID_TECH_IDEMPOTENCY_014",
-    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior", "mid", "senior"],
+    "stages": [
+      "stage_2_tech_stack",
+      "stage_3_domain_knowledge"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior",
+      "mid",
+      "senior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "problem_solving"],
-    "techTags": ["rest", "http", "idempotency", "retries"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "problem_solving"
+    ],
+    "techTags": [
+      "rest",
+      "http",
+      "idempotency",
+      "retries"
+    ],
     "difficulty": 3,
     "conversationDepth": "mid",
     "intent": "Verify whether the candidate understands idempotent HTTP methods and why idempotency matters for retries, duplicate requests, and distributed systems.",
     "primaryQuestion": "What is an idempotent request, and which HTTP methods are idempotent?",
     "expectedSignals": [
-      "Defines idempotency as making the same request once or multiple times resulting in the same intended server state, even if each response may differ.",
-      "Identifies GET, HEAD, OPTIONS, TRACE, PUT, and DELETE as idempotent by HTTP semantics when implemented correctly.",
-      "Explains that POST is not generally idempotent, while PATCH may or may not be idempotent depending on the patch operation and server contract.",
-      "Distinguishes safe methods such as GET and HEAD from idempotent but state-changing methods such as PUT and DELETE.",
-      "Connects idempotency to retry behavior after timeouts, duplicate submissions, payment/order creation, and idempotency keys for non-idempotent operations.",
-      "Mentions that server implementation can violate method expectations, so API contracts and tests matter."
-    ],
-    "redFlags": [
-      "Says idempotent means the request does not change state.",
-      "Says DELETE is not idempotent because the second call returns 404.",
-      "Says POST is always safe to retry without idempotency keys.",
-      "Confuses response equality with final resource state equality."
+      {
+        "label": "Defines idempotency as making the same request once or multiple times resulting in the same intended server state, even if each response may differ.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "defines_idempotency_by_server_state",
+            "description": "Defines idempotency by same intended server state after one or many identical requests."
+          },
+          {
+            "key": "separates_state_from_response_code",
+            "description": "Clarifies that response codes or bodies may differ across repeated requests."
+          }
+        ]
+      },
+      {
+        "label": "Identifies GET, HEAD, OPTIONS, TRACE, PUT, and DELETE as idempotent by HTTP semantics when implemented correctly.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "names_idempotent_http_methods",
+            "description": "Identifies GET, HEAD, OPTIONS, TRACE, PUT, and DELETE as idempotent by HTTP semantics."
+          },
+          {
+            "key": "qualifies_when_implemented_correctly",
+            "description": "Adds that implementation must preserve the expected semantics."
+          }
+        ]
+      },
+      {
+        "label": "Explains that POST is not generally idempotent, while PATCH may or may not be idempotent depending on the patch operation and server contract.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "states_post_not_generally_idempotent",
+            "description": "States that POST generally is not idempotent because repeated calls can create repeated effects."
+          },
+          {
+            "key": "qualifies_patch_idempotency_by_contract",
+            "description": "Explains that PATCH idempotency depends on the patch operation and server contract."
+          }
+        ]
+      },
+      {
+        "label": "Distinguishes safe methods such as GET and HEAD from idempotent but state-changing methods such as PUT and DELETE.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "defines_safe_methods_as_read_only",
+            "description": "Explains safe methods such as GET/HEAD are intended not to change resource state."
+          },
+          {
+            "key": "distinguishes_idempotent_state_changing_methods",
+            "description": "Explains that PUT and DELETE can change state while still being idempotent."
+          }
+        ]
+      },
+      {
+        "label": "Connects idempotency to retry behavior after timeouts, duplicate submissions, payment/order creation, and idempotency keys for non-idempotent operations.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "connects_idempotency_to_retry_safety",
+            "description": "Explains why idempotency matters for retries after timeouts or duplicate submissions."
+          },
+          {
+            "key": "mentions_idempotency_keys_for_post",
+            "description": "Mentions idempotency keys or duplicate prevention for payments, orders, or other POST operations."
+          }
+        ]
+      },
+      {
+        "label": "Mentions that server implementation can violate method expectations, so API contracts and tests matter.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "warns_implementation_can_break_semantics",
+            "description": "Mentions that bad server implementation can violate method semantics."
+          },
+          {
+            "key": "requires_contracts_and_tests",
+            "description": "Mentions documenting and testing idempotency behavior in API contracts."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {
@@ -1847,7 +3094,7 @@
     ],
     "followUps": [
       {
-        "trigger": "red_flag",
+        "trigger": "missing_consequence",
         "question": "If DELETE /users/123 returns 204 the first time and 404 the second time, can it still be idempotent?",
         "purpose": "Check response-versus-state nuance."
       },
@@ -1941,29 +3188,121 @@
   },
   {
     "code": "REST_API_DESIGN_MID_TECH_OPENAPI_EXPRESS_015",
-    "stages": ["stage_2_tech_stack", "stage_3_domain_knowledge"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["mid", "senior"],
+    "stages": [
+      "stage_2_tech_stack",
+      "stage_3_domain_knowledge"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "mid",
+      "senior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "collaboration", "ownership", "communication"],
-    "techTags": ["rest", "express", "openapi", "swagger", "documentation"],
+    "competencies": [
+      "technical_fundamentals",
+      "collaboration",
+      "ownership",
+      "communication"
+    ],
+    "techTags": [
+      "rest",
+      "express",
+      "openapi",
+      "swagger",
+      "documentation"
+    ],
     "difficulty": 3,
     "conversationDepth": "mid",
     "intent": "Assess whether the candidate can integrate Swagger/OpenAPI documentation into an Express API and keep the contract useful and maintainable.",
     "primaryQuestion": "How do you integrate Swagger or OpenAPI documentation into Express?",
     "expectedSignals": [
-      "Explains OpenAPI as a machine-readable contract describing paths, methods, parameters, request bodies, responses, schemas, auth, and servers.",
-      "Mentions common Express setup using a generated or handwritten OpenAPI document served through swagger-ui-express at a docs route.",
-      "Describes ways to create the spec: YAML or JSON file, annotations with swagger-jsdoc, schema-driven generation, or contract-first design.",
-      "Includes documenting request/response schemas, validation errors, auth schemes such as bearer JWT or API keys, tags, examples, and status codes.",
-      "Mentions keeping docs in sync with implementation through CI validation, linting, contract tests, generated clients, or deriving docs from shared schemas.",
-      "Mentions protecting or limiting docs exposure in production when necessary and versioning docs alongside API versions."
-    ],
-    "redFlags": [
-      "Treats Swagger as only a pretty UI and not an API contract.",
-      "Documents only happy-path 200 responses.",
-      "Lets docs drift from implementation with no validation.",
-      "Exposes internal-only endpoints or sensitive examples publicly."
+      {
+        "label": "Explains OpenAPI as a machine-readable contract describing paths, methods, parameters, request bodies, responses, schemas, auth, and servers.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "defines_openapi_machine_readable_contract",
+            "description": "Defines OpenAPI as a machine-readable API contract."
+          },
+          {
+            "key": "names_core_openapi_sections",
+            "description": "Mentions paths, methods, parameters, request bodies, responses, schemas, auth, or servers."
+          }
+        ]
+      },
+      {
+        "label": "Mentions common Express setup using a generated or handwritten OpenAPI document served through swagger-ui-express at a docs route.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_swagger_ui_express_setup",
+            "description": "Mentions serving docs with swagger-ui-express or an equivalent docs route."
+          },
+          {
+            "key": "mentions_generated_or_handwritten_spec",
+            "description": "Mentions using a generated or handwritten OpenAPI JSON/YAML document."
+          }
+        ]
+      },
+      {
+        "label": "Describes ways to create the spec: YAML or JSON file, annotations with swagger-jsdoc, schema-driven generation, or contract-first design.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "names_spec_authoring_approaches",
+            "description": "Names approaches such as YAML/JSON, swagger-jsdoc annotations, schema-driven generation, or contract-first design."
+          },
+          {
+            "key": "compares_code_first_and_contract_first",
+            "description": "Compares at least one trade-off between writing the contract first and generating it from code."
+          }
+        ]
+      },
+      {
+        "label": "Includes documenting request/response schemas, validation errors, auth schemes such as bearer JWT or API keys, tags, examples, and status codes.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "documents_request_response_and_errors",
+            "description": "Mentions documenting request bodies, response schemas, validation errors, examples, and status codes."
+          },
+          {
+            "key": "documents_auth_and_tags",
+            "description": "Mentions auth schemes such as bearer JWT/API keys plus tags or grouping."
+          }
+        ]
+      },
+      {
+        "label": "Mentions keeping docs in sync with implementation through CI validation, linting, contract tests, generated clients, or deriving docs from shared schemas.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "mentions_ci_or_lint_sync",
+            "description": "Mentions CI validation, OpenAPI linting, or contract tests."
+          },
+          {
+            "key": "mentions_generated_clients_or_shared_schemas",
+            "description": "Mentions generated clients or deriving docs from shared schemas to reduce drift."
+          }
+        ]
+      },
+      {
+        "label": "Mentions protecting or limiting docs exposure in production when necessary and versioning docs alongside API versions.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "mentions_docs_exposure_controls",
+            "description": "Mentions protecting, disabling, or limiting docs exposure in production when needed."
+          },
+          {
+            "key": "mentions_docs_versioned_with_api",
+            "description": "Mentions versioning documentation alongside API versions."
+          }
+        ]
+      }
     ],
     "scoringHints": [
       {

@@ -158,33 +158,35 @@ export class ProbeRendererService {
   async buildRedirectText({
     language,
     lastCandidateAnswer,
+    currentQuestion,
     personaPolicy,
   }: {
     language: QuestionProbeLanguage;
     lastCandidateAnswer?: string;
+    currentQuestion?: string;
     personaPolicy: PersonaPolicy;
   }): Promise<string> {
     const fallbacks: Record<QuestionProbeLanguage, string[]> = {
       vi: [
-        'Bạn có thể cho tôi một ví dụ cụ thể không?',
-        'Bạn có thể kể một tình huống thực tế bạn đã gặp không?',
-        'Tôi muốn nghe một trường hợp cụ thể — bạn có thể chia sẻ không?',
-        'Bạn có thể nói rõ hơn với một ví dụ từ công việc thực tế không?',
+        'Bạn có thể trả lời trực tiếp vào câu hỏi tôi vừa đặt ra không?',
+        'Hãy tập trung vào câu hỏi ban đầu — bạn có thể chia sẻ trải nghiệm thực tế của mình không?',
+        'Tôi muốn bạn trả lời đúng vào câu hỏi vừa rồi — bạn nghĩ sao?',
+        'Câu hỏi của tôi vẫn còn đó — bạn có thể trả lời trực tiếp không?',
       ],
       en: [
-        'Can you give me a concrete example?',
-        'Could you walk me through a specific situation where this happened?',
-        "Can you tell me about a real case you've dealt with?",
-        "I'd love to hear a specific example — can you share one?",
+        'Let me bring you back to the question I just asked — can you address it directly?',
+        'I want to keep us focused — could you answer the question I asked?',
+        "Let's stay on topic — can you respond to the question I raised?",
+        'Please focus on the question I asked — can you give me your answer?',
       ],
       ja: [
-        '具体的な例を教えていただけますか？',
-        '実際に経験した状況を教えていただけますか？',
-        '具体的なケースを共有していただけますか？',
+        '先ほどの質問に直接お答えいただけますか？',
+        '質問に戻りましょう — 直接お答えいただけますか？',
+        '元の質問に集中していただけますか？',
       ],
     };
 
-    if (lastCandidateAnswer) {
+    if (currentQuestion) {
       try {
         const result: string = await this.groqService.generateContent({
           model: 'llama-3.1-8b-instant',
@@ -194,6 +196,7 @@ export class ProbeRendererService {
               parts: [
                 {
                   text: this._redirectRenderPrompt({
+                    currentQuestion,
                     lastCandidateAnswer,
                     personaPolicy,
                     language,
@@ -313,18 +316,25 @@ ABSOLUTE RULES:
   }
 
   private _redirectRenderPrompt({
+    currentQuestion,
     lastCandidateAnswer,
     personaPolicy,
     language,
   }: {
-    lastCandidateAnswer: string;
+    currentQuestion: string;
+    lastCandidateAnswer?: string;
     personaPolicy: PersonaPolicy;
     language: QuestionProbeLanguage;
   }): string {
+    const answerCtx = lastCandidateAnswer
+      ? `\nThe candidate just said: "${lastCandidateAnswer.slice(0, 200)}" — their response did not address the question.`
+      : '';
     return `You are ${personaPolicy.name}. Tone: ${personaPolicy.tone}.
-The candidate just said: "${lastCandidateAnswer.slice(0, 300)}"
-Their answer was too vague or generic. Ask them for a specific real example or situation. Language: ${language}.
-One sentence only. No feedback, no hints. Natural, conversational.`;
+You are interviewing a candidate. Language: ${language}.${answerCtx}
+
+The question you asked was: "${currentQuestion}"
+
+The candidate's answer was off-topic or empty. Politely but firmly redirect them back to the original question. One sentence only. Do not give hints, feedback, or ask a new question. Natural, conversational.`;
   }
 
   /** Build opening contract text — scripted, no LLM */

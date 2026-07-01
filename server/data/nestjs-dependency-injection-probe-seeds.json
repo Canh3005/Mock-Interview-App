@@ -1,38 +1,133 @@
 [
   {
     "code": "NESTJS_DI_TECH_CONCEPT_001",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "communication"],
-    "techTags": ["nestjs", "nodejs", "typescript"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "communication"
+    ],
+    "techTags": [
+      "nestjs",
+      "nodejs",
+      "typescript"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Check whether the candidate understands Dependency Injection as inversion of object creation and can explain why NestJS uses it to manage providers, module boundaries, scopes, and testability.",
     "primaryQuestion": "What is Dependency Injection, and why does NestJS use it?",
     "expectedSignals": [
-      "Defines Dependency Injection as receiving dependencies from an external container instead of constructing them inside the class.",
-      "Connects DI to inversion of control: the NestJS container owns provider creation, dependency resolution, and lifecycle management.",
-      "Explains why this improves testability because dependencies can be mocked or overridden by token.",
-      "Mentions maintainability benefits such as loose coupling, module visibility rules, reusable providers, and easier swapping of implementations.",
-      "Uses a concrete example such as UsersController receiving UsersService through the constructor instead of calling new UsersService()."
-    ],
-    "redFlags": [
-      "Describes DI only as importing a class from another file.",
-      "Says DI is just a NestJS decorator feature without explaining object ownership or lifecycle.",
-      "Cannot explain why manually creating service instances makes testing and configuration harder.",
-      "Ignores module registration and assumes every class is injectable automatically."
+      {
+        "label": "Defines Dependency Injection as receiving dependencies from an external container instead of constructing them inside the class.",
+        "requirements": [
+          {
+            "key": "defines_external_dependency_supply",
+            "description": "Defines DI as receiving dependencies from outside the class instead of creating them with new."
+          },
+          {
+            "key": "contrasts_with_manual_construction",
+            "description": "Contrasts injection with a class directly constructing its own service or repository."
+          }
+        ],
+        "relatedTrigger": "vague_answer"
+      },
+      {
+        "label": "Connects DI to inversion of control: the NestJS container owns provider creation, dependency resolution, and lifecycle management.",
+        "requirements": [
+          {
+            "key": "names_nest_container_responsibility",
+            "description": "Explains that the Nest container creates providers and resolves dependencies."
+          },
+          {
+            "key": "mentions_lifecycle_management",
+            "description": "Connects DI to provider lifetime or scope management."
+          }
+        ],
+        "relatedTrigger": "vague_answer"
+      },
+      {
+        "label": "Explains why this improves testability because dependencies can be mocked or overridden by token.",
+        "requirements": [
+          {
+            "key": "explains_token_override_testing",
+            "description": "Explains that tests can override or mock dependencies by provider token."
+          },
+          {
+            "key": "connects_no_new_to_mockability",
+            "description": "Connects avoiding direct construction to easier unit tests."
+          }
+        ],
+        "relatedTrigger": "missing_tradeoff"
+      },
+      {
+        "label": "Mentions maintainability benefits such as loose coupling, module visibility rules, reusable providers, and easier swapping of implementations.",
+        "requirements": [
+          {
+            "key": "names_loose_coupling_benefit",
+            "description": "Mentions loose coupling, reusable providers, or swapping implementations."
+          },
+          {
+            "key": "mentions_module_visibility",
+            "description": "Connects DI to module provider visibility or exported providers."
+          }
+        ],
+        "relatedTrigger": "missing_tradeoff"
+      },
+      {
+        "label": "Uses a concrete example such as UsersController receiving UsersService through the constructor instead of calling new UsersService().",
+        "requirements": [
+          {
+            "key": "uses_controller_service_example",
+            "description": "Uses a concrete example such as UsersController receiving UsersService."
+          },
+          {
+            "key": "shows_constructor_injection_shape",
+            "description": "Shows or describes constructor injection rather than only naming DI."
+          }
+        ],
+        "relatedTrigger": "vague_answer"
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Clearly explains DI, IoC, provider tokens, lifecycle ownership, module registration, and testability with a NestJS example." },
-      { "scoreBand": "solid", "description": "Explains constructor-provided dependencies and testability but misses lifecycle, module visibility, or token resolution details." },
-      { "scoreBand": "needs_work", "description": "Knows that NestJS injects services but cannot explain why the pattern matters in real code." },
-      { "scoreBand": "insufficient_evidence", "description": "Answer is generic framework language and does not demonstrate understanding of DI mechanics." }
+      {
+        "scoreBand": "strong",
+        "description": "Clearly explains DI, IoC, provider tokens, lifecycle ownership, module registration, and testability with a NestJS example."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains constructor-provided dependencies and testability but misses lifecycle, module visibility, or token resolution details."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows that NestJS injects services but cannot explain why the pattern matters in real code."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is generic framework language and does not demonstrate understanding of DI mechanics."
+      }
     ],
     "followUps": [
-      { "trigger": "vague_answer", "question": "Can you show the difference between a controller using constructor injection and a controller calling new UsersService() directly?", "purpose": "Force a concrete comparison between DI and manual instantiation." },
-      { "trigger": "missing_tradeoff", "question": "What would become harder to test or configure if the service created its own dependencies?", "purpose": "Check whether the candidate understands the practical value of inversion of control." }
+      {
+        "trigger": "vague_answer",
+        "question": "Can you show the difference between a controller using constructor injection and a controller calling new UsersService() directly?",
+        "purpose": "Force a concrete comparison between DI and manual instantiation."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "What would become harder to test or configure if the service created its own dependencies?",
+        "purpose": "Check whether the candidate understands the practical value of inversion of control."
+      }
     ],
     "localizedContent": {
       "en": {
@@ -49,7 +144,11 @@
           "Skipping why the IoC container makes mocking and replacement easier.",
           "Ignoring that providers still need to be registered in a module context."
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "Mục đích của Dependency Injection trong NestJS",
@@ -65,7 +164,11 @@
           "Không giải thích vì sao IoC container giúp mock hoặc thay implementation dễ hơn.",
           "Bỏ qua việc provider vẫn phải được đăng ký trong module context."
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "NestJS における Dependency Injection の目的",
@@ -81,49 +184,154 @@
           "IoC container が mock や implementation 交換を容易にする理由を説明しない。",
           "provider は module context に登録が必要である点を無視する。"
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "NestJS docs: Providers", "url": "https://docs.nestjs.com/providers", "note": "Used for NestJS provider and dependency injection concepts." },
-      { "label": "NestJS docs: Modules", "url": "https://docs.nestjs.com/modules", "note": "Used for module registration and provider visibility." }
+      {
+        "label": "NestJS docs: Providers",
+        "url": "https://docs.nestjs.com/providers",
+        "note": "Used for NestJS provider and dependency injection concepts."
+      },
+      {
+        "label": "NestJS docs: Modules",
+        "url": "https://docs.nestjs.com/modules",
+        "note": "Used for module registration and provider visibility."
+      }
     ],
     "status": "active"
   },
   {
     "code": "NESTJS_DI_TECH_INJECTABLE_002",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "communication"],
-    "techTags": ["nestjs", "typescript"],
+    "competencies": [
+      "technical_fundamentals",
+      "communication"
+    ],
+    "techTags": [
+      "nestjs",
+      "typescript"
+    ],
     "difficulty": 2,
     "conversationDepth": "intro",
     "intent": "Verify whether the candidate understands what @Injectable() marks, why metadata matters, and which NestJS classes are normally registered as injectable providers.",
     "primaryQuestion": "What is the @Injectable() decorator, and which classes require it?",
     "expectedSignals": [
-      "Explains that @Injectable() marks a class as a provider candidate that can be managed by the NestJS DI container.",
-      "Mentions that services, repositories, adapters, guards, interceptors, pipes, filters, and strategies commonly use @Injectable() when they are provider classes.",
-      "Distinguishes @Injectable() from @Controller() and @Module(), which have their own decorators and runtime roles.",
-      "Understands that registering the class in a module providers array is still needed unless it is provided through another mechanism.",
-      "Mentions that decorators and emitted metadata help Nest infer constructor dependencies, while custom tokens may still need @Inject()."
-    ],
-    "redFlags": [
-      "Says @Injectable() alone globally registers the class everywhere.",
-      "Thinks controllers should normally be decorated with @Injectable() instead of @Controller().",
-      "Cannot distinguish a class being decorated from a provider being visible in a module.",
-      "Assumes TypeScript interfaces can be injected directly without a runtime token."
+      {
+        "label": "Explains that @Injectable() marks a class as a provider candidate that can be managed by the NestJS DI container.",
+        "requirements": [
+          {
+            "key": "defines_injectable_provider_candidate",
+            "description": "Explains that @Injectable marks a class as a provider candidate for the DI container."
+          },
+          {
+            "key": "connects_to_container_management",
+            "description": "Connects @Injectable to Nest creating and injecting provider instances."
+          }
+        ],
+        "relatedTrigger": "missing_context"
+      },
+      {
+        "label": "Mentions that services, repositories, adapters, guards, interceptors, pipes, filters, and strategies commonly use @Injectable() when they are provider classes.",
+        "requirements": [
+          {
+            "key": "names_common_provider_classes",
+            "description": "Names services, repositories, adapters, guards, interceptors, pipes, filters, or strategies as provider classes."
+          },
+          {
+            "key": "ties_injectable_to_provider_role",
+            "description": "Explains that these use @Injectable when managed as providers."
+          }
+        ],
+        "relatedTrigger": "missing_context"
+      },
+      {
+        "label": "Distinguishes @Injectable() from @Controller() and @Module(), which have their own decorators and runtime roles.",
+        "requirements": [
+          {
+            "key": "distinguishes_controller_decorator",
+            "description": "Explains why controllers use @Controller for routing role rather than only @Injectable."
+          },
+          {
+            "key": "distinguishes_module_decorator",
+            "description": "Explains that modules use @Module to declare provider/controller/import/export metadata."
+          }
+        ],
+        "relatedTrigger": "vague_answer"
+      },
+      {
+        "label": "Understands that registering the class in a module providers array is still needed unless it is provided through another mechanism.",
+        "requirements": [
+          {
+            "key": "requires_provider_registration",
+            "description": "States that @Injectable alone is not enough if the provider is not registered or otherwise provided."
+          },
+          {
+            "key": "connects_registration_to_injection_visibility",
+            "description": "Explains that module providers/imports/exports control whether another class can inject it."
+          }
+        ],
+        "relatedTrigger": "missing_context"
+      },
+      {
+        "label": "Mentions that decorators and emitted metadata help Nest infer constructor dependencies, while custom tokens may still need @Inject().",
+        "requirements": [
+          {
+            "key": "mentions_constructor_metadata",
+            "description": "Mentions emitted metadata helping Nest infer constructor dependencies."
+          },
+          {
+            "key": "mentions_inject_for_custom_tokens",
+            "description": "Mentions @Inject for custom tokens or non-class providers."
+          }
+        ],
+        "relatedTrigger": "missing_context"
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Explains decorator metadata, provider role, common provider class types, module registration, and the distinction from controllers/modules." },
-      { "scoreBand": "solid", "description": "Understands @Injectable() for services but misses metadata or module registration nuance." },
-      { "scoreBand": "needs_work", "description": "Recognizes the decorator by name but cannot say what it changes in NestJS DI behavior." },
-      { "scoreBand": "insufficient_evidence", "description": "Answer does not demonstrate practical knowledge of NestJS provider classes." }
+      {
+        "scoreBand": "strong",
+        "description": "Explains decorator metadata, provider role, common provider class types, module registration, and the distinction from controllers/modules."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands @Injectable() for services but misses metadata or module registration nuance."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Recognizes the decorator by name but cannot say what it changes in NestJS DI behavior."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not demonstrate practical knowledge of NestJS provider classes."
+      }
     ],
     "followUps": [
-      { "trigger": "missing_context", "question": "If a service has @Injectable() but is not listed in any module providers array, can another class inject it? Why?", "purpose": "Check module registration and visibility reasoning." },
-      { "trigger": "red_flag", "question": "Why do controllers use @Controller() instead of only @Injectable()?", "purpose": "Verify that the candidate distinguishes NestJS class roles." }
+      {
+        "trigger": "missing_context",
+        "question": "If a service has @Injectable() but is not listed in any module providers array, can another class inject it? Why?",
+        "purpose": "Check module registration and visibility reasoning."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "Why do controllers use @Controller() instead of only @Injectable()?",
+        "purpose": "Verify that the candidate distinguishes NestJS class roles."
+      }
     ],
     "localizedContent": {
       "en": {
@@ -140,7 +348,11 @@
           "Forgetting the providers array or equivalent registration.",
           "Treating TypeScript interfaces as runtime injection tokens."
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "Metadata provider với @Injectable",
@@ -156,7 +368,11 @@
           "Quên providers array hoặc cơ chế đăng ký tương đương.",
           "Xem TypeScript interface như runtime injection token."
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "@Injectable による provider metadata",
@@ -172,49 +388,155 @@
           "providers array などの登録を忘れる。",
           "TypeScript interface を runtime injection token として扱う。"
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "NestJS docs: Providers", "url": "https://docs.nestjs.com/providers", "note": "Used for @Injectable() and provider registration behavior." },
-      { "label": "NestJS docs: Custom providers", "url": "https://docs.nestjs.com/fundamentals/custom-providers", "note": "Used for token and provider registration nuance." }
+      {
+        "label": "NestJS docs: Providers",
+        "url": "https://docs.nestjs.com/providers",
+        "note": "Used for @Injectable() and provider registration behavior."
+      },
+      {
+        "label": "NestJS docs: Custom providers",
+        "url": "https://docs.nestjs.com/fundamentals/custom-providers",
+        "note": "Used for token and provider registration nuance."
+      }
     ],
     "status": "active"
   },
   {
     "code": "NESTJS_DI_TECH_CONSTRUCTOR_PROPERTY_003",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "trade_off_analysis", "communication"],
-    "techTags": ["nestjs", "typescript"],
+    "competencies": [
+      "technical_fundamentals",
+      "trade_off_analysis",
+      "communication"
+    ],
+    "techTags": [
+      "nestjs",
+      "typescript"
+    ],
     "difficulty": 2,
     "conversationDepth": "mid",
     "intent": "Assess whether the candidate can compare constructor injection and property injection in NestJS and choose constructor injection for explicit required dependencies.",
     "primaryQuestion": "What is the difference between constructor injection and property injection?",
     "expectedSignals": [
-      "Explains constructor injection as declaring dependencies in the constructor so the class cannot be instantiated correctly without them.",
-      "Explains property injection as assigning dependencies to decorated properties after class construction.",
-      "States that constructor injection is the usual NestJS choice because dependencies are explicit, required, easier to test, and compatible with readonly fields.",
-      "Mentions property injection may be used for optional or framework-driven cases, but it hides dependencies and can leave properties undefined during construction.",
-      "Connects the choice to maintainability: constructor parameters make dependencies visible in tests and code review."
-    ],
-    "redFlags": [
-      "Says property injection is always cleaner because it avoids long constructors.",
-      "Does not recognize that property-injected values are not available inside the constructor body.",
-      "Cannot explain why explicit required dependencies are better expressed in the constructor.",
-      "Confuses property injection with TypeScript class property initialization."
+      {
+        "label": "Explains constructor injection as declaring dependencies in the constructor so the class cannot be instantiated correctly without them.",
+        "requirements": [
+          {
+            "key": "defines_constructor_injection",
+            "description": "Explains that required dependencies are declared in the constructor."
+          },
+          {
+            "key": "connects_to_required_dependency",
+            "description": "Explains that the class cannot be correctly created without those dependencies."
+          }
+        ],
+        "relatedTrigger": "vague_answer"
+      },
+      {
+        "label": "Explains property injection as assigning dependencies to decorated properties after class construction.",
+        "requirements": [
+          {
+            "key": "defines_property_injection",
+            "description": "Explains property injection as Nest assigning decorated properties after construction."
+          },
+          {
+            "key": "notes_after_construction_timing",
+            "description": "Mentions the timing difference from constructor injection."
+          }
+        ],
+        "relatedTrigger": "missing_tradeoff"
+      },
+      {
+        "label": "States that constructor injection is the usual NestJS choice because dependencies are explicit, required, easier to test, and compatible with readonly fields.",
+        "requirements": [
+          {
+            "key": "prefers_constructor_for_required_deps",
+            "description": "States constructor injection is the usual choice for required dependencies."
+          },
+          {
+            "key": "mentions_testing_or_readonly_benefit",
+            "description": "Mentions explicit tests, code review visibility, or readonly fields as benefits."
+          }
+        ],
+        "relatedTrigger": "vague_answer"
+      },
+      {
+        "label": "Mentions property injection may be used for optional or framework-driven cases, but it hides dependencies and can leave properties undefined during construction.",
+        "requirements": [
+          {
+            "key": "names_property_injection_fit",
+            "description": "Names optional or framework-driven cases where property injection may fit."
+          },
+          {
+            "key": "explains_undefined_during_constructor_risk",
+            "description": "Explains risk when a dependency is used during construction before property injection occurs."
+          }
+        ],
+        "relatedTrigger": "missing_tradeoff"
+      },
+      {
+        "label": "Connects the choice to maintainability: constructor parameters make dependencies visible in tests and code review.",
+        "requirements": [
+          {
+            "key": "connects_constructor_to_visible_deps",
+            "description": "Connects constructor parameters to visible dependencies in tests and code review."
+          },
+          {
+            "key": "compares_hidden_property_deps",
+            "description": "Contrasts that with property injection hiding dependencies."
+          }
+        ],
+        "relatedTrigger": "vague_answer"
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Compares timing, explicitness, required versus optional dependencies, testability, and NestJS convention with a concrete example." },
-      { "scoreBand": "solid", "description": "Prefers constructor injection and explains the main reason but misses timing or optional-dependency nuance." },
-      { "scoreBand": "needs_work", "description": "Can name both styles but cannot choose between them in real NestJS code." },
-      { "scoreBand": "insufficient_evidence", "description": "Answer does not demonstrate practical DI style knowledge." }
+      {
+        "scoreBand": "strong",
+        "description": "Compares timing, explicitness, required versus optional dependencies, testability, and NestJS convention with a concrete example."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Prefers constructor injection and explains the main reason but misses timing or optional-dependency nuance."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can name both styles but cannot choose between them in real NestJS code."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not demonstrate practical DI style knowledge."
+      }
     ],
     "followUps": [
-      { "trigger": "missing_tradeoff", "question": "When would property injection be risky in a service that uses a dependency during construction?", "purpose": "Check lifecycle and initialization-order understanding." },
-      { "trigger": "vague_answer", "question": "How would your unit test reveal the dependencies of a class that uses constructor injection?", "purpose": "Connect injection style to test ergonomics." }
+      {
+        "trigger": "missing_tradeoff",
+        "question": "When would property injection be risky in a service that uses a dependency during construction?",
+        "purpose": "Check lifecycle and initialization-order understanding."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "How would your unit test reveal the dependencies of a class that uses constructor injection?",
+        "purpose": "Connect injection style to test ergonomics."
+      }
     ],
     "localizedContent": {
       "en": {
@@ -231,7 +553,11 @@
           "Assuming property-injected dependencies are available inside the constructor.",
           "Not considering how tests discover and supply dependencies."
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "Constructor injection và property injection",
@@ -247,7 +573,11 @@
           "Tưởng dependency inject vào property có thể dùng ngay trong constructor.",
           "Không cân nhắc test sẽ phát hiện và cung cấp dependency như thế nào."
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "constructor injection と property injection",
@@ -263,50 +593,170 @@
           "property-injected dependency が constructor 内で使えると考える。",
           "test が dependency をどう把握し供給するかを考慮しない。"
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "NestJS docs: Providers", "url": "https://docs.nestjs.com/providers", "note": "Used for constructor-based dependency injection patterns." },
-      { "label": "NestJS docs: Custom providers", "url": "https://docs.nestjs.com/fundamentals/custom-providers", "note": "Used for explicit token injection and provider binding patterns." }
+      {
+        "label": "NestJS docs: Providers",
+        "url": "https://docs.nestjs.com/providers",
+        "note": "Used for constructor-based dependency injection patterns."
+      },
+      {
+        "label": "NestJS docs: Custom providers",
+        "url": "https://docs.nestjs.com/fundamentals/custom-providers",
+        "note": "Used for explicit token injection and provider binding patterns."
+      }
     ],
     "status": "active"
   },
   {
     "code": "NESTJS_DI_TECH_PROVIDER_SCOPES_004",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["mid", "senior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "mid",
+      "senior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "trade_off_analysis", "system_thinking"],
-    "techTags": ["nestjs", "nodejs", "typescript"],
+    "competencies": [
+      "technical_fundamentals",
+      "trade_off_analysis",
+      "system_thinking"
+    ],
+    "techTags": [
+      "nestjs",
+      "nodejs",
+      "typescript"
+    ],
     "difficulty": 3,
     "conversationDepth": "deep",
     "intent": "Evaluate whether the candidate understands DEFAULT, REQUEST, and TRANSIENT provider scopes and can justify REQUEST scope without overusing it.",
     "primaryQuestion": "What are Provider scopes in NestJS (DEFAULT, REQUEST, TRANSIENT)? When would you use REQUEST scope?",
     "expectedSignals": [
-      "Defines DEFAULT scope as singleton-like within the application/module context and reused across requests.",
-      "Defines REQUEST scope as creating a provider instance per incoming request context.",
-      "Defines TRANSIENT scope as creating a new provider instance for each injection consumer.",
-      "Mentions that REQUEST scope has performance and lifecycle implications and can propagate through dependency chains.",
-      "Uses REQUEST scope for request-specific state such as tenant context, current user context, correlation metadata, or per-request transaction context when passing parameters is not clean.",
-      "Warns against storing mutable request data in DEFAULT singleton providers."
-    ],
-    "redFlags": [
-      "Says REQUEST scope should be used for every service that handles HTTP requests.",
-      "Stores current user or tenant state in a singleton provider field.",
-      "Cannot explain the difference between REQUEST and TRANSIENT.",
-      "Ignores the overhead and dependency-chain impact of request-scoped providers."
+      {
+        "label": "Defines DEFAULT scope as singleton-like within the application/module context and reused across requests.",
+        "requirements": [
+          {
+            "key": "defines_default_scope_singleton",
+            "description": "Defines DEFAULT scope as singleton-like within the app/module context."
+          },
+          {
+            "key": "mentions_reuse_across_requests",
+            "description": "States that DEFAULT providers are reused across requests."
+          }
+        ],
+        "relatedTrigger": "missing_tradeoff"
+      },
+      {
+        "label": "Defines REQUEST scope as creating a provider instance per incoming request context.",
+        "requirements": [
+          {
+            "key": "defines_request_scope_per_request",
+            "description": "Defines REQUEST scope as creating an instance per incoming request context."
+          },
+          {
+            "key": "connects_request_scope_to_request_state",
+            "description": "Connects REQUEST scope to per-request state needs."
+          }
+        ],
+        "relatedTrigger": "missing_tradeoff"
+      },
+      {
+        "label": "Defines TRANSIENT scope as creating a new provider instance for each injection consumer.",
+        "requirements": [
+          {
+            "key": "defines_transient_scope_per_consumer",
+            "description": "Defines TRANSIENT scope as a new instance for each injection consumer."
+          },
+          {
+            "key": "distinguishes_transient_from_request",
+            "description": "Distinguishes per-consumer transient instances from per-request instances."
+          }
+        ],
+        "relatedTrigger": "missing_tradeoff"
+      },
+      {
+        "label": "Mentions that REQUEST scope has performance and lifecycle implications and can propagate through dependency chains.",
+        "requirements": [
+          {
+            "key": "mentions_request_scope_overhead",
+            "description": "Mentions request-scope performance or lifecycle overhead."
+          },
+          {
+            "key": "mentions_scope_propagation",
+            "description": "Explains that request scope can propagate through dependency chains."
+          }
+        ],
+        "relatedTrigger": "missing_tradeoff"
+      },
+      {
+        "label": "Uses REQUEST scope for request-specific state such as tenant context, current user context, correlation metadata, or per-request transaction context when passing parameters is not clean.",
+        "requirements": [
+          {
+            "key": "names_request_specific_state",
+            "description": "Names tenant, current user, correlation metadata, or per-request transaction context."
+          },
+          {
+            "key": "justifies_request_scope_over_params",
+            "description": "Explains why request scope is useful when passing parameters everywhere is not clean."
+          }
+        ],
+        "relatedTrigger": "missing_tradeoff"
+      },
+      {
+        "label": "Warns against storing mutable request data in DEFAULT singleton providers.",
+        "requirements": [
+          {
+            "key": "identifies_singleton_request_data_bug",
+            "description": "Explains the bug risk of storing currentUser or request data on a singleton service field."
+          },
+          {
+            "key": "mentions_cross_request_leak",
+            "description": "Mentions cross-request data leak or concurrency contamination."
+          }
+        ],
+        "relatedTrigger": "missing_consequence"
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Accurately defines all three scopes, explains lifecycle/performance trade-offs, and gives a justified request-specific use case." },
-      { "scoreBand": "solid", "description": "Defines the scopes correctly but gives a shallow REQUEST scope use case or misses scope propagation." },
-      { "scoreBand": "needs_work", "description": "Knows singleton and request words but cannot reason about mutable state or provider lifetime." },
-      { "scoreBand": "insufficient_evidence", "description": "Answer does not show practical knowledge of NestJS provider scopes." }
+      {
+        "scoreBand": "strong",
+        "description": "Accurately defines all three scopes, explains lifecycle/performance trade-offs, and gives a justified request-specific use case."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Defines the scopes correctly but gives a shallow REQUEST scope use case or misses scope propagation."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows singleton and request words but cannot reason about mutable state or provider lifetime."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not show practical knowledge of NestJS provider scopes."
+      }
     ],
     "followUps": [
-      { "trigger": "missing_tradeoff", "question": "Why can REQUEST scope hurt performance or make a dependency graph harder to reason about?", "purpose": "Check whether the candidate understands scope cost and propagation." },
-      { "trigger": "red_flag", "question": "What bug could happen if you store currentUser on a singleton service field?", "purpose": "Verify awareness of cross-request state leaks." }
+      {
+        "trigger": "missing_tradeoff",
+        "question": "Why can REQUEST scope hurt performance or make a dependency graph harder to reason about?",
+        "purpose": "Check whether the candidate understands scope cost and propagation."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "What bug could happen if you store currentUser on a singleton service field?",
+        "purpose": "Verify awareness of cross-request state leaks."
+      }
     ],
     "localizedContent": {
       "en": {
@@ -323,7 +773,11 @@
           "Keeping per-request mutable state in singleton providers.",
           "Confusing transient per-consumer instances with per-request instances."
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Mid-level/Senior", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level/Senior",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "Provider scope và REQUEST scope",
@@ -339,7 +793,11 @@
           "Giữ mutable state theo request trong singleton provider.",
           "Nhầm transient instance theo consumer với request instance theo request."
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Mid-level/Senior", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level/Senior",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "provider scope と REQUEST scope",
@@ -355,48 +813,150 @@
           "request ごとの mutable state を singleton provider に保持する。",
           "consumer ごとの transient instance と request ごとの instance を混同する。"
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Mid-level/Senior", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level/Senior",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "NestJS docs: Injection scopes", "url": "https://docs.nestjs.com/fundamentals/injection-scopes", "note": "Used for DEFAULT, REQUEST, and TRANSIENT provider lifetimes." }
+      {
+        "label": "NestJS docs: Injection scopes",
+        "url": "https://docs.nestjs.com/fundamentals/injection-scopes",
+        "note": "Used for DEFAULT, REQUEST, and TRANSIENT provider lifetimes."
+      }
     ],
     "status": "active"
   },
   {
     "code": "NESTJS_DI_TECH_SINGLETON_TRANSIENT_005",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking"],
-    "techTags": ["nestjs", "nodejs", "typescript"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking"
+    ],
+    "techTags": [
+      "nestjs",
+      "nodejs",
+      "typescript"
+    ],
     "difficulty": 2,
     "conversationDepth": "mid",
     "intent": "Check whether the candidate can distinguish singleton provider reuse from transient provider instantiation and reason about state, memory, and dependency behavior.",
     "primaryQuestion": "What is the difference between a singleton and a transient provider?",
     "expectedSignals": [
-      "Explains that a singleton provider has one shared instance reused by consumers within the application/module context.",
-      "Explains that a transient provider creates a separate instance for each injection consumer.",
-      "Mentions singleton is the NestJS default and is appropriate for stateless services, database clients, repositories, and shared adapters.",
-      "Mentions transient can be useful for lightweight stateful helpers, per-consumer builders, contextual loggers, or classes that should not share internal mutable fields.",
-      "Identifies the risk of mutable shared state in singletons and the overhead of creating many transient instances."
-    ],
-    "redFlags": [
-      "Says transient means one instance per HTTP request.",
-      "Assumes singleton providers are unsafe by default because requests are concurrent.",
-      "Uses transient to hide state bugs instead of designing stateless services.",
-      "Cannot explain why database connections or expensive clients usually should not be transient."
+      {
+        "label": "Explains that a singleton provider has one shared instance reused by consumers within the application/module context.",
+        "requirements": [
+          {
+            "key": "defines_singleton_shared_instance",
+            "description": "Explains that singleton providers share one instance within the app/module context."
+          },
+          {
+            "key": "mentions_consumer_reuse",
+            "description": "States that multiple consumers receive the same singleton instance."
+          }
+        ],
+        "relatedTrigger": "missing_tradeoff"
+      },
+      {
+        "label": "Explains that a transient provider creates a separate instance for each injection consumer.",
+        "requirements": [
+          {
+            "key": "defines_transient_per_consumer",
+            "description": "Explains that a transient provider creates a separate instance for each injection consumer."
+          },
+          {
+            "key": "contrasts_with_singleton_reuse",
+            "description": "Contrasts transient instance creation with singleton reuse."
+          }
+        ],
+        "relatedTrigger": "missing_tradeoff"
+      },
+      {
+        "label": "Mentions singleton is the NestJS default and is appropriate for stateless services, database clients, repositories, and shared adapters.",
+        "requirements": [
+          {
+            "key": "states_singleton_default",
+            "description": "States that singleton/default scope is the normal NestJS provider behavior."
+          },
+          {
+            "key": "names_singleton_fit",
+            "description": "Names stateless services, database clients, repositories, or shared adapters as singleton fits."
+          }
+        ],
+        "relatedTrigger": "missing_tradeoff"
+      },
+      {
+        "label": "Mentions transient can be useful for lightweight stateful helpers, per-consumer builders, contextual loggers, or classes that should not share internal mutable fields.",
+        "requirements": [
+          {
+            "key": "names_transient_fit",
+            "description": "Names lightweight stateful helpers, per-consumer builders, contextual loggers, or non-shared mutable helpers."
+          },
+          {
+            "key": "avoids_transient_database_client",
+            "description": "Explains why a database client usually should not be transient."
+          }
+        ],
+        "relatedTrigger": "missing_tradeoff"
+      },
+      {
+        "label": "Identifies the risk of mutable shared state in singletons and the overhead of creating many transient instances.",
+        "requirements": [
+          {
+            "key": "explains_mutable_singleton_risk",
+            "description": "Explains data leak or race risk from mutable fields on singleton services."
+          },
+          {
+            "key": "explains_transient_overhead",
+            "description": "Mentions overhead from creating many transient instances."
+          }
+        ],
+        "relatedTrigger": "missing_consequence"
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Clearly compares instance lifetime, default behavior, state safety, memory/performance implications, and realistic use cases." },
-      { "scoreBand": "solid", "description": "Defines singleton and transient correctly but gives limited examples or misses overhead concerns." },
-      { "scoreBand": "needs_work", "description": "Can repeat definitions but confuses transient with request scope or cannot apply the distinction." },
-      { "scoreBand": "insufficient_evidence", "description": "Answer is too vague to confirm provider lifetime understanding." }
+      {
+        "scoreBand": "strong",
+        "description": "Clearly compares instance lifetime, default behavior, state safety, memory/performance implications, and realistic use cases."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Defines singleton and transient correctly but gives limited examples or misses overhead concerns."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can repeat definitions but confuses transient with request scope or cannot apply the distinction."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague to confirm provider lifetime understanding."
+      }
     ],
     "followUps": [
-      { "trigger": "missing_tradeoff", "question": "Would you make a database client transient? Why or why not?", "purpose": "Check performance and resource-lifecycle reasoning." },
-      { "trigger": "red_flag", "question": "If a singleton service has a mutable array field, what concurrency or data-leak issue could appear?", "purpose": "Verify awareness of shared mutable state risk." }
+      {
+        "trigger": "missing_tradeoff",
+        "question": "Would you make a database client transient? Why or why not?",
+        "purpose": "Check performance and resource-lifecycle reasoning."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "If a singleton service has a mutable array field, what concurrency or data-leak issue could appear?",
+        "purpose": "Verify awareness of shared mutable state risk."
+      }
     ],
     "localizedContent": {
       "en": {
@@ -413,7 +973,11 @@
           "Putting request-specific mutable data into singleton fields.",
           "Making expensive clients transient without a resource reason."
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "Singleton provider và transient provider",
@@ -429,7 +993,11 @@
           "Đưa mutable data riêng theo request vào field của singleton.",
           "Biến expensive client thành transient mà không có lý do về resource."
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "singleton provider と transient provider",
@@ -445,49 +1013,164 @@
           "request 固有の mutable data を singleton field に入れる。",
           "高コストな client を理由なく transient にする。"
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "NestJS docs: Injection scopes", "url": "https://docs.nestjs.com/fundamentals/injection-scopes", "note": "Used for singleton/default and transient provider lifetime distinctions." }
+      {
+        "label": "NestJS docs: Injection scopes",
+        "url": "https://docs.nestjs.com/fundamentals/injection-scopes",
+        "note": "Used for singleton/default and transient provider lifetime distinctions."
+      }
     ],
     "status": "active"
   },
   {
     "code": "NESTJS_DI_TECH_CUSTOM_PROVIDERS_006",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["mid", "senior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "mid",
+      "senior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "trade_off_analysis", "system_thinking"],
-    "techTags": ["nestjs", "typescript"],
+    "competencies": [
+      "technical_fundamentals",
+      "trade_off_analysis",
+      "system_thinking"
+    ],
+    "techTags": [
+      "nestjs",
+      "typescript"
+    ],
     "difficulty": 3,
     "conversationDepth": "deep",
     "intent": "Evaluate whether the candidate can implement custom providers with useClass, useValue, and useFactory and choose the right provider style for swapping implementations, constants, and dynamic configuration.",
     "primaryQuestion": "How do you create a custom provider using useClass, useValue, and useFactory?",
     "expectedSignals": [
-      "Explains the common provider object shape with provide as the injection token and one of useClass, useValue, or useFactory as the binding.",
-      "Describes useClass for choosing or swapping an implementation class behind a token, such as different mailer implementations.",
-      "Describes useValue for static values, configuration objects, constants, external client instances, or test mocks.",
-      "Describes useFactory for dynamic creation using injected dependencies, environment config, async setup, or conditional logic.",
-      "Mentions that custom tokens can be strings, symbols, or class references and that consumers use @Inject(token) when TypeScript type inference is not enough.",
-      "Notes that the provider must be registered in the module and exported if another module needs to inject it."
-    ],
-    "redFlags": [
-      "Cannot name the provide token or explain how consumers request the provider.",
-      "Uses useFactory without mentioning its inject array for dependencies.",
-      "Uses useValue for mutable shared objects without considering shared state.",
-      "Assumes a TypeScript interface can be used directly as an injection token at runtime."
+      {
+        "label": "Explains the common provider object shape with provide as the injection token and one of useClass, useValue, or useFactory as the binding.",
+        "requirements": [
+          {
+            "key": "describes_provider_object_shape",
+            "description": "Describes provider objects with `provide` as token and a binding such as useClass, useValue, or useFactory."
+          },
+          {
+            "key": "distinguishes_token_from_binding",
+            "description": "Distinguishes the injection token from the implementation/value/factory bound to it."
+          }
+        ],
+        "relatedTrigger": "vague_answer"
+      },
+      {
+        "label": "Describes useClass for choosing or swapping an implementation class behind a token, such as different mailer implementations.",
+        "requirements": [
+          {
+            "key": "explains_useclass_binding",
+            "description": "Explains useClass as binding a token to an implementation class."
+          },
+          {
+            "key": "uses_swappable_implementation_example",
+            "description": "Gives a swappable implementation example such as mock/real mailer."
+          }
+        ],
+        "relatedTrigger": "vague_answer"
+      },
+      {
+        "label": "Describes useValue for static values, configuration objects, constants, external client instances, or test mocks.",
+        "requirements": [
+          {
+            "key": "explains_usevalue_binding",
+            "description": "Explains useValue as binding a token to an existing value or object."
+          },
+          {
+            "key": "uses_config_or_mock_example",
+            "description": "Gives an example such as APP_CONFIG, constants, external clients, or test mocks."
+          }
+        ],
+        "relatedTrigger": "vague_answer"
+      },
+      {
+        "label": "Describes useFactory for dynamic creation using injected dependencies, environment config, async setup, or conditional logic.",
+        "requirements": [
+          {
+            "key": "explains_usefactory_binding",
+            "description": "Explains useFactory as dynamically creating a provider value."
+          },
+          {
+            "key": "mentions_factory_inject_dependencies",
+            "description": "Explains how a factory receives dependencies such as ConfigService through inject."
+          }
+        ],
+        "relatedTrigger": "missing_context"
+      },
+      {
+        "label": "Mentions that custom tokens can be strings, symbols, or class references and that consumers use @Inject(token) when TypeScript type inference is not enough.",
+        "requirements": [
+          {
+            "key": "names_custom_token_forms",
+            "description": "Names strings, symbols, constants, or class references as provider tokens."
+          },
+          {
+            "key": "mentions_inject_for_custom_token_consumers",
+            "description": "Mentions @Inject(token) when Nest cannot infer the token from a class type."
+          }
+        ],
+        "relatedTrigger": "missing_context"
+      },
+      {
+        "label": "Notes that the provider must be registered in the module and exported if another module needs to inject it.",
+        "requirements": [
+          {
+            "key": "requires_module_provider_registration",
+            "description": "States that custom providers must be registered in a module."
+          },
+          {
+            "key": "requires_export_for_other_modules",
+            "description": "States that another module can inject it only if it is exported/imported appropriately."
+          }
+        ],
+        "relatedTrigger": "missing_context"
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Explains all three provider styles, token selection, inject array, module export, and testing/configuration use cases." },
-      { "scoreBand": "solid", "description": "Understands the three styles but misses token/runtime interface nuance or module export detail." },
-      { "scoreBand": "needs_work", "description": "Has used custom providers but cannot explain when each style should be chosen." },
-      { "scoreBand": "insufficient_evidence", "description": "Answer does not demonstrate working knowledge of NestJS custom provider syntax." }
+      {
+        "scoreBand": "strong",
+        "description": "Explains all three provider styles, token selection, inject array, module export, and testing/configuration use cases."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands the three styles but misses token/runtime interface nuance or module export detail."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Has used custom providers but cannot explain when each style should be chosen."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not demonstrate working knowledge of NestJS custom provider syntax."
+      }
     ],
     "followUps": [
-      { "trigger": "vague_answer", "question": "Can you sketch a provider object for CONFIG using useValue and a provider object for Mailer using useClass?", "purpose": "Force concrete provider syntax." },
-      { "trigger": "missing_context", "question": "How does a useFactory provider receive ConfigService or another dependency?", "purpose": "Verify inject-array mechanics." }
+      {
+        "trigger": "vague_answer",
+        "question": "Can you sketch a provider object for CONFIG using useValue and a provider object for Mailer using useClass?",
+        "purpose": "Force concrete provider syntax."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "How does a useFactory provider receive ConfigService or another dependency?",
+        "purpose": "Verify inject-array mechanics."
+      }
     ],
     "localizedContent": {
       "en": {
@@ -504,7 +1187,11 @@
           "Using a TypeScript interface as if it exists at runtime.",
           "Not exporting the custom provider for other modules."
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Mid-level/Senior", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level/Senior",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "Custom provider với useClass, useValue, useFactory",
@@ -520,7 +1207,11 @@
           "Dùng TypeScript interface như thể nó tồn tại ở runtime.",
           "Không export custom provider cho module khác."
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Mid-level/Senior", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level/Senior",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "useClass, useValue, useFactory による custom provider",
@@ -536,50 +1227,169 @@
           "TypeScript interface が runtime に存在すると考える。",
           "他 module で使う custom provider を export しない。"
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Mid-level/Senior", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level/Senior",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "NestJS docs: Custom providers", "url": "https://docs.nestjs.com/fundamentals/custom-providers", "note": "Used for useClass, useValue, useFactory, and injection token behavior." },
-      { "label": "NestJS docs: Modules", "url": "https://docs.nestjs.com/modules", "note": "Used for module exports and provider visibility." }
+      {
+        "label": "NestJS docs: Custom providers",
+        "url": "https://docs.nestjs.com/fundamentals/custom-providers",
+        "note": "Used for useClass, useValue, useFactory, and injection token behavior."
+      },
+      {
+        "label": "NestJS docs: Modules",
+        "url": "https://docs.nestjs.com/modules",
+        "note": "Used for module exports and provider visibility."
+      }
     ],
     "status": "active"
   },
   {
     "code": "NESTJS_DI_TECH_CIRCULAR_DEPENDENCY_007",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["mid", "senior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "mid",
+      "senior"
+    ],
     "type": "technical_depth",
-    "competencies": ["problem_solving", "system_thinking", "trade_off_analysis"],
-    "techTags": ["nestjs", "typescript"],
+    "competencies": [
+      "problem_solving",
+      "system_thinking",
+      "trade_off_analysis"
+    ],
+    "techTags": [
+      "nestjs",
+      "typescript"
+    ],
     "difficulty": 3,
     "conversationDepth": "deep",
     "intent": "Assess whether the candidate understands circular dependencies in providers/modules and prioritizes refactoring before using forwardRef as a workaround.",
     "primaryQuestion": "What is a circular dependency, and how do you resolve it in NestJS?",
     "expectedSignals": [
-      "Defines a circular dependency as two or more providers or modules depending on each other directly or indirectly.",
-      "Explains why cycles make initialization order and ownership unclear and can produce dependency resolution errors.",
-      "Prioritizes design fixes such as extracting shared logic to a third service/module, inverting the dependency, using events, or splitting responsibilities.",
-      "Mentions forwardRef() as a NestJS mechanism for unavoidable provider or module cycles, but not the first design choice.",
-      "Notes that module-level cycles require forwardRef in imports on both sides when both modules import each other.",
-      "Mentions alternatives such as ModuleRef or lazy lookup only for edge cases where refactoring is not practical."
-    ],
-    "redFlags": [
-      "Uses forwardRef() as the default solution without analyzing ownership.",
-      "Cannot distinguish a TypeScript import cycle from a NestJS DI provider/module cycle.",
-      "Adds both services to every module to make the error disappear.",
-      "Does not understand that circular dependency often signals poor boundaries or mixed responsibilities."
+      {
+        "label": "Defines a circular dependency as two or more providers or modules depending on each other directly or indirectly.",
+        "requirements": [
+          {
+            "key": "defines_provider_or_module_cycle",
+            "description": "Defines a cycle as providers or modules depending on each other directly or indirectly."
+          },
+          {
+            "key": "distinguishes_di_cycle_from_import_cycle",
+            "description": "Distinguishes a Nest DI cycle from a simple TypeScript import cycle."
+          }
+        ],
+        "relatedTrigger": "missing_tradeoff"
+      },
+      {
+        "label": "Explains why cycles make initialization order and ownership unclear and can produce dependency resolution errors.",
+        "requirements": [
+          {
+            "key": "explains_resolution_order_problem",
+            "description": "Explains why cycles confuse provider/module initialization and dependency resolution."
+          },
+          {
+            "key": "connects_cycle_to_ownership_smell",
+            "description": "Connects cycles to unclear ownership or mixed responsibilities."
+          }
+        ],
+        "relatedTrigger": "missing_consequence"
+      },
+      {
+        "label": "Prioritizes design fixes such as extracting shared logic to a third service/module, inverting the dependency, using events, or splitting responsibilities.",
+        "requirements": [
+          {
+            "key": "proposes_boundary_refactor",
+            "description": "Proposes extracting shared logic, splitting responsibilities, or inverting the dependency before forwardRef."
+          },
+          {
+            "key": "uses_auth_users_example",
+            "description": "Explains what shared responsibility might be extracted from an AuthService/UsersService cycle."
+          }
+        ],
+        "relatedTrigger": "missing_tradeoff"
+      },
+      {
+        "label": "Mentions forwardRef() as a NestJS mechanism for unavoidable provider or module cycles, but not the first design choice.",
+        "requirements": [
+          {
+            "key": "mentions_forwardref_workaround",
+            "description": "Mentions forwardRef as a Nest mechanism for unavoidable cycles."
+          },
+          {
+            "key": "frames_forwardref_not_default",
+            "description": "Frames forwardRef as a workaround, not the default architecture pattern."
+          }
+        ],
+        "relatedTrigger": "missing_consequence"
+      },
+      {
+        "label": "Notes that module-level cycles require forwardRef in imports on both sides when both modules import each other.",
+        "requirements": [
+          {
+            "key": "mentions_module_forwardref_imports",
+            "description": "Mentions forwardRef in module imports for module-level cycles."
+          },
+          {
+            "key": "mentions_both_sides_when_needed",
+            "description": "States that both sides may need forwardRef when both modules import each other."
+          }
+        ],
+        "relatedTrigger": "missing_tradeoff"
+      },
+      {
+        "label": "Mentions alternatives such as ModuleRef or lazy lookup only for edge cases where refactoring is not practical.",
+        "requirements": [
+          {
+            "key": "mentions_moduleref_or_lazy_lookup",
+            "description": "Mentions ModuleRef or lazy lookup as an edge-case alternative."
+          },
+          {
+            "key": "limits_lazy_lookup_to_edge_cases",
+            "description": "Explains that lazy lookup should not replace clearer dependency boundaries."
+          }
+        ],
+        "relatedTrigger": "missing_consequence"
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Defines provider and module cycles, explains root causes, proposes refactoring options, and uses forwardRef only as a controlled workaround." },
-      { "scoreBand": "solid", "description": "Explains cycles and forwardRef but misses design-level fixes or module/provider distinction." },
-      { "scoreBand": "needs_work", "description": "Recognizes the error but only knows to paste forwardRef without reasoning." },
-      { "scoreBand": "insufficient_evidence", "description": "Answer does not show practical debugging or design understanding of DI cycles." }
+      {
+        "scoreBand": "strong",
+        "description": "Defines provider and module cycles, explains root causes, proposes refactoring options, and uses forwardRef only as a controlled workaround."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains cycles and forwardRef but misses design-level fixes or module/provider distinction."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Recognizes the error but only knows to paste forwardRef without reasoning."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not show practical debugging or design understanding of DI cycles."
+      }
     ],
     "followUps": [
-      { "trigger": "missing_tradeoff", "question": "If AuthService and UsersService depend on each other, what shared responsibility might you extract before using forwardRef?", "purpose": "Check whether the candidate can break a real cycle by design." },
-      { "trigger": "red_flag", "question": "What problem remains if you fix every cycle by adding forwardRef everywhere?", "purpose": "Verify awareness that forwardRef can hide poor boundaries." }
+      {
+        "trigger": "missing_tradeoff",
+        "question": "If AuthService and UsersService depend on each other, what shared responsibility might you extract before using forwardRef?",
+        "purpose": "Check whether the candidate can break a real cycle by design."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "What problem remains if you fix every cycle by adding forwardRef everywhere?",
+        "purpose": "Verify awareness that forwardRef can hide poor boundaries."
+      }
     ],
     "localizedContent": {
       "en": {
@@ -596,7 +1406,11 @@
           "Confusing TypeScript import cycles with DI cycles.",
           "Registering providers in unrelated modules to silence the error."
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Mid-level/Senior", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level/Senior",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "Circular dependency trong NestJS DI",
@@ -612,7 +1426,11 @@
           "Nhầm TypeScript import cycle với DI cycle.",
           "Đăng ký provider vào module không liên quan chỉ để hết lỗi."
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Mid-level/Senior", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level/Senior",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "NestJS DI の circular dependency",
@@ -628,50 +1446,169 @@
           "TypeScript import cycle と DI cycle を混同する。",
           "error を消すために無関係な module へ provider を登録する。"
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Mid-level/Senior", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level/Senior",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "NestJS docs: Circular dependency", "url": "https://docs.nestjs.com/fundamentals/circular-dependency", "note": "Used for forwardRef and circular dependency handling." },
-      { "label": "NestJS docs: Modules", "url": "https://docs.nestjs.com/modules", "note": "Used for module import/export boundary reasoning." }
+      {
+        "label": "NestJS docs: Circular dependency",
+        "url": "https://docs.nestjs.com/fundamentals/circular-dependency",
+        "note": "Used for forwardRef and circular dependency handling."
+      },
+      {
+        "label": "NestJS docs: Modules",
+        "url": "https://docs.nestjs.com/modules",
+        "note": "Used for module import/export boundary reasoning."
+      }
     ],
     "status": "active"
   },
   {
     "code": "NESTJS_DI_TECH_FORWARD_REF_008",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["mid", "senior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "mid",
+      "senior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "problem_solving", "trade_off_analysis"],
-    "techTags": ["nestjs", "typescript"],
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving",
+      "trade_off_analysis"
+    ],
+    "techTags": [
+      "nestjs",
+      "typescript"
+    ],
     "difficulty": 3,
     "conversationDepth": "deep",
     "intent": "Verify whether the candidate knows what forwardRef() does, where it is applied, and why it should be used sparingly.",
     "primaryQuestion": "What is forwardRef(), and when is it needed?",
     "expectedSignals": [
-      "Explains forwardRef() as a wrapper that lets Nest resolve a reference lazily when two providers or modules refer to each other.",
-      "Mentions module usage such as imports: [forwardRef(() => UsersModule)] when two modules import each other.",
-      "Mentions provider usage such as @Inject(forwardRef(() => UsersService)) when two providers inject each other.",
-      "States that both sides of a provider or module cycle may need the appropriate forwardRef wiring.",
-      "Frames forwardRef as a workaround for unavoidable cycles after considering refactoring.",
-      "Warns that it can make architecture harder to reason about and should not replace clear ownership boundaries."
-    ],
-    "redFlags": [
-      "Says forwardRef fixes any injection error.",
-      "Uses forwardRef when the real problem is a missing provider, missing export, or wrong module import.",
-      "Cannot state whether the cycle is between modules or providers.",
-      "Does not know where forwardRef appears in code."
+      {
+        "label": "Explains forwardRef() as a wrapper that lets Nest resolve a reference lazily when two providers or modules refer to each other.",
+        "requirements": [
+          {
+            "key": "defines_forwardref_lazy_reference",
+            "description": "Explains forwardRef as lazy reference resolution for circular provider or module references."
+          },
+          {
+            "key": "limits_to_circular_reference_case",
+            "description": "Does not treat forwardRef as a fix for every DI error."
+          }
+        ],
+        "relatedTrigger": "missing_context"
+      },
+      {
+        "label": "Mentions module usage such as imports: [forwardRef(() => UsersModule)] when two modules import each other.",
+        "requirements": [
+          {
+            "key": "shows_module_import_syntax",
+            "description": "Mentions module usage such as imports: [forwardRef(() => UsersModule)]."
+          },
+          {
+            "key": "connects_to_module_cycle",
+            "description": "Connects that syntax to a module-level import cycle."
+          }
+        ],
+        "relatedTrigger": "missing_context"
+      },
+      {
+        "label": "Mentions provider usage such as @Inject(forwardRef(() => UsersService)) when two providers inject each other.",
+        "requirements": [
+          {
+            "key": "shows_provider_inject_syntax",
+            "description": "Mentions provider usage such as @Inject(forwardRef(() => UsersService))."
+          },
+          {
+            "key": "connects_to_constructor_cycle",
+            "description": "Connects that syntax to providers injecting each other."
+          }
+        ],
+        "relatedTrigger": "missing_context"
+      },
+      {
+        "label": "States that both sides of a provider or module cycle may need the appropriate forwardRef wiring.",
+        "requirements": [
+          {
+            "key": "mentions_both_sides_provider_or_module",
+            "description": "States that both sides of a cycle may need the appropriate forwardRef wiring."
+          },
+          {
+            "key": "distinguishes_module_vs_provider_fix_location",
+            "description": "Explains how to tell whether the fix belongs in imports or constructor @Inject."
+          }
+        ],
+        "relatedTrigger": "missing_context"
+      },
+      {
+        "label": "Frames forwardRef as a workaround for unavoidable cycles after considering refactoring.",
+        "requirements": [
+          {
+            "key": "requires_refactor_considered_first",
+            "description": "States that refactoring or boundary cleanup should be considered before forwardRef."
+          },
+          {
+            "key": "recognizes_missing_export_not_cycle",
+            "description": "Recognizes that missing exports/providers are different from circular references."
+          }
+        ],
+        "relatedTrigger": "missing_consequence"
+      },
+      {
+        "label": "Warns that it can make architecture harder to reason about and should not replace clear ownership boundaries.",
+        "requirements": [
+          {
+            "key": "names_forwardref_architecture_cost",
+            "description": "Explains that forwardRef can make architecture and initialization harder to reason about."
+          },
+          {
+            "key": "preserves_clear_ownership_boundary",
+            "description": "Warns that forwardRef should not replace clear ownership boundaries."
+          }
+        ],
+        "relatedTrigger": "missing_consequence"
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Explains lazy reference resolution, provider and module syntax, bidirectional wiring, and the architectural trade-off." },
-      { "scoreBand": "solid", "description": "Knows forwardRef solves cycles but misses either provider syntax, module syntax, or design caution." },
-      { "scoreBand": "needs_work", "description": "Recognizes the name but cannot apply it correctly to a provider or module cycle." },
-      { "scoreBand": "insufficient_evidence", "description": "Answer does not distinguish circular dependencies from other DI errors." }
+      {
+        "scoreBand": "strong",
+        "description": "Explains lazy reference resolution, provider and module syntax, bidirectional wiring, and the architectural trade-off."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows forwardRef solves cycles but misses either provider syntax, module syntax, or design caution."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Recognizes the name but cannot apply it correctly to a provider or module cycle."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not distinguish circular dependencies from other DI errors."
+      }
     ],
     "followUps": [
-      { "trigger": "missing_context", "question": "How would you tell whether the fix belongs in module imports or in a constructor @Inject() parameter?", "purpose": "Check provider-versus-module cycle diagnosis." },
-      { "trigger": "red_flag", "question": "If the provider simply is not exported from its module, would forwardRef help?", "purpose": "Verify that the candidate does not overapply forwardRef." }
+      {
+        "trigger": "missing_context",
+        "question": "How would you tell whether the fix belongs in module imports or in a constructor @Inject() parameter?",
+        "purpose": "Check provider-versus-module cycle diagnosis."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "If the provider simply is not exported from its module, would forwardRef help?",
+        "purpose": "Verify that the candidate does not overapply forwardRef."
+      }
     ],
     "localizedContent": {
       "en": {
@@ -688,7 +1625,11 @@
           "Not knowing whether the cycle is provider-level or module-level.",
           "Avoiding a simpler boundary refactor."
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Mid-level/Senior", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level/Senior",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "forwardRef cho DI reference lazy",
@@ -704,7 +1645,11 @@
           "Không biết cycle nằm ở provider-level hay module-level.",
           "Né refactor boundary đơn giản hơn."
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Mid-level/Senior", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level/Senior",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "lazy DI reference のための forwardRef",
@@ -720,49 +1665,154 @@
           "cycle が provider-level か module-level かを把握しない。",
           "より単純な boundary refactor を避ける。"
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Mid-level/Senior", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level/Senior",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "NestJS docs: Circular dependency", "url": "https://docs.nestjs.com/fundamentals/circular-dependency", "note": "Used for forwardRef provider and module examples." },
-      { "label": "NestJS docs: Common errors", "url": "https://docs.nestjs.com/faq/common-errors", "note": "Used for distinguishing circular dependencies from missing provider/export errors." }
+      {
+        "label": "NestJS docs: Circular dependency",
+        "url": "https://docs.nestjs.com/fundamentals/circular-dependency",
+        "note": "Used for forwardRef provider and module examples."
+      },
+      {
+        "label": "NestJS docs: Common errors",
+        "url": "https://docs.nestjs.com/faq/common-errors",
+        "note": "Used for distinguishing circular dependencies from missing provider/export errors."
+      }
     ],
     "status": "active"
   },
   {
     "code": "NESTJS_DI_TECH_INJECT_DECORATOR_009",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "communication"],
-    "techTags": ["nestjs", "typescript"],
+    "competencies": [
+      "technical_fundamentals",
+      "communication"
+    ],
+    "techTags": [
+      "nestjs",
+      "typescript"
+    ],
     "difficulty": 2,
     "conversationDepth": "mid",
     "intent": "Check whether the candidate knows why @Inject() is needed for explicit provider tokens, non-class values, interfaces, and special resolution cases.",
     "primaryQuestion": "What is the @Inject() decorator used for?",
     "expectedSignals": [
-      "Explains that @Inject() explicitly tells Nest which provider token to resolve for a constructor parameter or property.",
-      "Mentions @Inject() is needed for custom tokens such as strings, symbols, constants, or abstract tokens that TypeScript cannot infer at runtime.",
-      "Explains that TypeScript interfaces are erased at runtime, so a concrete injection token is required.",
-      "Mentions use cases such as injecting configuration values, external clients, aliases, and custom provider implementations.",
-      "Connects @Inject() with forwardRef() in circular provider cases when lazy token resolution is required."
-    ],
-    "redFlags": [
-      "Says @Inject() is required for every constructor-injected service.",
-      "Assumes interfaces can be injected without a runtime token.",
-      "Cannot explain the difference between a TypeScript type annotation and a NestJS provider token.",
-      "Uses string tokens casually without considering consistency or symbol/constant tokens."
+      {
+        "label": "Explains that @Inject() explicitly tells Nest which provider token to resolve for a constructor parameter or property.",
+        "requirements": [
+          {
+            "key": "defines_inject_explicit_token",
+            "description": "Explains that @Inject explicitly supplies the provider token for a parameter or property."
+          },
+          {
+            "key": "connects_token_to_resolution",
+            "description": "Connects the token to what Nest resolves from the DI container."
+          }
+        ],
+        "relatedTrigger": "vague_answer"
+      },
+      {
+        "label": "Mentions @Inject() is needed for custom tokens such as strings, symbols, constants, or abstract tokens that TypeScript cannot infer at runtime.",
+        "requirements": [
+          {
+            "key": "names_custom_token_cases",
+            "description": "Names custom token cases such as strings, symbols, constants, or abstract tokens."
+          },
+          {
+            "key": "explains_type_inference_limit",
+            "description": "Explains why Nest cannot infer those tokens from runtime type metadata."
+          }
+        ],
+        "relatedTrigger": "missing_context"
+      },
+      {
+        "label": "Explains that TypeScript interfaces are erased at runtime, so a concrete injection token is required.",
+        "requirements": [
+          {
+            "key": "explains_interface_erasure",
+            "description": "Explains that TypeScript interfaces do not exist at runtime."
+          },
+          {
+            "key": "requires_concrete_token_for_interface_port",
+            "description": "States that an interface-like port needs a concrete token such as a symbol or constant."
+          }
+        ],
+        "relatedTrigger": "missing_context"
+      },
+      {
+        "label": "Mentions use cases such as injecting configuration values, external clients, aliases, and custom provider implementations.",
+        "requirements": [
+          {
+            "key": "names_inject_use_case",
+            "description": "Names configuration values, external clients, aliases, or custom implementations as @Inject use cases."
+          },
+          {
+            "key": "uses_app_config_example",
+            "description": "Shows how a provider registered with provide: 'APP_CONFIG' would be injected."
+          }
+        ],
+        "relatedTrigger": "vague_answer"
+      },
+      {
+        "label": "Connects @Inject() with forwardRef() in circular provider cases when lazy token resolution is required.",
+        "requirements": [
+          {
+            "key": "mentions_inject_forwardref_case",
+            "description": "Mentions @Inject(forwardRef(...)) for provider-level circular references."
+          },
+          {
+            "key": "limits_forwardref_to_cycle",
+            "description": "Does not present forwardRef as necessary for normal class provider injection."
+          }
+        ],
+        "relatedTrigger": "missing_context"
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Explains explicit token resolution, runtime type erasure, custom provider tokens, and practical examples." },
-      { "scoreBand": "solid", "description": "Understands @Inject() for custom tokens but misses interface erasure or forwardRef use." },
-      { "scoreBand": "needs_work", "description": "Knows the decorator name but cannot say when Nest cannot infer a dependency automatically." },
-      { "scoreBand": "insufficient_evidence", "description": "Answer is too vague to validate provider-token understanding." }
+      {
+        "scoreBand": "strong",
+        "description": "Explains explicit token resolution, runtime type erasure, custom provider tokens, and practical examples."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands @Inject() for custom tokens but misses interface erasure or forwardRef use."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows the decorator name but cannot say when Nest cannot infer a dependency automatically."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague to validate provider-token understanding."
+      }
     ],
     "followUps": [
-      { "trigger": "missing_context", "question": "Why can Nest usually inject UsersService without @Inject(), but not inject an interface named CachePort?", "purpose": "Check metadata and interface-erasure understanding." },
-      { "trigger": "vague_answer", "question": "How would you inject a provider registered with provide: 'APP_CONFIG'?", "purpose": "Force concrete use of @Inject() with a non-class token." }
+      {
+        "trigger": "missing_context",
+        "question": "Why can Nest usually inject UsersService without @Inject(), but not inject an interface named CachePort?",
+        "purpose": "Check metadata and interface-erasure understanding."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "How would you inject a provider registered with provide: 'APP_CONFIG'?",
+        "purpose": "Force concrete use of @Inject() with a non-class token."
+      }
     ],
     "localizedContent": {
       "en": {
@@ -779,7 +1829,11 @@
           "Trying to inject a TypeScript interface directly.",
           "Using magic string tokens inconsistently."
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "@Inject và provider token tường minh",
@@ -795,7 +1849,11 @@
           "Cố inject trực tiếp TypeScript interface.",
           "Dùng magic string token không nhất quán."
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "@Inject と明示的な provider token",
@@ -811,49 +1869,156 @@
           "TypeScript interface を直接 inject しようとする。",
           "magic string token を一貫性なく使う。"
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "NestJS docs: Custom providers", "url": "https://docs.nestjs.com/fundamentals/custom-providers", "note": "Used for explicit provider tokens and @Inject() usage." },
-      { "label": "NestJS docs: Providers", "url": "https://docs.nestjs.com/providers", "note": "Used for constructor injection and token inference behavior." }
+      {
+        "label": "NestJS docs: Custom providers",
+        "url": "https://docs.nestjs.com/fundamentals/custom-providers",
+        "note": "Used for explicit provider tokens and @Inject() usage."
+      },
+      {
+        "label": "NestJS docs: Providers",
+        "url": "https://docs.nestjs.com/providers",
+        "note": "Used for constructor injection and token inference behavior."
+      }
     ],
     "status": "active"
   },
   {
     "code": "NESTJS_DI_TECH_MANUAL_NEW_010",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "problem_solving"],
-    "techTags": ["nestjs", "nodejs", "typescript"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "problem_solving"
+    ],
+    "techTags": [
+      "nestjs",
+      "nodejs",
+      "typescript"
+    ],
     "difficulty": 2,
     "conversationDepth": "mid",
     "intent": "Assess whether the candidate understands how NestJS DI differs from manual object construction and the bugs caused by bypassing the container.",
     "primaryQuestion": "How does NestJS DI differ from manually calling new ServiceName()?",
     "expectedSignals": [
-      "Explains that NestJS DI uses the IoC container to resolve constructor dependencies, provider tokens, scopes, lifecycle hooks, and module visibility.",
-      "Explains that new ServiceName() bypasses the container and therefore bypasses nested dependency injection.",
-      "Mentions manual construction can create duplicate instances, ignore singleton/request/transient scope, and miss configuration or mocked implementations.",
-      "Connects DI to testing because tests can override providers without changing the class under test.",
-      "Mentions that manual new may be acceptable for plain value objects or local helper classes that are not Nest providers and have no DI needs."
-    ],
-    "redFlags": [
-      "Says manual new is equivalent if the constructor arguments are the same.",
-      "Manually creates services inside controllers or other providers as a normal pattern.",
-      "Does not recognize lifecycle, scope, mocking, or nested dependency implications.",
-      "Cannot explain why a service with its own injected dependencies fails when constructed manually."
+      {
+        "label": "Explains that NestJS DI uses the IoC container to resolve constructor dependencies, provider tokens, scopes, lifecycle hooks, and module visibility.",
+        "requirements": [
+          {
+            "key": "names_container_managed_behaviors",
+            "description": "Names container-managed dependency resolution, tokens, scopes, lifecycle hooks, or module visibility."
+          },
+          {
+            "key": "connects_di_to_provider_graph",
+            "description": "Explains that Nest resolves the provider graph, not just a single constructor."
+          }
+        ],
+        "relatedTrigger": "missing_consequence"
+      },
+      {
+        "label": "Explains that new ServiceName() bypasses the container and therefore bypasses nested dependency injection.",
+        "requirements": [
+          {
+            "key": "explains_manual_new_bypasses_container",
+            "description": "Explains that manual new bypasses the Nest container."
+          },
+          {
+            "key": "explains_nested_dependency_failure",
+            "description": "Explains what happens when a manually created service needs another injected dependency such as ConfigService."
+          }
+        ],
+        "relatedTrigger": "missing_consequence"
+      },
+      {
+        "label": "Mentions manual construction can create duplicate instances, ignore singleton/request/transient scope, and miss configuration or mocked implementations.",
+        "requirements": [
+          {
+            "key": "mentions_duplicate_or_wrong_scope",
+            "description": "Mentions duplicate instances or ignored singleton/request/transient scope."
+          },
+          {
+            "key": "mentions_config_or_mock_bypass",
+            "description": "Mentions missing configured implementations or test mocks."
+          }
+        ],
+        "relatedTrigger": "missing_consequence"
+      },
+      {
+        "label": "Connects DI to testing because tests can override providers without changing the class under test.",
+        "requirements": [
+          {
+            "key": "connects_di_to_test_overrides",
+            "description": "Explains that tests can override providers without changing the class under test."
+          },
+          {
+            "key": "contrasts_with_hardcoded_new_in_tests",
+            "description": "Explains why hardcoded new makes substituting fakes harder."
+          }
+        ],
+        "relatedTrigger": "missing_tradeoff"
+      },
+      {
+        "label": "Mentions that manual new may be acceptable for plain value objects or local helper classes that are not Nest providers and have no DI needs.",
+        "requirements": [
+          {
+            "key": "identifies_plain_object_exception",
+            "description": "Mentions plain value objects or local helpers as cases where new may be reasonable."
+          },
+          {
+            "key": "requires_no_provider_di_lifecycle_need",
+            "description": "States that the object should not need Nest DI, scope, lifecycle, or module visibility."
+          }
+        ],
+        "relatedTrigger": "missing_tradeoff"
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Contrasts container-managed construction with manual new across dependency graph, scopes, lifecycle, module boundaries, and tests." },
-      { "scoreBand": "solid", "description": "Explains testability and nested dependency injection but misses scope or lifecycle detail." },
-      { "scoreBand": "needs_work", "description": "Knows DI avoids new but cannot explain practical consequences." },
-      { "scoreBand": "insufficient_evidence", "description": "Answer does not demonstrate understanding of NestJS container behavior." }
+      {
+        "scoreBand": "strong",
+        "description": "Contrasts container-managed construction with manual new across dependency graph, scopes, lifecycle, module boundaries, and tests."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains testability and nested dependency injection but misses scope or lifecycle detail."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows DI avoids new but cannot explain practical consequences."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not demonstrate understanding of NestJS container behavior."
+      }
     ],
     "followUps": [
-      { "trigger": "red_flag", "question": "What happens if UsersService manually constructs EmailService, but EmailService expects ConfigService injected by Nest?", "purpose": "Check nested dependency and container-bypass reasoning." },
-      { "trigger": "missing_tradeoff", "question": "When is it still reasonable to use new for an object in a NestJS application?", "purpose": "Verify nuanced distinction between providers and plain domain/value objects." }
+      {
+        "trigger": "missing_consequence",
+        "question": "What happens if UsersService manually constructs EmailService, but EmailService expects ConfigService injected by Nest?",
+        "purpose": "Check nested dependency and container-bypass reasoning."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "When is it still reasonable to use new for an object in a NestJS application?",
+        "purpose": "Verify nuanced distinction between providers and plain domain/value objects."
+      }
     ],
     "localizedContent": {
       "en": {
@@ -870,7 +2035,11 @@
           "Forgetting nested dependencies and provider scopes.",
           "Treating every class in the app as a Nest provider."
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "DI container so với gọi new thủ công",
@@ -886,7 +2055,11 @@
           "Quên nested dependency và provider scope.",
           "Xem mọi class trong app đều là Nest provider."
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "DI container と手動 new の違い",
@@ -902,50 +2075,169 @@
           "nested dependency と provider scope を忘れる。",
           "app 内の全 class を Nest provider として扱う。"
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "NestJS docs: Providers", "url": "https://docs.nestjs.com/providers", "note": "Used for container-managed provider construction." },
-      { "label": "NestJS docs: Testing", "url": "https://docs.nestjs.com/fundamentals/testing", "note": "Used for provider overriding and test module behavior." }
+      {
+        "label": "NestJS docs: Providers",
+        "url": "https://docs.nestjs.com/providers",
+        "note": "Used for container-managed provider construction."
+      },
+      {
+        "label": "NestJS docs: Testing",
+        "url": "https://docs.nestjs.com/fundamentals/testing",
+        "note": "Used for provider overriding and test module behavior."
+      }
     ],
     "status": "active"
   },
   {
     "code": "NESTJS_DI_TECH_OPTIONAL_011",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["mid", "senior"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "mid",
+      "senior"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "trade_off_analysis", "communication"],
-    "techTags": ["nestjs", "typescript"],
+    "competencies": [
+      "technical_fundamentals",
+      "trade_off_analysis",
+      "communication"
+    ],
+    "techTags": [
+      "nestjs",
+      "typescript"
+    ],
     "difficulty": 3,
     "conversationDepth": "deep",
     "intent": "Evaluate whether the candidate understands optional dependencies, when they are appropriate, and how @Optional() changes dependency resolution behavior.",
     "primaryQuestion": "What is an optional dependency, and how do you mark one with @Optional()?",
     "expectedSignals": [
-      "Defines an optional dependency as one that the class can operate without, often because a feature, adapter, logger, or integration is optional.",
-      "Explains that @Optional() is applied to a constructor parameter or injected property so Nest does not fail if the token is missing.",
-      "Mentions that optional dependencies often pair with @Inject(token), especially for custom tokens or pluggable integrations.",
-      "States that the code must handle undefined or absence explicitly instead of assuming the provider exists.",
-      "Warns against using @Optional() to hide missing module imports, missing exports, or incorrectly registered mandatory dependencies.",
-      "Gives an example such as an optional metrics client, optional cache adapter, optional feature flag service, or optional logger."
-    ],
-    "redFlags": [
-      "Uses @Optional() to silence DI errors for required dependencies.",
-      "Does not handle the dependency being undefined.",
-      "Cannot name a real optional integration use case.",
-      "Confuses optional TypeScript constructor parameter syntax with NestJS optional provider resolution."
+      {
+        "label": "Defines an optional dependency as one that the class can operate without, often because a feature, adapter, logger, or integration is optional.",
+        "requirements": [
+          {
+            "key": "defines_optional_dependency",
+            "description": "Defines optional dependency as one the class can operate without."
+          },
+          {
+            "key": "names_optional_integration_case",
+            "description": "Names an optional feature, adapter, logger, metrics client, or integration."
+          }
+        ],
+        "relatedTrigger": "missing_context"
+      },
+      {
+        "label": "Explains that @Optional() is applied to a constructor parameter or injected property so Nest does not fail if the token is missing.",
+        "requirements": [
+          {
+            "key": "places_optional_on_injection_site",
+            "description": "States @Optional is applied to a constructor parameter or injected property."
+          },
+          {
+            "key": "explains_missing_token_no_fail",
+            "description": "Explains that Nest will not fail when that optional token is absent."
+          }
+        ],
+        "relatedTrigger": "missing_context"
+      },
+      {
+        "label": "Mentions that optional dependencies often pair with @Inject(token), especially for custom tokens or pluggable integrations.",
+        "requirements": [
+          {
+            "key": "pairs_optional_with_inject_token",
+            "description": "Mentions pairing @Optional with @Inject(token) for custom tokens."
+          },
+          {
+            "key": "connects_to_pluggable_integration",
+            "description": "Connects optional injection to pluggable adapters or integrations."
+          }
+        ],
+        "relatedTrigger": "missing_context"
+      },
+      {
+        "label": "States that the code must handle undefined or absence explicitly instead of assuming the provider exists.",
+        "requirements": [
+          {
+            "key": "handles_absent_optional_dependency",
+            "description": "States that code must handle undefined or absent optional providers explicitly."
+          },
+          {
+            "key": "describes_fallback_behavior",
+            "description": "Describes fallback behavior when an optional metrics/cache/logger provider is missing."
+          }
+        ],
+        "relatedTrigger": "missing_context"
+      },
+      {
+        "label": "Warns against using @Optional() to hide missing module imports, missing exports, or incorrectly registered mandatory dependencies.",
+        "requirements": [
+          {
+            "key": "rejects_optional_for_mandatory_dependency",
+            "description": "Explains why a dependency required for service correctness should not be marked optional."
+          },
+          {
+            "key": "distinguishes_optional_from_registration_bug",
+            "description": "Distinguishes optional design from missing imports, exports, or wrong provider registration."
+          }
+        ],
+        "relatedTrigger": "missing_consequence"
+      },
+      {
+        "label": "Gives an example such as an optional metrics client, optional cache adapter, optional feature flag service, or optional logger.",
+        "requirements": [
+          {
+            "key": "gives_valid_optional_example",
+            "description": "Gives a valid optional dependency example such as metrics, cache, feature flags, or logger."
+          },
+          {
+            "key": "explains_service_behavior_without_it",
+            "description": "Explains how the service continues when the optional dependency is missing."
+          }
+        ],
+        "relatedTrigger": "missing_context"
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Explains @Optional() behavior, syntax, undefined handling, custom tokens, valid use cases, and misuse risks." },
-      { "scoreBand": "solid", "description": "Understands optional dependencies but misses custom-token pairing or misuse risk." },
-      { "scoreBand": "needs_work", "description": "Knows @Optional() exists but treats it as a generic fix for DI errors." },
-      { "scoreBand": "insufficient_evidence", "description": "Answer does not demonstrate safe optional dependency handling." }
+      {
+        "scoreBand": "strong",
+        "description": "Explains @Optional() behavior, syntax, undefined handling, custom tokens, valid use cases, and misuse risks."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands optional dependencies but misses custom-token pairing or misuse risk."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows @Optional() exists but treats it as a generic fix for DI errors."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not demonstrate safe optional dependency handling."
+      }
     ],
     "followUps": [
-      { "trigger": "red_flag", "question": "If PaymentService cannot work without PaymentGateway, should you mark PaymentGateway as @Optional()? Why?", "purpose": "Check whether the candidate distinguishes optional from required dependencies." },
-      { "trigger": "missing_context", "question": "How should the service behave when an optional metrics client is not registered?", "purpose": "Verify explicit absence handling." }
+      {
+        "trigger": "missing_consequence",
+        "question": "If PaymentService cannot work without PaymentGateway, should you mark PaymentGateway as @Optional()? Why?",
+        "purpose": "Check whether the candidate distinguishes optional from required dependencies."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "How should the service behave when an optional metrics client is not registered?",
+        "purpose": "Verify explicit absence handling."
+      }
     ],
     "localizedContent": {
       "en": {
@@ -962,7 +2254,11 @@
           "Forgetting null or undefined handling in the service.",
           "Confusing TypeScript optional syntax with NestJS DI resolution."
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Mid-level/Senior", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level/Senior",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "Optional dependency với @Optional",
@@ -978,7 +2274,11 @@
           "Quên xử lý null hoặc undefined trong service.",
           "Nhầm optional syntax của TypeScript với cơ chế DI resolution của NestJS."
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Mid-level/Senior", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level/Senior",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "@Optional による optional dependency",
@@ -994,50 +2294,168 @@
           "service 側で null/undefined handling を忘れる。",
           "TypeScript の optional syntax と NestJS DI resolution を混同する。"
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Mid-level/Senior", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Mid-level/Senior",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "NestJS docs: Providers", "url": "https://docs.nestjs.com/providers", "note": "Used for optional provider dependency behavior." },
-      { "label": "NestJS docs: Custom providers", "url": "https://docs.nestjs.com/fundamentals/custom-providers", "note": "Used for optional custom-token dependencies." }
+      {
+        "label": "NestJS docs: Providers",
+        "url": "https://docs.nestjs.com/providers",
+        "note": "Used for optional provider dependency behavior."
+      },
+      {
+        "label": "NestJS docs: Custom providers",
+        "url": "https://docs.nestjs.com/fundamentals/custom-providers",
+        "note": "Used for optional custom-token dependencies."
+      }
     ],
     "status": "active"
   },
   {
     "code": "NESTJS_DI_TECH_PLAIN_VALUE_012",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking"],
-    "techTags": ["nestjs", "typescript"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking"
+    ],
+    "techTags": [
+      "nestjs",
+      "typescript"
+    ],
     "difficulty": 2,
     "conversationDepth": "mid",
     "intent": "Check whether the candidate can inject non-class values through custom providers and understands token-based resolution for configuration, constants, and external instances.",
     "primaryQuestion": "How can you inject a plain value (not a class) as a provider?",
     "expectedSignals": [
-      "Explains registering a custom provider with a token and useValue, such as { provide: APP_CONFIG, useValue: configObject }.",
-      "Mentions that the consumer injects the value with @Inject(APP_CONFIG) because there is no class type for Nest to infer.",
-      "States that tokens should be stable constants or symbols rather than scattered magic strings.",
-      "Mentions plain values can include config objects, constants, feature flags, external SDK clients, or mocks.",
-      "Notes that useValue provides the same object reference to consumers, so mutable shared values should be treated carefully.",
-      "Mentions exporting the provider if other modules need to inject the plain value."
-    ],
-    "redFlags": [
-      "Tries to inject a plain object by only adding it to a constructor type annotation.",
-      "Uses a TypeScript interface as the provider token.",
-      "Forgets @Inject() for a string or symbol token.",
-      "Does not consider mutability and shared reference behavior of useValue."
+      {
+        "label": "Explains registering a custom provider with a token and useValue, such as { provide: APP_CONFIG, useValue: configObject }.",
+        "requirements": [
+          {
+            "key": "shows_usevalue_provider_shape",
+            "description": "Shows provider shape with provide token and useValue object."
+          },
+          {
+            "key": "uses_app_config_example",
+            "description": "Uses a concrete APP_CONFIG or equivalent plain-value provider example."
+          }
+        ],
+        "relatedTrigger": "vague_answer"
+      },
+      {
+        "label": "Mentions that the consumer injects the value with @Inject(APP_CONFIG) because there is no class type for Nest to infer.",
+        "requirements": [
+          {
+            "key": "uses_inject_for_plain_value",
+            "description": "Mentions @Inject(APP_CONFIG) or equivalent for consuming the plain value."
+          },
+          {
+            "key": "explains_no_class_type_inference",
+            "description": "Explains that Nest cannot infer a class token for plain values."
+          }
+        ],
+        "relatedTrigger": "vague_answer"
+      },
+      {
+        "label": "States that tokens should be stable constants or symbols rather than scattered magic strings.",
+        "requirements": [
+          {
+            "key": "prefers_stable_token_constant",
+            "description": "Recommends stable constants or symbols for provider tokens."
+          },
+          {
+            "key": "avoids_scattered_magic_strings",
+            "description": "Warns against scattered magic string tokens."
+          }
+        ],
+        "relatedTrigger": "missing_tradeoff"
+      },
+      {
+        "label": "Mentions plain values can include config objects, constants, feature flags, external SDK clients, or mocks.",
+        "requirements": [
+          {
+            "key": "names_plain_value_examples",
+            "description": "Names config objects, constants, feature flags, external clients, or mocks as plain-value providers."
+          },
+          {
+            "key": "connects_value_to_provider_use",
+            "description": "Explains why those values are registered through useValue."
+          }
+        ],
+        "relatedTrigger": "vague_answer"
+      },
+      {
+        "label": "Notes that useValue provides the same object reference to consumers, so mutable shared values should be treated carefully.",
+        "requirements": [
+          {
+            "key": "mentions_shared_reference",
+            "description": "States that useValue shares the same object reference among consumers."
+          },
+          {
+            "key": "explains_mutable_shared_value_risk",
+            "description": "Explains risk if the shared injected object is mutable."
+          }
+        ],
+        "relatedTrigger": "missing_tradeoff"
+      },
+      {
+        "label": "Mentions exporting the provider if other modules need to inject the plain value.",
+        "requirements": [
+          {
+            "key": "mentions_export_for_cross_module_use",
+            "description": "Mentions exporting the useValue provider when other modules need it."
+          },
+          {
+            "key": "connects_import_export_to_visibility",
+            "description": "Connects module imports/exports to provider visibility."
+          }
+        ],
+        "relatedTrigger": "missing_tradeoff"
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Explains token constants, useValue registration, @Inject consumption, module exports, and shared-reference caveats." },
-      { "scoreBand": "solid", "description": "Understands useValue and @Inject but misses token hygiene or mutability/export nuance." },
-      { "scoreBand": "needs_work", "description": "Can vaguely say useValue but cannot describe the module provider and consumer sides." },
-      { "scoreBand": "insufficient_evidence", "description": "Answer does not show practical knowledge of injecting non-class providers." }
+      {
+        "scoreBand": "strong",
+        "description": "Explains token constants, useValue registration, @Inject consumption, module exports, and shared-reference caveats."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands useValue and @Inject but misses token hygiene or mutability/export nuance."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can vaguely say useValue but cannot describe the module provider and consumer sides."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not show practical knowledge of injecting non-class providers."
+      }
     ],
     "followUps": [
-      { "trigger": "vague_answer", "question": "What would the providers array and constructor parameter look like for an APP_CONFIG object?", "purpose": "Force concrete provider registration and injection syntax." },
-      { "trigger": "missing_tradeoff", "question": "What risk appears if the injected useValue object is mutable and shared across services?", "purpose": "Check shared-reference and state-safety reasoning." }
+      {
+        "trigger": "vague_answer",
+        "question": "What would the providers array and constructor parameter look like for an APP_CONFIG object?",
+        "purpose": "Force concrete provider registration and injection syntax."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "What risk appears if the injected useValue object is mutable and shared across services?",
+        "purpose": "Check shared-reference and state-safety reasoning."
+      }
     ],
     "localizedContent": {
       "en": {
@@ -1054,7 +2472,11 @@
           "Using untracked magic strings as tokens.",
           "Mutating a shared useValue object without intent."
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "Inject plain value như provider",
@@ -1070,7 +2492,11 @@
           "Dùng magic string token rải rác.",
           "Mutate object useValue dùng chung mà không chủ đích."
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "plain value を provider として inject する",
@@ -1086,49 +2512,165 @@
           "管理されていない magic string token を使う。",
           "意図なく共有 useValue object を mutate する。"
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "NestJS docs: Custom providers", "url": "https://docs.nestjs.com/fundamentals/custom-providers", "note": "Used for useValue and non-class injection tokens." }
+      {
+        "label": "NestJS docs: Custom providers",
+        "url": "https://docs.nestjs.com/fundamentals/custom-providers",
+        "note": "Used for useValue and non-class injection tokens."
+      }
     ],
     "status": "active"
   },
   {
     "code": "NESTJS_DI_TECH_TEST_MOCK_PROVIDER_013",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "problem_solving", "impact_measurement"],
-    "techTags": ["nestjs", "jest", "typescript"],
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving",
+      "impact_measurement"
+    ],
+    "techTags": [
+      "nestjs",
+      "jest",
+      "typescript"
+    ],
     "difficulty": 2,
     "conversationDepth": "mid",
     "intent": "Evaluate whether the candidate can mock dependencies in NestJS unit tests using Test.createTestingModule and provider overrides.",
     "primaryQuestion": "How do you mock a provider in unit tests with Test.createTestingModule()?",
     "expectedSignals": [
-      "Explains creating a TestingModule with the class under test and a mock provider for its dependency.",
-      "Shows the provider shape { provide: DependencyToken, useValue: mockObject } for replacing a dependency.",
-      "Mentions module.compile() and retrieving the class under test with module.get(ServiceUnderTest).",
-      "Mentions jest.fn() or equivalent mocks to assert calls and control return values.",
-      "Mentions overrideProvider(token).useValue(mock) as an option when importing a real module but replacing one provider.",
-      "Keeps unit tests focused by mocking external dependencies such as repositories, HTTP clients, queues, or other services."
-    ],
-    "redFlags": [
-      "Instantiates the service manually while ignoring its NestJS provider dependencies.",
-      "Imports the full application module for a narrow unit test without controlling dependencies.",
-      "Uses real database, queue, or HTTP clients in a unit test mock scenario.",
-      "Cannot identify the correct provider token to override."
+      {
+        "label": "Explains creating a TestingModule with the class under test and a mock provider for its dependency.",
+        "requirements": [
+          {
+            "key": "creates_testing_module_with_subject",
+            "description": "Explains using Test.createTestingModule with the class under test."
+          },
+          {
+            "key": "adds_mock_dependency_provider",
+            "description": "Adds a mock provider for a dependency required by the class under test."
+          }
+        ],
+        "relatedTrigger": "vague_answer"
+      },
+      {
+        "label": "Shows the provider shape { provide: DependencyToken, useValue: mockObject } for replacing a dependency.",
+        "requirements": [
+          {
+            "key": "shows_mock_provider_shape",
+            "description": "Shows `{ provide: DependencyToken, useValue: mockObject }`."
+          },
+          {
+            "key": "uses_repository_example",
+            "description": "Applies the shape to a dependency such as UserRepository."
+          }
+        ],
+        "relatedTrigger": "vague_answer"
+      },
+      {
+        "label": "Mentions module.compile() and retrieving the class under test with module.get(ServiceUnderTest).",
+        "requirements": [
+          {
+            "key": "mentions_compile_testing_module",
+            "description": "Mentions compiling the testing module."
+          },
+          {
+            "key": "mentions_module_get_subject",
+            "description": "Mentions retrieving the subject with module.get."
+          }
+        ],
+        "relatedTrigger": "vague_answer"
+      },
+      {
+        "label": "Mentions jest.fn() or equivalent mocks to assert calls and control return values.",
+        "requirements": [
+          {
+            "key": "uses_mock_functions",
+            "description": "Mentions jest.fn or equivalent mock functions."
+          },
+          {
+            "key": "uses_mocks_for_assertions_or_returns",
+            "description": "Explains using mocks to assert calls or control dependency return values."
+          }
+        ],
+        "relatedTrigger": "vague_answer"
+      },
+      {
+        "label": "Mentions overrideProvider(token).useValue(mock) as an option when importing a real module but replacing one provider.",
+        "requirements": [
+          {
+            "key": "mentions_override_provider",
+            "description": "Mentions overrideProvider(token).useValue(mock)."
+          },
+          {
+            "key": "places_override_when_importing_real_module",
+            "description": "Explains overrideProvider fits when importing a module but replacing one provider."
+          }
+        ],
+        "relatedTrigger": "missing_context"
+      },
+      {
+        "label": "Keeps unit tests focused by mocking external dependencies such as repositories, HTTP clients, queues, or other services.",
+        "requirements": [
+          {
+            "key": "mocks_external_dependencies",
+            "description": "Mocks repositories, HTTP clients, queues, or external services in unit tests."
+          },
+          {
+            "key": "keeps_unit_test_focused",
+            "description": "Explains that focused unit tests avoid real external dependencies."
+          }
+        ],
+        "relatedTrigger": "missing_context"
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Describes TestingModule setup, useValue mocks, module.get, jest.fn assertions, overrideProvider, and unit-test isolation." },
-      { "scoreBand": "solid", "description": "Can replace dependencies with useValue but misses overrideProvider or retrieval/assertion detail." },
-      { "scoreBand": "needs_work", "description": "Has tested NestJS code but cannot explain provider mocking mechanics." },
-      { "scoreBand": "insufficient_evidence", "description": "Answer does not demonstrate practical NestJS unit testing knowledge." }
+      {
+        "scoreBand": "strong",
+        "description": "Describes TestingModule setup, useValue mocks, module.get, jest.fn assertions, overrideProvider, and unit-test isolation."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Can replace dependencies with useValue but misses overrideProvider or retrieval/assertion detail."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Has tested NestJS code but cannot explain provider mocking mechanics."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not demonstrate practical NestJS unit testing knowledge."
+      }
     ],
     "followUps": [
-      { "trigger": "vague_answer", "question": "If UserService depends on UserRepository, what providers would you pass to Test.createTestingModule()?", "purpose": "Force concrete unit-test module setup." },
-      { "trigger": "missing_context", "question": "When would you use overrideProvider instead of declaring a useValue mock directly?", "purpose": "Check imported-module testing patterns." }
+      {
+        "trigger": "vague_answer",
+        "question": "If UserService depends on UserRepository, what providers would you pass to Test.createTestingModule()?",
+        "purpose": "Force concrete unit-test module setup."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "When would you use overrideProvider instead of declaring a useValue mock directly?",
+        "purpose": "Check imported-module testing patterns."
+      }
     ],
     "localizedContent": {
       "en": {
@@ -1145,7 +2687,11 @@
           "Manually new-ing a provider with an incomplete dependency graph.",
           "Mocking the wrong token."
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "Mock provider trong unit test NestJS",
@@ -1161,7 +2707,11 @@
           "Tự new provider với dependency graph thiếu.",
           "Mock sai token."
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "NestJS unit test で provider を mock する",
@@ -1177,50 +2727,170 @@
           "不完全な dependency graph で provider を手動 new する。",
           "間違った token を mock する。"
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "NestJS docs: Testing", "url": "https://docs.nestjs.com/fundamentals/testing", "note": "Used for Test.createTestingModule and provider override patterns." },
-      { "label": "NestJS docs: Custom providers", "url": "https://docs.nestjs.com/fundamentals/custom-providers", "note": "Used for useValue provider mocks." }
+      {
+        "label": "NestJS docs: Testing",
+        "url": "https://docs.nestjs.com/fundamentals/testing",
+        "note": "Used for Test.createTestingModule and provider override patterns."
+      },
+      {
+        "label": "NestJS docs: Custom providers",
+        "url": "https://docs.nestjs.com/fundamentals/custom-providers",
+        "note": "Used for useValue provider mocks."
+      }
     ],
     "status": "active"
   },
   {
     "code": "NESTJS_DI_TECH_IOC_CONTAINER_014",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "technical_depth",
-    "competencies": ["technical_fundamentals", "system_thinking", "communication"],
-    "techTags": ["nestjs", "nodejs", "typescript"],
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "communication"
+    ],
+    "techTags": [
+      "nestjs",
+      "nodejs",
+      "typescript"
+    ],
     "difficulty": 2,
     "conversationDepth": "mid",
     "intent": "Check whether the candidate understands the NestJS IoC container as the runtime system that stores modules/providers and resolves dependency graphs.",
     "primaryQuestion": "What is the NestJS IoC container?",
     "expectedSignals": [
-      "Defines IoC container as the NestJS runtime component that owns provider registration, dependency resolution, and instance lifecycle.",
-      "Explains that modules contribute providers, controllers, imports, and exports to the container.",
-      "Mentions that the container resolves provider tokens and uses constructor metadata or explicit @Inject() tokens.",
-      "Explains that the container applies provider scopes such as singleton/default, request, and transient.",
-      "Connects IoC to inversion of control: application classes declare dependencies while the container creates and wires them.",
-      "Mentions that DI errors usually come from the container being unable to resolve a token in the current module context."
-    ],
-    "redFlags": [
-      "Defines IoC container as only a place where controllers are stored.",
-      "Cannot connect modules and providers to dependency resolution.",
-      "Thinks the container scans all files automatically regardless of module registration.",
-      "Does not understand token resolution or module context."
+      {
+        "label": "Defines IoC container as the NestJS runtime component that owns provider registration, dependency resolution, and instance lifecycle.",
+        "requirements": [
+          {
+            "key": "defines_ioc_container_runtime_role",
+            "description": "Defines the IoC container as the runtime component managing providers and dependencies."
+          },
+          {
+            "key": "mentions_instance_lifecycle",
+            "description": "Mentions provider registration, resolution, and lifecycle ownership."
+          }
+        ],
+        "relatedTrigger": "missing_context"
+      },
+      {
+        "label": "Explains that modules contribute providers, controllers, imports, and exports to the container.",
+        "requirements": [
+          {
+            "key": "mentions_module_metadata_contribution",
+            "description": "Explains that modules contribute providers, controllers, imports, and exports."
+          },
+          {
+            "key": "connects_import_export_to_resolution",
+            "description": "Connects module imports/exports to what the container can resolve."
+          }
+        ],
+        "relatedTrigger": "vague_answer"
+      },
+      {
+        "label": "Mentions that the container resolves provider tokens and uses constructor metadata or explicit @Inject() tokens.",
+        "requirements": [
+          {
+            "key": "mentions_provider_token_resolution",
+            "description": "Mentions resolving provider tokens."
+          },
+          {
+            "key": "mentions_metadata_or_inject_token",
+            "description": "Mentions constructor metadata or explicit @Inject tokens."
+          }
+        ],
+        "relatedTrigger": "missing_context"
+      },
+      {
+        "label": "Explains that the container applies provider scopes such as singleton/default, request, and transient.",
+        "requirements": [
+          {
+            "key": "names_provider_scopes",
+            "description": "Names singleton/default, request, and transient provider scopes."
+          },
+          {
+            "key": "connects_scope_to_instance_lifetime",
+            "description": "Connects scopes to instance lifetime managed by the container."
+          }
+        ],
+        "relatedTrigger": "missing_context"
+      },
+      {
+        "label": "Connects IoC to inversion of control: application classes declare dependencies while the container creates and wires them.",
+        "requirements": [
+          {
+            "key": "explains_inversion_of_control",
+            "description": "Explains that classes declare dependencies while the container creates and wires them."
+          },
+          {
+            "key": "contrasts_with_manual_creation",
+            "description": "Contrasts IoC with application classes manually constructing dependencies."
+          }
+        ],
+        "relatedTrigger": "missing_context"
+      },
+      {
+        "label": "Mentions that DI errors usually come from the container being unable to resolve a token in the current module context.",
+        "requirements": [
+          {
+            "key": "connects_di_error_to_unresolved_token",
+            "description": "Explains that DI errors often mean a token cannot be resolved."
+          },
+          {
+            "key": "mentions_current_module_context",
+            "description": "Mentions that resolution happens within the current module/import/export context."
+          }
+        ],
+        "relatedTrigger": "vague_answer"
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Explains the container across module graph, provider tokens, constructor metadata, scopes, lifecycle, and DI error context." },
-      { "scoreBand": "solid", "description": "Understands the container creates and injects providers but misses module graph or scope detail." },
-      { "scoreBand": "needs_work", "description": "Can repeat the IoC term but cannot explain what the container does at runtime." },
-      { "scoreBand": "insufficient_evidence", "description": "Answer does not show NestJS runtime dependency-resolution understanding." }
+      {
+        "scoreBand": "strong",
+        "description": "Explains the container across module graph, provider tokens, constructor metadata, scopes, lifecycle, and DI error context."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands the container creates and injects providers but misses module graph or scope detail."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can repeat the IoC term but cannot explain what the container does at runtime."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not show NestJS runtime dependency-resolution understanding."
+      }
     ],
     "followUps": [
-      { "trigger": "missing_context", "question": "How does the container know which implementation to inject for a constructor parameter?", "purpose": "Check token and metadata reasoning." },
-      { "trigger": "vague_answer", "question": "What role do module imports and exports play in what the container can resolve?", "purpose": "Connect IoC container behavior to NestJS module visibility." }
+      {
+        "trigger": "missing_context",
+        "question": "How does the container know which implementation to inject for a constructor parameter?",
+        "purpose": "Check token and metadata reasoning."
+      },
+      {
+        "trigger": "vague_answer",
+        "question": "What role do module imports and exports play in what the container can resolve?",
+        "purpose": "Connect IoC container behavior to NestJS module visibility."
+      }
     ],
     "localizedContent": {
       "en": {
@@ -1237,7 +2907,11 @@
           "Ignoring module context and provider exports.",
           "Not distinguishing IoC from plain imports."
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
       },
       "vi": {
         "title": "NestJS IoC container",
@@ -1253,7 +2927,11 @@
           "Bỏ qua module context và provider exports.",
           "Không phân biệt IoC với import thông thường."
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
       },
       "ja": {
         "title": "NestJS IoC container",
@@ -1269,50 +2947,169 @@
           "module context と provider exports を無視する。",
           "IoC と通常の import を区別しない。"
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "technical_depth" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "technical_depth"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "NestJS docs: Providers", "url": "https://docs.nestjs.com/providers", "note": "Used for IoC container and provider resolution concepts." },
-      { "label": "NestJS docs: Modules", "url": "https://docs.nestjs.com/modules", "note": "Used for module graph and provider visibility." }
+      {
+        "label": "NestJS docs: Providers",
+        "url": "https://docs.nestjs.com/providers",
+        "note": "Used for IoC container and provider resolution concepts."
+      },
+      {
+        "label": "NestJS docs: Modules",
+        "url": "https://docs.nestjs.com/modules",
+        "note": "Used for module graph and provider visibility."
+      }
     ],
     "status": "active"
   },
   {
     "code": "NESTJS_DI_TECH_UNREGISTERED_PROVIDER_015",
-    "stages": ["stage_2_tech_stack"],
-    "roleFamilies": ["backend", "fullstack"],
-    "levels": ["junior", "mid"],
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior",
+      "mid"
+    ],
     "type": "debugging",
-    "competencies": ["problem_solving", "technical_fundamentals", "system_thinking"],
-    "techTags": ["nestjs", "typescript"],
+    "competencies": [
+      "problem_solving",
+      "technical_fundamentals",
+      "system_thinking"
+    ],
+    "techTags": [
+      "nestjs",
+      "typescript"
+    ],
     "difficulty": 2,
     "conversationDepth": "mid",
     "intent": "Evaluate whether the candidate can debug the common NestJS error caused by injecting a provider that is missing from the module context.",
     "primaryQuestion": "What happens if you try to inject a provider that is not registered in any Module?",
     "expectedSignals": [
-      "States that NestJS fails during application bootstrap or testing module compilation with a dependency resolution error.",
-      "Mentions the typical message pattern: Nest cannot resolve dependencies of a class and shows the unresolved constructor parameter index or token.",
-      "Explains likely fixes: add the provider to the owning module providers array, import a module that exports it, or use the correct token.",
-      "Distinguishes missing provider from missing export: a provider can exist in another module but still be invisible unless exported and imported.",
-      "Mentions that @Global() modules can make exports available broadly, but should be used intentionally.",
-      "Notes that manually adding a provider to unrelated modules can create duplicate instances or weaken module boundaries."
-    ],
-    "redFlags": [
-      "Says NestJS silently injects undefined for missing required providers.",
-      "Uses @Optional() or forwardRef() without diagnosing registration, import, or export issues.",
-      "Adds the missing service to AppModule only without considering module ownership.",
-      "Cannot read the error message to identify which constructor parameter failed."
+      {
+        "label": "States that NestJS fails during application bootstrap or testing module compilation with a dependency resolution error.",
+        "requirements": [
+          {
+            "key": "states_bootstrap_or_compile_failure",
+            "description": "States that unresolved providers fail during app bootstrap or testing module compilation."
+          },
+          {
+            "key": "connects_failure_to_di_resolution",
+            "description": "Connects the failure to Nest being unable to resolve a dependency."
+          }
+        ],
+        "relatedTrigger": "missing_context"
+      },
+      {
+        "label": "Mentions the typical message pattern: Nest cannot resolve dependencies of a class and shows the unresolved constructor parameter index or token.",
+        "requirements": [
+          {
+            "key": "mentions_cannot_resolve_message",
+            "description": "Mentions the typical 'Nest cannot resolve dependencies' message pattern."
+          },
+          {
+            "key": "mentions_parameter_index_or_token",
+            "description": "Mentions unresolved parameter index or provider token clues."
+          }
+        ],
+        "relatedTrigger": "missing_context"
+      },
+      {
+        "label": "Explains likely fixes: add the provider to the owning module providers array, import a module that exports it, or use the correct token.",
+        "requirements": [
+          {
+            "key": "names_correct_registration_fix",
+            "description": "Names adding the provider to its owning module or correcting the provider token."
+          },
+          {
+            "key": "names_import_export_fix",
+            "description": "Names importing a module that exports the needed provider."
+          }
+        ],
+        "relatedTrigger": "missing_context"
+      },
+      {
+        "label": "Distinguishes missing provider from missing export: a provider can exist in another module but still be invisible unless exported and imported.",
+        "requirements": [
+          {
+            "key": "distinguishes_missing_provider_from_export",
+            "description": "Distinguishes provider not registered from provider registered but not exported/imported."
+          },
+          {
+            "key": "uses_auth_users_module_example",
+            "description": "Explains what UsersModule should export and AuthModule should import in the AuthService/UsersService case."
+          }
+        ],
+        "relatedTrigger": "missing_context"
+      },
+      {
+        "label": "Mentions that @Global() modules can make exports available broadly, but should be used intentionally.",
+        "requirements": [
+          {
+            "key": "mentions_global_module_exports",
+            "description": "Mentions @Global modules can make exports broadly available."
+          },
+          {
+            "key": "warns_global_use_intentional",
+            "description": "Warns that global modules should be intentional, not a default fix."
+          }
+        ],
+        "relatedTrigger": "missing_context"
+      },
+      {
+        "label": "Notes that manually adding a provider to unrelated modules can create duplicate instances or weaken module boundaries.",
+        "requirements": [
+          {
+            "key": "explains_duplicate_provider_risk",
+            "description": "Explains why adding the same provider to multiple unrelated modules can create duplicate instances."
+          },
+          {
+            "key": "explains_boundary_weakening",
+            "description": "Explains how that workaround weakens module ownership boundaries."
+          }
+        ],
+        "relatedTrigger": "missing_consequence"
+      }
     ],
     "scoringHints": [
-      { "scoreBand": "strong", "description": "Explains bootstrap/compile failure, reads the error context, identifies provider/import/export/token fixes, and preserves module boundaries." },
-      { "scoreBand": "solid", "description": "Knows to register or import the provider but misses export visibility or token mismatch details." },
-      { "scoreBand": "needs_work", "description": "Recognizes a DI error but applies random fixes like forwardRef or @Optional." },
-      { "scoreBand": "insufficient_evidence", "description": "Answer does not demonstrate practical NestJS DI debugging ability." }
+      {
+        "scoreBand": "strong",
+        "description": "Explains bootstrap/compile failure, reads the error context, identifies provider/import/export/token fixes, and preserves module boundaries."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Knows to register or import the provider but misses export visibility or token mismatch details."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Recognizes a DI error but applies random fixes like forwardRef or @Optional."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer does not demonstrate practical NestJS DI debugging ability."
+      }
     ],
     "followUps": [
-      { "trigger": "missing_context", "question": "If AuthService injects UsersService and the error happens in AuthModule, what should UsersModule expose and what should AuthModule import?", "purpose": "Check module ownership, exports, and imports." },
-      { "trigger": "red_flag", "question": "Why is adding UsersService to both UsersModule and AuthModule not always the right fix?", "purpose": "Verify duplicate-instance and boundary reasoning." }
+      {
+        "trigger": "missing_context",
+        "question": "If AuthService injects UsersService and the error happens in AuthModule, what should UsersModule expose and what should AuthModule import?",
+        "purpose": "Check module ownership, exports, and imports."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "Why is adding UsersService to both UsersModule and AuthModule not always the right fix?",
+        "purpose": "Verify duplicate-instance and boundary reasoning."
+      }
     ],
     "localizedContent": {
       "en": {
@@ -1329,7 +3126,11 @@
           "Using forwardRef or @Optional before checking registration.",
           "Registering the same service in unrelated modules and creating duplicate instances."
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "debugging" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "debugging"
+        }
       },
       "vi": {
         "title": "Lỗi DI khi provider chưa đăng ký",
@@ -1345,7 +3146,11 @@
           "Dùng forwardRef hoặc @Optional trước khi kiểm tra registration.",
           "Đăng ký cùng service vào module không liên quan và tạo duplicate instance."
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "debugging" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "debugging"
+        }
       },
       "ja": {
         "title": "未登録 provider による DI error",
@@ -1361,13 +3166,29 @@
           "registration を確認する前に forwardRef や @Optional を使う。",
           "無関係な module に同じ service を登録し duplicate instance を作る。"
         ],
-        "labels": { "role": "Backend/Fullstack", "level": "Junior/Mid-level", "type": "debugging" }
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior/Mid-level",
+          "type": "debugging"
+        }
       }
     },
     "sourceReferences": [
-      { "label": "NestJS docs: Common errors", "url": "https://docs.nestjs.com/faq/common-errors", "note": "Used for common cannot-resolve-dependencies diagnostics." },
-      { "label": "NestJS docs: Modules", "url": "https://docs.nestjs.com/modules", "note": "Used for provider exports and imports." },
-      { "label": "NestJS docs: Providers", "url": "https://docs.nestjs.com/providers", "note": "Used for provider registration and injection context." }
+      {
+        "label": "NestJS docs: Common errors",
+        "url": "https://docs.nestjs.com/faq/common-errors",
+        "note": "Used for common cannot-resolve-dependencies diagnostics."
+      },
+      {
+        "label": "NestJS docs: Modules",
+        "url": "https://docs.nestjs.com/modules",
+        "note": "Used for provider exports and imports."
+      },
+      {
+        "label": "NestJS docs: Providers",
+        "url": "https://docs.nestjs.com/providers",
+        "note": "Used for provider registration and injection context."
+      }
     ],
     "status": "active"
   }

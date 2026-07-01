@@ -1,22 +1,29 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { QuestionPracticeAttempt } from '../../entities/question-practice-attempt.entity';
 import {
   CandidateIntent,
-  LlmRedFlagExtraction,
+  LlmRequirementExtraction,
   LlmScoringExtraction,
   LlmSignalExtraction,
   OverallBand,
   ProbeCvClaimResult,
-  ProbeRedFlagResult,
   ProbeScoringResult,
+  ProbeSignalRequirementResult,
   ProbeSignalResult,
+  SignalStatus,
   ScoringConfidence,
 } from '../../types/question-practice-scoring.types';
 import { QUESTION_PRACTICE_SCORING_VERSION } from '../../constants/question-practice-scoring.constants';
-import type { CatalogItem } from '../../types/question-practice-scoring.types';
+import type {
+  CatalogItem,
+  CatalogItemRequirement,
+} from '../../types/question-practice-scoring.types';
 
 @Injectable()
 export class QuestionPracticeScoringResultService {
+  private readonly logger = new Logger(
+    QuestionPracticeScoringResultService.name,
+  );
   buildResult({
     attempt,
     extraction,
@@ -29,23 +36,17 @@ export class QuestionPracticeScoringResultService {
       signalCatalog: this.signalCatalog(attempt),
       answerText: attempt.answerText,
     });
-    const redFlags: ProbeRedFlagResult[] = this._validatedRedFlags({
-      extraction,
-      redFlagCatalog: this.redFlagCatalog(attempt),
-      answerText: attempt.answerText,
-    });
     const cvClaimResults: ProbeCvClaimResult[] = this._validatedCvClaims({
       extraction,
       answerText: attempt.answerText,
     });
-    const overallBand: OverallBand = this._overallBand({ signals, redFlags });
+    const overallBand: OverallBand = this._overallBand(signals);
     return {
       scoringVersion: QUESTION_PRACTICE_SCORING_VERSION,
       overallBand,
       confidence: this._confidence({ extraction, signals }),
       summary: this.fallbackSummary({ attempt, overallBand }),
       signalResults: signals,
-      redFlags,
       cvClaimResults,
       improvementSuggestions: this.fallbackSuggestions({ signals }),
       candidateIntent: extraction.candidateIntent ?? 'answer',
@@ -68,9 +69,6 @@ export class QuestionPracticeScoringResultService {
         overallBand: 'insufficient_evidence',
       }),
       signalResults: signals,
-      redFlags: this.redFlagCatalog(attempt).map((item: CatalogItem) =>
-        this._absentRedFlag(item),
-      ),
       cvClaimResults: [],
       improvementSuggestions: this.fallbackSuggestions({ signals }),
       candidateIntent,
@@ -79,18 +77,13 @@ export class QuestionPracticeScoringResultService {
 
   signalCatalog(attempt: QuestionPracticeAttempt): CatalogItem[] {
     return attempt.probeSnapshot.rubric.expectedSignals.map(
-      (label: string, index: number) => ({
+      (signal, index: number) => ({
         key: `signal_${index + 1}`,
-        label,
-      }),
-    );
-  }
-
-  redFlagCatalog(attempt: QuestionPracticeAttempt): CatalogItem[] {
-    return attempt.probeSnapshot.rubric.redFlags.map(
-      (label: string, index: number) => ({
-        key: `red_flag_${index + 1}`,
-        label,
+        label: signal.label,
+        relatedTrigger: signal.relatedTrigger,
+        requirements: signal.requirements as
+          | CatalogItemRequirement[]
+          | undefined,
       }),
     );
   }
@@ -101,7 +94,6 @@ export class QuestionPracticeScoringResultService {
    *
    * @param extraction - Kết quả extraction từ LLM
    * @param signalCatalog - Danh sách signal keys + labels của probe
-   * @param redFlagCatalog - Danh sách red flag keys + labels của probe
    * @param answerText - Toàn bộ candidate text trong probe (cumulative)
    * @param language - Ngôn ngữ phỏng vấn để hiển thị fallback summary
    * @returns ProbeScoringResult đã build và validate
@@ -109,38 +101,33 @@ export class QuestionPracticeScoringResultService {
   buildResultFromRaw({
     extraction,
     signalCatalog,
-    redFlagCatalog,
     answerText,
     language,
+    cvClaimCatalog = [],
   }: {
     extraction: LlmScoringExtraction;
     signalCatalog: CatalogItem[];
-    redFlagCatalog: CatalogItem[];
     answerText: string;
     language: string;
+    cvClaimCatalog?: { key: string; claim: string }[];
   }): ProbeScoringResult {
     const signals: ProbeSignalResult[] = this._validatedSignals({
       extraction,
       signalCatalog,
       answerText,
     });
-    const redFlags: ProbeRedFlagResult[] = this._validatedRedFlags({
-      extraction,
-      redFlagCatalog,
-      answerText,
-    });
     const cvClaimResults: ProbeCvClaimResult[] = this._validatedCvClaims({
       extraction,
       answerText,
+      cvClaimCatalog,
     });
-    const overallBand: OverallBand = this._overallBand({ signals, redFlags });
+    const overallBand: OverallBand = this._overallBand(signals);
     return {
       scoringVersion: QUESTION_PRACTICE_SCORING_VERSION,
       overallBand,
       confidence: this._confidence({ extraction, signals }),
       summary: `Feedback is based on the probe answered in ${language}.`,
       signalResults: signals,
-      redFlags,
       cvClaimResults,
       improvementSuggestions: this.fallbackSuggestions({ signals }),
       candidateIntent: extraction.candidateIntent ?? 'answer',
@@ -151,19 +138,16 @@ export class QuestionPracticeScoringResultService {
    * Build insufficient evidence result từ raw catalogs, không cần attempt.
    *
    * @param signalCatalog - Signal catalog của probe
-   * @param redFlagCatalog - Red flag catalog của probe
    * @param language - Ngôn ngữ phỏng vấn
    * @param candidateIntent - Intent phát hiện được (default: 'answer')
    * @returns ProbeScoringResult với overallBand = 'insufficient_evidence'
    */
   insufficientEvidenceResultFromRaw({
     signalCatalog,
-    redFlagCatalog,
     language,
     candidateIntent = 'answer',
   }: {
     signalCatalog: CatalogItem[];
-    redFlagCatalog: CatalogItem[];
     language: string;
     candidateIntent?: CandidateIntent;
   }): ProbeScoringResult {
@@ -176,9 +160,6 @@ export class QuestionPracticeScoringResultService {
       confidence: 'low',
       summary: `There is not enough evidence in the answer to evaluate fully. (${language})`,
       signalResults: signals,
-      redFlags: redFlagCatalog.map((item: CatalogItem) =>
-        this._absentRedFlag(item),
-      ),
       cvClaimResults: [],
       improvementSuggestions: this.fallbackSuggestions({ signals }),
       candidateIntent,
@@ -222,85 +203,185 @@ export class QuestionPracticeScoringResultService {
       const found: LlmSignalExtraction | undefined = extraction.signals.find(
         (signal: LlmSignalExtraction) => signal.key === item.key,
       );
-      if (!found) return this._missingSignal(item);
+      if (!found) {
+        // B3: model omitted this signal entirely — distinct from model saying 'missing'
+        this.logger.warn(
+          `Signal omitted by model: ${item.key} (${item.label})`,
+        );
+        return this._missingSignal(item);
+      }
+
+      // S3: requirement path — code deterministically computes status from evidence
+      if (item.requirements?.length) {
+        return this._signalFromRequirements(item, found, answerText);
+      }
+
+      // Legacy path (transition until probe data enriched with requirements)
+      // B2b: preserve model's status/feedback even when quotes fail normalization
       const quotes: string[] = this._validQuotes({
         quotes: found.evidenceQuotes,
         answerText,
       });
-      if (found.status !== 'missing' && quotes.length === 0) {
-        return this._missingSignal(item);
-      }
       return {
         key: item.key,
-        label: item.label,
         status: found.status,
         evidenceQuotes: quotes,
         feedback: found.feedback || item.label,
+        relatedTrigger: item.relatedTrigger ?? null,
       };
     });
   }
 
-  private _validatedRedFlags({
-    extraction,
-    redFlagCatalog,
-    answerText,
-  }: {
-    extraction: LlmScoringExtraction;
-    redFlagCatalog: CatalogItem[];
-    answerText: string;
-  }): ProbeRedFlagResult[] {
-    return redFlagCatalog.map((item: CatalogItem) => {
-      const found: LlmRedFlagExtraction | undefined = extraction.redFlags.find(
-        (redFlag: LlmRedFlagExtraction) => redFlag.key === item.key,
+  // S3: requirement-path helpers
+
+  private _signalFromRequirements(
+    item: CatalogItem,
+    found: LlmSignalExtraction,
+    answerText: string,
+  ): ProbeSignalResult {
+    const requirements: CatalogItemRequirement[] = item.requirements!;
+    const requirementResults: ProbeSignalRequirementResult[] =
+      this._validatedRequirementResults(
+        requirements,
+        found.requirementResults ?? [],
+        answerText,
       );
-      if (!found) return this._absentRedFlag(item);
+    const status: SignalStatus =
+      this._statusFromRequirementResults(requirementResults);
+    const evidenceQuotes: string[] =
+      this._uniqueRequirementQuotes(requirementResults);
+    const feedback: string = this._feedbackFromRequirements(
+      requirementResults,
+      status,
+      found.feedback,
+    );
+    return {
+      key: item.key,
+      status,
+      evidenceQuotes,
+      feedback,
+      relatedTrigger: item.relatedTrigger ?? null,
+      requirementResults,
+    };
+  }
+
+  private _validatedRequirementResults(
+    requirements: CatalogItemRequirement[],
+    extracted: LlmRequirementExtraction[],
+    answerText: string,
+  ): ProbeSignalRequirementResult[] {
+    return requirements.map((req) => {
+      const found = extracted.find((r) => r.key === req.key);
+      if (!found || !found.supported) {
+        return {
+          key: req.key,
+          description: req.description,
+          supported: false as const,
+          evidenceQuotes: [] as string[],
+          feedback: found?.feedback ?? '',
+        };
+      }
       const quotes: string[] = this._validQuotes({
         quotes: found.evidenceQuotes,
         answerText,
       });
-      if (found.present && quotes.length === 0)
-        return this._absentRedFlag(item);
+      if (quotes.length === 0) {
+        return {
+          key: req.key,
+          description: req.description,
+          supported: false as const,
+          evidenceQuotes: [] as string[],
+          feedback: found.feedback,
+        };
+      }
       return {
-        key: item.key,
-        label: item.label,
-        present: found.present,
+        key: req.key,
+        description: req.description,
+        supported: true as const,
         evidenceQuotes: quotes,
-        feedback: found.feedback || item.label,
+        feedback: found.feedback,
       };
     });
+  }
+
+  private _statusFromRequirementResults(
+    results: ProbeSignalRequirementResult[],
+  ): SignalStatus {
+    const supportedCount: number = results.filter((r) => r.supported).length;
+    if (supportedCount === 0) return 'missing';
+    if (supportedCount === results.length) return 'covered';
+    return 'unclear';
+  }
+
+  private _uniqueRequirementQuotes(
+    results: ProbeSignalRequirementResult[],
+  ): string[] {
+    const seen = new Set<string>();
+    const unique: string[] = [];
+    for (const r of results) {
+      for (const q of r.evidenceQuotes) {
+        if (!seen.has(q)) {
+          seen.add(q);
+          unique.push(q);
+        }
+      }
+    }
+    return unique;
+  }
+
+  private _feedbackFromRequirements(
+    results: ProbeSignalRequirementResult[],
+    status: SignalStatus,
+    modelFeedback: string,
+  ): string {
+    if (status === 'covered') return modelFeedback || 'All requirements met.';
+    const missing: string[] = results
+      .filter((r) => !r.supported)
+      .map((r) => r.description);
+    if (missing.length > 0) return `Missing: ${missing.join('; ')}.`;
+    return modelFeedback || '';
   }
 
   private _validatedCvClaims({
     extraction,
     answerText,
+    cvClaimCatalog = [],
   }: {
     extraction: LlmScoringExtraction;
     answerText: string;
+    cvClaimCatalog?: { key: string; claim: string }[];
   }): ProbeCvClaimResult[] {
-    return extraction.cvClaims.map((claim) => {
+    const results: ProbeCvClaimResult[] = [];
+    for (const entry of extraction.cvClaims) {
+      const catalogEntry =
+        cvClaimCatalog.find((c) => c.key === entry.key) ??
+        (entry.claim
+          ? cvClaimCatalog.find((c) => c.claim === entry.claim)
+          : undefined);
+      if (cvClaimCatalog.length > 0 && !catalogEntry) continue;
+      const claimText: string = catalogEntry?.claim ?? entry.claim ?? '';
       const quotes: string[] = this._validQuotes({
-        quotes: claim.evidenceQuotes,
+        quotes: entry.evidenceQuotes,
         answerText,
       });
-      return {
-        claim: claim.claim,
+      const needsQuote =
+        entry.verification === 'verified' ||
+        entry.verification === 'inflated_risk';
+      results.push({
+        key: entry.key,
+        claim: claimText,
         verification:
-          claim.verification === 'verified' && quotes.length === 0
+          needsQuote && quotes.length === 0
             ? 'not_verified'
-            : claim.verification,
+            : entry.verification,
         evidenceQuotes: quotes,
-        feedback: claim.feedback,
-      };
-    });
+        feedback: entry.feedback,
+      });
+    }
+    return results;
   }
 
-  private _overallBand({
-    signals,
-    redFlags,
-  }: {
-    signals: ProbeSignalResult[];
-    redFlags: ProbeRedFlagResult[];
-  }): OverallBand {
+  private _overallBand(signals: ProbeSignalResult[]): OverallBand {
     if (signals.length === 0) return 'insufficient_evidence';
     const score: number = signals.reduce(
       (sum: number, signal: ProbeSignalResult) =>
@@ -309,10 +390,9 @@ export class QuestionPracticeScoringResultService {
       0,
     );
     const maxScore: number = signals.length * 2;
-    const redPenalty: number = redFlags.filter(
-      (redFlag: ProbeRedFlagResult) => redFlag.present,
-    ).length;
-    const ratio: number = Math.max(0, score / maxScore - redPenalty * 0.15);
+    const ratio: number = score / maxScore;
+    // B4: near-empty answers that slipped past MIN_EVALUABLE_CHARS gate still get redirected
+    if (ratio < 0.2) return 'insufficient_evidence';
     if (ratio >= 0.8) return 'strong';
     if (ratio >= 0.55) return 'solid';
     return 'needs_work';
@@ -348,27 +428,30 @@ export class QuestionPracticeScoringResultService {
       );
   }
 
+  /** B2a: strip diacritical marks + normalize punctuation to reduce Vietnamese quote drift. */
   private _normalize(value: string): string {
-    return value.toLowerCase().replace(/\s+/g, ' ').trim();
+    return (
+      value
+        .normalize('NFC')
+        .normalize('NFD')
+        // strip combining diacritical marks (handles Vietnamese diacritic drift from LLM)
+        .replace(/[̀-ͯ]/g, '')
+        .toLowerCase()
+        .replace(/[""''`]/g, '"')
+        .replace(/[–—]/g, '-')
+        .replace(/\s+/g, ' ')
+        .trim()
+    );
   }
 
   private _missingSignal(item: CatalogItem): ProbeSignalResult {
     return {
       key: item.key,
-      label: item.label,
       status: 'missing',
       evidenceQuotes: [],
       feedback: 'No clear evidence was found for this signal.',
+      relatedTrigger: item.relatedTrigger ?? null,
     };
   }
 
-  private _absentRedFlag(item: CatalogItem): ProbeRedFlagResult {
-    return {
-      key: item.key,
-      label: item.label,
-      present: false,
-      evidenceQuotes: [],
-      feedback: 'No clear red flag evidence was found.',
-    };
-  }
 }
