@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -13,6 +14,7 @@ import {
   QuestionProbeRoleFamily,
   QuestionProbeStage,
   QuestionProbeStatus,
+  QuestionProbeTopicTag,
   QuestionProbeType,
 } from '../constants/question-bank-taxonomy.constants';
 
@@ -68,9 +70,11 @@ export class QuestionProbe {
   @Column({ type: 'text', array: true, default: [] })
   stages!: QuestionProbeStage[];
 
+  @Index('IDX_question_probes_role_families', { synchronize: false })
   @Column({ type: 'text', array: true, default: [] })
   roleFamilies!: QuestionProbeRoleFamily[];
 
+  @Index('IDX_question_probes_levels', { synchronize: false })
   @Column({ type: 'text', array: true, default: [] })
   levels!: QuestionProbeLevel[];
 
@@ -80,11 +84,17 @@ export class QuestionProbe {
   @Column({ type: 'varchar', length: 20, nullable: true })
   conversationDepth!: 'intro' | 'mid' | 'deep' | null;
 
+  @Index('IDX_question_probes_competencies', { synchronize: false })
   @Column({ type: 'text', array: true, default: [] })
   competencies!: QuestionProbeCompetency[];
 
+  @Index('IDX_question_probes_tech_tags', { synchronize: false })
   @Column({ type: 'text', array: true, default: [] })
   techTags!: string[];
+
+  @Index('IDX_question_probes_topic_tags', { synchronize: false })
+  @Column({ type: 'text', array: true, default: [] })
+  topicTags!: QuestionProbeTopicTag[];
 
   @Column({ type: 'int', nullable: true })
   difficulty!: number | null;
@@ -110,6 +120,7 @@ export class QuestionProbe {
   @Column({ type: 'jsonb', default: [] })
   sourceReferences!: QuestionProbeSourceReference[];
 
+  @Index('IDX_question_probes_status', { synchronize: false })
   @Column({ type: 'varchar', length: 30, default: 'draft' })
   status!: QuestionProbeStatus;
 

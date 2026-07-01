@@ -1,14 +1,18 @@
 import {
   BadRequestException,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import Redis from 'ioredis';
 import { Repository } from 'typeorm';
+import { REDIS_CLIENT } from '../../../redis/redis.module';
 import {
   QUESTION_PROBE_LANGUAGES,
   QuestionProbeLanguage,
 } from '../../constants/question-bank-taxonomy.constants';
+import { PUBLIC_QUESTION_BANK_DETAIL_CACHE_TTL_SECONDS } from '../../constants/question-bank-public.constants';
 import {
   QuestionProbe,
   QuestionProbeLocalizedContent,
@@ -28,6 +32,7 @@ export class QuestionBankDetailService {
     private readonly probeRepository: Repository<QuestionProbe>,
     private readonly projectionService: QuestionBankPublicProjectionService,
     private readonly relatedService: QuestionBankRelatedService,
+    @Inject(REDIS_CLIENT) private readonly redis: Redis,
   ) {}
 
   async getPublicProbeDetail({
@@ -48,14 +53,21 @@ export class QuestionBankDetailService {
       defaultValue: 4,
       maxValue: 6,
     });
-    const probe: QuestionProbe | null = await this.probeRepository.findOne({
-      where: { id: probeId, status: 'active' },
-    });
-    if (!probe) throw new NotFoundException('Question probe not found');
 
     this.probeRepository
       .increment({ id: probeId }, 'viewCount', 1)
       .catch(() => {});
+
+    const cacheKey = `qbank:detail:${probeId}:${locale}:${relatedLimit}`;
+    const cached: string | null = await this.redis
+      .get(cacheKey)
+      .catch(() => null);
+    if (cached) return JSON.parse(cached) as PublicQuestionProbeDetail;
+
+    const probe: QuestionProbe | null = await this.probeRepository.findOne({
+      where: { id: probeId, status: 'active' },
+    });
+    if (!probe) throw new NotFoundException('Question probe not found');
 
     const card: PublicQuestionProbeCard = this.projectionService.toPublicCard({
       probe,
@@ -73,12 +85,23 @@ export class QuestionBankDetailService {
         relatedLimit,
       });
 
-    return {
+    const detail: PublicQuestionProbeDetail = {
       ...card,
       guidance: content?.guidance ?? [],
       commonMistakes: content?.commonMistakes ?? [],
       relatedQuestions,
     };
+
+    this.redis
+      .set(
+        cacheKey,
+        JSON.stringify(detail),
+        'EX',
+        PUBLIC_QUESTION_BANK_DETAIL_CACHE_TTL_SECONDS,
+      )
+      .catch(() => {});
+
+    return detail;
   }
 
   private _nonNegativeInteger({
