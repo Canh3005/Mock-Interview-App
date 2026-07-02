@@ -134,7 +134,9 @@ export const LlmScoringExtractionSchema = z.object({
   confidence: ScoringConfidenceSchema,
 });
 
-export type LlmRequirementExtraction = z.infer<typeof LlmRequirementExtractionSchema>;
+export type LlmRequirementExtraction = z.infer<
+  typeof LlmRequirementExtractionSchema
+>;
 export type LlmSignalExtraction = z.infer<typeof LlmSignalExtractionSchema>;
 export type LlmCvClaimExtraction = z.infer<typeof LlmCvClaimExtractionSchema>;
 export type LlmScoringExtraction = z.infer<typeof LlmScoringExtractionSchema>;

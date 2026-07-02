@@ -317,6 +317,7 @@ export class QuestionProbeCurationService {
     if (dto.type !== undefined) probe.type = dto.type ?? null;
     if (dto.competencies !== undefined) probe.competencies = dto.competencies;
     if (dto.techTags !== undefined) probe.techTags = dto.techTags;
+    if (dto.topicTags !== undefined) probe.topicTags = dto.topicTags;
     if (dto.difficulty !== undefined) probe.difficulty = dto.difficulty ?? null;
     if (dto.intent !== undefined) probe.intent = dto.intent ?? null;
     if (dto.primaryQuestion !== undefined) {

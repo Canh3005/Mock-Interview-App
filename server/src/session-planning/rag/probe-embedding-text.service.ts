@@ -46,6 +46,7 @@ export class ProbeEmbeddingTextService {
       this._line('Difficulty', probe.difficulty),
       this._line('Competencies', probe.competencies),
       this._line('Tech tags', probe.techTags),
+      this._line('Topic tags', probe.topicTags ?? []),
       this._line('Suitable stages', probe.stages),
       this._line('Suitable levels', probe.levels),
       this._line('Suitable role families', probe.roleFamilies),

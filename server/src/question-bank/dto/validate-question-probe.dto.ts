@@ -18,6 +18,7 @@ import {
   QUESTION_PROBE_LEVELS,
   QUESTION_PROBE_ROLE_FAMILIES,
   QUESTION_PROBE_STAGES,
+  QUESTION_PROBE_TOPIC_TAGS,
   QUESTION_PROBE_TYPES,
   QuestionProbeFollowUpTrigger,
 } from '../constants/question-bank-taxonomy.constants';
@@ -151,6 +152,17 @@ export class ValidateQuestionProbeDto {
   @IsArray()
   @IsString({ each: true })
   techTags!: string[];
+
+  @ApiProperty({
+    required: false,
+    enum: QUESTION_PROBE_TOPIC_TAGS,
+    isArray: true,
+    example: ['http_semantics', 'api_design'],
+  })
+  @IsOptional()
+  @IsArray()
+  @IsIn(QUESTION_PROBE_TOPIC_TAGS, { each: true })
+  topicTags?: string[];
 
   @ApiProperty({ minimum: 1, maximum: 5, example: 3 })
   @IsInt()

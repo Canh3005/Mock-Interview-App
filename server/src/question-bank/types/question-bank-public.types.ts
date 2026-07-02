@@ -17,6 +17,8 @@ export interface PublicProbeListRequest {
   competency?: string;
   techTag?: string;
   techTags?: string | string[];
+  topicTag?: string;
+  topicTags?: string | string[];
   difficulty?: string;
   search?: string;
   sort?: string;
@@ -33,6 +35,7 @@ export interface PublicProbeListQuery {
   type?: string;
   competency?: string;
   techTags: string[];
+  topicTags: string[];
   difficulty?: number;
   search?: string;
   sort: 'newest' | 'popular';
@@ -50,6 +53,7 @@ export interface PublicQuestionProbeCard {
   type: string | null;
   competencies: string[];
   techTags: string[];
+  topicTags: string[];
   supportedLanguages: QuestionProbeLanguage[];
   locale: QuestionProbeLanguage;
   resolvedLocale: QuestionProbeLanguage;

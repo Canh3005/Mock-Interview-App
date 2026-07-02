@@ -18,12 +18,14 @@ import {
   QUESTION_PROBE_LEVELS,
   QUESTION_PROBE_ROLE_FAMILIES,
   QUESTION_PROBE_STAGES,
+  QUESTION_PROBE_TOPIC_TAGS,
   QUESTION_PROBE_TYPES,
   QuestionProbeCompetency,
   QuestionProbeFollowUpTrigger,
   QuestionProbeLevel,
   QuestionProbeRoleFamily,
   QuestionProbeStage,
+  QuestionProbeTopicTag,
   QuestionProbeType,
 } from '../constants/question-bank-taxonomy.constants';
 import { QuestionProbeLocalizedContentDto } from './validate-question-probe.dto';
@@ -159,6 +161,16 @@ export class QuestionProbeDraftDto {
   @IsArray()
   @IsString({ each: true })
   techTags?: string[];
+
+  @ApiProperty({
+    required: false,
+    enum: QUESTION_PROBE_TOPIC_TAGS,
+    isArray: true,
+  })
+  @IsOptional()
+  @IsArray()
+  @IsIn(QUESTION_PROBE_TOPIC_TAGS, { each: true })
+  topicTags?: QuestionProbeTopicTag[];
 
   @ApiProperty({ required: false, minimum: 1, maximum: 5, example: 3 })
   @IsOptional()

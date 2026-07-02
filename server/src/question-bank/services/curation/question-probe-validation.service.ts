@@ -6,6 +6,7 @@ import {
   QUESTION_PROBE_LEVELS,
   QUESTION_PROBE_ROLE_FAMILIES,
   QUESTION_PROBE_STAGES,
+  QUESTION_PROBE_TOPIC_TAGS,
   QUESTION_PROBE_TYPES,
 } from '../../constants/question-bank-taxonomy.constants';
 import {
@@ -76,6 +77,12 @@ export class QuestionProbeValidationService {
       allowed: QUESTION_PROBE_COMPETENCIES,
       issues,
     });
+    this._validateOptionalEnumArray({
+      field: 'topicTags',
+      values: input.topicTags,
+      allowed: QUESTION_PROBE_TOPIC_TAGS,
+      issues,
+    });
     this._validateDifficulty(input.difficulty, issues);
   }
 
@@ -136,6 +143,31 @@ export class QuestionProbeValidationService {
   }): void {
     if (typeof value === 'string' && allowed.includes(value)) return;
     issues.push({ field, message: `${field} must be a valid taxonomy value` });
+  }
+
+  private _validateOptionalEnumArray({
+    field,
+    values,
+    allowed,
+    issues,
+  }: {
+    field: string;
+    values: unknown;
+    allowed: readonly string[];
+    issues: ProbeValidationIssue[];
+  }): void {
+    if (values === undefined || values === null) return;
+    if (!Array.isArray(values)) {
+      issues.push({ field, message: `${field} must be an array` });
+      return;
+    }
+
+    const hasInvalid: boolean = values.some(
+      (value: unknown) => typeof value !== 'string' || !allowed.includes(value),
+    );
+    if (hasInvalid) {
+      issues.push({ field, message: `${field} contains invalid values` });
+    }
   }
 
   private _validateDifficulty(
@@ -247,7 +279,12 @@ export class QuestionProbeValidationService {
         const seenKeys = new Set<string>();
         item.requirements.forEach((req: unknown, reqIdx: number): void => {
           if (!this._isRecord(req)) {
-            issues.push(this._nestedIssue(`expectedSignals.${index}.requirements`, reqIdx));
+            issues.push(
+              this._nestedIssue(
+                `expectedSignals.${index}.requirements`,
+                reqIdx,
+              ),
+            );
             return;
           }
           this._validateNonEmptyText({

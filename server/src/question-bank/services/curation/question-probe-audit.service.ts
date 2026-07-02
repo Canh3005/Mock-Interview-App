@@ -59,6 +59,8 @@ export class QuestionProbeAuditService {
       levels: probe.levels,
       type: probe.type,
       competencies: probe.competencies,
+      techTags: probe.techTags,
+      topicTags: probe.topicTags ?? [],
       difficulty: probe.difficulty,
     };
   }

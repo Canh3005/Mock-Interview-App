@@ -44,7 +44,9 @@ describe('PolicyEngineService._pickTrigger (via decide)', () => {
     };
   }
 
-  function _followUp(trigger: QuestionProbeFollowUpTrigger): QuestionProbeFollowUp {
+  function _followUp(
+    trigger: QuestionProbeFollowUpTrigger,
+  ): QuestionProbeFollowUp {
     return { trigger, question: 'q', purpose: 'p' };
   }
 
@@ -75,7 +77,10 @@ describe('PolicyEngineService._pickTrigger (via decide)', () => {
     };
   }
 
-  const pressureProfile: PressureProfile = { level: 'low', maxChallengesPerProbe: 1 };
+  const pressureProfile: PressureProfile = {
+    level: 'low',
+    maxChallengesPerProbe: 1,
+  };
 
   function _decide(
     signalResults: ProbeSignalResult[],
@@ -94,8 +99,16 @@ describe('PolicyEngineService._pickTrigger (via decide)', () => {
   it('targets the trigger tied to the actually-missing signal, ignoring legacy priority order', () => {
     const decision = _decide(
       [
-        _signal({ key: 'signal_1', status: 'covered', relatedTrigger: 'missing_metric' }),
-        _signal({ key: 'signal_2', status: 'missing', relatedTrigger: 'missing_context' }),
+        _signal({
+          key: 'signal_1',
+          status: 'covered',
+          relatedTrigger: 'missing_metric',
+        }),
+        _signal({
+          key: 'signal_2',
+          status: 'missing',
+          relatedTrigger: 'missing_context',
+        }),
       ],
       [_followUp('missing_metric'), _followUp('missing_context')],
     );
@@ -107,8 +120,16 @@ describe('PolicyEngineService._pickTrigger (via decide)', () => {
   it('prefers a missing signal over an unclear one regardless of array order', () => {
     const decision = _decide(
       [
-        _signal({ key: 'signal_1', status: 'unclear', relatedTrigger: 'missing_context' }),
-        _signal({ key: 'signal_2', status: 'missing', relatedTrigger: 'missing_metric' }),
+        _signal({
+          key: 'signal_1',
+          status: 'unclear',
+          relatedTrigger: 'missing_context',
+        }),
+        _signal({
+          key: 'signal_2',
+          status: 'missing',
+          relatedTrigger: 'missing_metric',
+        }),
       ],
       [_followUp('missing_context'), _followUp('missing_metric')],
     );
@@ -127,7 +148,13 @@ describe('PolicyEngineService._pickTrigger (via decide)', () => {
 
   it('falls back to legacy priority order when the relatedTrigger has no matching follow-up on the probe', () => {
     const decision = _decide(
-      [_signal({ key: 'signal_1', status: 'missing', relatedTrigger: 'missing_tradeoff' })],
+      [
+        _signal({
+          key: 'signal_1',
+          status: 'missing',
+          relatedTrigger: 'missing_tradeoff',
+        }),
+      ],
       [_followUp('vague_answer')],
     );
 
@@ -136,7 +163,13 @@ describe('PolicyEngineService._pickTrigger (via decide)', () => {
 
   it('closes the probe when every signal is covered', () => {
     const decision = _decide(
-      [_signal({ key: 'signal_1', status: 'covered', relatedTrigger: 'missing_metric' })],
+      [
+        _signal({
+          key: 'signal_1',
+          status: 'covered',
+          relatedTrigger: 'missing_metric',
+        }),
+      ],
       [_followUp('missing_metric')],
     );
 

@@ -39,6 +39,7 @@ export interface QuestionPracticeProbeSnapshot {
     type: string | null;
     competencies: string[];
     techTags: string[];
+    topicTags: string[];
     difficulty: number | null;
   };
   rubric: {

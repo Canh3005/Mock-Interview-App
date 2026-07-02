@@ -101,7 +101,13 @@ describe('QuestionPracticeScoringResultService', () => {
     it('preserves relatedTrigger from catalog', () => {
       const extraction = _extraction({
         signals: [
-          { key: 'signal_1', label: 'Metric', status: 'missing', evidenceQuotes: [], feedback: '' },
+          {
+            key: 'signal_1',
+            label: 'Metric',
+            status: 'missing',
+            evidenceQuotes: [],
+            feedback: '',
+          },
         ],
       });
       const result = service.buildResultFromRaw({
@@ -123,7 +129,10 @@ describe('QuestionPracticeScoringResultService', () => {
       label: 'Shows index trade-off awareness',
       relatedTrigger: 'missing_tradeoff',
       requirements: [
-        { key: 'read_benefit', description: 'Mentions read performance improvement' },
+        {
+          key: 'read_benefit',
+          description: 'Mentions read performance improvement',
+        },
         { key: 'write_overhead', description: 'Mentions write overhead' },
       ],
     };
@@ -139,8 +148,18 @@ describe('QuestionPracticeScoringResultService', () => {
             feedback: '',
             status: 'missing' as const,
             requirementResults: [
-              { key: 'read_benefit', supported: true, evidenceQuotes: ['speed up reads'], feedback: 'good' },
-              { key: 'write_overhead', supported: true, evidenceQuotes: ['slow down writes'], feedback: 'good' },
+              {
+                key: 'read_benefit',
+                supported: true,
+                evidenceQuotes: ['speed up reads'],
+                feedback: 'good',
+              },
+              {
+                key: 'write_overhead',
+                supported: true,
+                evidenceQuotes: ['slow down writes'],
+                feedback: 'good',
+              },
             ],
           },
         ],
@@ -167,8 +186,18 @@ describe('QuestionPracticeScoringResultService', () => {
             evidenceQuotes: [],
             feedback: '',
             requirementResults: [
-              { key: 'read_benefit', supported: true, evidenceQuotes: ['speed up reads'], feedback: '' },
-              { key: 'write_overhead', supported: false, evidenceQuotes: [], feedback: 'not mentioned' },
+              {
+                key: 'read_benefit',
+                supported: true,
+                evidenceQuotes: ['speed up reads'],
+                feedback: '',
+              },
+              {
+                key: 'write_overhead',
+                supported: false,
+                evidenceQuotes: [],
+                feedback: 'not mentioned',
+              },
             ],
           },
         ],
@@ -193,8 +222,18 @@ describe('QuestionPracticeScoringResultService', () => {
             evidenceQuotes: [],
             feedback: '',
             requirementResults: [
-              { key: 'read_benefit', supported: false, evidenceQuotes: [], feedback: '' },
-              { key: 'write_overhead', supported: false, evidenceQuotes: [], feedback: '' },
+              {
+                key: 'read_benefit',
+                supported: false,
+                evidenceQuotes: [],
+                feedback: '',
+              },
+              {
+                key: 'write_overhead',
+                supported: false,
+                evidenceQuotes: [],
+                feedback: '',
+              },
             ],
           },
         ],
@@ -225,7 +264,12 @@ describe('QuestionPracticeScoringResultService', () => {
                 evidenceQuotes: ['this quote does not exist in answer'],
                 feedback: 'claimed',
               },
-              { key: 'write_overhead', supported: false, evidenceQuotes: [], feedback: '' },
+              {
+                key: 'write_overhead',
+                supported: false,
+                evidenceQuotes: [],
+                feedback: '',
+              },
             ],
           },
         ],
@@ -238,7 +282,9 @@ describe('QuestionPracticeScoringResultService', () => {
         language: 'en',
       });
       expect(result.signalResults[0].status).toBe('missing');
-      expect(result.signalResults[0].requirementResults?.[0].supported).toBe(false);
+      expect(result.signalResults[0].requirementResults?.[0].supported).toBe(
+        false,
+      );
     });
 
     it('unknown requirement key is ignored (not in catalog)', () => {
@@ -251,8 +297,18 @@ describe('QuestionPracticeScoringResultService', () => {
             evidenceQuotes: [],
             feedback: '',
             requirementResults: [
-              { key: 'unknown_key', supported: true, evidenceQuotes: ['some quote'], feedback: '' },
-              { key: 'write_overhead', supported: true, evidenceQuotes: ['slow down writes'], feedback: '' },
+              {
+                key: 'unknown_key',
+                supported: true,
+                evidenceQuotes: ['some quote'],
+                feedback: '',
+              },
+              {
+                key: 'write_overhead',
+                supported: true,
+                evidenceQuotes: ['slow down writes'],
+                feedback: '',
+              },
             ],
           },
         ],
@@ -301,12 +357,22 @@ describe('QuestionPracticeScoringResultService', () => {
     it('verified with valid quote stays verified', () => {
       const extraction = _extraction({
         cvClaims: [
-          { key: 'cv_claim_1', claim: 'Led PostgreSQL migration', verification: 'verified', evidenceQuotes: ['led the PostgreSQL migration'], feedback: 'confirmed' },
+          {
+            key: 'cv_claim_1',
+            claim: 'Led PostgreSQL migration',
+            verification: 'verified',
+            evidenceQuotes: ['led the PostgreSQL migration'],
+            feedback: 'confirmed',
+          },
         ],
       });
       const result = service.buildResultFromRaw({
-        extraction, signalCatalog: [], redFlagCatalog: [],
-        answerText: 'I led the PostgreSQL migration', language: 'en', cvClaimCatalog: catalog,
+        extraction,
+        signalCatalog: [],
+        redFlagCatalog: [],
+        answerText: 'I led the PostgreSQL migration',
+        language: 'en',
+        cvClaimCatalog: catalog,
       });
       expect(result.cvClaimResults?.[0].verification).toBe('verified');
     });
@@ -314,12 +380,22 @@ describe('QuestionPracticeScoringResultService', () => {
     it('verified without valid quote downgrades to not_verified', () => {
       const extraction = _extraction({
         cvClaims: [
-          { key: 'cv_claim_1', claim: 'Led PostgreSQL migration', verification: 'verified', evidenceQuotes: ['quote not in answer'], feedback: '' },
+          {
+            key: 'cv_claim_1',
+            claim: 'Led PostgreSQL migration',
+            verification: 'verified',
+            evidenceQuotes: ['quote not in answer'],
+            feedback: '',
+          },
         ],
       });
       const result = service.buildResultFromRaw({
-        extraction, signalCatalog: [], redFlagCatalog: [],
-        answerText: 'unrelated text', language: 'en', cvClaimCatalog: catalog,
+        extraction,
+        signalCatalog: [],
+        redFlagCatalog: [],
+        answerText: 'unrelated text',
+        language: 'en',
+        cvClaimCatalog: catalog,
       });
       expect(result.cvClaimResults?.[0].verification).toBe('not_verified');
     });
@@ -327,12 +403,22 @@ describe('QuestionPracticeScoringResultService', () => {
     it('inflated_risk without valid quote downgrades to not_verified', () => {
       const extraction = _extraction({
         cvClaims: [
-          { key: 'cv_claim_1', claim: 'Led PostgreSQL migration', verification: 'inflated_risk', evidenceQuotes: ['nonexistent quote'], feedback: '' },
+          {
+            key: 'cv_claim_1',
+            claim: 'Led PostgreSQL migration',
+            verification: 'inflated_risk',
+            evidenceQuotes: ['nonexistent quote'],
+            feedback: '',
+          },
         ],
       });
       const result = service.buildResultFromRaw({
-        extraction, signalCatalog: [], redFlagCatalog: [],
-        answerText: 'other text', language: 'en', cvClaimCatalog: catalog,
+        extraction,
+        signalCatalog: [],
+        redFlagCatalog: [],
+        answerText: 'other text',
+        language: 'en',
+        cvClaimCatalog: catalog,
       });
       expect(result.cvClaimResults?.[0].verification).toBe('not_verified');
     });
@@ -340,12 +426,22 @@ describe('QuestionPracticeScoringResultService', () => {
     it('inflated_risk with valid quote stays inflated_risk', () => {
       const extraction = _extraction({
         cvClaims: [
-          { key: 'cv_claim_1', claim: 'Led PostgreSQL migration', verification: 'inflated_risk', evidenceQuotes: ['led the migration alone'], feedback: '' },
+          {
+            key: 'cv_claim_1',
+            claim: 'Led PostgreSQL migration',
+            verification: 'inflated_risk',
+            evidenceQuotes: ['led the migration alone'],
+            feedback: '',
+          },
         ],
       });
       const result = service.buildResultFromRaw({
-        extraction, signalCatalog: [], redFlagCatalog: [],
-        answerText: 'I led the migration alone actually', language: 'en', cvClaimCatalog: catalog,
+        extraction,
+        signalCatalog: [],
+        redFlagCatalog: [],
+        answerText: 'I led the migration alone actually',
+        language: 'en',
+        cvClaimCatalog: catalog,
       });
       expect(result.cvClaimResults?.[0].verification).toBe('inflated_risk');
     });
@@ -353,12 +449,22 @@ describe('QuestionPracticeScoringResultService', () => {
     it('unknown cv claim key is dropped when catalog provided', () => {
       const extraction = _extraction({
         cvClaims: [
-          { key: 'unknown_claim', claim: 'Some other claim', verification: 'verified', evidenceQuotes: [], feedback: '' },
+          {
+            key: 'unknown_claim',
+            claim: 'Some other claim',
+            verification: 'verified',
+            evidenceQuotes: [],
+            feedback: '',
+          },
         ],
       });
       const result = service.buildResultFromRaw({
-        extraction, signalCatalog: [], redFlagCatalog: [],
-        answerText: 'text', language: 'en', cvClaimCatalog: catalog,
+        extraction,
+        signalCatalog: [],
+        redFlagCatalog: [],
+        answerText: 'text',
+        language: 'en',
+        cvClaimCatalog: catalog,
       });
       expect(result.cvClaimResults).toHaveLength(0);
     });
@@ -383,24 +489,58 @@ describe('QuestionPracticeScoringResultService', () => {
         relatedTrigger: null,
       }));
       const result = service.buildResultFromRaw({
-        extraction, signalCatalog: catalog, redFlagCatalog: [],
-        answerText: 'barely any content here', language: 'en',
+        extraction,
+        signalCatalog: catalog,
+        redFlagCatalog: [],
+        answerText: 'barely any content here',
+        language: 'en',
       });
       expect(result.overallBand).toBe('insufficient_evidence');
     });
 
     it('returns needs_work when ratio is between 0.2 and 0.55', () => {
       const signals = [
-        { key: 'signal_1', label: 'S1', status: 'covered' as const, evidenceQuotes: ['answer'], feedback: '' },
-        { key: 'signal_2', label: 'S2', status: 'missing' as const, evidenceQuotes: [], feedback: '' },
-        { key: 'signal_3', label: 'S3', status: 'missing' as const, evidenceQuotes: [], feedback: '' },
-        { key: 'signal_4', label: 'S4', status: 'missing' as const, evidenceQuotes: [], feedback: '' },
+        {
+          key: 'signal_1',
+          label: 'S1',
+          status: 'covered' as const,
+          evidenceQuotes: ['answer'],
+          feedback: '',
+        },
+        {
+          key: 'signal_2',
+          label: 'S2',
+          status: 'missing' as const,
+          evidenceQuotes: [],
+          feedback: '',
+        },
+        {
+          key: 'signal_3',
+          label: 'S3',
+          status: 'missing' as const,
+          evidenceQuotes: [],
+          feedback: '',
+        },
+        {
+          key: 'signal_4',
+          label: 'S4',
+          status: 'missing' as const,
+          evidenceQuotes: [],
+          feedback: '',
+        },
       ];
       const extraction = _extraction({ signals });
-      const catalog: CatalogItem[] = signals.map(s => ({ key: s.key, label: s.label, relatedTrigger: null }));
+      const catalog: CatalogItem[] = signals.map((s) => ({
+        key: s.key,
+        label: s.label,
+        relatedTrigger: null,
+      }));
       const result = service.buildResultFromRaw({
-        extraction, signalCatalog: catalog, redFlagCatalog: [],
-        answerText: 'some actual answer content here', language: 'en',
+        extraction,
+        signalCatalog: catalog,
+        redFlagCatalog: [],
+        answerText: 'some actual answer content here',
+        language: 'en',
       });
       // ratio = 2/8 = 0.25 → needs_work
       expect(result.overallBand).toBe('needs_work');

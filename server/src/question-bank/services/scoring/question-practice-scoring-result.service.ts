@@ -453,5 +453,4 @@ export class QuestionPracticeScoringResultService {
       relatedTrigger: item.relatedTrigger ?? null,
     };
   }
-
 }

@@ -1,10 +1,14 @@
 import { DataSource, Repository } from 'typeorm';
 import {
+  QUESTION_BANK_TAXONOMY,
+  QUESTION_PROBE_TECH_TOPIC_BASELINES,
+  QUESTION_PROBE_TOPIC_TAGS,
   QuestionProbeCompetency,
   QuestionProbeFollowUpTrigger,
   QuestionProbeLevel,
   QuestionProbeRoleFamily,
   QuestionProbeStage,
+  QuestionProbeTopicTag,
   QuestionProbeType,
 } from '../constants/question-bank-taxonomy.constants';
 import {
@@ -29,6 +33,7 @@ interface ProbeBlueprint {
   content: QuestionProbeLocalizedContentMap;
   competencies: QuestionProbeCompetency[];
   techTags: string[];
+  topicTags?: QuestionProbeTopicTag[];
   followUpTriggers: QuestionProbeFollowUpTrigger[];
 }
 
@@ -43,6 +48,7 @@ export type QuestionProbeSeed = Omit<
   type: QuestionProbeType;
   competencies: QuestionProbeCompetency[];
   techTags: string[];
+  topicTags: QuestionProbeTopicTag[];
   difficulty: number;
   intent: string;
   primaryQuestion: string;
@@ -81,6 +87,36 @@ const LEVEL_LABEL: Record<QuestionProbeLevel, string> = {
   senior: 'Senior',
 };
 
+const SEED_TECH_TAGS = new Set<string>(
+  QUESTION_BANK_TAXONOMY.techTagGroups.flatMap(
+    (group: { tags: string[] }): string[] => group.tags,
+  ),
+);
+
+const SEED_TOPIC_TAGS = new Set<string>(QUESTION_PROBE_TOPIC_TAGS);
+
+const SEED_LEGACY_TOPIC_TAG_MAP: Record<string, QuestionProbeTopicTag[]> = {
+  alerting: ['observability'],
+  audit_logging: ['audit_logging'],
+  browser_performance: ['browser_performance'],
+  consistency: ['data_integrity'],
+  data_quality: ['data_quality'],
+  event_driven_architecture: ['event_driven_architecture'],
+  idempotency: ['idempotency'],
+  impact_measurement: [],
+  indexing: ['indexing'],
+  lineage: ['data_lineage'],
+  logging: ['observability'],
+  outbox_pattern: ['outbox_pattern'],
+  owasp: ['application_security'],
+  partitioning: ['data_partitioning'],
+  rollback: ['deployment', 'transactions'],
+  schema_design: ['schema_design'],
+  secrets_management: ['secrets_management'],
+  test_strategy: ['testing_strategy'],
+  transaction: ['transactions'],
+};
+
 const TYPE_CODE: Record<QuestionProbeType, string> = {
   behavioral: 'BEHAV',
   technical_depth: 'TECH',
@@ -89,6 +125,60 @@ const TYPE_CODE: Record<QuestionProbeType, string> = {
   cv_claim_verification: 'CV',
   situational: 'SIT',
 };
+
+function normalizeSeedTags(
+  tags: string[],
+  explicitTopicTags: QuestionProbeTopicTag[] = [],
+): { techTags: string[]; topicTags: QuestionProbeTopicTag[] } {
+  const techTags: string[] = [];
+  const topicTags: QuestionProbeTopicTag[] = [...explicitTopicTags];
+
+  tags.forEach((tag: string): void => {
+    const normalizedTag: string = tag.replace(/-/g, '_');
+    const techTag: string | null = seedTechTag(tag, normalizedTag);
+    if (techTag) {
+      techTags.push(techTag);
+      topicTags.push(...(QUESTION_PROBE_TECH_TOPIC_BASELINES[techTag] ?? []));
+    }
+
+    const topicTag: QuestionProbeTopicTag | null = seedTopicTag(
+      tag,
+      normalizedTag,
+    );
+    if (topicTag) topicTags.push(topicTag);
+
+    topicTags.push(
+      ...(SEED_LEGACY_TOPIC_TAG_MAP[tag] ?? []),
+      ...(SEED_LEGACY_TOPIC_TAG_MAP[normalizedTag] ?? []),
+    );
+  });
+
+  return {
+    techTags: uniqueSeedTags(techTags),
+    topicTags: uniqueSeedTags(topicTags),
+  };
+}
+
+function seedTechTag(tag: string, normalizedTag: string): string | null {
+  if (SEED_TECH_TAGS.has(tag)) return tag;
+  if (SEED_TECH_TAGS.has(normalizedTag)) return normalizedTag;
+  return null;
+}
+
+function seedTopicTag(
+  tag: string,
+  normalizedTag: string,
+): QuestionProbeTopicTag | null {
+  if (SEED_TOPIC_TAGS.has(tag)) return tag as QuestionProbeTopicTag;
+  if (SEED_TOPIC_TAGS.has(normalizedTag)) {
+    return normalizedTag as QuestionProbeTopicTag;
+  }
+  return null;
+}
+
+function uniqueSeedTags<T extends string>(tags: T[]): T[] {
+  return [...new Set(tags)];
+}
 
 function lc({
   en,
@@ -2505,6 +2595,10 @@ function toSeed({
   levelIndex: number;
 }): QuestionProbeSeed {
   const role: RoleMeta = ROLE_META[roleFamily];
+  const normalizedTags: {
+    techTags: string[];
+    topicTags: QuestionProbeTopicTag[];
+  } = normalizeSeedTags(blueprint.techTags, blueprint.topicTags);
 
   return {
     code: `QB_${role.code}_${LEVEL_CODE[blueprint.level]}_${TYPE_CODE[blueprint.type]}_${String(levelIndex + 1).padStart(2, '0')}`,
@@ -2513,7 +2607,8 @@ function toSeed({
     levels: [blueprint.level],
     type: blueprint.type,
     competencies: blueprint.competencies,
-    techTags: blueprint.techTags,
+    techTags: normalizedTags.techTags,
+    topicTags: normalizedTags.topicTags,
     difficulty: LEVEL_DIFFICULTY[blueprint.level],
     intent: requiredContent(blueprint, 'en').displayIntent,
     primaryQuestion: requiredContent(blueprint, 'en').displayQuestion,

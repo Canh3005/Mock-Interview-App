@@ -8,6 +8,7 @@ import {
   QUESTION_PROBE_LEVELS,
   QUESTION_PROBE_ROLE_FAMILIES,
   QUESTION_PROBE_STAGES,
+  QUESTION_PROBE_TOPIC_TAGS,
   QUESTION_PROBE_TYPES,
   QuestionProbeLanguage,
 } from '../../constants/question-bank-taxonomy.constants';
@@ -122,6 +123,7 @@ export class QuestionBankPublicBrowseService {
         field: 'competency',
       }),
       techTags: this._techTags(request.techTags ?? request.techTag),
+      topicTags: this._topicTags(request.topicTags ?? request.topicTag),
       difficulty: this._difficulty(request.difficulty),
       search: this._cleanText(request.search),
       sort,
@@ -152,6 +154,11 @@ export class QuestionBankPublicBrowseService {
     if (query.techTags.length > 0) {
       qb.andWhere('probe.techTags && :techTags', {
         techTags: query.techTags,
+      });
+    }
+    if (query.topicTags.length > 0) {
+      qb.andWhere('probe.topicTags && :topicTags', {
+        topicTags: query.topicTags,
       });
     }
     if (query.difficulty) qb.andWhere('probe.difficulty = :difficulty', query);
@@ -270,6 +277,21 @@ export class QuestionBankPublicBrowseService {
       return uniqueValues;
     }
     throw new BadRequestException('Invalid techTags');
+  }
+
+  private _topicTags(value?: string | string[]): string[] {
+    const cleanValues: string[] = (Array.isArray(value) ? value : [value])
+      .flatMap((item: string | undefined): string[] =>
+        item ? item.split(',') : [],
+      )
+      .map((item: string): string => item.trim())
+      .filter((item: string): boolean => item.length > 0);
+    const uniqueValues: string[] = [...new Set(cleanValues)];
+    const allowed: readonly string[] = QUESTION_PROBE_TOPIC_TAGS;
+    if (uniqueValues.every((item: string): boolean => allowed.includes(item))) {
+      return uniqueValues;
+    }
+    throw new BadRequestException('Invalid topicTags');
   }
 
   private _cleanText(value?: string): string | undefined {

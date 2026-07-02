@@ -13,6 +13,7 @@ import {
   QuestionProbeRoleFamily,
   QuestionProbeStage,
   QuestionProbeStatus,
+  QuestionProbeTopicTag,
   QuestionProbeType,
 } from '../constants/question-bank-taxonomy.constants';
 
@@ -85,6 +86,9 @@ export class QuestionProbe {
 
   @Column({ type: 'text', array: true, default: [] })
   techTags!: string[];
+
+  @Column({ type: 'text', array: true, default: [] })
+  topicTags!: QuestionProbeTopicTag[];
 
   @Column({ type: 'int', nullable: true })
   difficulty!: number | null;

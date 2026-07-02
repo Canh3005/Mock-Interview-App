@@ -41,6 +41,7 @@ export class QuestionBankPublicProjectionService {
       type: probe.type,
       competencies: probe.competencies,
       techTags: probe.techTags,
+      topicTags: probe.topicTags ?? [],
       supportedLanguages,
       locale,
       resolvedLocale,
