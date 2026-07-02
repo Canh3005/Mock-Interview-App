@@ -1,0 +1,3038 @@
+[
+  {
+    "code": "REST_HTTP_JR_METHODS_PUT_PATCH_001",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "technical_depth",
+    "competencies": [
+      "technical_fundamentals",
+      "communication"
+    ],
+    "techTags": [
+      "rest"
+    ],
+    "topicTags": [
+      "http_semantics",
+      "api_design",
+      "http_methods"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate understands HTTP method semantics beyond CRUD naming, especially replacement versus partial update.",
+    "primaryQuestion": "What are the main HTTP methods, and what is the difference between PUT and PATCH?",
+    "expectedSignals": [
+      {
+        "label": "Explains GET, POST, PUT, PATCH, and DELETE by intent and resource semantics.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "get_reads_a_representation_without_r_1",
+            "description": "GET reads a representation without requesting state change."
+          },
+          {
+            "key": "post_creates_subordinate_resources_o_2",
+            "description": "POST creates subordinate resources or triggers processing when semantics are not idempotent replacement."
+          }
+        ]
+      },
+      {
+        "label": "Distinguishes PUT as replacing a resource representation at a known URI.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "put_is_used_when_the_client_sends_th_1",
+            "description": "PUT is used when the client sends the desired full representation or replacement state."
+          },
+          {
+            "key": "put_to_the_same_uri_with_the_same_re_2",
+            "description": "PUT to the same URI with the same representation should have the same intended effect."
+          }
+        ]
+      },
+      {
+        "label": "Distinguishes PATCH as partial modification of a resource.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "patch_sends_a_change_document_or_par_1",
+            "description": "PATCH sends a change document or partial fields rather than the whole resource."
+          },
+          {
+            "key": "patch_semantics_depend_on_the_patch__2",
+            "description": "PATCH semantics depend on the patch format and may or may not be idempotent by design."
+          }
+        ]
+      },
+      {
+        "label": "Connects method choice to validation, missing fields, and client/server contracts.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "explains_why_omitted_fields_in_put_a_1",
+            "description": "Explains why omitted fields in PUT and PATCH can mean different things."
+          },
+          {
+            "key": "mentions_documenting_method_behavior_2",
+            "description": "Mentions documenting method behavior so clients do not accidentally erase fields."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "If PATCH /users/1 only sends { \"name\": \"Ava\" }, what should happen to email?",
+        "purpose": "Check partial-update semantics."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "When would POST be a better fit than PUT for a create operation?",
+        "purpose": "Probe resource identity and idempotency reasoning."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "HTTP methods and PUT versus PATCH",
+        "displayQuestion": "What are the main HTTP methods, and what is the difference between PUT and PATCH?",
+        "displayIntent": "Check whether the candidate understands HTTP method semantics beyond CRUD naming, especially replacement versus partial update.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "http_methods"
+        }
+      },
+      "vi": {
+        "title": "HTTP method và PUT so với PATCH",
+        "displayQuestion": "Các HTTP method chính là gì, và PUT khác PATCH như thế nào?",
+        "displayIntent": "Check whether the candidate understands HTTP method semantics beyond CRUD naming, especially replacement versus partial update.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "http_methods"
+        }
+      },
+      "ja": {
+        "title": "HTTP methods and PUT versus PATCH",
+        "displayQuestion": "次の点を説明してください: What are the main HTTP methods, and what is the difference between PUT and PATCH?",
+        "displayIntent": "この質問は http_methods を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "http_methods"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "RFC 9110: HTTP Semantics",
+        "url": "https://www.rfc-editor.org/rfc/rfc9110",
+        "note": "Canonical reference for HTTP methods, status codes, semantics, caching, and content negotiation."
+      },
+      {
+        "label": "MDN HTTP",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP",
+        "note": "Used for practical HTTP headers, CORS, caching, and browser behavior."
+      },
+      {
+        "label": "OpenAPI Specification",
+        "url": "https://spec.openapis.org/oas/latest.html",
+        "note": "Used for API contract and documentation conventions."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REST_HTTP_JR_IDEMPOTENCY_SAFE_CACHE_002",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "technical_depth",
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking"
+    ],
+    "techTags": [
+      "rest"
+    ],
+    "topicTags": [
+      "http_semantics",
+      "idempotency",
+      "caching"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Evaluate whether the candidate can reason about retries, side effects, and caching from HTTP semantics.",
+    "primaryQuestion": "What does safe, idempotent, and cacheable mean for HTTP methods, and why do these differences matter?",
+    "expectedSignals": [
+      {
+        "label": "Defines safe methods as methods whose requested semantics are read-only.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "get_head_and_options_are_safe_by_int_1",
+            "description": "GET, HEAD, and OPTIONS are safe by intended semantics."
+          },
+          {
+            "key": "safe_does_not_mean_no_logging_or_met_2",
+            "description": "Safe does not mean no logging or metrics happen internally."
+          }
+        ]
+      },
+      {
+        "label": "Defines idempotency as same intended effect after one or multiple identical requests.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "put_and_delete_are_idempotent_by_met_1",
+            "description": "PUT and DELETE are idempotent by method semantics when implemented correctly."
+          },
+          {
+            "key": "post_is_generally_not_idempotent_unl_2",
+            "description": "POST is generally not idempotent unless an application-level idempotency key or equivalent is added."
+          }
+        ]
+      },
+      {
+        "label": "Separates cacheability from safety and idempotency.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "cacheability_depends_on_method_seman_1",
+            "description": "Cacheability depends on method semantics and response caching headers."
+          },
+          {
+            "key": "a_method_can_be_idempotent_without_b_2",
+            "description": "A method can be idempotent without being useful to cache."
+          }
+        ]
+      },
+      {
+        "label": "Connects idempotency to retry safety in unreliable networks.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "explains_why_clients_proxies_or_work_1",
+            "description": "Explains why clients, proxies, or workers may retry requests after timeouts."
+          },
+          {
+            "key": "mentions_duplicate_orders_or_payment_2",
+            "description": "Mentions duplicate orders or payments as a risk when non-idempotent operations are retried."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Is DELETE /users/1 idempotent if the second call returns 404? Explain the intended effect.",
+        "purpose": "Check idempotency nuance."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "Why is idempotency important for payment creation when the client times out?",
+        "purpose": "Connect semantics to production risk."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Safe, idempotent, and cacheable methods",
+        "displayQuestion": "What does safe, idempotent, and cacheable mean for HTTP methods, and why do these differences matter?",
+        "displayIntent": "Evaluate whether the candidate can reason about retries, side effects, and caching from HTTP semantics.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "http_semantics"
+        }
+      },
+      "vi": {
+        "title": "Safe, idempotent và cacheable method",
+        "displayQuestion": "Safe, idempotent và cacheable nghĩa là gì trong HTTP method, và vì sao các khái niệm này quan trọng?",
+        "displayIntent": "Evaluate whether the candidate can reason about retries, side effects, and caching from HTTP semantics.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "http_semantics"
+        }
+      },
+      "ja": {
+        "title": "Safe, idempotent, and cacheable methods",
+        "displayQuestion": "次の点を説明してください: What does safe, idempotent, and cacheable mean for HTTP methods, and why do these differences matter?",
+        "displayIntent": "この質問は http_semantics を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "http_semantics"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "RFC 9110: HTTP Semantics",
+        "url": "https://www.rfc-editor.org/rfc/rfc9110",
+        "note": "Canonical reference for HTTP methods, status codes, semantics, caching, and content negotiation."
+      },
+      {
+        "label": "MDN HTTP",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP",
+        "note": "Used for practical HTTP headers, CORS, caching, and browser behavior."
+      },
+      {
+        "label": "OpenAPI Specification",
+        "url": "https://spec.openapis.org/oas/latest.html",
+        "note": "Used for API contract and documentation conventions."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REST_HTTP_JR_STATUS_CODES_003",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "technical_depth",
+    "competencies": [
+      "technical_fundamentals",
+      "communication"
+    ],
+    "techTags": [
+      "rest"
+    ],
+    "topicTags": [
+      "http_semantics",
+      "status_codes",
+      "api_design"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate can map API outcomes to precise HTTP responses rather than returning 200 for everything.",
+    "primaryQuestion": "Explain common HTTP status codes such as 200, 201, 204, 400, 401, 403, 404, 409, 422, and 500. When should each be used?",
+    "expectedSignals": [
+      {
+        "label": "Explains successful responses accurately.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "200_is_a_successful_response_with_a__1",
+            "description": "200 is a successful response with a representation."
+          },
+          {
+            "key": "201_indicates_a_resource_was_created_2",
+            "description": "201 indicates a resource was created and may include Location or created representation."
+          },
+          {
+            "key": "204_indicates_success_with_no_respon_3",
+            "description": "204 indicates success with no response body."
+          }
+        ]
+      },
+      {
+        "label": "Distinguishes client input and validation errors.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "400_covers_malformed_request_syntax__1",
+            "description": "400 covers malformed request syntax or invalid request shape."
+          },
+          {
+            "key": "422_is_useful_when_syntax_is_valid_b_2",
+            "description": "422 is useful when syntax is valid but semantic validation fails."
+          },
+          {
+            "key": "409_represents_conflict_with_current_3",
+            "description": "409 represents conflict with current resource state such as duplicate unique value or version conflict."
+          }
+        ]
+      },
+      {
+        "label": "Distinguishes authentication and authorization failures.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "401_means_authentication_is_missing__1",
+            "description": "401 means authentication is missing or invalid and a challenge may be appropriate."
+          },
+          {
+            "key": "403_means_the_authenticated_principa_2",
+            "description": "403 means the authenticated principal is not allowed to perform the action."
+          }
+        ]
+      },
+      {
+        "label": "Uses 404 and 500 without hiding real server errors.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "404_means_the_target_resource_is_not_1",
+            "description": "404 means the target resource is not found or not exposed."
+          },
+          {
+            "key": "500_means_unexpected_server_failure__2",
+            "description": "500 means unexpected server failure, not normal validation failure."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "What status would you return when creating a user succeeds and why?",
+        "purpose": "Check 201 versus 200 reasoning."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "What is the difference between duplicate email and malformed JSON in status-code choice?",
+        "purpose": "Probe 409/400/422 distinction."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Choosing HTTP status codes",
+        "displayQuestion": "Explain common HTTP status codes such as 200, 201, 204, 400, 401, 403, 404, 409, 422, and 500. When should each be used?",
+        "displayIntent": "Check whether the candidate can map API outcomes to precise HTTP responses rather than returning 200 for everything.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "status_codes"
+        }
+      },
+      "vi": {
+        "title": "Chọn HTTP status code",
+        "displayQuestion": "Hãy giải thích các HTTP status code phổ biến như 200, 201, 204, 400, 401, 403, 404, 409, 422 và 500. Khi nào nên dùng từng mã?",
+        "displayIntent": "Check whether the candidate can map API outcomes to precise HTTP responses rather than returning 200 for everything.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "status_codes"
+        }
+      },
+      "ja": {
+        "title": "Choosing HTTP status codes",
+        "displayQuestion": "次の点を説明してください: Explain common HTTP status codes such as 200, 201, 204, 400, 401, 403, 404, 409, 422, and 500. When should each be used?",
+        "displayIntent": "この質問は status_codes を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "status_codes"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "RFC 9110: HTTP Semantics",
+        "url": "https://www.rfc-editor.org/rfc/rfc9110",
+        "note": "Canonical reference for HTTP methods, status codes, semantics, caching, and content negotiation."
+      },
+      {
+        "label": "MDN HTTP",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP",
+        "note": "Used for practical HTTP headers, CORS, caching, and browser behavior."
+      },
+      {
+        "label": "OpenAPI Specification",
+        "url": "https://spec.openapis.org/oas/latest.html",
+        "note": "Used for API contract and documentation conventions."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REST_HTTP_JR_REST_CONSTRAINTS_004",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "technical_depth",
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking"
+    ],
+    "techTags": [
+      "rest"
+    ],
+    "topicTags": [
+      "http_semantics",
+      "api_design",
+      "module_architecture"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Assess whether the candidate understands REST as an architectural style, especially stateless request design and cacheable uniform interfaces.",
+    "primaryQuestion": "What are the REST constraints, and what does stateless mean in a REST API?",
+    "expectedSignals": [
+      {
+        "label": "Names the core REST constraints at a high level.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "mentions_client_server_stateless_cac_1",
+            "description": "Mentions client-server, stateless, cacheable, uniform interface, layered system, and optional code-on-demand."
+          },
+          {
+            "key": "avoids_reducing_rest_to_only_url_nam_2",
+            "description": "Avoids reducing REST to only URL naming conventions."
+          }
+        ]
+      },
+      {
+        "label": "Explains stateless requests accurately.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "each_request_carries_enough_context__1",
+            "description": "Each request carries enough context for the server to understand it."
+          },
+          {
+            "key": "the_server_should_not_depend_on_hidd_2",
+            "description": "The server should not depend on hidden conversation state from previous requests to process the current request."
+          }
+        ]
+      },
+      {
+        "label": "Connects statelessness to scaling, reliability, and load balancing.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "explains_why_stateless_apis_are_easi_1",
+            "description": "Explains why stateless APIs are easier to scale across instances."
+          },
+          {
+            "key": "mentions_that_authentication_can_sti_2",
+            "description": "Mentions that authentication can still use tokens or session identifiers if the request carries the necessary reference."
+          }
+        ]
+      },
+      {
+        "label": "Distinguishes REST constraints from dogmatic implementation rules.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "recognizes_rest_allows_different_rep_1",
+            "description": "Recognizes REST allows different representations and versioning strategies."
+          },
+          {
+            "key": "explains_that_pragmatic_apis_may_be__2",
+            "description": "Explains that pragmatic APIs may be REST-like without perfectly satisfying every constraint."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "If page two of a search depends on server memory from page one, why is that not stateless?",
+        "purpose": "Check request self-containment."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "Can an API be useful if it is REST-like but not perfectly RESTful? What trade-off are you accepting?",
+        "purpose": "Probe pragmatic architectural judgment."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "REST constraints and statelessness",
+        "displayQuestion": "What are the REST constraints, and what does stateless mean in a REST API?",
+        "displayIntent": "Assess whether the candidate understands REST as an architectural style, especially stateless request design and cacheable uniform interfaces.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "rest_constraints"
+        }
+      },
+      "vi": {
+        "title": "REST constraints và statelessness",
+        "displayQuestion": "Các REST constraint là gì, và stateless nghĩa là gì trong REST API?",
+        "displayIntent": "Assess whether the candidate understands REST as an architectural style, especially stateless request design and cacheable uniform interfaces.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "rest_constraints"
+        }
+      },
+      "ja": {
+        "title": "REST constraints and statelessness",
+        "displayQuestion": "次の点を説明してください: What are the REST constraints, and what does stateless mean in a REST API?",
+        "displayIntent": "この質問は rest_constraints を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "rest_constraints"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "RFC 9110: HTTP Semantics",
+        "url": "https://www.rfc-editor.org/rfc/rfc9110",
+        "note": "Canonical reference for HTTP methods, status codes, semantics, caching, and content negotiation."
+      },
+      {
+        "label": "MDN HTTP",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP",
+        "note": "Used for practical HTTP headers, CORS, caching, and browser behavior."
+      },
+      {
+        "label": "OpenAPI Specification",
+        "url": "https://spec.openapis.org/oas/latest.html",
+        "note": "Used for API contract and documentation conventions."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REST_HTTP_JR_AUTHN_AUTHZ_005",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "security"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "technical_depth",
+    "competencies": [
+      "technical_fundamentals",
+      "communication"
+    ],
+    "techTags": [
+      "rest"
+    ],
+    "topicTags": [
+      "http_semantics",
+      "authentication",
+      "authorization"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate separates identity verification from permission checks and maps failures to correct API behavior.",
+    "primaryQuestion": "What is the difference between authentication and authorization, and how do they apply in a REST API?",
+    "expectedSignals": [
+      {
+        "label": "Defines authentication as proving who the caller is.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "mentions_credentials_sessions_bearer_1",
+            "description": "Mentions credentials, sessions, bearer tokens, or cookies as authentication mechanisms."
+          },
+          {
+            "key": "explains_that_authentication_establi_2",
+            "description": "Explains that authentication establishes an identity or principal."
+          }
+        ]
+      },
+      {
+        "label": "Defines authorization as deciding what that identity can access or do.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "mentions_roles_permissions_scopes_ow_1",
+            "description": "Mentions roles, permissions, scopes, ownership checks, or policy checks."
+          },
+          {
+            "key": "explains_that_authorization_can_fail_2",
+            "description": "Explains that authorization can fail even when authentication succeeds."
+          }
+        ]
+      },
+      {
+        "label": "Maps failures to practical REST responses.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "401_is_appropriate_for_missing_or_in_1",
+            "description": "401 is appropriate for missing or invalid authentication."
+          },
+          {
+            "key": "403_is_appropriate_when_the_caller_i_2",
+            "description": "403 is appropriate when the caller is authenticated but not allowed."
+          }
+        ]
+      },
+      {
+        "label": "Places checks at the correct API boundary.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "authentication_usually_happens_befor_1",
+            "description": "Authentication usually happens before route business logic."
+          },
+          {
+            "key": "authorization_often_uses_route_resou_2",
+            "description": "Authorization often uses route, resource, and user context such as owner ID or required scope."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "A logged-in user tries to delete another user account. Is this authentication or authorization?",
+        "purpose": "Separate identity from permission."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Why is checking only that a JWT is valid not enough for an admin-only endpoint?",
+        "purpose": "Check resource/action-level policy reasoning."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Authentication versus authorization in REST",
+        "displayQuestion": "What is the difference between authentication and authorization, and how do they apply in a REST API?",
+        "displayIntent": "Check whether the candidate separates identity verification from permission checks and maps failures to correct API behavior.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "authn_authz"
+        }
+      },
+      "vi": {
+        "title": "Authentication và authorization trong REST",
+        "displayQuestion": "Authentication khác authorization như thế nào, và chúng áp dụng trong REST API ra sao?",
+        "displayIntent": "Check whether the candidate separates identity verification from permission checks and maps failures to correct API behavior.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "authn_authz"
+        }
+      },
+      "ja": {
+        "title": "Authentication versus authorization in REST",
+        "displayQuestion": "次の点を説明してください: What is the difference between authentication and authorization, and how do they apply in a REST API?",
+        "displayIntent": "この質問は authn_authz を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "authn_authz"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "RFC 9110: HTTP Semantics",
+        "url": "https://www.rfc-editor.org/rfc/rfc9110",
+        "note": "Canonical reference for HTTP methods, status codes, semantics, caching, and content negotiation."
+      },
+      {
+        "label": "MDN HTTP",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP",
+        "note": "Used for practical HTTP headers, CORS, caching, and browser behavior."
+      },
+      {
+        "label": "OpenAPI Specification",
+        "url": "https://spec.openapis.org/oas/latest.html",
+        "note": "Used for API contract and documentation conventions."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REST_HTTP_JR_CORS_PREFLIGHT_006",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "frontend",
+      "fullstack",
+      "backend"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "debugging",
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking"
+    ],
+    "techTags": [
+      "rest"
+    ],
+    "topicTags": [
+      "http_semantics",
+      "cors",
+      "csrf",
+      "xss"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Evaluate whether the candidate understands CORS as a browser security policy and server opt-in mechanism, not a generic backend networking error.",
+    "primaryQuestion": "What is CORS, why does the browser enforce it, and what is a preflight request?",
+    "expectedSignals": [
+      {
+        "label": "Defines CORS as browser-controlled cross-origin access using response headers.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "mentions_that_browsers_enforce_same__1",
+            "description": "Mentions that browsers enforce same-origin policy and CORS relaxes it by server opt-in."
+          },
+          {
+            "key": "mentions_access_control_allow_origin_2",
+            "description": "Mentions Access-Control-Allow-Origin or related CORS response headers."
+          }
+        ]
+      },
+      {
+        "label": "Explains preflight as an OPTIONS request for non-simple cross-origin requests.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "preflight_checks_whether_the_server__1",
+            "description": "Preflight checks whether the server allows the method and headers before the real request."
+          },
+          {
+            "key": "mentions_access_control_allow_method_2",
+            "description": "Mentions Access-Control-Allow-Methods and Access-Control-Allow-Headers."
+          }
+        ]
+      },
+      {
+        "label": "Avoids confusing CORS with server-to-server requests.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "recognizes_cors_is_mainly_a_browser__1",
+            "description": "Recognizes CORS is mainly a browser enforcement issue."
+          },
+          {
+            "key": "explains_that_postman_or_backend_to__2",
+            "description": "Explains that Postman or backend-to-backend calls may not show the same CORS block."
+          }
+        ]
+      },
+      {
+        "label": "Mentions safe credential configuration.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "explains_that_credentials_require_ex_1",
+            "description": "Explains that credentials require explicit origin handling rather than wildcard origin."
+          },
+          {
+            "key": "mentions_cookies_or_authorization_he_2",
+            "description": "Mentions cookies or Authorization headers as cases needing careful CORS configuration."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Why can the Network tab show a 200 response but browser JavaScript still says CORS blocked?",
+        "purpose": "Check browser enforcement model."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "Why is Access-Control-Allow-Origin: * risky or invalid when credentials are used?",
+        "purpose": "Probe credentialed CORS safety."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "CORS and preflight requests",
+        "displayQuestion": "What is CORS, why does the browser enforce it, and what is a preflight request?",
+        "displayIntent": "Evaluate whether the candidate understands CORS as a browser security policy and server opt-in mechanism, not a generic backend networking error.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "debugging",
+          "topic": "cors"
+        }
+      },
+      "vi": {
+        "title": "CORS và preflight request",
+        "displayQuestion": "CORS là gì, vì sao browser enforce nó, và preflight request là gì?",
+        "displayIntent": "Evaluate whether the candidate understands CORS as a browser security policy and server opt-in mechanism, not a generic backend networking error.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "debugging",
+          "topic": "cors"
+        }
+      },
+      "ja": {
+        "title": "CORS and preflight requests",
+        "displayQuestion": "次の点を説明してください: What is CORS, why does the browser enforce it, and what is a preflight request?",
+        "displayIntent": "この質問は cors を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "debugging",
+          "topic": "cors"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "RFC 9110: HTTP Semantics",
+        "url": "https://www.rfc-editor.org/rfc/rfc9110",
+        "note": "Canonical reference for HTTP methods, status codes, semantics, caching, and content negotiation."
+      },
+      {
+        "label": "MDN HTTP",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP",
+        "note": "Used for practical HTTP headers, CORS, caching, and browser behavior."
+      },
+      {
+        "label": "OpenAPI Specification",
+        "url": "https://spec.openapis.org/oas/latest.html",
+        "note": "Used for API contract and documentation conventions."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REST_HTTP_JR_HEADERS_NEGOTIATION_007",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "technical_depth",
+    "competencies": [
+      "technical_fundamentals",
+      "communication"
+    ],
+    "techTags": [
+      "rest"
+    ],
+    "topicTags": [
+      "http_semantics",
+      "content_negotiation"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Check whether the candidate can reason about metadata, representation formats, auth, caching, and content negotiation.",
+    "primaryQuestion": "What information is carried in HTTP request headers versus response headers, and how do Accept and Content-Type differ?",
+    "expectedSignals": [
+      {
+        "label": "Separates request metadata from response metadata.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "request_headers_describe_client_pref_1",
+            "description": "Request headers describe client preferences, credentials, body format, and conditional request information."
+          },
+          {
+            "key": "response_headers_describe_server_met_2",
+            "description": "Response headers describe server metadata such as content type, caching, cookies, or rate-limit information."
+          }
+        ]
+      },
+      {
+        "label": "Distinguishes Content-Type from Accept.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "content_type_describes_the_media_typ_1",
+            "description": "Content-Type describes the media type of the message body being sent."
+          },
+          {
+            "key": "accept_describes_media_types_the_cli_2",
+            "description": "Accept describes media types the client is willing to receive."
+          }
+        ]
+      },
+      {
+        "label": "Gives practical examples of common headers.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "authorization_carries_credentials_su_1",
+            "description": "Authorization carries credentials such as bearer tokens."
+          },
+          {
+            "key": "cache_control_influences_caching_beh_2",
+            "description": "Cache-Control influences caching behavior."
+          },
+          {
+            "key": "etag_can_support_conditional_request_3",
+            "description": "ETag can support conditional requests."
+          }
+        ]
+      },
+      {
+        "label": "Connects incorrect headers to real bugs.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "wrong_content_type_can_break_body_pa_1",
+            "description": "Wrong Content-Type can break body parsing or validation."
+          },
+          {
+            "key": "missing_authorization_or_wrong_accep_2",
+            "description": "Missing Authorization or wrong Accept behavior can lead to 401, 415, or 406-style issues depending on API design."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "If a client sends JSON, which header tells the server how to parse the body?",
+        "purpose": "Check Content-Type."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "If the client wants JSON back, which header communicates that preference?",
+        "purpose": "Check Accept and negotiation."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Request and response headers",
+        "displayQuestion": "What information is carried in HTTP request headers versus response headers, and how do Accept and Content-Type differ?",
+        "displayIntent": "Check whether the candidate can reason about metadata, representation formats, auth, caching, and content negotiation.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "headers"
+        }
+      },
+      "vi": {
+        "title": "Request header và response header",
+        "displayQuestion": "HTTP request header và response header mang thông tin gì, và Accept khác Content-Type như thế nào?",
+        "displayIntent": "Check whether the candidate can reason about metadata, representation formats, auth, caching, and content negotiation.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "headers"
+        }
+      },
+      "ja": {
+        "title": "Request and response headers",
+        "displayQuestion": "次の点を説明してください: What information is carried in HTTP request headers versus response headers, and how do Accept and Content-Type differ?",
+        "displayIntent": "この質問は headers を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "headers"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "RFC 9110: HTTP Semantics",
+        "url": "https://www.rfc-editor.org/rfc/rfc9110",
+        "note": "Canonical reference for HTTP methods, status codes, semantics, caching, and content negotiation."
+      },
+      {
+        "label": "MDN HTTP",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP",
+        "note": "Used for practical HTTP headers, CORS, caching, and browser behavior."
+      },
+      {
+        "label": "OpenAPI Specification",
+        "url": "https://spec.openapis.org/oas/latest.html",
+        "note": "Used for API contract and documentation conventions."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REST_HTTP_JR_RESOURCE_DESIGN_008",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "technical_depth",
+    "competencies": [
+      "technical_fundamentals",
+      "communication",
+      "system_thinking"
+    ],
+    "techTags": [
+      "rest"
+    ],
+    "topicTags": [
+      "http_semantics",
+      "api_design",
+      "routing"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Assess practical endpoint design for resources, identifiers, filtering, and request payload boundaries.",
+    "primaryQuestion": "What makes an endpoint RESTful? Explain resource-based URLs, nouns versus verbs, and path parameters, query parameters, and request body usage.",
+    "expectedSignals": [
+      {
+        "label": "Uses resource nouns and HTTP methods rather than action-heavy URLs.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "names_resources_such_as_users_or_ord_1",
+            "description": "Names resources such as /users or /orders instead of /getUsers for normal CRUD-style APIs."
+          },
+          {
+            "key": "uses_method_semantics_to_express_rea_2",
+            "description": "Uses method semantics to express read, create, replace, update, or delete."
+          }
+        ]
+      },
+      {
+        "label": "Uses path parameters for resource identity.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "explains_that_users_id_identifies_a__1",
+            "description": "Explains that /users/{id} identifies a specific user resource."
+          },
+          {
+            "key": "avoids_putting_stable_resource_ids_o_2",
+            "description": "Avoids putting stable resource IDs only in request bodies for ordinary resource URLs."
+          }
+        ]
+      },
+      {
+        "label": "Uses query parameters for collection controls.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "explains_filtering_sorting_searching_1",
+            "description": "Explains filtering, sorting, searching, pagination, and include options as query parameters."
+          },
+          {
+            "key": "distinguishes_query_parameters_from__2",
+            "description": "Distinguishes query parameters from identity path segments."
+          }
+        ]
+      },
+      {
+        "label": "Uses request body for representation or command payload where appropriate.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "explains_that_post_put_and_patch_oft_1",
+            "description": "Explains that POST, PUT, and PATCH often carry JSON bodies."
+          },
+          {
+            "key": "avoids_sending_sensitive_or_large_pa_2",
+            "description": "Avoids sending sensitive or large payloads in URLs."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "How would you design an endpoint to list active users sorted by created date?",
+        "purpose": "Check path/query/body separation."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "When would a verb in the path, such as /orders/{id}/cancel, be acceptable?",
+        "purpose": "Probe pragmatic resource/action modeling."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "RESTful resource design",
+        "displayQuestion": "What makes an endpoint RESTful? Explain resource-based URLs, nouns versus verbs, and path parameters, query parameters, and request body usage.",
+        "displayIntent": "Assess practical endpoint design for resources, identifiers, filtering, and request payload boundaries.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "resource_design"
+        }
+      },
+      "vi": {
+        "title": "Thiết kế resource RESTful",
+        "displayQuestion": "Điều gì làm một endpoint RESTful? Hãy giải thích resource-based URL, noun so với verb, và cách dùng path parameter, query parameter, request body.",
+        "displayIntent": "Assess practical endpoint design for resources, identifiers, filtering, and request payload boundaries.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "resource_design"
+        }
+      },
+      "ja": {
+        "title": "RESTful resource design",
+        "displayQuestion": "次の点を説明してください: What makes an endpoint RESTful? Explain resource-based URLs, nouns versus verbs, and path parameters, query parameters, and request body usage.",
+        "displayIntent": "この質問は resource_design を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "resource_design"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "RFC 9110: HTTP Semantics",
+        "url": "https://www.rfc-editor.org/rfc/rfc9110",
+        "note": "Canonical reference for HTTP methods, status codes, semantics, caching, and content negotiation."
+      },
+      {
+        "label": "MDN HTTP",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP",
+        "note": "Used for practical HTTP headers, CORS, caching, and browser behavior."
+      },
+      {
+        "label": "OpenAPI Specification",
+        "url": "https://spec.openapis.org/oas/latest.html",
+        "note": "Used for API contract and documentation conventions."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REST_HTTP_JR_202_ACCEPTED_009",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "situational",
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "communication"
+    ],
+    "techTags": [
+      "rest"
+    ],
+    "topicTags": [
+      "http_semantics",
+      "async_programming",
+      "status_codes"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Check whether the candidate can model long-running or queued work without lying that processing has already completed.",
+    "primaryQuestion": "When should an API return 202 Accepted instead of 200 OK or 201 Created?",
+    "expectedSignals": [
+      {
+        "label": "Explains that 202 means the request was accepted for processing but not completed yet.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "separates_accepted_from_completed_su_1",
+            "description": "Separates accepted from completed success."
+          },
+          {
+            "key": "avoids_returning_201_when_no_resourc_2",
+            "description": "Avoids returning 201 when no resource is actually created yet."
+          }
+        ]
+      },
+      {
+        "label": "Gives realistic use cases for queued or long-running work.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "mentions_imports_report_generation_b_1",
+            "description": "Mentions imports, report generation, background jobs, email sending, video processing, or payment review."
+          },
+          {
+            "key": "explains_why_synchronous_200_may_be__2",
+            "description": "Explains why synchronous 200 may be misleading or too slow."
+          }
+        ]
+      },
+      {
+        "label": "Describes how clients should track completion.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "mentions_returning_a_job_id_status_u_1",
+            "description": "Mentions returning a job ID, status URL, Location header, polling endpoint, webhook, or callback mechanism."
+          },
+          {
+            "key": "defines_possible_states_such_as_pend_2",
+            "description": "Defines possible states such as pending, processing, succeeded, and failed."
+          }
+        ]
+      },
+      {
+        "label": "Handles error and retry implications.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "explains_that_later_job_failure_must_1",
+            "description": "Explains that later job failure must be observable to the client."
+          },
+          {
+            "key": "mentions_idempotency_or_duplicate_su_2",
+            "description": "Mentions idempotency or duplicate submission protection for retryable accepted requests."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "If a CSV import is queued, what would you put in the 202 response body?",
+        "purpose": "Check client tracking design."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "How does the client learn that an accepted job failed later?",
+        "purpose": "Probe async failure handling."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "202 Accepted for asynchronous processing",
+        "displayQuestion": "When should an API return 202 Accepted instead of 200 OK or 201 Created?",
+        "displayIntent": "Check whether the candidate can model long-running or queued work without lying that processing has already completed.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "situational",
+          "topic": "async_http"
+        }
+      },
+      "vi": {
+        "title": "202 Accepted cho xử lý bất đồng bộ",
+        "displayQuestion": "Khi nào API nên trả 202 Accepted thay vì 200 OK hoặc 201 Created?",
+        "displayIntent": "Check whether the candidate can model long-running or queued work without lying that processing has already completed.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "situational",
+          "topic": "async_http"
+        }
+      },
+      "ja": {
+        "title": "202 Accepted for asynchronous processing",
+        "displayQuestion": "次の点を説明してください: When should an API return 202 Accepted instead of 200 OK or 201 Created?",
+        "displayIntent": "この質問は async_http を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "situational",
+          "topic": "async_http"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "RFC 9110: HTTP Semantics",
+        "url": "https://www.rfc-editor.org/rfc/rfc9110",
+        "note": "Canonical reference for HTTP methods, status codes, semantics, caching, and content negotiation."
+      },
+      {
+        "label": "MDN HTTP",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP",
+        "note": "Used for practical HTTP headers, CORS, caching, and browser behavior."
+      },
+      {
+        "label": "OpenAPI Specification",
+        "url": "https://spec.openapis.org/oas/latest.html",
+        "note": "Used for API contract and documentation conventions."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REST_HTTP_JR_ERROR_RESPONSE_010",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "situational",
+    "competencies": [
+      "communication",
+      "system_thinking",
+      "technical_fundamentals"
+    ],
+    "techTags": [
+      "rest"
+    ],
+    "topicTags": [
+      "http_semantics",
+      "api_design",
+      "error_handling"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Evaluate whether the candidate can design client-friendly errors with stable codes, human messages, field validation details, and traceability.",
+    "primaryQuestion": "How would you design a consistent error response format for a REST API?",
+    "expectedSignals": [
+      {
+        "label": "Includes stable machine-readable error information.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "mentions_an_application_error_code_d_1",
+            "description": "Mentions an application error code distinct from the HTTP status."
+          },
+          {
+            "key": "explains_why_clients_should_not_pars_2",
+            "description": "Explains why clients should not parse free-form human text."
+          }
+        ]
+      },
+      {
+        "label": "Includes human-readable context without leaking internals.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "provides_a_safe_message_suitable_for_1",
+            "description": "Provides a safe message suitable for clients or users."
+          },
+          {
+            "key": "avoids_exposing_stack_traces_sql_sec_2",
+            "description": "Avoids exposing stack traces, SQL, secrets, or infrastructure details."
+          }
+        ]
+      },
+      {
+        "label": "Supports field-level validation errors.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "mentions_an_errors_array_or_field_ma_1",
+            "description": "Mentions an errors array or field map for validation details."
+          },
+          {
+            "key": "distinguishes_global_request_errors__2",
+            "description": "Distinguishes global request errors from per-field errors."
+          }
+        ]
+      },
+      {
+        "label": "Includes observability metadata for support.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "mentions_request_id_trace_id_timesta_1",
+            "description": "Mentions request ID, trace ID, timestamp, or documentation link."
+          },
+          {
+            "key": "connects_response_format_to_logging__2",
+            "description": "Connects response format to logging and debugging across services."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "What fields would you include for a validation error where email is invalid?",
+        "purpose": "Check concrete error schema."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "Why should an API not return raw exception messages to clients?",
+        "purpose": "Probe security and maintainability."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Consistent REST error responses",
+        "displayQuestion": "How would you design a consistent error response format for a REST API?",
+        "displayIntent": "Evaluate whether the candidate can design client-friendly errors with stable codes, human messages, field validation details, and traceability.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "situational",
+          "topic": "error_response"
+        }
+      },
+      "vi": {
+        "title": "Error response REST nhất quán",
+        "displayQuestion": "Bạn sẽ thiết kế format error response nhất quán cho REST API như thế nào?",
+        "displayIntent": "Evaluate whether the candidate can design client-friendly errors with stable codes, human messages, field validation details, and traceability.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "situational",
+          "topic": "error_response"
+        }
+      },
+      "ja": {
+        "title": "Consistent REST error responses",
+        "displayQuestion": "次の点を説明してください: How would you design a consistent error response format for a REST API?",
+        "displayIntent": "この質問は error_response を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "situational",
+          "topic": "error_response"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "RFC 9110: HTTP Semantics",
+        "url": "https://www.rfc-editor.org/rfc/rfc9110",
+        "note": "Canonical reference for HTTP methods, status codes, semantics, caching, and content negotiation."
+      },
+      {
+        "label": "MDN HTTP",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP",
+        "note": "Used for practical HTTP headers, CORS, caching, and browser behavior."
+      },
+      {
+        "label": "OpenAPI Specification",
+        "url": "https://spec.openapis.org/oas/latest.html",
+        "note": "Used for API contract and documentation conventions."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REST_HTTP_JR_PAGINATION_011",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "trade_off",
+    "competencies": [
+      "trade_off_analysis",
+      "system_thinking",
+      "technical_fundamentals"
+    ],
+    "techTags": [
+      "rest"
+    ],
+    "topicTags": [
+      "http_semantics",
+      "pagination",
+      "api_design",
+      "query_planning"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Check whether the candidate understands API pagination trade-offs for performance and consistency as datasets grow.",
+    "primaryQuestion": "How do you implement pagination in a REST API, and how do offset-based and cursor-based pagination compare?",
+    "expectedSignals": [
+      {
+        "label": "Explains offset pagination mechanics and benefits.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "uses_limit_and_offset_or_page_and_pa_1",
+            "description": "Uses limit and offset or page and pageSize parameters."
+          },
+          {
+            "key": "mentions_simplicity_and_easy_random__2",
+            "description": "Mentions simplicity and easy random page access."
+          }
+        ]
+      },
+      {
+        "label": "Explains offset drawbacks on large or changing datasets.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "large_offsets_can_become_slow_becaus_1",
+            "description": "Large offsets can become slow because many rows are skipped."
+          },
+          {
+            "key": "concurrent_inserts_or_deletes_can_ca_2",
+            "description": "Concurrent inserts or deletes can cause duplicates or missing items across pages."
+          }
+        ]
+      },
+      {
+        "label": "Explains cursor pagination mechanics and benefits.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "uses_a_stable_cursor_based_on_sort_k_1",
+            "description": "Uses a stable cursor based on sort key, ID, timestamp, or encoded position."
+          },
+          {
+            "key": "improves_consistency_and_performance_2",
+            "description": "Improves consistency and performance for forward scrolling over large datasets."
+          }
+        ]
+      },
+      {
+        "label": "Mentions response metadata and stable ordering.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "includes_nextcursor_hasmore_total_co_1",
+            "description": "Includes nextCursor, hasMore, total count when appropriate, or links."
+          },
+          {
+            "key": "explains_that_pagination_needs_deter_2",
+            "description": "Explains that pagination needs deterministic sort order."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Why can page=10000&pageSize=20 become slow with offset pagination?",
+        "purpose": "Check performance reasoning."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "What makes a good cursor for a list sorted by createdAt descending?",
+        "purpose": "Probe stable ordering and tie-breakers."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Offset versus cursor pagination",
+        "displayQuestion": "How do you implement pagination in a REST API, and how do offset-based and cursor-based pagination compare?",
+        "displayIntent": "Check whether the candidate understands API pagination trade-offs for performance and consistency as datasets grow.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "trade_off",
+          "topic": "pagination"
+        }
+      },
+      "vi": {
+        "title": "Offset pagination so với cursor pagination",
+        "displayQuestion": "Bạn implement pagination trong REST API như thế nào, và offset-based pagination khác cursor-based pagination ra sao?",
+        "displayIntent": "Check whether the candidate understands API pagination trade-offs for performance and consistency as datasets grow.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "trade_off",
+          "topic": "pagination"
+        }
+      },
+      "ja": {
+        "title": "Offset versus cursor pagination",
+        "displayQuestion": "次の点を説明してください: How do you implement pagination in a REST API, and how do offset-based and cursor-based pagination compare?",
+        "displayIntent": "この質問は pagination を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "trade_off",
+          "topic": "pagination"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "RFC 9110: HTTP Semantics",
+        "url": "https://www.rfc-editor.org/rfc/rfc9110",
+        "note": "Canonical reference for HTTP methods, status codes, semantics, caching, and content negotiation."
+      },
+      {
+        "label": "MDN HTTP",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP",
+        "note": "Used for practical HTTP headers, CORS, caching, and browser behavior."
+      },
+      {
+        "label": "OpenAPI Specification",
+        "url": "https://spec.openapis.org/oas/latest.html",
+        "note": "Used for API contract and documentation conventions."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REST_HTTP_JR_FILTER_SORT_SEARCH_012",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "situational",
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "problem_solving"
+    ],
+    "techTags": [
+      "rest"
+    ],
+    "topicTags": [
+      "http_semantics",
+      "api_design",
+      "pagination"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Assess whether the candidate can design predictable collection query parameters with validation, indexing awareness, and response stability.",
+    "primaryQuestion": "How would you support filtering, sorting, and searching in a collection endpoint like GET /users?",
+    "expectedSignals": [
+      {
+        "label": "Uses query parameters for collection controls.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "places_filters_such_as_status_active_1",
+            "description": "Places filters such as status=active or role=admin in query parameters."
+          },
+          {
+            "key": "uses_sort_parameters_with_documented_2",
+            "description": "Uses sort parameters with documented allowed fields and direction."
+          }
+        ]
+      },
+      {
+        "label": "Validates and whitelists query fields.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "rejects_or_ignores_unknown_filter_an_1",
+            "description": "Rejects or ignores unknown filter and sort fields intentionally."
+          },
+          {
+            "key": "avoids_directly_interpolating_query__2",
+            "description": "Avoids directly interpolating query parameters into SQL."
+          }
+        ]
+      },
+      {
+        "label": "Distinguishes filtering from full-text search.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "explains_exact_filters_versus_free_t_1",
+            "description": "Explains exact filters versus free-text search query q."
+          },
+          {
+            "key": "mentions_search_relevance_indexes_or_2",
+            "description": "Mentions search relevance, indexes, or dedicated search backend when needed."
+          }
+        ]
+      },
+      {
+        "label": "Maintains pagination and deterministic ordering.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "combines_filters_and_sort_with_pagin_1",
+            "description": "Combines filters and sort with pagination metadata."
+          },
+          {
+            "key": "uses_tie_breaker_ordering_to_avoid_u_2",
+            "description": "Uses tie-breaker ordering to avoid unstable pages."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "How would you represent active users sorted newest first in a URL?",
+        "purpose": "Check concrete query design."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Why should sort fields be whitelisted?",
+        "purpose": "Probe security and database safety."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Filtering, sorting, and searching collections",
+        "displayQuestion": "How would you support filtering, sorting, and searching in a collection endpoint like GET /users?",
+        "displayIntent": "Assess whether the candidate can design predictable collection query parameters with validation, indexing awareness, and response stability.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "situational",
+          "topic": "collection_queries"
+        }
+      },
+      "vi": {
+        "title": "Filter, sort và search collection",
+        "displayQuestion": "Bạn sẽ hỗ trợ filtering, sorting và searching trong collection endpoint như GET /users như thế nào?",
+        "displayIntent": "Assess whether the candidate can design predictable collection query parameters with validation, indexing awareness, and response stability.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "situational",
+          "topic": "collection_queries"
+        }
+      },
+      "ja": {
+        "title": "Filtering, sorting, and searching collections",
+        "displayQuestion": "次の点を説明してください: How would you support filtering, sorting, and searching in a collection endpoint like GET /users?",
+        "displayIntent": "この質問は collection_queries を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "situational",
+          "topic": "collection_queries"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "RFC 9110: HTTP Semantics",
+        "url": "https://www.rfc-editor.org/rfc/rfc9110",
+        "note": "Canonical reference for HTTP methods, status codes, semantics, caching, and content negotiation."
+      },
+      {
+        "label": "MDN HTTP",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP",
+        "note": "Used for practical HTTP headers, CORS, caching, and browser behavior."
+      },
+      {
+        "label": "OpenAPI Specification",
+        "url": "https://spec.openapis.org/oas/latest.html",
+        "note": "Used for API contract and documentation conventions."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REST_HTTP_JR_VERSIONING_013",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "trade_off",
+    "competencies": [
+      "trade_off_analysis",
+      "communication",
+      "system_thinking"
+    ],
+    "techTags": [
+      "rest"
+    ],
+    "topicTags": [
+      "http_semantics",
+      "api_versioning",
+      "api_design"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Check whether the candidate understands API compatibility, breaking changes, and practical versioning trade-offs.",
+    "primaryQuestion": "What is API versioning? Compare URL versioning with header-based versioning.",
+    "expectedSignals": [
+      {
+        "label": "Defines versioning as managing API contract evolution.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "connects_versioning_to_breaking_chan_1",
+            "description": "Connects versioning to breaking changes in request or response contracts."
+          },
+          {
+            "key": "distinguishes_versioning_from_ordina_2",
+            "description": "Distinguishes versioning from ordinary additive backward-compatible changes."
+          }
+        ]
+      },
+      {
+        "label": "Explains URL versioning benefits and drawbacks.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "url_versioning_such_as_v1_users_is_v_1",
+            "description": "URL versioning such as /v1/users is visible, cache-friendly, and easy to route."
+          },
+          {
+            "key": "it_can_clutter_urls_and_encourage_co_2",
+            "description": "It can clutter URLs and encourage coarse-grained versions."
+          }
+        ]
+      },
+      {
+        "label": "Explains header or media-type versioning benefits and drawbacks.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "header_versioning_keeps_resource_url_1",
+            "description": "Header versioning keeps resource URLs stable."
+          },
+          {
+            "key": "it_can_be_less_visible_and_harder_to_2",
+            "description": "It can be less visible and harder to test manually or cache depending on infrastructure."
+          }
+        ]
+      },
+      {
+        "label": "Mentions migration and deprecation practices.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "documents_supported_versions_and_dep_1",
+            "description": "Documents supported versions and deprecation timelines."
+          },
+          {
+            "key": "keeps_old_clients_working_while_new__2",
+            "description": "Keeps old clients working while new clients adopt the changed contract."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "What kind of response change would require a new version?",
+        "purpose": "Check breaking-change awareness."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "Why might a public API choose /v1 in the URL even if it is less elegant?",
+        "purpose": "Probe operational trade-off."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "API versioning trade-offs",
+        "displayQuestion": "What is API versioning? Compare URL versioning with header-based versioning.",
+        "displayIntent": "Check whether the candidate understands API compatibility, breaking changes, and practical versioning trade-offs.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "trade_off",
+          "topic": "api_versioning"
+        }
+      },
+      "vi": {
+        "title": "Trade-off của API versioning",
+        "displayQuestion": "API versioning là gì? Hãy so sánh URL versioning với header-based versioning.",
+        "displayIntent": "Check whether the candidate understands API compatibility, breaking changes, and practical versioning trade-offs.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "trade_off",
+          "topic": "api_versioning"
+        }
+      },
+      "ja": {
+        "title": "API versioning trade-offs",
+        "displayQuestion": "次の点を説明してください: What is API versioning? Compare URL versioning with header-based versioning.",
+        "displayIntent": "この質問は api_versioning を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "trade_off",
+          "topic": "api_versioning"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "RFC 9110: HTTP Semantics",
+        "url": "https://www.rfc-editor.org/rfc/rfc9110",
+        "note": "Canonical reference for HTTP methods, status codes, semantics, caching, and content negotiation."
+      },
+      {
+        "label": "MDN HTTP",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP",
+        "note": "Used for practical HTTP headers, CORS, caching, and browser behavior."
+      },
+      {
+        "label": "OpenAPI Specification",
+        "url": "https://spec.openapis.org/oas/latest.html",
+        "note": "Used for API contract and documentation conventions."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REST_HTTP_JR_CACHING_ETAG_014",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "technical_depth",
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking"
+    ],
+    "techTags": [
+      "rest"
+    ],
+    "topicTags": [
+      "http_semantics",
+      "caching"
+    ],
+    "difficulty": 3,
+    "conversationDepth": "mid",
+    "intent": "Evaluate whether the candidate can reason about freshness, validation, bandwidth reduction, and safe caching boundaries.",
+    "primaryQuestion": "How does HTTP caching work? Explain Cache-Control, ETag, and conditional requests.",
+    "expectedSignals": [
+      {
+        "label": "Explains Cache-Control as freshness and storage instructions.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "mentions_directives_such_as_max_age__1",
+            "description": "Mentions directives such as max-age, no-store, no-cache, private, or public at a high level."
+          },
+          {
+            "key": "connects_caching_directives_to_brows_2",
+            "description": "Connects caching directives to browsers, CDNs, or intermediaries."
+          }
+        ]
+      },
+      {
+        "label": "Explains ETag as a validator for a representation.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "etag_changes_when_the_representation_1",
+            "description": "ETag changes when the representation changes."
+          },
+          {
+            "key": "clients_can_send_if_none_match_to_va_2",
+            "description": "Clients can send If-None-Match to validate cached content."
+          }
+        ]
+      },
+      {
+        "label": "Explains conditional response behavior such as 304 Not Modified.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "304_tells_the_client_cached_represen_1",
+            "description": "304 tells the client cached representation is still valid."
+          },
+          {
+            "key": "conditional_requests_can_save_bandwi_2",
+            "description": "Conditional requests can save bandwidth and server work."
+          }
+        ]
+      },
+      {
+        "label": "Mentions risks for personalized or sensitive data.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "avoids_caching_private_user_data_in__1",
+            "description": "Avoids caching private user data in shared caches by accident."
+          },
+          {
+            "key": "mentions_using_no_store_or_private_w_2",
+            "description": "Mentions using no-store or private where appropriate."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "What happens when a client sends If-None-Match with a matching ETag?",
+        "purpose": "Check conditional request flow."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "Why might Cache-Control: public be dangerous for a user profile response?",
+        "purpose": "Probe privacy and shared-cache risk."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "HTTP caching, ETag, and conditional requests",
+        "displayQuestion": "How does HTTP caching work? Explain Cache-Control, ETag, and conditional requests.",
+        "displayIntent": "Evaluate whether the candidate can reason about freshness, validation, bandwidth reduction, and safe caching boundaries.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "http_caching"
+        }
+      },
+      "vi": {
+        "title": "HTTP caching, ETag và conditional request",
+        "displayQuestion": "HTTP caching hoạt động như thế nào? Hãy giải thích Cache-Control, ETag và conditional request.",
+        "displayIntent": "Evaluate whether the candidate can reason about freshness, validation, bandwidth reduction, and safe caching boundaries.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "http_caching"
+        }
+      },
+      "ja": {
+        "title": "HTTP caching, ETag, and conditional requests",
+        "displayQuestion": "次の点を説明してください: How does HTTP caching work? Explain Cache-Control, ETag, and conditional requests.",
+        "displayIntent": "この質問は http_caching を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "http_caching"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "RFC 9110: HTTP Semantics",
+        "url": "https://www.rfc-editor.org/rfc/rfc9110",
+        "note": "Canonical reference for HTTP methods, status codes, semantics, caching, and content negotiation."
+      },
+      {
+        "label": "MDN HTTP",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP",
+        "note": "Used for practical HTTP headers, CORS, caching, and browser behavior."
+      },
+      {
+        "label": "OpenAPI Specification",
+        "url": "https://spec.openapis.org/oas/latest.html",
+        "note": "Used for API contract and documentation conventions."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "REST_HTTP_JR_IDEMPOTENCY_KEYS_015",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "situational",
+    "competencies": [
+      "problem_solving",
+      "system_thinking",
+      "technical_fundamentals"
+    ],
+    "techTags": [
+      "rest"
+    ],
+    "topicTags": [
+      "http_semantics",
+      "idempotency",
+      "timeouts_retries"
+    ],
+    "difficulty": 3,
+    "conversationDepth": "mid",
+    "intent": "Check whether the candidate can prevent duplicate side effects caused by retries, double-clicks, and network timeouts.",
+    "primaryQuestion": "What is an idempotency key, and why is it useful for payment or order creation endpoints?",
+    "expectedSignals": [
+      {
+        "label": "Defines an idempotency key as a client-provided unique key for one logical operation.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "the_server_stores_the_key_with_reque_1",
+            "description": "The server stores the key with request outcome or operation identity."
+          },
+          {
+            "key": "repeated_requests_with_the_same_key__2",
+            "description": "Repeated requests with the same key return the same result or do not duplicate the side effect."
+          }
+        ]
+      },
+      {
+        "label": "Explains retry and timeout scenarios.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "client_may_not_know_whether_the_firs_1",
+            "description": "Client may not know whether the first request succeeded after a timeout."
+          },
+          {
+            "key": "retrying_without_protection_can_crea_2",
+            "description": "Retrying without protection can create duplicate orders, charges, or emails."
+          }
+        ]
+      },
+      {
+        "label": "Mentions server-side storage and comparison rules.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "stores_key_with_user_account_scope_a_1",
+            "description": "Stores key with user/account scope and expiration window."
+          },
+          {
+            "key": "rejects_or_handles_same_key_with_dif_2",
+            "description": "Rejects or handles same key with different payload to avoid accidental key reuse."
+          }
+        ]
+      },
+      {
+        "label": "Connects to method semantics and response behavior.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "explains_why_post_create_endpoints_o_1",
+            "description": "Explains why POST create endpoints often need application-level idempotency."
+          },
+          {
+            "key": "mentions_returning_the_original_resp_2",
+            "description": "Mentions returning the original response or operation status on retry."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "What should the server do if the same idempotency key is retried after a payment timeout?",
+        "purpose": "Check duplicate prevention behavior."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Why should the key usually be scoped to the user or merchant?",
+        "purpose": "Probe storage and collision safety."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Idempotency keys for duplicate prevention",
+        "displayQuestion": "What is an idempotency key, and why is it useful for payment or order creation endpoints?",
+        "displayIntent": "Check whether the candidate can prevent duplicate side effects caused by retries, double-clicks, and network timeouts.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "situational",
+          "topic": "idempotency_keys"
+        }
+      },
+      "vi": {
+        "title": "Idempotency key để chống duplicate",
+        "displayQuestion": "Idempotency key là gì, và vì sao nó hữu ích cho endpoint tạo payment hoặc order?",
+        "displayIntent": "Check whether the candidate can prevent duplicate side effects caused by retries, double-clicks, and network timeouts.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "situational",
+          "topic": "idempotency_keys"
+        }
+      },
+      "ja": {
+        "title": "Idempotency keys for duplicate prevention",
+        "displayQuestion": "次の点を説明してください: What is an idempotency key, and why is it useful for payment or order creation endpoints?",
+        "displayIntent": "この質問は idempotency_keys を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "situational",
+          "topic": "idempotency_keys"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "RFC 9110: HTTP Semantics",
+        "url": "https://www.rfc-editor.org/rfc/rfc9110",
+        "note": "Canonical reference for HTTP methods, status codes, semantics, caching, and content negotiation."
+      },
+      {
+        "label": "MDN HTTP",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP",
+        "note": "Used for practical HTTP headers, CORS, caching, and browser behavior."
+      },
+      {
+        "label": "OpenAPI Specification",
+        "url": "https://spec.openapis.org/oas/latest.html",
+        "note": "Used for API contract and documentation conventions."
+      }
+    ],
+    "status": "active"
+  }
+]

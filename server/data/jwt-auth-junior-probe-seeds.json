@@ -1,0 +1,3049 @@
+[
+  {
+    "code": "JWT_JR_STRUCTURE_001",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "security"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "technical_depth",
+    "competencies": [
+      "technical_fundamentals",
+      "communication"
+    ],
+    "techTags": [
+      "jwt"
+    ],
+    "topicTags": [
+      "authentication",
+      "jwt_lifecycle",
+      "authorization"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate understands JWT as a signed token format and does not confuse encoding, signing, and encryption.",
+    "primaryQuestion": "What is a JWT, what are its three parts, and is the payload encrypted by default?",
+    "expectedSignals": [
+      {
+        "label": "Identifies header, payload, and signature.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "header_carries_token_type_and_signin_1",
+            "description": "Header carries token type and signing algorithm or key ID metadata."
+          },
+          {
+            "key": "payload_carries_claims_2",
+            "description": "Payload carries claims."
+          },
+          {
+            "key": "signature_protects_integrity_using_t_3",
+            "description": "Signature protects integrity using the signing key."
+          }
+        ]
+      },
+      {
+        "label": "Explains Base64URL encoding is not encryption.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "jwt_parts_are_typically_base64url_en_1",
+            "description": "JWT parts are typically Base64URL encoded and can be decoded by anyone who has the token."
+          },
+          {
+            "key": "payload_should_not_contain_secrets_o_2",
+            "description": "Payload should not contain secrets or sensitive personal data unless encrypted separately."
+          }
+        ]
+      },
+      {
+        "label": "Explains what the signature proves.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "signature_validates_that_the_token_w_1",
+            "description": "Signature validates that the token was issued by a trusted signer and was not altered."
+          },
+          {
+            "key": "signature_does_not_hide_payload_cont_2",
+            "description": "Signature does not hide payload contents."
+          }
+        ]
+      },
+      {
+        "label": "Mentions JWS versus JWE at a high level.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "signed_jwts_are_common_for_authentic_1",
+            "description": "Signed JWTs are common for authentication tokens."
+          },
+          {
+            "key": "encrypted_jwt_or_jwe_is_a_different__2",
+            "description": "Encrypted JWT or JWE is a different mechanism when confidentiality is required."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "If I paste a JWT into a decoder, why can I read the payload?",
+        "purpose": "Check encoding versus encryption."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "Why should you avoid putting a password or secret API key inside JWT claims?",
+        "purpose": "Probe confidentiality risk."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "JWT structure and signed payloads",
+        "displayQuestion": "What is a JWT, what are its three parts, and is the payload encrypted by default?",
+        "displayIntent": "Check whether the candidate understands JWT as a signed token format and does not confuse encoding, signing, and encryption.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "jwt_structure"
+        }
+      },
+      "vi": {
+        "title": "Cấu trúc JWT và payload được ký",
+        "displayQuestion": "JWT là gì, ba phần của nó gồm gì, và payload có được mã hóa mặc định không?",
+        "displayIntent": "Check whether the candidate understands JWT as a signed token format and does not confuse encoding, signing, and encryption.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "jwt_structure"
+        }
+      },
+      "ja": {
+        "title": "JWT structure and signed payloads",
+        "displayQuestion": "次の点を説明してください: What is a JWT, what are its three parts, and is the payload encrypted by default?",
+        "displayIntent": "この質問は jwt_structure を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "jwt_structure"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "RFC 7519: JSON Web Token",
+        "url": "https://www.rfc-editor.org/rfc/rfc7519",
+        "note": "Canonical reference for JWT structure and registered claims."
+      },
+      {
+        "label": "OWASP JSON Web Token Cheat Sheet",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/JSON_Web_Token_for_Java_Cheat_Sheet.html",
+        "note": "Used for JWT security risks and storage guidance patterns."
+      },
+      {
+        "label": "RFC 6750: OAuth 2.0 Bearer Token Usage",
+        "url": "https://www.rfc-editor.org/rfc/rfc6750",
+        "note": "Used for bearer token semantics."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "JWT_JR_ACCESS_REFRESH_FLOW_002",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "security"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "technical_depth",
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking"
+    ],
+    "techTags": [
+      "jwt"
+    ],
+    "topicTags": [
+      "authentication",
+      "jwt_lifecycle",
+      "refresh_token",
+      "authorization"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Assess whether the candidate understands short-lived access authorization and longer-lived renewal with reduced blast radius.",
+    "primaryQuestion": "Explain the access token plus refresh token flow. Why are two separate tokens used?",
+    "expectedSignals": [
+      {
+        "label": "Explains access token purpose.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "access_token_is_presented_to_protect_1",
+            "description": "Access token is presented to protected APIs to authenticate the request."
+          },
+          {
+            "key": "it_is_usually_short_lived_to_limit_d_2",
+            "description": "It is usually short-lived to limit damage if stolen."
+          }
+        ]
+      },
+      {
+        "label": "Explains refresh token purpose.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "refresh_token_is_used_to_obtain_new__1",
+            "description": "Refresh token is used to obtain new access tokens without asking the user to log in again."
+          },
+          {
+            "key": "it_is_stored_and_protected_more_care_2",
+            "description": "It is stored and protected more carefully than access tokens."
+          }
+        ]
+      },
+      {
+        "label": "Walks through renewal flow.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "api_rejects_expired_access_token_or__1",
+            "description": "API rejects expired access token or client notices expiry."
+          },
+          {
+            "key": "client_sends_refresh_token_to_renewa_2",
+            "description": "Client sends refresh token to renewal endpoint."
+          },
+          {
+            "key": "server_validates_refresh_token_and_i_3",
+            "description": "Server validates refresh token and issues new token pair or access token."
+          }
+        ]
+      },
+      {
+        "label": "Explains why one long-lived access token is weaker.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "long_lived_bearer_access_token_gives_1",
+            "description": "Long-lived bearer access token gives attackers longer API access if stolen."
+          },
+          {
+            "key": "separate_refresh_flow_allows_rotatio_2",
+            "description": "Separate refresh flow allows rotation, reuse detection, and revocation."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "What happens step by step when an access token expires during normal app usage?",
+        "purpose": "Check renewal flow."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "Why not make the access token valid for thirty days?",
+        "purpose": "Probe blast-radius reasoning."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Access token and refresh token flow",
+        "displayQuestion": "Explain the access token plus refresh token flow. Why are two separate tokens used?",
+        "displayIntent": "Assess whether the candidate understands short-lived access authorization and longer-lived renewal with reduced blast radius.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "access_refresh"
+        }
+      },
+      "vi": {
+        "title": "Luồng access token và refresh token",
+        "displayQuestion": "Hãy giải thích luồng access token + refresh token. Vì sao dùng hai token riêng?",
+        "displayIntent": "Assess whether the candidate understands short-lived access authorization and longer-lived renewal with reduced blast radius.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "access_refresh"
+        }
+      },
+      "ja": {
+        "title": "Access token and refresh token flow",
+        "displayQuestion": "次の点を説明してください: Explain the access token plus refresh token flow. Why are two separate tokens used?",
+        "displayIntent": "この質問は access_refresh を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "access_refresh"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "RFC 7519: JSON Web Token",
+        "url": "https://www.rfc-editor.org/rfc/rfc7519",
+        "note": "Canonical reference for JWT structure and registered claims."
+      },
+      {
+        "label": "OWASP JSON Web Token Cheat Sheet",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/JSON_Web_Token_for_Java_Cheat_Sheet.html",
+        "note": "Used for JWT security risks and storage guidance patterns."
+      },
+      {
+        "label": "RFC 6750: OAuth 2.0 Bearer Token Usage",
+        "url": "https://www.rfc-editor.org/rfc/rfc6750",
+        "note": "Used for bearer token semantics."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "JWT_JR_EXPIRATION_003",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "security"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "trade_off",
+    "competencies": [
+      "trade_off_analysis",
+      "system_thinking"
+    ],
+    "techTags": [
+      "jwt"
+    ],
+    "topicTags": [
+      "authentication",
+      "jwt_lifecycle",
+      "refresh_token",
+      "authorization"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Check whether the candidate can reason about token lifetimes as risk management rather than fixed magic numbers.",
+    "primaryQuestion": "What expiration strategy would you use for access tokens versus refresh tokens, and what happens when an access token expires?",
+    "expectedSignals": [
+      {
+        "label": "States access tokens should usually be short-lived.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "explains_lifetime_depends_on_risk_ux_1",
+            "description": "Explains lifetime depends on risk, UX, and system needs."
+          },
+          {
+            "key": "avoids_claiming_one_universal_expira_2",
+            "description": "Avoids claiming one universal expiration value is always correct."
+          }
+        ]
+      },
+      {
+        "label": "States refresh tokens are longer-lived but more tightly controlled.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "refresh_tokens_require_secure_storag_1",
+            "description": "Refresh tokens require secure storage, rotation, and revocation strategy."
+          },
+          {
+            "key": "refresh_token_lifetime_may_be_absolu_2",
+            "description": "Refresh token lifetime may be absolute and/or sliding."
+          }
+        ]
+      },
+      {
+        "label": "Explains expiration validation.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "server_checks_exp_and_rejects_expire_1",
+            "description": "Server checks exp and rejects expired access tokens."
+          },
+          {
+            "key": "client_should_not_rely_only_on_local_2",
+            "description": "Client should not rely only on local decoding as security enforcement."
+          }
+        ]
+      },
+      {
+        "label": "Explains renewal and failure outcomes.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "valid_refresh_can_issue_new_token_pa_1",
+            "description": "Valid refresh can issue new token pair."
+          },
+          {
+            "key": "invalid_expired_revoked_or_reused_re_2",
+            "description": "Invalid, expired, revoked, or reused refresh token should require re-authentication or incident handling."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Who must enforce exp: the frontend, the backend, or both? Why?",
+        "purpose": "Check validation responsibility."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "What factors would make you shorten access-token lifetime?",
+        "purpose": "Probe risk-based expiration thinking."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Token expiration and renewal",
+        "displayQuestion": "What expiration strategy would you use for access tokens versus refresh tokens, and what happens when an access token expires?",
+        "displayIntent": "Check whether the candidate can reason about token lifetimes as risk management rather than fixed magic numbers.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior",
+          "type": "trade_off",
+          "topic": "token_expiration"
+        }
+      },
+      "vi": {
+        "title": "Token expiration và renewal",
+        "displayQuestion": "Bạn dùng chiến lược expiration nào cho access token và refresh token, và chuyện gì xảy ra khi access token hết hạn?",
+        "displayIntent": "Check whether the candidate can reason about token lifetimes as risk management rather than fixed magic numbers.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior",
+          "type": "trade_off",
+          "topic": "token_expiration"
+        }
+      },
+      "ja": {
+        "title": "Token expiration and renewal",
+        "displayQuestion": "次の点を説明してください: What expiration strategy would you use for access tokens versus refresh tokens, and what happens when an access token expires?",
+        "displayIntent": "この質問は token_expiration を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior",
+          "type": "trade_off",
+          "topic": "token_expiration"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "RFC 7519: JSON Web Token",
+        "url": "https://www.rfc-editor.org/rfc/rfc7519",
+        "note": "Canonical reference for JWT structure and registered claims."
+      },
+      {
+        "label": "OWASP JSON Web Token Cheat Sheet",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/JSON_Web_Token_for_Java_Cheat_Sheet.html",
+        "note": "Used for JWT security risks and storage guidance patterns."
+      },
+      {
+        "label": "RFC 6750: OAuth 2.0 Bearer Token Usage",
+        "url": "https://www.rfc-editor.org/rfc/rfc6750",
+        "note": "Used for bearer token semantics."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "JWT_JR_STATELESS_TRADEOFF_004",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "security"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "trade_off",
+    "competencies": [
+      "trade_off_analysis",
+      "system_thinking"
+    ],
+    "techTags": [
+      "jwt",
+      "redis"
+    ],
+    "topicTags": [
+      "authentication",
+      "jwt_lifecycle",
+      "session_management"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Evaluate whether the candidate understands JWT verification without session lookup and the revocation/control trade-offs.",
+    "primaryQuestion": "JWT is often called stateless. What does that mean, and what is the trade-off compared with server-side sessions stored in Redis?",
+    "expectedSignals": [
+      {
+        "label": "Defines stateless token verification.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "api_can_verify_signature_and_claims__1",
+            "description": "API can verify signature and claims without loading session state for every request."
+          },
+          {
+            "key": "token_carries_claims_needed_for_basi_2",
+            "description": "Token carries claims needed for basic authentication decision."
+          }
+        ]
+      },
+      {
+        "label": "Explains scaling and latency benefits.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "less_central_session_storage_lookup__1",
+            "description": "Less central session storage lookup can simplify horizontal scaling."
+          },
+          {
+            "key": "services_can_validate_tokens_if_they_2",
+            "description": "Services can validate tokens if they have trusted keys and claim rules."
+          }
+        ]
+      },
+      {
+        "label": "Explains revocation drawbacks.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "a_valid_jwt_remains_usable_until_exp_1",
+            "description": "A valid JWT remains usable until expiry unless additional revocation checks are added."
+          },
+          {
+            "key": "changing_user_status_or_permissions__2",
+            "description": "Changing user status or permissions may not immediately affect already issued tokens."
+          }
+        ]
+      },
+      {
+        "label": "Compares server-side session control.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "redis_sessions_are_easier_to_revoke__1",
+            "description": "Redis sessions are easier to revoke centrally."
+          },
+          {
+            "key": "they_add_storage_dependency_lookup_l_2",
+            "description": "They add storage dependency, lookup latency, and operational state."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "If an employee is disabled, why might an already issued JWT still work?",
+        "purpose": "Check revocation trade-off."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "When would Redis-backed sessions be simpler or safer than JWT access tokens?",
+        "purpose": "Probe architecture choice."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Stateless JWTs versus server-side sessions",
+        "displayQuestion": "JWT is often called stateless. What does that mean, and what is the trade-off compared with server-side sessions stored in Redis?",
+        "displayIntent": "Evaluate whether the candidate understands JWT verification without session lookup and the revocation/control trade-offs.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior",
+          "type": "trade_off",
+          "topic": "stateless_sessions"
+        }
+      },
+      "vi": {
+        "title": "JWT stateless so với server-side session",
+        "displayQuestion": "JWT thường được gọi là stateless. Điều đó nghĩa là gì, và trade-off so với server-side session lưu trong Redis là gì?",
+        "displayIntent": "Evaluate whether the candidate understands JWT verification without session lookup and the revocation/control trade-offs.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior",
+          "type": "trade_off",
+          "topic": "stateless_sessions"
+        }
+      },
+      "ja": {
+        "title": "Stateless JWTs versus server-side sessions",
+        "displayQuestion": "次の点を説明してください: JWT is often called stateless. What does that mean, and what is the trade-off compared with server-side sessions stored in Redis?",
+        "displayIntent": "この質問は stateless_sessions を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior",
+          "type": "trade_off",
+          "topic": "stateless_sessions"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "RFC 7519: JSON Web Token",
+        "url": "https://www.rfc-editor.org/rfc/rfc7519",
+        "note": "Canonical reference for JWT structure and registered claims."
+      },
+      {
+        "label": "OWASP JSON Web Token Cheat Sheet",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/JSON_Web_Token_for_Java_Cheat_Sheet.html",
+        "note": "Used for JWT security risks and storage guidance patterns."
+      },
+      {
+        "label": "RFC 6750: OAuth 2.0 Bearer Token Usage",
+        "url": "https://www.rfc-editor.org/rfc/rfc6750",
+        "note": "Used for bearer token semantics."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "JWT_JR_REFRESH_ROTATION_005",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "security"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "technical_depth",
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking"
+    ],
+    "techTags": [
+      "jwt"
+    ],
+    "topicTags": [
+      "authentication",
+      "jwt_lifecycle",
+      "refresh_token",
+      "authorization"
+    ],
+    "difficulty": 3,
+    "conversationDepth": "mid",
+    "intent": "Check whether the candidate understands how refresh token rotation limits replay attacks and detects stolen refresh tokens.",
+    "primaryQuestion": "What is refresh token rotation, token family, and refresh token reuse detection?",
+    "expectedSignals": [
+      {
+        "label": "Defines refresh token rotation.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "each_successful_refresh_returns_a_ne_1",
+            "description": "Each successful refresh returns a new refresh token."
+          },
+          {
+            "key": "the_previous_refresh_token_is_invali_2",
+            "description": "The previous refresh token is invalidated after use."
+          }
+        ]
+      },
+      {
+        "label": "Defines token family at a high level.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "a_token_family_is_the_chain_of_refre_1",
+            "description": "A token family is the chain of refresh tokens descended from one login session."
+          },
+          {
+            "key": "the_server_tracks_current_valid_toke_2",
+            "description": "The server tracks current valid token or family state."
+          }
+        ]
+      },
+      {
+        "label": "Explains reuse detection.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "if_an_old_refresh_token_is_used_agai_1",
+            "description": "If an old refresh token is used again, it may indicate theft or replay."
+          },
+          {
+            "key": "server_should_revoke_the_token_famil_2",
+            "description": "Server should revoke the token family or require reauthentication depending on policy."
+          }
+        ]
+      },
+      {
+        "label": "Mentions storage requirements.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "rotation_requires_server_side_state__1",
+            "description": "Rotation requires server-side state for refresh tokens, hashes, family IDs, or revocation records."
+          },
+          {
+            "key": "purely_stateless_refresh_rotation_is_2",
+            "description": "Purely stateless refresh rotation is not enough for reuse detection."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "What should happen if refresh token A was already used to get token B, and A appears again?",
+        "purpose": "Check reuse detection behavior."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Why does refresh token rotation require server-side tracking?",
+        "purpose": "Probe state requirement."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Refresh token rotation and reuse detection",
+        "displayQuestion": "What is refresh token rotation, token family, and refresh token reuse detection?",
+        "displayIntent": "Check whether the candidate understands how refresh token rotation limits replay attacks and detects stolen refresh tokens.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "refresh_rotation"
+        }
+      },
+      "vi": {
+        "title": "Refresh token rotation và reuse detection",
+        "displayQuestion": "Refresh token rotation, token family và refresh token reuse detection là gì?",
+        "displayIntent": "Check whether the candidate understands how refresh token rotation limits replay attacks and detects stolen refresh tokens.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "refresh_rotation"
+        }
+      },
+      "ja": {
+        "title": "Refresh token rotation and reuse detection",
+        "displayQuestion": "次の点を説明してください: What is refresh token rotation, token family, and refresh token reuse detection?",
+        "displayIntent": "この質問は refresh_rotation を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "refresh_rotation"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "RFC 7519: JSON Web Token",
+        "url": "https://www.rfc-editor.org/rfc/rfc7519",
+        "note": "Canonical reference for JWT structure and registered claims."
+      },
+      {
+        "label": "OWASP JSON Web Token Cheat Sheet",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/JSON_Web_Token_for_Java_Cheat_Sheet.html",
+        "note": "Used for JWT security risks and storage guidance patterns."
+      },
+      {
+        "label": "RFC 6750: OAuth 2.0 Bearer Token Usage",
+        "url": "https://www.rfc-editor.org/rfc/rfc6750",
+        "note": "Used for bearer token semantics."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "JWT_JR_CLIENT_STORAGE_006",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "security"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "trade_off",
+    "competencies": [
+      "trade_off_analysis",
+      "technical_fundamentals"
+    ],
+    "techTags": [
+      "jwt"
+    ],
+    "topicTags": [
+      "authentication",
+      "jwt_lifecycle",
+      "xss",
+      "csrf",
+      "session_management",
+      "token_storage"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Evaluate whether the candidate can compare token storage choices under XSS, CSRF, UX, and implementation constraints.",
+    "primaryQuestion": "Where should JWTs be stored on the client: localStorage, sessionStorage, or HttpOnly cookies? What are the security implications?",
+    "expectedSignals": [
+      {
+        "label": "Explains localStorage and sessionStorage XSS exposure.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "javascript_can_read_tokens_stored_in_1",
+            "description": "JavaScript can read tokens stored in web storage."
+          },
+          {
+            "key": "an_xss_bug_can_steal_bearer_tokens_f_2",
+            "description": "An XSS bug can steal bearer tokens from storage."
+          }
+        ]
+      },
+      {
+        "label": "Explains HttpOnly cookie benefit and CSRF consideration.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "httponly_prevents_javascript_from_re_1",
+            "description": "HttpOnly prevents JavaScript from reading the cookie."
+          },
+          {
+            "key": "cookies_are_sent_automatically_so_cs_2",
+            "description": "Cookies are sent automatically, so CSRF protections may be needed depending on SameSite and API design."
+          }
+        ]
+      },
+      {
+        "label": "Mentions common cookie flags.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "httponly_secure_samesite_path_and_ma_1",
+            "description": "HttpOnly, Secure, SameSite, Path, and Max-Age or Expires are considered."
+          },
+          {
+            "key": "secure_requires_https_for_transmissi_2",
+            "description": "Secure requires HTTPS for transmission."
+          }
+        ]
+      },
+      {
+        "label": "Avoids claiming one storage is universally perfect.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "choice_depends_on_threat_model_app_a_1",
+            "description": "Choice depends on threat model, app architecture, domain setup, mobile/browser needs, and CSRF/XSS mitigations."
+          },
+          {
+            "key": "refresh_token_and_access_token_may_u_2",
+            "description": "Refresh token and access token may use different storage strategies."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Why is localStorage dangerous when an XSS vulnerability exists?",
+        "purpose": "Check token theft risk."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "If refresh token is in an HttpOnly cookie, what CSRF protections would you consider?",
+        "purpose": "Probe cookie-based auth risk."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "JWT storage on the client",
+        "displayQuestion": "Where should JWTs be stored on the client: localStorage, sessionStorage, or HttpOnly cookies? What are the security implications?",
+        "displayIntent": "Evaluate whether the candidate can compare token storage choices under XSS, CSRF, UX, and implementation constraints.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior",
+          "type": "trade_off",
+          "topic": "client_storage"
+        }
+      },
+      "vi": {
+        "title": "Lưu JWT ở client",
+        "displayQuestion": "JWT nên được lưu ở client ở đâu: localStorage, sessionStorage hay HttpOnly cookie? Hệ quả bảo mật là gì?",
+        "displayIntent": "Evaluate whether the candidate can compare token storage choices under XSS, CSRF, UX, and implementation constraints.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior",
+          "type": "trade_off",
+          "topic": "client_storage"
+        }
+      },
+      "ja": {
+        "title": "JWT storage on the client",
+        "displayQuestion": "次の点を説明してください: Where should JWTs be stored on the client: localStorage, sessionStorage, or HttpOnly cookies? What are the security implications?",
+        "displayIntent": "この質問は client_storage を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior",
+          "type": "trade_off",
+          "topic": "client_storage"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "RFC 7519: JSON Web Token",
+        "url": "https://www.rfc-editor.org/rfc/rfc7519",
+        "note": "Canonical reference for JWT structure and registered claims."
+      },
+      {
+        "label": "OWASP JSON Web Token Cheat Sheet",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/JSON_Web_Token_for_Java_Cheat_Sheet.html",
+        "note": "Used for JWT security risks and storage guidance patterns."
+      },
+      {
+        "label": "RFC 6750: OAuth 2.0 Bearer Token Usage",
+        "url": "https://www.rfc-editor.org/rfc/rfc6750",
+        "note": "Used for bearer token semantics."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "JWT_JR_REVOCATION_LOGOUT_007",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "security"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "situational",
+    "competencies": [
+      "problem_solving",
+      "system_thinking"
+    ],
+    "techTags": [
+      "jwt"
+    ],
+    "topicTags": [
+      "authentication",
+      "jwt_lifecycle",
+      "session_management"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Assess whether the candidate understands revocation strategies and device/session state for JWT-based systems.",
+    "primaryQuestion": "How do you invalidate or revoke a JWT before it expires, and how would you implement logout for one device versus all devices?",
+    "expectedSignals": [
+      {
+        "label": "Explains short-lived access tokens as baseline damage control.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "short_expiry_limits_how_long_stolen__1",
+            "description": "Short expiry limits how long stolen access tokens work."
+          },
+          {
+            "key": "short_lifetime_does_not_immediately__2",
+            "description": "Short lifetime does not immediately revoke an already issued token."
+          }
+        ]
+      },
+      {
+        "label": "Explains blacklist or denylist strategy.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "stores_revoked_jti_or_token_identifi_1",
+            "description": "Stores revoked jti or token identifiers until expiry."
+          },
+          {
+            "key": "api_checks_denylist_for_protected_re_2",
+            "description": "API checks denylist for protected requests when immediate revocation is required."
+          }
+        ]
+      },
+      {
+        "label": "Explains refresh token revocation.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "logout_one_device_revokes_that_devic_1",
+            "description": "Logout one device revokes that device refresh token or token family."
+          },
+          {
+            "key": "logout_all_devices_revokes_all_refre_2",
+            "description": "Logout all devices revokes all refresh token families for the user or increments a session version."
+          }
+        ]
+      },
+      {
+        "label": "Mentions trade-offs.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "blacklist_checks_add_storage_lookup__1",
+            "description": "Blacklist checks add storage lookup and operational complexity."
+          },
+          {
+            "key": "immediate_revocation_requires_some_s_2",
+            "description": "Immediate revocation requires some server-side state."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "If access tokens are stateless, why is immediate logout hard?",
+        "purpose": "Check revocation trade-off."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "What identifier would you store to revoke one device session?",
+        "purpose": "Probe token family or jti design."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "JWT revocation and logout",
+        "displayQuestion": "How do you invalidate or revoke a JWT before it expires, and how would you implement logout for one device versus all devices?",
+        "displayIntent": "Assess whether the candidate understands revocation strategies and device/session state for JWT-based systems.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior",
+          "type": "situational",
+          "topic": "revocation_logout"
+        }
+      },
+      "vi": {
+        "title": "JWT revocation và logout",
+        "displayQuestion": "Làm sao invalidate hoặc revoke JWT trước khi hết hạn, và implement logout một thiết bị so với tất cả thiết bị như thế nào?",
+        "displayIntent": "Assess whether the candidate understands revocation strategies and device/session state for JWT-based systems.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior",
+          "type": "situational",
+          "topic": "revocation_logout"
+        }
+      },
+      "ja": {
+        "title": "JWT revocation and logout",
+        "displayQuestion": "次の点を説明してください: How do you invalidate or revoke a JWT before it expires, and how would you implement logout for one device versus all devices?",
+        "displayIntent": "この質問は revocation_logout を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior",
+          "type": "situational",
+          "topic": "revocation_logout"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "RFC 7519: JSON Web Token",
+        "url": "https://www.rfc-editor.org/rfc/rfc7519",
+        "note": "Canonical reference for JWT structure and registered claims."
+      },
+      {
+        "label": "OWASP JSON Web Token Cheat Sheet",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/JSON_Web_Token_for_Java_Cheat_Sheet.html",
+        "note": "Used for JWT security risks and storage guidance patterns."
+      },
+      {
+        "label": "RFC 6750: OAuth 2.0 Bearer Token Usage",
+        "url": "https://www.rfc-editor.org/rfc/rfc6750",
+        "note": "Used for bearer token semantics."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "JWT_JR_CLAIMS_VALIDATION_008",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "security"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "technical_depth",
+    "competencies": [
+      "technical_fundamentals",
+      "communication"
+    ],
+    "techTags": [
+      "jwt"
+    ],
+    "topicTags": [
+      "authentication",
+      "jwt_lifecycle",
+      "request_validation"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Check whether the candidate understands token claims as security-critical assertions that require validation.",
+    "primaryQuestion": "What are common JWT claims such as iss, sub, aud, exp, nbf, iat, and jti, and why must the server validate claims and signature instead of only decoding?",
+    "expectedSignals": [
+      {
+        "label": "Explains registered claims at a useful level.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "iss_identifies_issuer_sub_identifies_1",
+            "description": "iss identifies issuer, sub identifies subject, aud identifies intended audience."
+          },
+          {
+            "key": "exp_nbf_and_iat_describe_validity_ti_2",
+            "description": "exp, nbf, and iat describe validity timing."
+          },
+          {
+            "key": "jti_is_a_token_identifier_useful_for_3",
+            "description": "jti is a token identifier useful for replay tracking or revocation."
+          }
+        ]
+      },
+      {
+        "label": "Explains signature validation.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "signature_proves_token_integrity_and_1",
+            "description": "Signature proves token integrity and trusted issuer when using the correct key."
+          },
+          {
+            "key": "decoding_alone_does_not_prove_the_to_2",
+            "description": "Decoding alone does not prove the token is valid."
+          }
+        ]
+      },
+      {
+        "label": "Explains issuer and audience validation.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "issuer_prevents_accepting_tokens_fro_1",
+            "description": "Issuer prevents accepting tokens from untrusted issuers."
+          },
+          {
+            "key": "audience_prevents_using_a_token_mean_2",
+            "description": "Audience prevents using a token meant for another API or client."
+          }
+        ]
+      },
+      {
+        "label": "Explains time validation and clock skew.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "exp_and_nbf_must_be_checked_server_s_1",
+            "description": "exp and nbf must be checked server-side."
+          },
+          {
+            "key": "small_allowed_clock_skew_may_be_used_2",
+            "description": "Small allowed clock skew may be used, but excessive skew weakens validity windows."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "What could go wrong if an API accepts any validly signed token regardless of aud?",
+        "purpose": "Check audience validation."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Why is decoding a JWT payload not the same as authenticating a request?",
+        "purpose": "Probe signature validation."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "JWT claims and validation",
+        "displayQuestion": "What are common JWT claims such as iss, sub, aud, exp, nbf, iat, and jti, and why must the server validate claims and signature instead of only decoding?",
+        "displayIntent": "Check whether the candidate understands token claims as security-critical assertions that require validation.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "claims_validation"
+        }
+      },
+      "vi": {
+        "title": "JWT claims và validation",
+        "displayQuestion": "Các JWT claim phổ biến như iss, sub, aud, exp, nbf, iat, jti là gì, và vì sao server phải validate claim và signature thay vì chỉ decode?",
+        "displayIntent": "Check whether the candidate understands token claims as security-critical assertions that require validation.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "claims_validation"
+        }
+      },
+      "ja": {
+        "title": "JWT claims and validation",
+        "displayQuestion": "次の点を説明してください: What are common JWT claims such as iss, sub, aud, exp, nbf, iat, and jti, and why must the server validate claims and signature instead of only decoding?",
+        "displayIntent": "この質問は claims_validation を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "claims_validation"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "RFC 7519: JSON Web Token",
+        "url": "https://www.rfc-editor.org/rfc/rfc7519",
+        "note": "Canonical reference for JWT structure and registered claims."
+      },
+      {
+        "label": "OWASP JSON Web Token Cheat Sheet",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/JSON_Web_Token_for_Java_Cheat_Sheet.html",
+        "note": "Used for JWT security risks and storage guidance patterns."
+      },
+      {
+        "label": "RFC 6750: OAuth 2.0 Bearer Token Usage",
+        "url": "https://www.rfc-editor.org/rfc/rfc6750",
+        "note": "Used for bearer token semantics."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "JWT_JR_AUTHZ_CLAIMS_009",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "security"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "technical_depth",
+    "competencies": [
+      "technical_fundamentals",
+      "communication"
+    ],
+    "techTags": [
+      "jwt"
+    ],
+    "topicTags": [
+      "authentication",
+      "jwt_lifecycle",
+      "authorization"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Assess whether the candidate separates identity claims from permission decisions and avoids trusting stale or oversized authorization data blindly.",
+    "primaryQuestion": "What is the difference between authentication claims and authorization claims such as roles, scopes, or permissions?",
+    "expectedSignals": [
+      {
+        "label": "Defines authentication claims.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "claims_such_as_sub_and_issuer_establ_1",
+            "description": "Claims such as sub and issuer establish who the token represents and who issued it."
+          },
+          {
+            "key": "authentication_claims_help_identify__2",
+            "description": "Authentication claims help identify the principal."
+          }
+        ]
+      },
+      {
+        "label": "Defines authorization claims.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "roles_scopes_permissions_tenant_or_r_1",
+            "description": "Roles, scopes, permissions, tenant, or resource ownership hints can inform access checks."
+          },
+          {
+            "key": "authorization_still_depends_on_route_2",
+            "description": "Authorization still depends on route and resource context."
+          }
+        ]
+      },
+      {
+        "label": "Mentions stale claim risk.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "role_or_permission_changes_may_not_r_1",
+            "description": "Role or permission changes may not reflect in already issued tokens until expiry or refresh."
+          },
+          {
+            "key": "critical_authorization_may_require_d_2",
+            "description": "Critical authorization may require database or policy lookup."
+          }
+        ]
+      },
+      {
+        "label": "Avoids putting too much authorization data in tokens.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "large_tokens_hurt_performance_and_le_1",
+            "description": "Large tokens hurt performance and leak internal permission structure."
+          },
+          {
+            "key": "keeps_claims_minimal_and_purposeful_2",
+            "description": "Keeps claims minimal and purposeful."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "If a token says role=user, is that enough to delete any user resource?",
+        "purpose": "Check resource-level authorization."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "What happens if a user is removed from admin role but still has an old access token?",
+        "purpose": "Probe stale claims."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Authentication claims versus authorization claims",
+        "displayQuestion": "What is the difference between authentication claims and authorization claims such as roles, scopes, or permissions?",
+        "displayIntent": "Assess whether the candidate separates identity claims from permission decisions and avoids trusting stale or oversized authorization data blindly.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "authorization_claims"
+        }
+      },
+      "vi": {
+        "title": "Authentication claim so với authorization claim",
+        "displayQuestion": "Authentication claim khác authorization claim như roles, scopes hoặc permissions như thế nào?",
+        "displayIntent": "Assess whether the candidate separates identity claims from permission decisions and avoids trusting stale or oversized authorization data blindly.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "authorization_claims"
+        }
+      },
+      "ja": {
+        "title": "Authentication claims versus authorization claims",
+        "displayQuestion": "次の点を説明してください: What is the difference between authentication claims and authorization claims such as roles, scopes, or permissions?",
+        "displayIntent": "この質問は authorization_claims を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "authorization_claims"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "RFC 7519: JSON Web Token",
+        "url": "https://www.rfc-editor.org/rfc/rfc7519",
+        "note": "Canonical reference for JWT structure and registered claims."
+      },
+      {
+        "label": "OWASP JSON Web Token Cheat Sheet",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/JSON_Web_Token_for_Java_Cheat_Sheet.html",
+        "note": "Used for JWT security risks and storage guidance patterns."
+      },
+      {
+        "label": "RFC 6750: OAuth 2.0 Bearer Token Usage",
+        "url": "https://www.rfc-editor.org/rfc/rfc6750",
+        "note": "Used for bearer token semantics."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "JWT_JR_ALGORITHMS_KEYS_010",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "security"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "technical_depth",
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking"
+    ],
+    "techTags": [
+      "jwt"
+    ],
+    "topicTags": [
+      "authentication",
+      "jwt_lifecycle"
+    ],
+    "difficulty": 3,
+    "conversationDepth": "mid",
+    "intent": "Check whether the candidate understands symmetric versus asymmetric signing and basic JWT algorithm safety.",
+    "primaryQuestion": "What is the difference between HS256 and RS256, what is kid used for, and why restrict allowed algorithms?",
+    "expectedSignals": [
+      {
+        "label": "Distinguishes symmetric and asymmetric signing.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "hs256_uses_a_shared_secret_for_signi_1",
+            "description": "HS256 uses a shared secret for signing and verifying."
+          },
+          {
+            "key": "rs256_uses_a_private_key_for_signing_2",
+            "description": "RS256 uses a private key for signing and public key for verification."
+          }
+        ]
+      },
+      {
+        "label": "Explains when asymmetric signing is useful.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "multiple_services_can_verify_tokens__1",
+            "description": "Multiple services can verify tokens with public keys without knowing the signing private key."
+          },
+          {
+            "key": "key_distribution_and_blast_radius_ca_2",
+            "description": "Key distribution and blast radius can be improved."
+          }
+        ]
+      },
+      {
+        "label": "Explains kid for key selection during rotation.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "kid_identifies_which_key_should_be_u_1",
+            "description": "kid identifies which key should be used to verify the token."
+          },
+          {
+            "key": "server_must_still_only_trust_keys_fr_2",
+            "description": "Server must still only trust keys from its configured trusted key set."
+          }
+        ]
+      },
+      {
+        "label": "Explains algorithm confusion risk.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "server_should_restrict_accepted_algo_1",
+            "description": "Server should restrict accepted algorithms instead of blindly trusting alg from the token header."
+          },
+          {
+            "key": "accepting_none_or_unexpected_algorit_2",
+            "description": "Accepting none or unexpected algorithm can create critical vulnerabilities."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Why can RS256 let an API verify tokens without having the signing private key?",
+        "purpose": "Check asymmetric model."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "Why should the verifier not simply accept whatever alg the JWT header says?",
+        "purpose": "Probe algorithm confusion awareness."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "JWT algorithms and key rotation",
+        "displayQuestion": "What is the difference between HS256 and RS256, what is kid used for, and why restrict allowed algorithms?",
+        "displayIntent": "Check whether the candidate understands symmetric versus asymmetric signing and basic JWT algorithm safety.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "jwt_algorithms"
+        }
+      },
+      "vi": {
+        "title": "JWT algorithm và key rotation",
+        "displayQuestion": "HS256 khác RS256 như thế nào, kid dùng để làm gì, và vì sao phải restrict allowed algorithms?",
+        "displayIntent": "Check whether the candidate understands symmetric versus asymmetric signing and basic JWT algorithm safety.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "jwt_algorithms"
+        }
+      },
+      "ja": {
+        "title": "JWT algorithms and key rotation",
+        "displayQuestion": "次の点を説明してください: What is the difference between HS256 and RS256, what is kid used for, and why restrict allowed algorithms?",
+        "displayIntent": "この質問は jwt_algorithms を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "jwt_algorithms"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "RFC 7519: JSON Web Token",
+        "url": "https://www.rfc-editor.org/rfc/rfc7519",
+        "note": "Canonical reference for JWT structure and registered claims."
+      },
+      {
+        "label": "OWASP JSON Web Token Cheat Sheet",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/JSON_Web_Token_for_Java_Cheat_Sheet.html",
+        "note": "Used for JWT security risks and storage guidance patterns."
+      },
+      {
+        "label": "RFC 6750: OAuth 2.0 Bearer Token Usage",
+        "url": "https://www.rfc-editor.org/rfc/rfc6750",
+        "note": "Used for bearer token semantics."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "JWT_JR_BEARER_HEADER_011",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "security"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "technical_depth",
+    "competencies": [
+      "technical_fundamentals",
+      "communication"
+    ],
+    "techTags": [
+      "jwt"
+    ],
+    "topicTags": [
+      "authentication",
+      "jwt_lifecycle",
+      "http_semantics"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate understands bearer-token possession semantics and the transport requirements around protected API calls.",
+    "primaryQuestion": "How does a Bearer token in the Authorization header work?",
+    "expectedSignals": [
+      {
+        "label": "Describes header format.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "authorization_header_uses_bearer_fol_1",
+            "description": "Authorization header uses Bearer followed by the access token."
+          },
+          {
+            "key": "the_server_extracts_and_verifies_the_2",
+            "description": "The server extracts and verifies the token before protected route handling."
+          }
+        ]
+      },
+      {
+        "label": "Explains bearer possession semantics.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "whoever_possesses_the_token_can_use__1",
+            "description": "Whoever possesses the token can use it unless additional binding or checks are applied."
+          },
+          {
+            "key": "bearer_tokens_must_be_protected_in_s_2",
+            "description": "Bearer tokens must be protected in storage and transit."
+          }
+        ]
+      },
+      {
+        "label": "Mentions HTTPS requirement.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "tokens_should_be_sent_only_over_tls__1",
+            "description": "Tokens should be sent only over TLS/HTTPS in production."
+          },
+          {
+            "key": "tls_protects_token_confidentiality_a_2",
+            "description": "TLS protects token confidentiality and integrity in transit."
+          }
+        ]
+      },
+      {
+        "label": "Mentions common failure handling.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "missing_malformed_expired_or_invalid_1",
+            "description": "Missing, malformed, expired, or invalid tokens lead to authentication failure."
+          },
+          {
+            "key": "api_should_avoid_logging_full_tokens_2",
+            "description": "API should avoid logging full tokens."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "What does Bearer mean from a security perspective?",
+        "purpose": "Check possession semantics."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "Why should logs not include the full Authorization header?",
+        "purpose": "Probe token leakage risk."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Bearer tokens in Authorization header",
+        "displayQuestion": "How does a Bearer token in the Authorization header work?",
+        "displayIntent": "Check whether the candidate understands bearer-token possession semantics and the transport requirements around protected API calls.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "bearer_tokens"
+        }
+      },
+      "vi": {
+        "title": "Bearer token trong Authorization header",
+        "displayQuestion": "Bearer token trong Authorization header hoạt động như thế nào?",
+        "displayIntent": "Check whether the candidate understands bearer-token possession semantics and the transport requirements around protected API calls.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "bearer_tokens"
+        }
+      },
+      "ja": {
+        "title": "Bearer tokens in Authorization header",
+        "displayQuestion": "次の点を説明してください: How does a Bearer token in the Authorization header work?",
+        "displayIntent": "この質問は bearer_tokens を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "bearer_tokens"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "RFC 7519: JSON Web Token",
+        "url": "https://www.rfc-editor.org/rfc/rfc7519",
+        "note": "Canonical reference for JWT structure and registered claims."
+      },
+      {
+        "label": "OWASP JSON Web Token Cheat Sheet",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/JSON_Web_Token_for_Java_Cheat_Sheet.html",
+        "note": "Used for JWT security risks and storage guidance patterns."
+      },
+      {
+        "label": "RFC 6750: OAuth 2.0 Bearer Token Usage",
+        "url": "https://www.rfc-editor.org/rfc/rfc6750",
+        "note": "Used for bearer token semantics."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "JWT_JR_ACCOUNT_CHANGES_012",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "security"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "situational",
+    "competencies": [
+      "problem_solving",
+      "system_thinking"
+    ],
+    "techTags": [
+      "jwt"
+    ],
+    "topicTags": [
+      "authentication",
+      "jwt_lifecycle"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Evaluate whether the candidate understands account state changes as revocation and authorization events, not only login events.",
+    "primaryQuestion": "How should tokens be handled when a user changes password or an admin disables the account?",
+    "expectedSignals": [
+      {
+        "label": "Revokes refresh tokens on sensitive account changes.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "password_change_should_invalidate_ex_1",
+            "description": "Password change should invalidate existing refresh tokens or sessions depending on policy."
+          },
+          {
+            "key": "admin_disable_should_prevent_renewal_2",
+            "description": "Admin disable should prevent renewal and future authenticated access."
+          }
+        ]
+      },
+      {
+        "label": "Handles access tokens with short lifetime or immediate deny checks.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "short_lived_access_tokens_reduce_res_1",
+            "description": "Short-lived access tokens reduce residual access."
+          },
+          {
+            "key": "immediate_enforcement_may_require_ch_2",
+            "description": "Immediate enforcement may require checking user status, token version, or denylist."
+          }
+        ]
+      },
+      {
+        "label": "Distinguishes one-device and all-device effects.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "password_change_may_log_out_all_devi_1",
+            "description": "Password change may log out all devices or all except current device based on product policy."
+          },
+          {
+            "key": "admin_disable_should_usually_affect__2",
+            "description": "Admin disable should usually affect all sessions."
+          }
+        ]
+      },
+      {
+        "label": "Mentions audit and user communication.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "security_sensitive_events_should_be__1",
+            "description": "Security-sensitive events should be logged."
+          },
+          {
+            "key": "user_may_receive_notification_for_pa_2",
+            "description": "User may receive notification for password change or suspicious revocation."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "If an admin disables a user, should their refresh token still work?",
+        "purpose": "Check enforcement."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "How could a tokenVersion field help invalidate old tokens?",
+        "purpose": "Probe implementation strategy."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Password changes and disabled accounts",
+        "displayQuestion": "How should tokens be handled when a user changes password or an admin disables the account?",
+        "displayIntent": "Evaluate whether the candidate understands account state changes as revocation and authorization events, not only login events.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior",
+          "type": "situational",
+          "topic": "account_state_changes"
+        }
+      },
+      "vi": {
+        "title": "Đổi mật khẩu và disable account",
+        "displayQuestion": "Token nên được xử lý thế nào khi user đổi mật khẩu hoặc admin disable account?",
+        "displayIntent": "Evaluate whether the candidate understands account state changes as revocation and authorization events, not only login events.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior",
+          "type": "situational",
+          "topic": "account_state_changes"
+        }
+      },
+      "ja": {
+        "title": "Password changes and disabled accounts",
+        "displayQuestion": "次の点を説明してください: How should tokens be handled when a user changes password or an admin disables the account?",
+        "displayIntent": "この質問は account_state_changes を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior",
+          "type": "situational",
+          "topic": "account_state_changes"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "RFC 7519: JSON Web Token",
+        "url": "https://www.rfc-editor.org/rfc/rfc7519",
+        "note": "Canonical reference for JWT structure and registered claims."
+      },
+      {
+        "label": "OWASP JSON Web Token Cheat Sheet",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/JSON_Web_Token_for_Java_Cheat_Sheet.html",
+        "note": "Used for JWT security risks and storage guidance patterns."
+      },
+      {
+        "label": "RFC 6750: OAuth 2.0 Bearer Token Usage",
+        "url": "https://www.rfc-editor.org/rfc/rfc6750",
+        "note": "Used for bearer token semantics."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "JWT_JR_BLACKLIST_TRADEOFF_013",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "security"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "trade_off",
+    "competencies": [
+      "trade_off_analysis",
+      "system_thinking"
+    ],
+    "techTags": [
+      "jwt",
+      "redis"
+    ],
+    "topicTags": [
+      "authentication",
+      "jwt_lifecycle"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Check whether the candidate can evaluate immediate revocation against latency, availability, and operational state.",
+    "primaryQuestion": "What are the trade-offs of checking a token blacklist on every request?",
+    "expectedSignals": [
+      {
+        "label": "Explains blacklist purpose.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "blacklist_or_denylist_blocks_known_r_1",
+            "description": "Blacklist or denylist blocks known revoked tokens before expiry."
+          },
+          {
+            "key": "it_is_useful_for_logout_compromise_r_2",
+            "description": "It is useful for logout, compromise response, or admin revocation."
+          }
+        ]
+      },
+      {
+        "label": "Explains lookup cost and availability risk.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "every_protected_request_may_need_a_f_1",
+            "description": "Every protected request may need a fast shared lookup."
+          },
+          {
+            "key": "if_redis_or_blacklist_store_is_unava_2",
+            "description": "If Redis or blacklist store is unavailable, the system must choose fail-open or fail-closed behavior."
+          }
+        ]
+      },
+      {
+        "label": "Mentions storage lifecycle.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "entries_should_expire_when_the_token_1",
+            "description": "Entries should expire when the token would naturally expire."
+          },
+          {
+            "key": "storing_token_identifiers_or_hashes__2",
+            "description": "Storing token identifiers or hashes is safer than storing raw tokens."
+          }
+        ]
+      },
+      {
+        "label": "Compares alternatives.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "short_access_token_lifetime_may_be_e_1",
+            "description": "Short access-token lifetime may be enough for lower-risk cases."
+          },
+          {
+            "key": "refresh_token_revocation_plus_short__2",
+            "description": "Refresh-token revocation plus short access tokens can reduce per-request checks."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "What should the TTL of a blacklist entry usually be?",
+        "purpose": "Check lifecycle logic."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "When would you avoid per-request blacklist checks?",
+        "purpose": "Probe risk-based design."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Token blacklist trade-offs",
+        "displayQuestion": "What are the trade-offs of checking a token blacklist on every request?",
+        "displayIntent": "Check whether the candidate can evaluate immediate revocation against latency, availability, and operational state.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior",
+          "type": "trade_off",
+          "topic": "blacklist_tradeoff"
+        }
+      },
+      "vi": {
+        "title": "Trade-off của token blacklist",
+        "displayQuestion": "Trade-off của việc check token blacklist trên mọi request là gì?",
+        "displayIntent": "Check whether the candidate can evaluate immediate revocation against latency, availability, and operational state.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior",
+          "type": "trade_off",
+          "topic": "blacklist_tradeoff"
+        }
+      },
+      "ja": {
+        "title": "Token blacklist trade-offs",
+        "displayQuestion": "次の点を説明してください: What are the trade-offs of checking a token blacklist on every request?",
+        "displayIntent": "この質問は blacklist_tradeoff を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior",
+          "type": "trade_off",
+          "topic": "blacklist_tradeoff"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "RFC 7519: JSON Web Token",
+        "url": "https://www.rfc-editor.org/rfc/rfc7519",
+        "note": "Canonical reference for JWT structure and registered claims."
+      },
+      {
+        "label": "OWASP JSON Web Token Cheat Sheet",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/JSON_Web_Token_for_Java_Cheat_Sheet.html",
+        "note": "Used for JWT security risks and storage guidance patterns."
+      },
+      {
+        "label": "RFC 6750: OAuth 2.0 Bearer Token Usage",
+        "url": "https://www.rfc-editor.org/rfc/rfc6750",
+        "note": "Used for bearer token semantics."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "JWT_JR_NEST_GUARD_014",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "technical_depth",
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking"
+    ],
+    "techTags": [
+      "jwt",
+      "nestjs"
+    ],
+    "topicTags": [
+      "authentication",
+      "jwt_lifecycle",
+      "guards_pipes_interceptors"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Check whether the candidate maps authentication responsibilities to NestJS request lifecycle correctly.",
+    "primaryQuestion": "In NestJS, where would JWT verification usually live: middleware, guard, interceptor, or service? Why?",
+    "expectedSignals": [
+      {
+        "label": "Chooses guards for route-level authentication and authorization checks.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "guard_can_decide_whether_the_request_1",
+            "description": "Guard can decide whether the request may proceed to the route handler."
+          },
+          {
+            "key": "guard_has_access_to_executioncontext_2",
+            "description": "Guard has access to ExecutionContext and route metadata."
+          }
+        ]
+      },
+      {
+        "label": "Distinguishes middleware role.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "middleware_can_parse_tokens_or_attac_1",
+            "description": "Middleware can parse tokens or attach preliminary request data."
+          },
+          {
+            "key": "middleware_is_less_suited_for_route__2",
+            "description": "Middleware is less suited for route metadata based authorization decisions."
+          }
+        ]
+      },
+      {
+        "label": "Distinguishes interceptors and services.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "interceptor_is_better_for_wrapping_e_1",
+            "description": "Interceptor is better for wrapping execution, logging, caching, or transforming responses."
+          },
+          {
+            "key": "service_can_contain_token_verificati_2",
+            "description": "Service can contain token verification helper logic used by the guard but should not replace lifecycle placement."
+          }
+        ]
+      },
+      {
+        "label": "Mentions attaching user context safely.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "after_verification_request_user_or_c_1",
+            "description": "After verification, request user or context can be populated for downstream handlers."
+          },
+          {
+            "key": "authorization_should_still_check_per_2",
+            "description": "Authorization should still check permissions and resource ownership."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Why is a Guard a better fit than an Interceptor for blocking unauthenticated requests?",
+        "purpose": "Check lifecycle responsibility."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Where would roles metadata be read in a NestJS auth flow?",
+        "purpose": "Probe ExecutionContext and route metadata."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "JWT verification in NestJS",
+        "displayQuestion": "In NestJS, where would JWT verification usually live: middleware, guard, interceptor, or service? Why?",
+        "displayIntent": "Check whether the candidate maps authentication responsibilities to NestJS request lifecycle correctly.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "nestjs_jwt_guard"
+        }
+      },
+      "vi": {
+        "title": "JWT verification trong NestJS",
+        "displayQuestion": "Trong NestJS, JWT verification thường nên nằm ở đâu: middleware, guard, interceptor hay service? Vì sao?",
+        "displayIntent": "Check whether the candidate maps authentication responsibilities to NestJS request lifecycle correctly.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "nestjs_jwt_guard"
+        }
+      },
+      "ja": {
+        "title": "JWT verification in NestJS",
+        "displayQuestion": "次の点を説明してください: In NestJS, where would JWT verification usually live: middleware, guard, interceptor, or service? Why?",
+        "displayIntent": "この質問は nestjs_jwt_guard を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "nestjs_jwt_guard"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "RFC 7519: JSON Web Token",
+        "url": "https://www.rfc-editor.org/rfc/rfc7519",
+        "note": "Canonical reference for JWT structure and registered claims."
+      },
+      {
+        "label": "OWASP JSON Web Token Cheat Sheet",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/JSON_Web_Token_for_Java_Cheat_Sheet.html",
+        "note": "Used for JWT security risks and storage guidance patterns."
+      },
+      {
+        "label": "RFC 6750: OAuth 2.0 Bearer Token Usage",
+        "url": "https://www.rfc-editor.org/rfc/rfc6750",
+        "note": "Used for bearer token semantics."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "JWT_JR_CLOCK_SKEW_015",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "security"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "technical_depth",
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking"
+    ],
+    "techTags": [
+      "jwt"
+    ],
+    "topicTags": [
+      "authentication",
+      "jwt_lifecycle",
+      "request_validation"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Check whether the candidate understands time-based token validation and why small leeway may be needed without weakening token lifetime too much.",
+    "primaryQuestion": "What is clock skew, and how can it affect exp and nbf validation in JWTs?",
+    "expectedSignals": [
+      {
+        "label": "Defines clock skew.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "clock_skew_is_a_time_difference_betw_1",
+            "description": "Clock skew is a time difference between systems such as issuer, verifier, and client."
+          },
+          {
+            "key": "distributed_systems_cannot_always_as_2",
+            "description": "Distributed systems cannot always assume clocks are perfectly aligned."
+          }
+        ]
+      },
+      {
+        "label": "Explains impact on exp.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "a_verifier_clock_that_is_ahead_may_r_1",
+            "description": "A verifier clock that is ahead may reject a token slightly before the issuer intended."
+          },
+          {
+            "key": "a_verifier_clock_that_is_behind_may__2",
+            "description": "A verifier clock that is behind may accept a token slightly longer than intended."
+          }
+        ]
+      },
+      {
+        "label": "Explains impact on nbf.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "a_verifier_clock_that_is_ahead_may_a_1",
+            "description": "A verifier clock that is ahead may accept a not-before token too early."
+          },
+          {
+            "key": "a_verifier_clock_that_is_behind_may__2",
+            "description": "A verifier clock that is behind may reject a token that should already be valid."
+          }
+        ]
+      },
+      {
+        "label": "Mentions bounded leeway and clock synchronization.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "small_configured_leeway_can_reduce_f_1",
+            "description": "Small configured leeway can reduce false rejections."
+          },
+          {
+            "key": "leeway_should_be_limited_and_systems_2",
+            "description": "Leeway should be limited, and systems should still use clock synchronization such as NTP."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "If the API server clock is two minutes ahead, what might happen to a newly issued token with nbf?",
+        "purpose": "Check time-claim reasoning."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "Why should clock-skew leeway be small instead of ten or twenty minutes?",
+        "purpose": "Probe security trade-off."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Clock skew and time-based JWT claims",
+        "displayQuestion": "What is clock skew, and how can it affect exp and nbf validation in JWTs?",
+        "displayIntent": "Check whether the candidate understands time-based token validation and why small leeway may be needed without weakening token lifetime too much.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "clock_skew"
+        }
+      },
+      "vi": {
+        "title": "Clock skew và time-based JWT claim",
+        "displayQuestion": "Clock skew là gì, và nó ảnh hưởng thế nào tới việc validate exp và nbf trong JWT?",
+        "displayIntent": "Check whether the candidate understands time-based token validation and why small leeway may be needed without weakening token lifetime too much.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "clock_skew"
+        }
+      },
+      "ja": {
+        "title": "Clock skew and time-based JWT claims",
+        "displayQuestion": "次の点を説明してください: What is clock skew, and how can it affect exp and nbf validation in JWTs?",
+        "displayIntent": "この質問は clock_skew を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "clock_skew"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "RFC 7519: JSON Web Token",
+        "url": "https://www.rfc-editor.org/rfc/rfc7519",
+        "note": "Canonical reference for JWT structure and registered claims."
+      },
+      {
+        "label": "OWASP JSON Web Token Cheat Sheet",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/JSON_Web_Token_for_Java_Cheat_Sheet.html",
+        "note": "Used for JWT security risks and storage guidance patterns."
+      },
+      {
+        "label": "RFC 6750: OAuth 2.0 Bearer Token Usage",
+        "url": "https://www.rfc-editor.org/rfc/rfc6750",
+        "note": "Used for bearer token semantics."
+      }
+    ],
+    "status": "active"
+  }
+]

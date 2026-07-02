@@ -1,0 +1,2954 @@
+[
+  {
+    "code": "JS_CORE_JR_TECH_CLOSURE_001",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "frontend",
+      "fullstack",
+      "backend"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "technical_depth",
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving",
+      "communication"
+    ],
+    "techTags": [
+      "javascript"
+    ],
+    "topicTags": [
+      "closure",
+      "scope",
+      "async_programming"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate understands closures as lexical environment retention and can connect the concept to practical callback, factory, and state-hiding use cases.",
+    "primaryQuestion": "What is a closure in JavaScript? Give a practical use case where closures are useful.",
+    "expectedSignals": [
+      {
+        "label": "Defines a closure as a function that keeps access to variables from its lexical scope after the outer function has finished.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "defines_function_plus_lexical_environment",
+            "description": "Explains that a closure is the combination of a function and the lexical environment it was created in."
+          },
+          {
+            "key": "mentions_outer_scope_survives",
+            "description": "States that variables from the outer scope remain accessible later, even after the outer function has returned."
+          }
+        ]
+      },
+      {
+        "label": "Explains closure behavior without treating closed-over variables as global variables.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "separates_closure_from_global_state",
+            "description": "Clarifies that closure state belongs to a specific lexical scope, not the global object."
+          },
+          {
+            "key": "mentions_binding_reference",
+            "description": "Mentions that closures retain access to variable bindings and can observe later changes to those bindings."
+          }
+        ]
+      },
+      {
+        "label": "Gives a practical use case such as function factories, private state, event handlers, timers, or callbacks.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "names_real_use_case",
+            "description": "Names at least one realistic closure use case rather than only giving a textbook definition."
+          },
+          {
+            "key": "connects_use_case_to_retained_state",
+            "description": "Explains why retained lexical state is useful in that use case."
+          }
+        ]
+      },
+      {
+        "label": "Recognizes a common risk such as accidentally sharing mutable state or retaining memory longer than expected.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "mentions_shared_mutable_state_risk",
+            "description": "Mentions that multiple closures can share the same mutable binding if created from the same scope."
+          },
+          {
+            "key": "mentions_lifetime_or_memory_risk",
+            "description": "Mentions that closed-over values can live longer than expected while references remain reachable."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Defines closure through lexical scope, gives a practical use case, and explains both benefit and a common bug or lifetime risk."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands that inner functions access outer variables but misses one nuance such as binding lifetime or shared mutable state."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can repeat that closures are functions inside functions but cannot explain why the captured scope still matters."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague to distinguish closure from normal scope or global variables."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Can you show a tiny function factory example where each returned function remembers a different value?",
+        "purpose": "Force the definition into observable closure behavior."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "What can go wrong if many event handlers close over a large object that is no longer needed?",
+        "purpose": "Check whether the candidate understands closure lifetime and memory consequences."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Closures and retained lexical state",
+        "displayQuestion": "What is a closure in JavaScript? Give a practical use case where closures are useful.",
+        "displayIntent": "Check whether the candidate can explain closures as retained lexical state, not just nested functions.",
+        "guidance": [
+          "Define closure through lexical scope and retained variables.",
+          "Use a practical example such as a counter, event handler, or function factory.",
+          "Mention one common risk, such as shared mutable state or retained memory."
+        ],
+        "commonMistakes": [
+          "Saying a closure is only a function inside another function.",
+          "Treating closed-over variables as globals.",
+          "Ignoring lifetime and shared state consequences."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "closure"
+        }
+      },
+      "vi": {
+        "title": "Closure và trạng thái lexical được giữ lại",
+        "displayQuestion": "Closure trong JavaScript là gì? Hãy nêu một use case thực tế nơi closure hữu ích.",
+        "displayIntent": "Kiểm tra ứng viên có hiểu closure là việc giữ lexical state, không chỉ là hàm lồng trong hàm.",
+        "guidance": [
+          "Định nghĩa closure thông qua lexical scope và biến được giữ lại.",
+          "Dùng ví dụ thực tế như counter, event handler hoặc function factory.",
+          "Nêu một rủi ro như shared mutable state hoặc giữ bộ nhớ quá lâu."
+        ],
+        "commonMistakes": [
+          "Nói closure chỉ là một hàm nằm trong hàm khác.",
+          "Xem biến được closure giữ lại như biến global.",
+          "Bỏ qua hệ quả về lifetime và shared state."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "closure"
+        }
+      },
+      "ja": {
+        "title": "クロージャと保持される lexical state",
+        "displayQuestion": "JavaScript の closure とは何ですか。closure が役立つ実用的な use case を挙げてください。",
+        "displayIntent": "closure を単なる入れ子関数ではなく、保持された lexical state として説明できるかを確認する。",
+        "guidance": [
+          "lexical scope と保持される変数で closure を定義する。",
+          "counter、event handler、function factory などの実例を使う。",
+          "shared mutable state や memory retention などのリスクを一つ述べる。"
+        ],
+        "commonMistakes": [
+          "closure を関数の中の関数だけだと説明する。",
+          "閉じ込められた変数を global variable と混同する。",
+          "lifetime と shared state の影響を無視する。"
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "closure"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "MDN JavaScript Guide: Closures",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Closures",
+        "note": "Used for lexical environment and closure behavior."
+      },
+      {
+        "label": "ECMAScript Language Specification",
+        "url": "https://tc39.es/ecma262/",
+        "note": "Used as the canonical language semantics reference."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "JS_CORE_JR_TECH_HOISTING_TDZ_002",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "frontend",
+      "fullstack",
+      "backend"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "technical_depth",
+    "competencies": [
+      "technical_fundamentals",
+      "communication",
+      "problem_solving"
+    ],
+    "techTags": [
+      "javascript"
+    ],
+    "topicTags": [
+      "hoisting_tdz",
+      "scope"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Assess whether the candidate can reason about declaration creation, initialization timing, and why var, let, and const behave differently before their declaration line.",
+    "primaryQuestion": "Explain hoisting. What is the difference in hoisting behavior between var, let, and const?",
+    "expectedSignals": [
+      {
+        "label": "Explains hoisting as declaration or binding setup during scope creation, not physical movement of code.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "describes_scope_setup",
+            "description": "Explains that bindings are created before the code in the scope executes."
+          },
+          {
+            "key": "avoids_physical_movement_myth",
+            "description": "Avoids saying the JavaScript engine literally moves source lines to the top."
+          }
+        ]
+      },
+      {
+        "label": "Distinguishes var as function-scoped and initialized to undefined before assignment.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "var_function_scoped",
+            "description": "States that var is scoped to the nearest function or global scope."
+          },
+          {
+            "key": "var_initialized_undefined",
+            "description": "Explains that reading var before assignment produces undefined instead of a temporal dead zone error."
+          }
+        ]
+      },
+      {
+        "label": "Explains that let and const are block-scoped and unavailable before initialization because of the temporal dead zone.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "let_const_block_scoped",
+            "description": "States that let and const are scoped to the nearest block."
+          },
+          {
+            "key": "tdz_reference_error",
+            "description": "Mentions that accessing let or const before initialization throws a ReferenceError."
+          }
+        ]
+      },
+      {
+        "label": "Connects the model to practical bug prevention in loops, conditional blocks, and refactors.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "loop_or_block_example",
+            "description": "Uses a concrete loop or block example where scope choice changes behavior."
+          },
+          {
+            "key": "explains_refactor_safety",
+            "description": "Explains why let and const make accidental early reads or scope leaks easier to catch."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains binding creation, var initialization, let/const TDZ, block versus function scope, and gives a concrete failure example."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Correctly describes the main var, let, and const differences but misses one execution timing nuance."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows the words hoisting and TDZ but cannot predict what a short code sample will do."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is a memorized rule with no useful execution model."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "What happens if console.log(user) runs before let user = 'Ava', and why?",
+        "purpose": "Check whether the candidate can apply TDZ rather than recite it."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "Why can replacing var with let in a loop change callback behavior?",
+        "purpose": "Connect hoisting and scope to a common production bug."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Hoisting, scope, and temporal dead zone",
+        "displayQuestion": "Explain hoisting. What is the difference in hoisting behavior between var, let, and const?",
+        "displayIntent": "Check declaration timing and scope fundamentals.",
+        "guidance": [
+          "Explain binding setup before execution.",
+          "Compare var with let and const using a small example.",
+          "Mention temporal dead zone and ReferenceError."
+        ],
+        "commonMistakes": [
+          "Saying source code is physically moved.",
+          "Saying let and const are not hoisted at all.",
+          "Forgetting block scope versus function scope."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "hoisting"
+        }
+      },
+      "vi": {
+        "title": "Hoisting, scope và temporal dead zone",
+        "displayQuestion": "Hãy giải thích hoisting. var, let và const khác nhau như thế nào về hoisting?",
+        "displayIntent": "Kiểm tra nền tảng về thời điểm tạo binding và scope.",
+        "guidance": [
+          "Giải thích việc setup binding trước khi thực thi.",
+          "So sánh var với let và const bằng ví dụ nhỏ.",
+          "Nhắc tới temporal dead zone và ReferenceError."
+        ],
+        "commonMistakes": [
+          "Nói source code thật sự bị di chuyển.",
+          "Nói let và const hoàn toàn không được hoist.",
+          "Quên khác biệt giữa block scope và function scope."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "hoisting"
+        }
+      },
+      "ja": {
+        "title": "hoisting、scope、temporal dead zone",
+        "displayQuestion": "hoisting とは何ですか。var、let、const の hoisting の違いを説明してください。",
+        "displayIntent": "binding の作成タイミングと scope の基礎を確認する。",
+        "guidance": [
+          "実行前に binding が準備されることを説明する。",
+          "短い例で var と let/const を比較する。",
+          "temporal dead zone と ReferenceError に触れる。"
+        ],
+        "commonMistakes": [
+          "source code が物理的に移動すると説明する。",
+          "let と const は全く hoist されないと言う。",
+          "block scope と function scope の違いを忘れる。"
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "hoisting"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "MDN JavaScript Guide: Grammar and types",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Grammar_and_types",
+        "note": "Used for variable declarations and scope behavior."
+      },
+      {
+        "label": "MDN JavaScript Guide: Closures",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Closures",
+        "note": "Used for scope and lexical environment context."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "JS_CORE_JR_TECH_THIS_BINDING_003",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "frontend",
+      "fullstack",
+      "backend"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "technical_depth",
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving",
+      "communication"
+    ],
+    "techTags": [
+      "javascript"
+    ],
+    "topicTags": [
+      "this_binding",
+      "scope",
+      "oop"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Evaluate whether the candidate can reason about this from call-site rules, lexical arrow behavior, class methods, and explicit binding APIs.",
+    "primaryQuestion": "What does this refer to inside a regular function, an arrow function, and a class method? How do bind(), call(), and apply() affect this?",
+    "expectedSignals": [
+      {
+        "label": "Explains that regular function this is usually determined by how the function is called.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "call_site_determines_this",
+            "description": "States that a regular function's this is based on call-site rules, such as obj.method() versus a detached function call."
+          },
+          {
+            "key": "mentions_strict_or_global_default",
+            "description": "Mentions that an unbound regular function call can have undefined this in strict mode or global object behavior in sloppy mode."
+          }
+        ]
+      },
+      {
+        "label": "Explains that arrow functions do not create their own this and instead capture this lexically.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "arrow_lexical_this",
+            "description": "States that arrow functions use this from the surrounding lexical scope."
+          },
+          {
+            "key": "arrow_not_rebound_by_call_apply_bind",
+            "description": "Recognizes that call, apply, and bind do not change an arrow function's lexical this."
+          }
+        ]
+      },
+      {
+        "label": "Describes class methods as normal functions whose this depends on the receiver unless bound.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "method_receiver_rule",
+            "description": "Explains that obj.method() or instance.method() sets this to the receiver object."
+          },
+          {
+            "key": "detached_method_loses_receiver",
+            "description": "Mentions that passing a method as a callback can lose the original receiver unless it is bound or wrapped."
+          }
+        ]
+      },
+      {
+        "label": "Compares bind, call, and apply accurately.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "bind_returns_new_function",
+            "description": "Explains that bind returns a new function with this preset."
+          },
+          {
+            "key": "call_apply_invoke_immediately",
+            "description": "Explains that call and apply invoke immediately, with call taking arguments individually and apply taking an array-like argument list."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Uses call-site rules, lexical arrow behavior, detached method examples, and correctly compares bind, call, and apply."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Gets the main regular versus arrow function distinction but misses one nuance such as detached class methods."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Relies on broad statements like this means the current object without being able to explain callback behavior."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Cannot predict this in common function and method examples."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "If const fn = user.getName; fn() is called later, why might this no longer be user?",
+        "purpose": "Check call-site reasoning with a detached method."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Why is an arrow function often useful inside a setTimeout callback inside a class method?",
+        "purpose": "Check lexical this understanding in a practical callback scenario."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "this binding in functions and methods",
+        "displayQuestion": "What does this refer to inside a regular function, an arrow function, and a class method? How do bind(), call(), and apply() affect this?",
+        "displayIntent": "Check whether the candidate reasons about this from call-site and lexical binding rules.",
+        "guidance": [
+          "Explain regular function this from how the function is called.",
+          "Explain arrow functions through lexical this.",
+          "Compare bind, call, and apply with callback examples."
+        ],
+        "commonMistakes": [
+          "Saying this always means the object where the function was defined.",
+          "Forgetting detached methods lose their receiver.",
+          "Trying to rebind arrow function this."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "this"
+        }
+      },
+      "vi": {
+        "title": "Binding của this trong function và method",
+        "displayQuestion": "this trỏ tới đâu trong regular function, arrow function và class method? bind(), call(), apply() ảnh hưởng tới this như thế nào?",
+        "displayIntent": "Kiểm tra ứng viên có suy luận this dựa trên call-site và lexical binding hay không.",
+        "guidance": [
+          "Giải thích this của regular function dựa trên cách hàm được gọi.",
+          "Giải thích arrow function thông qua lexical this.",
+          "So sánh bind, call và apply bằng ví dụ callback."
+        ],
+        "commonMistakes": [
+          "Nói this luôn là object nơi function được định nghĩa.",
+          "Quên rằng method bị tách ra sẽ mất receiver.",
+          "Cố rebind this của arrow function."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "this"
+        }
+      },
+      "ja": {
+        "title": "function と method の this binding",
+        "displayQuestion": "regular function、arrow function、class method の中で this は何を指しますか。bind(), call(), apply() は this にどう影響しますか。",
+        "displayIntent": "this を call-site と lexical binding のルールから説明できるかを確認する。",
+        "guidance": [
+          "regular function の this は呼び出し方で決まることを説明する。",
+          "arrow function は lexical this を使うことを説明する。",
+          "callback の例で bind、call、apply を比較する。"
+        ],
+        "commonMistakes": [
+          "this は function が定義された object を常に指すと言う。",
+          "detached method が receiver を失うことを忘れる。",
+          "arrow function の this を rebind できると思う。"
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "this"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "MDN JavaScript Reference: this",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/this",
+        "note": "Used for this binding rules."
+      },
+      {
+        "label": "MDN JavaScript Reference: Arrow functions",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions",
+        "note": "Used for lexical this behavior."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "JS_CORE_JR_DEBUG_EVENT_LOOP_ORDER_004",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "frontend",
+      "fullstack",
+      "backend"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "debugging",
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving",
+      "system_thinking"
+    ],
+    "techTags": [
+      "javascript"
+    ],
+    "topicTags": [
+      "event_loop",
+      "async_programming"
+    ],
+    "difficulty": 3,
+    "conversationDepth": "mid",
+    "intent": "Check whether the candidate can explain the JavaScript event loop well enough to predict ordering between synchronous code, promise microtasks, and timer callbacks.",
+    "primaryQuestion": "Explain the JavaScript event loop. In what order do synchronous code, Promise microtasks, and setTimeout(..., 0) tasks run?",
+    "expectedSignals": [
+      {
+        "label": "Explains that synchronous code runs on the call stack first until the current turn finishes.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "call_stack_runs_sync_first",
+            "description": "States that synchronous JavaScript runs to completion on the call stack before queued callbacks run."
+          },
+          {
+            "key": "mentions_run_to_completion",
+            "description": "Mentions the run-to-completion model or equivalent wording."
+          }
+        ]
+      },
+      {
+        "label": "Distinguishes tasks from microtasks and places Promise callbacks in the microtask queue.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "promise_then_is_microtask",
+            "description": "States that Promise then/catch/finally callbacks run as microtasks."
+          },
+          {
+            "key": "timer_callback_is_task",
+            "description": "States that setTimeout callback runs as a task, after the current stack and microtasks."
+          }
+        ]
+      },
+      {
+        "label": "Predicts the usual order: synchronous logs, microtasks, then timer tasks.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "predicts_sync_before_promise",
+            "description": "Correctly predicts synchronous output before promise microtask output."
+          },
+          {
+            "key": "predicts_promise_before_timeout",
+            "description": "Correctly predicts promise microtasks before setTimeout with zero delay."
+          }
+        ]
+      },
+      {
+        "label": "Connects event loop knowledge to UI responsiveness, async debugging, or Node.js latency.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "connects_to_responsiveness_or_latency",
+            "description": "Explains why blocking the stack or flooding microtasks can delay UI updates or request handling."
+          },
+          {
+            "key": "uses_debugging_context",
+            "description": "Names a practical debugging symptom such as logs appearing out of expected order or timers firing late."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Correctly explains stack, tasks, microtasks, run-to-completion, output order, and a practical debugging consequence."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Predicts common ordering but misses one detail such as task versus microtask terminology."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows async code runs later but cannot explain why Promise callbacks run before setTimeout."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Cannot reason about event ordering from a simple code sample."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Given console.log('A'); Promise.resolve().then(() => console.log('B')); setTimeout(() => console.log('C'), 0); console.log('D'); what is printed?",
+        "purpose": "Force concrete ordering from the event loop model."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "Why can a long synchronous loop make a timer or UI update feel delayed?",
+        "purpose": "Connect event loop theory to responsiveness and debugging."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Event loop ordering",
+        "displayQuestion": "Explain the JavaScript event loop. In what order do synchronous code, Promise microtasks, and setTimeout(..., 0) tasks run?",
+        "displayIntent": "Check whether the candidate can predict async ordering from the event loop model.",
+        "guidance": [
+          "Start with call stack and run-to-completion.",
+          "Separate task queue from microtask queue.",
+          "Use a short console.log example to prove the order."
+        ],
+        "commonMistakes": [
+          "Saying setTimeout with zero delay runs immediately.",
+          "Putting Promise callbacks after timers.",
+          "Ignoring that long synchronous work blocks later callbacks."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "debugging",
+          "topic": "event_loop"
+        }
+      },
+      "vi": {
+        "title": "Thứ tự chạy của event loop",
+        "displayQuestion": "Hãy giải thích event loop trong JavaScript. Synchronous code, Promise microtasks và setTimeout(..., 0) chạy theo thứ tự nào?",
+        "displayIntent": "Kiểm tra ứng viên có dự đoán được thứ tự async dựa trên event loop hay không.",
+        "guidance": [
+          "Bắt đầu từ call stack và run-to-completion.",
+          "Tách task queue và microtask queue.",
+          "Dùng ví dụ console.log ngắn để chứng minh thứ tự."
+        ],
+        "commonMistakes": [
+          "Nói setTimeout delay 0 chạy ngay lập tức.",
+          "Cho Promise callback chạy sau timer.",
+          "Bỏ qua việc synchronous work dài sẽ chặn callback phía sau."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "debugging",
+          "topic": "event_loop"
+        }
+      },
+      "ja": {
+        "title": "event loop の実行順序",
+        "displayQuestion": "JavaScript の event loop を説明してください。synchronous code、Promise microtasks、setTimeout(..., 0) tasks はどの順番で実行されますか。",
+        "displayIntent": "event loop model から async の実行順序を予測できるかを確認する。",
+        "guidance": [
+          "call stack と run-to-completion から説明する。",
+          "task queue と microtask queue を分ける。",
+          "短い console.log の例で順序を示す。"
+        ],
+        "commonMistakes": [
+          "setTimeout 0 が即時に実行されると言う。",
+          "Promise callback を timer の後に置く。",
+          "長い synchronous work が後続 callback を遅らせることを無視する。"
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "debugging",
+          "topic": "event_loop"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "MDN JavaScript execution model",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Execution_model",
+        "note": "Used for event loop and job queue explanation."
+      },
+      {
+        "label": "MDN Promise",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise",
+        "note": "Used for promise microtask behavior context."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "JS_CORE_JR_TECH_PROTOTYPE_CHAIN_005",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "frontend",
+      "fullstack",
+      "backend"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "technical_depth",
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "communication"
+    ],
+    "techTags": [
+      "javascript"
+    ],
+    "topicTags": [
+      "prototype_chain",
+      "inheritance",
+      "immutability"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Assess whether the candidate understands JavaScript object lookup through the prototype chain and can distinguish prototypal inheritance from class syntax.",
+    "primaryQuestion": "What is the prototype chain? How does prototypal inheritance differ from classical class-based inheritance?",
+    "expectedSignals": [
+      {
+        "label": "Explains property lookup through an object's own properties and then its prototype chain.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "own_property_checked_first",
+            "description": "States that JavaScript checks the object itself before walking up its prototype."
+          },
+          {
+            "key": "walks_chain_until_found_or_null",
+            "description": "Explains that lookup continues through prototypes until the property is found or the chain ends."
+          }
+        ]
+      },
+      {
+        "label": "Connects methods on shared prototypes to memory and behavior sharing.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "methods_shared_on_prototype",
+            "description": "Explains that methods can be shared through a prototype rather than copied onto each instance."
+          },
+          {
+            "key": "mentions_shadowing",
+            "description": "Mentions that an own property can shadow a property with the same name on the prototype."
+          }
+        ]
+      },
+      {
+        "label": "Explains that JavaScript class syntax is primarily syntax over prototype-based behavior.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "class_uses_prototypes",
+            "description": "States that JavaScript classes still use prototypes underneath."
+          },
+          {
+            "key": "avoids_java_style_class_model",
+            "description": "Avoids describing JavaScript classes as the same runtime model as Java or C# classes."
+          }
+        ]
+      },
+      {
+        "label": "Recognizes practical implications such as shared methods, instanceof behavior, and avoiding prototype mutation surprises.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_instanceof_or_constructor_link",
+            "description": "Mentions instanceof, constructor functions, or class instances as related to prototype linkage."
+          },
+          {
+            "key": "mentions_mutation_risk",
+            "description": "Mentions that mutating prototypes can affect many objects and should be done carefully."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains lookup order, prototype sharing, class syntax over prototypes, shadowing, and one practical implication."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands lookup through prototypes but misses class syntax or shadowing nuance."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows the term prototype but cannot explain what happens during property lookup."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer confuses prototypes with unrelated concepts such as modules or TypeScript interfaces."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "If obj.name is missing on obj but exists on Object.getPrototypeOf(obj), what happens when obj.name is read?",
+        "purpose": "Force a concrete property lookup explanation."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "Why are methods usually placed on a prototype instead of being recreated for every object?",
+        "purpose": "Check understanding of shared behavior and memory implications."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Prototype chain and inheritance",
+        "displayQuestion": "What is the prototype chain? How does prototypal inheritance differ from classical class-based inheritance?",
+        "displayIntent": "Check JavaScript object lookup and inheritance fundamentals.",
+        "guidance": [
+          "Explain property lookup step by step.",
+          "Mention shared prototype methods and shadowing.",
+          "Clarify that class syntax still uses prototypes."
+        ],
+        "commonMistakes": [
+          "Treating JavaScript classes as a different inheritance runtime.",
+          "Ignoring own property shadowing.",
+          "Thinking methods are copied into every instance by default."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "prototype"
+        }
+      },
+      "vi": {
+        "title": "Prototype chain và inheritance",
+        "displayQuestion": "Prototype chain là gì? Prototypal inheritance khác classical class-based inheritance như thế nào?",
+        "displayIntent": "Kiểm tra nền tảng lookup object và inheritance trong JavaScript.",
+        "guidance": [
+          "Giải thích từng bước khi đọc property.",
+          "Nhắc tới method dùng chung trên prototype và shadowing.",
+          "Làm rõ class syntax vẫn dùng prototype."
+        ],
+        "commonMistakes": [
+          "Xem JavaScript class như một runtime inheritance khác hẳn.",
+          "Bỏ qua own property shadowing.",
+          "Nghĩ method mặc định được copy vào từng instance."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "prototype"
+        }
+      },
+      "ja": {
+        "title": "prototype chain と inheritance",
+        "displayQuestion": "prototype chain とは何ですか。prototypal inheritance は classical class-based inheritance とどう違いますか。",
+        "displayIntent": "JavaScript の object lookup と inheritance の基礎を確認する。",
+        "guidance": [
+          "property lookup を段階的に説明する。",
+          "prototype 上の共有 method と shadowing に触れる。",
+          "class syntax も prototype を使うことを明確にする。"
+        ],
+        "commonMistakes": [
+          "JavaScript class を別の inheritance runtime として扱う。",
+          "own property shadowing を無視する。",
+          "method が各 instance に copy されると思う。"
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "prototype"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "MDN Inheritance and the prototype chain",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Inheritance_and_the_prototype_chain",
+        "note": "Used for prototype chain and prototypal inheritance concepts."
+      },
+      {
+        "label": "MDN Classes",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes",
+        "note": "Used for class syntax over prototype-based behavior."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "JS_CORE_JR_DEBUG_COERCION_EQUALITY_006",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "frontend",
+      "fullstack",
+      "backend"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "debugging",
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving"
+    ],
+    "techTags": [
+      "javascript"
+    ],
+    "topicTags": [
+      "type_coercion"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Check whether the candidate understands equality and type coercion enough to avoid common production bugs in validation, form input, and defaulting logic.",
+    "primaryQuestion": "What is the difference between == and ===? What is type coercion, and when can it cause unexpected bugs?",
+    "expectedSignals": [
+      {
+        "label": "Explains that === compares without implicit type conversion while == may coerce operands before comparison.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "strict_equality_no_coercion",
+            "description": "States that strict equality checks value and type without implicit conversion."
+          },
+          {
+            "key": "loose_equality_coerces",
+            "description": "States that loose equality can convert one or both operands before comparing."
+          }
+        ]
+      },
+      {
+        "label": "Gives realistic bug examples involving strings from forms, numbers, booleans, null, or undefined.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "names_external_string_input",
+            "description": "Mentions that data from forms, query strings, localStorage, or JSON may be strings even when it looks numeric."
+          },
+          {
+            "key": "explains_bug_from_unexpected_conversion",
+            "description": "Explains how implicit conversion can make a condition pass or fail unexpectedly."
+          }
+        ]
+      },
+      {
+        "label": "Understands operator coercion examples such as string concatenation with + and numeric conversion with -, *, or unary +.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "plus_can_concatenate",
+            "description": "Explains that + can concatenate when a string operand is involved."
+          },
+          {
+            "key": "minus_times_numeric_conversion",
+            "description": "Explains that -, *, and unary + typically coerce operands toward numbers."
+          }
+        ]
+      },
+      {
+        "label": "States a safe practice: prefer explicit conversion and strict comparison except for intentional narrow cases.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "prefers_explicit_conversion",
+            "description": "Recommends converting input intentionally with Number, Boolean, parsing, or validation before comparing."
+          },
+          {
+            "key": "prefers_strict_equality",
+            "description": "Recommends strict equality as the default team convention unless loose equality is deliberate and documented."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains equality, operator coercion, real data-boundary bugs, and safe explicit conversion practices."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands == versus === but misses operator coercion or a realistic bug example."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Only says always use triple equals without explaining what coercion would have done."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Cannot explain simple examples such as '37' + 7 versus '37' - 7."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "What do '37' + 7 and '37' - 7 return, and why are they different?",
+        "purpose": "Check practical operator coercion knowledge."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "If an API query parameter page='0' is checked with if (page), what bug might happen?",
+        "purpose": "Connect coercion and truthiness to real input handling."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Equality and coercion bugs",
+        "displayQuestion": "What is the difference between == and ===? What is type coercion, and when can it cause unexpected bugs?",
+        "displayIntent": "Check whether the candidate can reason about implicit conversion instead of only memorizing equality rules.",
+        "guidance": [
+          "Explain strict versus loose equality.",
+          "Use examples with form or query string input.",
+          "Mention explicit conversion before comparison."
+        ],
+        "commonMistakes": [
+          "Only saying use === without explaining why.",
+          "Forgetting that + can concatenate strings.",
+          "Ignoring null, undefined, and input-boundary cases."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "debugging",
+          "topic": "coercion"
+        }
+      },
+      "vi": {
+        "title": "Equality và lỗi coercion",
+        "displayQuestion": "== và === khác nhau như thế nào? Type coercion là gì và khi nào nó gây bug bất ngờ?",
+        "displayIntent": "Kiểm tra ứng viên có suy luận implicit conversion thay vì chỉ học thuộc quy tắc equality hay không.",
+        "guidance": [
+          "Giải thích strict equality và loose equality.",
+          "Dùng ví dụ với input từ form hoặc query string.",
+          "Nhắc tới việc convert rõ ràng trước khi so sánh."
+        ],
+        "commonMistakes": [
+          "Chỉ nói dùng === mà không giải thích lý do.",
+          "Quên rằng + có thể nối chuỗi.",
+          "Bỏ qua null, undefined và dữ liệu ở boundary."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "debugging",
+          "topic": "coercion"
+        }
+      },
+      "ja": {
+        "title": "equality と coercion のバグ",
+        "displayQuestion": "== と === は何が違いますか。type coercion とは何で、どのような時に予期しない bug を起こしますか。",
+        "displayIntent": "equality の暗記ではなく implicit conversion を reasoning できるかを確認する。",
+        "guidance": [
+          "strict equality と loose equality を説明する。",
+          "form input や query string の例を使う。",
+          "比較前に明示的に変換することに触れる。"
+        ],
+        "commonMistakes": [
+          "なぜかを説明せずに === を使うと言うだけ。",
+          "+ が string concatenation になり得ることを忘れる。",
+          "null、undefined、boundary data を無視する。"
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "debugging",
+          "topic": "coercion"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "MDN Equality comparisons and sameness",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Equality_comparisons_and_sameness",
+        "note": "Used for equality comparison behavior."
+      },
+      {
+        "label": "MDN Type coercion glossary",
+        "url": "https://developer.mozilla.org/en-US/docs/Glossary/Type_coercion",
+        "note": "Used for coercion terminology."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "JS_CORE_JR_TECH_ASYNC_MODEL_007",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "frontend",
+      "fullstack",
+      "backend"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "technical_depth",
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "communication"
+    ],
+    "techTags": [
+      "javascript"
+    ],
+    "topicTags": [
+      "async_programming",
+      "event_loop"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate understands how single-threaded JavaScript coordinates asynchronous work through runtime APIs and queued callbacks without blocking the main execution thread.",
+    "primaryQuestion": "What is the difference between synchronous and asynchronous code? How does JavaScript, being single-threaded, handle async operations?",
+    "expectedSignals": [
+      {
+        "label": "Distinguishes synchronous code that blocks the current execution path from asynchronous code that completes later.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "defines_sync_blocking_flow",
+            "description": "Explains that synchronous code runs immediately in order and blocks the current stack until it finishes."
+          },
+          {
+            "key": "defines_async_later_completion",
+            "description": "Explains that asynchronous work lets the program continue and reports completion later."
+          }
+        ]
+      },
+      {
+        "label": "Explains that JavaScript execution is single-threaded, but browser or Node.js runtime APIs can perform work outside the JS call stack.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "single_js_call_stack",
+            "description": "States that normal JavaScript code runs on one main call stack per execution context."
+          },
+          {
+            "key": "runtime_handles_io_timers",
+            "description": "Mentions runtime APIs such as timers, network I/O, DOM events, or Node.js APIs as sources of asynchronous completion."
+          }
+        ]
+      },
+      {
+        "label": "Connects async completion back to callbacks, promises, or async/await through the event loop.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "callbacks_or_promises_resume",
+            "description": "Explains that callbacks or promise reactions run later when the async operation settles."
+          },
+          {
+            "key": "event_loop_schedules_later_work",
+            "description": "Mentions the event loop as the mechanism that schedules later JavaScript work."
+          }
+        ]
+      },
+      {
+        "label": "Understands that async does not make CPU-heavy JavaScript automatically parallel.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "cpu_work_still_blocks",
+            "description": "States that long CPU-bound JavaScript still blocks the thread unless moved to a worker or separate process."
+          },
+          {
+            "key": "distinguishes_io_from_cpu",
+            "description": "Distinguishes non-blocking I/O from parallel CPU execution."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains sync versus async flow, single JS stack, runtime-managed I/O/timers, event loop scheduling, and CPU-bound limits."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands async completion but misses one nuance such as CPU-bound blocking or runtime involvement."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Thinks async means JavaScript simply runs everything in parallel."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Cannot explain why async callbacks run later while code after the async call continues."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "If fetch starts and the next console.log runs immediately, what is JavaScript doing while the network request is pending?",
+        "purpose": "Check runtime and event loop understanding."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "Would wrapping a CPU-heavy loop in an async function stop it from blocking the page? Why or why not?",
+        "purpose": "Check whether the candidate distinguishes async syntax from parallel execution."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Synchronous versus asynchronous JavaScript",
+        "displayQuestion": "What is the difference between synchronous and asynchronous code? How does JavaScript, being single-threaded, handle async operations?",
+        "displayIntent": "Check the candidate's mental model for non-blocking JavaScript.",
+        "guidance": [
+          "Separate JavaScript execution from browser or Node.js runtime work.",
+          "Mention callbacks, promises, or async/await as continuation mechanisms.",
+          "Clarify that async I/O is not the same as parallel CPU execution."
+        ],
+        "commonMistakes": [
+          "Saying async automatically creates a new JavaScript thread.",
+          "Ignoring the role of the runtime and event loop.",
+          "Thinking async functions make CPU-heavy code non-blocking."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "async_model"
+        }
+      },
+      "vi": {
+        "title": "JavaScript synchronous và asynchronous",
+        "displayQuestion": "Synchronous code và asynchronous code khác nhau như thế nào? JavaScript single-threaded xử lý async operation ra sao?",
+        "displayIntent": "Kiểm tra mental model của ứng viên về JavaScript non-blocking.",
+        "guidance": [
+          "Tách việc thực thi JavaScript khỏi công việc của browser hoặc Node.js runtime.",
+          "Nhắc tới callback, promise hoặc async/await như cơ chế tiếp tục xử lý.",
+          "Làm rõ async I/O không đồng nghĩa với chạy CPU song song."
+        ],
+        "commonMistakes": [
+          "Nói async tự tạo JavaScript thread mới.",
+          "Bỏ qua vai trò của runtime và event loop.",
+          "Nghĩ async function làm CPU-heavy code hết blocking."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "async_model"
+        }
+      },
+      "ja": {
+        "title": "synchronous と asynchronous JavaScript",
+        "displayQuestion": "synchronous code と asynchronous code は何が違いますか。single-threaded な JavaScript は async operation をどう扱いますか。",
+        "displayIntent": "non-blocking JavaScript の mental model を確認する。",
+        "guidance": [
+          "JavaScript execution と browser/Node.js runtime の仕事を分ける。",
+          "callback、promise、async/await を continuation mechanism として説明する。",
+          "async I/O と parallel CPU execution は同じではないと明確にする。"
+        ],
+        "commonMistakes": [
+          "async が自動的に新しい JavaScript thread を作ると言う。",
+          "runtime と event loop の役割を無視する。",
+          "async function が CPU-heavy code を non-blocking にすると考える。"
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "async_model"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "MDN JavaScript execution model",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Execution_model",
+        "note": "Used for event loop and run-to-completion concepts."
+      },
+      {
+        "label": "MDN Asynchronous JavaScript",
+        "url": "https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Asynchronous",
+        "note": "Used for asynchronous programming concepts."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "JS_CORE_JR_TECH_EVENT_DELEGATION_008",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "frontend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "technical_depth",
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking",
+      "problem_solving"
+    ],
+    "techTags": [
+      "javascript"
+    ],
+    "topicTags": [
+      "event_delegation"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Evaluate whether the candidate understands browser event propagation and can use event delegation for dynamic lists without attaching unnecessary listeners.",
+    "primaryQuestion": "What is event delegation? Why is it preferred over attaching event listeners to individual elements, and what is the difference between event.target and event.currentTarget?",
+    "expectedSignals": [
+      {
+        "label": "Defines event delegation as listening on an ancestor and handling events from matching descendants.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "listener_on_ancestor",
+            "description": "States that the listener is attached to a parent or ancestor element."
+          },
+          {
+            "key": "handles_matching_descendants",
+            "description": "Explains that the handler checks the actual event source or closest matching descendant."
+          }
+        ]
+      },
+      {
+        "label": "Explains the role of bubbling in making delegation work.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mentions_event_bubbling",
+            "description": "Mentions that many DOM events bubble from the target up through ancestors."
+          },
+          {
+            "key": "notes_not_all_events_bubble",
+            "description": "Recognizes that not every event bubbles or that capture/listener options may matter."
+          }
+        ]
+      },
+      {
+        "label": "Compares event.target and event.currentTarget accurately.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "target_actual_source",
+            "description": "Explains that event.target is the actual element that initiated the event or the deepest relevant target."
+          },
+          {
+            "key": "current_target_listener_element",
+            "description": "Explains that event.currentTarget is the element whose listener is currently running."
+          }
+        ]
+      },
+      {
+        "label": "Names practical benefits and precautions: dynamic elements, fewer listeners, filtering, and not acting on the wrong child.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "benefit_dynamic_or_many_items",
+            "description": "Explains that delegation helps with dynamic lists or many child elements without one listener per item."
+          },
+          {
+            "key": "filters_target_safely",
+            "description": "Mentions filtering with matches, closest, dataset, or containment checks to avoid handling the wrong element."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains delegation through bubbling, target/currentTarget, dynamic-list benefits, and safe target filtering."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands parent listener delegation but misses one nuance such as currentTarget or filtering."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows delegation means fewer listeners but cannot explain propagation or target behavior."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Cannot distinguish the clicked element from the element where the listener was registered."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "In a ul click listener, what are event.target and event.currentTarget when the user clicks a button inside an li?",
+        "purpose": "Force a concrete target/currentTarget explanation."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "What check would you add so a parent listener only handles clicks on delete buttons?",
+        "purpose": "Check safe filtering and practical implementation."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Event delegation and DOM targets",
+        "displayQuestion": "What is event delegation? Why is it preferred over attaching event listeners to individual elements, and what is the difference between event.target and event.currentTarget?",
+        "displayIntent": "Check browser event propagation and practical DOM event handling.",
+        "guidance": [
+          "Explain bubbling and ancestor listeners.",
+          "Compare target and currentTarget.",
+          "Mention filtering for matching descendants."
+        ],
+        "commonMistakes": [
+          "Thinking target and currentTarget are always the same.",
+          "Forgetting dynamic elements.",
+          "Handling every child click without filtering."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "event_delegation"
+        }
+      },
+      "vi": {
+        "title": "Event delegation và DOM target",
+        "displayQuestion": "Event delegation là gì? Vì sao nó thường tốt hơn việc gắn listener cho từng element, và event.target khác event.currentTarget như thế nào?",
+        "displayIntent": "Kiểm tra hiểu biết về event propagation và xử lý DOM event thực tế.",
+        "guidance": [
+          "Giải thích bubbling và listener ở ancestor.",
+          "So sánh target với currentTarget.",
+          "Nhắc tới việc filter descendant phù hợp."
+        ],
+        "commonMistakes": [
+          "Nghĩ target và currentTarget luôn giống nhau.",
+          "Quên case element được thêm động.",
+          "Xử lý mọi click con mà không filter."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "event_delegation"
+        }
+      },
+      "ja": {
+        "title": "event delegation と DOM target",
+        "displayQuestion": "event delegation とは何ですか。個別の element に listener を付けるより好まれる理由と、event.target と event.currentTarget の違いを説明してください。",
+        "displayIntent": "browser event propagation と実践的な DOM event handling を確認する。",
+        "guidance": [
+          "bubbling と ancestor listener を説明する。",
+          "target と currentTarget を比較する。",
+          "対象 descendant を filter することに触れる。"
+        ],
+        "commonMistakes": [
+          "target と currentTarget が常に同じだと思う。",
+          "dynamic element の case を忘れる。",
+          "filter せずにすべての child click を処理する。"
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "event_delegation"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "MDN Event bubbling",
+        "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Scripting/Event_bubbling",
+        "note": "Used for event bubbling and delegation concepts."
+      },
+      {
+        "label": "MDN Event.target",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/API/Event/target",
+        "note": "Used for target/currentTarget distinction."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "JS_CORE_JR_TECH_VALUES_NULLISH_009",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "frontend",
+      "fullstack",
+      "backend"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "technical_depth",
+    "competencies": [
+      "technical_fundamentals",
+      "communication",
+      "problem_solving"
+    ],
+    "techTags": [
+      "javascript"
+    ],
+    "topicTags": [
+      "type_coercion"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate understands primitive values, objects, nullish values, and truthiness well enough to write safe conditionals and defaults.",
+    "primaryQuestion": "What are JavaScript primitive types, how are primitives different from objects, and how do null, undefined, truthy, and falsy values affect conditions?",
+    "expectedSignals": [
+      {
+        "label": "Lists the common primitive types and separates primitives from objects.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "lists_primitive_types",
+            "description": "Names string, number, bigint, boolean, undefined, symbol, and null as primitive values in JavaScript terminology."
+          },
+          {
+            "key": "separates_objects_from_primitives",
+            "description": "Explains that objects, arrays, and functions are reference-like objects rather than primitive values."
+          }
+        ]
+      },
+      {
+        "label": "Explains that primitives are immutable values while objects can have mutable properties.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "primitive_values_immutable",
+            "description": "States that primitive values themselves are immutable."
+          },
+          {
+            "key": "objects_mutable_properties",
+            "description": "States that object properties can usually be mutated through references to the object."
+          }
+        ]
+      },
+      {
+        "label": "Distinguishes null from undefined in intent and data modeling.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "undefined_missing_or_uninitialized",
+            "description": "Explains undefined as a missing, not-provided, or uninitialized value."
+          },
+          {
+            "key": "null_intentional_empty",
+            "description": "Explains null as an intentional empty or no-value marker when the code or API chooses to use it."
+          }
+        ]
+      },
+      {
+        "label": "Names common falsy values and connects truthiness to safe conditionals and defaults.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "names_common_falsy_values",
+            "description": "Names false, 0, -0, 0n, empty string, null, undefined, and NaN as common falsy values."
+          },
+          {
+            "key": "mentions_defaulting_bug",
+            "description": "Explains that using truthiness for defaults can accidentally replace valid values like 0 or empty string."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers primitives, objects, mutability, null versus undefined, falsy values, and defaulting pitfalls."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands most value categories but misses one nuance such as NaN falsiness or intentional null."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can list some types but cannot explain how value categories affect code behavior."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer mixes primitives, arrays, objects, null, and undefined without a coherent model."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Why is typeof [] not a good way to check whether a value is an array?",
+        "purpose": "Check separation between objects, arrays, and primitive type checks."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "If pageSize can validly be 0, why can pageSize || 20 be a bug?",
+        "purpose": "Connect truthiness to defaulting mistakes."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Values, nullish state, and truthiness",
+        "displayQuestion": "What are JavaScript primitive types, how are primitives different from objects, and how do null, undefined, truthy, and falsy values affect conditions?",
+        "displayIntent": "Check the candidate's value model for safe conditionals and defaults.",
+        "guidance": [
+          "Separate primitive values from objects.",
+          "Explain null versus undefined.",
+          "Name falsy values and defaulting pitfalls."
+        ],
+        "commonMistakes": [
+          "Calling arrays primitive values.",
+          "Treating null and undefined as always interchangeable.",
+          "Using truthiness when 0 or empty string are valid values."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "values"
+        }
+      },
+      "vi": {
+        "title": "Value, nullish state và truthiness",
+        "displayQuestion": "Primitive types trong JavaScript là gì, primitive khác object như thế nào, và null, undefined, truthy, falsy ảnh hưởng tới condition ra sao?",
+        "displayIntent": "Kiểm tra model về value để viết condition và default an toàn.",
+        "guidance": [
+          "Tách primitive value khỏi object.",
+          "Giải thích null và undefined.",
+          "Nêu falsy values và lỗi defaulting."
+        ],
+        "commonMistakes": [
+          "Gọi array là primitive value.",
+          "Xem null và undefined luôn thay thế được cho nhau.",
+          "Dùng truthiness khi 0 hoặc chuỗi rỗng là giá trị hợp lệ."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "values"
+        }
+      },
+      "ja": {
+        "title": "value、nullish state、truthiness",
+        "displayQuestion": "JavaScript の primitive types とは何ですか。primitive と object はどう違い、null、undefined、truthy、falsy は condition にどう影響しますか。",
+        "displayIntent": "安全な condition と default のための value model を確認する。",
+        "guidance": [
+          "primitive value と object を分ける。",
+          "null と undefined を説明する。",
+          "falsy values と defaulting の落とし穴を述べる。"
+        ],
+        "commonMistakes": [
+          "array を primitive value と呼ぶ。",
+          "null と undefined を常に同じものとして扱う。",
+          "0 や empty string が有効な値なのに truthiness を使う。"
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "values"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "MDN JavaScript data types and data structures",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures",
+        "note": "Used for primitive and object value categories."
+      },
+      {
+        "label": "MDN Truthy",
+        "url": "https://developer.mozilla.org/en-US/docs/Glossary/Truthy",
+        "note": "Used for truthy/falsy conditional behavior."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "JS_CORE_JR_TECH_CONST_MUTATION_010",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "frontend",
+      "fullstack",
+      "backend"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "technical_depth",
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving"
+    ],
+    "techTags": [
+      "javascript"
+    ],
+    "topicTags": [
+      "immutability"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate understands const as binding immutability rather than deep value immutability, especially for arrays and objects.",
+    "primaryQuestion": "Why can a const object or array still be mutated? What exactly does const protect?",
+    "expectedSignals": [
+      {
+        "label": "Explains that const prevents rebinding the variable name to a different value.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "const_prevents_reassignment",
+            "description": "States that assigning a new value to the const binding is not allowed."
+          },
+          {
+            "key": "binding_not_value",
+            "description": "Uses binding or variable reference language rather than saying const makes the value immutable."
+          }
+        ]
+      },
+      {
+        "label": "Explains that object and array contents can still be changed through the same reference.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "object_properties_can_change",
+            "description": "States that properties of an object stored in const can usually be mutated."
+          },
+          {
+            "key": "array_elements_can_change",
+            "description": "States that arrays declared with const can still be pushed to, sorted, or have elements changed."
+          }
+        ]
+      },
+      {
+        "label": "Distinguishes shallow prevention techniques from deep immutability.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "mentions_object_freeze_shallow",
+            "description": "Mentions Object.freeze or equivalent as a way to prevent some direct mutations, with shallow limitations."
+          },
+          {
+            "key": "mentions_nested_objects_need_more",
+            "description": "Explains that nested objects require additional handling for deep immutability."
+          }
+        ]
+      },
+      {
+        "label": "Connects the concept to safer state updates in application code.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "mentions_immutable_update_pattern",
+            "description": "Mentions creating a new object or array when immutable update semantics are desired."
+          },
+          {
+            "key": "mentions_mutation_side_effect_risk",
+            "description": "Explains that mutating shared objects can create unexpected side effects."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Clearly separates binding immutability from object mutation, mentions arrays, shallow freeze limits, and safe update patterns."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands const prevents reassignment but misses freeze depth or shared mutation consequences."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows const cannot be reassigned but incorrectly says objects are fully immutable."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Cannot explain why const user = {}; user.name = 'Ava' is allowed."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Is const user = {}; user.name = 'Ava' allowed? Is user = {} allowed? Why?",
+        "purpose": "Force the distinction between mutation and rebinding."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "Why can mutating a shared object be risky in UI state or request-handling code?",
+        "purpose": "Check practical consequence beyond syntax."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "const binding versus object mutation",
+        "displayQuestion": "Why can a const object or array still be mutated? What exactly does const protect?",
+        "displayIntent": "Check whether the candidate separates variable binding from object mutability.",
+        "guidance": [
+          "Explain const as protecting the binding.",
+          "Show object property or array mutation examples.",
+          "Mention immutable update patterns when mutation is unsafe."
+        ],
+        "commonMistakes": [
+          "Saying const makes objects deeply immutable.",
+          "Confusing reassignment with mutation.",
+          "Ignoring shared reference side effects."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "const"
+        }
+      },
+      "vi": {
+        "title": "const binding và object mutation",
+        "displayQuestion": "Vì sao const object hoặc array vẫn có thể bị mutate? const thật sự bảo vệ điều gì?",
+        "displayIntent": "Kiểm tra ứng viên có tách được variable binding khỏi object mutability hay không.",
+        "guidance": [
+          "Giải thích const bảo vệ binding.",
+          "Đưa ví dụ mutate property hoặc array.",
+          "Nhắc tới immutable update pattern khi mutation không an toàn."
+        ],
+        "commonMistakes": [
+          "Nói const làm object immutable sâu.",
+          "Nhầm reassignment với mutation.",
+          "Bỏ qua side effect từ shared reference."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "const"
+        }
+      },
+      "ja": {
+        "title": "const binding と object mutation",
+        "displayQuestion": "const の object や array が mutate できるのはなぜですか。const は正確には何を守りますか。",
+        "displayIntent": "variable binding と object mutability を分けて説明できるかを確認する。",
+        "guidance": [
+          "const は binding を守ることを説明する。",
+          "object property や array mutation の例を示す。",
+          "mutation が危険な時の immutable update pattern に触れる。"
+        ],
+        "commonMistakes": [
+          "const が object を深く immutable にすると言う。",
+          "reassignment と mutation を混同する。",
+          "shared reference の side effect を無視する。"
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "const"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "MDN const",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/const",
+        "note": "Used for const binding behavior."
+      },
+      {
+        "label": "MDN Object.freeze",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze",
+        "note": "Used for shallow freezing and object immutability discussion."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "JS_CORE_JR_TECH_FUNCTION_FORMS_011",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "frontend",
+      "fullstack",
+      "backend"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "technical_depth",
+    "competencies": [
+      "technical_fundamentals",
+      "communication"
+    ],
+    "techTags": [
+      "javascript"
+    ],
+    "topicTags": [
+      "scope",
+      "this_binding",
+      "hoisting_tdz"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate can choose between function declarations, function expressions, and arrow functions based on hoisting, this, arguments, and constructor behavior.",
+    "primaryQuestion": "What is the difference between a function declaration, a function expression, and an arrow function?",
+    "expectedSignals": [
+      {
+        "label": "Distinguishes declarations from expressions by naming, assignment, and hoisting behavior.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "function_declaration_hoisted",
+            "description": "Explains that function declarations are generally available throughout their scope before their source position."
+          },
+          {
+            "key": "function_expression_assigned_value",
+            "description": "Explains that function expressions are values assigned to variables or passed around, with access depending on the variable declaration."
+          }
+        ]
+      },
+      {
+        "label": "Explains arrow functions as concise function expressions with lexical this.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "arrow_is_expression",
+            "description": "States that an arrow function is an expression, commonly used as a callback or small function value."
+          },
+          {
+            "key": "arrow_lexical_this",
+            "description": "Explains that arrow functions capture this from the surrounding scope."
+          }
+        ]
+      },
+      {
+        "label": "Mentions arguments and constructor differences for arrow functions.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "arrow_no_own_arguments",
+            "description": "Mentions that arrow functions do not have their own arguments object and rest parameters are preferred."
+          },
+          {
+            "key": "arrow_not_constructor",
+            "description": "Mentions that arrow functions cannot be used as constructors with new."
+          }
+        ]
+      },
+      {
+        "label": "Chooses a function form based on readability, callbacks, methods, and team conventions.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "uses_declaration_for_named_units",
+            "description": "Explains why a declaration can be clearer for named reusable functions."
+          },
+          {
+            "key": "avoids_arrow_for_methods_needing_dynamic_this",
+            "description": "Explains why a regular method/function is better when dynamic this or construction is required."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Compares declaration, expression, and arrow function behavior across hoisting, this, arguments, constructors, and practical selection."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main forms but misses one important arrow-function limitation."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Treats arrow functions as only shorter syntax without understanding behavioral differences."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Cannot tell which forms are hoisted or how this differs."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Why might an arrow function be a bad choice for an object method that needs this to point at the object?",
+        "purpose": "Check practical lexical this consequences."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "When would you prefer a named function declaration over an inline arrow callback?",
+        "purpose": "Probe readability and debugging judgment, not only syntax recall."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Function declarations, expressions, and arrows",
+        "displayQuestion": "What is the difference between a function declaration, a function expression, and an arrow function?",
+        "displayIntent": "Check whether the candidate understands function forms beyond syntax.",
+        "guidance": [
+          "Compare hoisting and assignment behavior.",
+          "Explain lexical this in arrow functions.",
+          "Mention arguments and constructor limitations."
+        ],
+        "commonMistakes": [
+          "Saying arrow functions are only shorter functions.",
+          "Ignoring this and arguments behavior.",
+          "Using arrows for methods that require dynamic this."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "functions"
+        }
+      },
+      "vi": {
+        "title": "Function declaration, expression và arrow",
+        "displayQuestion": "Function declaration, function expression và arrow function khác nhau như thế nào?",
+        "displayIntent": "Kiểm tra ứng viên hiểu function form vượt khỏi cú pháp viết ngắn.",
+        "guidance": [
+          "So sánh hoisting và hành vi assignment.",
+          "Giải thích lexical this trong arrow function.",
+          "Nhắc tới arguments và giới hạn constructor."
+        ],
+        "commonMistakes": [
+          "Nói arrow function chỉ là function viết ngắn hơn.",
+          "Bỏ qua this và arguments behavior.",
+          "Dùng arrow cho method cần dynamic this."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "functions"
+        }
+      },
+      "ja": {
+        "title": "function declaration、expression、arrow",
+        "displayQuestion": "function declaration、function expression、arrow function は何が違いますか。",
+        "displayIntent": "短い syntax だけでなく function form の振る舞いを理解しているかを確認する。",
+        "guidance": [
+          "hoisting と assignment behavior を比較する。",
+          "arrow function の lexical this を説明する。",
+          "arguments と constructor の制限に触れる。"
+        ],
+        "commonMistakes": [
+          "arrow function は短い function だけだと言う。",
+          "this と arguments behavior を無視する。",
+          "dynamic this が必要な method に arrow を使う。"
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "functions"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "MDN Functions",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions",
+        "note": "Used for function declarations and expressions."
+      },
+      {
+        "label": "MDN Arrow function expressions",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions",
+        "note": "Used for arrow function behavior."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "JS_CORE_JR_DEBUG_REFERENCE_ARGUMENTS_012",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "frontend",
+      "fullstack",
+      "backend"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "debugging",
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving"
+    ],
+    "techTags": [
+      "javascript"
+    ],
+    "topicTags": [
+      "immutability",
+      "scope"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Evaluate whether the candidate can reason about function arguments, primitive values, object references, and mutation side effects without using imprecise pass-by-reference language.",
+    "primaryQuestion": "How does JavaScript pass arguments to functions? Explain primitive values versus object-reference behavior.",
+    "expectedSignals": [
+      {
+        "label": "Explains that function parameters receive values, and an object value is a reference to an object.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "parameters_receive_values",
+            "description": "Explains that JavaScript passes values into parameters."
+          },
+          {
+            "key": "object_value_is_reference",
+            "description": "Explains that the value for an object is a reference-like handle to the same object."
+          }
+        ]
+      },
+      {
+        "label": "Distinguishes reassignment of a parameter from mutating the object it refers to.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "parameter_reassignment_local",
+            "description": "States that assigning parameter = newValue does not reassign the caller's variable."
+          },
+          {
+            "key": "object_mutation_visible",
+            "description": "States that changing a property on the object can be visible to other references to that object."
+          }
+        ]
+      },
+      {
+        "label": "Explains primitive behavior: changing a parameter holding a primitive does not change the original variable.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "primitive_parameter_independent",
+            "description": "Explains that reassigning a primitive parameter only changes the local parameter binding."
+          },
+          {
+            "key": "uses_small_code_example",
+            "description": "Can illustrate with a small number or string example."
+          }
+        ]
+      },
+      {
+        "label": "Connects the model to defensive copying, pure functions, or avoiding hidden mutation bugs.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "mentions_copy_before_mutation",
+            "description": "Mentions copying or cloning before mutation when callers should not observe changes."
+          },
+          {
+            "key": "mentions_pure_function_or_side_effect",
+            "description": "Explains that mutating input objects creates side effects that callers may not expect."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Accurately explains parameter values, object reference values, reassignment versus mutation, primitives, and side-effect prevention."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands object mutation visibility but uses slightly imprecise wording or misses defensive copying."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Says primitives pass by value and objects pass by reference but cannot predict reassignment versus mutation behavior."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Cannot explain whether a function mutating obj.name affects the caller's object."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "If a function does user.name = 'Ava', does the caller see it? What if the function does user = {}?",
+        "purpose": "Force distinction between object mutation and parameter reassignment."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "When would you copy an object before changing it inside a function?",
+        "purpose": "Connect argument behavior to API design and side-effect prevention."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Arguments, references, and mutation",
+        "displayQuestion": "How does JavaScript pass arguments to functions? Explain primitive values versus object-reference behavior.",
+        "displayIntent": "Check whether the candidate can reason about mutation side effects through function parameters.",
+        "guidance": [
+          "Separate parameter reassignment from object mutation.",
+          "Use one primitive example and one object example.",
+          "Mention copying when mutation should not escape."
+        ],
+        "commonMistakes": [
+          "Using pass-by-reference wording without explaining behavior.",
+          "Thinking parameter reassignment changes the caller's variable.",
+          "Ignoring hidden side effects from mutating input objects."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "debugging",
+          "topic": "references"
+        }
+      },
+      "vi": {
+        "title": "Argument, reference và mutation",
+        "displayQuestion": "JavaScript truyền argument vào function như thế nào? Hãy giải thích primitive value so với hành vi object-reference.",
+        "displayIntent": "Kiểm tra ứng viên có suy luận được side effect khi mutate qua function parameter hay không.",
+        "guidance": [
+          "Tách parameter reassignment khỏi object mutation.",
+          "Dùng một ví dụ primitive và một ví dụ object.",
+          "Nhắc tới copy khi mutation không nên thoát ra ngoài."
+        ],
+        "commonMistakes": [
+          "Dùng pass-by-reference nhưng không giải thích hành vi.",
+          "Nghĩ parameter reassignment đổi biến của caller.",
+          "Bỏ qua side effect khi mutate input object."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "debugging",
+          "topic": "references"
+        }
+      },
+      "ja": {
+        "title": "arguments、references、mutation",
+        "displayQuestion": "JavaScript は function に arguments をどのように渡しますか。primitive value と object-reference behavior を説明してください。",
+        "displayIntent": "function parameter 経由の mutation side effect を reasoning できるかを確認する。",
+        "guidance": [
+          "parameter reassignment と object mutation を分ける。",
+          "primitive の例と object の例を一つずつ使う。",
+          "mutation を外に出したくない時の copy に触れる。"
+        ],
+        "commonMistakes": [
+          "behavior を説明せずに pass-by-reference とだけ言う。",
+          "parameter reassignment が caller の variable を変えると思う。",
+          "input object mutation の hidden side effect を無視する。"
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "debugging",
+          "topic": "references"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "MDN Functions",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions",
+        "note": "Used for parameter and function behavior context."
+      },
+      {
+        "label": "MDN JavaScript data types and data structures",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures",
+        "note": "Used for primitive and object value categories."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "JS_CORE_JR_TECH_ARRAY_TRANSFORMS_013",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "frontend",
+      "fullstack",
+      "backend"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "technical_depth",
+    "competencies": [
+      "technical_fundamentals",
+      "communication",
+      "problem_solving"
+    ],
+    "techTags": [
+      "javascript"
+    ],
+    "topicTags": [
+      "array_iteration"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate understands array iteration methods as data-flow tools and can choose the right one based on whether they transform, filter, reduce, or perform side effects.",
+    "primaryQuestion": "Compare for...of, for...in, forEach(), map(), filter(), and reduce(). When should you use each?",
+    "expectedSignals": [
+      {
+        "label": "Separates array value iteration from object key/property iteration.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "for_of_values_iterables",
+            "description": "Explains that for...of iterates values from iterable objects such as arrays."
+          },
+          {
+            "key": "for_in_keys_properties",
+            "description": "Explains that for...in iterates enumerable property keys and is usually not the first choice for arrays."
+          }
+        ]
+      },
+      {
+        "label": "Distinguishes forEach from map by side effects versus returning a transformed array.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "foreach_for_side_effects",
+            "description": "States that forEach is for running a function for each item and returns undefined."
+          },
+          {
+            "key": "map_returns_new_array",
+            "description": "States that map returns a new array of transformed values."
+          }
+        ]
+      },
+      {
+        "label": "Explains filter as selecting items and reduce as accumulating a single result or structured aggregate.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "filter_selects_subset",
+            "description": "Explains that filter returns items that pass a predicate."
+          },
+          {
+            "key": "reduce_accumulates_result",
+            "description": "Explains that reduce uses an accumulator to derive a result such as sum, map-by-id, or grouped data."
+          }
+        ]
+      },
+      {
+        "label": "Mentions readability and choosing simple loops when transformation methods become too clever.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "chooses_based_on_intent",
+            "description": "Chooses the method based on the intended operation rather than habit."
+          },
+          {
+            "key": "mentions_readability_tradeoff",
+            "description": "Mentions that a clear for...of loop can be better than an overly complex reduce."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Accurately maps each iteration option to intent, return behavior, side effects, and readability trade-offs."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Correctly distinguishes map, filter, and forEach but misses for...in or reduce readability nuance."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Knows names of methods but chooses them randomly or cannot explain return values."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Cannot tell which method returns a new array or when for...in is inappropriate for arrays."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "If you need an array of user names from an array of users, why is map a better signal than forEach?",
+        "purpose": "Check method intent and return behavior."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "When would you replace a reduce with a plain for...of loop?",
+        "purpose": "Probe practical readability judgment."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Choosing array iteration tools",
+        "displayQuestion": "Compare for...of, for...in, forEach(), map(), filter(), and reduce(). When should you use each?",
+        "displayIntent": "Check whether the candidate chooses iteration APIs by intent, not syntax habit.",
+        "guidance": [
+          "Separate values, keys, side effects, transforms, filters, and accumulation.",
+          "Mention what returns a new array.",
+          "Discuss readability when reduce becomes too clever."
+        ],
+        "commonMistakes": [
+          "Using for...in as the default array loop.",
+          "Using map only for side effects.",
+          "Writing hard-to-read reduce logic for simple loops."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "arrays"
+        }
+      },
+      "vi": {
+        "title": "Chọn công cụ iterate array",
+        "displayQuestion": "Hãy so sánh for...of, for...in, forEach(), map(), filter(), reduce(). Khi nào nên dùng từng loại?",
+        "displayIntent": "Kiểm tra ứng viên chọn API iterate theo intent, không chỉ theo thói quen cú pháp.",
+        "guidance": [
+          "Tách value, key, side effect, transform, filter và accumulation.",
+          "Nhắc rõ method nào trả về array mới.",
+          "Bàn về readability khi reduce quá khó đọc."
+        ],
+        "commonMistakes": [
+          "Dùng for...in làm loop mặc định cho array.",
+          "Dùng map chỉ để tạo side effect.",
+          "Viết reduce khó đọc cho logic có thể là loop đơn giản."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "arrays"
+        }
+      },
+      "ja": {
+        "title": "array iteration tool の選び方",
+        "displayQuestion": "for...of、for...in、forEach()、map()、filter()、reduce() を比較してください。それぞれいつ使いますか。",
+        "displayIntent": "syntax の癖ではなく intent によって iteration API を選べるかを確認する。",
+        "guidance": [
+          "values、keys、side effects、transforms、filters、accumulation を分ける。",
+          "新しい array を返す method を明確にする。",
+          "reduce が複雑すぎる時の readability を話す。"
+        ],
+        "commonMistakes": [
+          "array loop の default として for...in を使う。",
+          "side effect だけのために map を使う。",
+          "単純な loop で済む処理を読みにくい reduce にする。"
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "arrays"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "MDN Array",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array",
+        "note": "Used for array iteration methods."
+      },
+      {
+        "label": "MDN for...of",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...of",
+        "note": "Used for iterable value iteration behavior."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "JS_CORE_JR_DEBUG_SHALLOW_COPY_014",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "frontend",
+      "fullstack",
+      "backend"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "debugging",
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving",
+      "system_thinking"
+    ],
+    "techTags": [
+      "javascript"
+    ],
+    "topicTags": [
+      "immutability",
+      "array_iteration"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Check whether the candidate can reason about shallow copies, nested references, and mutation bugs when using object spread or Object.assign.",
+    "primaryQuestion": "What is a shallow copy? Compare object spread ({ ...obj }) and Object.assign(). What happens with nested objects?",
+    "expectedSignals": [
+      {
+        "label": "Defines shallow copy as copying top-level properties while nested objects remain shared references.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "copies_top_level",
+            "description": "Explains that a shallow copy creates a new outer object or array with top-level entries copied."
+          },
+          {
+            "key": "nested_references_shared",
+            "description": "Explains that nested objects or arrays are still shared references."
+          }
+        ]
+      },
+      {
+        "label": "Compares object spread and Object.assign as common shallow-copy tools.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "spread_shallow_copy",
+            "description": "States that object spread performs a shallow copy of enumerable own properties into a new object."
+          },
+          {
+            "key": "object_assign_shallow_copy",
+            "description": "States that Object.assign copies enumerable own properties into a target object and is shallow."
+          }
+        ]
+      },
+      {
+        "label": "Predicts mutation behavior for nested objects after a shallow copy.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "mutating_nested_affects_both",
+            "description": "Explains that changing copy.profile.name can affect original.profile.name if profile is shared."
+          },
+          {
+            "key": "replacing_nested_breaks_link_for_that_property",
+            "description": "Explains that replacing copy.profile with a new object changes the copy's top-level reference only."
+          }
+        ]
+      },
+      {
+        "label": "Names appropriate approaches when deep independence is needed.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "mentions_structured_clone_or_specific_clone",
+            "description": "Mentions structuredClone, library helpers, or explicit cloning of the nested parts that need independence."
+          },
+          {
+            "key": "mentions_data_shape_tradeoff",
+            "description": "Explains that deep cloning has trade-offs and should match the data shape and mutation needs."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains shallow copy mechanics, spread versus Object.assign, nested reference behavior, and when to use explicit or structured cloning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands nested references stay shared but misses one tool or trade-off detail."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Thinks object spread creates a fully independent deep copy."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Cannot predict whether mutating a nested object affects the original after copying."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "If const copy = { ...user } and copy.address.city is changed, when would user.address.city also change?",
+        "purpose": "Force nested reference reasoning."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "When would structuredClone be reasonable, and when would you clone only one nested branch instead?",
+        "purpose": "Check practical clone strategy judgment."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Shallow copy and nested references",
+        "displayQuestion": "What is a shallow copy? Compare object spread ({ ...obj }) and Object.assign(). What happens with nested objects?",
+        "displayIntent": "Check whether the candidate can debug mutation caused by shared nested references.",
+        "guidance": [
+          "Define top-level copy versus nested shared references.",
+          "Compare object spread and Object.assign.",
+          "Mention structuredClone or explicit nested copying when needed."
+        ],
+        "commonMistakes": [
+          "Assuming spread is a deep clone.",
+          "Forgetting nested arrays or objects remain shared.",
+          "Deep cloning everything without considering cost or data shape."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "debugging",
+          "topic": "shallow_copy"
+        }
+      },
+      "vi": {
+        "title": "Shallow copy và nested reference",
+        "displayQuestion": "Shallow copy là gì? Hãy so sánh object spread ({ ...obj }) và Object.assign(). Chuyện gì xảy ra với nested object?",
+        "displayIntent": "Kiểm tra ứng viên có debug được mutation do nested reference dùng chung hay không.",
+        "guidance": [
+          "Định nghĩa top-level copy so với nested reference dùng chung.",
+          "So sánh object spread và Object.assign.",
+          "Nhắc tới structuredClone hoặc copy nested branch khi cần."
+        ],
+        "commonMistakes": [
+          "Tưởng spread là deep clone.",
+          "Quên nested array hoặc object vẫn dùng chung.",
+          "Deep clone mọi thứ mà không cân nhắc cost hoặc data shape."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "debugging",
+          "topic": "shallow_copy"
+        }
+      },
+      "ja": {
+        "title": "shallow copy と nested references",
+        "displayQuestion": "shallow copy とは何ですか。object spread ({ ...obj }) と Object.assign() を比較し、nested objects では何が起きるか説明してください。",
+        "displayIntent": "shared nested references による mutation bug を debug できるかを確認する。",
+        "guidance": [
+          "top-level copy と shared nested reference を定義する。",
+          "object spread と Object.assign を比較する。",
+          "必要な時の structuredClone や explicit nested copy に触れる。"
+        ],
+        "commonMistakes": [
+          "spread を deep clone だと思う。",
+          "nested array や object が共有されたままだと忘れる。",
+          "cost や data shape を考えずにすべて deep clone する。"
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "debugging",
+          "topic": "shallow_copy"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "MDN Spread syntax",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax",
+        "note": "Used for object and array spread behavior."
+      },
+      {
+        "label": "MDN Object.assign",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign",
+        "note": "Used for shallow assignment behavior."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "JS_CORE_JR_DEBUG_PROMISE_ASYNC_015",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "frontend",
+      "fullstack",
+      "backend"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "debugging",
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving",
+      "communication"
+    ],
+    "techTags": [
+      "javascript"
+    ],
+    "topicTags": [
+      "async_programming",
+      "error_handling"
+    ],
+    "difficulty": 3,
+    "conversationDepth": "mid",
+    "intent": "Evaluate whether the candidate understands promises, async/await, error propagation, and why returning or awaiting async work prevents floating promise bugs.",
+    "primaryQuestion": "Explain the three Promise states. How do then(), catch(), finally(), and async/await relate to promises, and what is a floating promise?",
+    "expectedSignals": [
+      {
+        "label": "Explains the three promise states: pending, fulfilled, and rejected.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "defines_pending",
+            "description": "Defines pending as not yet settled."
+          },
+          {
+            "key": "defines_fulfilled_rejected",
+            "description": "Defines fulfilled as successful settlement with a value and rejected as failed settlement with a reason."
+          }
+        ]
+      },
+      {
+        "label": "Explains then, catch, and finally as chainable reactions to promise settlement.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "then_transforms_or_continues",
+            "description": "Explains that then handles fulfillment and can return a value or another promise for chaining."
+          },
+          {
+            "key": "catch_finally_roles",
+            "description": "Explains that catch handles rejection and finally runs cleanup regardless of fulfillment or rejection."
+          }
+        ]
+      },
+      {
+        "label": "Connects async/await to promises and error handling with try/catch.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "async_returns_promise",
+            "description": "States that an async function returns a promise and await pauses the async function until settlement."
+          },
+          {
+            "key": "try_catch_rejected_await",
+            "description": "Explains that try/catch can handle rejected promises when using await."
+          }
+        ]
+      },
+      {
+        "label": "Explains floating promises and why returning or awaiting promises matters.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "defines_floating_promise",
+            "description": "Defines a floating promise as async work started without being returned, awaited, or otherwise observed."
+          },
+          {
+            "key": "explains_lost_error_or_ordering",
+            "description": "Explains that floating promises can cause lost errors, premature completion, or out-of-order side effects."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Explains promise states, chaining, error propagation, async/await equivalence, try/catch, and floating promise consequences."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Understands promises and async/await but misses one practical bug such as not returning a promise from then."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Can use async/await syntax but cannot explain rejection flow or floating promises."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Cannot describe what happens when an awaited promise rejects."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Inside a then callback, why does returning fetchProfile(user.id) matter for the next then in the chain?",
+        "purpose": "Check promise chaining and floating promise understanding."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "What bug can happen if an async save() is called but not awaited before showing a success message?",
+        "purpose": "Connect floating promises to user-visible ordering and error bugs."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Promises, async/await, and floating work",
+        "displayQuestion": "Explain the three Promise states. How do then(), catch(), finally(), and async/await relate to promises, and what is a floating promise?",
+        "displayIntent": "Check whether the candidate can reason about async completion and error propagation.",
+        "guidance": [
+          "Define pending, fulfilled, and rejected.",
+          "Explain chaining and returning promises from then.",
+          "Connect async/await to promises and try/catch.",
+          "Describe floating promise risks."
+        ],
+        "commonMistakes": [
+          "Thinking async/await is not based on promises.",
+          "Not returning promises from then callbacks.",
+          "Showing success before async work has actually finished."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "debugging",
+          "topic": "promises"
+        }
+      },
+      "vi": {
+        "title": "Promise, async/await và async work bị thả nổi",
+        "displayQuestion": "Hãy giải thích ba trạng thái của Promise. then(), catch(), finally() và async/await liên quan tới promise như thế nào, và floating promise là gì?",
+        "displayIntent": "Kiểm tra ứng viên có suy luận được async completion và error propagation hay không.",
+        "guidance": [
+          "Định nghĩa pending, fulfilled và rejected.",
+          "Giải thích chaining và việc return promise trong then.",
+          "Kết nối async/await với promise và try/catch.",
+          "Mô tả rủi ro của floating promise."
+        ],
+        "commonMistakes": [
+          "Nghĩ async/await không dựa trên promise.",
+          "Không return promise từ then callback.",
+          "Hiển thị success trước khi async work thật sự hoàn tất."
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "debugging",
+          "topic": "promises"
+        }
+      },
+      "ja": {
+        "title": "promises、async/await、floating work",
+        "displayQuestion": "Promise の三つの状態を説明してください。then(), catch(), finally(), async/await は promise とどう関係し、floating promise とは何ですか。",
+        "displayIntent": "async completion と error propagation を reasoning できるかを確認する。",
+        "guidance": [
+          "pending、fulfilled、rejected を定義する。",
+          "chaining と then から promise を return する意味を説明する。",
+          "async/await と promise、try/catch をつなげる。",
+          "floating promise のリスクを説明する。"
+        ],
+        "commonMistakes": [
+          "async/await は promise に基づかないと思う。",
+          "then callback から promise を return しない。",
+          "async work が終わる前に success を表示する。"
+        ],
+        "labels": {
+          "role": "Frontend/Fullstack/Backend",
+          "level": "Junior",
+          "type": "debugging",
+          "topic": "promises"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "MDN Promise",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise",
+        "note": "Used for promise states and chaining."
+      },
+      {
+        "label": "MDN async function",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function",
+        "note": "Used for async/await and promise relationship."
+      }
+    ],
+    "status": "active"
+  }
+]

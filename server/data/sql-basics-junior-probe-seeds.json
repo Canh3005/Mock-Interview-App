@@ -1,0 +1,2984 @@
+[
+  {
+    "code": "SQL_JR_JOINS_001",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "data"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "technical_depth",
+    "competencies": [
+      "technical_fundamentals",
+      "communication"
+    ],
+    "techTags": [
+      "sql",
+      "postgresql"
+    ],
+    "topicTags": [
+      "relational_model",
+      "joins"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate can reason about matching and non-matching rows when combining tables.",
+    "primaryQuestion": "What is the difference between INNER JOIN, LEFT JOIN, RIGHT JOIN, and FULL OUTER JOIN?",
+    "expectedSignals": [
+      {
+        "label": "Explains INNER JOIN returns only matching rows from both sides.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "rows_without_a_match_on_either_table_1",
+            "description": "Rows without a match on either table are excluded."
+          },
+          {
+            "key": "uses_a_relationship_such_as_users_an_2",
+            "description": "Uses a relationship such as users and orders as example."
+          }
+        ]
+      },
+      {
+        "label": "Explains LEFT JOIN keeps all left table rows.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "matching_right_rows_are_included_whe_1",
+            "description": "Matching right rows are included when present."
+          },
+          {
+            "key": "right_side_columns_are_null_when_no__2",
+            "description": "Right-side columns are NULL when no match exists."
+          }
+        ]
+      },
+      {
+        "label": "Explains RIGHT and FULL OUTER joins.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "right_join_is_the_mirror_of_left_joi_1",
+            "description": "RIGHT JOIN is the mirror of LEFT JOIN and keeps all right-side rows."
+          },
+          {
+            "key": "full_outer_join_keeps_unmatched_rows_2",
+            "description": "FULL OUTER JOIN keeps unmatched rows from both sides."
+          }
+        ]
+      },
+      {
+        "label": "Chooses join type based on question being asked.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "uses_left_join_for_users_with_no_ord_1",
+            "description": "Uses LEFT JOIN for users with no orders scenarios."
+          },
+          {
+            "key": "avoids_using_inner_join_when_missing_2",
+            "description": "Avoids using INNER JOIN when missing related records must be preserved."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Which join would you use to find users who have no orders?",
+        "purpose": "Check LEFT JOIN null filtering."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "What happens to right-table columns in a LEFT JOIN when there is no match?",
+        "purpose": "Check null behavior."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "SQL join types",
+        "displayQuestion": "What is the difference between INNER JOIN, LEFT JOIN, RIGHT JOIN, and FULL OUTER JOIN?",
+        "displayIntent": "Check whether the candidate can reason about matching and non-matching rows when combining tables.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "joins"
+        }
+      },
+      "vi": {
+        "title": "Các loại SQL JOIN",
+        "displayQuestion": "INNER JOIN, LEFT JOIN, RIGHT JOIN và FULL OUTER JOIN khác nhau như thế nào?",
+        "displayIntent": "Check whether the candidate can reason about matching and non-matching rows when combining tables.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "joins"
+        }
+      },
+      "ja": {
+        "title": "SQL join types",
+        "displayQuestion": "次の点を説明してください: What is the difference between INNER JOIN, LEFT JOIN, RIGHT JOIN, and FULL OUTER JOIN?",
+        "displayIntent": "この質問は joins を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "joins"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "PostgreSQL Documentation",
+        "url": "https://www.postgresql.org/docs/current/",
+        "note": "Used for SQL behavior, constraints, joins, indexes, and EXPLAIN concepts."
+      },
+      {
+        "label": "OWASP SQL Injection Prevention Cheat Sheet",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html",
+        "note": "Used for parameterized query and SQL injection prevention guidance."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "SQL_JR_WHERE_HAVING_GROUP_002",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "data"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "technical_depth",
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving"
+    ],
+    "techTags": [
+      "sql"
+    ],
+    "topicTags": [
+      "relational_model",
+      "aggregation"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Assess whether the candidate can filter rows before grouping and groups after aggregation.",
+    "primaryQuestion": "What is the difference between WHERE and HAVING, and how do GROUP BY and aggregate functions work?",
+    "expectedSignals": [
+      {
+        "label": "Explains WHERE filters rows before grouping.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "where_conditions_apply_to_individual_1",
+            "description": "WHERE conditions apply to individual rows from FROM/JOIN."
+          },
+          {
+            "key": "where_cannot_directly_filter_by_aggr_2",
+            "description": "WHERE cannot directly filter by aggregate result such as COUNT(*) > 3."
+          }
+        ]
+      },
+      {
+        "label": "Explains GROUP BY groups rows for aggregate calculation.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "group_by_defines_one_result_row_per__1",
+            "description": "GROUP BY defines one result row per group key."
+          },
+          {
+            "key": "count_sum_avg_min_and_max_summarize__2",
+            "description": "COUNT, SUM, AVG, MIN, and MAX summarize rows in each group."
+          }
+        ]
+      },
+      {
+        "label": "Explains HAVING filters groups after aggregation.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "having_can_filter_on_aggregate_expre_1",
+            "description": "HAVING can filter on aggregate expressions."
+          },
+          {
+            "key": "example_users_with_count_orders_id_0_2",
+            "description": "Example: users with COUNT(orders.id) > 0."
+          }
+        ]
+      },
+      {
+        "label": "Mentions SELECT list rules.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "non_aggregated_selected_columns_shou_1",
+            "description": "Non-aggregated selected columns should be grouped or functionally dependent depending on database rules."
+          },
+          {
+            "key": "avoids_selecting_arbitrary_ungrouped_2",
+            "description": "Avoids selecting arbitrary ungrouped columns."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "How would you count orders per user?",
+        "purpose": "Check GROUP BY use."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Why does COUNT(*) > 5 belong in HAVING rather than WHERE?",
+        "purpose": "Probe logical order."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "WHERE, HAVING, GROUP BY, and aggregates",
+        "displayQuestion": "What is the difference between WHERE and HAVING, and how do GROUP BY and aggregate functions work?",
+        "displayIntent": "Assess whether the candidate can filter rows before grouping and groups after aggregation.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "grouping"
+        }
+      },
+      "vi": {
+        "title": "WHERE, HAVING, GROUP BY và aggregate",
+        "displayQuestion": "WHERE khác HAVING như thế nào, và GROUP BY cùng aggregate function hoạt động ra sao?",
+        "displayIntent": "Assess whether the candidate can filter rows before grouping and groups after aggregation.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "grouping"
+        }
+      },
+      "ja": {
+        "title": "WHERE, HAVING, GROUP BY, and aggregates",
+        "displayQuestion": "次の点を説明してください: What is the difference between WHERE and HAVING, and how do GROUP BY and aggregate functions work?",
+        "displayIntent": "この質問は grouping を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "grouping"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "PostgreSQL Documentation",
+        "url": "https://www.postgresql.org/docs/current/",
+        "note": "Used for SQL behavior, constraints, joins, indexes, and EXPLAIN concepts."
+      },
+      {
+        "label": "OWASP SQL Injection Prevention Cheat Sheet",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html",
+        "note": "Used for parameterized query and SQL injection prevention guidance."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "SQL_JR_SUBQUERY_JOIN_003",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "data"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "trade_off",
+    "competencies": [
+      "technical_fundamentals",
+      "trade_off_analysis"
+    ],
+    "techTags": [
+      "sql"
+    ],
+    "topicTags": [
+      "relational_model",
+      "query_planning",
+      "joins"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Check whether the candidate can choose readable and efficient SQL patterns for related data filtering.",
+    "primaryQuestion": "What is a subquery, what is a correlated subquery, and when would you use a subquery versus a JOIN?",
+    "expectedSignals": [
+      {
+        "label": "Defines subquery as a query nested inside another query.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "subqueries_can_appear_in_select_from_1",
+            "description": "Subqueries can appear in SELECT, FROM, WHERE, or EXISTS contexts."
+          },
+          {
+            "key": "non_correlated_subquery_can_run_inde_2",
+            "description": "Non-correlated subquery can run independently of the outer row."
+          }
+        ]
+      },
+      {
+        "label": "Defines correlated subquery.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "correlated_subquery_references_colum_1",
+            "description": "Correlated subquery references columns from the outer query."
+          },
+          {
+            "key": "it_is_logically_evaluated_per_outer__2",
+            "description": "It is logically evaluated per outer row, though optimizers may transform it."
+          }
+        ]
+      },
+      {
+        "label": "Compares subquery and JOIN use cases.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "join_is_natural_when_returning_colum_1",
+            "description": "JOIN is natural when returning columns from related tables."
+          },
+          {
+            "key": "exists_or_subquery_can_be_clear_for__2",
+            "description": "EXISTS or subquery can be clear for existence filtering."
+          }
+        ]
+      },
+      {
+        "label": "Mentions performance depends on plan and indexes.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "does_not_assume_subquery_is_always_s_1",
+            "description": "Does not assume subquery is always slower or JOIN is always better."
+          },
+          {
+            "key": "uses_explain_and_indexes_to_verify_r_2",
+            "description": "Uses EXPLAIN and indexes to verify real performance."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "How would you find users who have at least one paid order?",
+        "purpose": "Check EXISTS/JOIN reasoning."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "Why should you verify with EXPLAIN instead of assuming every subquery is slow?",
+        "purpose": "Probe optimizer awareness."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Subqueries and joins",
+        "displayQuestion": "What is a subquery, what is a correlated subquery, and when would you use a subquery versus a JOIN?",
+        "displayIntent": "Check whether the candidate can choose readable and efficient SQL patterns for related data filtering.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Junior",
+          "type": "trade_off",
+          "topic": "subqueries"
+        }
+      },
+      "vi": {
+        "title": "Subquery và JOIN",
+        "displayQuestion": "Subquery là gì, correlated subquery là gì, và khi nào dùng subquery thay vì JOIN?",
+        "displayIntent": "Check whether the candidate can choose readable and efficient SQL patterns for related data filtering.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Junior",
+          "type": "trade_off",
+          "topic": "subqueries"
+        }
+      },
+      "ja": {
+        "title": "Subqueries and joins",
+        "displayQuestion": "次の点を説明してください: What is a subquery, what is a correlated subquery, and when would you use a subquery versus a JOIN?",
+        "displayIntent": "この質問は subqueries を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Junior",
+          "type": "trade_off",
+          "topic": "subqueries"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "PostgreSQL Documentation",
+        "url": "https://www.postgresql.org/docs/current/",
+        "note": "Used for SQL behavior, constraints, joins, indexes, and EXPLAIN concepts."
+      },
+      {
+        "label": "OWASP SQL Injection Prevention Cheat Sheet",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html",
+        "note": "Used for parameterized query and SQL injection prevention guidance."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "SQL_JR_INDEX_TRADEOFF_004",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "data"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "trade_off",
+    "competencies": [
+      "technical_fundamentals",
+      "trade_off_analysis"
+    ],
+    "techTags": [
+      "sql",
+      "postgresql"
+    ],
+    "topicTags": [
+      "relational_model",
+      "indexing",
+      "query_planning"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Evaluate whether the candidate understands indexes as read-path accelerators with write, storage, and maintenance costs.",
+    "primaryQuestion": "What is a database index, how does it speed up queries, and what are the trade-offs of adding too many indexes?",
+    "expectedSignals": [
+      {
+        "label": "Explains index as a data structure for finding rows without scanning everything.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "index_stores_ordered_or_searchable_k_1",
+            "description": "Index stores ordered or searchable keys pointing to table rows."
+          },
+          {
+            "key": "b_tree_indexes_are_common_for_equali_2",
+            "description": "B-tree indexes are common for equality and range lookups."
+          }
+        ]
+      },
+      {
+        "label": "Explains query patterns indexes help.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "where_join_order_by_and_uniqueness_c_1",
+            "description": "WHERE, JOIN, ORDER BY, and uniqueness checks may benefit from suitable indexes."
+          },
+          {
+            "key": "composite_index_usefulness_depends_o_2",
+            "description": "Composite index usefulness depends on column order and predicates."
+          }
+        ]
+      },
+      {
+        "label": "Explains costs.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "indexes_consume_storage_1",
+            "description": "Indexes consume storage."
+          },
+          {
+            "key": "insert_update_and_delete_must_mainta_2",
+            "description": "INSERT, UPDATE, and DELETE must maintain indexes and can become slower."
+          }
+        ]
+      },
+      {
+        "label": "Mentions measuring with EXPLAIN and real workload.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "avoids_indexing_every_column_blindly_1",
+            "description": "Avoids indexing every column blindly."
+          },
+          {
+            "key": "uses_query_plans_and_slow_query_logs_2",
+            "description": "Uses query plans and slow query logs to choose indexes."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Why can an index on email speed up WHERE email = ? queries?",
+        "purpose": "Check lookup model."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "Why can too many indexes hurt write-heavy tables?",
+        "purpose": "Probe maintenance cost."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Database indexes and trade-offs",
+        "displayQuestion": "What is a database index, how does it speed up queries, and what are the trade-offs of adding too many indexes?",
+        "displayIntent": "Evaluate whether the candidate understands indexes as read-path accelerators with write, storage, and maintenance costs.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Junior",
+          "type": "trade_off",
+          "topic": "indexes"
+        }
+      },
+      "vi": {
+        "title": "Database index và trade-off",
+        "displayQuestion": "Database index là gì, nó tăng tốc query như thế nào, và trade-off khi thêm quá nhiều index là gì?",
+        "displayIntent": "Evaluate whether the candidate understands indexes as read-path accelerators with write, storage, and maintenance costs.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Junior",
+          "type": "trade_off",
+          "topic": "indexes"
+        }
+      },
+      "ja": {
+        "title": "Database indexes and trade-offs",
+        "displayQuestion": "次の点を説明してください: What is a database index, how does it speed up queries, and what are the trade-offs of adding too many indexes?",
+        "displayIntent": "この質問は indexes を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Junior",
+          "type": "trade_off",
+          "topic": "indexes"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "PostgreSQL Documentation",
+        "url": "https://www.postgresql.org/docs/current/",
+        "note": "Used for SQL behavior, constraints, joins, indexes, and EXPLAIN concepts."
+      },
+      {
+        "label": "OWASP SQL Injection Prevention Cheat Sheet",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html",
+        "note": "Used for parameterized query and SQL injection prevention guidance."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "SQL_JR_DELETE_TRUNCATE_DROP_005",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "data"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "technical_depth",
+    "competencies": [
+      "technical_fundamentals",
+      "communication"
+    ],
+    "techTags": [
+      "sql"
+    ],
+    "topicTags": [
+      "relational_model",
+      "transactions",
+      "migration"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Check whether the candidate understands row deletion, table clearing, and schema removal safety.",
+    "primaryQuestion": "What is the difference between DELETE, TRUNCATE, and DROP?",
+    "expectedSignals": [
+      {
+        "label": "Explains DELETE removes selected rows.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "delete_can_use_where_to_remove_speci_1",
+            "description": "DELETE can use WHERE to remove specific rows."
+          },
+          {
+            "key": "without_where_it_removes_all_rows_bu_2",
+            "description": "Without WHERE it removes all rows but still operates as row deletion semantics."
+          }
+        ]
+      },
+      {
+        "label": "Explains TRUNCATE clears a table more directly.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "truncate_removes_all_rows_from_a_tab_1",
+            "description": "TRUNCATE removes all rows from a table."
+          },
+          {
+            "key": "it_is_usually_faster_and_may_reset_i_2",
+            "description": "It is usually faster and may reset identity depending on database/options."
+          }
+        ]
+      },
+      {
+        "label": "Explains DROP removes the table object/schema.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "drop_table_removes_table_definition__1",
+            "description": "DROP TABLE removes table definition and data."
+          },
+          {
+            "key": "dependent_objects_and_permissions_ca_2",
+            "description": "Dependent objects and permissions can be affected."
+          }
+        ]
+      },
+      {
+        "label": "Mentions transaction, foreign key, and safety considerations.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "behavior_can_vary_by_database_and_tr_1",
+            "description": "Behavior can vary by database and transaction context."
+          },
+          {
+            "key": "backups_migrations_and_where_safegua_2",
+            "description": "Backups, migrations, and WHERE safeguards matter for production."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Which command would you use to remove one inactive user row?",
+        "purpose": "Check DELETE use."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "Why is DROP TABLE more dangerous than deleting rows?",
+        "purpose": "Probe schema impact."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "DELETE, TRUNCATE, and DROP",
+        "displayQuestion": "What is the difference between DELETE, TRUNCATE, and DROP?",
+        "displayIntent": "Check whether the candidate understands row deletion, table clearing, and schema removal safety.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "destructive_sql"
+        }
+      },
+      "vi": {
+        "title": "DELETE, TRUNCATE và DROP",
+        "displayQuestion": "DELETE, TRUNCATE và DROP khác nhau như thế nào?",
+        "displayIntent": "Check whether the candidate understands row deletion, table clearing, and schema removal safety.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "destructive_sql"
+        }
+      },
+      "ja": {
+        "title": "DELETE, TRUNCATE, and DROP",
+        "displayQuestion": "次の点を説明してください: What is the difference between DELETE, TRUNCATE, and DROP?",
+        "displayIntent": "この質問は destructive_sql を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "destructive_sql"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "PostgreSQL Documentation",
+        "url": "https://www.postgresql.org/docs/current/",
+        "note": "Used for SQL behavior, constraints, joins, indexes, and EXPLAIN concepts."
+      },
+      {
+        "label": "OWASP SQL Injection Prevention Cheat Sheet",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html",
+        "note": "Used for parameterized query and SQL injection prevention guidance."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "SQL_JR_FOREIGN_KEYS_006",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "data"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "technical_depth",
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking"
+    ],
+    "techTags": [
+      "sql"
+    ],
+    "topicTags": [
+      "relational_model",
+      "constraints",
+      "schema_design"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Assess whether the candidate understands referential integrity and delete policies.",
+    "primaryQuestion": "What is a foreign key constraint, and what happens when deleting a parent record with child records using CASCADE versus RESTRICT?",
+    "expectedSignals": [
+      {
+        "label": "Defines foreign key constraint.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "child_table_column_references_a_pare_1",
+            "description": "Child table column references a parent table key."
+          },
+          {
+            "key": "database_enforces_that_referenced_pa_2",
+            "description": "Database enforces that referenced parent rows exist."
+          }
+        ]
+      },
+      {
+        "label": "Explains RESTRICT or NO ACTION behavior.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "delete_is_blocked_while_child_rows_r_1",
+            "description": "Delete is blocked while child rows reference the parent."
+          },
+          {
+            "key": "application_must_delete_or_reassign__2",
+            "description": "Application must delete or reassign child rows first."
+          }
+        ]
+      },
+      {
+        "label": "Explains ON DELETE CASCADE.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "deleting_parent_automatically_delete_1",
+            "description": "Deleting parent automatically deletes child rows."
+          },
+          {
+            "key": "useful_for_true_ownership_but_danger_2",
+            "description": "Useful for true ownership but dangerous for shared or valuable child data."
+          }
+        ]
+      },
+      {
+        "label": "Chooses delete policy based on domain ownership.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "uses_cascade_for_dependent_records_t_1",
+            "description": "Uses cascade for dependent records that should not live without parent."
+          },
+          {
+            "key": "uses_restrict_or_soft_delete_when_ac_2",
+            "description": "Uses restrict or soft delete when accidental data loss would be unacceptable."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Should deleting a user cascade delete payment records? Why might that be dangerous?",
+        "purpose": "Probe domain policy."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "What database error might happen if you delete a parent with existing children and no cascade?",
+        "purpose": "Check referential integrity."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Foreign keys and delete behavior",
+        "displayQuestion": "What is a foreign key constraint, and what happens when deleting a parent record with child records using CASCADE versus RESTRICT?",
+        "displayIntent": "Assess whether the candidate understands referential integrity and delete policies.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "foreign_keys"
+        }
+      },
+      "vi": {
+        "title": "Foreign key và hành vi delete",
+        "displayQuestion": "Foreign key constraint là gì, và khi xóa parent có child record thì CASCADE khác RESTRICT như thế nào?",
+        "displayIntent": "Assess whether the candidate understands referential integrity and delete policies.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "foreign_keys"
+        }
+      },
+      "ja": {
+        "title": "Foreign keys and delete behavior",
+        "displayQuestion": "次の点を説明してください: What is a foreign key constraint, and what happens when deleting a parent record with child records using CASCADE versus RESTRICT?",
+        "displayIntent": "この質問は foreign_keys を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "foreign_keys"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "PostgreSQL Documentation",
+        "url": "https://www.postgresql.org/docs/current/",
+        "note": "Used for SQL behavior, constraints, joins, indexes, and EXPLAIN concepts."
+      },
+      {
+        "label": "OWASP SQL Injection Prevention Cheat Sheet",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html",
+        "note": "Used for parameterized query and SQL injection prevention guidance."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "SQL_JR_LOGICAL_ORDER_007",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "data"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "technical_depth",
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving"
+    ],
+    "techTags": [
+      "sql"
+    ],
+    "topicTags": [
+      "relational_model",
+      "query_planning"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Check whether the candidate can reason about why aliases, WHERE, GROUP BY, HAVING, ORDER BY, and LIMIT behave as they do.",
+    "primaryQuestion": "What is the logical processing order of a SQL SELECT query?",
+    "expectedSignals": [
+      {
+        "label": "Lists the usual logical order at a high level.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "from_and_join_establish_row_source_1",
+            "description": "FROM and JOIN establish row source."
+          },
+          {
+            "key": "where_filters_rows_2",
+            "description": "WHERE filters rows."
+          },
+          {
+            "key": "group_by_groups_rows_3",
+            "description": "GROUP BY groups rows."
+          },
+          {
+            "key": "having_filters_groups_4",
+            "description": "HAVING filters groups."
+          },
+          {
+            "key": "select_computes_output_expressions_5",
+            "description": "SELECT computes output expressions."
+          },
+          {
+            "key": "order_by_sorts_output_6",
+            "description": "ORDER BY sorts output."
+          },
+          {
+            "key": "limit_or_offset_returns_a_slice_7",
+            "description": "LIMIT or OFFSET returns a slice."
+          }
+        ]
+      },
+      {
+        "label": "Explains why WHERE cannot use aggregate results.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "aggregates_are_computed_after_groupi_1",
+            "description": "Aggregates are computed after grouping."
+          },
+          {
+            "key": "having_is_used_for_aggregate_filters_2",
+            "description": "HAVING is used for aggregate filters."
+          }
+        ]
+      },
+      {
+        "label": "Explains alias visibility nuance.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "select_aliases_may_be_available_in_o_1",
+            "description": "SELECT aliases may be available in ORDER BY in many databases."
+          },
+          {
+            "key": "select_aliases_are_not_generally_ava_2",
+            "description": "SELECT aliases are not generally available to WHERE because WHERE is logically earlier."
+          }
+        ]
+      },
+      {
+        "label": "Distinguishes logical order from physical execution.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "database_optimizer_may_execute_diffe_1",
+            "description": "Database optimizer may execute differently physically."
+          },
+          {
+            "key": "logical_order_is_still_useful_for_re_2",
+            "description": "Logical order is still useful for reasoning about query meaning."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Why can WHERE not filter COUNT(*) directly?",
+        "purpose": "Check order reasoning."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Does the database always physically execute in the logical order?",
+        "purpose": "Probe optimizer distinction."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Logical SELECT processing order",
+        "displayQuestion": "What is the logical processing order of a SQL SELECT query?",
+        "displayIntent": "Check whether the candidate can reason about why aliases, WHERE, GROUP BY, HAVING, ORDER BY, and LIMIT behave as they do.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "query_order"
+        }
+      },
+      "vi": {
+        "title": "Thứ tự xử lý logic của SELECT",
+        "displayQuestion": "Thứ tự xử lý logic của một câu SQL SELECT là gì?",
+        "displayIntent": "Check whether the candidate can reason about why aliases, WHERE, GROUP BY, HAVING, ORDER BY, and LIMIT behave as they do.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "query_order"
+        }
+      },
+      "ja": {
+        "title": "Logical SELECT processing order",
+        "displayQuestion": "次の点を説明してください: What is the logical processing order of a SQL SELECT query?",
+        "displayIntent": "この質問は query_order を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "query_order"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "PostgreSQL Documentation",
+        "url": "https://www.postgresql.org/docs/current/",
+        "note": "Used for SQL behavior, constraints, joins, indexes, and EXPLAIN concepts."
+      },
+      {
+        "label": "OWASP SQL Injection Prevention Cheat Sheet",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html",
+        "note": "Used for parameterized query and SQL injection prevention guidance."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "SQL_JR_COUNT_NULL_008",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "data"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "debugging",
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving"
+    ],
+    "techTags": [
+      "sql"
+    ],
+    "topicTags": [
+      "relational_model",
+      "null_safety",
+      "aggregation"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Evaluate whether the candidate understands NULL as unknown/missing and can avoid common counting and comparison bugs.",
+    "primaryQuestion": "What is the difference between COUNT(*), COUNT(column), COUNT(DISTINCT column), and how does SQL handle NULL?",
+    "expectedSignals": [
+      {
+        "label": "Explains COUNT variants.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "count_counts_rows_1",
+            "description": "COUNT(*) counts rows."
+          },
+          {
+            "key": "count_column_counts_rows_where_that__2",
+            "description": "COUNT(column) counts rows where that column is not NULL."
+          },
+          {
+            "key": "count_distinct_column_counts_distinc_3",
+            "description": "COUNT(DISTINCT column) counts distinct non-NULL values."
+          }
+        ]
+      },
+      {
+        "label": "Explains NULL comparison behavior.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "null_represents_unknown_or_missing_v_1",
+            "description": "NULL represents unknown or missing value."
+          },
+          {
+            "key": "column_null_does_not_work_as_expecte_2",
+            "description": "column = NULL does not work as expected; IS NULL or IS NOT NULL is required."
+          }
+        ]
+      },
+      {
+        "label": "Explains three-valued logic at a high level.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "comparisons_with_null_often_produce__1",
+            "description": "Comparisons with NULL often produce unknown rather than true."
+          },
+          {
+            "key": "where_keeps_rows_where_predicate_is__2",
+            "description": "WHERE keeps rows where predicate is true, not unknown."
+          }
+        ]
+      },
+      {
+        "label": "Mentions practical bugs.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "left_join_plus_count_child_id_differ_1",
+            "description": "LEFT JOIN plus COUNT(child.id) differs from COUNT(*)."
+          },
+          {
+            "key": "optional_fields_and_nullable_filters_2",
+            "description": "Optional fields and nullable filters need explicit handling."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Why does WHERE deleted_at = NULL not return rows with NULL deleted_at?",
+        "purpose": "Check NULL comparison."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "In a LEFT JOIN, why might COUNT(*) produce one row for a user with no orders?",
+        "purpose": "Probe count variant nuance."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "COUNT variants and NULL behavior",
+        "displayQuestion": "What is the difference between COUNT(*), COUNT(column), COUNT(DISTINCT column), and how does SQL handle NULL?",
+        "displayIntent": "Evaluate whether the candidate understands NULL as unknown/missing and can avoid common counting and comparison bugs.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Junior",
+          "type": "debugging",
+          "topic": "count_and_null"
+        }
+      },
+      "vi": {
+        "title": "COUNT và hành vi NULL",
+        "displayQuestion": "COUNT(*), COUNT(column), COUNT(DISTINCT column) khác nhau như thế nào, và SQL xử lý NULL ra sao?",
+        "displayIntent": "Evaluate whether the candidate understands NULL as unknown/missing and can avoid common counting and comparison bugs.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Junior",
+          "type": "debugging",
+          "topic": "count_and_null"
+        }
+      },
+      "ja": {
+        "title": "COUNT variants and NULL behavior",
+        "displayQuestion": "次の点を説明してください: What is the difference between COUNT(*), COUNT(column), COUNT(DISTINCT column), and how does SQL handle NULL?",
+        "displayIntent": "この質問は count_and_null を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Junior",
+          "type": "debugging",
+          "topic": "count_and_null"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "PostgreSQL Documentation",
+        "url": "https://www.postgresql.org/docs/current/",
+        "note": "Used for SQL behavior, constraints, joins, indexes, and EXPLAIN concepts."
+      },
+      {
+        "label": "OWASP SQL Injection Prevention Cheat Sheet",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html",
+        "note": "Used for parameterized query and SQL injection prevention guidance."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "SQL_JR_PAGINATION_OFFSET_009",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "data"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "trade_off",
+    "competencies": [
+      "trade_off_analysis",
+      "technical_fundamentals"
+    ],
+    "techTags": [
+      "sql"
+    ],
+    "topicTags": [
+      "relational_model",
+      "pagination",
+      "indexing",
+      "query_planning"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Check whether the candidate can design predictable result pages and understand why offset pagination can become slow or inconsistent.",
+    "primaryQuestion": "What are ORDER BY, LIMIT, and OFFSET, and what are the drawbacks of large-offset pagination?",
+    "expectedSignals": [
+      {
+        "label": "Explains ORDER BY, LIMIT, and OFFSET.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "order_by_defines_result_ordering_1",
+            "description": "ORDER BY defines result ordering."
+          },
+          {
+            "key": "limit_caps_number_of_rows_returned_2",
+            "description": "LIMIT caps number of rows returned."
+          },
+          {
+            "key": "offset_skips_a_number_of_rows_before_3",
+            "description": "OFFSET skips a number of rows before returning results."
+          }
+        ]
+      },
+      {
+        "label": "Mentions deterministic ordering requirement.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "pagination_without_stable_order_by_c_1",
+            "description": "Pagination without stable ORDER BY can return inconsistent results."
+          },
+          {
+            "key": "tie_breaker_columns_such_as_id_may_b_2",
+            "description": "Tie-breaker columns such as id may be needed."
+          }
+        ]
+      },
+      {
+        "label": "Explains large-offset performance cost.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "database_may_still_scan_or_sort_many_1",
+            "description": "Database may still scan or sort many skipped rows."
+          },
+          {
+            "key": "cost_grows_as_offset_grows_2",
+            "description": "Cost grows as offset grows."
+          }
+        ]
+      },
+      {
+        "label": "Explains consistency issue and cursor alternative.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "inserts_or_deletes_between_page_requ_1",
+            "description": "Inserts or deletes between page requests can cause missing or duplicated rows."
+          },
+          {
+            "key": "cursor_keyset_pagination_can_be_bett_2",
+            "description": "Cursor/keyset pagination can be better for large scrolling lists."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Why is LIMIT 20 OFFSET 100000 often expensive?",
+        "purpose": "Check skipped-row cost."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Why should pagination queries include an ORDER BY?",
+        "purpose": "Probe deterministic result ordering."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "ORDER BY, LIMIT, OFFSET, and large offsets",
+        "displayQuestion": "What are ORDER BY, LIMIT, and OFFSET, and what are the drawbacks of large-offset pagination?",
+        "displayIntent": "Check whether the candidate can design predictable result pages and understand why offset pagination can become slow or inconsistent.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Junior",
+          "type": "trade_off",
+          "topic": "sql_pagination"
+        }
+      },
+      "vi": {
+        "title": "ORDER BY, LIMIT, OFFSET và large offset",
+        "displayQuestion": "ORDER BY, LIMIT và OFFSET là gì, và nhược điểm của large-offset pagination là gì?",
+        "displayIntent": "Check whether the candidate can design predictable result pages and understand why offset pagination can become slow or inconsistent.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Junior",
+          "type": "trade_off",
+          "topic": "sql_pagination"
+        }
+      },
+      "ja": {
+        "title": "ORDER BY, LIMIT, OFFSET, and large offsets",
+        "displayQuestion": "次の点を説明してください: What are ORDER BY, LIMIT, and OFFSET, and what are the drawbacks of large-offset pagination?",
+        "displayIntent": "この質問は sql_pagination を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Junior",
+          "type": "trade_off",
+          "topic": "sql_pagination"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "PostgreSQL Documentation",
+        "url": "https://www.postgresql.org/docs/current/",
+        "note": "Used for SQL behavior, constraints, joins, indexes, and EXPLAIN concepts."
+      },
+      {
+        "label": "OWASP SQL Injection Prevention Cheat Sheet",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html",
+        "note": "Used for parameterized query and SQL injection prevention guidance."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "SQL_JR_UNION_010",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "data"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "technical_depth",
+    "competencies": [
+      "technical_fundamentals",
+      "communication"
+    ],
+    "techTags": [
+      "sql"
+    ],
+    "topicTags": [
+      "relational_model",
+      "query_planning"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Check whether the candidate understands duplicate elimination and performance implications when combining result sets.",
+    "primaryQuestion": "What is the difference between UNION and UNION ALL?",
+    "expectedSignals": [
+      {
+        "label": "Explains both combine compatible result sets.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "queries_must_return_compatible_colum_1",
+            "description": "Queries must return compatible column counts and types."
+          },
+          {
+            "key": "rows_from_both_result_sets_are_appen_2",
+            "description": "Rows from both result sets are appended logically."
+          }
+        ]
+      },
+      {
+        "label": "Explains UNION removes duplicates.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "union_performs_duplicate_elimination_1",
+            "description": "UNION performs duplicate elimination across combined rows."
+          },
+          {
+            "key": "duplicate_removal_can_require_sort_o_2",
+            "description": "Duplicate removal can require sort or hash work."
+          }
+        ]
+      },
+      {
+        "label": "Explains UNION ALL keeps duplicates.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "union_all_returns_all_rows_from_both_1",
+            "description": "UNION ALL returns all rows from both queries including duplicates."
+          },
+          {
+            "key": "it_is_often_faster_when_duplicates_a_2",
+            "description": "It is often faster when duplicates are acceptable or impossible."
+          }
+        ]
+      },
+      {
+        "label": "Chooses based on business semantics.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "uses_union_when_duplicate_rows_would_1",
+            "description": "Uses UNION when duplicate rows would be incorrect."
+          },
+          {
+            "key": "uses_union_all_when_preserving_count_2",
+            "description": "Uses UNION ALL when preserving counts or performance matters."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Which would you use if duplicate rows must be counted twice?",
+        "purpose": "Check UNION ALL semantics."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "Why can UNION be slower than UNION ALL?",
+        "purpose": "Probe duplicate elimination cost."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "UNION versus UNION ALL",
+        "displayQuestion": "What is the difference between UNION and UNION ALL?",
+        "displayIntent": "Check whether the candidate understands duplicate elimination and performance implications when combining result sets.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "union"
+        }
+      },
+      "vi": {
+        "title": "UNION so với UNION ALL",
+        "displayQuestion": "UNION khác UNION ALL như thế nào?",
+        "displayIntent": "Check whether the candidate understands duplicate elimination and performance implications when combining result sets.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "union"
+        }
+      },
+      "ja": {
+        "title": "UNION versus UNION ALL",
+        "displayQuestion": "次の点を説明してください: What is the difference between UNION and UNION ALL?",
+        "displayIntent": "この質問は union を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "union"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "PostgreSQL Documentation",
+        "url": "https://www.postgresql.org/docs/current/",
+        "note": "Used for SQL behavior, constraints, joins, indexes, and EXPLAIN concepts."
+      },
+      {
+        "label": "OWASP SQL Injection Prevention Cheat Sheet",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html",
+        "note": "Used for parameterized query and SQL injection prevention guidance."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "SQL_JR_KEYS_CONSTRAINTS_011",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "data"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "technical_depth",
+    "competencies": [
+      "technical_fundamentals",
+      "communication"
+    ],
+    "techTags": [
+      "sql"
+    ],
+    "topicTags": [
+      "relational_model",
+      "constraints",
+      "schema_design"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Assess whether the candidate understands identity, uniqueness, relationships, and multi-column constraints.",
+    "primaryQuestion": "What is the difference between a primary key, unique constraint, foreign key, and composite key?",
+    "expectedSignals": [
+      {
+        "label": "Explains primary key.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "primary_key_uniquely_identifies_each_1",
+            "description": "Primary key uniquely identifies each row."
+          },
+          {
+            "key": "primary_key_is_not_nullable_and_is_t_2",
+            "description": "Primary key is not nullable and is the main row identity."
+          }
+        ]
+      },
+      {
+        "label": "Explains unique constraint.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "unique_constraint_prevents_duplicate_1",
+            "description": "Unique constraint prevents duplicate values in one or more columns."
+          },
+          {
+            "key": "a_table_can_have_multiple_unique_con_2",
+            "description": "A table can have multiple unique constraints, unlike one primary key."
+          }
+        ]
+      },
+      {
+        "label": "Explains foreign key.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "foreign_key_references_a_key_in_anot_1",
+            "description": "Foreign key references a key in another table."
+          },
+          {
+            "key": "it_enforces_referential_integrity_2",
+            "description": "It enforces referential integrity."
+          }
+        ]
+      },
+      {
+        "label": "Explains composite key.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "composite_key_uses_multiple_columns__1",
+            "description": "Composite key uses multiple columns together for identity or uniqueness."
+          },
+          {
+            "key": "useful_for_junction_tables_or_natura_2",
+            "description": "Useful for junction tables or natural multi-column uniqueness."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Why might a user_roles table have a composite unique key on user_id and role_id?",
+        "purpose": "Check junction table uniqueness."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Can a table have both a primary key and a separate unique email constraint?",
+        "purpose": "Probe key distinction."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Primary, unique, foreign, and composite keys",
+        "displayQuestion": "What is the difference between a primary key, unique constraint, foreign key, and composite key?",
+        "displayIntent": "Assess whether the candidate understands identity, uniqueness, relationships, and multi-column constraints.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "keys_constraints"
+        }
+      },
+      "vi": {
+        "title": "Primary, unique, foreign và composite key",
+        "displayQuestion": "Primary key, unique constraint, foreign key và composite key khác nhau như thế nào?",
+        "displayIntent": "Assess whether the candidate understands identity, uniqueness, relationships, and multi-column constraints.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "keys_constraints"
+        }
+      },
+      "ja": {
+        "title": "Primary, unique, foreign, and composite keys",
+        "displayQuestion": "次の点を説明してください: What is the difference between a primary key, unique constraint, foreign key, and composite key?",
+        "displayIntent": "この質問は keys_constraints を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "keys_constraints"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "PostgreSQL Documentation",
+        "url": "https://www.postgresql.org/docs/current/",
+        "note": "Used for SQL behavior, constraints, joins, indexes, and EXPLAIN concepts."
+      },
+      {
+        "label": "OWASP SQL Injection Prevention Cheat Sheet",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html",
+        "note": "Used for parameterized query and SQL injection prevention guidance."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "SQL_JR_MANY_TO_MANY_012",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "data"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "technical_depth",
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking"
+    ],
+    "techTags": [
+      "sql"
+    ],
+    "topicTags": [
+      "relational_model",
+      "joins",
+      "schema_design"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Check whether the candidate can design basic relational schemas for many-to-many relationships.",
+    "primaryQuestion": "What is a many-to-many relationship, and how do you model it with a junction table?",
+    "expectedSignals": [
+      {
+        "label": "Defines many-to-many relationship.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "one_row_in_table_a_can_relate_to_man_1",
+            "description": "One row in table A can relate to many rows in table B."
+          },
+          {
+            "key": "one_row_in_table_b_can_relate_to_man_2",
+            "description": "One row in table B can relate to many rows in table A."
+          }
+        ]
+      },
+      {
+        "label": "Explains junction table design.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "junction_table_stores_foreign_keys_t_1",
+            "description": "Junction table stores foreign keys to both parent tables."
+          },
+          {
+            "key": "example_user_roles_with_user_id_and__2",
+            "description": "Example user_roles with user_id and role_id."
+          }
+        ]
+      },
+      {
+        "label": "Mentions constraints.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "foreign_keys_enforce_referenced_user_1",
+            "description": "Foreign keys enforce referenced users and roles exist."
+          },
+          {
+            "key": "composite_primary_key_or_unique_cons_2",
+            "description": "Composite primary key or unique constraint prevents duplicate links."
+          }
+        ]
+      },
+      {
+        "label": "Mentions attributes on relationship.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "junction_table_can_store_metadata_su_1",
+            "description": "Junction table can store metadata such as assigned_at or assigned_by."
+          },
+          {
+            "key": "if_relationship_has_behavior_it_may__2",
+            "description": "If relationship has behavior, it may be modeled as its own entity."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "How would you model users and roles?",
+        "purpose": "Check concrete schema."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Where would you store assigned_at for a user role?",
+        "purpose": "Probe relationship metadata."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Many-to-many relationships",
+        "displayQuestion": "What is a many-to-many relationship, and how do you model it with a junction table?",
+        "displayIntent": "Check whether the candidate can design basic relational schemas for many-to-many relationships.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "many_to_many"
+        }
+      },
+      "vi": {
+        "title": "Quan hệ many-to-many",
+        "displayQuestion": "Quan hệ many-to-many là gì, và bạn model nó bằng junction table như thế nào?",
+        "displayIntent": "Check whether the candidate can design basic relational schemas for many-to-many relationships.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "many_to_many"
+        }
+      },
+      "ja": {
+        "title": "Many-to-many relationships",
+        "displayQuestion": "次の点を説明してください: What is a many-to-many relationship, and how do you model it with a junction table?",
+        "displayIntent": "この質問は many_to_many を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "many_to_many"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "PostgreSQL Documentation",
+        "url": "https://www.postgresql.org/docs/current/",
+        "note": "Used for SQL behavior, constraints, joins, indexes, and EXPLAIN concepts."
+      },
+      {
+        "label": "OWASP SQL Injection Prevention Cheat Sheet",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html",
+        "note": "Used for parameterized query and SQL injection prevention guidance."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "SQL_JR_EXISTS_IN_JOIN_013",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "data"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "trade_off",
+    "competencies": [
+      "trade_off_analysis",
+      "technical_fundamentals"
+    ],
+    "techTags": [
+      "sql"
+    ],
+    "topicTags": [
+      "relational_model",
+      "query_planning",
+      "joins"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Evaluate whether the candidate can choose SQL patterns based on existence, values, and result-shape needs.",
+    "primaryQuestion": "What is the difference between EXISTS, IN, and JOIN for filtering related records?",
+    "expectedSignals": [
+      {
+        "label": "Explains EXISTS for existence checks.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "exists_tests_whether_the_subquery_re_1",
+            "description": "EXISTS tests whether the subquery returns at least one row."
+          },
+          {
+            "key": "it_is_often_clear_for_correlated_exi_2",
+            "description": "It is often clear for correlated existence filtering."
+          }
+        ]
+      },
+      {
+        "label": "Explains IN for matching against a set of values.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "in_compares_a_value_with_a_list_or_s_1",
+            "description": "IN compares a value with a list or subquery result."
+          },
+          {
+            "key": "null_behavior_and_large_lists_need_c_2",
+            "description": "NULL behavior and large lists need care."
+          }
+        ]
+      },
+      {
+        "label": "Explains JOIN when related columns are needed.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "join_combines_rows_and_can_return_co_1",
+            "description": "JOIN combines rows and can return columns from both tables."
+          },
+          {
+            "key": "join_can_duplicate_parent_rows_when__2",
+            "description": "JOIN can duplicate parent rows when multiple child rows match."
+          }
+        ]
+      },
+      {
+        "label": "Mentions optimizer and index dependence.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "performance_depends_on_query_plan_in_1",
+            "description": "Performance depends on query plan, indexes, and database optimizer."
+          },
+          {
+            "key": "use_explain_for_non_trivial_cases_2",
+            "description": "Use EXPLAIN for non-trivial cases."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "How would you find users that have at least one order without returning order columns?",
+        "purpose": "Check EXISTS suitability."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Why can JOIN duplicate users when a user has many orders?",
+        "purpose": "Probe result shape."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "EXISTS, IN, and JOIN for filtering",
+        "displayQuestion": "What is the difference between EXISTS, IN, and JOIN for filtering related records?",
+        "displayIntent": "Evaluate whether the candidate can choose SQL patterns based on existence, values, and result-shape needs.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Junior",
+          "type": "trade_off",
+          "topic": "exists_in_join"
+        }
+      },
+      "vi": {
+        "title": "EXISTS, IN và JOIN để filter",
+        "displayQuestion": "EXISTS, IN và JOIN khác nhau như thế nào khi filter related records?",
+        "displayIntent": "Evaluate whether the candidate can choose SQL patterns based on existence, values, and result-shape needs.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Junior",
+          "type": "trade_off",
+          "topic": "exists_in_join"
+        }
+      },
+      "ja": {
+        "title": "EXISTS, IN, and JOIN for filtering",
+        "displayQuestion": "次の点を説明してください: What is the difference between EXISTS, IN, and JOIN for filtering related records?",
+        "displayIntent": "この質問は exists_in_join を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Data",
+          "level": "Junior",
+          "type": "trade_off",
+          "topic": "exists_in_join"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "PostgreSQL Documentation",
+        "url": "https://www.postgresql.org/docs/current/",
+        "note": "Used for SQL behavior, constraints, joins, indexes, and EXPLAIN concepts."
+      },
+      {
+        "label": "OWASP SQL Injection Prevention Cheat Sheet",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html",
+        "note": "Used for parameterized query and SQL injection prevention guidance."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "SQL_JR_SQL_INJECTION_014",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack",
+      "security"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "debugging",
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving"
+    ],
+    "techTags": [
+      "sql"
+    ],
+    "topicTags": [
+      "relational_model",
+      "sql_injection",
+      "authorization"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Check whether the candidate understands SQL injection as code/data confusion and knows the baseline prevention technique.",
+    "primaryQuestion": "What is SQL injection, and how do parameterized queries prevent it?",
+    "expectedSignals": [
+      {
+        "label": "Defines SQL injection.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "untrusted_input_is_interpreted_as_pa_1",
+            "description": "Untrusted input is interpreted as part of SQL code."
+          },
+          {
+            "key": "attackers_can_alter_query_logic_read_2",
+            "description": "Attackers can alter query logic, read data, modify data, or bypass authentication."
+          }
+        ]
+      },
+      {
+        "label": "Explains parameterized query protection.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "sql_text_and_values_are_sent_separat_1",
+            "description": "SQL text and values are sent separately to the database driver."
+          },
+          {
+            "key": "user_input_is_treated_as_data_not_ex_2",
+            "description": "User input is treated as data, not executable SQL syntax."
+          }
+        ]
+      },
+      {
+        "label": "Mentions unsafe string concatenation.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "building_sql_by_concatenating_raw_in_1",
+            "description": "Building SQL by concatenating raw input is dangerous."
+          },
+          {
+            "key": "escaping_manually_is_error_prone_com_2",
+            "description": "Escaping manually is error-prone compared with parameters."
+          }
+        ]
+      },
+      {
+        "label": "Mentions complementary controls.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "least_privilege_validation_orm_safe__1",
+            "description": "Least privilege, validation, ORM safe APIs, logging, and tests help reduce impact."
+          },
+          {
+            "key": "parameterized_queries_are_the_primar_2",
+            "description": "Parameterized queries are the primary defense for dynamic values."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Why is `WHERE email = ${input}` dangerous if input comes from a request?",
+        "purpose": "Check code/data confusion."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Does using an ORM automatically make every raw query safe?",
+        "purpose": "Probe raw query parameterization."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "SQL injection and parameterized queries",
+        "displayQuestion": "What is SQL injection, and how do parameterized queries prevent it?",
+        "displayIntent": "Check whether the candidate understands SQL injection as code/data confusion and knows the baseline prevention technique.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior",
+          "type": "debugging",
+          "topic": "sql_injection"
+        }
+      },
+      "vi": {
+        "title": "SQL injection và parameterized query",
+        "displayQuestion": "SQL injection là gì, và parameterized query ngăn nó như thế nào?",
+        "displayIntent": "Check whether the candidate understands SQL injection as code/data confusion and knows the baseline prevention technique.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior",
+          "type": "debugging",
+          "topic": "sql_injection"
+        }
+      },
+      "ja": {
+        "title": "SQL injection and parameterized queries",
+        "displayQuestion": "次の点を説明してください: What is SQL injection, and how do parameterized queries prevent it?",
+        "displayIntent": "この質問は sql_injection を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack/Security",
+          "level": "Junior",
+          "type": "debugging",
+          "topic": "sql_injection"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "PostgreSQL Documentation",
+        "url": "https://www.postgresql.org/docs/current/",
+        "note": "Used for SQL behavior, constraints, joins, indexes, and EXPLAIN concepts."
+      },
+      {
+        "label": "OWASP SQL Injection Prevention Cheat Sheet",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html",
+        "note": "Used for parameterized query and SQL injection prevention guidance."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "SQL_JR_MIGRATIONS_015",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "technical_depth",
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking"
+    ],
+    "techTags": [
+      "sql"
+    ],
+    "topicTags": [
+      "relational_model",
+      "migration",
+      "schema_design",
+      "deployment"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Assess whether the candidate understands controlled schema evolution across environments and deployments.",
+    "primaryQuestion": "What are database migrations, and why should schema changes be versioned?",
+    "expectedSignals": [
+      {
+        "label": "Defines migration.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "migration_is_a_versioned_change_to_d_1",
+            "description": "Migration is a versioned change to database schema or sometimes data."
+          },
+          {
+            "key": "examples_include_creating_tables_add_2",
+            "description": "Examples include creating tables, adding columns, adding indexes, or backfilling data."
+          }
+        ]
+      },
+      {
+        "label": "Explains versioning across environments.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "dev_staging_and_production_can_apply_1",
+            "description": "Dev, staging, and production can apply the same ordered changes."
+          },
+          {
+            "key": "team_members_can_reproduce_schema_st_2",
+            "description": "Team members can reproduce schema state reliably."
+          }
+        ]
+      },
+      {
+        "label": "Mentions deployment safety.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "migrations_should_be_reviewed_tested_1",
+            "description": "Migrations should be reviewed, tested, and preferably reversible or forward-fixable."
+          },
+          {
+            "key": "large_table_changes_may_need_locking_2",
+            "description": "Large table changes may need locking and performance planning."
+          }
+        ]
+      },
+      {
+        "label": "Connects migrations to application compatibility.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "schema_and_code_changes_need_rollout_1",
+            "description": "Schema and code changes need rollout order planning."
+          },
+          {
+            "key": "backward_compatible_migrations_reduc_2",
+            "description": "Backward-compatible migrations reduce downtime risk."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Why is manually changing production schema without a migration risky?",
+        "purpose": "Check reproducibility and auditability."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "Why might adding a NOT NULL column to a huge table need a careful rollout?",
+        "purpose": "Probe deployment impact."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Database migrations",
+        "displayQuestion": "What are database migrations, and why should schema changes be versioned?",
+        "displayIntent": "Assess whether the candidate understands controlled schema evolution across environments and deployments.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "migrations"
+        }
+      },
+      "vi": {
+        "title": "Database migration",
+        "displayQuestion": "Database migration là gì, và vì sao schema change cần được version?",
+        "displayIntent": "Assess whether the candidate understands controlled schema evolution across environments and deployments.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "migrations"
+        }
+      },
+      "ja": {
+        "title": "Database migrations",
+        "displayQuestion": "次の点を説明してください: What are database migrations, and why should schema changes be versioned?",
+        "displayIntent": "この質問は migrations を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "migrations"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "PostgreSQL Documentation",
+        "url": "https://www.postgresql.org/docs/current/",
+        "note": "Used for SQL behavior, constraints, joins, indexes, and EXPLAIN concepts."
+      },
+      {
+        "label": "OWASP SQL Injection Prevention Cheat Sheet",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html",
+        "note": "Used for parameterized query and SQL injection prevention guidance."
+      }
+    ],
+    "status": "active"
+  }
+]

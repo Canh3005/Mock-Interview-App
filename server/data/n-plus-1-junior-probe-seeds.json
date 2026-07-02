@@ -1,0 +1,3022 @@
+[
+  {
+    "code": "NPLUS1_JR_DEFINITION_001",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "technical_depth",
+    "competencies": [
+      "technical_fundamentals",
+      "problem_solving"
+    ],
+    "techTags": [
+      "sql",
+      "typeorm"
+    ],
+    "topicTags": [
+      "n_plus_1",
+      "relational_model",
+      "query_planning"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "intro",
+    "intent": "Check whether the candidate can identify query explosion from loading related data one row at a time.",
+    "primaryQuestion": "What is the N+1 query problem? Explain it with a concrete example such as fetching posts and authors.",
+    "expectedSignals": [
+      {
+        "label": "Defines N+1 as one query for parent rows plus one query per parent for related data.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "n_parent_rows_cause_1_n_queries_1",
+            "description": "N parent rows cause 1 + N queries."
+          },
+          {
+            "key": "example_fetch_posts_then_fetch_autho_2",
+            "description": "Example: fetch posts, then fetch author for each post."
+          }
+        ]
+      },
+      {
+        "label": "Explains why it scales poorly.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "query_count_grows_linearly_with_resu_1",
+            "description": "Query count grows linearly with result size."
+          },
+          {
+            "key": "network_round_trips_and_database_wor_2",
+            "description": "Network round trips and database work increase even if each query is small."
+          }
+        ]
+      },
+      {
+        "label": "Gives a concrete query count example.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "100_posts_and_lazy_author_loading_ca_1",
+            "description": "100 posts and lazy author loading can produce 101 queries."
+          },
+          {
+            "key": "a_join_or_batched_query_can_reduce_i_2",
+            "description": "A join or batched query can reduce it dramatically."
+          }
+        ]
+      },
+      {
+        "label": "Mentions it can be hidden by ORM abstractions.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "accessing_relation_property_or_seria_1",
+            "description": "Accessing relation property or serialization can trigger queries silently."
+          },
+          {
+            "key": "local_small_datasets_may_hide_the_pr_2",
+            "description": "Local small datasets may hide the problem."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "If you fetch 100 posts and then load each author separately, how many queries might run?",
+        "purpose": "Check N+1 arithmetic."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Why might this not be obvious in local development with only five rows?",
+        "purpose": "Probe scale effect."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "N+1 query problem",
+        "displayQuestion": "What is the N+1 query problem? Explain it with a concrete example such as fetching posts and authors.",
+        "displayIntent": "Check whether the candidate can identify query explosion from loading related data one row at a time.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "n_plus_one_definition"
+        }
+      },
+      "vi": {
+        "title": "N+1 query problem",
+        "displayQuestion": "N+1 query problem là gì? Hãy giải thích bằng ví dụ fetch posts và authors.",
+        "displayIntent": "Check whether the candidate can identify query explosion from loading related data one row at a time.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "n_plus_one_definition"
+        }
+      },
+      "ja": {
+        "title": "N+1 query problem",
+        "displayQuestion": "次の点を説明してください: What is the N+1 query problem? Explain it with a concrete example such as fetching posts and authors.",
+        "displayIntent": "この質問は n_plus_one_definition を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "n_plus_one_definition"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "TypeORM Relations",
+        "url": "https://typeorm.io/relations",
+        "note": "Used for lazy/eager relation loading concepts."
+      },
+      {
+        "label": "TypeORM SelectQueryBuilder",
+        "url": "https://typeorm.io/select-query-builder",
+        "note": "Used for join-based relation loading patterns."
+      },
+      {
+        "label": "GraphQL DataLoader",
+        "url": "https://github.com/graphql/dataloader",
+        "note": "Used for batching and request-scoped caching concepts."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NPLUS1_JR_TYPEORM_MANIFEST_002",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "debugging",
+    "competencies": [
+      "problem_solving",
+      "technical_fundamentals"
+    ],
+    "techTags": [
+      "sql",
+      "typeorm"
+    ],
+    "topicTags": [
+      "n_plus_1"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Evaluate whether the candidate knows where hidden relation loading can appear in service, mapper, or serialization code.",
+    "primaryQuestion": "How does the N+1 problem typically manifest when using an ORM like TypeORM?",
+    "expectedSignals": [
+      {
+        "label": "Identifies relation access after parent query.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "code_fetches_parent_entities_first_1",
+            "description": "Code fetches parent entities first."
+          },
+          {
+            "key": "later_loop_or_mapper_accesses_relati_2",
+            "description": "Later loop or mapper accesses relation for each parent."
+          }
+        ]
+      },
+      {
+        "label": "Mentions lazy loading risk.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "lazy_relation_property_can_trigger_q_1",
+            "description": "Lazy relation property can trigger query when awaited or accessed."
+          },
+          {
+            "key": "serialization_can_accidentally_touch_2",
+            "description": "Serialization can accidentally touch lazy relations."
+          }
+        ]
+      },
+      {
+        "label": "Mentions repository abstraction hiding query count.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "a_helper_method_called_in_a_loop_can_1",
+            "description": "A helper method called in a loop can hide database access."
+          },
+          {
+            "key": "service_layer_may_look_clean_while_e_2",
+            "description": "Service layer may look clean while executing many queries."
+          }
+        ]
+      },
+      {
+        "label": "Mentions detection through query logs.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "orm_query_logging_or_database_logs_r_1",
+            "description": "ORM query logging or database logs reveal repeated similar SELECT statements."
+          },
+          {
+            "key": "apm_traces_can_show_excessive_databa_2",
+            "description": "APM traces can show excessive database calls per request."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Where in response mapping might N+1 silently appear?",
+        "purpose": "Check mapper/serialization risk."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "What would repeated SELECT author WHERE id = ? in logs suggest?",
+        "purpose": "Probe query-log detection."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "How N+1 appears in TypeORM",
+        "displayQuestion": "How does the N+1 problem typically manifest when using an ORM like TypeORM?",
+        "displayIntent": "Evaluate whether the candidate knows where hidden relation loading can appear in service, mapper, or serialization code.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "debugging",
+          "topic": "typeorm_manifestation"
+        }
+      },
+      "vi": {
+        "title": "N+1 xuất hiện trong TypeORM như thế nào",
+        "displayQuestion": "N+1 problem thường xuất hiện như thế nào khi dùng ORM như TypeORM?",
+        "displayIntent": "Evaluate whether the candidate knows where hidden relation loading can appear in service, mapper, or serialization code.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "debugging",
+          "topic": "typeorm_manifestation"
+        }
+      },
+      "ja": {
+        "title": "How N+1 appears in TypeORM",
+        "displayQuestion": "次の点を説明してください: How does the N+1 problem typically manifest when using an ORM like TypeORM?",
+        "displayIntent": "この質問は typeorm_manifestation を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "debugging",
+          "topic": "typeorm_manifestation"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "TypeORM Relations",
+        "url": "https://typeorm.io/relations",
+        "note": "Used for lazy/eager relation loading concepts."
+      },
+      {
+        "label": "TypeORM SelectQueryBuilder",
+        "url": "https://typeorm.io/select-query-builder",
+        "note": "Used for join-based relation loading patterns."
+      },
+      {
+        "label": "GraphQL DataLoader",
+        "url": "https://github.com/graphql/dataloader",
+        "note": "Used for batching and request-scoped caching concepts."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NPLUS1_JR_EAGER_JOIN_003",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "trade_off",
+    "competencies": [
+      "trade_off_analysis",
+      "technical_fundamentals"
+    ],
+    "techTags": [
+      "sql",
+      "typeorm"
+    ],
+    "topicTags": [
+      "n_plus_1",
+      "query_planning",
+      "joins"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Check whether the candidate can choose explicit relation loading without overfetching everything.",
+    "primaryQuestion": "What are solutions to N+1 in TypeORM, and how do eager loading and QueryBuilder with leftJoinAndSelect differ?",
+    "expectedSignals": [
+      {
+        "label": "Names explicit relation loading solutions.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "use_relations_option_querybuilder_jo_1",
+            "description": "Use relations option, QueryBuilder joins, batched IN queries, projections, or DataLoader depending on context."
+          },
+          {
+            "key": "avoids_relying_on_accidental_lazy_lo_2",
+            "description": "Avoids relying on accidental lazy loads."
+          }
+        ]
+      },
+      {
+        "label": "Explains eager relation behavior.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "eager_relation_can_be_automatically__1",
+            "description": "Eager relation can be automatically loaded by repository find methods."
+          },
+          {
+            "key": "too_many_eager_relations_can_overfet_2",
+            "description": "Too many eager relations can overfetch and slow unrelated queries."
+          }
+        ]
+      },
+      {
+        "label": "Explains leftJoinAndSelect.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "querybuilder_explicitly_joins_and_se_1",
+            "description": "QueryBuilder explicitly joins and selects relation data for one query shape."
+          },
+          {
+            "key": "it_gives_control_over_joins_filters__2",
+            "description": "It gives control over joins, filters, selected columns, and conditions."
+          }
+        ]
+      },
+      {
+        "label": "Mentions QueryBuilder eager relation caveat.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "eager_relations_are_disabled_with_qu_1",
+            "description": "Eager relations are disabled with QueryBuilder in TypeORM, so joins must be explicit."
+          },
+          {
+            "key": "candidate_knows_to_use_leftjoinandse_2",
+            "description": "Candidate knows to use leftJoinAndSelect or explicit selection there."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Why might eager: true on many relations be harmful?",
+        "purpose": "Probe overfetching."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "If you use QueryBuilder, what should you do instead of assuming eager relations load?",
+        "purpose": "Check TypeORM-specific behavior."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Eager loading versus leftJoinAndSelect",
+        "displayQuestion": "What are solutions to N+1 in TypeORM, and how do eager loading and QueryBuilder with leftJoinAndSelect differ?",
+        "displayIntent": "Check whether the candidate can choose explicit relation loading without overfetching everything.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "trade_off",
+          "topic": "typeorm_solutions"
+        }
+      },
+      "vi": {
+        "title": "Eager loading so với leftJoinAndSelect",
+        "displayQuestion": "Các giải pháp N+1 trong TypeORM là gì, và eager loading khác QueryBuilder với leftJoinAndSelect như thế nào?",
+        "displayIntent": "Check whether the candidate can choose explicit relation loading without overfetching everything.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "trade_off",
+          "topic": "typeorm_solutions"
+        }
+      },
+      "ja": {
+        "title": "Eager loading versus leftJoinAndSelect",
+        "displayQuestion": "次の点を説明してください: What are solutions to N+1 in TypeORM, and how do eager loading and QueryBuilder with leftJoinAndSelect differ?",
+        "displayIntent": "この質問は typeorm_solutions を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "trade_off",
+          "topic": "typeorm_solutions"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "TypeORM Relations",
+        "url": "https://typeorm.io/relations",
+        "note": "Used for lazy/eager relation loading concepts."
+      },
+      {
+        "label": "TypeORM SelectQueryBuilder",
+        "url": "https://typeorm.io/select-query-builder",
+        "note": "Used for join-based relation loading patterns."
+      },
+      {
+        "label": "GraphQL DataLoader",
+        "url": "https://github.com/graphql/dataloader",
+        "note": "Used for batching and request-scoped caching concepts."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NPLUS1_JR_LAZY_EAGER_004",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "trade_off",
+    "competencies": [
+      "trade_off_analysis",
+      "technical_fundamentals"
+    ],
+    "techTags": [
+      "sql",
+      "typeorm"
+    ],
+    "topicTags": [
+      "n_plus_1"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Assess whether the candidate understands timing of database access and relation loading trade-offs.",
+    "primaryQuestion": "What is lazy loading versus eager loading in TypeORM, and what are the N+1 risks of lazy loading?",
+    "expectedSignals": [
+      {
+        "label": "Defines lazy loading.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "related_data_is_loaded_when_relation_1",
+            "description": "Related data is loaded when relation is accessed."
+          },
+          {
+            "key": "in_typeorm_lazy_relations_are_typica_2",
+            "description": "In TypeORM lazy relations are typically represented by Promise-like relation properties."
+          }
+        ]
+      },
+      {
+        "label": "Defines eager loading.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "related_data_is_loaded_automatically_1",
+            "description": "Related data is loaded automatically with the parent in certain repository operations."
+          },
+          {
+            "key": "eager_loading_can_reduce_explicit_co_2",
+            "description": "Eager loading can reduce explicit code for common always-needed relations."
+          }
+        ]
+      },
+      {
+        "label": "Explains lazy N+1 risk.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "looping_over_parents_and_accessing_l_1",
+            "description": "Looping over parents and accessing lazy relation can trigger one query per parent."
+          },
+          {
+            "key": "serialization_can_accidentally_load__2",
+            "description": "Serialization can accidentally load many relations."
+          }
+        ]
+      },
+      {
+        "label": "Explains trade-off and control.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "lazy_avoids_loading_unused_data_but__1",
+            "description": "Lazy avoids loading unused data but hides query timing."
+          },
+          {
+            "key": "explicit_query_shape_is_often_better_2",
+            "description": "Explicit query shape is often better for API endpoints."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Why can await post.author inside a loop produce N+1?",
+        "purpose": "Check lazy relation behavior."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "When might eager loading be worse than explicit joins?",
+        "purpose": "Probe overfetching risk."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Lazy loading versus eager loading",
+        "displayQuestion": "What is lazy loading versus eager loading in TypeORM, and what are the N+1 risks of lazy loading?",
+        "displayIntent": "Assess whether the candidate understands timing of database access and relation loading trade-offs.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "trade_off",
+          "topic": "lazy_vs_eager"
+        }
+      },
+      "vi": {
+        "title": "Lazy loading so với eager loading",
+        "displayQuestion": "Lazy loading khác eager loading trong TypeORM như thế nào, và lazy loading có rủi ro N+1 gì?",
+        "displayIntent": "Assess whether the candidate understands timing of database access and relation loading trade-offs.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "trade_off",
+          "topic": "lazy_vs_eager"
+        }
+      },
+      "ja": {
+        "title": "Lazy loading versus eager loading",
+        "displayQuestion": "次の点を説明してください: What is lazy loading versus eager loading in TypeORM, and what are the N+1 risks of lazy loading?",
+        "displayIntent": "この質問は lazy_vs_eager を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "trade_off",
+          "topic": "lazy_vs_eager"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "TypeORM Relations",
+        "url": "https://typeorm.io/relations",
+        "note": "Used for lazy/eager relation loading concepts."
+      },
+      {
+        "label": "TypeORM SelectQueryBuilder",
+        "url": "https://typeorm.io/select-query-builder",
+        "note": "Used for join-based relation loading patterns."
+      },
+      {
+        "label": "GraphQL DataLoader",
+        "url": "https://github.com/graphql/dataloader",
+        "note": "Used for batching and request-scoped caching concepts."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NPLUS1_JR_DATALOADER_005",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "technical_depth",
+    "competencies": [
+      "technical_fundamentals",
+      "system_thinking"
+    ],
+    "techTags": [
+      "sql",
+      "graphql"
+    ],
+    "topicTags": [
+      "n_plus_1",
+      "batching"
+    ],
+    "difficulty": 3,
+    "conversationDepth": "mid",
+    "intent": "Check whether the candidate understands batching by IDs and request-scoped caching, especially for GraphQL resolvers.",
+    "primaryQuestion": "What is DataLoader, how does it solve N+1 through batching, and when is it especially useful?",
+    "expectedSignals": [
+      {
+        "label": "Defines DataLoader as batching and caching utility.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "loads_requested_keys_in_batches_inst_1",
+            "description": "Loads requested keys in batches instead of one query per field."
+          },
+          {
+            "key": "caches_results_during_a_request_to_a_2",
+            "description": "Caches results during a request to avoid duplicate loads."
+          }
+        ]
+      },
+      {
+        "label": "Explains batch function shape.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "receives_an_array_of_keys_or_ids_1",
+            "description": "Receives an array of keys or IDs."
+          },
+          {
+            "key": "returns_values_in_the_same_order_as__2",
+            "description": "Returns values in the same order as keys, including null or errors for missing values as appropriate."
+          }
+        ]
+      },
+      {
+        "label": "Explains request-scoped caching.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "cache_should_usually_be_scoped_per_r_1",
+            "description": "Cache should usually be scoped per request because permissions and data freshness can vary."
+          },
+          {
+            "key": "global_cache_can_leak_data_or_become_2",
+            "description": "Global cache can leak data or become stale."
+          }
+        ]
+      },
+      {
+        "label": "Connects to GraphQL resolver N+1.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "each_field_resolver_can_request_auth_1",
+            "description": "Each field resolver can request author by ID."
+          },
+          {
+            "key": "dataloader_batches_all_author_ids_in_2",
+            "description": "DataLoader batches all author IDs into one IN query for that request."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Why must a DataLoader batch function return results in the same order as requested IDs?",
+        "purpose": "Check batch contract."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Why should DataLoader cache usually not be global?",
+        "purpose": "Probe isolation and freshness."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "DataLoader batching",
+        "displayQuestion": "What is DataLoader, how does it solve N+1 through batching, and when is it especially useful?",
+        "displayIntent": "Check whether the candidate understands batching by IDs and request-scoped caching, especially for GraphQL resolvers.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "dataloader"
+        }
+      },
+      "vi": {
+        "title": "Batching bằng DataLoader",
+        "displayQuestion": "DataLoader là gì, nó giải quyết N+1 bằng batching như thế nào, và đặc biệt hữu ích khi nào?",
+        "displayIntent": "Check whether the candidate understands batching by IDs and request-scoped caching, especially for GraphQL resolvers.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "dataloader"
+        }
+      },
+      "ja": {
+        "title": "DataLoader batching",
+        "displayQuestion": "次の点を説明してください: What is DataLoader, how does it solve N+1 through batching, and when is it especially useful?",
+        "displayIntent": "この質問は dataloader を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "technical_depth",
+          "topic": "dataloader"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "TypeORM Relations",
+        "url": "https://typeorm.io/relations",
+        "note": "Used for lazy/eager relation loading concepts."
+      },
+      {
+        "label": "TypeORM SelectQueryBuilder",
+        "url": "https://typeorm.io/select-query-builder",
+        "note": "Used for join-based relation loading patterns."
+      },
+      {
+        "label": "GraphQL DataLoader",
+        "url": "https://github.com/graphql/dataloader",
+        "note": "Used for batching and request-scoped caching concepts."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NPLUS1_JR_DETECTION_006",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "debugging",
+    "competencies": [
+      "problem_solving",
+      "technical_fundamentals"
+    ],
+    "techTags": [
+      "sql"
+    ],
+    "topicTags": [
+      "n_plus_1",
+      "observability",
+      "query_planning"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Evaluate whether the candidate can diagnose query count and latency problems with logs, tracing, and tests.",
+    "primaryQuestion": "How would you detect N+1 problems in a running application?",
+    "expectedSignals": [
+      {
+        "label": "Uses query logging.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "enables_orm_or_database_query_logs_i_1",
+            "description": "Enables ORM or database query logs in development or staging."
+          },
+          {
+            "key": "looks_for_repeated_similar_queries_d_2",
+            "description": "Looks for repeated similar queries differing only by ID."
+          }
+        ]
+      },
+      {
+        "label": "Uses APM or tracing.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "measures_query_count_and_database_ti_1",
+            "description": "Measures query count and database time per request."
+          },
+          {
+            "key": "finds_endpoints_where_database_calls_2",
+            "description": "Finds endpoints where database calls grow with number of returned rows."
+          }
+        ]
+      },
+      {
+        "label": "Uses production metrics carefully.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "monitors_p95_latency_db_query_volume_1",
+            "description": "Monitors p95 latency, DB query volume, slow queries, and connection pool pressure."
+          },
+          {
+            "key": "compares_query_count_to_response_siz_2",
+            "description": "Compares query count to response size."
+          }
+        ]
+      },
+      {
+        "label": "Uses tests or thresholds.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "integration_test_can_assert_query_co_1",
+            "description": "Integration test can assert query count stays under a threshold."
+          },
+          {
+            "key": "load_test_with_realistic_data_size_r_2",
+            "description": "Load test with realistic data size reveals local-hidden N+1."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "What log pattern would make you suspect N+1?",
+        "purpose": "Check repeated query recognition."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "How could an integration test fail when an endpoint performs too many queries?",
+        "purpose": "Probe automated detection."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Detecting N+1 in applications",
+        "displayQuestion": "How would you detect N+1 problems in a running application?",
+        "displayIntent": "Evaluate whether the candidate can diagnose query count and latency problems with logs, tracing, and tests.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "debugging",
+          "topic": "detecting_n_plus_one"
+        }
+      },
+      "vi": {
+        "title": "Phát hiện N+1 trong application",
+        "displayQuestion": "Bạn sẽ phát hiện N+1 problem trong một application đang chạy như thế nào?",
+        "displayIntent": "Evaluate whether the candidate can diagnose query count and latency problems with logs, tracing, and tests.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "debugging",
+          "topic": "detecting_n_plus_one"
+        }
+      },
+      "ja": {
+        "title": "Detecting N+1 in applications",
+        "displayQuestion": "次の点を説明してください: How would you detect N+1 problems in a running application?",
+        "displayIntent": "この質問は detecting_n_plus_one を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "debugging",
+          "topic": "detecting_n_plus_one"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "TypeORM Relations",
+        "url": "https://typeorm.io/relations",
+        "note": "Used for lazy/eager relation loading concepts."
+      },
+      {
+        "label": "TypeORM SelectQueryBuilder",
+        "url": "https://typeorm.io/select-query-builder",
+        "note": "Used for join-based relation loading patterns."
+      },
+      {
+        "label": "GraphQL DataLoader",
+        "url": "https://github.com/graphql/dataloader",
+        "note": "Used for batching and request-scoped caching concepts."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NPLUS1_JR_LOCAL_VS_PROD_007",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "debugging",
+    "competencies": [
+      "system_thinking",
+      "problem_solving"
+    ],
+    "techTags": [
+      "sql"
+    ],
+    "topicTags": [
+      "n_plus_1",
+      "query_planning",
+      "observability",
+      "relational_model"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Check whether the candidate understands scale, network latency, data volume, and connection pool effects.",
+    "primaryQuestion": "Why can N+1 be hard to notice in local development but painful in production?",
+    "expectedSignals": [
+      {
+        "label": "Explains small local data hides query explosion.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "five_rows_means_six_queries_may_feel_1",
+            "description": "Five rows means six queries may feel fine."
+          },
+          {
+            "key": "thousands_of_rows_or_nested_relation_2",
+            "description": "Thousands of rows or nested relations multiply query count."
+          }
+        ]
+      },
+      {
+        "label": "Explains latency and network impact.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "local_database_round_trips_are_fast_1",
+            "description": "Local database round trips are fast."
+          },
+          {
+            "key": "production_network_database_load_and_2",
+            "description": "Production network, database load, and connection pool contention amplify cost."
+          }
+        ]
+      },
+      {
+        "label": "Explains concurrency impact.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "many_users_causing_n_1_endpoints_can_1",
+            "description": "Many users causing N+1 endpoints can overload DB connections and CPU."
+          },
+          {
+            "key": "slow_endpoints_increase_queueing_and_2",
+            "description": "Slow endpoints increase queueing and timeouts."
+          }
+        ]
+      },
+      {
+        "label": "Suggests realistic testing.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "seed_realistic_data_volumes_1",
+            "description": "Seed realistic data volumes."
+          },
+          {
+            "key": "use_query_logs_apm_and_load_tests_be_2",
+            "description": "Use query logs, APM, and load tests before production."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Why can 101 queries seem okay locally but fail under production traffic?",
+        "purpose": "Check scale reasoning."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "What data volume would you test before claiming the endpoint is safe?",
+        "purpose": "Probe validation mindset."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Why N+1 hides locally",
+        "displayQuestion": "Why can N+1 be hard to notice in local development but painful in production?",
+        "displayIntent": "Check whether the candidate understands scale, network latency, data volume, and connection pool effects.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "debugging",
+          "topic": "scale_visibility"
+        }
+      },
+      "vi": {
+        "title": "Vì sao N+1 khó thấy ở local",
+        "displayQuestion": "Vì sao N+1 khó nhận ra ở local nhưng rất đau ở production?",
+        "displayIntent": "Check whether the candidate understands scale, network latency, data volume, and connection pool effects.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "debugging",
+          "topic": "scale_visibility"
+        }
+      },
+      "ja": {
+        "title": "Why N+1 hides locally",
+        "displayQuestion": "次の点を説明してください: Why can N+1 be hard to notice in local development but painful in production?",
+        "displayIntent": "この質問は scale_visibility を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "debugging",
+          "topic": "scale_visibility"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "TypeORM Relations",
+        "url": "https://typeorm.io/relations",
+        "note": "Used for lazy/eager relation loading concepts."
+      },
+      {
+        "label": "TypeORM SelectQueryBuilder",
+        "url": "https://typeorm.io/select-query-builder",
+        "note": "Used for join-based relation loading patterns."
+      },
+      {
+        "label": "GraphQL DataLoader",
+        "url": "https://github.com/graphql/dataloader",
+        "note": "Used for batching and request-scoped caching concepts."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NPLUS1_JR_RELATIONS_FIND_QUERYBUILDER_008",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "trade_off",
+    "competencies": [
+      "trade_off_analysis",
+      "technical_fundamentals"
+    ],
+    "techTags": [
+      "sql",
+      "typeorm"
+    ],
+    "topicTags": [
+      "n_plus_1",
+      "query_planning",
+      "joins"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Assess whether the candidate can choose TypeORM loading style based on query complexity and control needs.",
+    "primaryQuestion": "In TypeORM, what is the difference between using relations in find() and using leftJoinAndSelect() in QueryBuilder?",
+    "expectedSignals": [
+      {
+        "label": "Explains relations in find().",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "relations_option_requests_related_en_1",
+            "description": "relations option requests related entities in repository find APIs."
+          },
+          {
+            "key": "it_is_convenient_for_straightforward_2",
+            "description": "It is convenient for straightforward relation loading."
+          }
+        ]
+      },
+      {
+        "label": "Explains QueryBuilder joins.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "leftjoinandselect_explicitly_control_1",
+            "description": "leftJoinAndSelect explicitly controls joins and selected relation data."
+          },
+          {
+            "key": "querybuilder_supports_more_complex_f_2",
+            "description": "QueryBuilder supports more complex filters, conditions, ordering, projections, and joins."
+          }
+        ]
+      },
+      {
+        "label": "Mentions overfetching and projection control.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "relations_can_load_full_entities_and_1",
+            "description": "relations can load full entities and more columns than needed."
+          },
+          {
+            "key": "querybuilder_can_select_only_require_2",
+            "description": "QueryBuilder can select only required columns or shape a projection."
+          }
+        ]
+      },
+      {
+        "label": "Chooses based on endpoint complexity.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "use_simple_relations_for_simple_pred_1",
+            "description": "Use simple relations for simple predictable reads."
+          },
+          {
+            "key": "use_querybuilder_for_complex_filteri_2",
+            "description": "Use QueryBuilder for complex filtering, pagination, or performance-sensitive endpoints."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "When would find({ relations: ... }) be enough?",
+        "purpose": "Check simple case."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "When would you switch to QueryBuilder?",
+        "purpose": "Probe complexity and performance."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "relations option versus QueryBuilder joins",
+        "displayQuestion": "In TypeORM, what is the difference between using relations in find() and using leftJoinAndSelect() in QueryBuilder?",
+        "displayIntent": "Assess whether the candidate can choose TypeORM loading style based on query complexity and control needs.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "trade_off",
+          "topic": "relations_vs_querybuilder"
+        }
+      },
+      "vi": {
+        "title": "relations option so với QueryBuilder join",
+        "displayQuestion": "Trong TypeORM, dùng relations trong find() khác leftJoinAndSelect() trong QueryBuilder như thế nào?",
+        "displayIntent": "Assess whether the candidate can choose TypeORM loading style based on query complexity and control needs.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "trade_off",
+          "topic": "relations_vs_querybuilder"
+        }
+      },
+      "ja": {
+        "title": "relations option versus QueryBuilder joins",
+        "displayQuestion": "次の点を説明してください: In TypeORM, what is the difference between using relations in find() and using leftJoinAndSelect() in QueryBuilder?",
+        "displayIntent": "この質問は relations_vs_querybuilder を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "trade_off",
+          "topic": "relations_vs_querybuilder"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "TypeORM Relations",
+        "url": "https://typeorm.io/relations",
+        "note": "Used for lazy/eager relation loading concepts."
+      },
+      {
+        "label": "TypeORM SelectQueryBuilder",
+        "url": "https://typeorm.io/select-query-builder",
+        "note": "Used for join-based relation loading patterns."
+      },
+      {
+        "label": "GraphQL DataLoader",
+        "url": "https://github.com/graphql/dataloader",
+        "note": "Used for batching and request-scoped caching concepts."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NPLUS1_JR_EAGER_OVERFETCHING_009",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "trade_off",
+    "competencies": [
+      "trade_off_analysis",
+      "system_thinking"
+    ],
+    "techTags": [
+      "sql",
+      "typeorm"
+    ],
+    "topicTags": [
+      "n_plus_1",
+      "api_design",
+      "query_planning"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Check whether the candidate balances preventing N+1 with avoiding unnecessary relation loading.",
+    "primaryQuestion": "What is the risk of marking too many relations as eager: true, and how is overfetching related?",
+    "expectedSignals": [
+      {
+        "label": "Defines overfetching.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "api_or_query_loads_more_related_data_1",
+            "description": "API or query loads more related data or columns than the use case needs."
+          },
+          {
+            "key": "extra_data_increases_memory_network__2",
+            "description": "Extra data increases memory, network, and database work."
+          }
+        ]
+      },
+      {
+        "label": "Explains eager relation risk.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "every_load_of_the_entity_may_also_lo_1",
+            "description": "Every load of the entity may also load eager relations even for endpoints that do not need them."
+          },
+          {
+            "key": "multiple_eager_relations_can_create__2",
+            "description": "Multiple eager relations can create large joins or multiple heavy loads."
+          }
+        ]
+      },
+      {
+        "label": "Balances N+1 prevention with explicit query shape.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "n_1_fix_should_load_exactly_the_data_1",
+            "description": "N+1 fix should load exactly the data needed for the endpoint."
+          },
+          {
+            "key": "not_every_relation_should_be_globall_2",
+            "description": "Not every relation should be globally eager."
+          }
+        ]
+      },
+      {
+        "label": "Mentions response size and privacy.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "overfetching_can_expose_fields_accid_1",
+            "description": "Overfetching can expose fields accidentally if mapping is careless."
+          },
+          {
+            "key": "large_response_payloads_can_slow_cli_2",
+            "description": "Large response payloads can slow clients."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Why is eager loading every relation not a universal fix for N+1?",
+        "purpose": "Check trade-off."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "How can overfetching accidentally leak data?",
+        "purpose": "Probe mapping/privacy risk."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Eager loading and overfetching",
+        "displayQuestion": "What is the risk of marking too many relations as eager: true, and how is overfetching related?",
+        "displayIntent": "Check whether the candidate balances preventing N+1 with avoiding unnecessary relation loading.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "trade_off",
+          "topic": "overfetching"
+        }
+      },
+      "vi": {
+        "title": "Eager loading và overfetching",
+        "displayQuestion": "Rủi ro khi mark quá nhiều relation là eager: true là gì, và overfetching liên quan thế nào?",
+        "displayIntent": "Check whether the candidate balances preventing N+1 with avoiding unnecessary relation loading.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "trade_off",
+          "topic": "overfetching"
+        }
+      },
+      "ja": {
+        "title": "Eager loading and overfetching",
+        "displayQuestion": "次の点を説明してください: What is the risk of marking too many relations as eager: true, and how is overfetching related?",
+        "displayIntent": "この質問は overfetching を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "trade_off",
+          "topic": "overfetching"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "TypeORM Relations",
+        "url": "https://typeorm.io/relations",
+        "note": "Used for lazy/eager relation loading concepts."
+      },
+      {
+        "label": "TypeORM SelectQueryBuilder",
+        "url": "https://typeorm.io/select-query-builder",
+        "note": "Used for join-based relation loading patterns."
+      },
+      {
+        "label": "GraphQL DataLoader",
+        "url": "https://github.com/graphql/dataloader",
+        "note": "Used for batching and request-scoped caching concepts."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NPLUS1_JR_SERIALIZATION_010",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "debugging",
+    "competencies": [
+      "problem_solving",
+      "technical_fundamentals"
+    ],
+    "techTags": [
+      "sql",
+      "typeorm"
+    ],
+    "topicTags": [
+      "n_plus_1",
+      "api_design"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Evaluate whether the candidate can spot N+1 outside obvious repository code.",
+    "primaryQuestion": "How can lazy loading create hidden database calls during JSON serialization or response mapping?",
+    "expectedSignals": [
+      {
+        "label": "Explains serialization touches properties.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "json_serialization_or_dto_mapping_re_1",
+            "description": "JSON serialization or DTO mapping reads entity fields."
+          },
+          {
+            "key": "reading_a_lazy_relation_can_trigger__2",
+            "description": "Reading a lazy relation can trigger a database query."
+          }
+        ]
+      },
+      {
+        "label": "Explains loop amplification.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "mapping_a_list_of_entities_can_trigg_1",
+            "description": "Mapping a list of entities can trigger one relation query per entity."
+          },
+          {
+            "key": "nested_mapping_can_multiply_the_prob_2",
+            "description": "Nested mapping can multiply the problem further."
+          }
+        ]
+      },
+      {
+        "label": "Suggests safer mapping.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "load_required_relations_explicitly_b_1",
+            "description": "Load required relations explicitly before mapping."
+          },
+          {
+            "key": "map_from_projection_query_result_rat_2",
+            "description": "Map from projection/query result rather than rich lazy entities when appropriate."
+          }
+        ]
+      },
+      {
+        "label": "Mentions avoiding entity leakage.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "do_not_expose_orm_entities_directly__1",
+            "description": "Do not expose ORM entities directly as API responses."
+          },
+          {
+            "key": "dto_mapping_makes_data_and_relation__2",
+            "description": "DTO mapping makes data and relation needs explicit."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Why can returning entities directly from a controller hide database queries?",
+        "purpose": "Check serialization risk."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "How would a DTO projection help avoid this?",
+        "purpose": "Probe explicit response shape."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Hidden queries during serialization",
+        "displayQuestion": "How can lazy loading create hidden database calls during JSON serialization or response mapping?",
+        "displayIntent": "Evaluate whether the candidate can spot N+1 outside obvious repository code.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "debugging",
+          "topic": "serialization_n_plus_one"
+        }
+      },
+      "vi": {
+        "title": "Query ẩn khi serialize",
+        "displayQuestion": "Lazy loading có thể tạo database call ẩn khi JSON serialization hoặc response mapping như thế nào?",
+        "displayIntent": "Evaluate whether the candidate can spot N+1 outside obvious repository code.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "debugging",
+          "topic": "serialization_n_plus_one"
+        }
+      },
+      "ja": {
+        "title": "Hidden queries during serialization",
+        "displayQuestion": "次の点を説明してください: How can lazy loading create hidden database calls during JSON serialization or response mapping?",
+        "displayIntent": "この質問は serialization_n_plus_one を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "debugging",
+          "topic": "serialization_n_plus_one"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "TypeORM Relations",
+        "url": "https://typeorm.io/relations",
+        "note": "Used for lazy/eager relation loading concepts."
+      },
+      {
+        "label": "TypeORM SelectQueryBuilder",
+        "url": "https://typeorm.io/select-query-builder",
+        "note": "Used for join-based relation loading patterns."
+      },
+      {
+        "label": "GraphQL DataLoader",
+        "url": "https://github.com/graphql/dataloader",
+        "note": "Used for batching and request-scoped caching concepts."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NPLUS1_JR_REST_INCLUDE_011",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "situational",
+    "competencies": [
+      "problem_solving",
+      "system_thinking"
+    ],
+    "techTags": [
+      "sql",
+      "rest",
+      "typeorm"
+    ],
+    "topicTags": [
+      "n_plus_1",
+      "joins"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Assess whether the candidate can design explicit include handling with safe relation loading and pagination awareness.",
+    "primaryQuestion": "How would you solve N+1 in a REST endpoint like GET /posts?include=author,comments?",
+    "expectedSignals": [
+      {
+        "label": "Parses and validates include parameters.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "only_allows_documented_include_value_1",
+            "description": "Only allows documented include values such as author or comments."
+          },
+          {
+            "key": "rejects_unknown_or_too_deep_includes_2",
+            "description": "Rejects unknown or too-deep includes to avoid arbitrary relation loading."
+          }
+        ]
+      },
+      {
+        "label": "Loads requested relations explicitly.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "uses_joins_relation_options_or_batch_1",
+            "description": "Uses joins, relation options, or batched queries based on include set."
+          },
+          {
+            "key": "avoids_lazy_relation_access_during_r_2",
+            "description": "Avoids lazy relation access during response mapping."
+          }
+        ]
+      },
+      {
+        "label": "Handles pagination with relations carefully.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "paginates_parent_posts_before_loadin_1",
+            "description": "Paginates parent posts before loading heavy child collections when appropriate."
+          },
+          {
+            "key": "avoids_join_duplication_breaking_pag_2",
+            "description": "Avoids join duplication breaking page size."
+          }
+        ]
+      },
+      {
+        "label": "Shapes response intentionally.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "selects_required_columns_only_1",
+            "description": "Selects required columns only."
+          },
+          {
+            "key": "maps_to_dtos_so_included_data_is_exp_2",
+            "description": "Maps to DTOs so included data is explicit and safe."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Why should include values be whitelisted?",
+        "purpose": "Check safety and performance."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "How can joining comments affect pagination of posts?",
+        "purpose": "Probe duplication and page-size issue."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Solving N+1 in REST include endpoints",
+        "displayQuestion": "How would you solve N+1 in a REST endpoint like GET /posts?include=author,comments?",
+        "displayIntent": "Assess whether the candidate can design explicit include handling with safe relation loading and pagination awareness.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "situational",
+          "topic": "rest_include"
+        }
+      },
+      "vi": {
+        "title": "Giải N+1 trong REST include endpoint",
+        "displayQuestion": "Bạn sẽ giải N+1 trong REST endpoint như GET /posts?include=author,comments thế nào?",
+        "displayIntent": "Assess whether the candidate can design explicit include handling with safe relation loading and pagination awareness.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "situational",
+          "topic": "rest_include"
+        }
+      },
+      "ja": {
+        "title": "Solving N+1 in REST include endpoints",
+        "displayQuestion": "次の点を説明してください: How would you solve N+1 in a REST endpoint like GET /posts?include=author,comments?",
+        "displayIntent": "この質問は rest_include を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "situational",
+          "topic": "rest_include"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "TypeORM Relations",
+        "url": "https://typeorm.io/relations",
+        "note": "Used for lazy/eager relation loading concepts."
+      },
+      {
+        "label": "TypeORM SelectQueryBuilder",
+        "url": "https://typeorm.io/select-query-builder",
+        "note": "Used for join-based relation loading patterns."
+      },
+      {
+        "label": "GraphQL DataLoader",
+        "url": "https://github.com/graphql/dataloader",
+        "note": "Used for batching and request-scoped caching concepts."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NPLUS1_JR_GRAPHQL_RESOLVER_012",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "situational",
+    "competencies": [
+      "problem_solving",
+      "system_thinking"
+    ],
+    "techTags": [
+      "sql",
+      "graphql"
+    ],
+    "topicTags": [
+      "n_plus_1",
+      "batching",
+      "api_design"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Check whether the candidate can apply DataLoader or preloading to field resolver query explosion.",
+    "primaryQuestion": "How would you solve N+1 in a GraphQL resolver where each Post.author field triggers a database call?",
+    "expectedSignals": [
+      {
+        "label": "Identifies field resolver source of N+1.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "post_list_resolver_returns_many_post_1",
+            "description": "Post list resolver returns many posts."
+          },
+          {
+            "key": "author_field_resolver_runs_once_per__2",
+            "description": "Author field resolver runs once per post and queries by authorId."
+          }
+        ]
+      },
+      {
+        "label": "Uses DataLoader batching by author IDs.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "resolver_calls_authorloader_load_pos_1",
+            "description": "Resolver calls authorLoader.load(post.authorId)."
+          },
+          {
+            "key": "loader_batches_ids_and_performs_one__2",
+            "description": "Loader batches IDs and performs one query with IN or equivalent."
+          }
+        ]
+      },
+      {
+        "label": "Uses request-scoped loaders.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "each_request_gets_its_own_loader_ins_1",
+            "description": "Each request gets its own loader instance/cache."
+          },
+          {
+            "key": "prevents_cross_user_data_leakage_and_2",
+            "description": "Prevents cross-user data leakage and stale global cache."
+          }
+        ]
+      },
+      {
+        "label": "Handles result ordering and missing rows.",
+        "relatedTrigger": "missing_context",
+        "requirements": [
+          {
+            "key": "batch_function_maps_db_results_back__1",
+            "description": "Batch function maps DB results back to requested ID order."
+          },
+          {
+            "key": "missing_author_returns_null_or_appro_2",
+            "description": "Missing author returns null or appropriate error consistently."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "What does authorLoader.load(post.authorId) do differently from repository.findOne in each resolver?",
+        "purpose": "Check batching."
+      },
+      {
+        "trigger": "missing_context",
+        "question": "Why is result ordering important in a DataLoader batch function?",
+        "purpose": "Probe contract correctness."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "GraphQL resolver N+1",
+        "displayQuestion": "How would you solve N+1 in a GraphQL resolver where each Post.author field triggers a database call?",
+        "displayIntent": "Check whether the candidate can apply DataLoader or preloading to field resolver query explosion.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "situational",
+          "topic": "graphql_n_plus_one"
+        }
+      },
+      "vi": {
+        "title": "N+1 trong GraphQL resolver",
+        "displayQuestion": "Bạn sẽ giải N+1 trong GraphQL resolver khi mỗi Post.author field trigger một database call như thế nào?",
+        "displayIntent": "Check whether the candidate can apply DataLoader or preloading to field resolver query explosion.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "situational",
+          "topic": "graphql_n_plus_one"
+        }
+      },
+      "ja": {
+        "title": "GraphQL resolver N+1",
+        "displayQuestion": "次の点を説明してください: How would you solve N+1 in a GraphQL resolver where each Post.author field triggers a database call?",
+        "displayIntent": "この質問は graphql_n_plus_one を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "situational",
+          "topic": "graphql_n_plus_one"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "TypeORM Relations",
+        "url": "https://typeorm.io/relations",
+        "note": "Used for lazy/eager relation loading concepts."
+      },
+      {
+        "label": "TypeORM SelectQueryBuilder",
+        "url": "https://typeorm.io/select-query-builder",
+        "note": "Used for join-based relation loading patterns."
+      },
+      {
+        "label": "GraphQL DataLoader",
+        "url": "https://github.com/graphql/dataloader",
+        "note": "Used for batching and request-scoped caching concepts."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NPLUS1_JR_PROMISE_ALL_NOT_FIX_013",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "debugging",
+    "competencies": [
+      "problem_solving",
+      "technical_fundamentals"
+    ],
+    "techTags": [
+      "sql"
+    ],
+    "topicTags": [
+      "n_plus_1",
+      "async_programming",
+      "relational_model",
+      "query_planning"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Evaluate whether the candidate distinguishes parallelizing many queries from reducing query count.",
+    "primaryQuestion": "Why is Promise.all(items.map(...db query...)) not a real fix for N+1?",
+    "expectedSignals": [
+      {
+        "label": "Explains Promise.all does not reduce query count.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "it_still_issues_one_query_per_item_1",
+            "description": "It still issues one query per item."
+          },
+          {
+            "key": "it_only_starts_them_concurrently_2",
+            "description": "It only starts them concurrently."
+          }
+        ]
+      },
+      {
+        "label": "Explains database load risk.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "parallel_queries_can_overload_connec_1",
+            "description": "Parallel queries can overload connection pool or database CPU."
+          },
+          {
+            "key": "latency_may_improve_locally_while_sy_2",
+            "description": "Latency may improve locally while system throughput worsens."
+          }
+        ]
+      },
+      {
+        "label": "Names real fixes.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "use_joins_batched_in_queries_preload_1",
+            "description": "Use joins, batched IN queries, preloading, projection, or DataLoader."
+          },
+          {
+            "key": "reduce_round_trips_and_query_count_i_2",
+            "description": "Reduce round trips and query count instead of only parallelizing."
+          }
+        ]
+      },
+      {
+        "label": "Mentions controlled concurrency when needed.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "if_multiple_queries_are_unavoidable__1",
+            "description": "If multiple queries are unavoidable, limit concurrency."
+          },
+          {
+            "key": "but_concurrency_limiting_is_not_the__2",
+            "description": "But concurrency limiting is not the same as solving N+1."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "If 100 items each trigger one query inside Promise.all, how many queries run?",
+        "purpose": "Check query-count model."
+      },
+      {
+        "trigger": "missing_consequence",
+        "question": "How can Promise.all make the database problem worse?",
+        "purpose": "Probe connection pool pressure."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Promise.all is not an N+1 fix",
+        "displayQuestion": "Why is Promise.all(items.map(...db query...)) not a real fix for N+1?",
+        "displayIntent": "Evaluate whether the candidate distinguishes parallelizing many queries from reducing query count.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "debugging",
+          "topic": "promise_all_n_plus_one"
+        }
+      },
+      "vi": {
+        "title": "Promise.all không phải cách fix N+1",
+        "displayQuestion": "Vì sao Promise.all(items.map(...db query...)) không phải cách fix N+1 thật sự?",
+        "displayIntent": "Evaluate whether the candidate distinguishes parallelizing many queries from reducing query count.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "debugging",
+          "topic": "promise_all_n_plus_one"
+        }
+      },
+      "ja": {
+        "title": "Promise.all is not an N+1 fix",
+        "displayQuestion": "次の点を説明してください: Why is Promise.all(items.map(...db query...)) not a real fix for N+1?",
+        "displayIntent": "この質問は promise_all_n_plus_one を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "debugging",
+          "topic": "promise_all_n_plus_one"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "TypeORM Relations",
+        "url": "https://typeorm.io/relations",
+        "note": "Used for lazy/eager relation loading concepts."
+      },
+      {
+        "label": "TypeORM SelectQueryBuilder",
+        "url": "https://typeorm.io/select-query-builder",
+        "note": "Used for join-based relation loading patterns."
+      },
+      {
+        "label": "GraphQL DataLoader",
+        "url": "https://github.com/graphql/dataloader",
+        "note": "Used for batching and request-scoped caching concepts."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NPLUS1_JR_COLUMNS_PROJECTIONS_014",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "trade_off",
+    "competencies": [
+      "trade_off_analysis",
+      "system_thinking"
+    ],
+    "techTags": [
+      "sql",
+      "typeorm"
+    ],
+    "topicTags": [
+      "n_plus_1",
+      "query_planning"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Check whether the candidate thinks beyond query count to response shape, memory, and data minimization.",
+    "primaryQuestion": "How can selecting only required columns help when fixing N+1, and when would you prefer a hand-written projection?",
+    "expectedSignals": [
+      {
+        "label": "Explains column minimization.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "loading_only_fields_needed_by_respon_1",
+            "description": "Loading only fields needed by response reduces I/O, memory, and serialization cost."
+          },
+          {
+            "key": "avoids_loading_large_text_blobs_or_s_2",
+            "description": "Avoids loading large text, blobs, or sensitive columns unnecessarily."
+          }
+        ]
+      },
+      {
+        "label": "Explains projection approach.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "query_can_return_dto_shaped_rows_ins_1",
+            "description": "Query can return DTO-shaped rows instead of full ORM entities."
+          },
+          {
+            "key": "projection_can_combine_related_data__2",
+            "description": "Projection can combine related data without lazy relations."
+          }
+        ]
+      },
+      {
+        "label": "Mentions trade-offs.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "hand_written_sql_or_projections_can__1",
+            "description": "Hand-written SQL or projections can be less reusable than entity loading."
+          },
+          {
+            "key": "they_can_be_clearer_and_faster_for_r_2",
+            "description": "They can be clearer and faster for read-heavy endpoints."
+          }
+        ]
+      },
+      {
+        "label": "Connects to privacy and API contract.",
+        "relatedTrigger": "missing_consequence",
+        "requirements": [
+          {
+            "key": "response_should_not_expose_internal__1",
+            "description": "Response should not expose internal columns accidentally."
+          },
+          {
+            "key": "selected_fields_should_match_the_end_2",
+            "description": "Selected fields should match the endpoint contract."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "Why might selecting password_hash accidentally be a problem even if the API later filters it?",
+        "purpose": "Probe data minimization."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "When would full entity loading be acceptable?",
+        "purpose": "Check balanced choice."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Selecting only required columns",
+        "displayQuestion": "How can selecting only required columns help when fixing N+1, and when would you prefer a hand-written projection?",
+        "displayIntent": "Check whether the candidate thinks beyond query count to response shape, memory, and data minimization.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "trade_off",
+          "topic": "projections"
+        }
+      },
+      "vi": {
+        "title": "Chỉ select column cần thiết",
+        "displayQuestion": "Việc select đúng column cần thiết giúp gì khi fix N+1, và khi nào bạn chọn projection viết tay?",
+        "displayIntent": "Check whether the candidate thinks beyond query count to response shape, memory, and data minimization.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "trade_off",
+          "topic": "projections"
+        }
+      },
+      "ja": {
+        "title": "Selecting only required columns",
+        "displayQuestion": "次の点を説明してください: How can selecting only required columns help when fixing N+1, and when would you prefer a hand-written projection?",
+        "displayIntent": "この質問は projections を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "trade_off",
+          "topic": "projections"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "TypeORM Relations",
+        "url": "https://typeorm.io/relations",
+        "note": "Used for lazy/eager relation loading concepts."
+      },
+      {
+        "label": "TypeORM SelectQueryBuilder",
+        "url": "https://typeorm.io/select-query-builder",
+        "note": "Used for join-based relation loading patterns."
+      },
+      {
+        "label": "GraphQL DataLoader",
+        "url": "https://github.com/graphql/dataloader",
+        "note": "Used for batching and request-scoped caching concepts."
+      }
+    ],
+    "status": "active"
+  },
+  {
+    "code": "NPLUS1_JR_QUERY_COUNT_TEST_015",
+    "stages": [
+      "stage_2_tech_stack"
+    ],
+    "roleFamilies": [
+      "backend",
+      "fullstack"
+    ],
+    "levels": [
+      "junior"
+    ],
+    "type": "debugging",
+    "competencies": [
+      "problem_solving",
+      "technical_fundamentals"
+    ],
+    "techTags": [
+      "sql"
+    ],
+    "topicTags": [
+      "n_plus_1",
+      "query_planning"
+    ],
+    "difficulty": 2,
+    "conversationDepth": "mid",
+    "intent": "Assess whether the candidate can turn N+1 prevention into a regression test.",
+    "primaryQuestion": "How would you write an integration test that fails when an endpoint performs too many queries?",
+    "expectedSignals": [
+      {
+        "label": "Seeds enough related data to reveal N+1.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "creates_multiple_parent_rows_and_rel_1",
+            "description": "Creates multiple parent rows and related child rows."
+          },
+          {
+            "key": "uses_data_size_where_query_count_wou_2",
+            "description": "Uses data size where query count would differ noticeably between N+1 and join/batch."
+          }
+        ]
+      },
+      {
+        "label": "Captures query count.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "uses_orm_query_logger_test_database__1",
+            "description": "Uses ORM query logger, test database instrumentation, or wrapper around query execution."
+          },
+          {
+            "key": "counts_sql_statements_during_one_end_2",
+            "description": "Counts SQL statements during one endpoint request."
+          }
+        ]
+      },
+      {
+        "label": "Asserts a threshold.",
+        "relatedTrigger": "vague_answer",
+        "requirements": [
+          {
+            "key": "sets_expected_max_query_count_based__1",
+            "description": "Sets expected max query count based on intended query plan."
+          },
+          {
+            "key": "test_fails_if_query_count_grows_with_2",
+            "description": "Test fails if query count grows with parent row count unexpectedly."
+          }
+        ]
+      },
+      {
+        "label": "Balances test robustness.",
+        "relatedTrigger": "missing_tradeoff",
+        "requirements": [
+          {
+            "key": "avoids_brittle_exact_counts_when_fra_1",
+            "description": "Avoids brittle exact counts when framework noise changes."
+          },
+          {
+            "key": "uses_threshold_and_focused_endpoint__2",
+            "description": "Uses threshold and focused endpoint setup."
+          }
+        ]
+      }
+    ],
+    "scoringHints": [
+      {
+        "scoreBand": "strong",
+        "description": "Covers the mechanism, practical example, edge cases, and production consequence with clear reasoning."
+      },
+      {
+        "scoreBand": "solid",
+        "description": "Explains the main idea correctly but misses one nuance such as a boundary case, trade-off, or failure mode."
+      },
+      {
+        "scoreBand": "needs_work",
+        "description": "Shows surface familiarity but cannot apply the concept to a realistic code or API scenario."
+      },
+      {
+        "scoreBand": "insufficient_evidence",
+        "description": "Answer is too vague or memorized to validate practical understanding."
+      }
+    ],
+    "followUps": [
+      {
+        "trigger": "vague_answer",
+        "question": "What test data would expose posts -> author N+1?",
+        "purpose": "Check fixture design."
+      },
+      {
+        "trigger": "missing_tradeoff",
+        "question": "Why might an exact query count assertion be brittle?",
+        "purpose": "Probe test maintainability."
+      }
+    ],
+    "localizedContent": {
+      "en": {
+        "title": "Testing query count",
+        "displayQuestion": "How would you write an integration test that fails when an endpoint performs too many queries?",
+        "displayIntent": "Assess whether the candidate can turn N+1 prevention into a regression test.",
+        "guidance": [
+          "Start with the core mechanism, not only a definition.",
+          "Use a concrete backend or frontend example where the concept changes behavior.",
+          "Name one common mistake or production consequence."
+        ],
+        "commonMistakes": [
+          "Answering only with memorized keywords.",
+          "Ignoring boundary cases or failure modes.",
+          "Not connecting the concept to real implementation decisions."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "debugging",
+          "topic": "query_count_tests"
+        }
+      },
+      "vi": {
+        "title": "Test số lượng query",
+        "displayQuestion": "Bạn sẽ viết integration test thế nào để fail khi endpoint chạy quá nhiều query?",
+        "displayIntent": "Assess whether the candidate can turn N+1 prevention into a regression test.",
+        "guidance": [
+          "Bắt đầu bằng cơ chế cốt lõi, không chỉ đọc định nghĩa.",
+          "Dùng một ví dụ backend hoặc frontend cụ thể nơi khái niệm này làm thay đổi hành vi.",
+          "Nêu một lỗi phổ biến hoặc hệ quả trong production."
+        ],
+        "commonMistakes": [
+          "Chỉ trả lời bằng keyword học thuộc.",
+          "Bỏ qua boundary case hoặc failure mode.",
+          "Không kết nối khái niệm với quyết định implement thực tế."
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "debugging",
+          "topic": "query_count_tests"
+        }
+      },
+      "ja": {
+        "title": "Testing query count",
+        "displayQuestion": "次の点を説明してください: How would you write an integration test that fails when an endpoint performs too many queries?",
+        "displayIntent": "この質問は query_count_tests を実務で説明できるかを確認します。",
+        "guidance": [
+          "定義だけでなく、中心となる仕組みから説明する。",
+          "その概念が挙動を変える具体的な backend/frontend の例を使う。",
+          "よくある mistake または production consequence を一つ述べる。"
+        ],
+        "commonMistakes": [
+          "暗記した keyword だけで答える。",
+          "boundary case や failure mode を無視する。",
+          "概念を実装上の判断につなげない。"
+        ],
+        "labels": {
+          "role": "Backend/Fullstack",
+          "level": "Junior",
+          "type": "debugging",
+          "topic": "query_count_tests"
+        }
+      }
+    },
+    "sourceReferences": [
+      {
+        "label": "TypeORM Relations",
+        "url": "https://typeorm.io/relations",
+        "note": "Used for lazy/eager relation loading concepts."
+      },
+      {
+        "label": "TypeORM SelectQueryBuilder",
+        "url": "https://typeorm.io/select-query-builder",
+        "note": "Used for join-based relation loading patterns."
+      },
+      {
+        "label": "GraphQL DataLoader",
+        "url": "https://github.com/graphql/dataloader",
+        "note": "Used for batching and request-scoped caching concepts."
+      }
+    ],
+    "status": "active"
+  }
+]
